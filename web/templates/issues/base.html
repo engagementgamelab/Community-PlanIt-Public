@@ -1,0 +1,22 @@
+{%extends "layouts/base.html"%}
+{%block section%}values{%endblock%}
+
+{%block title%} {{issue.message}} {%endblock%}
+
+{%block aside%}
+{%endblock%}
+{%block content-title%}{{instance}}{%endblock%}
+{%block main%}
+    <h2> {{issue.message}} </h2>
+    <p><span class="highlight">{{issue.coins}}</span> out of a total <span class="highlight">{{total_coins}}</span> coins have been spent on {{issue.message}}</p>
+
+    <!-- Show comments -->
+    <div id="comments">
+        <div class="sleeper"></div>
+        <h4>Comments:</h4>
+        <span class="fine fancy">(140 character limit)</span>
+        <!-- Add Comment-->
+        {%include "comments/post.html"%}
+    </div>
+    
+{%endblock%}

@@ -1,0 +1,18 @@
+{%extends "layouts/base.html" %}
+
+{%block section%}accounts{%endblock%}
+
+{%block title%}Forgot password{%endblock%}
+{%block page_title%}Forgot password{%endblock%}
+{%block asideholder%}{%endblock%}
+
+{%block main%}
+    <div class="wrapper">
+        <div class="pad">Enter in your email address below and we'll send you a new password right away!</div>
+        <form action="" method="post">
+            {%csrf_token%}
+            {{form.as_p}}
+            <button class="button">Reset my password</button>
+        </form>
+    </div>
+{%endblock%}

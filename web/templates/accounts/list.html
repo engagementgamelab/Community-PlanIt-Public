@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+
+{%block section%}accounts{%endblock%}
+
+{%block title%}Registration | Accounts{%endblock%}
+
+{%block content-title%}Create An Account{%endblock%}
+{%block aside%}
+    <hr class="space">
+    <h2>Your Privacy</h2>
+    <p>
+        We need your email address to confirm your identity. We will not sell your information.
+    </p>
+{%endblock%}
+{%block main%}
+    <div class="wrapper">
+        <div class="players-list">
+            {%if players.all%}
+            <ul>
+                {%for player in players%}
+                <li>{{player.get_profile.avatar}} {{player.get_profile.first_name}} {{player.get_profile.last_name}}</li>
+                {%endfor%}
+            </ul>
+            {%else%}
+                No players found.
+            {%endif%}
+        </div>
+    </div>
+{%endblock%}
+
+{%block footer%} {%endblock%}

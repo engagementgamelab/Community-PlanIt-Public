@@ -1,0 +1,21 @@
+{%extends "games/index.html"%}
+{%block page_title%}{%endblock%}
+{%block game%}
+    <div class="game-wrapper">
+        <h2>{{thinkfast.prompt.message}}</h2>
+        <p>{{player_game.user.get_profile.first_name}} {{player_game.user.get_profile.last_name}} selected <span class="highlight">{{response}}</span> in response to <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}/">this thinkfast</a></p>
+        <hr class="space">
+
+        <!-- Show comments -->
+        <div id="comments">
+            <div class="sleeper"></div>
+            <h4>Comments:</h4>
+            <span class="fine fancy">(140 character limit)</span>
+            <!-- Add Comment-->
+            {%include "comments/post.html"%}
+        </div>
+    </div>
+{%endblock%}
+    
+{%block body%}
+{%endblock%}

@@ -1,0 +1,116 @@
+{%extends "layouts/base.html"%}
+{% load game_extras %}
+
+{%block section%}challenges{%endblock%}
+{%block title%}All challenges{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <div class="challenge-wrapper">
+        <div class="twothird">
+           {%if not instance.is_expired%}
+            <h2>Your Active Challenges</h2>
+            <ul class="gridview listless">
+                {%if current_challenges%}
+                    {%for challenge in current_challenges%}
+                        <li class="griditem {%if challenge.accepted%}accepted{%endif%} {%if not challenge.accepted%}declined{%endif%}">
+                            <span class="state"></span>
+                            <div class="date">
+                                <span class="datenum">{{challenge.challenge.start_date|date:"j"}}</span>
+                                {{challenge.challenge.start_date|date:"M"}}
+                                <br><span class="fine">{{challenge.challenge.start_date|date:"P"}}</span>
+                            </div>
+                            <h4><a href="/challenge/{{challenge.challenge.id}}">{{challenge.challenge.name}}</a> <span class="fine highlight green">{% get_points for completed challenge %}</span></h4>
+                            <p>{{challenge.challenge.description|slice:":50"}}{% if challenge.challenge.description|length > 50 %}...{%endif%}</p>
+                            <hr class="space">
+                            
+                            <a class="button" href="/challenge/{{challenge.challenge.id}}">Complete</a>
+                            
+                            {%if challenge.challenge.user == request.user%}
+                                <!-- <span class="fine">[<a href="/challenge/{{challenge.challenge.id}}/delete">Delete</a>]</span> -->
+                            {%endif%}
+                        </li>
+                    {%endfor%}
+                {%else%}
+                  <h4>You do not have any current challenges, accept one bellow.</h4>
+                {%endif%}
+            </ul>
+
+            <hr class="space">
+            <h2>Available Challenges</h2>
+            <ul class="gridview listless">
+                {%if new_challenges%}
+                    {%for challenge in new_challenges%}
+                       <li class="griditem">
+                           <span class="state"></span>
+                           <div class="date">
+                               <span class="datenum">{{challenge.start_date|date:"j"}}</span> {{challenge.start_date|date:"M"}}
+                           </div>
+                       
+                           <h4><a href="/challenge/{{challenge.id}}/">{{challenge.name}}</a> <span class="fine highlight green">{% get_points for completed challenge %}</span></h4>
+                           <p>{{challenge.description|slice:":50"}}{% if challenge.description|length > 50 %}...{%endif%}</p>
+                            
+                           <hr class="space">
+                           <a class="right" href="/challenge/{{challenge.id}}/"> Read more &rarr;</a>
+                       </li>
+                    {%endfor%}
+                {%else%}
+                   <h4>There are no new challenges <a href="/challenge/add/" class="button">Create a Challenge  <span class="fine">[{% get_points for created challenge %}]</span></a></h4>
+                {%endif%}
+            </ul>
+            {%else%}
+            <h2>The {{instance.region}} neighborhood has ended.</h2>
+            <div class="gridview listless">
+                You may not add or accept new challenges.
+            </div>
+           {%endif%}
+        </div>
+        <div class="third last">
+        {%if not instance.is_expired%}
+            <a href="/challenge/add/" class="button right">Create Challenge [<span class="fine">{% get_points for completed challenge %}</span>]</a>
+            <hr class="space">
+        {%endif%}
+            
+            <h3>Completed challenges</h3>
+            <ul class="listview listless pastchallenges">
+                {%if completed_challenges%}
+                    {%for challenge in completed_challenges%}
+                        <li class="">
+                            <p><a href="/challenge/{{challenge.challenge.id}}/">{{challenge.challenge.name}} <span class="highlight">Completed!</span></a></p>
+                        </li>
+                    {%endfor%}
+                {%else%}
+                    <h4>You have not completed a challenge yet</h4>
+                    <p>Complete a challenge to get <span class="fine highlight green">{% get_points for completed challenge %}</span> points</p>
+                {%endif%}
+            </ul>
+
+            <hr class="space">
+
+            <h3>Past Challenges</h3>
+            <ul class="listview listless pastchallenges">
+                {%if past_challenges%}
+                    {%for challenge in past_challenges%}
+                        <li class="">
+                            <h4>
+                                <a href="/challenge/{{challenge.id}}">{{challenge.name}}</a>
+                                <a class="fine right" href="/challenge/{{challenge.id}}">View &rarr;</a>
+                            </h4>
+                            
+                            <!--<div class="date">
+                                <span class="datenum">{{challenge.start_date|date:"j"}}</span> {{challenge.start_date|date:"M"}}
+                            </div>-->
+                        </li>
+                    {%endfor%}
+                {%else%}
+                <li class="listitem">
+                    No past challenges
+                </li>
+                {%endif%}
+                <hr class="clear">
+            </ul>
+        </div>
+    </div>
+
+    <hr class="space">
+{%endblock%}

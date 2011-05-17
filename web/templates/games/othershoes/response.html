@@ -1,0 +1,33 @@
+{%extends "games/index.html"%}
+{%block page_title%}{%endblock%}
+{%block game%}
+    <div class="game-wrapper">
+        <h2>
+          {{player_game.user.get_profile.first_name}} {{player_game.user.get_profile.last_name|slice:":1"}} said: 
+          "{{response.commentresponse.message}}"
+        </h2>
+        <h4><a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}/">{{othershoes.prompt.bio}}</a></h4>
+
+        <div class="fifth">
+            <img class="avatar" src="{{MEDIA_URL}}{{othershoes.prompt.avatar}}">
+        </div>
+        <p class="twothirds">
+          {{othershoes.prompt.first_name}} {{othershoes.prompt.last_name}} is a <span class="highlight">{{othershoes.prompt.age}}</span> year old <span class="highlight">{{othershoes.prompt.race}}</span> <span class="highlight">{{othershoes.prompt.gender}}</span> living in your neighborhood.
+        </p>
+        <hr class="space">
+        <hr class="space">
+
+        <!-- Show comments -->
+        <div id="comments">
+            <div class="sleeper"></div>
+            <h4>Comments:</h4>
+            <span class="fine fancy">(140 character limit)</span>
+            <!-- Add Comment-->
+            {%include "comments/post.html"%}
+            <div style="clear: both;"></div>
+        </div>
+    </div>
+{%endblock%}
+    
+{%block body%}
+{%endblock%}

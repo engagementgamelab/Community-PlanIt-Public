@@ -1,0 +1,37 @@
+{%extends "layouts/base.html"%}
+{%load gmap%}
+
+{%block title%}All neighborhoods{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+<h2>All neighborhoods</h2>
+    <ul class="instances gridview listless">
+        {%if instance|length == 0%}
+            <li class="griditem">No active Neighborhoods</li>
+        {%endif%}
+        {%for instance in instances%}
+            <li class="griditem instance">
+                <p>
+                    {% if instance.end_date > today %}<span class="highlight fine">Currently Active</span>{% else %}<span class="highlight fine">No longer Active</span>{% endif %}
+                    <a href="/neighborhood/{{instance.slug}}">{{instance.region}}</a> - {{instance.player_count}} player{%if instance.player_count > 1%}s{%endif%} {%if instance.player_count > 1%}have{%else%}has{%endif%} signed up.
+                    <br>
+                {% if instance.end_date > today %}
+                    <span class="fine">This neighborhood runs <span class="highlight">{{instance.start_date}}</span> through <span class="highlight">{{instance.end_date}}</span></span>
+                {% else %}
+                    <span class="fine">This neighborhood ran from <span class="highlight">{{instance.start_date}}</span> through <span class="highlight">{{instance.end_date}}</span></span>
+                    {% endif %}
+                </p>
+                <div class="date">
+                    <span class="datenum">{{instance.start_date|date:"j"}}</span> {{instance.start_date|date:"M"}}
+                </div>
+            </li>
+        {%endfor%}
+    </ul>
+    <div style="clear:both;"></div>
+
+{%endblock%}
+
+{%block body%}
+    {%gmap_includes%}
+{%endblock%}

@@ -1,0 +1,11 @@
+*.pyc
+*.swp
+*.tests
+*.sass-cache
+*designs
+
+web/settings.py
+data/
+data/staging
+staging
+.sass-cache/

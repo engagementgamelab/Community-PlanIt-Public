@@ -1,0 +1,227 @@
+import datetime
+import math
+from django.core.mail import send_mail
+from django.utils.translation import ugettext as _
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.template import Context, RequestContext, loader
+from django.contrib import auth, messages
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from web.accounts.models import UserProfile
+from web.accounts.forms import *
+from web.reports.models import Activity
+from web.reports.actions import ActivityLogger, PointsAssigner
+from web.processors import instance_processor as ip
+
+# This function is used for registration and forgot password as they are very similar.
+# It will take a form and determine if the email address is valid and then generate
+# a temporary random password.
+def validate_and_generate(base_form, request, callback):
+    form = base_form( )
+    if request.method == 'POST':
+        form = base_form(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = User.objects.make_random_password(length=10)
+
+            return callback(email, password, form)
+
+    return form
+
+def register(request):
+    def valid(email, password, form):
+        try:
+            player = User.objects.create(email=email)
+            player.set_password(password)
+            player.full_clean()
+            player.save()
+
+            tmpl = loader.get_template('accounts/email/welcome.html')
+            body = tmpl.render(Context({ 'password': password }))
+        except: pass
+
+        if send_mail(_('New account created!'), body, settings.NOREPLY_EMAIL, [email]):
+            messages.success(request, _('A temporary password has been sent to your email address.'))
+
+        player = auth.authenticate(username=email, password=password)
+        auth.login(request, player)
+        player.save()
+
+        uinfo = player.get_profile()
+        uinfo.instance = form.cleaned_data['instance']
+        uinfo.coins = 0
+        uinfo.points = 0
+        uinfo.points_multiplier = 1
+        uinfo.username = player.username
+        uinfo.email = player.email
+        uinfo.generated_password = player.password
+        uinfo.accepted_term = False
+        uinfo.accepted_research = False
+        uinfo.save()
+        
+        return HttpResponseRedirect('/account/dashboard')
+
+    # If not valid, show normal form
+    form = validate_and_generate(RegisterForm, request, valid)
+    if(isinstance(form, RegisterForm)):
+        tmpl = loader.get_template('accounts/register.html')
+        return HttpResponse(tmpl.render(RequestContext(request,{
+            'form': form,    
+        })))
+    else:
+        return form
+
+# Forgot your password
+def forgot(request):
+    def valid(email, password, form):
+        # Send a new password and update account
+        user = User.objects.get(email=email)
+        user.set_password(password)
+        user.save()
+        send_mail(_('Password Changed'), _('Your temporary password is: %(password)s') % { 'password': password }, settings.NOREPLY_EMAIL, [email])
+        messages.success(request, _('A temporary password has been sent to your email address.'))
+
+        return HttpResponseRedirect('/account/login')
+        
+    # If not valid, show normal form
+    form = validate_and_generate(ForgotForm, request, valid)
+    if(isinstance(form, ForgotForm)):
+        tmpl = loader.get_template('accounts/forgot.html')
+        return HttpResponse(tmpl.render(RequestContext(request, {
+            'form': form,
+        })))
+    else:
+        return form
+
+# Edit profile
+@login_required
+def edit(request):
+    try:
+        profile = request.user.get_profile()
+    except:
+        return Http404
+    
+    change_password_form = ChangePasswordForm()
+    profile_form = UserProfileForm(instance=profile)
+    if request.method == 'POST':
+        # Change password form moved to user profile
+        if request.POST['form'] == 'change_password':
+            change_password_form = ChangePasswordForm(request.POST)
+            if change_password_form.is_valid():
+                password = change_password_form.cleaned_data['password']
+                confirm = change_password_form.cleaned_data['confirm']
+                
+                request.user.set_password(confirm)
+                request.user.save()
+                messages.success(request, "Sucessfully updated password")
+        else:
+            # User profile form updated, not change password
+            profile_form = UserProfileForm(data=request.POST, files=request.FILES, instance=profile)
+            if profile_form.is_valid():
+                profile_form.save()
+                ActivityLogger.log(request.user, request, 'account profile', 'updated', '/player/'+ str(request.user.id), 'profile')
+
+                if not profile.completed:
+                    try:
+                        # TODO: Break this out into a function
+                        if len(profile.affiliations) and profile.accepted_term and profile.accepted_research and len(profile.phone_number):
+
+                            profile.completed = True
+                            profile.save()
+                            PointsAssigner.assign(request.user, 'profile_completed')
+                    except:
+                        pass
+
+                return HttpResponseRedirect('/dashboard')
+
+    tmpl = loader.get_template('accounts/profile_edit.html')
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        'profile_form': profile_form,
+        'change_password_form': change_password_form,
+    },[ip])))
+
+@login_required
+def profile(request, id):
+    player = User.objects.get(id=id)
+    
+    instance = player.get_profile().instance
+    log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:9]
+
+    followingme = []
+
+    for p in User.objects.select_related():
+        try:
+            if player and player.get_profile() and player in p.get_profile().following.all():
+                followingme.append(p)
+        except:
+            pass
+
+    tmpl = loader.get_template('accounts/profile.html')
+
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        'player': player,
+        'followingme': followingme,
+        'log': log,
+    },[ip])))
+
+@login_required
+def follow(request, id):
+    u = User.objects.get(id=id)
+    request.user.get_profile().following.add( u )
+    ActivityLogger.log(request.user, request, u.get_profile().first_name, 'started following', '/player/'+ id, 'profile')
+
+    return HttpResponseRedirect('/player/'+ str(id))
+
+def unfollow(request, id):
+    request.user.get_profile().following.remove( User.objects.get(id=id) )
+
+    return HttpResponseRedirect('/player/'+ str(id))
+
+@login_required
+def dashboard(request):
+    tmpl = loader.get_template('accounts/dashboard.html')
+
+    profile = request.user.get_profile()
+    instance = profile.instance
+    
+    # Dashboard related forms
+    activation_form = ActivationForm()
+
+    # Handle the last bit of interaction necessary to fully set up an account.
+    # This step ensures they have entered in a first/last name and accepted terms/research.
+    if request.method == 'POST':
+        if request.POST['form'] == 'of-age':
+            activation_form = ActivationForm(request.POST)
+
+            if activation_form.is_valid():
+                profile = request.user.get_profile()
+                profile.first_name = activation_form.cleaned_data['first_name']
+                profile.last_name = activation_form.cleaned_data['last_name']
+                profile.accepted_term = activation_form.cleaned_data['accepted_term']
+                profile.accepted_research = activation_form.cleaned_data['accepted_research']
+                profile.is_of_age = activation_form.cleaned_data['is_of_age']
+                profile.save()
+
+                user = request.user
+                user.is_active = True
+                user.save()
+
+                ActivityLogger.log(request.user, request, 'account', 'created', '/player/'+ str(user.id), 'profile')
+                PointsAssigner.assign(request.user, 'account_created')
+
+                return HttpResponseRedirect('/account/dashboard')
+    
+    # List all users following for filtering the activity feed later on.
+    feed = []
+    for user in profile.following.all():
+        feed.append(user)
+    feed.append(request.user)
+
+    # Fetch activity log feed for dashboard.
+    log = Activity.objects.filter(instance=instance).filter(user__in=feed).order_by('-date')[:9]
+
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        'activation_form': activation_form,
+        'log': log,
+    },[ip])))

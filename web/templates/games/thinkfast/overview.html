@@ -1,0 +1,78 @@
+{%extends "games/index.html"%}
+{%block page_title%}{%endblock%}
+{%block game%}
+    <div class="game-wrapper narrow">
+        {% if first_time %}
+            {%if unplayed%}
+                <div class="notice">
+                    <h3>Great work, you just earned points!</h3>
+                    <p>
+                    {% if request.user.get_profile.coins %}
+                        You have {{request.user.get_profile.coins}} coin{%if request.user.get_profile.coins > 1 %}s{%endif%}. 
+                        You can <a href="/issue" class="button">spend {%if request.user.get_profile.coins < 2 %}it{% else %}them{%endif%}</a>
+                         or <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a>.
+                    </p>
+                    {% else %}
+                        <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a></p>
+                    {% endif %}
+                </div>
+            {%endif%}
+        {%endif%}
+
+        <h3>ThinkFast! Summary <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a></h3>
+        <h1>{{thinkfast.prompt.message}}</h1>
+
+        {%if responses_wrapper|length%}
+            <ul class="chartlist">
+            {%for wrapper in responses_wrapper%}
+                  <li>
+                    <a>{{wrapper.choice}}</a>
+                    <span class="count">{{wrapper.players}}</span>
+                    <span class="index" style="width: {{wrapper.percent}}%">({{wrapper.percent}}%)</span>
+                  </li>
+            {%endfor%}
+            </ul>
+        {%endif%}
+
+        <hr class="space">
+
+        {%if choices|length%}
+        <ul class="listview highlighted">
+            {% for label, players in choices.items %}
+                <li class="listitem">
+                    <span class="highlight fine">{{players|length}}</span> players selected the answer {{label}}
+                    <hr class="space">
+                    {% for player in players %}
+                        {%if player.get_profile.avatar %}
+                            <a href="/player/{{player.id}}">
+                                <img alt="player.get_profile.first_name player.get_profile.last_name" class="avatar" src="{{MEDIA_URL}}{{player.get_profile.avatar}}">
+                            </a>
+                        {%else%}               
+                            <a href="/player/{{player.id}}">
+                                <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+                            </a>
+                        {%endif%} 
+                    {%endfor%}
+                    <hr class="space">
+                </li>
+            {%endfor%}
+        </ul>
+
+        <!-- {% for player in other_responses %}
+            {%if player.get_profile.avatar %}
+                <a href="/player/{{player.id}}">
+                    <img alt="player.get_profile.first_name player.get_profile.last_name" class="avatar" src="{{MEDIA_URL}}{{player.get_profile.avatar}}">
+                </a>
+            {%else%}               
+                <a href="/player/{{player.id}}">
+                    <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+                </a>
+            {%endif%} 
+        {%endfor%} -->
+
+        {%else%}
+            No submissions yet.
+        {%endif%}
+        <div style="clear: both;"></div>
+    </div>
+{%endblock%}

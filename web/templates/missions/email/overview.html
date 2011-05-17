@@ -1,0 +1,7 @@
+Dear {{user.first_name}}, 
+The {{past.topic}} mission just ended. {{first_place.first_name}} is now in first place with {{first_place.points}} points. 
+
+The {{current.topic}} mission is starting right now! The following activities have been unlocked: 
+{%for game in current.games.all%}
+    - <a href="http://planit.local/mission/{{current.slug}}/game/{{game.game_type}}/{{game.id}}/">{{ game }}</a>
+{%endfor%}

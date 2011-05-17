@@ -1,0 +1,295 @@
+{% load compress %}
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  
+    <title>{%block title%}{%endblock%} | Community Planit</title>
+
+    <meta name="viewport" content="width=240, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" href="{{MEDIA_URL}}img/favicon.png">
+    <link rel="apple-touch-icon" href="{{MEDIA_URL}}img/apple-touch-icon.png">
+
+    {%block css%}
+    {%compress css%}
+    <link rel="stylesheet" href="{{MEDIA_URL}}css/base.css">
+    <link rel="stylesheet" href="{{MEDIA_URL}}3pty/css/ui-lightness/jquery-ui-1.8.9.custom.css">
+    <link rel="stylesheet" href="{{MEDIA_URL}}3pty/fancybox/jquery.fancybox-1.3.4.css" media="screen" />
+    <link rel="stylesheet" href="{{MEDIA_URL}}3pty/css/community-planit/jquery-ui-.custom.css">
+    <link rel="stylesheet" href="{{MEDIA_URL}}3pty/css/jquery.ui.notification.css">
+    <link rel="stylesheet" href="{{MEDIA_URL}}css/mobile.css" media="screen and (max-width: 600px)">
+    {%endcompress%}
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    {%endblock%}
+    {%block head%}{%endblock%}
+</head>
+
+<body class="page {%block section%}default{%endblock%}{%if user.is_authenticated%} loggedin{%endif%}">
+    {%if messages%}
+        {%for message in messages%}
+        <div class="ui-notification-container message-{{forloop.counter}}"></div>
+        {%endfor%}
+    {%endif%}
+    
+    <!-- Header -->
+    <div id="header">
+        <div class="wrapper">
+            {%block header%}
+                {%if user.is_authenticated%}
+                    <a href="/"><img src="{{MEDIA_URL}}img/logo-3.png" alt="Community Planit"></a>
+                {%else%}
+                    <a href="/"><img src="{{MEDIA_URL}}img/logo-2.png" alt="Community Planit"></a>
+                {%endif%}
+            {%endblock%}
+            
+            <div class="page-title">
+                {%if instance%}
+                    <a href="/neighborhood/{{instance.slug}}">{{instance}}</a>
+
+                    {%if instance.is_notstarted%}
+                        <a href="/neighborhood/{{instance.slug}}">{{instance.region}} has not started yet</a>
+                    {%endif%}
+
+                    {%if instance.is_expired%}
+                        <a href="/neighborhood/{{instance.slug}}">{{instance.region}} has ended</a>
+                    {%endif%}
+                {%endif%}
+            </div>
+            <!-- Navigation -->
+            <nav>
+                {%block nav%}
+                    {%if user.is_authenticated and not instance.is_notstarted%}
+                        <a class="home" href = "/account/dashboard">Dashboard</a> <a class="missions" href="/mission">Missions</a> <a class="issues" href="/issue">Spend Coins</a> <a class="challenges" href="/challenge">Challenges</a>
+                        {%if user.is_staff%}
+                            <a class="right admin" href="/admin">Admin</a>
+                        {%endif%}
+                        {%if user.is_authenticated%}
+                            <a class="right logout" href="/account/logout">Logout</a>
+                        {%endif%}
+                        
+                    {%else%}
+                        <a class="home" href="/">Home</a> <a class="neighborhoods" href="/neighborhood">Neighborhoods</a> <a class="about" href="/about">About</a> <a class="contact" href="/contact">Contact</a>
+                    {%endif%}
+                {%endblock%}
+            </nav>
+        </div>
+    </div>
+    <div class="divider">
+        <div class="missionholder">
+            <div class="missioncounter">
+                {%if user.is_authenticated and not instance.is_notstarted%}
+                    {%for mission in missions.past.all%}
+                        <a href="/mission/{{mission.slug}}" class="past mission" title="{{mission.topic}}">
+                            {{mission.topic}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
+                        </a>
+                    {%endfor%}
+                    {%for mission in missions.current.all%}
+                        <a href="/mission/{{mission.slug}}" class="current mission" title="{{mission.topic}}">
+                            <span class="tailupper"></span>
+                            <span class="taillower"></span>
+                            <span class="suit"></span>
+                            {{mission.topic}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
+                    {%endfor%}
+                    </a>
+                    {%for mission in missions.future.all%}
+                        <div class="future mission" title="{{mission.topic}}">
+                            {{mission.topic}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
+                        </div>
+                    {%endfor%}
+                {%endif%}
+            </div>            
+        </div>
+    </div>
+    <div class="pattern">
+    <!-- Main content -->
+    <div id="main">
+        <div id="balancer">
+            {%block asideholder%}
+            <aside id="sidebar">
+                <div class="content">
+                    <hr class="space">
+                    {%if instance.is_notstarted%}
+                       <a class="neigborhood" href="/neighborhood/{{instance.slug}}">{{instance.region}} has not started yet</a>
+                    {%else%}
+                        {%if user.is_authenticated and not instance.is_notstarted%}
+                            <div class="third">
+                                {%if user.get_profile.avatar%}
+                                    <img class="avatar-large" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}">
+                                {%else%}
+                                    <img class="avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+                                {%endif%} 
+                            </div>
+                            <div class="twothirds">
+                                <h2 class="profile-name">
+                                    <a href="/player/{{user.id}}/">{{user.get_profile.first_name}} {{user.get_profile.last_name}}</a>
+                                </h2>
+                                <a href="/account/profile/edit" class="fine icon edit">Update Profile</a>
+                            </div>
+                            <hr class="space"/>
+
+                            {%block aside_progress%}
+                                <div class="score">
+                                    <div class="fill" style="width:{{user.get_profile.points_to_coin}}%"></div>
+                                    <span class="points">{{user.get_profile.points_to_coin}}/100 Points</span>
+                                    <a href="/issue" class="highlight coins{%if user.get_profile.coins%} has-coins{%endif%}">{{user.get_profile.coins}}</a>
+                                </div>
+                                {%if user.get_profile.coins > 0%}
+                                    {%if user.get_profile.instance%}
+                                    {%endif%}
+                                {%endif%}
+                            {%endblock%}
+                            
+                            <hr>
+                            <hr class="space">
+                            
+                            {%if instance%}
+                                   <a class="neigborhood" href="/neighborhood/{{instance.slug}}">Updates &amp; Leaderboard &rarr;</a>
+                            {%endif%}
+
+                            <hr class="space">
+                            
+                            {%if user.is_authenticated and instance%}
+                                {%for mission in missions.current.all%}
+                                    <a class="mission" href="/mission/{{mission.slug}}" title="{{mission.topic}}">View Current Mission &rarr;</a>
+                                {%endfor%}
+                            {%endif%}
+                            
+
+                            <hr class="space">
+                            <hr>
+                            <h2 class="profile-name">Your Game Summary</h2>
+                            <p>
+                                You have <span class="highlight">{{user.get_profile.points}}</span> points, 
+
+                                {%if user.get_profile.stake%}
+                                  {{user.get_profile.stake}} in <a class="highlight" href="/neighborhood/{{instance.slug}}">{{instance}}</a>,
+                                {%else%}
+                                  are a citizen of <a class="highlight" href="/neighborhood/{{instance.slug}}">{{instance}}</a>,
+                                {%endif%}
+
+                                are following <a href="/list/following/{{user.id}}" class="highlight">{{user.get_profile.following.all|length}}</a> players,
+                                {%if not user.get_profile.affiliations_csv|length%}
+                                    and
+                                {%endif%}
+                                are followed by <a href="/list/followers/{{user.id}}" class="highlight">{{followingme|length}}</a></a> players{%if not user.get_profile.affiliations_csv|length%}.{%endif%}{%if user.get_profile.affiliations_csv|length%}, and are affiliated with 
+                                    {%for a in user.get_profile.affiliations_csv %} 
+                                        {% if forloop.counter == user.get_profile.affiliations_csv|length and user.get_profile.affiliations_csv|length > 1%}
+                                            and 
+                                        {%endif%}
+                                        <a href="/affiliation/{{a}}" class="highlight">{{a}}</a>{% if forloop.counter < user.get_profile.affiliations_csv|length and not user.get_profile.affiliations_csv|length == 2 %}, {%endif%}{%endfor%}.{%endif%}
+                            </p>
+                            <hr class="space"/>
+
+                            {%block aside_actions%}
+                            {%endblock%}
+                        {%else%}
+                            <h3>New Player? <a href="/account/register" class="button">Sign Up</a></h3>
+                            <hr class="space"/>
+                        {%endif%}
+                    {%endif%}
+
+                    {%block aside%}
+                    {%endblock%}
+                 </div>
+              </aside>
+              {%endblock%}
+              <div class="content">
+                  <!-- <div class="content-title">
+                    {%block content-title%}
+                          {%if instance%}
+                                <a href="/neighborhood/{{instance.slug}}">{{instance}}</a>
+                            {%else%}
+                                {%if session%}
+                                    <a href="/neighborhood/{{instance.slug}}">{{session}} has not started yet</a>
+                                {%else%}
+                                    Not associated with a neighborhood
+                                {%endif%}
+                            {%endif%}
+                      {%endblock%}
+                  </div> -->
+
+                  <div class="alignleft">
+                      <h2>
+                          {%block page_title%}
+                              Community PlanIT
+                          {%endblock%}
+                      </h2>
+                      {%block main%}{%endblock%}
+                  </div>
+              </div>
+          </div>
+          <div class="fine footer">
+              <span class="left">&copy; 2011 Community PlanIT | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a> | <a href="/about">About</a> | <a href="/contact">Contact</a></span>
+              <span class="right"><a href="http://engagementgamelab.org/" target="blank">Powered By The Engagement Lab</a> at <a href="http://emerson.edu">Emerson College</a> with support from the <a href="http://knightfdn.org/">Knight Foundation</a>
+              </span>
+        </div>
+    </div>
+      
+      <!-- Footer content -->
+      <div id="footer" class="fine">
+          {%block footer%}{%endblock%}
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    {%block scripts%}
+    {%compress js%}
+    <script src="{{MEDIA_URL}}3pty/js/jquery-1.4.4.min.js"></script>
+    <script src="{{MEDIA_URL}}3pty/js/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="{{MEDIA_URL}}3pty/js/jquery-ui-timepicker-addon.js" type="text/javascript"></script>
+    <script src="{{MEDIA_URL}}3pty/js/jquery.ui.notification.js" type="text/javascript"></script>
+    <script src="{{MEDIA_URL}}3pty/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+
+    <script src="{{MEDIA_URL}}js/base.js"></script>
+    <script>
+        window.scrollTo(0,1);
+
+        {%if user.get_profile.location_tracking%}
+            (function(window) {
+
+                var geolocation = this.navigator && this.navigator.geolocation;
+                if(geolocation) {
+                    geolocation.getCurrentPosition(function(position) {
+                        document.cookie = escape( [ "position", JSON.stringify(position) ].join("=") );
+                    });
+                }
+
+            })(this);
+        {%else%}
+            document.cookie = "position=";
+        {%endif%}
+
+        $(function(){
+            var sidebarHeight = $('#sidebar').height(),
+                balancer = $('#balancer'),
+                balancerHeight = balancer.height();
+                
+            $(".ui-notification-container").notification();
+            {%if messages%}
+                {%for message in messages%}
+                    $(".message-{{forloop.counter}}").notification("create", {
+                        duration: 8000,
+                        content: "{{message}}"
+                    });
+                {%endfor%}
+            {%endif%}
+        
+            // Make sure the content area is never shorter than the sidebar
+            if( balancerHeight < sidebarHeight ) {
+                balancer.height( sidebarHeight )
+            }
+            
+
+            jQuery.each(jQuery.browser, function(i, val) {if(i=="msie" && (jQuery.browser.version.substr(0,3) == "6.0" || jQuery.browser.version.substr(0,3) == "5.0")){$('body').html('<center><div style="width: 800px; text-align: left"><h1>We noticed you&#8217re using an old version of Microsoft Internet Explorer.</h1><h2>To play Community Planit, please install <a href="http://www.google.com/chrome/">Google Chrome</a>, <a href="http://www.mozilla.com/firefox/">Firefox 4</a>  or <a href="http://www.microsoft.com/windows/downloads/ie/getitnow.mspx">IE 8+</a></h2></div></center>');}});
+        });
+    </script>
+    {%endcompress%}
+    {%endblock%}
+    {%block body%}{%endblock%}
+</body>
+</html>

@@ -1,0 +1,70 @@
+{%extends "layouts/base.html"%}
+{%load gmap%}
+{% load game_extras %}
+{%block section%}missions{%endblock%}
+
+{%block title%}{{mission.topic}} Mission{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <div class="wrapper">
+        <h2 class="currentmission">
+            {{mission.topic}}
+            <span class="highlight fine right {%if active %}green{% endif %}">
+                {{mission.start_date|date:"M"}} {{mission.start_date|date:"j"}} - {{mission.end_date|date:"M"}} {{mission.end_date|date:"j"}}
+            </span>
+        </h2>
+        {%if not active%}
+        <p class="notice">This mission has ended. You can click on the activities to see overviews, but you cannot redo the activities.</p>
+        {%endif%}
+        <div class="twothird">
+            <p class="video">{{mission.video|safe}}</p>
+            <p class="description">{{mission.description|linebreaks}}</p>
+        </div>
+
+        <div class="last third">
+            <h3>Activities</h3>
+            {%if active%}
+                <ul class="listview listless">
+                    {%for game in mission.games.all%}
+                        {%if not game in games%}
+                            <li class="listitem game {{game.game_type}}">
+                                <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">{{game.title}}</a>
+                                <span class="fine highlight green">{% get_points for completed game.game_type %}</span>
+                                <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">Play</a>
+                        {%else%}
+                            <li class="listitem game played {{game.game_type}}">
+                                <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">{{game.title}}</a>
+                                <span class="fine highlight">Complete!</span>
+                                <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">Replay</a>
+                        {%endif%}
+                        </li>
+                    {%endfor%}
+                </ul>
+            {%else%}
+                <hr class="space">
+                <ul class="listview listless">
+                     {%for game in mission.games.all%}
+                         {%if not game in games%}
+                             <li class="listitem game {{game.game_type}}">
+                                 <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">{{game.title}}</a>
+                                 <span class="fine highlight green">{% get_points for completed game.game_type %}</span>
+                                 <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">Play</a>
+                         {%else%}
+                             <li class="listitem game played {{game.game_type}}">
+                                 <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">{{game.title}}</a>
+                                 <span class="fine highlight">Completed</span>
+                                 <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">Overview</a>
+                         {%endif%}
+                    </li>
+                     {%endfor%}
+                </ul>
+            {%endif%}
+        </div>
+        <div style="clear:both;"></div>
+    </div>
+{%endblock%}
+
+{%block body%}
+    {%gmap_includes%}
+{%endblock%}

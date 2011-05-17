@@ -1,0 +1,171 @@
+{%extends "layouts/base.html"%}
+{% load game_extras %}
+
+{%block section%}accounts{%endblock%}
+
+{%block title%}Dashboard{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    {%if not instance.is_notstarted%}
+        {%if not user.is_active%}
+            <form method="POST" action="">
+                <h4>Please fill out the following information to complete your account activation:</h4>
+                {%csrf_token%}
+                <input type="hidden" name="form" value="of-age">
+                {{activation_form.as_p}}
+                <button class="button">Activate my account!</button>
+            </form>
+        {%else%}
+            <p class="welcome">
+                {%if not instance.is_expired%}
+                <strong>Keep the conversation going:</strong>
+                Complete the current <a class="" href="/mission/{{mission.slug}}" title="{{mission.topic}}">mission</a>,
+                accept or complete <a class="orange" href="/challenge">challenges</a> 
+                spend your  <a class="red" href="/issue">coins</a>, or comment on the latest 
+                neighborhood <a class="green" href="/neighborhood/{{instance.slug}}">activity</a>.
+                {%else%}
+                    <strong>{{instance.region}} has ended.</strong>
+                {%endif%}
+            </p>
+            <hr class="space">
+            
+            <div class="twothird">
+                <h3>News Feed</h3>
+                {%if log|length%}
+                <ul class="listless listview feed">
+                    {%for activity in log%}
+                    <li class="listitem {{activity.type}}">
+                        {%if activity.user.get_profile.avatar%}
+                            <img class="avatar" src="{{MEDIA_URL}}/{{activity.user.get_profile.avatar}}">
+                        {%else%}               
+                            <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+                        {%endif%} 
+                        <a href="/player/{{activity.user.id}}">{{activity.user.get_profile.first_name}} {{activity.user.get_profile.last_name|slice:":1"}}</a>
+                        {{activity.data}} 
+                        {%if activity.url%}
+                            <a href="{{activity.url}}">{{activity.action}}</a>
+                        {%else%}
+                            {{activity.action}}
+                        {%endif%}
+                        <div class="timestamp fine">{{activity.date|date:"F j, Y, g:i a"}}</div>
+                    </li>
+                    {%endfor%}
+                </ul>
+                {%else%}
+                    No news found.   
+                {%endif%}
+                <hr class="space">
+                
+                <p>
+                <a href="/neighborhood/{{user.get_profile.instance.slug}}" class="right fine">View all neighborhood news &rarr;</a>
+                </p>
+            </div>
+            
+            <div class="third last">        
+                <div class="modules">
+                    {%if missions.current.all|length%}
+                        {%for mission in missions.current.all%}
+                        <h3 class="missions">Current Mission <span class="fine">(<a href="/mission/{{mission.slug}}">{{mission.topic}}</a>)</span></h3>
+                        <div class="dashboardmodule">
+                            <div class="dashboardmoduleinner">
+                                 <ul class="listview listless">
+                                     {%if not mission.games.all|length == games|length%}
+                                         {%for game in mission.games.all%}
+                                             {%if not game in games%}
+                                             <li class="listitem game {{game.game_type}}">
+
+                                                {%with game.game_type as type%}
+                                                     <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}">{{game.title}}  
+                                                        {%if type == "mapit"%}
+                                                            <span class="fine highlight green">{% get_points for completed mapit %}</span>
+                                                        {%endif%}
+
+                                                        {%if type == "thinkfast"%}
+                                                            <span class="fine highlight green">{% get_points for completed thinkfast %}</span>
+                                                        {%endif%}
+
+                                                        {%if type == "othershoes"%}
+                                                            <span class="fine highlight green">{% get_points for completed othershoes %}</span>
+                                                        {%endif%}
+                                                    </a>
+                                                {%endwith%}
+                                                 <span class="fancy fine">({{game.game_type}})</span>
+                                                 <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}" class="button">Go</a>
+                                             {%endif%}
+                                             </li>
+                                         {%endfor%}
+                                     {%else%}
+                                         <h3>You completed all the actives. Great work!</h3>
+                                         <h4>Go to the current mission to see all responses or change your answers.</h4>
+                                     {%endif%}
+
+                                     <!-- {%for game in games%}
+                                         <li class="listitem game played {{game.game_type}}">
+                                             <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}/overview">{{game.title}}</a>
+                                             <span class="fancy fine">({{game.game_type}})</span>
+                                             <span class="buttons"><a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">Change Answer</a>
+                                         </li>
+                                     {%endfor%} -->
+                                 </ul>
+                            </div>
+                            <hr class="space">
+                            <a class="right fine" href="/mission/{{mission.slug}}" title="{{mission.topic}}">View Current Mission &rarr;</a>
+                            <hr class="space">
+                        </div>
+                        <hr class="space">
+                        {%endfor%}
+                    {%else%}
+                        No missions created.
+                    {%endif%}
+
+                    <hr class="space">
+                    <h3>Challenges</h3>
+                    <div class="dashboardmodule">
+                        <div class="dashboardmoduleinner">
+                            {%if challenges.active or player_challenges%}
+                                {%if challenges.active%}
+                                  {%for c in challenges.active%}
+                                      <div class="date">
+                                          <span class="datenum">{{c.start_date|date:"j"}}</span> {{c.start_date|date:"M"}}
+                                      </div>
+                                      <h4><a href="/challenge/{{c.id}}/">{{c.name}}</a> <span class="fine highlight green">{% get_points for completed challenge %}</span></h4>
+
+                                      <a class="button" href="/challenge/{{c.id}}/accept">Accept</a>
+                                      <hr class="space">
+                                  {%endfor%}
+                                {%else%}
+                                    <h4>There are no new challenges. <a href="/challenge/add">Create a new challenge</a> and get <span class="highlight fine green">{% get_points for created challenge %}</span> points.</h4>
+                                {%endif%}
+                            {%else%}
+                                <h4>No challenges found</h4>
+                            {%endif%}
+                        </div>    
+                        <a href="/challenge" class="right fine">View all Challenges &rarr;</a>
+                        <hr class="space">
+                    </div>
+
+                    <hr class="space">
+
+                    
+                    {%if user.password == user.get_profile.generated_password%}
+                    <hr class="space">
+                    
+                    <h3 color="orange">Set password</h3>
+                    <div class="dashboardmodule orange">
+                        <div class="dashboardmoduleinner">
+                            <a href="/account/profile/edit">Set your password</a>
+                        </div>
+                    </div>
+                    {%endif%}
+                </div>
+            </div>
+        {%endif%}
+    {%else%}
+        <div> The neighborhood {{instance}} has not started yet we will alert you once it has begun.  </div>
+        <br>
+        <a href="/account/logout">Logout</a>
+    {%endif%}
+
+    <div style="clear:both;"></div>
+{%endblock%}

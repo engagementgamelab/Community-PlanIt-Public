@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+
+{%block section%}accounts{%endblock%}
+
+{%block title%}Registration | Accounts{%endblock%}
+
+{%block content-title%}Create An Account{%endblock%}
+{%block aside%}
+    <hr class="space">
+    <h2>Your Privacy</h2>
+    <p>
+        We need your email address to confirm your identity. We will not sell your information.
+    </p>
+    <br>
+    <p>
+        <a href="/privacy" target="_blank">View Privacy Policy</a>
+    </p>
+    <p>
+        <a href="/terms" target="_blank">View Terms of Use</a>
+    </p>
+{%endblock%}
+{%block main%}
+    <form action="" method="post">
+        <iframe class="reg-video" src="http://player.vimeo.com/video/15813894?title=0&amp;byline=0&amp;portrait=0" width="400" height="225" frameborder="0"></iframe>
+        {%csrf_token%}
+        {{form.as_p}}
+        <div class="button submit"><span>Register</span></div>
+    </form>
+{%endblock%}
+
+{%block footer%} {%endblock%}

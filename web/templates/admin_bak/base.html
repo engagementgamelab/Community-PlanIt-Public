@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}css/admin.css" />
+<link rel="stylesheet" href="{{MEDIA_URL}}css/base.css">
+{% block extrastyle %}{% endblock %}
+<!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{% load adminmedia %}{% admin_media_prefix %}css/ie.css{% endblock %}" /><![endif]-->
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% admin_media_prefix %}css/rtl.css{% endblock %}" />{% endif %}
+<script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% admin_media_prefix %}{% endfilter %}";</script>
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+{% load i18n %}
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %} admin loggedin">
+
+<!-- Container -->
+<div id="container">
+    {% if not is_popup %}
+    <!-- Header -->
+    <div id="header">
+        <div class="wrapper">
+            {%block header%}
+                <a href="/">
+                    <img src="{{MEDIA_URL}}img/logo-3.png" alt="Community Planit" />
+                </a>
+            {%endblock%}
+            
+            <!-- Navigation -->
+            <nav>
+                <a href="/admin/issues/issue/" class="issues">Issues</a>
+                <a href="/admin/missions/mission/" class="missions">Missions</a>
+                <a href="/admin/challenges/challenge/" class="challenges">Challenges</a>
+                <a href="#flagged" class="flagged">Flagged</a>
+                <a href="/admin/attachments/attachment/" class="attachments">Attachments</a>
+                <a href="/admin/reports/activity/" class="activityfeed">Activity</a>
+                <a href="/admin/auth/user/" class="users">Users</a>
+                {% block nav-global %}{% endblock %}
+            </nav>
+        </div>
+    </div>
+    <div class="divider user-tools">
+        {% if user.is_active and user.is_staff %}
+            {% block pretitle %}{% endblock %}
+            {% trans 'Welcome,' %}
+            <strong>{% filter force_escape %}{% firstof user.first_name user.username %}{% endfilter %}</strong>.
+            <a href="/dashboard">Return to Dashboard</a> / 
+            {% block userlinks %}
+                {% url admin:password_change as password_change_url %}
+                {% if password_change_url %}
+                    <a href="{{ password_change_url }}">
+                {% else %}
+                    <a href="{{ root_path }}password_change/">
+                {% endif %}
+                {% trans 'Change password' %}</a> /
+                {% url admin:logout as logout_url %}
+                {% if logout_url %}
+                    <a href="{{ logout_url }}">
+                {% else %}
+                    <a href="{{ root_path }}logout/">
+                {% endif %}
+                {% trans 'Log out' %}</a>
+            {% endblock %}
+        {% endif %}
+    </div>
+    <!-- END Header -->
+    {% endif %}
+
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+	{% endfor %}</ul>
+        {% endif %}
+
+    <div class="pattern">
+        <!-- Main content -->
+        <div id="main">
+            <div id="balancer">
+                <aside id="sidebar">
+                    <div class="content">
+                        {% block aside %}{% endblock %}
+                        
+                     </div>
+                  </aside>
+                  <div class="content">
+                      <div class="alignleft module">
+                          <!-- Content -->
+                          <div id="content" class="{% block coltype %}colM{% endblock %}">
+                              {% block content_title %}
+                                 {% if title %}<h1></h1>{% endif %}
+                              {% endblock %}
+                                <strong class="title"></strong>
+
+                              {% block content %}
+                              {% block object-tools %}{% endblock %}
+                              {{ content }}
+                              {% endblock %}
+                              {% block sidebar %}{% endblock %}
+                              <br class="clear" />
+                          </div>
+                          <!-- END Content -->
+                      </div>
+                  </div>
+              </div>
+              <div class="fine footer">
+                  <span class="left">&copy; 2011 Community PlanIT | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a> | <a href="/about">About</a> | <a href="/contact">Contact</a></span>
+                  <span class="right"><a href="http://engagementgamelab.org/" target="blank">Powered By The Engagement Lab</a> at <a href="http://emerson.edu">Emerson College</a> with support from the <a href="http://knightfdn.org/">Knight Foundation</a>
+                  </span>
+            </div>
+        </div>
+    
+        <!-- Footer content -->
+        <div id="footer" class="fine"></div>
+    </div>
+    
+    {% block footer %}<div id="footer"></div>{% endblock %}
+</div>
+<!-- END Container -->
+
+</body>
+</html>
+

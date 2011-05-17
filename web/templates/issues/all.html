@@ -1,0 +1,68 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}values{%endblock%}
+{%block title%}All values{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <div class="full">
+        <h2>All values</h2>
+        <h3>You currently have <span class="highlight">{{user.get_profile.coins}}</span> coin{%if user.get_profile.coins == 0 or user.get_profile.coins > 1%}s{%endif%} to spend on issues!</h3>
+        {%if user.get_profile.coins == 0%}
+        <p class="notice">
+            Do some <a href="/missions">activities</a>, create or complete a <a href="/challenge">challenge</a>, or comment on your communities activity to earn points and get coins.
+        </p>
+        {%endif%}
+
+        {%if issue_wrapper|length%}
+            <ul class="chartlist">
+            {%for wrapper in issue_wrapper%}
+                  <li>
+                    <a>{{wrapper.issue.message}}</a> 
+                    <span class="count">{{wrapper.coins}}</span>
+                    <span class="index" style="width: {{wrapper.percent}}%">({{wrapper.percent}}%)</span>
+
+                  </li>
+            {%endfor%}
+            </ul>
+        {%endif%}
+
+        <hr class="space">
+        <div style="clear:both;"></div>
+
+        <div class="issues-wrapper">
+            {%if issues|length%}
+            <table class="issues"> 
+                <th>Issue</th>
+                <th>Total coins</th>
+                <th>Your coins</th>
+                <th>&nbsp;</th>
+                {%for wrapper in issue_wrapper%}
+                    <tr>
+                        <td class="alignleft">
+                            <a href="/issue/{{wrapper.issue.id}}" class="issue-message">{{wrapper.issue.message}}</a>
+                            <span class="fine">({{wrapper.issue.comments.all|length}} comments)</span>
+                        </td>
+                        <td>
+                            {{wrapper.issue.coins}}
+                        </td>
+                        <td>
+                            <span class="coin-count">{{wrapper.player_coins}}</span>
+                        </td>
+                        <td>
+                            {%if not instance.is_expired%}
+                            <a href="/issue/spend/{{wrapper.issue.id}}" class="button">Spend</a>
+                            <a href="/issue/take/{{wrapper.issue.id}}" class="right fine">[-]</a>
+                            {%endif%}
+                        </td>
+                    </tr>
+                {%endfor%}
+            </table>
+            {%else%}
+                <span>No issues created yet for this instance</span>
+            {%endif%}
+        </div>
+    </div>
+
+    <div style="clear:both;"></div>
+{%endblock%}

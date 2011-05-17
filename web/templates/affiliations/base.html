@@ -1,0 +1,44 @@
+{%extends "layouts/base.html"%} 
+
+{%block section%}affiliations{%endblock%}
+{%block title%}Affiliations{%endblock%}
+{%block page_title%}affiliations{%endblock%}
+
+{%block main%}
+    {%if affiliation|length%}
+        <h2>{{affiliation}}</h2>
+        <p>
+            has <span class="highlight">{{affiliation_leaderboard|length}}</span> players, who have scored a collective <span class="highlight">{{affiliation_points}}</span> points.
+        </p>
+        {%for user in players%}
+            <a href="/player/{{user.id}}">
+            {%if user.get_profile.avatar%}
+                <img class="avatar" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}">
+            {%else%}               
+                <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+            {%endif%}
+            </a> 
+        {%endfor%}
+
+        {%if affiliation_leaderboard|length%}
+        <div class="leaderboard-wrapper" style="clear:both;">
+            <h3>Leaderboard</h3>
+            <table class="leaderboard">
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Points</th>
+
+                {%for user in affiliation_leaderboard%}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{user.get_profile.first_name}} {{user.get_profile.last_name}}</td>
+                        <td>{{user.get_profile.points}}</td>
+                    </tr>
+                {%endfor%}
+            </table>
+        </div>
+        {%endif%}
+    {%else%}
+        <h2>No affiliation found.</h2>
+    {%endif%}
+{%endblock%}

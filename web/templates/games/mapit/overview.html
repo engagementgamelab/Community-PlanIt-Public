@@ -1,0 +1,55 @@
+{%extends "games/index.html"%}
+{%block page_title%}{%endblock%}
+{%block game%}
+    <div class="game-wrapper narrow">
+        {% if first_time %}
+            {%if unplayed%}
+                <div class="notice">
+                    <h3>Great work, you just earned points!</h3>
+                    <p>
+                    {% if request.user.get_profile.coins %}
+                        You have {{request.user.get_profile.coins}} coin{%if request.user.get_profile.coins > 1 %}s{%endif%}. 
+                        You can <a href="/issue" class="button">spend {%if request.user.get_profile.coins < 2 %}it{% else %}them{%endif%}</a>
+                         or <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a>.
+                    </p>
+                    {% else %}
+                        <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a></p>
+                    {% endif %}
+                    <hr class="space">
+                </div>
+            {%endif%}
+        {%endif%}
+
+        <h3>MapIT Summary <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a></h3>
+        <h1>{{mapit.prompt.message}}</h1>
+
+        <hr class="space">
+        <div class="google-map" data-type="{{mapit.response.mapresponse.type}}" data-state="overview"></div>
+        <hr class="space">
+        
+        {%if respondants%}
+          <h4>Respondants</h4>
+          {%for respondant in respondants%}
+              {%if respondant.player.user.get_profile.avatar%}
+                  <a href="/player/{{respondant.player.id}}"><img alt="{{respondant.player.first_name}} {{respondants.player.last_name}}" class="avatar" src="{{MEDIA_URL}}/{{respondant.player.user.get_profile.avatar}}"></a>
+              {%else%}               
+                  <a href="/player/{{respondant.player.id}}"><img alt="{{respondant.player.first_name}} {{respondants.player.last_name}}" class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
+              {%endif%} 
+          {%endfor%}
+        {%endif%}
+    </div>
+    <hr class="space">
+{%endblock%}
+    
+{%block body%}
+    <script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript" charset="utf-8"></script>
+    <script src="{{MEDIA_URL}}js/games/mapit.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        jQuery(function($) {
+            var all = {{response.map|safe|escape}};
+            all.markers = {{markers|safe|escape}};
+            var gmap = $(".google-map").mapit(all);
+            $(".remove-map").remove();
+        });
+    </script>
+{%endblock%}

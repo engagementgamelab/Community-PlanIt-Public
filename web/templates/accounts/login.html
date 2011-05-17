@@ -1,0 +1,33 @@
+{%extends "layouts/base.html" %}
+
+{%block section%}accounts{%endblock%}
+
+{%block title%}Player Login{%endblock%}
+{%block page_title%}Player Login{%endblock%}
+
+{%block aside%}
+    <h2>Forgot Password</h2>
+    <a href="/account/forgot">Reset password</a>
+{%endblock%}
+
+{%block main%}
+    <div class="pad">
+        <form action="" method="post">
+            {%if form.errors%}
+                <p class="error">Sorry, that's not a valid email address or password.</p>
+
+                <p>Not a member? <a href="/neighborhood/">Find your neighborhood and sign up now!</a></p>
+            {%endif%}
+            {%csrf_token%}
+            <label for="email">Email address:</label>
+            {{form.username}}
+            <br>
+            <label for="password">Password:</label>
+            {{form.password}}
+
+            <br><br>
+            <input type="submit" class="button submit" value="Login">
+            <input type="hidden" name="next" value="/account/dashboard" />
+        </form>
+    </div>
+{%endblock%}

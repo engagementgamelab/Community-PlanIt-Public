@@ -1,0 +1,19 @@
+<table cellspacing="0" id="result_list">
+  <thead>
+    <tr>
+      {{#headers}}
+      <th>{{.}}</th>
+      {{/headers}}
+    </tr>
+  </thead>
+
+  <tbody>
+    {{#values}}
+    <tr class="row{{index}}">
+      <td></td>
+      <td>{{count}}</td>
+      <td><a href="{{url}}">{{label}}</a></td>
+    </tr>
+    {{/values}}
+  </tbody>
+</table>

@@ -1,0 +1,17 @@
+{%extends "layouts/base.html"%}
+{%load gmap%}
+
+{%block content-title%}Affiliations{%endblock%}
+{%block aside%}
+{%endblock%}
+{%block main%}
+    {%for affiliation in affiliations%}
+        <h2>
+            {{affiliation.name}}
+        </h2>
+    {%endfor%}
+{%endblock%}
+
+{%block body%}
+    {%gmap_includes%}
+{%endblock%}

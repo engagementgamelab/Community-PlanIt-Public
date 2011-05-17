@@ -1,0 +1,58 @@
+{%extends "games/index.html"%}
+{% load game_extras %}
+
+{%block page_title%}{%endblock%}
+
+{%block game%}
+    <div class="narrow game-wrapper">
+        {%if response.map%}
+            {%if player_game%}
+                <p class="notice">Your original response is marked below. You may change your answer at any time during this mission</p>
+            {%endif%}
+            <h2 class="mapit game">
+                Map It!
+                {%if not player_game%}
+                    <span class="fine highlight right green">{% get_points for completed thinkfast %} points</span>                
+                {%endif%}
+            </h2>
+            {%if not expired%}
+            <form action="" method="POST" class="narrow"> 
+                {%csrf_token%}
+                {{map_form.errors}}
+                <div class="game-wrapper">
+                    <h2>{{mapit.prompt.message}}</h2>
+                    <button class="button add">Add {{mapit.response.type|lower}}</button>
+
+                    <div class="google-map" data-type="{{mapit.response.type}}"></div>
+
+                    <div id="comment">
+                        <h3>Briefly tell us why you made this decision. <span class="fine">(* Required)</span>:</h3>
+                        <textarea maxlength="140" name="comment" id="id_comment" style="width: 100%"></textarea>
+                        <hr class="space">
+                        <span>(</span><span class="count">140</span> <span>characters left)</span>
+                        <div class="markers">
+                            <button class="button submit">Submit response</button>
+                        </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+            </form>
+            {%else%}
+                Mission has expired, click <a href="overview/">here</a> to view responses.
+            {%endif%}
+        {%else%}
+            <h1>Game incorrectly configured</h1>
+        {%endif%}
+    </div>
+{%endblock%}
+    
+{%block body%}
+    <script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript" charset="utf-8"></script>
+    <script src="{{MEDIA_URL}}js/games/mapit.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        jQuery(function($) {
+            $(".google-map").mapit({{response.map|safe|escape}});
+            $(".remove-map").remove();
+        });
+    </script>
+{%endblock%}

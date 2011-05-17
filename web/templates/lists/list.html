@@ -1,0 +1,60 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}lists{%endblock%}
+{%block title%}{{page}} player list{%endblock%}
+{%block page_title%}{{page}} player list{%endblock%}
+
+{%block main%}
+    <div class="wrapper">
+        <h3>{{page}} player list</h3>
+        {%if players.object_list|length%}
+        <table style="width:100%">
+            <th>
+                <td>Name</td>
+                <td>Points</td>
+                <td>Coins</td>
+            </th>
+            {%for player in players.object_list%}
+            <tr>
+                <td>
+                    {%if player.get_profile.avatar%}
+                        <img class="avatar" style="float:left" src="{{MEDIA_URL}}{{player.get_profile.avatar}}">
+                    {%else%}               
+                        <img class="avatar" style="float:left" src="{{MEDIA_URL}}img/avatar-blank.jpg">
+                    {%endif%} 
+
+                </td>
+                <td>
+                    <a href="/player/{{player.id}}">{{player.get_profile.first_name}} {{player.get_profile.last_name|slice:":1"}}</a>
+                </td>
+                <td>
+                    {{player.get_profile.points}}
+                </td>
+                <td>
+                    {{player.get_profile.coins}}
+                </td>
+            </tr>
+            {%endfor%}
+        </table>
+        <hr class="space">
+        <div class="pagination">
+            <span class="step-links">
+                {% if players.has_previous %}
+                    <a href="?page={{ players.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ players.number }} of {{ players.paginator.num_pages }}.
+                </span>
+
+                {% if players.has_next %}
+                    <a href="?page={{ players.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+
+        {%else%}
+            No players found.   
+        {%endif%}
+    </div>
+{%endblock%}

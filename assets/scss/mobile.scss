@@ -1,0 +1,338 @@
+// Constants
+$lightblue: #DFE7F4;
+$green: #BCD52F;
+$blue: #08AAF3;
+$cityblue: #02AFF1;
+$darkblue: #0A4F9C;
+
+body {
+    background-color: #DFE7F4;
+    width: 100%;
+}
+
+div.map.ui-resizable {
+    width: 80% !important%;
+}
+
+.missionholder {
+    display: none;
+}
+
+body.missions {
+    #sidebar { display: none; }
+}
+
+.activities {
+    .alignleft {
+        .game-wrapper {
+            h2 { word-wrap: break-word !important; }
+        }
+    }
+}
+
+.page .google-map, .page .map {
+    border-width: 3px;
+    width: 90% !important;
+    height: 130px !important;
+}
+
+.flot-placeholder {
+    display: none;
+}
+
+.loggedin {
+    .right.admin {
+        display: none;
+    }
+
+    h1 { font-size: 14px; }
+
+    .alignleft {
+        .highlight {
+            line-height: 37px !important;
+        }
+        h3 {
+            font-size: 11px;
+            word-wrap: break-word;
+            display: inline-block;
+            margin-bottom: 0 !important;
+        }
+        .date {
+            width: 100%;
+            font-size: 10px !important;
+            float: none;
+            position: static;
+            padding: 0;
+        }
+    }
+
+    #header {
+        height: 90px;
+
+        .right.admin { display: none; }
+        .right.logout {
+            z-index: 15;
+            top: 60px;
+            right: 24px;
+            position: absolute;
+        }
+        div.wrapper {
+            text-align: center;
+
+            a {
+                display: inline-block;
+                width: auto;
+                padding: 0;
+
+                img {
+                    height: auto;
+                }
+            }
+
+            nav {
+                top: -5px;
+                height: 43px;
+                text-align: center;
+
+                a {
+                    padding-left: 15px;
+                }
+            }
+        }
+    }
+}
+
+#sidebar { display: none !important; }
+.accounts {
+    #sidebar {
+        display: block !important;
+        .third, .twothirds { display: none; }
+        .score { width: 100% !important; }
+        .highlight.coins {
+            display: none;
+        }
+    }
+}
+
+.games #main .content .map, .games #main .content .google-map, .challenges #main .content .map, .challenges #main .content .google-map {
+    border-width: 3px;
+    width: 90% !important;
+    height: 130px !important;
+}
+    
+// For homepage
+.page {
+    width: 100%;
+
+    .right {
+        float: none;
+    }
+
+    .neighborhood {
+        div.map, div.google-map {
+            border-width: 3px;
+            width: 90% !important;
+            height: 130px !important;
+        }
+    }
+    #main {
+        .narrow {
+            width: auto !important;
+        }
+    }
+    #header {
+        width: 100%;
+        min-width: 0;
+        .wrapper {
+            display: auto;
+            position: static;
+
+            .page-title {
+                font-size: 90%;
+                position: static;
+            }
+            a {
+                img {
+                    height: 55px;
+                }
+            }
+            nav {
+                margin: 0 auto;
+                top: -15px;
+                width: 100%;
+                height: 75px;
+
+                a {
+                    background-size: 16px 16px;
+                    font-size: 10px;
+                }
+
+                .home, .missions, .issues, .challenges, .neighborhoods, .about, .contact {
+                    padding-left: 5px;
+                    margin-left: 0px;
+                    padding-bottom: 0;
+                    padding-top: 0;
+                    position: relative;
+                    top: 8px;
+                }
+                .home, .missions, .issues, .challenges, .neighborhoods, .about, .contact {
+                    background: none;
+                }
+            }
+        }
+    }
+
+    #footer {
+        margin-top: 0;
+        height: 123px;
+    }
+
+    .instances {
+        li.griditem.instance {
+            background-image: none;
+            padding: 10px;
+            min-height: 55px;
+            float: none;
+
+            p {
+                margin-left: 2px;
+            }
+
+            .date {
+                background: none;
+                border: 0;
+                display: none;
+                .datenum {
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+
+    .button.right {
+        float: none !important;
+    }
+
+    .half {
+        width: auto;
+    }
+
+    .pattern {
+        #main {
+            width: inherit;
+            min-width: 0;
+            padding-bottom: 12px;
+            #balancer {
+                margin-left: 0;
+                width: inherit;
+                .content {
+                    width: auto;
+
+                    h2 {
+                        text-align: center;
+                        font-size: 14px;
+                    }
+                    .third {
+                        float: none;
+                    }
+                    .third.last {
+                        margin-left: 0px !important;
+                        width: 100%;
+                    }
+                    .twothird {
+                        float: none;
+                        width: auto;
+
+                        .missions {
+                            .mission {
+                                float: none;
+                                position: relative;
+                                width: 70%;
+                            }
+                        }
+
+                        .leaderboard-wrapper {
+                            padding-bottom: 10px;
+                        }
+                    }
+                    iframe {
+                        width: 100%;
+                        height: auto;
+                        display: none;
+                    }
+                }
+
+                #sidebar {
+                    .content {
+                        .coins {
+                            right: -60px !important;
+                        }
+                    }
+                }
+            }
+
+            .footer {
+                padding: 10px;
+                .left {
+                    left: 0px;
+                    float: none !important;
+                    position: static;
+                }
+                .right {
+                    float: none !important;
+                    position: static;
+                    display: block;
+                    margin-top: 10px;
+                }
+            }
+        }  
+    }
+}
+
+.accounts {
+    .pattern {
+        #main {
+            width: 100%;
+            #balancer {
+                aside {
+                    padding: 0;
+                    margin: 0;
+                    position: static;
+                    border: none;
+                    min-height: 0;
+
+                    .content {
+                        background: none;
+                        width: inherit;
+
+                        .coins {
+                            right: 45px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    iframe {
+        width: 100%;
+        height: auto;
+        display: none;
+    }
+}
+
+// Games
+.games {
+    .game-wrapper {
+        width: 100%;
+        margin: 0px auto;
+    }
+    #map_canvas {
+        width: 90%;
+        border: 5px solid $blue;
+        border-radius: 10px;
+        margin: 0px auto;
+    }
+    .markers {
+        margin-bottom: 25px;
+    }
+}

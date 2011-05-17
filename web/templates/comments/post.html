@@ -1,0 +1,28 @@
+<form enctype="multipart/form-data" action="comment/" method="POST">
+    {%if request.REQUEST.error%}
+        <span class="error">Please enter a valid comment.</span>
+    {%endif%}
+
+    {%csrf_token%}
+    <a id="add-video" href="#add-video" class="button small">Add Youtube Video</a> or <a id="add-picture" href="#add-picture" class="button small">Add Picture</a>
+    <div class="add-video modal">
+        <label for="yt-url">YouTube<br><small>(Paste in the URL)</small></label> <textarea id="yt-url" type="text" maxlength="255"></textarea>
+    </div>
+    <input type="hidden" name="yt-url">
+    <div class="hidden"></div>
+    <div class="add-picture modal">
+        <label for="picture">Add picture to comment</label> <input id="picture" type="file">
+    </div>
+    {{comment_form.as_p}}
+    <button class="button right">Add Comment</button>
+    <hr class="space">
+</form>
+{%if comments.comments.all%}
+    <ul class="listless comments">
+    {%for comment in comments.comments.all reversed%}
+        {%include "comments/comment.html"%}
+    {%endfor%}
+    </ul>
+{%else%}
+    No comments found.
+{%endif%}

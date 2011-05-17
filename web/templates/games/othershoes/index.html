@@ -1,0 +1,49 @@
+{%extends "games/index.html"%}
+{% load game_extras %}
+
+{%block page_title%}{%endblock%}
+{%block game%}
+    <div class="narrow game-wrapper">
+        {%if player_game%}
+            <p class="notice">Your original response is marked below. You may change your answer at any time during this mission</p>
+        {%endif%}
+
+        <h2 class="othershoes game">
+            Someone Else's Shoes
+            {%if not player_game%}
+                <span class="fine highlight right green">{% get_points for completed othershoes %} points</span>
+            {%endif%}
+        </h2>
+
+        <form action="" method="POST"> 
+            {%csrf_token%}
+            <div class="game-wrapper">
+                <div class="fifth">
+                    <img class="avatar" src="{{MEDIA_URL}}{{othershoes.prompt.avatar}}">
+                </div>
+                <p class="twothirds">
+                  {{othershoes.prompt.first_name}} {{othershoes.prompt.last_name}} is a <span class="highlight">{{othershoes.prompt.age}}</span> year old <span class="highlight">{{othershoes.prompt.race}}</span> <span class="highlight">{{othershoes.prompt.gender}}</span> living in your neighborhood.
+                </p>
+                {%if othershoes.prompt.download%}
+                    <strong>Download:</strong>
+                    <br>
+                    <a target="blank" href="{{othershoes.prompt.download.file.url}}">{{othershoes.prompt.download.file}}</a>
+                {%endif%}
+
+                <hr class="space">
+
+                <h2>{{othershoes.prompt.bio}}</h2>
+
+                <hr class="space">
+                <form action="" method="POST">
+                    {{comment_form.as_p}}
+                    <button class="button">Submit response</button>
+                </form>
+                <div style="clear: both;"></div>
+            </div>
+        </form>
+    </div>
+{%endblock%}
+    
+{%block body%}
+{%endblock%}

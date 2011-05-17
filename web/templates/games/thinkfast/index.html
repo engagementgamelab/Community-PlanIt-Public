@@ -1,0 +1,48 @@
+{%extends "games/index.html"%}
+{%block page_title%}{%endblock%}
+{% load game_extras %}
+
+{%block game%}
+    <div class="narrow game-wrapper">
+        {%if player_game%}
+            <p class="notice">Your original response is marked below. You may change your answer at any time during this mission</p>
+        {%endif%}
+        <h2 class="thinkfast game">
+            Think Fast!
+            {%if not player_game%}
+                <span class="fine highlight right green">{% get_points for completed thinkfast %} points</span>
+            {%endif%}
+        </h2>
+        {%if not player_game%}
+            <p class="alert">
+                Read the question below and select an answer. Click "submit" to see the community’s response!
+            </p>
+        {%endif%}
+        <form action="" method="POST"> 
+            {%csrf_token%}
+            <div class="game-wrapper">
+                <span class="bigq highlight">Q:</span><h2> {{thinkfast.prompt.message}}</h2>
+                {%if thinkfast.prompt.attachments%}
+                {%for attachment in thinkfast.prompt.attachments.all%}
+                <h3 class="right">
+                    Click to see the <a target="blank" class="orange" href="{{attachment.file.url}}">attached media file</a>.
+                </h3>    
+                {%endfor%}
+                <hr class="space">
+                {%endif%}
+                <form action="" method="POST">
+                    {#for choice in thinkfast.response.choices.all#}
+                    <!--<p><input type="radio" name="choice" value="{{choice.text}}"> {{choice.text}}</p>-->
+                    {#endfor#}
+                    {{choices_form.as_p}}
+                    <button class="button">Submit response</button>
+                </form>
+                
+                <div style="clear: both;"></div>
+            </div>
+        </form>
+    </div>
+{%endblock%}
+    
+{%block body%}
+{%endblock%}

@@ -1,0 +1,212 @@
+body {
+  background-color: #DFE7F4;
+  width: 100%; }
+
+div.map.ui-resizable {
+  width: 80% !important%; }
+
+.missionholder {
+  display: none; }
+
+body.missions #sidebar {
+  display: none; }
+
+.activities .alignleft .game-wrapper h2 {
+  word-wrap: break-word !important; }
+
+.page .google-map, .page .map {
+  border-width: 3px;
+  width: 90% !important;
+  height: 130px !important; }
+
+.flot-placeholder {
+  display: none; }
+
+.loggedin .right.admin {
+  display: none; }
+.loggedin h1 {
+  font-size: 14px; }
+.loggedin .alignleft .highlight {
+  line-height: 37px !important; }
+.loggedin .alignleft h3 {
+  font-size: 11px;
+  word-wrap: break-word;
+  display: inline-block;
+  margin-bottom: 0 !important; }
+.loggedin .alignleft .date {
+  width: 100%;
+  font-size: 10px !important;
+  float: none;
+  position: static;
+  padding: 0; }
+.loggedin #header {
+  height: 90px; }
+  .loggedin #header .right.admin {
+    display: none; }
+  .loggedin #header .right.logout {
+    z-index: 15;
+    top: 60px;
+    right: 24px;
+    position: absolute; }
+  .loggedin #header div.wrapper {
+    text-align: center; }
+    .loggedin #header div.wrapper a {
+      display: inline-block;
+      width: auto;
+      padding: 0; }
+      .loggedin #header div.wrapper a img {
+        height: auto; }
+    .loggedin #header div.wrapper nav {
+      top: -5px;
+      height: 43px;
+      text-align: center; }
+      .loggedin #header div.wrapper nav a {
+        padding-left: 15px; }
+
+#sidebar {
+  display: none !important; }
+
+.accounts #sidebar {
+  display: block !important; }
+  .accounts #sidebar .third, .accounts #sidebar .twothirds {
+    display: none; }
+  .accounts #sidebar .score {
+    width: 100% !important; }
+  .accounts #sidebar .highlight.coins {
+    display: none; }
+
+.games #main .content .map, .games #main .content .google-map, .challenges #main .content .map, .challenges #main .content .google-map {
+  border-width: 3px;
+  width: 90% !important;
+  height: 130px !important; }
+
+.page {
+  width: 100%; }
+  .page .right {
+    float: none; }
+  .page .neighborhood div.map, .page .neighborhood div.google-map {
+    border-width: 3px;
+    width: 90% !important;
+    height: 130px !important; }
+  .page #main .narrow {
+    width: auto !important; }
+  .page #header {
+    width: 100%;
+    min-width: 0; }
+    .page #header .wrapper {
+      display: auto;
+      position: static; }
+      .page #header .wrapper .page-title {
+        font-size: 90%;
+        position: static; }
+      .page #header .wrapper a img {
+        height: 55px; }
+      .page #header .wrapper nav {
+        margin: 0 auto;
+        top: -15px;
+        width: 100%;
+        height: 75px; }
+        .page #header .wrapper nav a {
+          background-size: 16px 16px;
+          font-size: 10px; }
+        .page #header .wrapper nav .home, .page #header .wrapper nav .missions, .page #header .wrapper nav .issues, .page #header .wrapper nav .challenges, .page #header .wrapper nav .neighborhoods, .page #header .wrapper nav .about, .page #header .wrapper nav .contact {
+          padding-left: 5px;
+          margin-left: 0px;
+          padding-bottom: 0;
+          padding-top: 0;
+          position: relative;
+          top: 8px; }
+        .page #header .wrapper nav .home, .page #header .wrapper nav .missions, .page #header .wrapper nav .issues, .page #header .wrapper nav .challenges, .page #header .wrapper nav .neighborhoods, .page #header .wrapper nav .about, .page #header .wrapper nav .contact {
+          background: none; }
+  .page #footer {
+    margin-top: 0;
+    height: 123px; }
+  .page .instances li.griditem.instance {
+    background-image: none;
+    padding: 10px;
+    min-height: 55px;
+    float: none; }
+    .page .instances li.griditem.instance p {
+      margin-left: 2px; }
+    .page .instances li.griditem.instance .date {
+      background: none;
+      border: 0;
+      display: none; }
+      .page .instances li.griditem.instance .date .datenum {
+        font-size: 14px; }
+  .page .button.right {
+    float: none !important; }
+  .page .half {
+    width: auto; }
+  .page .pattern #main {
+    width: inherit;
+    min-width: 0;
+    padding-bottom: 12px; }
+    .page .pattern #main #balancer {
+      margin-left: 0;
+      width: inherit; }
+      .page .pattern #main #balancer .content {
+        width: auto; }
+        .page .pattern #main #balancer .content h2 {
+          text-align: center;
+          font-size: 14px; }
+        .page .pattern #main #balancer .content .third {
+          float: none; }
+        .page .pattern #main #balancer .content .third.last {
+          margin-left: 0px !important;
+          width: 100%; }
+        .page .pattern #main #balancer .content .twothird {
+          float: none;
+          width: auto; }
+          .page .pattern #main #balancer .content .twothird .missions .mission {
+            float: none;
+            position: relative;
+            width: 70%; }
+          .page .pattern #main #balancer .content .twothird .leaderboard-wrapper {
+            padding-bottom: 10px; }
+        .page .pattern #main #balancer .content iframe {
+          width: 100%;
+          height: auto;
+          display: none; }
+      .page .pattern #main #balancer #sidebar .content .coins {
+        right: -60px !important; }
+    .page .pattern #main .footer {
+      padding: 10px; }
+      .page .pattern #main .footer .left {
+        left: 0px;
+        float: none !important;
+        position: static; }
+      .page .pattern #main .footer .right {
+        float: none !important;
+        position: static;
+        display: block;
+        margin-top: 10px; }
+
+.accounts .pattern #main {
+  width: 100%; }
+  .accounts .pattern #main #balancer aside {
+    padding: 0;
+    margin: 0;
+    position: static;
+    border: none;
+    min-height: 0; }
+    .accounts .pattern #main #balancer aside .content {
+      background: none;
+      width: inherit; }
+      .accounts .pattern #main #balancer aside .content .coins {
+        right: 45px; }
+.accounts iframe {
+  width: 100%;
+  height: auto;
+  display: none; }
+
+.games .game-wrapper {
+  width: 100%;
+  margin: 0px auto; }
+.games #map_canvas {
+  width: 90%;
+  border: 5px solid #08aaf3;
+  border-radius: 10px;
+  margin: 0px auto; }
+.games .markers {
+  margin-bottom: 25px; }

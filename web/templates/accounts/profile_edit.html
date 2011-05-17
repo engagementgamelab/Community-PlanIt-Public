@@ -1,0 +1,52 @@
+{% extends "layouts/base.html" %}
+
+{%block section%}accounts{%endblock%}
+{%block title%}Edit Profile{%endblock%}
+
+{%block main%}
+    <div class="profile-wrapper">
+    {%if profile_form.errors %}
+        Form errors
+    {%endif%}
+        <div class="third">
+            <h2>Avatar preview</h2>
+            {%if user.get_profile.avatar%}
+                <img class="avatar-edit" src="{{MEDIA_URL}}{{user.get_profile.avatar}}">
+            {%else%}
+                <img class="avatar-edit" src="{{MEDIA_URL}}img/avatar-blank.jpg">
+            {%endif%}
+            <br>
+        </div>
+        <div class="twothird">
+            <h2>Edit Profile</h2>
+
+            <form action="" method="post">
+                <input type="hidden" name="form" value="change_password">
+                {%csrf_token%}
+                {%if change_password_form.errors%}
+                    <span class="error">Passwords must match</span>
+                {%endif%}
+                <div>Password</div>
+                {{change_password_form.password}}
+                <div>Confirm</div>
+                {{change_password_form.confirm}}
+                <br>
+                <div class="button submit"><span>Change Password</span></div>
+                <hr class="space">
+            </form>
+
+            <div class="twothird"></div>
+
+            <form enctype="multipart/form-data" action="" method="post">
+                <input type="hidden" name="form" value="updated_profile">
+                {%csrf_token%}
+                {{profile_form.as_p}}
+
+                <div class="button submit"><span>Update Profile</span></div>
+            </form>
+        </div>
+        <div style="clear:both;"></div>
+    </div>
+{%endblock%}
+
+{%block footer%} {%endblock%}
