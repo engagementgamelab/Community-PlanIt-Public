@@ -22,7 +22,8 @@ urlpatterns = patterns('',
     (r'^player/(?P<id>.*)/$', 'web.accounts.views.profile'),
 
     # NOTE: Fixed to singular
-    (r'^$', 'web.views.index'),
+    (r'^$', 'web.views.indexTemp'),
+    (r'^hiddenindex/$', 'web.views.index'),
     (r'^dashboard/$', 'web.views.index'),
     (r'^account/', include('web.accounts.urls')),
     (r'^comment/', include('web.comments.urls')),

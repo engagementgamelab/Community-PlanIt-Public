@@ -248,6 +248,9 @@ hr.space {
   font-size: 10px; }
 .page .normal {
   font-size: 12px; }
+.page .large {
+  font-size: 48px;
+  font-weight: bold; }
 .page .right {
   float: right; }
 .page .left {
@@ -256,6 +259,8 @@ hr.space {
   text-align: left; }
 .page .alignright {
   text-align: right; }
+.page .aligncenter {
+  text-align: center; }
 .page .game-wrapper {
   margin-top: 30px; }
 .page .listless, .page .game-wrapper ul {
