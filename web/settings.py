@@ -20,21 +20,36 @@ SITE_ID = 1
 SECRET_KEY = config.get('general', 'SECRET_KEY')
 
 # Users & Admins
-ADMINS = ( ('tim', 'tim@bocoup.com'), )
+ADMINS = ( ('bholland', 'sheepskin505@gmail.com'), )
 MANAGERS = ADMINS
 LOGIN_URL = '/account/login'
 
 # Data & session storage
+#Use when testing out the web site once the database has been
+#more or less solidified
+#DATABASES = {
+#    'default': {
+#        'ENGINE': config.get('storage', 'ENGINE'),
+#        'NAME': config.get('storage', 'NAME'),
+#        'USER': config.get('storage', 'USER'),
+#        'PASSWORD': config.get('storage', 'PASSWORD'),
+#        'HOST': config.get('storage', 'HOST'),
+#        'PORT': config.get('storage', 'PORT'),
+#    }
+#}
+
+#Use when testing out the creation and database setup
 DATABASES = {
     'default': {
-        'ENGINE': config.get('storage', 'ENGINE'),
-        'NAME': config.get('storage', 'NAME'),
-        'USER': config.get('storage', 'USER'),
-        'PASSWORD': config.get('storage', 'PASSWORD'),
-        'HOST': config.get('storage', 'HOST'),
-        'PORT': config.get('storage', 'PORT'),
+        'ENGINE': config.get('teststorage', 'ENGINE'),
+       'NAME': config.get('teststorage', 'NAME'),
+        'USER': config.get('teststorage', 'USER'),
+        'PASSWORD': config.get('teststorage', 'PASSWORD'),
+        'HOST': config.get('teststorage', 'HOST'),
+        'PORT': config.get('teststorage', 'PORT'),
     }
 }
+
 CACHE_BACKEND = config.get('storage', 'CACHE_BACKEND')
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

@@ -47,7 +47,6 @@ def register(request):
         player = auth.authenticate(username=email, password=password)
         auth.login(request, player)
         player.save()
-
         uinfo = player.get_profile()
         uinfo.instance = form.cleaned_data['instance']
         uinfo.coins = 0
@@ -59,7 +58,6 @@ def register(request):
         uinfo.accepted_term = False
         uinfo.accepted_research = False
         uinfo.save()
-        
         return HttpResponseRedirect('/account/dashboard')
 
     # If not valid, show normal form

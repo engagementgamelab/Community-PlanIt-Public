@@ -8,13 +8,13 @@ def index(request):
     if not request.user.is_authenticated():
         tmpl = loader.get_template('base/index.html')
         return HttpResponse(tmpl.render(RequestContext(request,{})))
+    return dashboard(request)
 
 def indexTemp(request):
     # This is the altered temporary index
     if not request.user.is_authenticated():
         tmpl = loader.get_template('base/indexTemp.html')
         return HttpResponse(tmpl.render(RequestContext(request,{})))
-
     # Show dashboard
     return dashboard(request)
 
