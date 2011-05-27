@@ -23,16 +23,20 @@ def validate_and_generate(base_form, request, callback):
         form = base_form(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            password = User.objects.make_random_password(length=10)
+            firstName = form.cleaned_data['firstName']
+            lastName = form.cleaned_data['lastName']
+            password = form.cleaned_data['password']
 
-            return callback(email, password, form)
+            return callback(firstName, lastName, email, password, form)
 
     return form
 
 def register(request):
-    def valid(email, password, form):
+    def valid(firstName, lastName, email, password, form):
         try:
             player = User.objects.create(email=email)
+            player.first_name = firstName
+            player.last_name = lastName
             player.set_password(password)
             player.full_clean()
             player.save()
@@ -55,6 +59,8 @@ def register(request):
         uinfo.username = player.username
         uinfo.email = player.email
         uinfo.generated_password = player.password
+        uinfo.first_name = player.first_name;
+        uinfo.last_name = player.last_name;
         uinfo.accepted_term = False
         uinfo.accepted_research = False
         uinfo.save()
@@ -189,26 +195,24 @@ def dashboard(request):
     # Handle the last bit of interaction necessary to fully set up an account.
     # This step ensures they have entered in a first/last name and accepted terms/research.
     if request.method == 'POST':
-        if request.POST['form'] == 'of-age':
-            activation_form = ActivationForm(request.POST)
+        activation_form = ActivationForm(request.POST)
 
-            if activation_form.is_valid():
-                profile = request.user.get_profile()
-                profile.first_name = activation_form.cleaned_data['first_name']
-                profile.last_name = activation_form.cleaned_data['last_name']
-                profile.accepted_term = activation_form.cleaned_data['accepted_term']
-                profile.accepted_research = activation_form.cleaned_data['accepted_research']
-                profile.is_of_age = activation_form.cleaned_data['is_of_age']
-                profile.save()
+        if activation_form.is_valid():
+            profile = request.user.get_profile()
+            profile.accepted_term = activation_form.cleaned_data['accepted_term']
+            profile.accepted_research = activation_form.cleaned_data['accepted_research']
+            #TODO: is_of_age is now deprecated!
+            profile.is_of_age = True;
+            profile.save()
 
-                user = request.user
-                user.is_active = True
-                user.save()
+            user = request.user
+            user.is_active = True
+            user.save()
 
-                ActivityLogger.log(request.user, request, 'account', 'created', '/player/'+ str(user.id), 'profile')
-                PointsAssigner.assign(request.user, 'account_created')
+            ActivityLogger.log(request.user, request, 'account', 'created', '/player/'+ str(user.id), 'profile')
+            PointsAssigner.assign(request.user, 'account_created')
 
-                return HttpResponseRedirect('/account/dashboard')
+            return HttpResponseRedirect('/account/dashboard')
     
     # List all users following for filtering the activity feed later on.
     feed = []

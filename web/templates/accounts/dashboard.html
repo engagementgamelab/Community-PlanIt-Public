@@ -12,7 +12,6 @@
             <form method="POST" action="">
                 <h4>Please fill out the following information to complete your account activation:</h4>
                 {%csrf_token%}
-                <input type="hidden" name="form" value="of-age">
                 {{activation_form.as_p}}
                 <button class="button">Activate my account!</button>
             </form>

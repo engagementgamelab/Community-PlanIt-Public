@@ -6,24 +6,54 @@ from web.instances.models import Instance
 from web.accounts.models import UserProfile
 
 class RegisterForm(forms.Form):
-    email = forms.EmailField()
+    firstName = forms.CharField(required=True, max_length=30, label=_("First Name"))
+    lastName = forms.CharField(required=True, max_length=30, label=_("Last Name"))
+    email = forms.EmailField(required=True, label=_("Email:"))
+    password = forms.CharField(required=True, label=_("Password"), widget=forms.PasswordInput(render_value=False))
+    passwordAgain = forms.CharField(required=True, label=_("Password Again"), widget=forms.PasswordInput(render_value=False))
     instance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Neighborhood'))
 
     # Ensure that a user has not already registered an account with that email address.
     def clean_email(self):
         email = self.cleaned_data['email']
-        try:
-            user = User.objects.get(email=email)
+        if (User.objects.filter(email=email).count() != 0):
             raise forms.ValidationError(_('Account already exists, please use a different email address.'))
-        except User.DoesNotExist:
+        else:
             return email
-
+    
+    def clean_firstName(self):
+        firstName = self.cleaned_data['firstName']
+        if (len(firstName.strip()) == 0):
+            raise forms.ValidationError(_('Please provide your first name.'))
+        else:
+            return firstName
+        
+    def clean_lastName(self):
+        lastName = self.cleaned_data['lastName']
+        if (len(lastName.strip()) == 0):
+            raise forms.ValidationError(_('Please provide your last name.'))
+        else:
+            return lastName
+        
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        if (len(password.strip()) == 0):
+            raise forms.ValidationError(_('Please provide a password.'))
+        else:
+            return password
+    
+    def clean_passwordAgain(self):
+        passwordAgain = self.cleaned_data['passwordAgain']
+        if (len(passwordAgain.strip()) == 0):
+            raise forms.ValidationError(_('Please type the password again.'))
+        if (passwordAgain != self.cleaned_data['password']):
+            raise forms.ValidationError(_('The passwords do not match.'))
+        else:
+            return passwordAgain
+    
 class ActivationForm(forms.Form):
-    first_name = forms.CharField(max_length=30, required=True)
-    last_name = forms.CharField(max_length=30, required=True)
-    accepted_term = forms.BooleanField(required=True)
-    accepted_research = forms.BooleanField(required=True)
-    is_of_age = forms.BooleanField(required=True)
+    accepted_term = forms.BooleanField(required=True, label=_("Accepted term"))
+    accepted_research = forms.BooleanField(required=True, label=_("Accepted research"))
 
 class ForgotForm(forms.Form):
     email = forms.EmailField()

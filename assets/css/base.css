@@ -297,6 +297,15 @@ hr.space {
   width: 59%; }
 .page .fourfifth {
   width: 76%; }
+/*Note that 400px here is not terrible because all it's holding is the movie immage*/
+/* TODO: CSS needs to be fixed here, this should have % height*/
+.page .registerleft {
+	float: left;
+	width: 60%;
+	height: 600px; }
+.page .registerright {
+	float: right;
+	margin-right: 40%; }
 .page .half {
   width: 45%;
   margin-right: 5%; }
