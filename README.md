@@ -38,6 +38,7 @@ In most cases the installation of these dependancies will follow the pattern: `s
 * python-mysqldb
 * python-memcache
 * python-magic
+* libhaml-ruby1.8
 
 ## Python Dependancies ##
 
