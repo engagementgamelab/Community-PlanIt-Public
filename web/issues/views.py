@@ -105,9 +105,11 @@ def all(request):
         coins = issue.coins
         if len(player_issue) > 0:
             # +0.0 coerces to a float for percentages
-            issue_wrapper.append({ 'issue': issue, 'coins': coins, 'player_coins': player_issue[0].coins, 'percent': ((coins+0.0)/total_coins)*100 })
+            issue_wrapper.append({ 'issue': issue, 'coins': coins, 'player_coins': player_issue[0].coins, 
+                                  'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })
         else:
-            issue_wrapper.append({ 'issue': issue, 'coins': coins, 'player_coins': 0, 'percent': ((coins+0.0)/total_coins)*100 })    
+            issue_wrapper.append({ 'issue': issue, 'coins': coins, 'player_coins': 0,
+                                   'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })    
 
     tmpl = loader.get_template('issues/all.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
