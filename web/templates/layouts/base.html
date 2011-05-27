@@ -248,7 +248,11 @@
     <script src="{{MEDIA_URL}}js/base.js"></script>
     <script>
         window.scrollTo(0,1);
-
+		/*
+		 *Turning off location tracking, tracking_location tracking location which 
+		 * will hopefully disable the message, wants to know the location
+		*/
+		/*
         {%if user.get_profile.location_tracking%}
             (function(window) {
 
@@ -260,9 +264,9 @@
                 }
 
             })(this);
-        {%else%}
+        {%else%}*/
             document.cookie = "position=";
-        {%endif%}
+        /*{%endif%} */
 
         $(function(){
             var sidebarHeight = $('#sidebar').height(),

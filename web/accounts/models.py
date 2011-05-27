@@ -18,7 +18,7 @@ class UserProfile(models.Model):
     coins = models.IntegerField(default=0)
     points = models.IntegerField(default=0)
     points_multiplier = models.IntegerField(default=0)
-    location_tracking = models.BooleanField(default=True)
+    location_tracking = models.BooleanField(default=False)
     flagged = models.IntegerField(default=0)
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     affiliations = models.TextField(blank=True, null=True, help_text = '<p class="fine">Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club).</p>')

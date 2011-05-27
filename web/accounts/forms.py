@@ -98,4 +98,5 @@ class UserProfileForm(forms.ModelForm):
     
     class Meta:
         model = UserProfile
-        fields = ( 'avatar', 'email', 'first_name', 'last_name', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'location_tracking', 'affiliations', )
+        #Adding to Meta.fields will display default settings in the browser and link it to the correct model object. 
+        fields = ( 'avatar', 'email', 'first_name', 'last_name', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'affiliations', )
