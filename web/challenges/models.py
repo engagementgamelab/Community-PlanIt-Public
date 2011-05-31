@@ -51,6 +51,7 @@ class ChallengeAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.instance = request.session.get('admin_instance')
+        obj.user = request.user
         obj.save()
         
     obj = None
