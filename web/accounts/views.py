@@ -13,6 +13,7 @@ from web.accounts.forms import *
 from web.reports.models import Activity
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.processors import instance_processor as ip
+from web.instances.models import Instance
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
@@ -107,7 +108,7 @@ def edit(request):
         return Http404
     
     change_password_form = ChangePasswordForm()
-    profile_form = UserProfileForm(instance=profile)
+    profile_form = UserProfileForm(instance=profile, initial={ 'myInstance': profile.instance.id if profile.instance != None else 0})
     if request.method == 'POST':
         # Change password form moved to user profile
         if request.POST['form'] == 'change_password':
@@ -123,6 +124,15 @@ def edit(request):
             # User profile form updated, not change password
             profile_form = UserProfileForm(data=request.POST, files=request.FILES, instance=profile)
             if profile_form.is_valid():
+                if (request.POST['myInstance'] == 0 or request.POST['myInstance'] == ''): #reset to the None object
+                    profile.instance = None
+                else:
+                    ins = Instance.objects.filter(id=request.POST['myInstance'])
+                    if (len(ins) > 0):
+                        profile.instance = ins[0]
+                    else:
+                        profile.instance = None
+                profile.save()
                 profile_form.save()
                 ActivityLogger.log(request.user, request, 'account profile', 'updated', '/player/'+ str(request.user.id), 'profile')
 

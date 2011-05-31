@@ -95,8 +95,9 @@ class UserProfileForm(forms.ModelForm):
     stake = forms.ChoiceField(required=False, choices=(('','---'), ('live','Live'), ('work','Work'), ('play', 'Play')))
     birth_year = forms.CharField(max_length=30, label='Age', help_text='<em class="fine">(Private)</em>',required=True)
     phone_number = forms.CharField(max_length=30, help_text='<em class="fine">(Private)</em>',required=False)
+    myInstance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Neighborhood'))
     
     class Meta:
         model = UserProfile
         #Adding to Meta.fields will display default settings in the browser and link it to the correct model object. 
-        fields = ( 'avatar', 'email', 'first_name', 'last_name', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'affiliations', )
+        fields = ( 'avatar', 'email', 'first_name', 'last_name', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'myInstance', 'affiliations', )
