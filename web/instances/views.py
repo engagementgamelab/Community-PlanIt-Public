@@ -20,9 +20,13 @@ from web.processors import instance_processor as ip
 
 def region(request, slug):
     instance = Instance.objects.get(slug=slug)
-
-    users = User.objects.filter(userprofile__instance=instance)
-    leaderboard = users.order_by('-userprofile__points')
+    userProfiles = UserProfile.objects.filter(instance=instance)
+    users = []
+    for userProfile in userProfiles:
+        users.append(userProfile.user)
+    leaderboard = []
+    for userProfile in userProfiles.order_by("-points"):
+        leaderboard.append(userProfile.user)
     log = Activity.objects.filter(instance=instance).order_by('-date')[:100]
     attachments = Attachment.objects.filter(instance=instance).exclude(file='')
 
@@ -41,10 +45,9 @@ def all(request):
     
     # Get number of players in instance
     for instance in instances:
-        instance.player_count = 0
-        instance_users = User.objects.filter(userprofile__instance=instance)
-        for user in instance_users:
-            instance.player_count += 1
+        #This works because there is a strict 1:1 relationship between UserProfile and Users.
+        #TODO: fix the db to make this relationship much more transparent and forced.
+        instance.player_count = UserProfile.objects.filter(instance=instance).count()
 
     tmpl = loader.get_template('instances/all.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
