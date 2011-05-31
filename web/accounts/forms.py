@@ -11,7 +11,7 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(required=True, label=_("Email:"))
     password = forms.CharField(required=True, label=_("Password"), widget=forms.PasswordInput(render_value=False))
     passwordAgain = forms.CharField(required=True, label=_("Password Again"), widget=forms.PasswordInput(render_value=False))
-    instance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Neighborhood'))
+    instance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Community'))
 
     # Ensure that a user has not already registered an account with that email address.
     def clean_email(self):
@@ -95,7 +95,7 @@ class UserProfileForm(forms.ModelForm):
     stake = forms.ChoiceField(required=False, choices=(('','---'), ('live','Live'), ('work','Work'), ('play', 'Play')))
     birth_year = forms.CharField(max_length=30, label='Age', help_text='<em class="fine">(Private)</em>',required=True)
     phone_number = forms.CharField(max_length=30, help_text='<em class="fine">(Private)</em>',required=False)
-    myInstance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Neighborhood'))
+    myInstance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Community'))
     
     class Meta:
         model = UserProfile
