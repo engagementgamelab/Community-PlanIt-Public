@@ -198,7 +198,8 @@ def overview(request, mission_slug, id):
 
     for choice, players in choices.items():
         # +0.0 coerces to a float for percentages
-        responses_wrapper.append({ 'choice': choice, 'players': len(players), 'percent': ((len(players)+0.0)/total_responses)*100 })
+        responses_wrapper.append({ 'choice': choice, 'players': len(players), 
+                                  'percent': 0 if total_responses == 0 else ((len(players)+0.0)/total_responses)*100 })
     
     unplayed = []
     _played = []
@@ -224,6 +225,7 @@ def overview(request, mission_slug, id):
         'thinkfast': thinkfast,
         'unplayed': unplayed,
         'first_time': first_time,
+        'total_responses' : total_responses,
     }, [ip])))
 
 @login_required

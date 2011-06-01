@@ -21,58 +21,85 @@
 
         <h3>ThinkFast! Summary <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a></h3>
         <h1>{{thinkfast.prompt.message}}</h1>
-
-        {%if responses_wrapper|length%}
-            <ul class="chartlist">
-            {%for wrapper in responses_wrapper%}
-                  <li>
-                    <a>{{wrapper.choice}}</a>
-                    <span class="count">{{wrapper.players}}</span>
-                    <span class="index" style="width: {{wrapper.percent}}%">({{wrapper.percent}}%)</span>
-                  </li>
-            {%endfor%}
-            </ul>
-        {%endif%}
-
-        <hr class="space">
+        <div id="pie" class="graph" style="width:600px;height:300px; margin-left:auto; margin-right:auto; 
+            margin-top: 25px; margin-bottom: 25px"></div>
+        <!-- uncomment for hover -->
+        <!-- <div id="hover" style="width:600px; height:100px; margin-left:auto; margin-right:auto;"></div> -->
 
         {%if choices|length%}
-        <ul class="listview highlighted">
-            {% for label, players in choices.items %}
-                <li class="listitem">
-                    <span class="highlight fine">{{players|length}}</span> players selected the answer {{label}}
-                    <hr class="space">
-                    {% for player in players %}
-                        {%if player.get_profile.avatar %}
-                            <a href="/player/{{player.id}}">
-                                <img alt="player.get_profile.first_name player.get_profile.last_name" class="avatar" src="{{MEDIA_URL}}{{player.get_profile.avatar}}">
-                            </a>
-                        {%else%}               
-                            <a href="/player/{{player.id}}">
-                                <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-                            </a>
-                        {%endif%} 
-                    {%endfor%}
-                    <hr class="space">
-                </li>
-            {%endfor%}
-        </ul>
-
-        <!-- {% for player in other_responses %}
-            {%if player.get_profile.avatar %}
-                <a href="/player/{{player.id}}">
-                    <img alt="player.get_profile.first_name player.get_profile.last_name" class="avatar" src="{{MEDIA_URL}}{{player.get_profile.avatar}}">
-                </a>
-            {%else%}               
-                <a href="/player/{{player.id}}">
-                    <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-                </a>
-            {%endif%} 
-        {%endfor%} -->
-
+            <ul class="listview highlighted">
+                {% for label, players in choices.items %}
+                    <li class="listitem">
+                        <span class="highlight fine">{{players|length}}</span> players selected the answer {{label}}
+                        <hr class="space">
+                        {% for player in players %}
+                            {%if player.get_profile.avatar %}
+                                <a href="/player/{{player.id}}">
+                                    <img alt="player.get_profile.first_name player.get_profile.last_name" class="avatar" src="{{MEDIA_URL}}{{player.get_profile.avatar}}">
+                                </a>
+                            {%else%}               
+                                <a href="/player/{{player.id}}">
+                                    <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+                                </a>
+                            {%endif%} 
+                        {%endfor%}
+                        <hr class="space">
+                    </li>
+                {%endfor%}
+            </ul>
         {%else%}
             No submissions yet.
         {%endif%}
         <div style="clear: both;"></div>
     </div>
+   
+<!-- this is the chart -->
+
+
+<script type="text/javascript">
+    $(function () {
+        var data = [];
+        var i = 0;
+        {%if total_responses == 0 %}
+            {%for wrapper in responses_wrapper%}
+                data[i] = { label: "{{ wrapper.choice }}", data: 1 }
+                i++;
+            {%endfor%}
+        {%else%}
+            {%for wrapper in responses_wrapper%}
+                data[i] = { label: "{{ wrapper.choice }}", data: {{ wrapper.players }} }
+                i++;
+            {%endfor%}
+        {%endif%}
+        //uncoment the grid and function pieHover to enable the hover feature. 
+        $.plot($("#pie"), data, {
+            series: { 
+                pie: { 
+                    show: true,
+                    radius: 1
+                }
+            },
+            legend: { 
+                labelFormatter: function(label, series) {
+                    //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
+                    return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                }
+            }/*,
+            grid: {
+                hoverable: true
+            }*/
+        });
+        //$("#pie").bind("plothover", pieHover);
+    });
+    /*
+    function pieHover(event, pos, obj) 
+    {
+        if (!obj)
+            return;
+        percent = parseFloat(obj.series.percent).toFixed(2);
+        $("#hover").html('<span style="font-size: 1.25em; color: black">'+obj.series.label+' ('+percent+'%)</span>');
+    }
+   */
+</script>
+
 {%endblock%}
