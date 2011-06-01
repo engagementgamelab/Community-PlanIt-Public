@@ -115,6 +115,7 @@ def all(request):
     return HttpResponse(tmpl.render(RequestContext(request, {
         'issues': issues,
         'issue_wrapper': issue_wrapper,
+        'total_coins' : total_coins,
     }, [ip])))
 
 @login_required

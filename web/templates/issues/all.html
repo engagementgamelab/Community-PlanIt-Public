@@ -29,7 +29,8 @@
 
         <hr class="space">
         <div style="clear:both;"></div>
-
+        <!-- placeholder for chart -->
+        <div id="pie" class="graph" style="width:400px;height:300px;"></div>
         <div class="issues-wrapper">
             {%if issues|length%}
             <table class="issues"> 
@@ -63,6 +64,27 @@
             {%endif%}
         </div>
     </div>
-
     <div style="clear:both;"></div>
+	
+<!-- this is the chart -->
+<script type="text/javascript">
+    $(function () {
+        var data = [];
+        var i = 0;
+        {%if total_coins == 0 %}
+            {%for wrapper in issue_wrapper%}
+                data[i] = { label: "{{ wrapper.issue.message }}", data: 1 }
+                i++;
+            {%endfor%}
+        {%else%}
+            {%for wrapper in issue_wrapper%}
+                data[i] = { label: "{{ wrapper.issue.message }}", data: {{ wrapper.issue.coins }} }
+                i++;
+            {%endfor%}
+        {%endif%}
+
+        $.plot($("#pie"), data, {series: { pie: { show: true } } });
+    });
+</script>
+
 {%endblock%}
