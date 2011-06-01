@@ -1,0 +1,12 @@
+Django==1.3
+PIL
+django_compressor
+gunicorn
+python-magic
+python-memcached
+south
+supervisor
+
+# this fork should be short-lived, if my South
+# introspection rules are accepted upstream
+git+https://github.com/fairview/django_gmapsfield.git
