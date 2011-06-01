@@ -13,7 +13,7 @@
             Do some <a href="/mission">activities</a>, create or complete a <a href="/challenge">challenge</a>, or comment on your communities activity to earn points and get coins.
         </p>
         {%endif%}
-
+        <!--
         {%if issue_wrapper|length%}
             <ul class="chartlist">
             {%for wrapper in issue_wrapper%}
@@ -26,11 +26,12 @@
             {%endfor%}
             </ul>
         {%endif%}
-
+        -->
         <hr class="space">
         <div style="clear:both;"></div>
         <!-- placeholder for chart -->
-        <div id="pie" class="graph" style="width:400px;height:300px;"></div>
+        <div id="pie" class="graph" style="width:400px;height:300px; margin-left:auto; margin-right:auto; 
+            margin-top: 25px; margin-bottom: 25px"></div>
         <div class="issues-wrapper">
             {%if issues|length%}
             <table class="issues"> 
