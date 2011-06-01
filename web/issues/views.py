@@ -104,8 +104,8 @@ def all(request):
     for issue in issues:
         player_issue = playerissues.filter(issue=issue)
         coins = issue.coins
-        total_playerCoins = player_issue[0].coins
         if len(player_issue) > 0:
+            total_playerCoins = player_issue[0].coins
             # +0.0 coerces to a float for percentages
             issue_wrapper.append({ 'issue': issue, 'coins': coins, 'player_coins': player_issue[0].coins, 
                                   'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })
