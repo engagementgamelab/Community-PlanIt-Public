@@ -4,16 +4,22 @@
     {%endif%}
 
     {%csrf_token%}
-    <a id="add-video" href="#add-video" class="button small">Add Youtube Video</a> or <a id="add-picture" href="#add-picture" class="button small">Add Picture</a>
-    <div class="add-video modal">
-        <label for="yt-url">YouTube<br><small>(Paste in the URL)</small></label> <textarea id="yt-url" type="text" maxlength="255"></textarea>
+    <div id="attachments">
+        <div class="controls">
+            Include <a id="add-video" href="#add-video" class="button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="button small">Picture</a>
+            <div class="add-video modal">
+                <label for="yt-url">YouTube<br><small>(Paste in the URL)</small></label> <textarea id="yt-url" type="text" maxlength="255"></textarea>
+            </div>
+            <input type="hidden" name="yt-url">
+            <div class="hidden"></div>
+            <div class="add-picture modal">
+                <label for="picture">Add picture to comment</label> <input id="picture" type="file">
+            </div>
+        </div>
+        <div class="notification"></div>
     </div>
-    <input type="hidden" name="yt-url">
-    <div class="hidden"></div>
-    <div class="add-picture modal">
-        <label for="picture">Add picture to comment</label> <input id="picture" type="file">
-    </div>
-    {{comment_form.as_p}}
+    <textarea name="message" class="comment_message" cols="80" rows="6" id="id_message"></textarea>
+    {{comment_form.message.help_text|safe}}
     <button class="button right">Add Comment</button>
     <hr class="space">
 </form>

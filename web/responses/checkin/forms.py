@@ -5,7 +5,7 @@ from gmapsfield.fields import *
 
 class CheckInResponseForm(forms.ModelForm):
     map = GoogleMapsField()
-    comment = forms.CharField(max_length=140,required=True)
+    comment = forms.CharField(max_length=1000,required=True)
     class Meta:
         model = CheckInResponse
         fields = ('map',)

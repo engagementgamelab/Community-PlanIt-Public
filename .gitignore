@@ -4,6 +4,7 @@
 *.sass-cache
 *designs
 
+assets/uploads
 web/settings.py
 data/
 data/staging

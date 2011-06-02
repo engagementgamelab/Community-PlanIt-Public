@@ -61,6 +61,25 @@ def index(request, mission_slug, id):
 
                 request.session['justplayed'] = True
 
+            if request.POST.has_key('yt-url'):
+                if request.POST.get('yt-url'):
+                    url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
+
+                    if len(url) > 1:
+                        response.attachment.create(
+                            file=None,
+                            url=url,
+                            type='video',
+                            user=request.user,
+                            instance=request.user.get_profile().instance,
+                        )
+
+            if request.FILES.has_key('picture'):
+                response.attachment.create(
+                    file=request.FILES.get('picture'),
+                    user=request.user,
+                    instance=request.user.get_profile().instance,
+                )
 
             games = mission.games.all()
             pg = PlayerGame.objects.filter(user=request.user, completed=True)
@@ -131,7 +150,7 @@ def comment(request, mission_slug, id, user_id):
             c = Comment(
                 message=form.cleaned_data['message'], 
                 user=request.user,
-                instance=request.session.get('instance'),
+                instance=request.user.get_profile().instance,
             )
             c.save()
 
@@ -165,10 +184,7 @@ def overview(request, mission_slug, id):
 
     responses = []
     for pg in other_responses:
-        responses.append({
-            'player': pg.user.get_profile(),
-            'message': pg.response.commentresponse.message,
-        })
+        responses.append(pg)
 
     unplayed = []
     _played = []
@@ -183,7 +199,7 @@ def overview(request, mission_slug, id):
     if len(unplayed):
         unplayed = unplayed[0]
 
-    if othershoes.response.commentresponse:
+    if othershoes.response and othershoes.response.commentresponse:
         response = othershoes.response.commentresponse
     else:
         response = None

@@ -8,10 +8,10 @@
         </a>
       {%endif%}
     {%endfor%}
-    <p class="message">{{comment.message}}</p>
-    <p class="fancy">
-        <span class="user">posted by <a href="/player/{{comment.user.id}}/">{{comment.user.get_profile.first_name}} {{comment.user.get_profile.last_name|slice:":1"}}</a></span>
-        <span class="posted_date">, on {{comment.posted_date|date:"M"}} {{comment.posted_date|date:"j"}}</span>
+    <div class="message">{{comment.message|linebreaksbr}}</div>
+    <div class="fancy">
+        <span class="user">posted by <a href="/player/{{comment.user.id}}/">{{comment.user.get_profile.first_name}} {{comment.user.get_profile.last_name|slice:":1"}}</a>,</span>
+        <span class="posted_date">on {{comment.posted_date|date:"M"}} {{comment.posted_date|date:"j"}},</span>
         <span class="actions">
             <a href="/flag/comment/{{comment.id}}" class="red small">flag</a>
             <a class="button small reply">reply</a>
@@ -21,13 +21,14 @@
             <form enctype="multipart/form-data" method="POST" action="/comment/reply/{{comment.id}}/">
                 {%csrf_token%}
                 <button class="button">Add Comment</button>
-                {{comment_form.as_p}}
+                <textarea name="message" class="comment_message" cols="80" rows="6" id="id-{{comment.id}}_message"></textarea>
+                {{comment_form.message.help_text|safe}}
             </form>
         </div>
-    </p>
+    </div>
 
     {%if comment.comments.all%}
-    <span class="expand"><span>[+]</span> Expand Replies</span>
+    <span class="expand"><span>[+]</span> Expand Replies ({{comment.comments.count}})</span>
     <ul class="nested">
         {%for comment in comment.comments.all%}
             {%with "comments/comment.html" as filename%}

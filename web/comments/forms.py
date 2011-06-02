@@ -1,7 +1,20 @@
 from django import forms
 
 class CommentForm(forms.Form):
-    message = forms.CharField(max_length=140, widget=forms.Textarea, label='Comment', help_text='<br><span class="fine">(<span class="count">140</span> characters left)</span>')
+    message = forms.CharField(
+        max_length=1000,
+        widget=forms.Textarea(
+            attrs = {
+                'rows': 6,
+                'cols': 80,
+            }
+        ),
+        label='Comment',
+        help_text=(
+            '<div class="fine counter">(<span class="count">1000</span>'
+            ' characters left)</div>'
+        )
+    )
 
     def clean(self):
         message = self.cleaned_data.get('message')

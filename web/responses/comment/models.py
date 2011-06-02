@@ -3,7 +3,7 @@ from django.db import models
 from web.responses.models import Response
 
 class CommentResponse(Response):
-    message = models.CharField(default=' ', max_length=260)
+    message = models.CharField(default=' ', max_length=1000)
     posted_date = models.DateTimeField(auto_now_add=True, blank='')
 
     def save(self):

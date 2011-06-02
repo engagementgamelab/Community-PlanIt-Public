@@ -53,7 +53,7 @@ def index(request, mission_slug, id):
                 player_game.delete()
 
                 c = Comment(
-                    message=map_form.cleaned_data['comment'], 
+                    message=map_form.cleaned_data['message'], 
                     user=request.user,
                     instance=request.user.get_profile().instance,
                 )
@@ -75,7 +75,7 @@ def index(request, mission_slug, id):
                 response.save()
 
                 c = Comment(
-                    message=map_form.cleaned_data['comment'], 
+                    message=map_form.cleaned_data['message'], 
                     user=request.user,
                     instance=request.user.get_profile().instance,
                 )
@@ -138,30 +138,6 @@ def comment(request, mission_slug, id, user_id):
     player_game = player_game[0]
 
     if request.method == 'POST':
-        if request.POST.has_key('yt-url'):
-            if request.POST.get('yt-url'):
-                url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
-
-                if len(url) > 1:
-                    a = Attachment(
-                        file=None,
-                        url=url,
-                        type='video',
-                        user=request.user,
-                        instance=request.user.get_profile().instance,
-                    )
-
-                    a.save()
-        
-        if request.FILES.has_key('picture'):
-            b = Attachment(
-                file=request.FILES.get('picture'),
-                user=request.user,
-                instance=request.user.get_profile().instance,
-            )
-
-            b.save()
-
         form = CommentForm(request.POST)
         if form.is_valid():
             c = Comment(
@@ -175,6 +151,26 @@ def comment(request, mission_slug, id, user_id):
 
             PointsAssigner.assign(request.user, 'comment_created')
             ActivityLogger.log(request.user, request, 'to MapIT response', 'added comment', '/mission/'+ mission_slug +'/game/mapit/'+ id +'/'+ user_id, 'mapit')
+
+            if request.POST.has_key('yt-url'):
+                if request.POST.get('yt-url'):
+                    url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
+
+                    if len(url) > 1:
+                        c.attachment.create(
+                            file=None,
+                            url=url,
+                            type='video',
+                            user=request.user,
+                            instance=request.user.get_profile().instance,
+                        )
+
+            if request.FILES.has_key('picture'):
+                c.attachment.create(
+                    file=request.FILES.get('picture'),
+                    user=request.user,
+                    instance=request.user.get_profile().instance,
+                )
 
     return HttpResponseRedirect('/mission/'+ mission_slug +'/game/mapit/'+ id +'/'+ user_id)
 

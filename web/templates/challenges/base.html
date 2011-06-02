@@ -38,22 +38,33 @@
             
             <h3>Provide evidence to complete this challenge:</h3>
         
-            <form enctype="multipart/form-data" action="/challenge/{{challenge.id}}/complete/" method="POST">
-                {%csrf_token%}
+            <div id="comments">
+                <form enctype="multipart/form-data" action="/challenge/{{challenge.id}}/complete/" method="POST">
+                    {%if request.REQUEST.error%}
+                        <span class="error">Please enter a valid comment.</span>
+                    {%endif%}
 
-                <a id="add-video" href="#add-video" class="">Add Youtube Video</a> or <a id="add-picture" href="#add-picture" class="">Add Picture</a>
-                <div class="add-video modal">
-                    <label for="yt-url">Youtube Embed Code</label> <textarea id="yt-url" type="text" maxlength="255"></textarea>
-                </div>
-                <input type="hidden" name="yt-url">
-                <div class="hidden"></div>
-                <div class="add-picture modal">
-                    <label for="picture">Add picture to comment</label> <input id="picture" type="file">
-                </div>
-
-                <hr class="space">
-                <input class="button" type="submit" value="Complete challenge">
-            </form>
+                    {%csrf_token%}
+                    <div id="attachments">
+                        <div class="controls">
+                            Include <a id="add-video" href="#add-video" class="button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="button small">Picture</a>
+                            <div class="add-video modal">
+                                <label for="yt-url">YouTube<br><small>(Paste in the URL)</small></label> <textarea id="yt-url" type="text" maxlength="255"></textarea>
+                            </div>
+                            <input type="hidden" name="yt-url">
+                            <div class="hidden"></div>
+                            <div class="add-picture modal">
+                                <label for="picture">Add picture to comment</label> <input id="picture" type="file">
+                            </div>
+                        </div>
+                        <div class="notification"></div>
+                    </div>
+                    <textarea name="message" class="comment_message" cols="80" rows="6" id="id_message"></textarea>
+                    {{comment_form.message.help_text|safe}}
+                    <button class="button right">Submit response</button>
+                    <div style="clear: both;"></div>
+                </form>
+            </div>
             <hr class="space">
         {%endif%}
         {%if playerchallenge_all|length%}
@@ -94,6 +105,13 @@
         {%else%}
             <h4>No one has completed this challenge</h4>
         {%endif%}
+        <!-- Show comments -->
+        <div id="comments">
+            <div class="sleeper"></div>
+            <h4>Comments:</h4>
+            <!-- Add Comment-->
+            {%include "comments/post.html"%}
+        </div>
     </div>
     <div class="fifth right">
         <a class="right red normal" href="/flag/challenge/{{challenge.id}}">Flag challenge</a>

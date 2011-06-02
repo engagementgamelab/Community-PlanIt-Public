@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib import admin
 
 class Comment(models.Model):
-    message = models.CharField(max_length=140)
+    message = models.CharField(max_length=1000)
     posted_date = models.DateTimeField(auto_now_add=True)
     flagged = models.IntegerField(default=0)
 

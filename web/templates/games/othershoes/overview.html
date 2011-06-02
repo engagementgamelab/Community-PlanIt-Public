@@ -21,10 +21,19 @@
 
         <h3 class="game othershoes">Someone Else's Shoes Summary <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a></h3>
         <h2>{{othershoes.prompt.bio}}</h2>
-        {%if responses%}
-          {%for response in responses%}
-            <h3>{{response.player.first_name}} {{response.player.last_name|slice:":1"}} Answered</h3>
-            <p>{{response.message}}</p>
+        {% if responses %}
+          {% for response in responses %}
+          <h3>Response {{response.response.pk}}: {{response.user.get_profile.first_name}} {{response.user.get_profile.last_name|slice:":1"}} Answered</h3>
+            {% for attachment in response.response.attachment.all %}
+                {%if attachment.type == 'video'%}
+                <iframe width="560" height="349" src="http://www.youtube.com/embed/{{attachment.url}}" frameborder="0" allowfullscreen></iframe>
+                {%else%}
+                <a class="thumbnail" href="{{attachment.file.url}}">
+                  <img src="{{attachment.file.url}}">
+                </a>
+                {%endif%}
+            {%endfor%}
+            <div class="message">{{response.response.commentresponse.message|linebreaksbr}}</div>
           {%endfor%}
         {%else%}
             No submissions yet.

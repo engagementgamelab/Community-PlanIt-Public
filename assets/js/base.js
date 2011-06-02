@@ -19,7 +19,7 @@ jQuery(function($) {
     var reply = $('.reply').bind('click', function(evt) {
         evt.preventDefault();
 
-        $(this).parents('.fancy').parent().find('.reply-modal').dialog({
+        $(this).parents('.fancy').find('.reply-modal').dialog({
             title: 'Comment reply',
             modal: true
         });
@@ -53,6 +53,7 @@ jQuery(function($) {
                     pic.after(_);
                     hidden.empty().append(pic.attr("name", "picture"));
                     $(this).dialog("close");
+                    $('#attachments .notification').html('Media attached!')
                 }
             }
         });
@@ -68,14 +69,21 @@ jQuery(function($) {
     });
 
     // Comment count
-    var comments = $('#comment, #comments').find('textarea#id_message').bind('change keyup keydown blur', function(evt) {
-        var len = 140 - this.value.length;
-        if(len < 0 && evt.which !== 8 && evt.which !== 46) {
-            return false;
+    $('textarea.comment_message').live('change keyup keydown blur', function(evt) {
+        var comment_form = $(this.form);
+        var val = this.value.replace(/\r?\n/g, 'xx');
+        var len = Math.max(0, 1000 - val.length);
+        comment_form.find('.count').text(len);
+        if (len < 1) {
+            comment_form.find('.counter').addClass('limited');
+            if (!(evt.ctrlKey || evt.which < 48 && evt.which !== 9 && evt.which !== 13)) {
+                return false;
+            }
         }
-        comments.find('.count').text(len);
-    }).end().attr('maxlength', '140');
+        comment_form.find('.counter').removeClass('limited');
+    }).attr('maxlength', '1000').change();
 
+    var comments = $('#comments');
     // Hide nested comments initially
     comments.find(".nested").children().hide();
     comments.delegate(".expand", "click", function() {

@@ -176,7 +176,7 @@
                                 {%if not user.get_profile.affiliations_csv|length%}
                                     and
                                 {%endif%}
-                                are followed by <a href="/list/followers/{{user.id}}" class="highlight">{{followingme|length}}</a></a> players{%if not user.get_profile.affiliations_csv|length%}.{%endif%}{%if user.get_profile.affiliations_csv|length%}, and are affiliated with 
+                                are followed by <a href="/list/followers/{{user.id}}" class="highlight">{{followingme|length}}</a> players{%if not user.get_profile.affiliations_csv|length%}.{%endif%}{%if user.get_profile.affiliations_csv|length%}, and are affiliated with 
                                     {%for a in user.get_profile.affiliations_csv %} 
                                         {% if forloop.counter == user.get_profile.affiliations_csv|length and user.get_profile.affiliations_csv|length > 1%}
                                             and 
