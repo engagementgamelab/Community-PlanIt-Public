@@ -13,7 +13,7 @@
             Do some <a href="/mission">activities</a>, create or complete a <a href="/challenge">challenge</a>, or comment on your communities activity to earn points and get coins.
         </p>
         {%endif%}
-
+        <!--
         {%if issue_wrapper|length%}
             <ul class="chartlist">
             {%for wrapper in issue_wrapper%}
@@ -26,10 +26,26 @@
             {%endfor%}
             </ul>
         {%endif%}
-
+        -->
         <hr class="space">
         <div style="clear:both;"></div>
-
+        
+        <!-- placeholder for chart -->
+        <div>
+            <div style="float: left">
+                <h3>How all coins have been spent</h3>
+                <div id="pie" class="graph" style="width:350px;height:200px; margin-left:auto; 
+                    margin-top: 25px; margin-bottom: 25px;"></div>
+            </div>
+            <div style="float: right">
+                <h3>How your coins have been spent</h3>
+                <div id="userPie" class="graph" style="width:350px;height:200px; margin-right:auto; 
+                    margin-top: 25px; margin-bottom: 25px; "></div> 
+            </div>
+        </div>
+        
+        <div style="clear:both;"></div>
+        
         <div class="issues-wrapper">
             {%if issues|length%}
             <table class="issues"> 
@@ -63,6 +79,73 @@
             {%endif%}
         </div>
     </div>
-
     <div style="clear:both;"></div>
+	
+<!-- this is the chart -->
+<script type="text/javascript">
+    $(function () {
+        var globalData = [];
+        var i = 0;
+        {%if total_responses == 0 %}
+            {%for wrapper in issue_wrapper%}
+                globalData[i] = { label: "{{ wrapper.issue.message }}", data: 1 }
+                i++;
+            {%endfor%}
+        {%else%}
+            {%for wrapper in issue_wrapper%}
+                globalData[i] = { label: "{{ wrapper.issue.message }}", data: {{ wrapper.issue.coins }} }
+                i++;
+            {%endfor%}
+        {%endif%}
+        
+        var userData = [];
+        var i = 0;
+        {%if total_playerCoins == 0 %}
+            {%for wrapper in issue_wrapper%}
+                userData[i] = { label: "{{ wrapper.issue.message }}", data: 1 }
+                i++;
+            {%endfor%}
+        {%else%}
+            {%for wrapper in issue_wrapper%}
+                userData[i] = { label: "{{ wrapper.issue.message }}", data: {{ wrapper.player_coins }} }
+                i++;
+            {%endfor%}
+        {%endif%}
+        
+        //uncoment the grid and function pieHover to enable the hover feature. 
+        $.plot($("#pie"), globalData, {
+            series: { 
+                pie: { 
+                    show: true,
+                    radius: 1
+                }
+            },
+            legend: { 
+                labelFormatter: function(label, series) {
+                    //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
+                    return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                },
+                backgroundOpacity: .2
+            }
+        });
+        
+        $.plot($("#userPie"), userData, {
+            series: { 
+                pie: { 
+                    show: true,
+                    radius: 3/4
+                }
+            },
+            legend: { 
+                labelFormatter: function(label, series) {
+                    //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
+                    return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                },
+                backgroundOpacity: .2
+            }
+        });
+    });
+    
+</script>
+
 {%endblock%}
