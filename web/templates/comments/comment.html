@@ -11,7 +11,7 @@
     <div class="message">{{comment.message|linebreaksbr}}</div>
     <div class="fancy">
         <span class="user">posted by <a href="/player/{{comment.user.id}}/">{{comment.user.get_profile.first_name}} {{comment.user.get_profile.last_name|slice:":1"}}</a>,</span>
-        <span class="posted_date">on {{comment.posted_date|date:"M"}} {{comment.posted_date|date:"j"}},</span>
+        <span class="posted_date">on {{comment.posted_date|date:"M"}} {{comment.posted_date|date:"j"}}</span>
         <span class="actions">
             <a href="/flag/comment/{{comment.id}}" class="red small">flag</a>
             <a class="button small reply">reply</a>
