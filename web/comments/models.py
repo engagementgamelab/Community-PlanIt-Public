@@ -13,10 +13,18 @@ class Comment(models.Model):
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
     user = models.ForeignKey(User, editable=False)
     instance = models.ForeignKey(Instance, editable=False)
-    comments = models.ManyToManyField("self", symmetrical=False, blank=True, editable=False)
+    comments = models.ManyToManyField('self', symmetrical=False, blank=True, editable=False)
+    likes = models.ManyToManyField(User, blank=True, editable=False, related_name='liked_comments')
 
     def __unicode__(self):
         return self.message[:25] or ''
+
+    @property
+    def discussion_count(self):
+        total = self.comments.count()
+        for comment in self.comments.all():
+            total += comment.discussion_count
+        return total
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('message', 'posted_date', 'user',)

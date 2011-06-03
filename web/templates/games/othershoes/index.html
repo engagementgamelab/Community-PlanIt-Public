@@ -22,7 +22,7 @@
                     <img class="avatar" src="{{MEDIA_URL}}{{othershoes.prompt.avatar}}">
                 </div>
                 <p class="twothirds">
-                  {{othershoes.prompt.first_name}} {{othershoes.prompt.last_name}} is a <span class="highlight">{{othershoes.prompt.age}}</span> year old <span class="highlight">{{othershoes.prompt.race}}</span> <span class="highlight">{{othershoes.prompt.gender}}</span> living in your neighborhood.
+                {{othershoes.prompt.first_name}} {{othershoes.prompt.last_name}} is a <span class="highlight">{{othershoes.prompt.age}}</span> year old {% if othershoes.prompt.race %}<span class="highlight">{{othershoes.prompt.race}}</span>{% endif %} {% if othershoes.prompt.gender %}<span class="highlight">{{othershoes.prompt.gender}}</span>{% endif %} living in your neighborhood.
                 </p>
                 {%if othershoes.prompt.download%}
                     <strong>Download:</strong>

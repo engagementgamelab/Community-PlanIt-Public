@@ -12,6 +12,15 @@ def flag(request, id):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 @login_required
+def like(request, id):
+    c = Comment.objects.get(id=id)
+    if request.user != c.user:
+        c.likes.add(request.user)
+    referrer = request.META['HTTP_REFERER'].split('#', 1)[0]
+    referrer += '#comment-%s' % c.pk
+    return HttpResponseRedirect(referrer)
+
+@login_required
 def reply(request, id):
     p = Comment.objects.get(id=id)
     instance = request.user.get_profile().instance
@@ -26,4 +35,6 @@ def reply(request, id):
 
     p.comments.add(c)
 
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    referrer = request.META['HTTP_REFERER'].split('#', 1)[0]
+    referrer += '#comment-%s' % c.pk
+    return HttpResponseRedirect(referrer)
