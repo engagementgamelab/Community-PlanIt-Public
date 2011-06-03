@@ -8,6 +8,9 @@ Things marked with a TODO need to be done. This is also the section for messages
 
 is_staff in the auth_users table denote admin. Figure out the is_staff vs. is_superuser denotes. Can either be eleminated? -BMH
 
+# Database changes to a non-deployed system #
+the prompts_profileprompt.avatar column now allows nulls. ~BMH
+
 # Overview #
 Community PlanIt is written using Python(Django) and JavaScript(jQuery).  It has evolved over the course of the half year development
 which has led to some naming inconsistencies which will be noticable immediately.  For example, instances are 1:1 to neighborhoods in

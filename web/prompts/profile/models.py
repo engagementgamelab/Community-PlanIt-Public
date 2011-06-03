@@ -8,7 +8,7 @@ def determine_path(instance, filename):
 class ProfilePrompt(Prompt):
     bio = models.TextField(blank=True, null=True)
 
-    avatar = models.ImageField(upload_to=determine_path)
+    avatar = models.ImageField(upload_to=determine_path, blank=True, null=True)
     first_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30, blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
