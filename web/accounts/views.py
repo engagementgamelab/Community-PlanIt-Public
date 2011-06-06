@@ -129,7 +129,7 @@ def edit(request):
                 if (request.POST.get('myInstance', None) == None or request.POST['myInstance'] == ''): #reset to the None object
                     profile.instance = None
                 else:
-                    ins = Instance.objects.filter(id=profile_form.cleaned_data['myInstance'])
+                    ins = Instance.objects.filter(id=request.POST.get('myInstance'))
                     if (len(ins) > 0):
                         profile.instance = ins[0]
                     else:
