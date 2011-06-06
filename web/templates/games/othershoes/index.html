@@ -4,10 +4,6 @@
 {%block page_title%}{%endblock%}
 {%block game%}
     <div class="narrow game-wrapper">
-        {%if player_game%}
-            <p class="notice">Your original response is marked below. You may change your answer at any time during this mission</p>
-        {%endif%}
-
         <h2 class="othershoes game">
             Someone Else's Shoes
             {%if not player_game%}
@@ -34,31 +30,14 @@
 
                 <h2>{{othershoes.prompt.bio}}</h2>
 
-                <hr class="space">
-                    {%if request.REQUEST.error%}
-                        <span class="error">Please enter a valid comment.</span>
-                    {%endif%}
+                <div id="comments">
+                    <div class="sleeper"></div>
+                    <h4>Your response:</h4>
+                    {% with othershoes as comments %}
+                    {% include "comments/post.html" %}
+                    {% endwith %}
+                </div>
 
-                    {%csrf_token%}
-                    <div id="attachments">
-                        <div class="controls">
-                            Include <a id="add-video" href="#add-video" class="button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="button small">Picture</a>
-                            <div class="add-video modal">
-                                <label for="yt-url">YouTube<br><small>(Paste in the URL)</small></label> <textarea id="yt-url" type="text" maxlength="255"></textarea>
-                            </div>
-                            <input type="hidden" name="yt-url">
-                            <div class="hidden"></div>
-                            <div class="add-picture modal">
-                                <label for="picture">Add picture to comment</label> <input id="picture" type="file">
-                            </div>
-                        </div>
-                        <div class="notification"></div>
-                    </div>
-                    <textarea name="message" class="comment_message" cols="80" rows="6" id="id_message"></textarea>
-                    {{comment_form.message.help_text|safe}}
-                    <div style="clear: both;"></div>
-                    <button class="button">Submit response</button>
-                    <hr class="space">
                 <div style="clear: both;"></div>
             </div>
         </form>

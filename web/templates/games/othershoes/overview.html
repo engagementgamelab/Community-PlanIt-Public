@@ -2,42 +2,32 @@
 {%block page_title%}{%endblock%}
 {%block game%}
     <div class="game-wrapper narrow">
-        {% if first_time %}
-            {%if unplayed%}
-                <div class="notice">
-                    <h3>Great work, you just earned points!</h3>
-                    <p>
-                    {% if request.user.get_profile.coins %}
-                        You have {{request.user.get_profile.coins}} coin{%if request.user.get_profile.coins > 1 %}s{%endif%}. 
-                        You can <a href="/issue" class="button">spend {%if request.user.get_profile.coins < 2 %}it{% else %}them{%endif%}</a>
-                         or <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a>.
-                    </p>
-                    {% else %}
-                        <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a></p>
-                    {% endif %}
-                </div>
-            {%endif%}
+        {% if first_time and unplayed %}
+            <div class="notice">
+                <h3>Great work, you just earned points!</h3>
+                <p>
+                {% if request.user.get_profile.coins %}
+                    You have {{request.user.get_profile.coins}} coin{%if request.user.get_profile.coins > 1 %}s{%endif%}. 
+                    You can <a href="/issue" class="button">spend {%if request.user.get_profile.coins < 2 %}it{% else %}them{%endif%}</a>
+                     or <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a>.
+                </p>
+                {% else %}
+                    <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a></p>
+                {% endif %}
+            </div>
         {%endif%}
 
-        <h3 class="game othershoes">Someone Else's Shoes Summary <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a></h3>
+        <h3 class="game othershoes">Someone Else's Shoes Summary</h3>
         <h2>{{othershoes.prompt.bio}}</h2>
-        {% if responses %}
-          {% for response in responses %}
-          <h3>{{response.user.get_profile.first_name}} {{response.user.get_profile.last_name|slice:":1"}} Answered</h3>
-            {% for attachment in response.response.attachment.all %}
-                {%if attachment.type == 'video'%}
-                <iframe width="560" height="349" src="http://www.youtube.com/embed/{{attachment.url}}" frameborder="0" allowfullscreen></iframe>
-                {%else%}
-                <a class="thumbnail" href="{{attachment.file.url}}">
-                  <img src="{{attachment.file.url}}">
-                </a>
-                {%endif%}
-            {%endfor%}
-            <div class="message">{{response.response.commentresponse.message|linebreaksbr}}</div>
-          {%endfor%}
-        {%else%}
-            No submissions yet.
-        {%endif%}
-        <div style="clear: both;"></div>
+        <div id="comments">
+            <div class="sleeper"></div>
+            <h4>Comments:</h4>
+            <ul class="listless comments">
+                {%for comment in othershoes.comments.all reversed%}
+                {%include "comments/comment.html"%}
+                {%endfor%}
+            </ul>
+            <div style="clear: both;"></div>
+        </div>
     </div>
 {%endblock%}
