@@ -86,6 +86,16 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.user.email[:25] +"'s Profile"
 
+    def screen_name(self):
+        first = self.first_name or self.user.first_name or ''
+        last = self.last_name or self.user.last_name or ''
+        last = len(last) > 1 and last[0].upper() + '.' or last
+
+        if first or last:
+            return "%s%s" % (first, last and ' ' + last or '')
+
+        return 'Anonymous'
+
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
 

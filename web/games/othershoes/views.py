@@ -1,19 +1,22 @@
-import web, re 
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.template import RequestContext, loader
-from django.contrib.auth.models import User
+import re
+import web 
+
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
-from web.missions.models import Mission
+from django.template import RequestContext, loader
+
+from web.attachments.models import Attachment
+from web.comments.forms import CommentForm
+from web.comments.models import Comment
 from web.games.models import Game, PlayerGame
 from web.games.othershoes.models import OtherShoes
-from web.responses.comment.models import *
-from web.responses.comment.forms import CommentResponseForm
-from web.attachments.models import Attachment
-from web.comments.models import Comment
-from web.comments.forms import CommentForm
-from web.reports.actions import PointsAssigner, ActivityLogger
+from web.missions.models import Mission
 from web.processors import instance_processor as ip
+from web.reports.actions import PointsAssigner, ActivityLogger
+from web.responses.comment.models import CommentResponse
 
 @login_required
 def index(request, mission_slug, id):
@@ -27,29 +30,17 @@ def index(request, mission_slug, id):
 
     player_game = None
  
-    # Code to check for games not yet played
-    unplayed = []
-    _played = []   
-
-    comment_form = CommentResponseForm(instance=othershoes.response)
-
     if request.method == 'POST':
-        comment_form = CommentResponseForm(request.POST, instance=othershoes.response)
-
+        comment_form = CommentForm(request.POST, just_one_form=True)
         if comment_form.is_valid():
+            comment = othershoes.comments.create(
+                message=comment_form.cleaned_data['message'], 
+                user=request.user,
+                instance=instance,
+            )
+
             try:
                 player_game = PlayerGame.objects.get(user=request.user, game=game)
-                player_game.delete()
-
-                response = CommentResponse(answer=True)
-                response.message = comment_form.cleaned_data['message']
-                response.save()
-
-                player_game = PlayerGame(visible=True, completed=True, response=response, game=othershoes, user=request.user)
-                response = player_game.response.commentresponse
-                player_game.save()
-
-                ActivityLogger.log(request.user, request, 'an Other Shoes game', 'updated', '/mission/'+ mission_slug +'/game/othershoes/'+ id +'/'+str(request.user.id), 'othershoes')
             except:
                 response = CommentResponse(answer=True)
                 response.message = comment_form.cleaned_data['message']
@@ -66,7 +57,7 @@ def index(request, mission_slug, id):
                     url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
 
                     if len(url) > 1:
-                        response.attachment.create(
+                        comment.attachment.create(
                             file=None,
                             url=url,
                             type='video',
@@ -75,28 +66,18 @@ def index(request, mission_slug, id):
                         )
 
             if request.FILES.has_key('picture'):
-                response.attachment.create(
+                comment.attachment.create(
                     file=request.FILES.get('picture'),
                     user=request.user,
                     instance=request.user.get_profile().instance,
                 )
 
-            games = mission.games.all()
-            pg = PlayerGame.objects.filter(user=request.user, completed=True)
-            for p in pg:
-                _played.append(p.game)
-            for g in games:
-                if not g in _played and not g == game:
-                    unplayed.append(g)
-
             return HttpResponseRedirect(request.path +'overview')
-
-    other_responses = PlayerGame.objects.all().filter(game=othershoes, completed=True)
+    else:
+        comment_form = CommentForm(just_one_form=True)
 
     tmpl = loader.get_template('games/othershoes/index.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
-        'unplayed': unplayed,
-        'other_responses': other_responses[:5],
         'mission': mission,
         'game': game,
         'othershoes': othershoes,
@@ -106,64 +87,40 @@ def index(request, mission_slug, id):
 
 @login_required
 def comment(request, mission_slug, id, user_id):
-    a = None
-    b = None
-
     mission = Mission.objects.get(slug=mission_slug)
     game = Game.objects.get(id=id)
     othershoes = game.othershoes
     user = User.objects.get(id=user_id)
 
-    player_game = PlayerGame.objects.filter(user=user, game=game)
-    if len(player_game) > 1:
-        for pg in player_game[0:len(player_game)-1]:
-            pg.delete()
-
-    player_game = player_game[0]
-
     if request.method == 'POST':
-        if request.POST.has_key('yt-url'):
-            if request.POST.get('yt-url'):
-                url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
-
-                if len(url) > 1:
-                    a = Attachment(
-                        file=None,
-                        url=url,
-                        type='video',
-                        user=request.user,
-                        instance=request.user.get_profile().instance,
-                    )
-                    a.save()
-        
-        if request.FILES.has_key('picture'):
-            b = Attachment(
-                file=request.FILES.get('picture'),
-                user=request.user,
-                instance=request.user.get_profile().instance,
-            )
-
-            b.save()
-
         form = CommentForm(request.POST)
         if form.is_valid():
-            c = Comment(
+            comment = othershoes.comments.create(
                 message=form.cleaned_data['message'], 
                 user=request.user,
-                instance=request.user.get_profile().instance,
+                instance=instance,
             )
-            c.save()
 
-            if a:
-                c.attachment.add(a)
-                c.save()
+            if request.POST.has_key('yt-url'):
+                if request.POST.get('yt-url'):
+                    url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
 
-            if b:
-                c.attachment.add(b)
-                c.save()
+                    if len(url) > 1:
+                        comment.attachment.create(
+                            file=None,
+                            url=url,
+                            type='video',
+                            user=request.user,
+                            instance=request.user.get_profile().instance,
+                        )
 
-            player_game.comments.add(c)
-            player_game.save()
+            if request.FILES.has_key('picture'):
+                comment.attachment.create(
+                    file=request.FILES.get('picture'),
+                    user=request.user,
+                    instance=request.user.get_profile().instance,
+                )
+
 
             PointsAssigner.assign(request.user, 'comment_created')
             ActivityLogger.log(request.user, request, 'to Other Shoes response', 'added comment', '/mission/'+ mission_slug +'/game/othershoes/'+ id +'/'+ user_id, 'othershoes')
@@ -175,40 +132,20 @@ def comment(request, mission_slug, id, user_id):
 @login_required
 def overview(request, mission_slug, id):
     mission = Mission.objects.get(slug=mission_slug)
-    game = Game.objects.get(id=id)
+    game = get_object_or_404(Game, id=id)
     othershoes = game.othershoes
-    first_time = request.session.has_key('justplayed') and request.session['justplayed'] or False
+    first_time = request.session.get('justplayed') or False
     request.session['justplayed'] = False
 
-    other_responses = PlayerGame.objects.all().filter(game=othershoes, completed=True)
+    if not othershoes.comments.count():
+        return HttpResponseRedirect(reverse('games_othershoes_index', args=[mission_slug, id]))
 
-    responses = []
-    for pg in other_responses:
-        responses.append(pg)
-
-    unplayed = []
-    _played = []
-    games = mission.games.all()
-    pg = PlayerGame.objects.filter(user=request.user, completed=True)
-    for p in pg:
-        _played.append(p.game)
-    for g in games:
-        if not g in _played and not g == game:
-            unplayed.append(g)
-    
-    if len(unplayed):
-        unplayed = unplayed[0]
-
-    if othershoes.response and othershoes.response.commentresponse:
-        response = othershoes.response.commentresponse
-    else:
-        response = None
+    completed_games = PlayerGame.objects.filter(user=request.user, completed=True)
+    unplayed = mission.games.exclude(pk=game.pk).exclude(playergame__in=completed_games)
+    unplayed = unplayed.count() and unplayed[0] or None
     
     tmpl = loader.get_template('games/othershoes/overview.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
-        'other_responses': other_responses[:5],
-        'response': response,
-        'responses': responses,
         'mission': mission,
         'game': game,
         'othershoes': othershoes,

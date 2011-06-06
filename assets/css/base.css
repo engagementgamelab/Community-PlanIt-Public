@@ -248,9 +248,6 @@ hr.space {
   font-size: 10px; }
 .page .normal {
   font-size: 12px; }
-.page .large {
-  font-size: 24px;
-  font-weight: bold; }
 .page .right {
   float: right; }
 .page .left {
@@ -259,8 +256,6 @@ hr.space {
   text-align: left; }
 .page .alignright {
   text-align: right; }
-.page .aligncenter {
-  text-align: center; }
 .page .game-wrapper {
   margin-top: 30px; }
 .page .listless, .page .game-wrapper ul {
@@ -297,15 +292,6 @@ hr.space {
   width: 59%; }
 .page .fourfifth {
   width: 76%; }
-/*Note that 400px here is not terrible because all it's holding is the movie immage*/
-/* TODO: CSS needs to be fixed here, this should have % height*/
-.page .registerleft {
-	float: left;
-	width: 60%;
-	height: 600px; }
-.page .registerright {
-	float: right;
-	margin-right: 40%; }
 .page .half {
   width: 45%;
   margin-right: 5%; }
@@ -364,6 +350,12 @@ hr.space {
   -webkit-border-radius: 5px;
   -o-border-radius: 5px;
   border-radius: 5px; }
+.page .button.green {
+  background-image: -moz-linear-gradient(top, #01d232, #007b25);
+  background-image: -o-linear-gradient(#01d232, #007b25);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #a8d201), color-stop(1, #007b25));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#01d232', EndColorStr='#007b25');
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#01d232', EndColorStr='#007b25')"; }
 .page .button.red {
   background-image: -moz-linear-gradient(top, #d20132, #7b0025);
   background-image: -o-linear-gradient(#d20132, #7b0025);
@@ -1197,34 +1189,47 @@ hr.space {
       .page #main .content #comments .hidden {
         position: absolute;
         opacity: 0; }
-      #attachments {
-          overflow: auto;
-      }
-      #attachments .controls {
-          float: left;
-          clear: left;
-      }
-      #attachments .notification {
-          float: right;
-          clear: right;
-          font-style: italic;
-      }
-      #comments .limited {
-          color: #f00;
-      }
+      .page #main .content #comments #attachments {
+        overflow: auto; }
+      .page #main .content #comments #attachments .notification {
+        float: right;
+        clear: right;
+        font-style: italic; }
+      .page #main .content #comments #comments .limited {
+        color: #f00; }
+      .page #main .content #comments .comments {
+        margin-top: 1em; }
       .page #main .content #comments .comment {
-        margin-bottom: 30px;
-        padding-bottom: 30px; }
-        .page #main .content #comments .comment .fancy {
+        margin-top: 8px;
+        overflow: auto;
+        border: none;
+        border-top: 1px solid #ddd;
+        padding-top: 2px; }
+        .page #main .content #comments .comment .meta span {
           color: #999999;
-          padding: 8px;
-          border-bottom: 3px solid #c5d6f2; }
-          .page #main .content #comments .comment .fancy .posted_date {
-            color: #4c4d4f; }
-      .page #main .content #comments .fancy {
-        margin: 0; }
-      .page #main .content #comments .message {
-        margin-top: 10px; }
+          font-size: .75em;
+          padding-left: 2em;
+          white-space: nowrap; }
+        .page #main .content #comments .comment .button {
+          padding: 2px 4px 2px 4px; }
+        .page #main .content #comments .comment .controls {
+          text-align: right;
+          margin: 0 0 1em 0; }
+          .page #main .content #comments .comment .controls .reply-modal {
+            position: relative;
+            width: 90%; }
+          .page #main .content #comments .comment .controls .reply-modal button {
+            float: right;
+            margin: 2px; }
+        .page #main .content #comments .comment .message {
+          padding: 1em 0 0 0;
+          word-wrap: break-word; }
+        .page #main .content #comments .comment .attachments {
+          margin-top: 1em; }
+        .page #main .content #comments .comment .replies {
+          float: none;
+          clear: both;
+          margin: 1em 0 0 2em; }
       .page #main .content #comments .error {
         background: none;
         border-width: 0px;
@@ -1241,18 +1246,12 @@ hr.space {
         top: -10px;
         right: -10px;
         position: absolute; }
-      .page #main .content #comments .actions {
-        float: right; }
       .page #main .content #comments .expand, .page #main .content #comments .collapse {
         color: #999999;
         font-size: 12px;
         cursor: pointer; }
-      .page #main .content #comments .nested {
-        width: 90%;
-        float: right;
-        display: none; }
-        .page #main .content #comments .nested li.comment {
-          display: list-item; }
+      .page #main .content #comments .nested li.comment {
+        display: list-item; }
       .page #main .content #comments h4 {
         color: #04223e;
         font-size: 120%; }
@@ -1260,18 +1259,14 @@ hr.space {
         margin: 0;
         margin-bottom: 20px; }
       .page #main .content #comments textarea {
-        width: 100%;
-        border-width: 4px;
+        width: 98%;
+        border-width: 1px;
         font-family: sans-serif;
-        color: #04223e; }
-      #comments .counter {
-          float: left;
-          clear: left;
-      }
-      .page #main .content #comments .fine.fancy {
-        position: absolute;
-        top: 55px;
-        right: 12px; }
+        color: #04223e;
+        margin-bottom: 0; }
+      .page #main .content #comments #comments .counter {
+        float: left;
+        clear: left; }
     .page #main .content .columns {
       margin: 0px auto;
       display: inline-block;
@@ -1498,11 +1493,11 @@ hr.space {
     .challenges .content form p label {
       font-style: normal; }
 
-/*#container {
+/*
+#container {
     text-align: center;
 
     nav {
-        // For now
         a, a:visited, a:hover {
             color: #FFF;
         }

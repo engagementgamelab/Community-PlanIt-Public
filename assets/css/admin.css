@@ -1246,7 +1246,7 @@ html, body {
     text-align: center;
 
     nav {
-        // For now
+        /* For now */
         a, a:visited, a:hover {
             color: #FFF;
         }

@@ -295,7 +295,7 @@
         
             // Make sure the content area is never shorter than the sidebar
             if( balancerHeight < sidebarHeight ) {
-                balancer.height( sidebarHeight )
+                balancer.css('minHeight', sidebarHeight);
             }
             
 

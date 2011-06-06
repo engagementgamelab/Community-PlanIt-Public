@@ -276,6 +276,13 @@ hr.space {
         @include border-radius(5px);
     }
 
+   .button.green {
+      background-image: -moz-linear-gradient(top, #01d232, #007b25);
+      background-image: -o-linear-gradient(#01d232, #007b25);
+      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #a8d201), color-stop(1, #007b25));
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#01d232', EndColorStr='#007b25');
+      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#01d232', EndColorStr='#007b25')";
+    }
     .button.red {
       background-image: -moz-linear-gradient(top, #D20132, #7B0025);
       background-image: -o-linear-gradient(#D20132, #7B0025);
@@ -1284,27 +1291,72 @@ hr.space {
                     opacity: 0;
                 }
             
+                #attachments {
+                    overflow: auto;
+                }
+
+                #attachments .notification {
+                    float: right;
+                    clear: right;
+                    font-style: italic;
+                }
+
+                #comments .limited {
+                    color: #f00;
+                }
+
+                .comments {
+                    margin-top: 1em;
+                }
+
                 .comment {
-                    margin-bottom: 30px;
-                    padding-bottom: 30px;
+                    margin-top: 8px;
+                    overflow: auto;
+                    border: none;
+                    border-top: 1px solid #ddd;
+                    padding-top: 2px;
 
-                    .fancy {
+                    .meta span {
                         color: $gray;
-                        padding: 8px;
-                        border-bottom: 3px solid $lightblue;
-
-                        .posted_date {
-                            color: $darkgray;
-                        }
+                        font-size: .75em;
+                        padding-left: 2em;
+                        white-space: nowrap;
                     }
-                }
 
-                .fancy {
-                    margin: 0;
-                }
+                    .button {
+                        padding: 2px 4px 2px 4px;
+                    }
 
-                .message {
-                    margin-top: 10px;
+                    .controls {
+                        text-align: right;
+                        margin: 0 0 1em 0;
+
+                        .reply-modal {
+                            position: relative;
+                            width: 90%;
+                        }
+
+                        .reply-modal button {
+                            float: right;
+                            margin: 2px;
+                        }
+
+                    }
+
+                    .message {
+                        padding: 1em 0 0 0;
+                        word-wrap: break-word;
+                    }
+
+                    .attachments {
+                        margin-top: 1em;
+                    }
+
+                    .replies {
+                        float: none;
+                        clear: both;
+                        margin: 1em 0 0 2em;
+                    }
                 }
 
                 .error {
@@ -1330,10 +1382,6 @@ hr.space {
                     position: absolute;
                 }
 
-                .actions {
-                    float: right;
-                }
-
                 .expand, .collapse {
                     color: $gray;
                     font-size: 12px;
@@ -1341,10 +1389,6 @@ hr.space {
                 }
 
                 .nested {
-                    width: 90%;
-                    float: right;
-                    display: none;
-
                     li.comment {
                         display: list-item;
                     }
@@ -1361,21 +1405,16 @@ hr.space {
                 }
                 
                 textarea {
-                    width: 100%;
-                    height: 70px;
-                    border-width: 4px;
-                    font-size: 18px;
+                    width: 98%;
+                    border-width: 1px;
                     font-family: sans-serif;
                     color: $darkblue;
+                    margin-bottom: 0;
                 }
 
-                .fine.fancy {
-                    position: absolute;
-                    top: 55px;
-                    right: 12px;
-                }
-
-                button {
+                #comments .counter {
+                    float: left;
+                    clear: left;
                 }
             }
 
@@ -1722,11 +1761,11 @@ hr.space {
     }
 }
 
-/*#container {
+/*
+#container {
     text-align: center;
 
     nav {
-        // For now
         a, a:visited, a:hover {
             color: #FFF;
         }

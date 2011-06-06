@@ -5,15 +5,16 @@ from django.contrib.contenttypes.models import ContentType
 
 from web.games.models import Game
 from web.prompts.profile.models import ProfilePrompt
+from web.comments.models import Comment
 from web.responses.comment.models import CommentResponse
 
 class OtherShoes(Game):
     prompt = models.ForeignKey(ProfilePrompt, null=True, blank=True)
-    response = models.ForeignKey(CommentResponse, null=True, blank=True)
 
-#    object_id = models.PositiveIntegerField()
-#    content_type = models.ForeignKey(ContentType)
-#    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    # the discussion captured in 'comments' replaces the mutable
+    # CommentResponse answers, which could be changed, trashing entire
+    # discussions
+    comments = models.ManyToManyField(Comment, blank=True, null=True)
 
     def save(self):
         self.game_type = "othershoes"
@@ -28,8 +29,4 @@ class OtherShoes(Game):
         return "Other Shoes"
 
 class OtherShoesAdmin(admin.ModelAdmin):
-    list_display = ('title', 'prompt', 'response',)
-
-    #def queryset(self, request):
-    #    qs = super(OtherShoesAdmin, self).queryset(request)
-    #    return qs.filter(mission=request.session.get('mission'))
+    list_display = ('title', 'prompt')

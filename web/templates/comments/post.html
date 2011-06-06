@@ -8,12 +8,12 @@
         <div class="controls">
             Include <a id="add-video" href="#add-video" class="button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="button small">Picture</a>
             <div class="add-video modal">
-                <label for="yt-url">YouTube<br><small>(Paste in the URL)</small></label> <textarea id="yt-url" type="text" maxlength="255"></textarea>
+                <label for="yt-url">YouTube Video (paste in the URL):</label> <textarea id="yt-url" type="text" maxlength="255"></textarea>
             </div>
             <input type="hidden" name="yt-url">
             <div class="hidden"></div>
             <div class="add-picture modal">
-                <label for="picture">Add picture to comment</label> <input id="picture" type="file">
+                <label for="picture">Picture:</label> <input id="picture" type="file">
             </div>
         </div>
         <div class="notification"></div>
@@ -23,12 +23,14 @@
     <button class="button right">Add Comment</button>
     <hr class="space">
 </form>
-{%if comments.comments.all%}
-    <ul class="listless comments">
-    {%for comment in comments.comments.all reversed%}
-        {%include "comments/comment.html"%}
-    {%endfor%}
-    </ul>
-{%else%}
-    No comments found.
+{% if not comment_form.just_one_form %}
+    {%if comments.comments.all %}
+        <ul class="listless comments">
+        {%for comment in comments.comments.all reversed%}
+            {%include "comments/comment.html"%}
+        {%endfor%}
+        </ul>
+    {% else%}
+        No comments found.
+    {%endif%}
 {%endif%}

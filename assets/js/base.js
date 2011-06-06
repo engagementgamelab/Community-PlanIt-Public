@@ -3,11 +3,11 @@ jQuery(function($) {
     // Ensure "buttons" work 
     $(".button").live("click", function(evt) {
         var button = $(this);
-        if(button.is(".submit") || button.is("button")) {
+        if(button.is(".submit") || button.is("button[type=submit]")) {
             button.closest("form").submit();
             button.attr("disabled", "disabled");
         }
-        else if(button.is(".none")) {
+        else if(button.is(".none") || button.is("button[type=reset]")) {
             return false;
         }
         else {
@@ -15,18 +15,22 @@ jQuery(function($) {
         }
     });
     
+    var reply = $('.cancel').bind('click', function(evt) {
+        $(this).parents('.controls').find('.reply-modal').slideUp();
+        $(this).parents('.controls').find('.reply').show();
+        return false;
+    });
+
     // Post reply modal
     var reply = $('.reply').bind('click', function(evt) {
         evt.preventDefault();
 
-        $(this).parents('.fancy').find('.reply-modal').dialog({
-            title: 'Comment reply',
-            modal: true
-        });
+        $(this).parents('.controls').find('.reply-modal').slideDown();
+        $(this).hide();
 
         return false;
     }).delegate('form', 'submit', function() {
-      // what goes in hurr?
+        $(this).slideUp();
     });
 
     // Comment fancybox
@@ -83,17 +87,6 @@ jQuery(function($) {
         comment_form.find('.counter').removeClass('limited');
     }).attr('maxlength', '1000').change();
 
-    var comments = $('#comments');
-    // Hide nested comments initially
-    comments.find(".nested").children().hide();
-    comments.delegate(".expand", "click", function() {
-        $(this).removeClass("expand").addClass("collapse").html("<span>[-]</span> Collapse Replies").parent().children(".nested").show().children("li").show();
-    });
-
-    comments.delegate(".collapse", "click", function() {
-        $(this).removeClass("collapse").addClass("expand").html("<span>[+]</span> Expand Replies").parent().children(".nested").hide().children("li").hide();
-    });
-    
     // Notifications code
     if (window.webkitNotifications) {
         if (window.webkitNotifications.checkPermission() == 0) { // 0 is PERMISSION_ALLOWED

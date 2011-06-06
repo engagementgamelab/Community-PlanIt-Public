@@ -1,6 +1,10 @@
 from django import forms
 
 class CommentForm(forms.Form):
+    # sometimes we don't want to show the entire discussion
+    # before the user has contributed
+    just_one_form = False
+
     message = forms.CharField(
         max_length=1000,
         widget=forms.Textarea(
@@ -15,6 +19,12 @@ class CommentForm(forms.Form):
             ' characters left)</div>'
         )
     )
+
+    def __init__(self, *args, **kwargs):
+        if 'just_one_form' in kwargs:
+            self.just_one_form = True
+            del kwargs['just_one_form']
+        super(CommentForm, self).__init__(*args, **kwargs)
 
     def clean(self):
         message = self.cleaned_data.get('message')
