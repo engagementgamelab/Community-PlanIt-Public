@@ -319,9 +319,9 @@ hr.space {
   width: 195px; }
 .page label {
   display: block;
-  font-weight: bold;
-  font-size: 14px;
-  color: #4c4d4f;
+  font-weight: normal;
+  font-size: 1em;
+  color: black;
   vertical-align: top;
   line-height: 2; }
 .page .game-wrapper label {

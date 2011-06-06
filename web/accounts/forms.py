@@ -4,6 +4,8 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate
 from web.instances.models import Instance
 from web.accounts.models import UserProfile
+from web.accounts.models import UserProfileEducation
+from web.accounts.models import UserProfileIncomes
 
 class RegisterForm(forms.Form):
     firstName = forms.CharField(required=True, max_length=30, label=_("First Name"))
@@ -80,24 +82,46 @@ class ChangePasswordForm(forms.Form):
 
         return confirm
 
+class AvatarUpdateForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ( 'avatar', )
+
 class UserProfileForm(forms.ModelForm):
     # Required fields
     first_name = forms.CharField(max_length=30, required=True,)
     last_name = forms.CharField(max_length=30, required=True,)
-    email = forms.CharField(max_length=255, required=True, help_text='<em class="fine">(Private)</em>',)
+    email = forms.CharField(max_length=255, required=True, help_text="(Private)",)
 
     # Non-required fields
-    gender = forms.ChoiceField(required=False, help_text='<em class="fine">(Private)</em>', choices=(('male','Male'), ('female', 'Female'), ('other', 'Other')))
+    gender = forms.ChoiceField(required=False, help_text='(Private)', choices=(('', '------'), ('male','Male'), ('female', 'Female'), ('other', 'Other')))
     race = forms.ChoiceField(required=False, help_text='<em class="fine">(Private)</em>', choices=(
-        ('','---'), ('asian','Asian'), ('american indian or alaska native','American Indian or Alaska Native'), ('black or african american', 'Black or African American'),
+        ('','------'), ('asian','Asian'), ('american indian or alaska native','American Indian or Alaska Native'), ('black or african american', 'Black or African American'),
         ('hispanic or latino or spanish','Hispanic, Latino, or Spanish'), ('pacific islander or native hawaiian', 'Pacific Islander or Native Hawaiian'), ('white','White'),
         ('multiracial', 'Multiracial'), ('other','Other')))
-    stake = forms.ChoiceField(required=False, choices=(('','---'), ('live','Live'), ('work','Work'), ('play', 'Play')))
-    birth_year = forms.CharField(max_length=30, label='Age', help_text='<em class="fine">(Private)</em>',required=True)
-    phone_number = forms.CharField(max_length=30, help_text='<em class="fine">(Private)</em>',required=False)
+    stake = forms.ChoiceField(required=False, choices=(('','------'), ('live','Live'), ('work','Work'), ('play', 'Play')))
+    birth_year = forms.CharField(max_length=30, label='Age', help_text='Private',required=False)
+    phone_number = forms.CharField(max_length=30, help_text='Private',required=False)
     myInstance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Community'))
+    affiliations = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}), 
+                                   help_text = "Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club).")
+    c1 = []
+    c1.append((0, '------'))
+    for x in UserProfileEducation.objects.all().order_by("pos"):
+        c1.append((x.id, x.eduLevel))
+    education = forms.ChoiceField(required=False, choices=c1)
+    
+    c2 = []
+    c2.append((0, '------'))
+    for x in UserProfileIncomes.objects.all().order_by("pos"):
+        c2.append((x.id, x.income))
+    income = forms.ChoiceField(required=False, choices=c2)
+    
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        return email
     
     class Meta:
         model = UserProfile
         #Adding to Meta.fields will display default settings in the browser and link it to the correct model object. 
-        fields = ( 'avatar', 'email', 'first_name', 'last_name', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'myInstance', 'affiliations', )
+        fields = ( 'email', 'first_name', 'last_name', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'myInstance', 'affiliations', )

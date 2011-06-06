@@ -2,47 +2,133 @@
 
 {%block section%}accounts{%endblock%}
 {%block title%}Edit Profile{%endblock%}
-
+{%block page_title%}Update Your Profile{%endblock%}
 {%block main%}
     <div class="profile-wrapper">
     {%if profile_form.errors %}
         Form errors
     {%endif%}
-        <div class="third">
-            <h2>Avatar preview</h2>
+        <!-- TODO CSS: make the avatar text appear below
+            the image without having to resort to style="width:100%" as this
+            is a bad anoying hack. -->
+        <div class="half">
+            <label>Your current avatar</label>
             {%if user.get_profile.avatar%}
-                <img class="avatar-edit" src="{{MEDIA_URL}}{{user.get_profile.avatar}}">
+                <img class="avatar-edit" src="{{MEDIA_URL}}{{user.get_profile.avatar}}" style="width:100%;">
             {%else%}
-                <img class="avatar-edit" src="{{MEDIA_URL}}img/avatar-blank.jpg">
+                <img class="avatar-edit" src="{{MEDIA_URL}}img/avatar-blank.jpg" style="width:100%;">
             {%endif%}
-            <br>
-        </div>
-        <div class="twothird">
-            <h2>Edit Profile</h2>
+            
+            <form enctype="multipart/form-data" action="" method="post">
+                <input type="hidden" name="form" value="updated_profile">
+                {%csrf_token%}
+                {{avatar_form.as_p}}
 
+                <!-- <div class="button submit"><span>Update Profile</span></div> -->
+            </form>
+            <br>
             <form action="" method="post">
                 <input type="hidden" name="form" value="change_password">
                 {%csrf_token%}
                 {%if change_password_form.errors%}
                     <span class="error">Passwords must match</span>
                 {%endif%}
-                <div>Password</div>
+                <div><label>Password</label></div>
                 {{change_password_form.password}}
-                <div>Confirm</div>
+                <div><label>Confirm<label></label></div>
                 {{change_password_form.confirm}}
                 <br>
                 <div class="button submit"><span>Change Password</span></div>
                 <hr class="space">
             </form>
 
+        </div>
+        
+        <div class="half last">
+            
             <div class="twothird"></div>
-
             <form enctype="multipart/form-data" action="" method="post">
                 <input type="hidden" name="form" value="updated_profile">
                 {%csrf_token%}
-                {{profile_form.as_p}}
-
+                <div class="fieldWrapper">
+                    {{ profile_form.email.errors }}
+                    <label for="id_email">Email:*</label>
+                    {{ profile_form.email }}
+                    <p style="font-size: .75em; font-style:italic;">{{ profile_form.affiliations.help_text }}</p>
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.first_name.errors }}
+                    <label for="id_first_name">First Name:*</label>
+                    {{ profile_form.first_name }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.last_name.errors }}
+                    <label for="id_last_name">Last Name:*</label>
+                    {{ profile_form.last_name }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.stake.errors }}
+                    <label for="id_stake">stake</label>
+                    {{ profile_form.stake }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.affiliations.errors }}
+                    <label for="id_affiliations">Affiliations:</label>
+                    {{ profile_form.affiliations }}
+                   <p style="font-size: .75em; font-style:italic;">{{ profile_form.affiliations.help_text }}</p>
+                </div>
+                <br>
+                <br>
+                <hr>
+                <div>
+                    <label style="font-size: 1em;">
+                        The information below will be used by administrators only to better understand Community
+                        PlanIt users. Other users cannot see this information. Please see our
+                        <a href="/privacy">privacy policy</a>.
+                    </label>
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.gender.errors }}
+                    <label for="id_gender">Gender:</label>
+                    {{ profile_form.gender }}
+                    <p style="font-size: .75em; font-style:italic;">{{ profile_form.gender.help_text }}</p>
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.birth_year.errors }}
+                    <label for="id_birth_year">Age:</label>
+                    {{ profile_form.birth_year }}
+                    <p style="font-size: .75em; font-style:italic;">{{ profile_form.birth_year.help_text }}</p>
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.race.errors }}
+                    <label for="id_race">Race/Ethnicity:</label>
+                    {{ profile_form.race }}
+                </div>
+                
+                {% if user.is_superuser == True or user.is_staff == True %}
+                    <div class="fieldWrapper">
+                        {{ profile_form.myInstance.errors }}
+                        <label for="id_myInstance">Community</label>
+                        {{ profile_form.myInstance }}
+                    </div>
+                {%endif%}
+                
+                <div class="fieldWrapper">
+                    {{ profile_form.education.errors }}
+                    <label for="id_education">Educational attainment:</label>
+                    {{ profile_form.education }}
+                </div>
+                
+                <div class="fieldWrapper">
+                    {{ profile_form.incomes.errors }}
+                    <label for="id_incomes">Household income:</label>
+                    {{ profile_form.income }}
+                </div>
+                
                 <div class="button submit"><span>Update Profile</span></div>
+                <div>
+                    <label style="font-size: .75em; font-style:italic;">* denotes a required field</label>
+                </div>
             </form>
         </div>
         <div style="clear:both;"></div>
