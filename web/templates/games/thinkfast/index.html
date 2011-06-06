@@ -23,12 +23,10 @@
             <div class="game-wrapper">
                 <span class="bigq highlight">Q:</span><h2> {{thinkfast.prompt.message}}</h2>
                 {%if thinkfast.prompt.attachments%}
-                {%for attachment in thinkfast.prompt.attachments.all%}
-                <h3 class="right">
-                    Click to see the <a target="blank" class="orange" href="{{attachment.file.url}}">attached media file</a>.
-                </h3>    
-                {%endfor%}
-                <hr class="space">
+                    {%for file, x, y in fileList%}
+                        <iframe src="{{MEDIA_URL}}/{{file}}" width="{{x}}" height="{{y}}" frameborder="0"></iframe>
+                    {%endfor%}
+                    <hr class="space">
                 {%endif%}
                 <form action="" method="POST">
                     {#for choice in thinkfast.response.choices.all#}

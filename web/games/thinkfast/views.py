@@ -1,4 +1,4 @@
-import web, re
+import web, re, Image
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext, loader
 from django.contrib.auth.models import User
@@ -14,6 +14,7 @@ from web.comments.models import Comment
 from web.comments.forms import CommentForm
 from web.reports.actions import PointsAssigner, ActivityLogger
 from web.processors import instance_processor as ip
+from settings import MEDIA_URL, MEDIA_ROOT
 
 @login_required
 def index(request, mission_slug, id):
@@ -78,7 +79,18 @@ def index(request, mission_slug, id):
             return HttpResponseRedirect(request.path +'overview')
 
     other_responses = PlayerGame.objects.all().filter(game=thinkfast, completed=True)
-
+    
+    fileList = []
+    for x in thinkfast.prompt.attachments.all():
+        fileName = "%s%s" % (MEDIA_ROOT, x.file)
+        #Manipulate this to get the image down to a 2:3aspect ratio so
+        #200:300
+        img = Image.open(fileName)
+        x1 = img.size[0]
+        y1 = img.size[1]
+        fileList.append((x.file, x1, y1))
+        
+    
     tmpl = loader.get_template('games/thinkfast/index.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'unplayed': unplayed,
@@ -88,6 +100,7 @@ def index(request, mission_slug, id):
         'thinkfast': thinkfast,
         'choices_form': choices_form,
         'player_game': player_game,
+        'fileList': fileList,
     }, [ip])))
 
 @login_required
