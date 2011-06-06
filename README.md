@@ -11,6 +11,12 @@ is_staff in the auth_users table denote admin. Figure out the is_staff vs. is_su
 # Database changes to a non-deployed system #
 the prompts_profileprompt.avatar column now allows nulls. ~BMH
 
+alter table accounts_userprofile add foreign key(income_id) references accounts_userprofileincomes(id);
+alter table accounts_userprofile add foreign key(education_id) references accounts_userprofileeducation(id);
+
+insert into accounts_userprofileincomes (income, pos) values ("$0 to $25,000", 1), ("$25,000 to $50,000", 2), ("$50,000 to $75,000", 3), ("$75,000 to $100,000", 4), ("$100,000 or more", 5);
+insert into accounts_userprofileeducation (eduLevel, pos) values ("High School or Less", 1), ("Some College", 2), ("Associate's Degree", 3), ("Bachelor's Degree", 4), ("Master's Degree", 5), ("Doctoral Degree", 6);
+
 # Overview #
 Community PlanIt is written using Python(Django) and JavaScript(jQuery).  It has evolved over the course of the half year development
 which has led to some naming inconsistencies which will be noticable immediately.  For example, instances are 1:1 to neighborhoods in
