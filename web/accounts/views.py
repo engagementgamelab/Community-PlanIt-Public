@@ -109,6 +109,7 @@ def edit(request):
     
     change_password_form = ChangePasswordForm()
     profile_form = UserProfileForm(instance=profile, initial={ 'myInstance': profile.instance.id if profile.instance != None else 0})
+    avatar_form = AvatarUpdateForm(instance=profile)
     if request.method == 'POST':
         # Change password form moved to user profile
         if request.POST['form'] == 'change_password':
@@ -124,14 +125,34 @@ def edit(request):
             # User profile form updated, not change password
             profile_form = UserProfileForm(data=request.POST, files=request.FILES, instance=profile)
             if profile_form.is_valid():
-                if (request.POST['myInstance'] == 0 or request.POST['myInstance'] == ''): #reset to the None object
+                #Changing instances
+                if (request.POST.get('myInstance', None) == None or request.POST['myInstance'] == ''): #reset to the None object
                     profile.instance = None
                 else:
-                    ins = Instance.objects.filter(id=request.POST['myInstance'])
+                    ins = Instance.objects.filter(id=profile_form.cleaned_data['myInstance'])
                     if (len(ins) > 0):
                         profile.instance = ins[0]
                     else:
                         profile.instance = None
+                #changing birth year (needed because of the int)
+                #This fails with the birth_year being blank and python can not convert
+                #a '' to an int
+                if (request.POST.get('birth_year', None) == None or request.POST.get('birth_year', None) == ''):
+                    profile.birth_year = None
+                else:
+                    profile.birth_year = int(profile_form.cleaned_data['birth_year'])
+                
+                #updating email address
+                #TODO: Either make email a required field in the database or allow the user to not have an
+                # email. (models.py located at web/accounts/models.py)
+                if (request.POST.get('email', None) == None or request.POST.get('email', None) == ''):
+                    profile.email = None
+                else:
+                    #TODO: FIX THIS!!!!! THIS IS HORRIBLE!!!!!!! -BMH
+                    profile.email = profile_form.cleaned_data['email']
+                    profile.user.email = profile_form.cleaned_data['email']
+                    profile.user.save()
+                    
                 profile.save()
                 profile_form.save()
                 ActivityLogger.log(request.user, request, 'account profile', 'updated', '/player/'+ str(request.user.id), 'profile')
@@ -152,7 +173,9 @@ def edit(request):
     tmpl = loader.get_template('accounts/profile_edit.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'profile_form': profile_form,
+        'avatar_form': avatar_form,
         'change_password_form': change_password_form,
+        'user': request.user,
     },[ip])))
 
 @login_required

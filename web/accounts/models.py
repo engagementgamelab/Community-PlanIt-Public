@@ -11,6 +11,15 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
 
+class UserProfileIncomes(models.Model):
+    income = models.CharField(max_length=128, blank=False, null=False)
+    pos = models.IntegerField(blank=False, null=False)
+    
+    
+class UserProfileEducation(models.Model):
+    eduLevel = models.CharField(max_length=128)
+    pos = models.IntegerField(blank=False, null=False)
+
 class UserProfile(models.Model):
     accepted_term = models.BooleanField(blank=True)
     accepted_research = models.BooleanField(blank=True)
@@ -21,7 +30,7 @@ class UserProfile(models.Model):
     location_tracking = models.BooleanField(default=False)
     flagged = models.IntegerField(default=0)
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
-    affiliations = models.TextField(blank=True, null=True, help_text = '<p class="fine">Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club).</p>')
+    affiliations = models.TextField(blank=True, null=True)
     is_of_age = models.BooleanField(default=False)
 
     # Additional profile fields
@@ -32,6 +41,8 @@ class UserProfile(models.Model):
     gender = models.CharField(max_length=64, blank=True, null=True)
     race = models.CharField(max_length=125, blank=True, null=True)
     stake = models.CharField(max_length=125, blank=True, null=True)
+    education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
+    income = models.ForeignKey(UserProfileIncomes, blank=True, null=True, default=None)
 
     # Internal fields
     generated_password = models.CharField(max_length=260, editable=False)
