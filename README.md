@@ -3,12 +3,36 @@ Community Planit Documentation
 
 __A game about your neighborhood.__
 
+# Instructions on how to deploy #
+Change either config/development.ini or config/production.ini:
+MEDIA_ROOT= /home/ben/git/Community-PlanIt/assets
+
+; email settings
+[email]
+EMAIL_HOST= dev.communityplanit.org
+EMAIL_PORT= 25
+EMAIL_HOST_USER=
+EMAIL_HOST_PASSWORD=
+EMAIL_USE_TLS= false
+
+from web/settings.py
+change: config.read('../config/development.ini')
+to config.read('../config/production.ini') on production
+
+make sure that:
+MEDIA_ROOT= /var/www/cpi/assets/
+
+make sure that each line in "Datbaase changes to a deployed system" are follows
+
+ 
+
+
 # Notes #
 Things marked with a TODO need to be done. This is also the section for messages to fix or are strange.
 
 is_staff in the auth_users table denote admin. Figure out the is_staff vs. is_superuser denotes. Can either be eleminated? -BMH
 
-# Database changes to a non-deployed system #
+# Database changes to a deployed system #
 the prompts_profileprompt.avatar column now allows nulls. ~BMH
 
 alter table accounts_userprofile add foreign key(income_id) references accounts_userprofileincomes(id);
