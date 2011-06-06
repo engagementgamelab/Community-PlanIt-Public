@@ -86,7 +86,7 @@
     $(function () {
         var globalData = [];
         var i = 0;
-        {%if total_responses == 0 %}
+        {%if total_coins == 0 %}
             {%for wrapper in issue_wrapper%}
                 globalData[i] = { label: "{{ wrapper.issue.message }}", data: 1 }
                 i++;
@@ -99,7 +99,7 @@
         {%endif%}
         
         var userData = [];
-        var i = 0;
+        i = 0;
         {%if total_playerCoins == 0 %}
             {%for wrapper in issue_wrapper%}
                 userData[i] = { label: "{{ wrapper.issue.message }}", data: 1 }
