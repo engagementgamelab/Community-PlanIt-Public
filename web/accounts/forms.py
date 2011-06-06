@@ -82,11 +82,6 @@ class ChangePasswordForm(forms.Form):
 
         return confirm
 
-class AvatarUpdateForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ( 'avatar', )
-
 class UserProfileForm(forms.ModelForm):
     # Required fields
     first_name = forms.CharField(max_length=30, required=True,)
@@ -116,6 +111,8 @@ class UserProfileForm(forms.ModelForm):
     for x in UserProfileIncomes.objects.all().order_by("pos"):
         c2.append((x.id, x.income))
     income = forms.ChoiceField(required=False, choices=c2)
+    
+    avatar = forms.ImageField(required=False)
     
     def clean_email(self):
         email = self.cleaned_data['email']

@@ -109,7 +109,6 @@ def edit(request):
     
     change_password_form = ChangePasswordForm()
     profile_form = UserProfileForm(instance=profile, initial={ 'myInstance': profile.instance.id if profile.instance != None else 0})
-    avatar_form = AvatarUpdateForm(instance=profile)
     if request.method == 'POST':
         # Change password form moved to user profile
         if request.POST['form'] == 'change_password':
@@ -152,7 +151,10 @@ def edit(request):
                     profile.email = profile_form.cleaned_data['email']
                     profile.user.email = profile_form.cleaned_data['email']
                     profile.user.save()
-                    
+                
+                if request.FILES != "":
+                    profile.avatar = request.FILES['avatar']
+                
                 profile.save()
                 profile_form.save()
                 ActivityLogger.log(request.user, request, 'account profile', 'updated', '/player/'+ str(request.user.id), 'profile')
@@ -173,7 +175,6 @@ def edit(request):
     tmpl = loader.get_template('accounts/profile_edit.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'profile_form': profile_form,
-        'avatar_form': avatar_form,
         'change_password_form': change_password_form,
         'user': request.user,
     },[ip])))
