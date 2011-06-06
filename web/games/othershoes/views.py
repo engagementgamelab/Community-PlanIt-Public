@@ -47,7 +47,8 @@ def index(request, mission_slug, id):
                 response.save()
                 player_game = PlayerGame(visible=True, completed=True, response=response, game=othershoes, user=request.user)
                 player_game.save()
-                ActivityLogger.log(request.user, request, 'an Other Shoes game', 'completed', '/mission/'+ mission_slug +'/game/othershoes/'+ id +'/'+str(request.user.id), 'othershoes')
+                log_url = reverse('games_othershoes_overview', args=[mission_slug, id]) + '#comment-' + str(comment.pk)
+                ActivityLogger.log(request.user, request, 'an Other Shoes game', 'completed', log_url, 'othershoes')
                 PointsAssigner.assign(request.user, 'othershoes_completed')
 
                 request.session['justplayed'] = True
@@ -87,7 +88,12 @@ def index(request, mission_slug, id):
 
 @login_required
 def comment(request, mission_slug, id, user_id):
+    instance = request.user.get_profile().instance
     mission = Mission.objects.get(slug=mission_slug)
+
+    if instance.is_expired() or mission.is_expired():
+        return HttpResponseRedirect('/mission/'+ mission_slug +'/game/othershoes/'+ id +'/overview/')
+
     game = Game.objects.get(id=id)
     othershoes = game.othershoes
     user = User.objects.get(id=user_id)
@@ -123,11 +129,12 @@ def comment(request, mission_slug, id, user_id):
 
 
             PointsAssigner.assign(request.user, 'comment_created')
-            ActivityLogger.log(request.user, request, 'to Other Shoes response', 'added comment', '/mission/'+ mission_slug +'/game/othershoes/'+ id +'/'+ user_id, 'othershoes')
+            log_url = reverse('games_othershoes_overview', args=[mission_slug, id]) + '#comment-' + str(comment.pk)
+            ActivityLogger.log(request.user, request, 'to Other Shoes response', 'added comment', log_url, 'othershoes')
         else:
             return HttpResponseRedirect('/mission/'+ mission_slug +'/game/othershoes/'+ id +'/'+ user_id +'?error=true')
 
-    return HttpResponseRedirect('/mission/'+ mission_slug +'/game/othershoes/'+ id +'/'+ user_id)
+    return HttpResponseRedirect(reverse('games_othershoes_index', args=[mission_slug, id]))
 
 @login_required
 def overview(request, mission_slug, id):
@@ -137,7 +144,7 @@ def overview(request, mission_slug, id):
     first_time = request.session.get('justplayed') or False
     request.session['justplayed'] = False
 
-    if not othershoes.comments.count():
+    if not othershoes.comments.filter(user=request.user).count():
         return HttpResponseRedirect(reverse('games_othershoes_index', args=[mission_slug, id]))
 
     completed_games = PlayerGame.objects.filter(user=request.user, completed=True)
@@ -151,28 +158,4 @@ def overview(request, mission_slug, id):
         'othershoes': othershoes,
         'unplayed': unplayed,
         'first_time': first_time,
-    }, [ip])))
-
-@login_required
-def response(request, mission_slug, id, user_id):
-    mission = Mission.objects.get(slug=mission_slug)
-    game = Game.objects.get(id=id)
-    othershoes = game.othershoes
-    user = User.objects.get(id=user_id)
-
-    player_game = PlayerGame.objects.get(user=user, game=game)
-
-    other_responses = PlayerGame.objects.all().filter(game=othershoes, completed=True)
-
-    tmpl = loader.get_template('games/othershoes/response.html')
-    return HttpResponse(tmpl.render(RequestContext(request, {
-        'other_responses': other_responses[:5],
-        'mission': mission,
-        'game': game,
-        'othershoes': othershoes,
-        'user': user,
-        'player_game': player_game,
-        'comments': player_game,
-        'response': player_game.response.commentresponse,
-        'comment_form': CommentForm(),
     }, [ip])))
