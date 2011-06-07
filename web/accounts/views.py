@@ -159,7 +159,7 @@ def edit(request):
                     profile.user.email = profile_form.cleaned_data['email']
                     profile.user.save()
                 
-                if request.FILES != "":
+                if request.FILES.get('avatar', None) != None:
                     profile.avatar = request.FILES['avatar']
                 
                 profile.save()

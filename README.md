@@ -19,7 +19,7 @@ from web/settings.py
 change: config.read('../config/development.ini')
 to config.read('../config/production.ini') on production
 
-make sure that:
+make sure that there is a slash at the end:
 MEDIA_ROOT= /var/www/cpi/assets/
 
 make sure that each line in "Datbaase changes to a deployed system" are follows
