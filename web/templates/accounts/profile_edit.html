@@ -19,9 +19,9 @@
                 <img class="avatar-edit" src="{{MEDIA_URL}}img/avatar-blank.jpg" style="width:100%;">
             {%endif%}
             
-            <br>
             <form action="" method="post">
                 <input type="hidden" name="form" value="change_password">
+                <label>Change Password:</label>
                 {%csrf_token%}
                 {%if change_password_form.errors%}
                     <span class="error">Passwords must match</span>

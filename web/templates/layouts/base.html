@@ -129,7 +129,7 @@
                        <a class="neigborhood" href="/neighborhood/{{instance.slug}}">{{instance.region}} has not started yet</a>
                     {%else%}
                         {%if user.is_authenticated and not instance.is_notstarted%}
-                            <!-- TODO: CSS make the Update Profile in one line -->
+                            <!-- TODO CSS: make the Update Profile in one line -->
                             <div class="third">
                                 {%if user.get_profile.avatar%}
                                     <img class="avatar-large" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}">
