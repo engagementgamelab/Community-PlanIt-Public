@@ -117,6 +117,15 @@ def edit(request):
     change_password_form = ChangePasswordForm()
     profile_form = UserProfileForm(instance=profile, initial={ 'myInstance': profile.instance.id if profile.instance != None else 0})
     if request.method == 'POST':
+        
+        #files = ""
+        #post = ""
+        #for x in request.FILES:
+        #    files = "%s%s: %s\n" % (files, x, request.FILES[x])
+        #for x in request.POST: 
+        #    post = "%s%s: %s\n" % (post, x, request.POST[x])
+        #return HttpResponse("FILES: %s \nPOST: %s \n" % (files, post))
+        
         # Change password form moved to user profile
         if request.POST['form'] == 'change_password':
             change_password_form = ChangePasswordForm(request.POST)
@@ -161,7 +170,6 @@ def edit(request):
                 
                 if request.FILES.get('avatar', None) != None:
                     profile.avatar = request.FILES['avatar']
-                
                 profile.save()
                 profile_form.save()
                 ActivityLogger.log(request.user, request, 'account profile', 'updated', '/player/'+ str(request.user.id), 'profile')

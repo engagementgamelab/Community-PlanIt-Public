@@ -3,14 +3,10 @@ from django.test import TestCase
 from django.contrib.auth.models import User, Group
 from web.accounts.models import UserProfile
 from django.test.client import Client
-
+from PIL import Image
+from settings import MEDIA_ROOT
 # For testing Accounts
 class AccountsTestCase(TestCase):
-
-    TEST_HOST = "127.0.0.1"
-    TEST_PORT = 8080
-    
-    
 
     # Test user registration
     def test_user_registration(self):
@@ -69,12 +65,61 @@ class AccountsTestCase(TestCase):
     def test_register(self):
         c = Client()
         response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
-                                                  "lastName": "new_test", "email": "new_test@localhost.com"})
+                                                  "lastName": "new_test", "email": "testRegister@localhost.com"})
         #status_code 302 denotes a redirect but that the same URI should still be used
         self.assertTrue(response.status_code == 302, "The response status denotes that the user should have been created")
         user = User.objects.filter(email="new_test@localhost.com")
         self.assertTrue(len(user) > 0, "The user was created successfully")
+    
+    def test_login(self):
+        c = Client()
+        response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
+                                                  "lastName": "new_test", "email": "testLogin@localhost.com"})
+        self.assertTrue(response.status_code == 302, "The response status denotes that the user should have been created")
+        response = c.post("/account/login/", {"password": "pass", "email": "testLogin@localhost.com"})
+        self.assertTrue(response.status_code == 200, "Loged in")
+        
+    def test_logout(self):
+        fout = open("/home/ben/djangoOut", "w")
+        c = Client()
+        response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
+                                                  "lastName": "new_test", "email": "testLogout@localhost.com"})
+        self.assertTrue(response.status_code == 302, "The response status denotes that the user should have been created")
+        response = c.post("/account/login/", {"password": "pass", "email": "testLogout@localhost.com"})
+        self.assertTrue(response.status_code == 200, "Loged in")
+        response = c.post("/acount/logout/")
+        fout.write("%s\n" % response.content)
+        self.assertTrue(response.status_code == 200, "Loged out")
+    
+    def test_upload(self):
+        c = Client()
+        fout = open("/home/ben/djangoOut", "w")
+        response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
+                                                  "lastName": "new_test", "email": "testUpload@localhost.com"})
 
+        self.assertTrue(response.status_code == 302, "User Created")
+        
+        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 200, "Loged in")
+        
+        user = User.objects.get(email="testUpload@localhost.com")
+        f = open("/home/ben/Desktop/Viconia.jpg", "r")
+        response = c.post("/account/profile/edit/", {"avatar": f,
+                                                     "user": user, "form": "updated_profile", "email": "testUpload@localhost.com",
+                                                     "first_name": "new_test", "last_name": "new_test"} )
+        self.assertTrue(response.status_code==302, "File uploaded")
+        
+        user = User.objects.get(email="testUpload@localhost.com")
+        profile = user.get_profile()
+        self.assertTrue(profile.avatar != None and profile.avatar != "", "Avatar filename is in the database")
+        
+        try:
+            img = Image.open("%s%s" % (MEDIA_ROOT, profile.avatar))
+        except:
+            self.fail("The image at %s%s can not be found or is an invalid image" % (MEDIA_ROOT, profile.avatar))
+        
+        f.close()
+        fout.close()
     #TODO: it would be nice to test login, logout and change password but this is very difficult since
     #it requires session keys.   
 
@@ -86,6 +131,9 @@ def suite():
              'test_multiple_registrations',
              'test_user_profile',
              'test_register',
+             'test_login',
+             'test_logout',
+             'test_upload'
             ]
 
     return unittest.TestSuite(map(AccountsTestCase, tests))
