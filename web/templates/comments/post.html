@@ -7,18 +7,25 @@
     <div id="attachments">
         <div class="controls">
             Include <a id="add-video" href="#add-video" class="button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="button small">Picture</a>
-            <div class="add-video modal">
-                <label for="yt-url">YouTube Video (paste in the URL):</label> <textarea id="yt-url" type="text" maxlength="255"></textarea>
+        </div>
+        <div class="add-video form">
+            <label for="yt-url">YouTube Video (paste in the URL):</label>
+            <textarea name="yt-url" type="text" maxlength="255"></textarea>
+            <div class="controls">
+                <button class="button small add">add</button>
+                <button type="reset" class="button small reset">remove</button>
             </div>
-            <input type="hidden" name="yt-url">
-            <div class="hidden"></div>
-            <div class="add-picture modal">
-                <label for="picture">Picture:</label> <input id="picture" type="file">
+        </div>
+        <div class="add-picture form">
+            <label for="picture">Picture:</label> <input name="picture" type="file">
+            <div class="controls">
+                <button class="button small add">add</button>
+                <button type="reset" class="button small reset">remove</button>
             </div>
         </div>
         <div class="notification"></div>
     </div>
-    <textarea name="message" class="comment_message" cols="80" rows="6" id="id_message"></textarea>
+    <textarea name="message" class="comment_message" cols="80" rows="6"></textarea>
     {{comment_form.message.help_text|safe}}
     <button class="button right">Add Comment</button>
     <hr class="space">

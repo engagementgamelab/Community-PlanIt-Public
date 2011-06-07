@@ -319,9 +319,9 @@ hr.space {
   width: 195px; }
 .page label {
   display: block;
-  font-weight: normal;
-  font-size: 1em;
-  color: black;
+  font-weight: bold;
+  font-size: 14px;
+  color: #4c4d4f;
   vertical-align: top;
   line-height: 2; }
 .page .game-wrapper label {
@@ -1191,10 +1191,21 @@ hr.space {
         opacity: 0; }
       .page #main .content #comments #attachments {
         overflow: auto; }
-      .page #main .content #comments #attachments .notification {
-        float: right;
-        clear: right;
-        font-style: italic; }
+        .page #main .content #comments #attachments .form {
+          display: none;
+          padding: 8px;
+          margin: 8px;
+          background: #f0f0f0;
+          border-radius: 8px; }
+          .page #main .content #comments #attachments .form label {
+            font-size: .9em;
+            padding: 0; }
+          .page #main .content #comments #attachments .form .controls {
+            text-align: right; }
+        .page #main .content #comments #attachments .notification {
+          float: right;
+          clear: right;
+          font-style: italic; }
       .page #main .content #comments #comments .limited {
         color: #f00; }
       .page #main .content #comments .comments {
@@ -1224,7 +1235,7 @@ hr.space {
         .page #main .content #comments .comment .message {
           padding: 1em 0 0 0;
           word-wrap: break-word; }
-        .page #main .content #comments .comment .attachments {
+        .page #main .content #comments .comment .attachments div {
           margin-top: 1em; }
         .page #main .content #comments .comment .replies {
           float: none;

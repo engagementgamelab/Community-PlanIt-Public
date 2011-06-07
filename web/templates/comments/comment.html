@@ -10,10 +10,14 @@
             <span>{{comment.comments.count}} response{{ comment.comments.count|pluralize }}</span>
             {% endif %}
         </span>
+        <span class="right">
+            <a href="/flag/comment/{{comment.id}}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
+        </span>
     </div>
     <div class="message">{{comment.message|linebreaksbr}}</div>
     <div class="attachments">
     {%for attachment in comment.attachment.all%}
+      <div>
       {%if attachment.type == 'video'%}
         <iframe width="560" height="349" src="http://www.youtube.com/embed/{{attachment.url}}" frameborder="0" allowfullscreen></iframe>
       {%else%}
@@ -21,15 +25,15 @@
           <img src="{{attachment.file.url}}">
         </a>
       {%endif%}
+      </div>
     {%endfor%}
     </div>
     <div class="controls">
         <div class="actions">
             {% if comment.user != user %}
-            <a href="{% url comments_like comment.id %}" class="small button green">like</a>
+            <a href="{% url comments_like comment.id %}" title="click to say you like this"><img src="{{MEDIA_URL}}img/icons/up-small.png" alt="like"/></a>
             {% endif %}
-            <a href="/flag/comment/{{comment.id}}" class="small button red">flag</a>
-            <a class="button small reply">reply</a>
+            <a class="reply" href="#reply-{{comment.id}}" title="click to reply"><img src="{{MEDIA_URL}}img/icons/quote.png" alt="reply"/></a>
         </div>
 
         <div class="reply-modal">
