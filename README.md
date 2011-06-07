@@ -19,7 +19,7 @@ from web/settings.py
 change: config.read('../config/development.ini')
 to config.read('../config/production.ini') on production
 
-make sure that:
+make sure that there is a slash at the end:
 MEDIA_ROOT= /var/www/cpi/assets/
 
 make sure that each line in "Datbaase changes to a deployed system" are follows
@@ -31,6 +31,10 @@ make sure that each line in "Datbaase changes to a deployed system" are follows
 Things marked with a TODO need to be done. This is also the section for messages to fix or are strange.
 
 is_staff in the auth_users table denote admin. Figure out the is_staff vs. is_superuser denotes. Can either be eleminated? -BMH
+
+To use the fixtures django goodie place a folder called fixtures in the application then create a file called initial_data.yaml or
+initial_data.xml, or initial_data.json. I did yaml because it seemed really easy. Make sure to install python-yaml (in ubuntu it's
+apt-get install python-yaml). To test in a python shell just import yaml to make sure you have it installed correctly. -BMH
 
 # Database changes to a deployed system #
 the prompts_profileprompt.avatar column now allows nulls. ~BMH

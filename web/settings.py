@@ -151,3 +151,8 @@ GMAP_DEFAULT = [42.355241376822725,-71.06010156250015]
 # Default points/coins
 DEFAULT_POINTS = 10
 DEFAULT_COINS = 0
+
+SERIALIZATION_MODULES = {
+    'yaml': "django.core.serializers.pyyaml"
+
+} 

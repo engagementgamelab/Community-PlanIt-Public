@@ -1,0 +1,65 @@
+-   model: accounts.userprofileeducation
+    pk: 1
+    fields:
+        eduLevel: High School or Less
+        pos: 1
+         
+-   model: accounts.userprofileeducation
+    pk: 2
+    fields:
+        eduLevel: Some College
+        pos: 2
+
+-   model: accounts.userprofileeducation
+    pk: 3
+    fields:
+        eduLevel: Associate's Degree
+        pos: 3
+
+-   model: accounts.userprofileeducation
+    pk: 4
+    fields:
+        eduLevel: Bachelor's Degree
+        pos: 4
+
+-   model: accounts.userprofileeducation
+    pk: 5
+    fields:
+        eduLevel: Master's Degree
+        pos: 5
+
+-   model: accounts.userprofileeducation
+    pk: 6
+    fields:
+        eduLevel: Doctoral Degree
+        pos: 6
+
+-   model: accounts.userprofileincomes
+    pk: 1
+    fields:
+        income: $0 to $25,000
+        pos: 1
+         
+-   model: accounts.userprofileincomes
+    pk: 2
+    fields:
+        income: $25,000 to $50,000
+        pos: 2
+
+-   model: accounts.userprofileincomes
+    pk: 3
+    fields:
+        income: $50,000 to $75,000
+        pos: 3
+
+-   model: accounts.userprofileincomes
+    pk: 4
+    fields:
+        income: $75,000 to $100,000
+        pos: 4
+
+-   model: accounts.userprofileincomes
+    pk: 5
+    fields:
+        income: $100,000 or more
+        pos: 5

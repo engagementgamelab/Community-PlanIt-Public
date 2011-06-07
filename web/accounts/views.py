@@ -24,12 +24,19 @@ def validate_and_generate(base_form, request, callback):
         form = base_form(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            firstName = form.cleaned_data['firstName']
-            lastName = form.cleaned_data['lastName']
-            password = form.cleaned_data['password']
-
+            
+            password = None
+            firstName = None
+            lastName = None
+            if request.POST.get('password', None) != None:
+                password = form.cleaned_data['password']
+            else:
+                password = User.objects.make_random_password(length=10)
+            if request.POST.get('firstName', None) != None:
+                firstName = form.cleaned_data['firstName']
+            if request.POST.get('lastName', None) != None:
+                lastName = form.cleaned_data['lastName']
             return callback(firstName, lastName, email, password, form)
-
     return form
 
 def register(request):
@@ -79,7 +86,7 @@ def register(request):
 
 # Forgot your password
 def forgot(request):
-    def valid(email, password, form):
+    def valid(firstName, lasstName, email, password, form):
         # Send a new password and update account
         user = User.objects.get(email=email)
         user.set_password(password)
@@ -152,7 +159,7 @@ def edit(request):
                     profile.user.email = profile_form.cleaned_data['email']
                     profile.user.save()
                 
-                if request.FILES != "":
+                if request.FILES.get('avatar', None) != None:
                     profile.avatar = request.FILES['avatar']
                 
                 profile.save()
