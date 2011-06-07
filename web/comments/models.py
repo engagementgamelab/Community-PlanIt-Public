@@ -9,6 +9,7 @@ class Comment(models.Model):
     message = models.CharField(max_length=1000)
     posted_date = models.DateTimeField(auto_now_add=True)
     flagged = models.IntegerField(default=0)
+    hidden = models.BooleanField(default=False)
 
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
     user = models.ForeignKey(User, editable=False)
@@ -27,7 +28,20 @@ class Comment(models.Model):
         return total
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('message', 'posted_date', 'user',)
+    list_filter = ('posted_date', 'flagged', 'hidden')
+    list_display = ('posted_date', 'user', 'flagged', 'hidden', 'message')
+
+    actions = ['hide_selected', 'reveal_selected']
+
+    def get_actions(self, request):
+        actions = super(CommentAdmin, self).get_actions(request)
+        del actions['delete_selected']
+        return actions
+    
+    def hide_selected(self, request, queryset):
+        queryset.update(hidden=True)
+        count = queryset.count()
+        self.message_user(request, "Hid %d comment%s." % (count, (count == 1 and '' or 's')))
 
     def queryset(self, request):
         qs = super(CommentAdmin, self).queryset(request)
@@ -36,3 +50,9 @@ class CommentAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.instance = request.session.get('admin_instance')
         obj.save()
+
+    def reveal_selected(self, request, queryset):
+        queryset.update(hidden=False)
+        count = queryset.count()
+        self.message_user(request, "Revealed %d comment%s." % (count, (count == 1 and '' or 's')))
+

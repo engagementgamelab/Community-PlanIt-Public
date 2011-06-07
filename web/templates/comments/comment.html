@@ -14,7 +14,13 @@
             <a href="/flag/comment/{{comment.id}}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
         </span>
     </div>
-    <div class="message">{{comment.message|linebreaksbr}}</div>
+    <div class="message">
+        {% if comment.hidden %}
+            <div class="notice">This message has been removed by the moderators.</div>
+        {% else %}
+            {{comment.message|linebreaksbr}}
+        {% endif %}
+    </div>
     <div class="attachments">
     {%for attachment in comment.attachment.all%}
       <div>

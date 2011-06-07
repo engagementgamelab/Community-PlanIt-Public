@@ -1,5 +1,6 @@
 Django==1.3
 PIL
+PyYAML
 django_compressor
 gunicorn
 python-magic
