@@ -32,7 +32,7 @@ def validate_and_generate(base_form, request, callback):
                 password = form.cleaned_data['password']
             else:
                 password = User.objects.make_random_password(length=10)
-            if request.POST.get('fistName', None) != None:
+            if request.POST.get('firstName', None) != None:
                 firstName = form.cleaned_data['firstName']
             if request.POST.get('lastName', None) != None:
                 lastName = form.cleaned_data['lastName']
