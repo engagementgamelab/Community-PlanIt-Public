@@ -1293,12 +1293,29 @@ hr.space {
             
                 #attachments {
                     overflow: auto;
-                }
 
-                #attachments .notification {
-                    float: right;
-                    clear: right;
-                    font-style: italic;
+                    .form {
+                        display: none;
+                        padding: 8px;
+                        margin: 8px;
+                        background: #f0f0f0;
+                        border-radius: 8px;
+
+                        label {
+                            font-size: .9em;
+                            padding: 0;
+                        }
+
+                        .controls {
+                            text-align: right;
+                        }
+                    }
+
+                    .notification {
+                        float: right;
+                        clear: right;
+                        font-style: italic;
+                    }
                 }
 
                 #comments .limited {
@@ -1348,7 +1365,7 @@ hr.space {
                         word-wrap: break-word;
                     }
 
-                    .attachments {
+                    .attachments div {
                         margin-top: 1em;
                     }
 

@@ -286,15 +286,20 @@
                 balancer = $('#balancer'),
                 balancerHeight = balancer.height();
                 
-            $(".ui-notification-container").notification();
-            {%if messages%}
-                {%for message in messages%}
-                    $(".message-{{forloop.counter}}").notification("create", {
-                        duration: 8000,
-                        content: "{{message}}"
-                    });
-                {%endfor%}
-            {%endif%}
+            $(".ui-notification-container").notification({
+                duration: 8000,
+            });
+
+            {%for message in messages%}
+            $(".message-{{forloop.counter}}").notification("create", 
+                {content: "{{message}}"},
+                {
+                {% if "sticky" in message.tags.split %}
+                sticky: true
+                {% endif %}
+                }
+            );
+            {%endfor%}
         
             // Make sure the content area is never shorter than the sidebar
             if( balancerHeight < sidebarHeight ) {

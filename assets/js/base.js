@@ -16,7 +16,7 @@ jQuery(function($) {
     });
     
     var reply = $('.cancel').bind('click', function(evt) {
-        $(this).parents('.controls').find('.reply-modal').slideUp();
+        $(this).parents('.controls').find('.reply-modal').slideUp(200);
         $(this).parents('.controls').find('.reply').show();
         return false;
     });
@@ -25,12 +25,12 @@ jQuery(function($) {
     var reply = $('.reply').bind('click', function(evt) {
         evt.preventDefault();
 
-        $(this).parents('.controls').find('.reply-modal').slideDown();
+        $(this).parents('.controls').find('.reply-modal').slideDown(200);
         $(this).hide();
 
         return false;
     }).delegate('form', 'submit', function() {
-        $(this).slideUp();
+        $(this).slideUp(200);
     });
 
     // Comment fancybox
@@ -40,30 +40,39 @@ jQuery(function($) {
     $('#add-video, #add-picture').bind('click', function(evt) {
         evt.preventDefault();
         evt.stopPropagation();
-        
-        var modalClass = $(this).attr('id'),
-            pic = $("#picture"),
-            yt = $("#yt-url"),
-            hidden = $(".hidden"),
-            _;
 
-        $('.' + modalClass).dialog({
-            modal: true,
-            title: modalClass.replace('-', ' '),
-            buttons: { 
-                "add": function() { 
-                    $("[name=yt-url]").val(yt.val());
-                    _ = pic.clone(true);
-                    pic.after(_);
-                    hidden.empty().append(pic.attr("name", "picture"));
-                    $(this).dialog("close");
-                    $('#attachments .notification').html('Media attached!')
-                }
+        var form = $('#attachments .' + this.id);
+        form.slideToggle(200);
+        var inputs = form.find('textarea, input');
+        if (inputs.val()) {
+            form.find('.reset').text('remove');
+        } else {
+            form.find('.reset').text('cancel');
+        }
+    });
+
+    $('#attachments .form .button').click(function(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        var form = $(this).parents('.form');
+
+        var inputs = form.find('textarea, input');
+        if ($(this).hasClass('reset')) {
+            inputs.val('');
+        }
+        
+        var media = 'No media attached.';
+        $('#attachments input, #attachments textarea').each(function(i) {
+            if ($(this).val()) {
+                media = 'Media attached.';
             }
         });
+        $('#attachments .notification').html(media)
 
+        form.slideUp(200);
     });
-    
+
     // Game Points earned modal
     $('.gamemodal').dialog({
         title: 'Hey Player!',

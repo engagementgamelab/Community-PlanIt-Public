@@ -1,12 +1,14 @@
 import re
 import web 
 
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext, loader
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages
 
 from web.attachments.models import Attachment
 from web.comments.forms import CommentForm
@@ -145,7 +147,10 @@ def overview(request, mission_slug, id):
     request.session['justplayed'] = False
 
     if not othershoes.comments.filter(user=request.user).count():
+        messages.success(request, "You'll have to complete this activity to join its discussion.", extra_tags='sticky')
         return HttpResponseRedirect(reverse('games_othershoes_index', args=[mission_slug, id]))
+
+    other_responses = PlayerGame.objects.all().filter(game=othershoes, completed=True)
 
     completed_games = PlayerGame.objects.filter(user=request.user, completed=True)
     unplayed = mission.games.exclude(pk=game.pk).exclude(playergame__in=completed_games)
@@ -158,4 +163,5 @@ def overview(request, mission_slug, id):
         'othershoes': othershoes,
         'unplayed': unplayed,
         'first_time': first_time,
+        'other_responses': other_responses[:5]
     }, [ip])))
