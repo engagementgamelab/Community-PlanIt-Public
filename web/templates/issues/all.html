@@ -6,7 +6,7 @@
 
 {%block main%}
     <div class="full">
-        <h2>All values</h2>
+        <h2>Community Coins</h2>
         <h3>You currently have <span class="highlight">{{user.get_profile.coins}}</span> coin{%if user.get_profile.coins == 0 or user.get_profile.coins > 1%}s{%endif%} to spend on issues!</h3>
         {%if user.get_profile.coins == 0%}
         <p class="notice">
