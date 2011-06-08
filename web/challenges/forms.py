@@ -23,9 +23,10 @@ class AddChallenge(forms.Form):
     start_date = forms.DateTimeField(label="Challenge Start", help_text='<br>When will your challenge start?')
     end_date = forms.DateTimeField(label="Challenge End", help_text='<br>When will your challenge end? (cannot be the same as start)')
 
-    def clean(self):
+    def clean_end_date(self):
         # Ensure end date is in the present or the future
         if self.cleaned_data.get('end_date') < datetime.datetime.now():
             raise forms.ValidationError("Please enter an end date not in the past.")
-
-        return self.cleaned_data
+        if self.cleaned_data.get('end_date') < self.cleaned_data.get('start_date'):
+            raise forms.ValidationError("Please enter an end date after the start date.")
+        return self.cleaned_data.get('end_date')

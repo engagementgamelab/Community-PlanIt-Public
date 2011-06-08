@@ -6,6 +6,13 @@ from django.test.client import Client
 from PIL import Image
 from settings import MEDIA_ROOT
 # For testing Accounts
+# TODO: Testing the registration of users with an instance is tested under
+# challenges. Creation of an instance via the web and directly using models
+# should be placed under instances. Eventually when instances can be created
+# via the web, those tests to create a user with an instance should also be placed
+# under instances. Yes this leads to code copying but it's the best way to do
+# it since each test requires it's own setup and I am not fond of importing
+# unit tests. -BMH
 class AccountsTestCase(TestCase):
 
     # Test user registration
@@ -120,8 +127,7 @@ class AccountsTestCase(TestCase):
         
         f.close()
         fout.close()
-    #TODO: it would be nice to test login, logout and change password but this is very difficult since
-    #it requires session keys.   
+    
 
 # Organize the Accounts test suite
 def suite():
