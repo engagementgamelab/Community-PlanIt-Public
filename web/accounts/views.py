@@ -270,7 +270,7 @@ def dashboard(request):
     feed.append(request.user)
 
     # Fetch activity log feed for dashboard.
-    log = Activity.objects.filter(instance=instance).filter(user__in=feed).order_by('-date')[:9]
+    log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
 
     return HttpResponse(tmpl.render(RequestContext(request, {
         'activation_form': activation_form,
