@@ -12,12 +12,8 @@
            its coins and voices its priorities for a sustainable future in Lowell.
            Be sure to use the links below to discuss each community value.<br><br>
            You have <span style="font-weight: bold">{{user.get_profile.coins}}</span> 
-           coin{%if user.get_profile.coins == 0 or user.get_profile.coins > 1%}s{%endif%} to spend.</p>
-        {%if user.get_profile.coins == 0%}
-        <p class="notice">
-            Do some <a href="/mission">activities</a>, create or complete a <a href="/challenge">challenge</a>, or comment on your communities activity to earn points and get coins.
-        </p>
-        {%endif%}
+           coin{%if user.get_profile.coins == 0 or user.get_profile.coins > 1%}s{%endif%} to spend.
+       </p>
         <!--
         {%if issue_wrapper|length%}
             <ul class="chartlist">
