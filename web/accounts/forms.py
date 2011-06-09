@@ -54,7 +54,7 @@ class RegisterForm(forms.Form):
             return passwordAgain
     
 class ActivationForm(forms.Form):
-    accepted_term = forms.BooleanField(required=True, label=_("Accepted term"))
+    accepted_term = forms.BooleanField(required=True, label=_("I have have read the <a href=\"/label/\">Terms of Use.</a>"))
     accepted_research = forms.BooleanField(required=True, label=_("Accepted research"))
 
 class ForgotForm(forms.Form):

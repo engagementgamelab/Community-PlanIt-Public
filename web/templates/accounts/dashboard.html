@@ -10,9 +10,20 @@
     {%if not instance.is_notstarted%}
         {%if not user.is_active%}
             <form method="POST" action="">
-                <h4>Please fill out the following information to complete your account activation:</h4>
+                <h4>One last step: Please verify that you have read our Terms of Use and Privacy Policy. 
+                It is our commitment to provide a safe, friendly environment
+                for community members to discuss important issues.</h4>
                 {%csrf_token%}
-                {{activation_form.as_p}}
+                <div class="fieldWrapper">
+                    {{ activation_form.accepted_term.errors }}
+                    <label for="id_accepted_term">I have have read the <a href="/terms/">Terms of Use.</a></label>
+                    {{ activation_form.accepted_term }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ activation_form.accepted_research.errors }}
+                    <label for="id_accepted_research">I have read the <a href="/privacy/">Privacy Policy.</a></label>
+                    {{ activation_form.accepted_research }}
+                </div>
                 <button class="button">Activate my account!</button>
             </form>
         {%else%}
@@ -61,7 +72,7 @@
                 <hr class="space">
                 
                 <p>
-                <a href="/neighborhood/{{user.get_profile.instance.slug}}" class="right fine">View all neighborhood news &rarr;</a>
+                <a href="/neighborhood/{{user.get_profile.instance.slug}}" class="right fine">View more community news &rarr;</a>
                 </p>
             </div>
             
@@ -121,32 +132,6 @@
                     {%else%}
                         No missions created.
                     {%endif%}
-
-                    <hr class="space">
-                    <h3>Challenges</h3>
-                    <div class="dashboardmodule">
-                        <div class="dashboardmoduleinner">
-                            {%if challenges.active or player_challenges%}
-                                {%if challenges.active%}
-                                  {%for c in challenges.active%}
-                                      <div class="date">
-                                          <span class="datenum">{{c.start_date|date:"j"}}</span> {{c.start_date|date:"M"}}
-                                      </div>
-                                      <h4><a href="/challenge/{{c.id}}/">{{c.name}}</a> <span class="fine highlight green">{% get_points for completed challenge %}</span></h4>
-
-                                      <a class="button" href="/challenge/{{c.id}}/accept">Accept</a>
-                                      <hr class="space">
-                                  {%endfor%}
-                                {%else%}
-                                    <h4>There are no new challenges. <a href="/challenge/add">Create a new challenge</a> and get <span class="highlight fine green">{% get_points for created challenge %}</span> points.</h4>
-                                {%endif%}
-                            {%else%}
-                                <h4>No challenges found</h4>
-                            {%endif%}
-                        </div>    
-                        <a href="/challenge" class="right fine">View all Challenges &rarr;</a>
-                        <hr class="space">
-                    </div>
 
                     <hr class="space">
                 </div>

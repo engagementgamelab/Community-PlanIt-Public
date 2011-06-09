@@ -55,11 +55,12 @@ def register(request):
             player.save()
 
             tmpl = loader.get_template('accounts/email/welcome.html')
-            body = tmpl.render(Context({ 'password': password }))
+            body = tmpl.render(Context({ 'password': password,
+                                        'first_name': firstName }))
         except: pass
 
         if send_mail(_('New account created!'), body, settings.NOREPLY_EMAIL, [email]):
-            messages.success(request, _('A temporary password has been sent to your email address.'))
+            messages.success(request, _('Thanks for registering!'))
 
         player = auth.authenticate(username=email, password=password)
         auth.login(request, player)

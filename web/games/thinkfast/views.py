@@ -195,6 +195,16 @@ def overview(request, mission_slug, id):
     if len(unplayed):
         unplayed = unplayed[0]
     
+    fileList = []
+    for x in thinkfast.prompt.attachments.all():
+        fileName = "%s%s" % (MEDIA_ROOT, x.file)
+        #Manipulate this to get the image down to a 2:3aspect ratio so
+        #200:300
+        img = Image.open(fileName)
+        x1 = img.size[0]
+        y1 = img.size[1]
+        fileList.append((x.file, x1, y1))
+    
     tmpl = loader.get_template('games/thinkfast/overview.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'other_responses': other_responses[:5],
@@ -207,6 +217,7 @@ def overview(request, mission_slug, id):
         'unplayed': unplayed,
         'first_time': first_time,
         'total_responses' : total_responses,
+        'fileList': fileList,
     }, [ip])))
 
 @login_required

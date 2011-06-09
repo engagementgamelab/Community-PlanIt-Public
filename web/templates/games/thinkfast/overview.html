@@ -2,26 +2,26 @@
 {%block page_title%}{%endblock%}
 {%block game%}
     <div class="game-wrapper narrow">
-        {% if first_time %}
-            {%if unplayed%}
-                <div class="notice">
-                    <h3>Great work, you just earned points!</h3>
-                    <p>
-                    {% if request.user.get_profile.coins %}
-                        You have {{request.user.get_profile.coins}} coin{%if request.user.get_profile.coins > 1 %}s{%endif%}. 
-                        You can <a href="/issue" class="button">spend {%if request.user.get_profile.coins < 2 %}it{% else %}them{%endif%}</a>
-                         or <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a>.
-                    </p>
-                    {% else %}
-                        <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a></p>
-                    {% endif %}
-                </div>
-            {%endif%}
-        {%endif%}
+        {% if first_time and unplayed %}
+            <label style="font-size: 1.25em">
+                Thanks for completing this activity. Check out the community's
+                response below, then do the 
+                <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="red" style="font-weight:bold">next activity</a>!
+            </label>
+        {% endif %}
 
         <h3>ThinkFast! Summary <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a></h3>
         <h1>{{thinkfast.prompt.message}}</h1>
-        <div id="pie" class="graph" style="width:600px;height:300px; margin-left:auto; margin-right:auto; 
+        {%if thinkfast.prompt.attachments%}
+            {%for file, x, y in fileList%}
+                <iframe style="margin-left:auto; margin-right:auto;" src="{{MEDIA_URL}}/{{file}}" width="{{x}}" height="{{y}}" frameborder="0"></iframe>
+            {%endfor%}
+            <hr class="space">
+        {%endif%}
+        <div style="margin-left:auto; margin-right:auto;">
+            <label style="font-size: 1.5em; font-weight: bold">How the Community Responded</label>
+        </div>
+        <div id="pie" class="graph" style="height:300px; margin-left:auto; margin-right:auto; 
             margin-top: 25px; margin-bottom: 25px"></div>
         <!-- uncomment for hover -->
         <!-- <div id="hover" style="width:600px; height:100px; margin-left:auto; margin-right:auto;"></div> -->
@@ -86,30 +86,23 @@
             series: { 
                 pie: { 
                     show: true,
-                    radius: 1
+                    radius: 1,
+                    label: {
+                        show: true,
+                        radius: 2/3,
+                        formatter: function(label, series) {
+                            //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
+                            return '<div style="font-size:small;text-align:center;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                        },
+                        threshold: 0.1
+                    }
                 }
             },
             legend: { 
-                labelFormatter: function(label, series) {
-                    //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
-                    return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
-                }
-            }/*,
-            grid: {
-                hoverable: true
-            }*/
+                show: false
+            }
         });
-        //$("#pie").bind("plothover", pieHover);
     });
-    /*
-    function pieHover(event, pos, obj) 
-    {
-        if (!obj)
-            return;
-        percent = parseFloat(obj.series.percent).toFixed(2);
-        $("#hover").html('<span style="font-size: 1.25em; color: black">'+obj.series.label+' ('+percent+'%)</span>');
-    }
-   */
 </script>
 
 {%endblock%}
