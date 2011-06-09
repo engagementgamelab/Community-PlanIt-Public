@@ -55,7 +55,7 @@ def register(request):
         except: pass
 
         if send_mail(_('New account created!'), body, settings.NOREPLY_EMAIL, [email]):
-            messages.success(request, _('A temporary password has been sent to your email address.'))
+            messages.success(request, _('Thanks for registering!'))
 
         player = auth.authenticate(username=email, password=password)
         auth.login(request, player)

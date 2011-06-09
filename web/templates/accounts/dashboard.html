@@ -10,9 +10,20 @@
     {%if not instance.is_notstarted%}
         {%if not user.is_active%}
             <form method="POST" action="">
-                <h4>Please fill out the following information to complete your account activation:</h4>
+                <h4>One last step: Please verify that you have read our Terms of Use and Privacy Policy. 
+                It is our commitment to provide a safe, friendly environment
+                for community members to discuss important issues.</h4>
                 {%csrf_token%}
-                {{activation_form.as_p}}
+                <div class="fieldWrapper">
+                    {{ activation_form.accepted_term.errors }}
+                    <label for="id_accepted_term">I have have read the <a href="/terms/">Terms of Use.</a></label>
+                    {{ activation_form.accepted_term }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ activation_form.accepted_research.errors }}
+                    <label for="id_accepted_research">I have read the <a href="/privacy/">Privacy Policy.</a></label>
+                    {{ activation_form.accepted_research }}
+                </div>
                 <button class="button">Activate my account!</button>
             </form>
         {%else%}
