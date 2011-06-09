@@ -2,23 +2,13 @@
 {%block page_title%}{%endblock%}
 {%block game%}
     <div class="game-wrapper narrow">
-        {% if first_time %}
-            {%if unplayed%}
-                <div class="notice">
-                    <h3>Great work, you just earned points!</h3>
-                    <p>
-                    {% if request.user.get_profile.coins %}
-                        You have {{request.user.get_profile.coins}} coin{%if request.user.get_profile.coins > 1 %}s{%endif%}. 
-                        You can <a href="/issue" class="button">spend {%if request.user.get_profile.coins < 2 %}it{% else %}them{%endif%}</a>
-                         or <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a>.
-                    </p>
-                    {% else %}
-                        <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="button">Do the next activity</a></p>
-                    {% endif %}
-                    <hr class="space">
-                </div>
-            {%endif%}
-        {%endif%}
+        {% if first_time and unplayed %}
+            <label style="font-size: 1.25em">
+                Thanks for completing this activity. Check out the community's
+                response below, then do the 
+                <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="red" style="font-weight:bold">next activity</a>!
+            </label>
+        {% endif %}
 
         <h3>MapIT Summary <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a></h3>
         <h1>{{mapit.prompt.message}}</h1>
