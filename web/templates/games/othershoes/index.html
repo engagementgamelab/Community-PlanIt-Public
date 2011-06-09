@@ -5,21 +5,18 @@
 {%block game%}
     <div class="narrow game-wrapper">
         <h2 class="othershoes game">
-            Someone Else's Shoes
+            {{game.title}}
             {%if not player_game%}
                 <span class="fine highlight right green">{% get_points for completed othershoes %} points</span>
             {%endif%}
         </h2>
-
         <form enctype="multipart/form-data" action="." method="POST">
             {%csrf_token%}
             <div class="game-wrapper">
                 <div class="fifth">
                     <img class="avatar" src="{{MEDIA_URL}}{{othershoes.prompt.avatar}}">
                 </div>
-                <p class="twothirds">
-                {{othershoes.prompt.first_name}} {{othershoes.prompt.last_name}} is a <span class="highlight">{{othershoes.prompt.age}}</span> year old {% if othershoes.prompt.race %}<span class="highlight">{{othershoes.prompt.race}}</span>{% endif %} {% if othershoes.prompt.gender %}<span class="highlight">{{othershoes.prompt.gender}}</span>{% endif %} living in your neighborhood.
-                </p>
+                
                 {%if othershoes.prompt.download%}
                     <strong>Download:</strong>
                     <br>
@@ -29,7 +26,12 @@
                 <hr class="space">
 
                 <h2>{{othershoes.prompt.bio}}</h2>
-
+                <br>
+                <label style="font-size: 1.25em">
+                    Type a response below to enter the discussion. (You may attach images
+                    or YouTube embed codes.) Submit your response, then vote on
+                    your favorite ideas!
+                </label>
                 <div id="comments">
                     <div class="sleeper"></div>
                     <h4>Your response:</h4>
