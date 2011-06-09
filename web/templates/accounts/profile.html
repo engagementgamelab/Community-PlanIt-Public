@@ -110,12 +110,23 @@
             </div>
             
             <hr class="space">
-            
+
         </div>
     </div>
     
     
-    <div style="clear:both;"></div>
+    <div style="clear: both; padding: 1em 0;"></div>
+    <div id="comments">
+        <div class="sleeper"></div>
+        <h4>Leave a comment:</h4>
+        <ul class="listless comments">
+            {% with player.get_profile as comments %}
+            {%include "comments/post.html"%}
+            {% endwith %}
+        </ul>
+        <div style="clear: both;"></div>
+    </div>
+    
 {%endblock%}
 
 {%block footer%} {%endblock%}

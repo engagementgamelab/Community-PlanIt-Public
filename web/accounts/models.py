@@ -53,6 +53,9 @@ class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     instance = models.ForeignKey(Instance, blank=True, null=True)
 
+    # comments on the profile from others
+    comments = models.ManyToManyField(Comment, blank=True, null=True)
+
     def save(self, *args, **kwargs):
         if self.first_name:
             self.user.first_name = self.first_name
