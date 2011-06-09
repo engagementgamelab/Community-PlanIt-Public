@@ -10,7 +10,7 @@
                 <p class="notice">Your original response is marked below. You may change your answer at any time during this mission</p>
             {%endif%}
             <h2 class="mapit game">
-                Map It!
+                {{game.title}}
                 {%if not player_game%}
                     <span class="fine highlight right green">{% get_points for completed thinkfast %} points</span>                
                 {%endif%}
