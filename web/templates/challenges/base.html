@@ -77,7 +77,7 @@
                             <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
                         {%endif%} 
                         <h4>
-                            {{pc.player.get_profile.first_name}} {{pc.player.get_profile.last_name|slice:":1"}}. completed this challenge 
+                            {{pc.player.get_profile.screen_name}} completed this challenge 
                             and provided the following evidence
                             <!-- on {{pc.response.posted_date|date:"F j, Y, g:i a"}}-->
                         </h4>
@@ -98,7 +98,7 @@
                         <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
                     {%endif%} 
                     <h4>
-                        {{pc.player.get_profile.first_name}} {{pc.player.get_profile.last_name|slice:":1"}}. completed this challenge 
+                        {{pc.player.get_profile.screen_name}} completed this challenge 
                     </h4>
                     {% endif %}
             {%endfor%}

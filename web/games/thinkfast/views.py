@@ -1,20 +1,27 @@
-import web, re, Image
+import re
+
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.template import RequestContext, loader
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from web.missions.models import Mission
+from django.template import RequestContext, loader
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages
+
+import Image
+
+from web.attachments.models import Attachment
+from web.comments.forms import CommentForm
+from web.comments.models import Comment
 from web.games.models import Game, PlayerGame
 from web.games.thinkfast.models import ThinkFast
-from web.responses.choices.models import *
-from web.responses.choices.forms import ChoicesResponseForm
-from web.attachments.models import Attachment
-from web.comments.models import Comment
-from web.comments.forms import CommentForm
-from web.reports.actions import PointsAssigner, ActivityLogger
+from web.missions.models import Mission
 from web.processors import instance_processor as ip
-from settings import MEDIA_URL, MEDIA_ROOT
+from web.reports.actions import PointsAssigner, ActivityLogger
+from web.responses.choices.forms import ChoicesResponseForm
+from web.responses.choices.models import *
 
 @login_required
 def index(request, mission_slug, id):
@@ -24,7 +31,7 @@ def index(request, mission_slug, id):
     thinkfast = game.thinkfast
 
     if instance.is_expired() or mission.is_expired():
-        return HttpResponseRedirect('/mission/'+ mission_slug +'/game/thinkfast/'+ id +'/overview/')
+        return HttpResponseRedirect(reverse('games_thinkfast_overview', args=[mission_slug, id]))
 
     # Code to check for games not yet played
     unplayed = []
@@ -55,7 +62,8 @@ def index(request, mission_slug, id):
                 response = player_game.response.choicesresponse
                 player_game.save()
 
-                ActivityLogger.log(request.user, request, 'a ThinkFast! activity', 'updated', '/mission/'+ mission_slug +'/game/thinkfast/'+ id +'/'+str(request.user.id), 'thinkfast')
+                log_url = reverse('games_thinkfast_overview', args=[mission_slug, id])
+                ActivityLogger.log(request.user, request, 'a ThinkFast! activity', 'updated', log_url, 'thinkfast')
             except:
                 response = ChoicesResponse(answer=True)
                 response.save()
@@ -63,7 +71,9 @@ def index(request, mission_slug, id):
                 response.save()
                 player_game = PlayerGame(visible=True, completed=True, response=response, game=thinkfast, user=request.user)
                 player_game.save()
-                ActivityLogger.log(request.user, request, 'a ThinkFast! activity', 'completed', '/mission/'+ mission_slug +'/game/thinkfast/'+ id +'/'+str(request.user.id), 'thinkfast')
+
+                log_url = reverse('games_thinkfast_overview', args=[mission_slug, id])
+                ActivityLogger.log(request.user, request, 'a ThinkFast! game', 'completed', log_url, 'thinkfast')
                 PointsAssigner.assign(request.user, 'thinkfast_completed')
 
                 request.session['justplayed'] = True
@@ -76,13 +86,13 @@ def index(request, mission_slug, id):
                 if not g in _played and not g == game:
                     unplayed.append(g)
 
-            return HttpResponseRedirect(request.path +'overview')
+            return HttpResponseRedirect(reverse('games_thinkfast_overview', args=[mission_slug, id]))
 
     other_responses = PlayerGame.objects.all().filter(game=thinkfast, completed=True)
     
     fileList = []
     for x in thinkfast.prompt.attachments.all():
-        fileName = "%s%s" % (MEDIA_ROOT, x.file)
+        fileName = "%s%s" % (settings.MEDIA_ROOT, x.file)
         #Manipulate this to get the image down to a 2:3aspect ratio so
         #200:300
         img = Image.open(fileName)
@@ -104,73 +114,6 @@ def index(request, mission_slug, id):
     }, [ip])))
 
 @login_required
-def comment(request, mission_slug, id, user_id):
-    a = None
-    b = None
-
-    mission = Mission.objects.get(slug=mission_slug)
-    game = Game.objects.get(id=id)
-    thinkfast = game.thinkfast
-    user = User.objects.get(id=user_id)
-
-    player_game = PlayerGame.objects.filter(user=user, game=game)
-    if len(player_game) > 1:
-        for pg in player_game[0:len(player_game)-1]:
-            pg.delete()
-
-    player_game = player_game[0]
-    instance = request.user.get_profile().instance
-
-    if request.method == 'POST':
-        if request.POST.has_key('yt-url'):
-            if request.POST.get('yt-url'):
-                url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
-
-                if len(url) > 1:
-                    a = Attachment(
-                        file=None,
-                        url=url,
-                        type='video',
-                        user=request.user,
-                        instance=request.user.get_profile().instance,
-                    )
-                    a.save()
-        
-        if request.FILES.has_key('picture'):
-            b = Attachment(
-                file=request.FILES.get('picture'),
-                user=request.user,
-                instance=request.user.get_profile().instance,
-            )
-
-            b.save()
-
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            c = Comment(
-                message=form.cleaned_data['message'], 
-                user=request.user,
-                instance=instance,
-            )
-            c.save()
-
-            if a:
-                c.attachment.add(a)
-                c.save()
-
-            if b:
-                c.attachment.add(b)
-                c.save()
-
-            player_game.comments.add(c)
-            player_game.save()
-
-            PointsAssigner.assign(request.user, 'comment_created')
-            ActivityLogger.log(request.user, request, 'to ThinkFast! response', 'added comment', '/mission/'+ mission_slug +'/game/thinkfast/'+ id +'/'+ user_id, 'thinkfast')
-
-    return HttpResponseRedirect('/mission/'+ mission_slug +'/game/thinkfast/'+ id +'/'+ user_id)
-
-@login_required
 def overview(request, mission_slug, id):
     mission = Mission.objects.get(slug=mission_slug)
     game = Game.objects.get(id=id)
@@ -178,26 +121,51 @@ def overview(request, mission_slug, id):
     first_time = request.session.has_key('justplayed') and request.session['justplayed'] or False
     request.session['justplayed'] = False
 
+    if not thinkfast.playergame_set.filter(user=request.user).count():
+        messages.success(request, "You'll have to complete this activity to join its discussion.", extra_tags='sticky')
+        return HttpResponseRedirect(reverse('games_thinkfast_index', args=[mission_slug, id]))
+
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = thinkfast.comments.create(
+                message=comment_form.cleaned_data['message'], 
+                user=request.user,
+                instance=request.user.get_profile().instance,
+            )
+
+            if request.POST.has_key('yt-url'):
+                if request.POST.get('yt-url'):
+                    url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
+
+                    if len(url) > 1:
+                        comment.attachment.create(
+                            file=None,
+                            url=url,
+                            type='video',
+                            user=request.user,
+                            instance=request.user.get_profile().instance,
+                        )
+
+            if request.FILES.has_key('picture'):
+                comment.attachment.create(
+                    file=request.FILES.get('picture'),
+                    user=request.user,
+                    instance=request.user.get_profile().instance,
+                )
+
+            PointsAssigner.assign(request.user, 'comment_created')
+            log_url = reverse('games_thinkfast_overview', args=[mission_slug, id]) + '#comment-' + str(comment.pk)
+            ActivityLogger.log(request.user, request, 'to ThinkFast! response', 'added comment', log_url, 'thinkfast')
+
+            return HttpResponseRedirect(reverse('games_thinkfast_overview', args=[mission_slug, id]))
+    else:
+        comment_form = CommentForm()
+
     other_responses = PlayerGame.objects.all().filter(game=thinkfast, completed=True)
 
     responses_wrapper = []
     total_responses = 0
-
-    # Calculate total coins for next iteration to generate percentages
-    #for issue in issues:
-    #    player_issue = playerissues.filter(issue=issue)
-    #    if len(player_issue) > 0:
-    #        total_coins += player_issue[0].coins
-
-    #for issue in issues:
-    #    player_issue = playerissues.filter(issue=issue)
-    #    if len(player_issue) > 0:
-    #        coins = player_issue[0].coins
-
-    #        # +0.0 coerces to a float for percentages
-    #        issue_wrapper.append({ 'issue': issue, 'player_coins': coins, 'percent': ((coins+0.0)/total_coins)*100 })
-    #    else:
-    #        issue_wrapper.append({ 'issue': issue, 'player_coins': 0, 'percent': 0 })
 
     choices = {}
     for pg in other_responses:
@@ -264,3 +232,4 @@ def response(request, mission_slug, id, user_id):
         'response': player_game.response.choicesresponse.choices.all()[0].text,
         'comment_form': CommentForm(),
     }, [ip])))
+

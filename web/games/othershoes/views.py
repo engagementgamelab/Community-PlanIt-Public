@@ -89,22 +89,22 @@ def index(request, mission_slug, id):
     }, [ip])))
 
 @login_required
-def comment(request, mission_slug, id, user_id):
-    instance = request.user.get_profile().instance
+def overview(request, mission_slug, id):
     mission = Mission.objects.get(slug=mission_slug)
-
-    if instance.is_expired() or mission.is_expired():
-        return HttpResponseRedirect('/mission/'+ mission_slug +'/game/othershoes/'+ id +'/overview/')
-
-    game = Game.objects.get(id=id)
+    game = get_object_or_404(Game, id=id)
     othershoes = game.othershoes
-    user = User.objects.get(id=user_id)
+    first_time = request.session.get('justplayed') or False
+    request.session['justplayed'] = False
+
+    if not othershoes.playergame_set.filter(user=request.user).count():
+        messages.success(request, "You'll have to complete this activity to join its discussion.", extra_tags='sticky')
+        return HttpResponseRedirect(reverse('games_othershoes_index', args=[mission_slug, id]))
 
     if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
             comment = othershoes.comments.create(
-                message=form.cleaned_data['message'], 
+                message=comment_form.cleaned_data['message'], 
                 user=request.user,
                 instance=instance,
             )
@@ -129,26 +129,13 @@ def comment(request, mission_slug, id, user_id):
                     instance=request.user.get_profile().instance,
                 )
 
-
             PointsAssigner.assign(request.user, 'comment_created')
             log_url = reverse('games_othershoes_overview', args=[mission_slug, id]) + '#comment-' + str(comment.pk)
             ActivityLogger.log(request.user, request, 'to Other Shoes response', 'added comment', log_url, 'othershoes')
-        else:
-            return HttpResponseRedirect('/mission/'+ mission_slug +'/game/othershoes/'+ id +'/'+ user_id +'?error=true')
 
-    return HttpResponseRedirect(reverse('games_othershoes_index', args=[mission_slug, id]))
-
-@login_required
-def overview(request, mission_slug, id):
-    mission = Mission.objects.get(slug=mission_slug)
-    game = get_object_or_404(Game, id=id)
-    othershoes = game.othershoes
-    first_time = request.session.get('justplayed') or False
-    request.session['justplayed'] = False
-
-    if not othershoes.comments.filter(user=request.user).count():
-        messages.success(request, "You'll have to complete this activity to join its discussion.", extra_tags='sticky')
-        return HttpResponseRedirect(reverse('games_othershoes_index', args=[mission_slug, id]))
+            return HttpResponseRedirect(request.path +'overview')
+    else:
+        comment_form = CommentForm()
 
     other_responses = PlayerGame.objects.all().filter(game=othershoes, completed=True)
 
@@ -165,3 +152,28 @@ def overview(request, mission_slug, id):
         'first_time': first_time,
         'other_responses': other_responses[:5]
     }, [ip])))
+
+@login_required
+def response(request, mission_slug, id, user_id):
+    mission = Mission.objects.get(slug=mission_slug)
+    game = Game.objects.get(id=id)
+    othershoes = game.othershoes
+    user = User.objects.get(id=user_id)
+
+    player_game = PlayerGame.objects.get(user=user, game=game)
+
+    other_responses = PlayerGame.objects.all().filter(game=othershoes, completed=True)
+
+    tmpl = loader.get_template('games/othershoes/response.html')
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        'other_responses': other_responses[:5],
+        'mission': mission,
+        'game': game,
+        'othershoes': othershoes,
+        'user': user,
+        'player_game': player_game,
+        'comments': player_game,
+        'response': player_game.response,
+        'comment_form': CommentForm(),
+    }, [ip])))
+

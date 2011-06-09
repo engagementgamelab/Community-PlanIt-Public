@@ -3,7 +3,7 @@
 {%block section%}accounts{%endblock%}
 
 {%block title%}Dashboard{%endblock%}
-{%block page_title%} {{player.get_profile.first_name}} {{player.get_profile.last_name}} {%endblock%}
+{%block page_title%} {{player.get_profile.screen_name}} {%endblock%}
 
 {%block main%}
     <h2>
@@ -35,7 +35,7 @@
     </p>    
     <hr class="clear">
     <div class="twothird">
-        <h3>{{player.get_profile.first_name}} {{player.get_profile.last_name}}'s Activity Log</h3>
+        <h3>{{player.get_profile.screen_name}}'s Activity Log</h3>
         {%if log|length%}
         <ul class="listless listview feed">
             {%for activity in log%}
@@ -45,7 +45,7 @@
                 {%else%}               
                     <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
                 {%endif%} 
-                <a href="/player/{{activity.user.id}}">{{activity.user.get_profile.first_name}} {{activity.user.get_profile.last_name|slice:":1"}}</a>
+                <a href="/player/{{activity.user.id}}">{{activity.user.get_profile.screen_name}}</a>
                 {{activity.data}} 
                 {%if activity.url%}
                     <a href="{{activity.url}}">{{activity.action}}</a>
@@ -71,7 +71,7 @@
                         {%if player.get_profile.following.all %}
                           {% for player in player.get_profile.following.all %}
                               {%if player.get_profile.avatar %}
-                                  <a href="/player/{{player.id}}"><img alt="player.get_profile.first_name player.get_profile.last_name" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
+                              <a href="/player/{{player.id}}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
                               {%else%}               
                                   <a href="/player/{{player.id}}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
                               {%endif%} 
@@ -95,7 +95,7 @@
                         {%if followingme %}
                           {% for player in followingme %}
                               {%if player.get_profile.avatar %}
-                                  <a href="/player/{{player.id}}"><img alt="player.get_profile.first_name player.get_profile.last_name" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
+                                  <a href="/player/{{player.id}}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
                               {%else%}               
                                   <a href="/player/{{player.id}}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
                               {%endif%} 

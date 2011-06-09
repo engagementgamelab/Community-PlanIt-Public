@@ -3,18 +3,15 @@
 {%block page_title%}{%endblock%}
 {%block game%}
     <div class="game-wrapper narrow">
-        <h3>{{player_game.user.get_profile.first_name}} {{player_game.user.get_profile.last_name}}'s response</h3>
-        <h2>{{mapit.prompt.message}}</h2>
+        <h2 class="game thinkfast">MapIT Response</h2>
+        <h3>The Activity:</h3>
+        <p>{{mapit.prompt.message}}</p>
+        <h3>{{player_game.user.get_profile.screen_name}}'s response</h3>
+        {% if response.mapresponse.message %}
+        <blockquote>{{response.mapresponse.message}}</blockquote>
+        {% endif %}
         <div class="google-map" data-type="{{mapit.response.mapresponse.type}}" data-state="played"></div>
-        <hr class="space">
-
-        <!-- Show comments -->
-        <div id="comments">
-            <div class="sleeper"></div>
-            <h4>Comments:</h4>
-            <!-- Add Comment-->
-            {%include "comments/post.html"%}
-        </div>
+        <p><a href="{% url games_mapit_overview mission.slug,mapit.pk %}">Back to the activity overview &rarr;</a></p>
     </div>
 {%endblock%}
     

@@ -1,4 +1,4 @@
-<form enctype="multipart/form-data" action="comment/" method="POST">
+<form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
     {%if request.REQUEST.error%}
         <span class="error">Please enter a valid comment.</span>
     {%endif%}

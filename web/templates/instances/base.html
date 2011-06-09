@@ -26,7 +26,7 @@
                     {%for user in leaderboard%}
                         <tr>
                             <td>{{forloop.counter}}</td>
-                            <td><a href="/player/{{user.id}}">{{user.get_profile.first_name}} {{user.get_profile.last_name|slice:":1"}}</a></td>
+                            <td><a href="/player/{{user.id}}">{{user.get_profile.screen_name}}</a></td>
                             <td>{{user.get_profile.points}}</td>
                         </tr>
                     {%endfor%}
@@ -49,7 +49,7 @@
                     {%else%}               
                         <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
                     {%endif%} 
-                    <a href="/player/{{activity.user.id}}">{{activity.user.get_profile.first_name}} {{activity.user.get_profile.last_name|slice:":1"}}</a>
+                    <a href="/player/{{activity.user.id}}">{{activity.user.get_profile.screen_name}}</a>
                     {{activity.data}} 
                     {%if activity.url%}
                         <a href="{{activity.url}}">{{activity.action}}</a>

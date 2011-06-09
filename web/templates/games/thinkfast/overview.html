@@ -30,12 +30,12 @@
             <ul class="listview highlighted">
                 {% for label, players in choices.items %}
                     <li class="listitem">
-                        <span class="highlight fine">{{players|length}}</span> players selected the answer {{label}}
+                    <span class="highlight fine">{{players|length}}</span> player{{players|pluralize}} selected the answer <span class="highlight">{{label}}</span>
                         <hr class="space">
                         {% for player in players %}
                             {%if player.get_profile.avatar %}
                                 <a href="/player/{{player.id}}">
-                                    <img alt="player.get_profile.first_name player.get_profile.last_name" class="avatar" src="{{MEDIA_URL}}{{player.get_profile.avatar}}">
+                                    <img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}{{player.get_profile.avatar}}">
                                 </a>
                             {%else%}               
                                 <a href="/player/{{player.id}}">
@@ -50,7 +50,17 @@
         {%else%}
             No submissions yet.
         {%endif%}
-        <div style="clear: both;"></div>
+        <div style="clear: both; padding: 1em 0;"></div>
+        <div id="comments">
+            <div class="sleeper"></div>
+            <h4>Comments:</h4>
+            <ul class="listless comments">
+                {% with game as comments %}
+                {%include "comments/post.html"%}
+                {% endwith %}
+            </ul>
+            <div style="clear: both;"></div>
+        </div>
     </div>
    
 <!-- this is the chart -->
