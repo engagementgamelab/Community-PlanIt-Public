@@ -8,7 +8,7 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         for r in orm.MapResponse.objects.all():
-            if r.comments.count() and not r.message:
+            if r.comments.count() and (not r.message or r.message == ' '):
                 r.message = r.comments.all()[0].message
                 r.save()
 
