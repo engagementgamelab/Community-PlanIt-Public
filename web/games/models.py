@@ -15,6 +15,8 @@ class Game(models.Model):
     slug = models.SlugField(editable=False)
     active = models.BooleanField(editable=False,default=True)
 
+    comments = models.ManyToManyField(Comment, blank=True, null=True)
+
     object_id = models.PositiveIntegerField()
     content_type = models.ForeignKey(ContentType)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
