@@ -21,6 +21,8 @@ class Challenge(models.Model):
     end_date = models.DateTimeField()
     flagged = models.IntegerField(default=0, editable=False)
 
+    #TODO: Figure out why this is not required, or make it required. The view to add a challenge
+    #expects an instance from the user profile so why can it be blank here?
     instance = models.ForeignKey(Instance, null=True, blank=True,editable=False)
     user = models.ForeignKey(User, editable=False)
     attachments = models.ManyToManyField(Attachment, blank=True)
