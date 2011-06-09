@@ -953,7 +953,7 @@ hr.space {
       .page #main aside .score .points {
         position: absolute;
         top: 10px;
-        left: 10px; }
+        left: 2px; }
     .page #main aside .coins {
       background: url("/assets/img/icons/piggybank.png") center center no-repeat;
       width: 30px;
