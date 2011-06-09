@@ -184,9 +184,9 @@ def overview(request, mission_slug, id):
     
     other_responses = PlayerGame.objects.all().filter(game=mapit, completed=True)
     
-    respondants = []
+    respondents = []
     for pg in other_responses:
-        respondants.append({
+        respondents.append({
             'player': pg.user.get_profile()
         })
     
@@ -224,7 +224,7 @@ def overview(request, mission_slug, id):
         'mission': mission,
         'game': game,
         'mapit': mapit,
-        'respondants': respondants,
+        'respondents': respondents,
         'unplayed': unplayed,
         'first_time': first_time,
     },[ip])))

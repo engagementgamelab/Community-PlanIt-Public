@@ -17,13 +17,13 @@
         <div class="google-map" data-type="{{mapit.response.mapresponse.type}}" data-state="overview"></div>
         <hr class="space">
         
-        {%if respondants%}
-          <h4>Respondants</h4>
-          {%for respondant in respondants%}
+        {%if respondents%}
+          <h4>Respondents</h4>
+          {%for respondant in respondents%}
               {%if respondant.player.user.get_profile.avatar%}
-                  <a href="/player/{{respondant.player.id}}"><img alt="{{respondant.player.first_name}} {{respondants.player.last_name}}" class="avatar" src="{{MEDIA_URL}}/{{respondant.player.user.get_profile.avatar}}"></a>
+                  <a href="/player/{{respondant.player.id}}"><img alt="{{respondant.player.first_name}} {{respondents.player.last_name}}" class="avatar" src="{{MEDIA_URL}}/{{respondant.player.user.get_profile.avatar}}"></a>
               {%else%}               
-                  <a href="/player/{{respondant.player.id}}"><img alt="{{respondant.player.first_name}} {{respondants.player.last_name}}" class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
+                  <a href="/player/{{respondant.player.id}}"><img alt="{{respondant.player.first_name}} {{respondents.player.last_name}}" class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
               {%endif%} 
           {%endfor%}
         {%endif%}
