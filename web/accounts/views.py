@@ -50,7 +50,8 @@ def register(request):
             player.save()
 
             tmpl = loader.get_template('accounts/email/welcome.html')
-            body = tmpl.render(Context({ 'password': password }))
+            body = tmpl.render(Context({ 'password': password,
+                                        'first_name': firstName }))
         except: pass
 
         if send_mail(_('New account created!'), body, settings.NOREPLY_EMAIL, [email]):
