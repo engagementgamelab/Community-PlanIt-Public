@@ -21,12 +21,16 @@
                 {{map_form.errors}}
                 <div class="game-wrapper">
                     <h2>{{mapit.prompt.message}}</h2>
+                    <label style="font-size: 1.25em">Click the "Add point" button below to add a marker to the map.
+                        With your mouse, you can click and drag the marker to your desired location. You can also
+                        click and drag the map, or use your mouse scroll wheel to zoom in and out.</label>
                     <button class="button add">Add {{mapit.response.type|lower}}</button>
 
                     <div class="google-map" data-type="{{mapit.response.type}}"></div>
 
                     <div id="comments">
-                        <h3>Briefly tell us why you made this decision. <span class="fine">(* Required)</span>:</h3>
+                        <p style="font-size: 1.25em">Why did you choose this point? <span style="font-size: .9em">(required)</span></p>
+                        
                         <textarea maxlength="1000" rows="10" columns="80" name="message" id="id_message" class="comment_message" style="width: 100%"></textarea>
                         <hr class="space">
                         <span>(</span><span class="count">1000</span> <span>characters left)</span>
