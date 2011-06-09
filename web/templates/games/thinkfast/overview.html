@@ -21,7 +21,16 @@
 
         <h3>ThinkFast! Summary <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a></h3>
         <h1>{{thinkfast.prompt.message}}</h1>
-        <div id="pie" class="graph" style="width:600px;height:300px; margin-left:auto; margin-right:auto; 
+        {%if thinkfast.prompt.attachments%}
+            {%for file, x, y in fileList%}
+                <iframe style="margin-left:auto; margin-right:auto;" src="{{MEDIA_URL}}/{{file}}" width="{{x}}" height="{{y}}" frameborder="0"></iframe>
+            {%endfor%}
+            <hr class="space">
+        {%endif%}
+        <div style="margin-left:auto; margin-right:auto;">
+            <label style="font-size: 1.5em; font-weight: bold">How the Community Responded</label>
+        </div>
+        <div id="pie" class="graph" style="height:300px; margin-left:auto; margin-right:auto; 
             margin-top: 25px; margin-bottom: 25px"></div>
         <!-- uncomment for hover -->
         <!-- <div id="hover" style="width:600px; height:100px; margin-left:auto; margin-right:auto;"></div> -->
@@ -76,30 +85,23 @@
             series: { 
                 pie: { 
                     show: true,
-                    radius: 1
+                    radius: 1,
+                    label: {
+                        show: true,
+                        radius: 2/3,
+                        formatter: function(label, series) {
+                            //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
+                            return '<div style="font-size:small;text-align:center;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                        },
+                        threshold: 0.1
+                    }
                 }
             },
             legend: { 
-                labelFormatter: function(label, series) {
-                    //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
-                    return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
-                }
-            }/*,
-            grid: {
-                hoverable: true
-            }*/
+                show: false
+            }
         });
-        //$("#pie").bind("plothover", pieHover);
     });
-    /*
-    function pieHover(event, pos, obj) 
-    {
-        if (!obj)
-            return;
-        percent = parseFloat(obj.series.percent).toFixed(2);
-        $("#hover").html('<span style="font-size: 1.25em; color: black">'+obj.series.label+' ('+percent+'%)</span>');
-    }
-   */
 </script>
 
 {%endblock%}

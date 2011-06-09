@@ -8,16 +8,11 @@
             <p class="notice">Your original response is marked below. You may change your answer at any time during this mission.</p>
         {%endif%}
         <h2 class="thinkfast game">
-            Think Fast!
+            {{game.title}}
             {%if not player_game%}
                 <span class="fine highlight right green">{% get_points for completed thinkfast %} points</span>
             {%endif%}
         </h2>
-        {%if not player_game%}
-            <p class="alert">
-                Read the question below and select an answer. Click "submit" to see the community’s response!
-            </p>
-        {%endif%}
         <form action="" method="POST"> 
             {%csrf_token%}
             <div class="game-wrapper">
@@ -32,7 +27,13 @@
                     {#for choice in thinkfast.response.choices.all#}
                     <!--<p><input type="radio" name="choice" value="{{choice.text}}"> {{choice.text}}</p>-->
                     {#endfor#}
+                    
+                    <label style="font-size:1.5em;">
+                        Select one of the choices below and click "submit". 
+                        If you select "other", please tell us your answer on the next page.
+                    </label>
                     {{choices_form.as_p}}
+                    <br>
                     <button class="button">Submit response</button>
                 </form>
                 
