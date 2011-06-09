@@ -11,6 +11,7 @@ def video(request):
 
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
+#TODO: Is this code used? -BMH
 @login_required
 def picture(request):
 
