@@ -175,16 +175,6 @@ def overview(request, mission_slug, id):
     else:
         comment_form = CommentForm()
 
-@login_required
-def overview(request, mission_slug, id):
-    mission = Mission.objects.get(slug=mission_slug)
-    game = get_object_or_404(Game, id=id)
-    mapit = game.mapit
-    first_time = request.session.has_key('justplayed') and request.session['justplayed'] or False
-    request.session['justplayed'] = False
-    
-    other_responses = PlayerGame.objects.all().filter(game=mapit, completed=True)
-    
     respondents = []
     for pg in other_responses:
         respondents.append({
