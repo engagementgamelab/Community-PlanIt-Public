@@ -131,8 +131,14 @@ def add(request):
     if request.method == 'POST':
         form = AddChallenge(request.POST)
         if form.is_valid():
+            map = None
+            if (request.POST.get('map', None) == None or request.POST.get('map', None) == "None"):
+                map = instance.location
+            else:
+                map = form.cleaned_data['map']
+
             challenge = Challenge(
-                map = form.cleaned_data['map'],
+                map = map,
                 name = form.cleaned_data['name'],
                 description = form.cleaned_data['description'],
                 start_date = form.cleaned_data['start_date'],
