@@ -16,10 +16,18 @@ from web.processors import instance_processor as ip
 @login_required
 def affiliation(request, affiliation):
     instance = request.user.get_profile().instance
-    users = User.objects.filter(userprofile__instance=instance)
+    users = []
+    for up in UserProfile.objects.filter(instance=instance):
+        users.append(up.user)
 
-    players = users.filter(userprofile__affiliations__contains=affiliation)
-    affiliation_leaderboard = users.filter(userprofile__affiliations__contains=affiliation).order_by("-userprofile__points")
+    players = []
+    for up in UserProfile.objects.filter(affiliations__contains=affiliation):
+        players.append(up.user)
+    
+    affiliation_leaderboard = []
+    for up in UserProfile.objects.filter(affiliations__contains=affiliation).order_by("-points"):
+        affiliation_leaderboard.append(up.user)
+    
     affiliation_points = 0
     
     for player in players:
