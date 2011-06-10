@@ -14,7 +14,7 @@
                 <h2>{{current_instance.region}} has ended. Updates and Leaderboard</h2>
             {%endif%}
             <p>{{current_instance.content|escape|safe}}</p>
-            {{current_instance.location|show}}
+            {# {current_instance.location|show} #}
 
             <div class="leaderboard-wrapper" style="clear:both;">
             {%if leaderboard|length%}
