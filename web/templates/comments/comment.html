@@ -10,17 +10,20 @@
             <span>{{comment.comments.count}} response{{ comment.comments.count|pluralize }}</span>
             {% endif %}
         </span>
+        {% if not comment.hidden %}
         <span class="right">
             <a href="/flag/comment/{{comment.id}}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
         </span>
+        {% endif %}
     </div>
     <div class="message">
         {% if comment.hidden %}
-            <div class="notice">This message has been removed by the moderators.</div>
+            <div class="notice">This content has been flagged by the community and hidden by the administrator.</div>
         {% else %}
             {{comment.message|linebreaksbr}}
         {% endif %}
     </div>
+    {% if not comment.hidden %}
     <div class="attachments">
     {%for attachment in comment.attachment.all%}
       <div>
@@ -39,9 +42,8 @@
             {% if comment.user != user %}
             <a href="{% url comments_like comment.id %}" title="click to say you like this"><img src="{{MEDIA_URL}}img/icons/up-small.png" alt="like"/></a>
             {% endif %}
-            <a class="reply" href="#reply-{{comment.id}}" title="click to reply"><img src="{{MEDIA_URL}}img/icons/quote.png" alt="reply"/></a>
+            <a class="small button reply" href="#reply-{{comment.id}}">reply</a>
         </div>
-
         <div class="reply-modal">
             <form enctype="multipart/form-data" method="POST" action="/comment/reply/{{comment.id}}/">
                 {%csrf_token%}
@@ -52,6 +54,7 @@
             </form>
         </div>
     </div>
+    {% endif %}
 
     {%if comment.comments.all%}
     <div class="replies">

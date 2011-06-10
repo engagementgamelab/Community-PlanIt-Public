@@ -11,11 +11,6 @@ from web.responses.comment.models import CommentResponse
 class OtherShoes(Game):
     prompt = models.ForeignKey(ProfilePrompt, null=True, blank=True)
 
-    # the discussion captured in 'comments' replaces the mutable
-    # CommentResponse answers, which could be changed, trashing entire
-    # discussions
-    comments = models.ManyToManyField(Comment, blank=True, null=True)
-
     def save(self):
         self.game_type = "othershoes"
         super(OtherShoes, self).save()

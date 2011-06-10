@@ -18,7 +18,7 @@
             {%if players.all%}
             <ul>
                 {%for player in players%}
-                <li>{{player.get_profile.avatar}} {{player.get_profile.first_name}} {{player.get_profile.last_name}}</li>
+                <li>{{player.get_profile.avatar}} {{player.get_profile.screen_name}}</li>
                 {%endfor%}
             </ul>
             {%else%}

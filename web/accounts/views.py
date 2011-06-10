@@ -1,19 +1,24 @@
 import datetime
 import math
+
+from django.conf import settings
 from django.core.mail import send_mail
-from django.utils.translation import ugettext as _
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import Context, RequestContext, loader
+from django.utils.translation import ugettext as _
+
 from django.contrib import auth, messages
-from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
-from web.accounts.models import UserProfile
+from django.contrib.auth.models import User, Group
+
 from web.accounts.forms import *
-from web.reports.models import Activity
-from web.reports.actions import ActivityLogger, PointsAssigner
-from web.processors import instance_processor as ip
+from web.accounts.models import UserProfile
+from web.comments.forms import CommentForm
 from web.instances.models import Instance
+from web.processors import instance_processor as ip
+from web.reports.actions import ActivityLogger, PointsAssigner
+from web.reports.models import Activity
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
@@ -201,6 +206,37 @@ def profile(request, id):
     
     instance = player.get_profile().instance
     log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:9]
+
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = player.get_profile().comments.create(
+                message=comment_form.cleaned_data['message'], 
+                user=request.user,
+                instance=instance,
+            )
+
+            if request.POST.has_key('yt-url'):
+                if request.POST.get('yt-url'):
+                    url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
+
+                    if len(url) > 1:
+                        comment.attachment.create(
+                            file=None,
+                            url=url,
+                            type='video',
+                            user=request.user,
+                            instance=request.user.get_profile().instance,
+                        )
+
+            if request.FILES.has_key('picture'):
+                comment.attachment.create(
+                    file=request.FILES.get('picture'),
+                    user=request.user,
+                    instance=request.user.get_profile().instance,
+                )
+
+            return HttpResponseRedirect(reverse('accounts_profile', args=[id]))
 
     followingme = []
 

@@ -31,7 +31,7 @@
                 {%for user in affiliation_leaderboard%}
                     <tr>
                         <td>{{forloop.counter}}</td>
-                        <td>{{user.get_profile.first_name}} {{user.get_profile.last_name}}</td>
+                        <td>{{user.get_profile.screen_name}}</td>
                         <td>{{user.get_profile.points}}</td>
                     </tr>
                 {%endfor%}

@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     # NOTE: Player related
     (r'^player/follow/(?P<id>.*)/$', 'web.accounts.views.follow'),
     (r'^player/unfollow/(?P<id>.*)/$', 'web.accounts.views.unfollow'),
-    (r'^player/(?P<id>.*)/$', 'web.accounts.views.profile'),
+    url(r'^player/(?P<id>.*)/$', 'web.accounts.views.profile', name='accounts_profile'),
 
     # NOTE: Fixed to singular
     (r'^$', 'web.views.index'),

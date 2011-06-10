@@ -7,6 +7,7 @@ from web.responses.models import Response
 class MapResponse(Response):
     map = GoogleMapsField()
     type = models.CharField(max_length=260, choices=(('Shape','Shape'), ('Line','Line'), ('Point','Point')), default='Point')
+    message = models.CharField(default=' ', max_length=1000)
 
     game = models.ForeignKey('games.Game', related_name='mapresponse_game', null=True, blank=True)
     

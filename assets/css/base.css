@@ -127,9 +127,15 @@ html, body {
   font-size: 12px;
   border: 0;
   margin: 0;
-  font-family: verdana, Helvetica, Arial, sans-serif;
+  font-family: Verdana, Helvetica, Arial, sans-serif;
   background-color: #c2d3ef;
   background: url("/assets/img/footer-texture.png"); }
+
+blockquote {
+  margin: 1em;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 1em; }
 
 .bar-placeholder {
   width: 100%;
@@ -223,7 +229,7 @@ hr.space {
 .page .welcome {
   font-family: "HelveticaNeue", Helvetica, Arial, Sans-serif;
   font-weight: normal;
-  font-size: 1.4em;
+  font-size: 22px;
   color: #555;
   padding: 20px;
   background: #eee; }
@@ -1424,8 +1430,6 @@ hr.space {
   color: white;
   font-size: 14px;
   font-weight: bold; }
-.accounts .message {
-  color: red; }
 .accounts .games {
   color: #FFF;
   font-size: 16px; }

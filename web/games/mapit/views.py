@@ -1,21 +1,28 @@
-import re, web, datetime
+import datetime
+import re
+
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from django.template import RequestContext, loader
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.utils import simplejson
 from django.shortcuts import get_object_or_404
-from web.attachments.models import Attachment
-from web.missions.models import Mission
-from web.games.models import Game, PlayerGame
-from web.games.mapit.models import Mapit
-from web.responses.map.models import MapResponse
-from web.responses.map.forms import MapResponseForm
-from web.comments.models import Comment
-from web.comments.forms import CommentForm
-from web.reports.actions import *
+from django.template import RequestContext, loader
+from django.utils import simplejson
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages
+
 from gmapsfield.fields import GoogleMaps
+
+from web.attachments.models import Attachment
+from web.comments.forms import CommentForm
+from web.comments.models import Comment
+from web.games.mapit.models import Mapit
+from web.games.models import Game, PlayerGame
+from web.missions.models import Mission
 from web.processors import instance_processor as ip
+from web.reports.actions import *
+from web.responses.map.forms import MapResponseForm
+from web.responses.map.models import MapResponse
 
 @login_required
 def index(request, mission_slug, id):
@@ -25,7 +32,7 @@ def index(request, mission_slug, id):
     mapit = game.mapit
 
     if instance.is_expired() or mission.is_expired():
-        return HttpResponseRedirect('/mission/'+ mission_slug +'/game/othershoes/'+ id +'/overview/')
+        return HttpResponseRedirect(reverse('games_mapit_overview', args=[mission_slug, id]))
 
     unplayed = []
     _played = []
@@ -52,42 +59,40 @@ def index(request, mission_slug, id):
                 player_game = PlayerGame.objects.get(user=request.user, game=game)
                 player_game.delete()
 
-                c = Comment(
+                c = mapit.comments.create(
                     message=map_form.cleaned_data['message'], 
                     user=request.user,
                     instance=request.user.get_profile().instance,
                 )
-                c.save()
+
                 response = MapResponse(answer=True, map=map_form.cleaned_data['map'])
-                response.save()
-                response.comments.add(c)
+                response.message = map_form.cleaned_data['message']
                 response.save()
 
                 player_game = PlayerGame(visible=True, completed=True, response=response, game=mapit, user=request.user)
                 response = player_game.response.mapresponse
                 player_game.save()
 
-                ActivityLogger.log(request.user, request, 'a MapIT game', 'updated', '/mission/'+ mission_slug +'/game/mapit/'+ id +'/'+str(request.user.id), 'mapit')
+                log_url = reverse('games_mapit_overview', args=[mission_slug, id])
+                ActivityLogger.log(request.user, request, 'a MapIT game', 'updated', log_url, 'mapit')
                 
             # Play for the first time
             except:
                 response = MapResponse(answer=True, map=map_form.cleaned_data['map'])
                 response.save()
 
-                c = Comment(
+                c = mapit.comments.create(
                     message=map_form.cleaned_data['message'], 
                     user=request.user,
                     instance=request.user.get_profile().instance,
                 )
-                c.save()
-                response.comments.add(c)
-                response.save()
 
                 player_game = PlayerGame(visible=True, completed=True, response=response, game=mapit, user=request.user)
                 response = player_game.response.mapresponse
                 player_game.save()
 
-                ActivityLogger.log(request.user, request, 'a MapIT game', 'completed', '/mission/'+ mission_slug +'/game/mapit/'+ id +'/'+str(request.user.id), 'mapit')
+                log_url = reverse('games_mapit_overview', args=[mission_slug, id])
+                ActivityLogger.log(request.user, request, 'a MapIT game', 'completed', log_url, 'mapit')
                 PointsAssigner.assign(request.user, 'mapit_completed')
 
                 request.session['justplayed'] = True
@@ -101,7 +106,7 @@ def index(request, mission_slug, id):
                 if not g in _played and not g == game:
                     unplayed.append(g)
 
-            return HttpResponseRedirect(request.path +'overview')
+            return HttpResponseRedirect(reverse('games_mapit_overview', args=[mission_slug, id]))
                 
 
     other_responses = PlayerGame.objects.all().filter(game=mapit, completed=True)
@@ -120,61 +125,6 @@ def index(request, mission_slug, id):
     }, [ip])))
 
 @login_required
-def comment(request, mission_slug, id, user_id):
-    a = None
-    b = None
-
-    mission = Mission.objects.get(slug=mission_slug)
-    game = Game.objects.get(id=id)
-    mapit = game.mapit
-    user = User.objects.get(id=user_id)
-    instance = request.user.get_profile().instance
-
-    player_game = PlayerGame.objects.filter(user=user, game=game)
-    if len(player_game) > 1:
-        for pg in player_game[0:len(player_game)-1]:
-            pg.delete()
-
-    player_game = player_game[0]
-
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            c = Comment(
-                message=form.cleaned_data['message'], 
-                user=request.user,
-                instance=instance,
-            )
-            c.save()
-            player_game.comments.add(c)
-            player_game.save()
-
-            PointsAssigner.assign(request.user, 'comment_created')
-            ActivityLogger.log(request.user, request, 'to MapIT response', 'added comment', '/mission/'+ mission_slug +'/game/mapit/'+ id +'/'+ user_id, 'mapit')
-
-            if request.POST.has_key('yt-url'):
-                if request.POST.get('yt-url'):
-                    url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
-
-                    if len(url) > 1:
-                        c.attachment.create(
-                            file=None,
-                            url=url,
-                            type='video',
-                            user=request.user,
-                            instance=request.user.get_profile().instance,
-                        )
-
-            if request.FILES.has_key('picture'):
-                c.attachment.create(
-                    file=request.FILES.get('picture'),
-                    user=request.user,
-                    instance=request.user.get_profile().instance,
-                )
-
-    return HttpResponseRedirect('/mission/'+ mission_slug +'/game/mapit/'+ id +'/'+ user_id)
-
-@login_required
 def overview(request, mission_slug, id):
     mission = Mission.objects.get(slug=mission_slug)
     game = get_object_or_404(Game, id=id)
@@ -184,6 +134,47 @@ def overview(request, mission_slug, id):
     
     other_responses = PlayerGame.objects.all().filter(game=mapit, completed=True)
     
+    if not mapit.playergame_set.filter(user=request.user).count():
+        messages.success(request, "You'll have to complete this activity to join its discussion.", extra_tags='sticky')
+        return HttpResponseRedirect(reverse('games_mapit_index', args=[mission_slug, id]))
+
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = mapit.comments.create(
+                message=comment_form.cleaned_data['message'], 
+                user=request.user,
+                instance=request.user.get_profile().instance,
+            )
+
+            if request.POST.has_key('yt-url'):
+                if request.POST.get('yt-url'):
+                    url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
+
+                    if len(url) > 1:
+                        comment.attachment.create(
+                            file=None,
+                            url=url,
+                            type='video',
+                            user=request.user,
+                            instance=request.user.get_profile().instance,
+                        )
+
+            if request.FILES.has_key('picture'):
+                comment.attachment.create(
+                    file=request.FILES.get('picture'),
+                    user=request.user,
+                    instance=request.user.get_profile().instance,
+                )
+
+            PointsAssigner.assign(request.user, 'comment_created')
+            log_url = reverse('games_mapit_overview', args=[mission_slug, id]) + '#comment-' + str(comment.pk)
+            ActivityLogger.log(request.user, request, 'to MapIT response', 'added comment', log_url, 'mapit')
+
+            return HttpResponseRedirect(reverse('games_mapit_overview', args=[mission_slug, id]))
+    else:
+        comment_form = CommentForm()
+
     respondents = []
     for pg in other_responses:
         respondents.append({
@@ -197,8 +188,8 @@ def overview(request, mission_slug, id):
         if _markers:
             for marker in _markers:
                 try: 
-                    marker['message'] = pg.response.mapresponse.comments.all()[0].message
-                    marker['player'] = pg.user.get_profile().first_name + " " + pg.user.get_profile().last_name[:1]
+                    marker['message'] = pg.response.mapresponse.message
+                    marker['player'] = pg.user.get_profile().screen_name()
                 except: pass
             markers.append(_markers)
 
@@ -229,19 +220,15 @@ def overview(request, mission_slug, id):
         'first_time': first_time,
     },[ip])))
 
+
 @login_required
 def response(request, mission_slug, id, user_id):
     mission = Mission.objects.get(slug=mission_slug)
-    game = get_object_or_404(Game, id=id)
+    game = Game.objects.get(id=id)
     mapit = game.mapit
     user = User.objects.get(id=user_id)
 
-    player_game = PlayerGame.objects.filter(user=user, game=game)
-    if len(player_game) > 1:
-        for pg in player_game[0:len(player_game)-1]:
-            pg.delete()
-
-    player_game = player_game[0]
+    player_game = PlayerGame.objects.get(user=user, game=game)
 
     other_responses = PlayerGame.objects.all().filter(game=mapit, completed=True)
 
@@ -256,4 +243,5 @@ def response(request, mission_slug, id, user_id):
         'comments': player_game,
         'response': player_game.response.mapresponse,
         'comment_form': CommentForm(),
-    },[ip])))
+    }, [ip])))
+

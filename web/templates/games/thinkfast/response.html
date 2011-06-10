@@ -2,17 +2,14 @@
 {%block page_title%}{%endblock%}
 {%block game%}
     <div class="game-wrapper">
-        <h2>{{thinkfast.prompt.message}}</h2>
-        <p>{{player_game.user.get_profile.first_name}} {{player_game.user.get_profile.last_name}} selected <span class="highlight">{{response}}</span> in response to <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}/">this thinkfast</a></p>
-        <hr class="space">
+        <h2 class="game thinkfast">ThinkFast! Response</h2>
 
-        <!-- Show comments -->
-        <div id="comments">
-            <div class="sleeper"></div>
-            <h4>Comments:</h4>
-            <!-- Add Comment-->
-            {%include "comments/post.html"%}
+        <div class="fifth">
+            <img class="avatar" src="{{MEDIA_URL}}{{thinkfast.prompt.avatar}}">
         </div>
+        <h3>{{thinkfast.prompt.message}}</h3>
+        <p>{{player_game.user.get_profile.screen_name}} selected <span class="highlight">{{response}}</span>.</p>
+        <p><a href="{% url games_thinkfast_overview mission.slug,thinkfast.pk %}">Back to the activity overview &rarr;</a></p>
     </div>
 {%endblock%}
     

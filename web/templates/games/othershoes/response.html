@@ -2,29 +2,22 @@
 {%block page_title%}{%endblock%}
 {%block game%}
     <div class="game-wrapper">
-        <h2>
-          {{player_game.user.get_profile.first_name}} {{player_game.user.get_profile.last_name|slice:":1"}} said: 
-          "{{response.commentresponse.message}}"
-        </h2>
-        <h4><a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}/">{{othershoes.prompt.bio}}</a></h4>
+        <h2 class="game othershoes">Someone Else's Shoes Response</h2>
 
+        <h3>The Scenario:</h3>
         <div class="fifth">
             <img class="avatar" src="{{MEDIA_URL}}{{othershoes.prompt.avatar}}">
         </div>
         <p class="twothirds">
           {{othershoes.prompt.first_name}} {{othershoes.prompt.last_name}} is a <span class="highlight">{{othershoes.prompt.age}}</span> year old {% if othershoes.prompt.race %}<span class="highlight">{{othershoes.prompt.race}}</span>{% endif %} {% if othershoes.prompt.gender %}<span class="highlight">{{othershoes.prompt.gender}}</span>{% endif %} living in your neighborhood.
         </p>
-        <hr class="space">
-        <hr class="space">
+        <p>{{othershoes.prompt.bio}}</p>
+        <h3>
+          {{player_game.user.get_profile.screen_name}} said: 
+        </h3>
+        <blockquote>{{response.commentresponse.message}}</blockquote>
 
-        <!-- Show comments -->
-        <div id="comments">
-            <div class="sleeper"></div>
-            <h4>Comments:</h4>
-            <!-- Add Comment-->
-            {%include "comments/post.html"%}
-            <div style="clear: both;"></div>
-        </div>
+        <p><a href="{% url games_othershoes_overview mission.slug,othershoes.pk %}">Back to the activity overview &rarr;</a></p>
     </div>
 {%endblock%}
     
