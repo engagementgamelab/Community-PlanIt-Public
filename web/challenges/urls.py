@@ -7,7 +7,7 @@ urlpatterns = patterns('',
     # Decline
     (r'^(?P<id>.*)/decline/$', 'challenges.views.decline'),
     # Comment
-    (r'^(?P<id>.*)/comment/$', 'challenges.views.comment'),
+    url(r'^(?P<id>.*)/comment/$', 'challenges.views.comment', name='challenges_comment'),
     (r'^(?P<id>.*)/complete/$', 'challenges.views.complete'),
 
     # Add

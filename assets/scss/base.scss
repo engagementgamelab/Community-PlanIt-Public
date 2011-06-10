@@ -121,6 +121,10 @@ hr.space {
         }
     }
 
+    .instructionText {
+        font-size: 1.25em;
+    }
+
     .thumbnail {
         img {
             width: 64px;
@@ -1012,7 +1016,7 @@ hr.space {
                 .points {
                     position: absolute;
                     top: 10px;
-                    left: 10px;
+                    left: 2px;
                 }
             }
             .coins {
@@ -1287,6 +1291,10 @@ hr.space {
                 border: 10px solid $faintblue;
                 padding: 30px;
                 border-right-color: $lightblue;
+
+                h2 {
+                    margin-top: 1em;
+                }
 
                 iframe {
                     width: 320px;
