@@ -6,6 +6,7 @@ from web.instances.models import Instance
 from web.accounts.models import UserProfile
 from web.accounts.models import UserProfileEducation
 from web.accounts.models import UserProfileIncomes
+from web.accounts.models import UserProfileLiving
 
 class RegisterForm(forms.Form):
     firstName = forms.CharField(required=True, max_length=30, label=_("First Name"))
@@ -111,6 +112,12 @@ class UserProfileForm(forms.ModelForm):
     for x in UserProfileIncomes.objects.all().order_by("pos"):
         c2.append((x.id, x.income))
     income = forms.ChoiceField(required=False, choices=c2)
+    
+    c3 = []
+    c3.append((0, '------'))
+    for x in UserProfileLiving.objects.all().order_by("pos"):
+        c3.append((x.id, x.livingSituation))
+    living = forms.ChoiceField(required=False, choices=c3)
     
     avatar = forms.ImageField(required=False)
     

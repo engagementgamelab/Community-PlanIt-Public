@@ -131,6 +131,12 @@
                     {{ profile_form.income }}
                 </div>
                 
+                <div class="fieldWrapper">
+                    {{ profile_form.living.errors }}
+                    <label for="id_incomes">Current Living Situation:</label>
+                    {{ profile_form.living }}
+                </div>
+                
                 <div class="button submit"><span>Update Profile</span></div>
                 <div>
                     <label style="font-size: .75em; font-style:italic;">* denotes a required field</label>
