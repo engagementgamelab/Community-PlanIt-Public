@@ -18,11 +18,12 @@
     </div>
     <div class="message">
         {% if comment.hidden %}
-            <div class="notice">This message has been removed by the moderators.</div>
+            <div class="notice">This content has been flagged by the community and hidden by the administrator.</div>
         {% else %}
             {{comment.message|linebreaksbr}}
         {% endif %}
     </div>
+    {% if not comment.hidden %}
     <div class="attachments">
     {%for attachment in comment.attachment.all%}
       <div>
@@ -36,7 +37,6 @@
       </div>
     {%endfor%}
     </div>
-    {% if not comment.hidden %}
     <div class="controls">
         <div class="actions">
             {% if comment.user != user %}
