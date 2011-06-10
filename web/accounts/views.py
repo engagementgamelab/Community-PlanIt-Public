@@ -217,7 +217,7 @@ def profile(request, id):
     player = User.objects.get(id=id)
     
     instance = player.get_profile().instance
-    log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:9]
+    log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]
 
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
