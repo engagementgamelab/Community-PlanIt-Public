@@ -20,6 +20,10 @@ class UserProfileEducation(models.Model):
     eduLevel = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
 
+class UserProfileLiving(models.Model):
+    livingSituation = models.CharField(max_length=128)
+    pos = models.IntegerField(blank=False, null=False)
+
 class UserProfile(models.Model):
     accepted_term = models.BooleanField(blank=True)
     accepted_research = models.BooleanField(blank=True)
@@ -43,6 +47,7 @@ class UserProfile(models.Model):
     stake = models.CharField(max_length=125, blank=True, null=True)
     education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
     income = models.ForeignKey(UserProfileIncomes, blank=True, null=True, default=None)
+    living = models.ForeignKey(UserProfileLiving, blank=True, null=True, default=None)
 
     # Internal fields
     generated_password = models.CharField(max_length=260, editable=False)

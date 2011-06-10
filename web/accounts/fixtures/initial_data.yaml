@@ -63,3 +63,24 @@
     fields:
         income: $100,000 or more
         pos: 5
+        
+-   model: accounts.userprofileliving
+    pk: 1
+    fields:
+        livingSituation: rent
+        pos: 1        
+-   model: accounts.userprofileliving
+    pk: 2
+    fields:
+        livingSituation: own
+        pos: 2
+-   model: accounts.userprofileliving
+    pk: 3
+    fields:
+        livingSituation: live with parent or guardian
+        pos: 3
+-   model: accounts.userprofileliving
+    pk: 4
+    fields:
+        livingSituation: other
+        pos: 4

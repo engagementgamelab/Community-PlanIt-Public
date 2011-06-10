@@ -6,6 +6,10 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 
 from gmapsfield.fields import GoogleMapsField
+import south_rules
+
+from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
 class Instance(models.Model):
     region = models.CharField(max_length=45)
@@ -64,3 +68,5 @@ def instance_post_save(instance, created, **kwargs):
         except: pass
 
 models.signals.post_save.connect(instance_post_save, sender=Instance)
+
+

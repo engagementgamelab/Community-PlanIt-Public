@@ -9,6 +9,9 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.contrib import admin
 
+from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
+
 class QuerySetManager(models.Manager):
     def get_query_set(self):
         return self.model.QuerySet(self.model)
