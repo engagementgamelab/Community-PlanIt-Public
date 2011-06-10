@@ -24,14 +24,13 @@
             <img class="left avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
         {%endif%} 
         <!--Lives in East Boston, works in Fort Point and Plays in Fort Point.-->
-        {{player.first_name}} has <span class="highlight">{{player.get_profile.points}}</span> points, is following <a class="highlight" href="/list/following/{{player.id}}">{{player.get_profile.following.all|length}}</a></span> players is followed by <a class="highlight" href="/list/followers/{{player.id}}">{{followingme|length}}</a> players{%if user.get_profile.affiliations_csv|length%}
-         , and is affiliated with
-         {%for a in player.get_profile.affiliations_csv %} 
-                {% if forloop.counter == user.get_profile.affiliations_csv|length %}
-                and 
-                {%endif%}
-                <a href="/affiliation/{{a}}" class="highlight">{{a}}</a>{% if forloop.counter < user.get_profile.affiliations_csv|length %}, {%endif%}{%endfor%}.
-        {%else%}.{%endif%}
+        <span style="font-size: 1em">Points: {{player.get_profile.points}}</span><br>
+        <span style="font-size: 1em">Community Stake: {{player.get_profile.stake}}</span><br>
+        <span style="font-size: 1em">Affiliated With:
+            {%for a in player.get_profile.affiliations_csv %} 
+                <a href="/affiliation/{{a}}" class="highlight">{{a}}</a>
+            {%endfor%}
+        </span>
     </p>    
     <hr class="clear">
     <div class="twothird">
