@@ -71,7 +71,7 @@ class UserProfile(models.Model):
     def points_to_coin(self):
         if self.points_multiplier < 1:
             self.points_multiplier = 1
-        return 99 - ((self.points_multiplier*99) - self.points)
+        return 100 - ((self.points_multiplier*100) - self.points)
 
     def affiliations_csv(self):
         if self.affiliations:
