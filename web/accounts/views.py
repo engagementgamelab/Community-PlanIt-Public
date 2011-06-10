@@ -180,9 +180,9 @@ def edit(request):
                     profile.user.first_name = profile_form.cleaned_data['first_name']
                     
                 if (request.POST.get('last_name', None) == None or request.POST.get('last_name', None) == None):
-                    profile.user.first_name = None
+                    profile.user.last_name = None
                 else:
-                    profile.user.first_name = profile_form.cleaned_data['last_name']
+                    profile.user.last_name = profile_form.cleaned_data['last_name']
                 profile.user.save()
                 
               
