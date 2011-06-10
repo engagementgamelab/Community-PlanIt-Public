@@ -75,7 +75,6 @@
                 <a href="/neighborhood/{{user.get_profile.instance.slug}}" class="right fine">View more community news &rarr;</a>
                 </p>
             </div>
-            
             <div class="third last">        
                 <div class="modules">
                     {%if missions.current.all|length%}
@@ -104,7 +103,6 @@
                                                         {%endif%}
                                                     </a>
                                                 {%endwith%}
-                                                 <span class="fancy fine">({{game.game_type}})</span>
                                                  <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}" class="button">Go</a>
                                              {%endif%}
                                              </li>
