@@ -63,22 +63,7 @@
             {%else%}
                 No activities created.   
             {%endif%}
-            
-            <hr class="space">
-            
-            <h4>Neighborhood Attachments</h4>
-            {%if attachments|length%}
-            <ul class="listless listview feed attachments">
-                {%for attachment in attachments%}
-                <li class="listitem {{attachment.type}}">
-                    <a href="{{attachment.file.url}}">{{attachment.file.name|slice:"0:35"}}</a>
-                </li>
-                {%endfor%}
-            </ul>
-            {%else%}
-                <p>No attachments added.</p>
-            {%endif%}
-            
+           
         </div>
         <hr class="space">
     </div>
