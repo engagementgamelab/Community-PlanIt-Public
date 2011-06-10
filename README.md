@@ -24,7 +24,9 @@ MEDIA_ROOT= /var/www/cpi/assets/
 
 make sure that each line in "Datbaase changes to a deployed system" are follows
 
- 
+run ./manage.py syncdb and ./manage.py migrate 
+
+to get the db changes.  
 
 
 # Notes #
