@@ -13,14 +13,13 @@ from web.processors import instance_processor as ip
 
 @login_required
 def fetch(request, id):
-    players = UserProfile.objects.all()
     issues = Issue.objects.filter(instance=request.user.get_profile().instance)
     issue = Issue.objects.get(id=id)
 
     total_coins = 0
     
-    for player in players:
-        total_coins += player.coins
+    for i in issues:
+        total_coins += i.coins
 
     tmpl = loader.get_template('issues/base.html')
     return HttpResponse(tmpl.render(RequestContext(request, {

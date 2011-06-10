@@ -22,6 +22,7 @@ from web.processors import instance_processor as ip
 from web.reports.actions import PointsAssigner, ActivityLogger
 from web.responses.choices.forms import ChoicesResponseForm
 from web.responses.choices.models import *
+from settings import MEDIA_ROOT
 
 @login_required
 def index(request, mission_slug, id):
