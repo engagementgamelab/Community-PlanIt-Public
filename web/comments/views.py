@@ -25,15 +25,11 @@ def reply(request, id):
     p = Comment.objects.get(id=id)
     instance = request.user.get_profile().instance
   
-    c = Comment(
+    c = p.comments.create(
         message=request.POST.get('message'), 
         user=request.user,
         instance=instance,
     )
-
-    c.save()
-
-    p.comments.add(c)
 
     referrer = request.META['HTTP_REFERER'].split('#', 1)[0]
     referrer += '#comment-%s' % c.pk
