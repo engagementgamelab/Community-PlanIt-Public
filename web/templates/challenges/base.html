@@ -105,6 +105,9 @@
         {%else%}
             <h4>No one has completed this challenge</h4>
         {%endif%}
+        
+        
+        {%if completed%}
         <!-- Show comments -->
         <div id="comments">
             <div class="sleeper"></div>
@@ -112,6 +115,7 @@
             <!-- Add Comment-->
             {%include "comments/post.html"%}
         </div>
+        {%endif%}
     </div>
     <div class="fifth right">
         <a class="right red normal" href="/flag/challenge/{{challenge.id}}">Flag challenge</a>
