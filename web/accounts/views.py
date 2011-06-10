@@ -1,6 +1,6 @@
 import datetime
 import math
-
+import re
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -172,8 +172,20 @@ def edit(request):
                     #TODO: FIX THIS!!!!! THIS IS HORRIBLE!!!!!!! -BMH
                     profile.email = profile_form.cleaned_data['email']
                     profile.user.email = profile_form.cleaned_data['email']
-                    profile.user.save()
                 
+                #AND IT CONTINUES, EXPECT BUGS! -bmh
+                if (request.POST.get('first_name', None) == None or request.POST.get('first_name', None) == None):
+                    profile.user.first_name = None
+                else:
+                    profile.user.first_name = profile_form.cleaned_data['first_name']
+                    
+                if (request.POST.get('last_name', None) == None or request.POST.get('last_name', None) == None):
+                    profile.user.first_name = None
+                else:
+                    profile.user.first_name = profile_form.cleaned_data['last_name']
+                profile.user.save()
+                
+              
                 if request.FILES.get('avatar', None) != None:
                     profile.avatar = request.FILES['avatar']
                 profile.save()
