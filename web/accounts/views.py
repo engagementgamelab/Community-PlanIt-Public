@@ -190,7 +190,8 @@ def edit(request):
                     profile.avatar = request.FILES['avatar']
                 profile.save()
                 profile_form.save()
-                ActivityLogger.log(request.user, request, 'account profile', 'updated', '/player/'+ str(request.user.id), 'profile')
+                #This will remove the log message. In the furture look for ActivityLogger.log
+                #ActivityLogger.log(request.user, request, 'account profile', 'updated', '/player/'+ str(request.user.id), 'profile')
 
                 if not profile.completed:
                     try:
