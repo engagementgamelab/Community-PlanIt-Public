@@ -1,89 +1,21 @@
-import datetime, re
+import datetime
+import re
+
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404
 from django.template import Context, RequestContext, loader
-from web.accounts.models import UserProfile
-from web.issues.models import *
-from web.comments.models import Comment
-from web.attachments.models import Attachment
-from web.comments.forms import CommentForm
-from web.reports.actions import ActivityLogger, PointsAssigner
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+
+from web.accounts.models import UserProfile
+from web.attachments.models import Attachment
+from web.comments.forms import CommentForm
+from web.comments.models import Comment
+from web.issues.models import *
 from web.processors import instance_processor as ip
-
-@login_required
-def fetch(request, id):
-    issues = Issue.objects.filter(instance=request.user.get_profile().instance)
-    issue = Issue.objects.get(id=id)
-
-    total_coins = 0
-    
-    for i in issues:
-        total_coins += i.coins
-
-    tmpl = loader.get_template('issues/base.html')
-    return HttpResponse(tmpl.render(RequestContext(request, {
-        'issue': issue,
-        'total_coins': total_coins,
-        'comments': issue,
-        'comment_form': CommentForm(),
-    }, [ip])))
-
-@login_required
-def comment(request, id):
-    a = None
-    b = None
-
-    if request.method == 'POST':
-        if request.POST.has_key('yt-url'):
-            if request.POST.get('yt-url'):
-                url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
-
-                if len(url) > 1:
-                    a = Attachment(
-                        file=None,
-                        url=url,
-                        type='video',
-                        user=request.user,
-                        instance=request.user.get_profile().instance,
-                    )
-                    a.save()
-        
-        if request.FILES.has_key('picture'):
-            b = Attachment(
-                file=request.FILES.get('picture'),
-                user=request.user,
-                instance=request.user.get_profile().instance,
-            )
-
-            b.save()
-
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            c = Comment(
-                message=form.cleaned_data['message'], 
-                user=request.user,
-                instance=request.user.get_profile().instance,
-            )
-            c.save()
-
-            if a:
-                c.attachment.add(a)
-                c.save()
-
-            if b:
-                c.attachment.add(b)
-                c.save()
-
-            issue = Issue.objects.get(id=id)
-            issue.comments.add(c)
-            issue.save()
-            PointsAssigner.assign(request.user, 'comment_created')
-            ActivityLogger.log(request.user, request, 'to issue', 'added comment', '/issue/'+ id, 'issue')
-        else:
-            return HttpResponseRedirect('/issue/'+ id +'?error=true')
-
-    return HttpResponseRedirect('/issue/'+ id)
+from web.reports.actions import ActivityLogger, PointsAssigner
 
 @login_required
 def all(request):
@@ -118,6 +50,57 @@ def all(request):
         'issue_wrapper': issue_wrapper,
         'total_coins' : total_coins,
         'total_playerCoins' : total_playerCoins,
+    }, [ip])))
+
+@login_required
+def detail(request, id):
+    issue = get_object_or_404(Issue, id=id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = issue.comments.create(
+                message=form.cleaned_data['message'], 
+                user=request.user,
+                instance=request.user.get_profile().instance,
+            )
+
+            if request.POST.has_key('yt-url'):
+                if request.POST.get('yt-url'):
+                    url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
+
+                    if len(url) > 1:
+                        comment.attachment.create(
+                            file=None,
+                            url=url,
+                            type='video',
+                            user=request.user,
+                            instance=request.user.get_profile().instance,
+                        )
+            
+            if request.FILES.has_key('picture'):
+                comment.attachment.create(
+                    file=request.FILES.get('picture'),
+                    user=request.user,
+                    instance=request.user.get_profile().instance,
+                )
+
+            PointsAssigner.assign(request.user, 'comment_created')
+            log_url = reverse('issues_detail', args=[id]) + '#comment-' + str(comment.pk)
+            ActivityLogger.log(request.user, request, 'to issue', 'added comment', log_url, 'issue')
+            return HttpResponseRedirect(reverse('issues_detail', args=[id]))
+
+    issues = Issue.objects.filter(instance=request.user.get_profile().instance)
+    total_coins = 0
+    for i in issues:
+        total_coins += i.coins
+
+    tmpl = loader.get_template('issues/base.html')
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        'issue': issue,
+        'total_coins': total_coins,
+        'comments': issue,
+        'comment_form': CommentForm(),
     }, [ip])))
 
 @login_required

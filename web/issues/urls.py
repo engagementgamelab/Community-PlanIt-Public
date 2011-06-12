@@ -2,14 +2,12 @@ from django.conf.urls.defaults import *
 from django.contrib.auth.views import login, logout
 
 urlpatterns = patterns('',
-    # Comment on detail
-    (r'^(?P<id>.*)/comment/$', 'issues.views.comment'),
     # Show all
-    (r'^$', 'issues.views.all'),
+    url(r'^$', 'issues.views.all', name='issues_all'),
     # Spend coin
-    (r'^spend/(?P<id>.*)/$', 'issues.views.spend'),
+    url(r'^spend/(?P<id>.*)/$', 'issues.views.spend', name='issues_spend'),
     # Take coin
-    (r'^take/(?P<id>.*)/$', 'issues.views.take'),
-    # Fetch detail
-    (r'^(?P<id>.*)/$', 'issues.views.fetch'),
+    url(r'^take/(?P<id>.*)/$', 'issues.views.take', name='issues_take'),
+    # Show detail
+    url(r'^(?P<id>.*)/$', 'issues.views.detail', name='issues_detail'),
 )

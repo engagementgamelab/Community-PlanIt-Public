@@ -105,14 +105,14 @@
         {%else%}
             <h4>No one has completed this challenge</h4>
         {%endif%}
-        
-        
+
         {%if completed%}
         <!-- Show comments -->
         <div id="comments">
             <div class="sleeper"></div>
             <h4>Comments:</h4>
             <!-- Add Comment-->
+            {% url challenges_comment challenge.id as comment_post_url %}
             {%include "comments/post.html"%}
         </div>
         {%endif%}

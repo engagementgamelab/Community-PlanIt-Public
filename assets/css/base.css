@@ -237,6 +237,8 @@ hr.space {
     font-weight: bold;
     text-shadow: none;
     text-decoration: underline; }
+.page .instructionText {
+  font-size: 1.25em; }
 .page .thumbnail img {
   width: 64px;
   height: auto;
@@ -1189,6 +1191,8 @@ hr.space {
       border: 10px solid #e6edf9;
       padding: 30px;
       border-right-color: #c5d6f2; }
+      .page #main .content #comments h2 {
+        margin-top: 1em; }
       .page #main .content #comments iframe {
         width: 320px;
         height: 185px; }
@@ -1342,8 +1346,6 @@ hr.space {
   margin-top: 40px;
   height: 140px;
   background: url("/assets/img/city1_bg.png") repeat-x top left; }
-.page .instructionText {
-    font-size: 1.25em;}
 
 .loggedin #header {
   height: 40px; }
