@@ -188,17 +188,22 @@ def edit(request):
                 else:
                     profile.user.last_name = profile_form.cleaned_data['last_name']
                 
-                if (request.POST.get("education", None) == None or request.POST.get("education", None) == 0):
+                #post = ""
+                #for x in request.POST:
+                #    post = "%s%s: %s<br>" % (post, x, request.POST[x])
+                #return HttpResponse(post)
+                
+                if (request.POST.get("education", None) == None or profile_form.cleaned_data['education']):
                     profile.education = None
                 else:
                     profile.education = UserProfileEducation.objects.get(id=profile_form.cleaned_data['education'])
                 
-                if (request.POST.get("income", None) == None or request.POST.get("income", None) == 0):
+                if (request.POST.get("income", None) == None or profile_form.cleaned_data['income']):
                     profile.income = None
                 else:
                     profile.income = UserProfileIncomes.objects.get(id=profile_form.cleaned_data['income'])
                 
-                if (request.POST.get("living", None) == None or request.POST.get("living", None) == 0):
+                if (request.POST.get("living", None) == None or profile_form.cleaned_data['living']):
                     profile.living = None
                 else:
                     profile.living = UserProfileLiving.objects.get(id=profile_form.cleaned_data['living'])
