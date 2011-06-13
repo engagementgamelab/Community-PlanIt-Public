@@ -128,7 +128,22 @@
                         <hr class="space">
                         {%endfor%}
                     {%else%}
-                        No missions created.
+                        {%if missions.past.all|length%}
+                        <label>
+                            Your missions have ended for now. Great work!
+                            Your community is better because of your efforts.
+                            You'll be notified when a new mission starts.
+                        </label>
+                        {%else%}
+                            {%if missions.future.all|length%}
+                                <label>
+                                    The mission has not yet started. You will
+                                    be notified when the mission starts.
+                                </label>
+                            {%else%}
+                                No missions created.
+                            {%endif%}
+                        {%endif%}
                     {%endif%}
 
                     <hr class="space">
