@@ -194,18 +194,16 @@ def comment(request, id):
 
     if request.method == 'POST':
         if request.POST.has_key('yt-url'):
-            if request.POST.get('yt-url'):
-                url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
-
-                if len(url) > 1:
-                    a = Attachment(
-                        file=None,
-                        url=url,
-                        type='video',
-                        user=request.user,
-                        instance=request.user.get_profile().instance,
-                    )
-                    a.save()
+            url = request.POST.get('yt-url')
+            if url:
+                a = Attachment(
+                    file=None,
+                    url=url,
+                    type='video',
+                    user=request.user,
+                    instance=request.user.get_profile().instance,
+                )
+                a.save()
         
         if request.FILES.has_key('picture'):
             b = Attachment(
