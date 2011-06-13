@@ -4,13 +4,6 @@
     <div class="game-wrapper">
         <h2 class="game othershoes">Someone Else's Shoes Response</h2>
 
-        <h3>The Scenario:</h3>
-        <div class="fifth">
-            <img class="avatar" src="{{MEDIA_URL}}{{othershoes.prompt.avatar}}">
-        </div>
-        <p class="twothirds">
-          {{othershoes.prompt.first_name}} {{othershoes.prompt.last_name}} is a <span class="highlight">{{othershoes.prompt.age}}</span> year old {% if othershoes.prompt.race %}<span class="highlight">{{othershoes.prompt.race}}</span>{% endif %} {% if othershoes.prompt.gender %}<span class="highlight">{{othershoes.prompt.gender}}</span>{% endif %} living in your neighborhood.
-        </p>
         <p>{{othershoes.prompt.bio}}</p>
         <h3>
           {{player_game.user.get_profile.screen_name}} said: 
