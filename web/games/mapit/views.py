@@ -54,49 +54,36 @@ def index(request, mission_slug, id):
 
         if map_form.is_valid():
 
-            # Replay
+            # delete any existing PlayerGame, adjusting the log message
+            # accordingly
             try:
                 player_game = PlayerGame.objects.get(user=request.user, game=game)
                 player_game.delete()
-
-                c = mapit.comments.create(
-                    message=map_form.cleaned_data['message'], 
-                    user=request.user,
-                    instance=request.user.get_profile().instance,
-                )
-
-                response = MapResponse(answer=True, map=map_form.cleaned_data['map'])
-                response.message = map_form.cleaned_data['message']
-                response.save()
-
-                player_game = PlayerGame(visible=True, completed=True, response=response, game=mapit, user=request.user)
-                response = player_game.response.mapresponse
-                player_game.save()
-
-                log_url = reverse('games_mapit_overview', args=[mission_slug, id])
-                ActivityLogger.log(request.user, request, 'a MapIT game', 'updated', log_url, 'mapit')
-                
-            # Play for the first time
-            except:
-                response = MapResponse(answer=True, map=map_form.cleaned_data['map'])
-                response.save()
-
-                c = mapit.comments.create(
-                    message=map_form.cleaned_data['message'], 
-                    user=request.user,
-                    instance=request.user.get_profile().instance,
-                )
-
-                player_game = PlayerGame(visible=True, completed=True, response=response, game=mapit, user=request.user)
-                response = player_game.response.mapresponse
-                player_game.save()
-
-                log_url = reverse('games_mapit_overview', args=[mission_slug, id])
-                ActivityLogger.log(request.user, request, 'a MapIT game', 'completed', log_url, 'mapit')
+                log_message = 'updated'
+            except PlayerGame.DoesNotExist:
+                # this is the first time this player's completed this game
+                log_message = 'completed'
                 PointsAssigner.assign(request.user, 'mapit_completed')
-
                 request.session['justplayed'] = True
 
+            response = MapResponse(
+                answer=True,
+                message = map_form.cleaned_data['message'],
+                map=map_form.cleaned_data['map']
+            )
+            response.save()
+
+            player_game = PlayerGame(
+                visible=True,
+                completed=True,
+                response=response,
+                game=mapit,
+                user=request.user
+            )
+            player_game.save()
+
+            log_url = reverse('games_mapit_overview', args=[mission_slug, id])
+            ActivityLogger.log(request.user, request, 'a MapIT game', log_message, log_url, 'mapit')
 
             games = mission.games.all()
             pg = PlayerGame.objects.filter(user=request.user, completed=True)
@@ -107,7 +94,6 @@ def index(request, mission_slug, id):
                     unplayed.append(g)
 
             return HttpResponseRedirect(reverse('games_mapit_overview', args=[mission_slug, id]))
-                
 
     other_responses = PlayerGame.objects.all().filter(game=mapit, completed=True)
 
