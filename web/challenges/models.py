@@ -30,12 +30,13 @@ class Challenge(models.Model):
     user = models.ForeignKey(User, editable=False)
     attachments = models.ManyToManyField(Attachment, blank=True)
     comments = models.ManyToManyField(Comment, blank=True)
-
+    
+    #TODO: Turn this into a view, GAH! -BMH
     def is_active(self):
-        return self.start_date <= datetime.datetime.now() and self.end_date >= datetime.datetime.now()
+        return self.end_date >= datetime.datetime.now()
 
     def is_expired(self):
-        return self.start_date <= datetime.datetime.now() and self.end_date <= datetime.datetime.now()
+        return self.end_date <= datetime.datetime.now()
 
     # Faking out the objects collection to pull from the inner model
     # class.
