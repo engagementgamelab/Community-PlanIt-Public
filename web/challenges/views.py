@@ -61,7 +61,7 @@ def complete(request, id):
     if request.method == 'POST':
         if not pc.completed:
             carf = CommentAttachmentResponseForm(request.POST)
-            
+
             if request.POST.has_key('yt-url'):
                 if request.POST.get('yt-url'):
                     a = Attachment(
@@ -94,6 +94,9 @@ def complete(request, id):
                 pc.attachments.add(b)
                 pc.save()
 
+            if carf.is_valid():
+                pc.response = carf.save()
+            
             pc.completed = True
             pc.save()
 
