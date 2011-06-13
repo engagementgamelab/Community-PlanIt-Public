@@ -121,7 +121,11 @@ def edit(request):
         return Http404
     
     change_password_form = ChangePasswordForm()
-    profile_form = UserProfileForm(instance=profile, initial={ 'myInstance': profile.instance.id if profile.instance != None else 0})
+    profile_form = UserProfileForm(instance=profile, 
+                                   initial={'myInstance': profile.instance.id if profile.instance != None else 0,
+                                            'education': profile.education.id if profile.education != None else 0,
+                                            'income': profile.income.id if profile.income != None else 0,
+                                            'living': profile.living.id if profile.living != None else 0})
     if request.method == 'POST':
         
         #files = ""
@@ -174,15 +178,36 @@ def edit(request):
                     profile.user.email = profile_form.cleaned_data['email']
                 
                 #AND IT CONTINUES, EXPECT BUGS! -bmh
-                if (request.POST.get('first_name', None) == None or request.POST.get('first_name', None) == None):
+                if (request.POST.get('first_name', None) == None or request.POST.get('first_name', None) == ''):
                     profile.user.first_name = None
                 else:
                     profile.user.first_name = profile_form.cleaned_data['first_name']
                     
-                if (request.POST.get('last_name', None) == None or request.POST.get('last_name', None) == None):
+                if (request.POST.get('last_name', None) == None or request.POST.get('last_name', None) == ''):
                     profile.user.last_name = None
                 else:
                     profile.user.last_name = profile_form.cleaned_data['last_name']
+                
+                #post = ""
+                #for x in request.POST:
+                #    post = "%s%s: %s<br>" % (post, x, request.POST[x])
+                #return HttpResponse(post)
+                
+                if (request.POST.get("education", None) == None or profile_form.cleaned_data['education']):
+                    profile.education = None
+                else:
+                    profile.education = UserProfileEducation.objects.get(id=profile_form.cleaned_data['education'])
+                
+                if (request.POST.get("income", None) == None or profile_form.cleaned_data['income']):
+                    profile.income = None
+                else:
+                    profile.income = UserProfileIncomes.objects.get(id=profile_form.cleaned_data['income'])
+                
+                if (request.POST.get("living", None) == None or profile_form.cleaned_data['living']):
+                    profile.living = None
+                else:
+                    profile.living = UserProfileLiving.objects.get(id=profile_form.cleaned_data['living'])
+                
                 profile.user.save()
                 
               

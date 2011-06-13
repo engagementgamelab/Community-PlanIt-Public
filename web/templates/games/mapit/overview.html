@@ -9,10 +9,16 @@
                 <a href="/mission/{{mission.slug}}/game/{{unplayed.game_type}}/{{unplayed.id}}/" class="red" style="font-weight:bold">next activity</a>!
             </label>
         {% endif %}
-
-        <h3>MapIT Summary <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a></h3>
-        <h1>{{mapit.prompt.message}}</h1>
-
+        
+        <h1>
+            <span style="width: 75%; float: left;">
+                {{mapit.prompt.message}}
+            </span>
+            <span style="width: 25%; float: right;">
+                <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a>
+            </span>
+        </h1>
+        
         <hr class="space">
         <div class="google-map" data-type="{{mapit.response.mapresponse.type}}" data-state="overview"></div>
         <hr class="space">

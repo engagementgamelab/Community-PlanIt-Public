@@ -27,10 +27,22 @@
             {%if active%}
                 <ul class="listview listless">
                     {%for game in mission.games.all%}
+                        {%with game.game_type as type%}
                         {%if not game in games%}
                             <li class="listitem game {{game.game_type}}">
                                 <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">{{game.title}}</a>
-                                <span class="fine highlight green">{% get_points for completed game.game_type %}</span>
+                                {%if type == "mapit"%}
+                                    <span class="fine highlight green">{% get_points for completed mapit %}</span>
+                                {%endif%}
+                                
+                                {%if type == "thinkfast"%}
+                                    <span class="fine highlight green">{% get_points for completed thinkfast %}</span>
+                                {%endif%}
+
+                                {%if type == "othershoes"%}
+                                    <span class="fine highlight green">{% get_points for completed othershoes %}</span>
+                                {%endif%}
+                                
                                 <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">Play</a>
                         {%else%}
                             <li class="listitem game played {{game.game_type}}">
@@ -39,6 +51,7 @@
                                 <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">Replay</a>
                         {%endif%}
                         </li>
+                        {%endwith%}
                     {%endfor%}
                 </ul>
             {%else%}

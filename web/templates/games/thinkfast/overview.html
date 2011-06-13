@@ -10,8 +10,16 @@
             </label>
         {% endif %}
 
-        <h3>ThinkFast! Summary <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a></h3>
-        <h1>{{thinkfast.prompt.message}}</h1>
+        <h1>
+            <span style="width: 75%; float: left;">
+                {{thinkfast.prompt.message}}
+            </span>
+            <span style="width: 25%; float: right;">
+                <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}" class="button right">Change Answer</a>
+            </span>
+        </h1>
+        
+        
         {%if thinkfast.prompt.attachments%}
             {%for file, x, y in fileList%}
                 <iframe style="margin-left:auto; margin-right:auto;" src="{{MEDIA_URL}}/{{file}}" width="{{x}}" height="{{y}}" frameborder="0"></iframe>
