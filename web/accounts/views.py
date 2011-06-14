@@ -59,7 +59,7 @@ def register(request):
                                         'first_name': firstName }))
         except: pass
 
-        if send_mail(_('New account created!'), body, settings.NOREPLY_EMAIL, [email]):
+        if send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [email]):
             messages.success(request, _('Thanks for registering!'))
 
         player = auth.authenticate(username=email, password=password)
