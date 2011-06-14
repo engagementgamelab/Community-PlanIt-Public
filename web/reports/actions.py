@@ -44,7 +44,6 @@ class PointsAssigner:
             up = user.get_profile()
             up.points += p.points
             up.coins += p.coins
-            up.save()
 
             if up.points:
                 messages.success(request, 'You have earned '+ up.points +' points')
@@ -56,27 +55,20 @@ class PointsAssigner:
             up = user.get_profile()
             up.points += settings.DEFAULT_POINTS or 10
             up.coins += settings.DEFAULT_COINS or 0
-            up.save()
-
-        if up.points > 0:
-            if up.points_multiplier == 0:
-                up.points_multiplier = 1
-
-            if up.points >= up.points_multiplier * 99:
-                up.points_multiplier += math.floor(up.points / (up.points_multiplier*99))
-                up.coins += math.floor(up.points / ((up.points_multiplier - 1) * 99))
-                up.save()
-
-        offset = up.points_multiplier or 1
-        if up.points >= offset * 99:
-            new_coins = math.floor(up.points / (offset * 99))
+        
+        new_coins = 0
+        pointDiff = up.points - up.points_multiplier * 100
+        #Say points = 480, you make 40 points, you now have 520
+        #your multiplier is still 4, 520 - 400 > 100, new coin!
+        if pointDiff >= 100:
+            new_coins += pointDiff / 100
             up.coins += new_coins
-            up.points_multiplier = offset + new_coins
-            up.save()
-
-            if new_coins > 1:
-                ActivityLogger.log(request.user, request, 'to gain '+ str(up.coins) +' coins', 'earned over '+ str((up.points_multiplier - 1) * 100) +' points', 'issue')
-            else:
-                ActivityLogger.log(request.user, request, 'to gain a coin', 'earned over '+ str((up.points_multiplier - 1) * 100) +' points', 'issue')
+            up.points_multiplier += pointDiff / 100
+        up.save()
+                
+        #if new_coins > 1:
+        #    ActivityLogger.log(request.user, request, 'to gain '+ str(up.coins) +' coins', 'earned over '+ str((up.points_multiplier - 1) * 100) +' points', 'issue')
+        #else:
+        #    ActivityLogger.log(request.user, request, 'to gain a coin', 'earned over '+ str((up.points_multiplier - 1) * 100) +' points', 'issue')
 
 PointsAssigner = PointsAssigner()
