@@ -95,7 +95,7 @@ class UserProfileForm(forms.ModelForm):
         ('','------'), ('asian','Asian'), ('american indian or alaska native','American Indian or Alaska Native'), ('black or african american', 'Black or African American'),
         ('hispanic or latino or spanish','Hispanic, Latino, or Spanish'), ('pacific islander or native hawaiian', 'Pacific Islander or Native Hawaiian'), ('white','White'),
         ('multiracial', 'Multiracial'), ('other','Other')))
-    stake = forms.ChoiceField(required=False, choices=(('','------'), ('live','Live'), ('work','Work'), ('play', 'Play')))
+    stake = forms.ChoiceField(required=False, choices=(('','------'), ('live','Live'), ('work','Work'), ('play', 'Play'), ('learn', 'Learn')))
     birth_year = forms.CharField(max_length=30, label='Age', help_text='Private',required=False)
     phone_number = forms.CharField(max_length=30, help_text='Private',required=False)
     myInstance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Community'))
