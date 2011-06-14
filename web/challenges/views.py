@@ -163,6 +163,7 @@ def add(request):
     
     tmpl = loader.get_template('challenges/add.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
+        'instance': instance,
         'form': form,
         'location': location.coordinates,
     },[ip])))

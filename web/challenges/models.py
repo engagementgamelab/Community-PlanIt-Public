@@ -30,6 +30,11 @@ class Challenge(models.Model):
     user = models.ForeignKey(User, editable=False)
     attachments = models.ManyToManyField(Attachment, blank=True)
     comments = models.ManyToManyField(Comment, blank=True)
+    game_type = models.CharField(max_length=45, editable=False)
+    
+    def save(self):
+        self.game_type = "challenge"
+        super(Challenge, self).save()
     
     #TODO: Turn this into a view, GAH! -BMH
     def is_active(self):

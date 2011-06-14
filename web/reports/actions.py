@@ -6,6 +6,7 @@ from django.utils import simplejson
 from gmapsfield.fields import GoogleMaps
 from django.conf import settings
 from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 
 class ActivityLogger:
     def log(self, user, request, action, data, url, type):
@@ -39,23 +40,32 @@ class PointsAssigner:
         return p.points 
 
     def assign(self, user, action):
-        try:
-            p = PointsAssignment.objects.get(action=action)
-            up = user.get_profile()
-            up.points += p.points
-            up.coins += p.coins
-
-            if up.points:
-                messages.success(request, 'You have earned '+ up.points +' points')
-
-            if up.coins:
-                messages.success(request, 'You have earned '+ up.coins +' coins')
-
-        except:
+        #p = PointsAssignment.objects.get(action=action)
+        #return HttpResponse("action: %s, points: %s, coins: %s" % (p.action, p.points, p.coins))
+        before = 0
+        str = ""
+        
+        p = PointsAssignment.objects.filter(action=action)
+        if len(p) > 0:
+            p = p[0]
+        else:
             up = user.get_profile()
             up.points += settings.DEFAULT_POINTS or 10
             up.coins += settings.DEFAULT_COINS or 0
+            return 
         
+        str = "action: %s, points: %s, coins: %s" % (p.action, p.points, p.coins)
+        up = user.get_profile()
+        before = up.points
+        up.points += p.points
+        up.coins += p.coins
+
+        #if up.points:
+        #    messages.success(request, 'You have earned '+ up.points +' points')
+
+        #if up.coins:
+        #    messages.success(request, 'You have earned '+ up.coins +' coins')
+
         new_coins = 0
         pointDiff = up.points - up.points_multiplier * 100
         #Say points = 480, you make 40 points, you now have 520
