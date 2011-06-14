@@ -136,17 +136,15 @@ def overview(request, mission_slug, id):
             )
 
             if request.POST.has_key('yt-url'):
-                if request.POST.get('yt-url'):
-                    url = re.search(r"(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=[0-9]/)[^&\n]+|(?<=v=)[^&\n]+", request.POST.get('yt-url')).group()
-
-                    if len(url) > 1:
-                        comment.attachment.create(
-                            file=None,
-                            url=url,
-                            type='video',
-                            user=request.user,
-                            instance=request.user.get_profile().instance,
-                        )
+                url = request.POST.get('yt-url')
+                if url:
+                    comment.attachment.create(
+                        file=None,
+                        url=url,
+                        type='video',
+                        user=request.user,
+                        instance=request.user.get_profile().instance,
+                    )
 
             if request.FILES.has_key('picture'):
                 comment.attachment.create(

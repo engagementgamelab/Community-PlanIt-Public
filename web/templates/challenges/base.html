@@ -1,5 +1,5 @@
 {%extends "layouts/base.html"%}
-{%load gmap%}
+{%load gmap attachment_tags %}
 {%block section%}challenges{%endblock%}
 {%block title%}Challenge{%endblock%}
 {%block page_title%}{%endblock%}
@@ -50,7 +50,7 @@
                             Include <a id="add-video" href="#add-video" class="button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="button small">Picture</a>
                         </div>
                         <div class="add-video form">
-                            <label for="yt-url">Paste the embed code of your YouTube video below. (On the YouTube video page click "Share," then "Embed" to get the code.)</label>
+                            <label for="yt-url">Paste the URL of your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID.</label>
                             <textarea name="yt-url" type="text" maxlength="255"></textarea>
                             <div class="controls">
                                 <button class="button small add">add</button>
@@ -88,13 +88,17 @@
                     </h4>
                     <div class="left">
                     {%for attachment in pc.attachments.all%}
-                        {%if attachment.type == 'video'%}
-                          {{attachment.url|safe|escape}}
-                        {%else%}
-                          <a class="thumbnail" href="{{attachment.file.url}}">
-                            <img src="{{attachment.file.url}}">
-                          </a>
-                        {%endif%}
+                        {% if attachment.is_valid %}
+                        <div>
+                            {% if attachment.type == 'video' %}
+                            {% youtube_video attachment.url %}
+                            {% else %}
+                            <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <div class="notice">This content is currently unavailable.</div>
+                        {% endif %}
                     {%endfor%}
                     </div>
                 {% else %}
