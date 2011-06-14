@@ -254,14 +254,6 @@ def all(request):
     completed_challenges = []
     current_challenges = []
     
-    post = ""
-    for x in new_challenges:
-        post = "%snew_challenges: %s<br>" % (post, x.id)
-    for x in challenges:
-        post = "%schallenges: %s<br>" % (post, x.id)
-    #return HttpResponse(post)
-
-    
     for player_challenge in player_challenges:
         challenges = challenges.exclude(id=player_challenge.challenge.id)
         new_challenges = new_challenges.exclude(id=player_challenge.challenge.id)

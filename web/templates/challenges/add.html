@@ -23,7 +23,7 @@
             {%csrf_token%}
             <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
             {{form.as_p}}
-            <input type="submit" value="Create Challenge">
+            <input type="submit" class="button submit" value="Create Challenge">
         </form>
     </div>
 {%endblock%}
