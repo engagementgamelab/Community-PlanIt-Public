@@ -1,4 +1,5 @@
 import re
+import Image
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -9,8 +10,6 @@ from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-
-import Image
 
 from web.attachments.models import Attachment
 from web.comments.forms import CommentForm

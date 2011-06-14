@@ -17,9 +17,13 @@
             {%csrf_token%}
             <div class="game-wrapper">
                 <span class="bigq highlight">Q:</span><h2> {{thinkfast.prompt.message}}</h2>
-                {%if thinkfast.prompt.attachments%}
+                {%if othershoes.prompt.attachments%}
                     {%for file, x, y in fileList%}
-                        <iframe src="{{MEDIA_URL}}/{{file}}" width="{{x}}" height="{{y}}" frameborder="0"></iframe>
+                        {%if x > 400 %}
+                            <img style="width: 400px" src="{{MEDIA_URL}}/{{file}}">
+                        {%else%}
+                            <img src="{{MEDIA_URL}}/{{file}}">
+                        {%endif%}
                     {%endfor%}
                     <hr class="space">
                 {%endif%}

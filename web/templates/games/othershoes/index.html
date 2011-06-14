@@ -16,7 +16,7 @@
                 <div class="fifth">
                     <img class="avatar" src="{{MEDIA_URL}}{{othershoes.prompt.avatar}}">
                 </div>
-                
+
                 {%if othershoes.prompt.download%}
                     <strong>Download:</strong>
                     <br>
@@ -26,6 +26,16 @@
                 <hr class="space">
 
                 <h2>{{othershoes.prompt.bio}}</h2>
+                {%if othershoes.prompt.attachments%}
+                    {%for file, x, y in fileList%}
+                        {%if x > 400 %}
+                            <img style="width: 400px" src="{{MEDIA_URL}}/{{file}}">
+                        {%else%}
+                            <img src="{{MEDIA_URL}}/{{file}}">
+                        {%endif%}
+                    {%endfor%}
+                    <hr class="space">
+                {%endif%}
                 <br>
                 <label class="instructionText">
                     Type a response below to enter the discussion. (You may attach images
