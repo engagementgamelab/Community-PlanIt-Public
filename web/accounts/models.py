@@ -80,9 +80,10 @@ class UserProfile(models.Model):
         super(UserProfile, self).save(*args, **kwargs)
 
     def points_to_coin(self):
-        if self.points_multiplier < 1:
-            self.points_multiplier = 1
-        return 100 - ((self.points_multiplier*100) - self.points)
+        return 100 - (self.points - self.points_multiplier*100)
+    
+    def points_to_coin_for_fill(self):
+        return (self.points - self.points_multiplier*100)
 
     def affiliations_csv(self):
         if self.affiliations:

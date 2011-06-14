@@ -69,7 +69,7 @@ def register(request):
         uinfo.instance = form.cleaned_data['instance']
         uinfo.coins = 0
         uinfo.points = 0
-        uinfo.points_multiplier = 1
+        uinfo.points_multiplier = 0
         uinfo.username = player.username
         uinfo.email = player.email
         uinfo.generated_password = player.password

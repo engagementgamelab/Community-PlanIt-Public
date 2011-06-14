@@ -148,8 +148,8 @@
 
                             {%block aside_progress%}
                                 <div class="score">
-                                    <div class="fill" style="width:{{user.get_profile.points_to_coin}}%"></div>
-                                    <span class="points">Next coin in {{ user.get_profile.points_to_coin|subtractFrom:"100" }} pts!</span>
+                                    <div class="fill" style="width:{{user.get_profile.points_to_coin_for_fill}}%"></div>
+                                    <span class="points">Next coin in {{ user.get_profile.points_to_coin }} pts!</span>
                                     <a href="/issue" class="highlight coins{%if user.get_profile.coins%} has-coins{%endif%}">{{user.get_profile.coins}}</a>
                                 </div>
                                 {%if user.get_profile.coins > 0%}
