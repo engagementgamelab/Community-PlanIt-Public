@@ -28,8 +28,14 @@ class UserProfile(models.Model):
     accepted_term = models.BooleanField(blank=True)
     accepted_research = models.BooleanField(blank=True)
     phone_number = models.CharField(max_length=12, blank=True, help_text = '<p class="fine">Please use the following phone number format: <em>xxx-xxx-xxx</em>.</p>')
+    #Coins is the current number of coins that the player has
     coins = models.IntegerField(default=0)
+    #Points is the total points that the player has accrewed
+    #TODO: rename this total points, add field for current points,
+    # get rid of point multiplier
     points = models.IntegerField(default=0)
+    #This is the total number of coins accrewed and this is generally *100
+    # Basically TotalPoints - 100*multiplier gives you the number of points to coin
     points_multiplier = models.IntegerField(default=0)
     location_tracking = models.BooleanField(default=False)
     flagged = models.IntegerField(default=0)
