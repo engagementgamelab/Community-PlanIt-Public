@@ -17,7 +17,7 @@
             {%csrf_token%}
             <div class="game-wrapper">
                 <span class="bigq highlight">Q:</span><h2> {{thinkfast.prompt.message}}</h2>
-                {%if othershoes.prompt.attachments%}
+                {%if thinkfast.prompt.attachments%}
                     {%for file, x, y in fileList%}
                         {%if x > 400 %}
                             <img style="width: 400px" src="{{MEDIA_URL}}/{{file}}">
