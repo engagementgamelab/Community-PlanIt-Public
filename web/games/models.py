@@ -9,6 +9,7 @@ from web.comments.models import Comment
 from django.contrib.auth.models import User
 
 # Base Game
+#TODO: Make a foreign key to missions, currently requires a mission slug
 class Game(models.Model):
     game_type = models.CharField(max_length=45, editable=False)
     title = models.CharField(max_length=45)
