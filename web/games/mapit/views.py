@@ -25,6 +25,7 @@ from web.responses.map.forms import MapResponseForm
 from web.responses.map.models import MapResponse
 
 @login_required
+#TODO: Make this only require a game id like everything else
 def index(request, mission_slug, id):
     instance = request.user.get_profile().instance
     mission = Mission.objects.get(slug=mission_slug)
@@ -111,6 +112,7 @@ def index(request, mission_slug, id):
         'expired': expired,
     }, [ip])))
 
+#TODO: Make this only require a game id like everything else
 @login_required
 def overview(request, mission_slug, id):
     mission = Mission.objects.get(slug=mission_slug)
@@ -207,6 +209,7 @@ def overview(request, mission_slug, id):
 
 
 @login_required
+#TODO: Make this only require a game id like everything else
 def response(request, mission_slug, id, user_id):
     mission = Mission.objects.get(slug=mission_slug)
     game = Game.objects.get(id=id)
