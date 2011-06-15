@@ -18,20 +18,23 @@ def instance_processor(request):
         
         for player_challenge in player_challenges:
             challenges = challenges.exclude(id=player_challenge.challenge.id)
-
+        
+        #TODO: This was breaking hard, users would get 99 points and something would fail. The number of missions was 0,
+        # the number of instances was 0, so it never got past this point. No errors were thrown in debug mode which 
+        # terrifies me. -BMH
         # Calculate if any points have been awarded and not accounted for
         # to get coins.
-        offset = profile.points_multiplier or 1
-        if profile.points >= offset * 99:
-            new_coins = math.floor(profile.points / (offset * 99))
-            profile.coins += new_coins
-            profile.points_multiplier = offset + new_coins
-            profile.save()
+        #offset = profile.points_multiplier or 1
+        #if profile.points >= offset * 99:
+        #    new_coins = math.floor(profile.points / (offset * 99))
+        #    profile.coins += new_coins
+        #    profile.points_multiplier = offset + new_coins
+        #    profile.save()
 
-            if new_coins > 1:
-                ActivityLogger.log(request.user, request, 'to gain '+ str(new_coins) +' coins', 'earned over '+ str((profile.points_multiplier - 1) * 99) +' points', '/player/'+ str(request.user.id), 'coin')
-            else:
-                ActivityLogger.log(request.user, request, 'to gain a coin', 'earned over '+ str((profile.points_multiplier - 1) * 99) +' points', '/player/'+ str(request.user.id), 'coin')
+        #    if new_coins > 1:
+        #        ActivityLogger.log(request.user, request, 'to gain '+ str(new_coins) +' coins', 'earned over '+ str((profile.points_multiplier - 1) * 99) +' points', '/player/'+ str(request.user.id), 'coin')
+        #    else:
+        #        ActivityLogger.log(request.user, request, 'to gain a coin', 'earned over '+ str((profile.points_multiplier - 1) * 99) +' points', '/player/'+ str(request.user.id), 'coin')
 
         player_games = PlayerGame.objects.filter(visible=True, completed=True, user=request.user)
         games = []

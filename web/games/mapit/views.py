@@ -99,6 +99,7 @@ def index(request, mission_slug, id):
 
     tmpl = loader.get_template('games/mapit/index.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
+        'instance': instance,
         'unplayed': unplayed,
         'other_responses': other_responses[:5],
         'mission': mission,
