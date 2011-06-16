@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from web.instances.models import Instance
 from web.comments.models import Comment
 
+#TODO: change coins to something like coinsSpentOnIntance or something
+#more descriptive
 class Issue(models.Model):
     message = models.CharField(max_length=260, verbose_name='Issue')
     coins = models.IntegerField(default=0)

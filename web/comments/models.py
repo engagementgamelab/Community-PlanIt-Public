@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.contrib import admin
 
+#Change flagged to either a bitfield or change to flaggedBy and link a foreign key to a user. 
 class Comment(models.Model):
     message = models.CharField(max_length=1000)
     posted_date = models.DateTimeField(auto_now_add=True)

@@ -18,6 +18,7 @@ from web.reports.models import Activity
 from web.reports.actions import ActivityLogger
 from web.processors import instance_processor as ip
 
+#TODO: this does not fail nicely, it should 
 def region(request, slug):
     instance = Instance.objects.get(slug=slug)
     userProfiles = UserProfile.objects.filter(instance=instance)

@@ -9,6 +9,11 @@ from gmapsfield.fields import GoogleMapsField
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
+#TODO: Make the slug field not null and not blank
+#Turn the is_active, is_expired, not started into a view
+#Worry about time zone issues, look up how to fix that
+#is_notstarted? Sersiouly? How about is_not<insert another noun>
+#Fix that and make it part of the view. 
 class Instance(models.Model):
     region = models.CharField(max_length=45)
     slug = models.SlugField(null=True, blank=True, editable=False)
@@ -35,6 +40,8 @@ class Instance(models.Model):
     def __unicode__(self):
         return self.region[:25]
 
+#TODO: Why is this like this? what possible actions can be taken on an
+#instance?
 class PointsAssignment(models.Model):
     action = models.CharField(max_length=260)
     points = models.IntegerField(default=0)
@@ -56,6 +63,7 @@ class PointsAssignmentAdmin(admin.ModelAdmin):
 class InstanceAdmin(admin.ModelAdmin):
     list_display = ('region', 'start_date', 'end_date',)
 
+#TODO: This just looks broken
 def instance_post_save(instance, created, **kwargs):
     if created:
         try:
