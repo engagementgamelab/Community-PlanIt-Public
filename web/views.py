@@ -1,5 +1,7 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader, Context, RequestContext
+import settings
+
 
 from web.accounts.views import dashboard
 
@@ -20,8 +22,11 @@ def indexTemp(request):
 
 def error_404(request):
     # Show 404 page
-    tmpl = loader.get_template('base/404.html')
-    return HttpResponse(tmpl.render(RequestContext(request,{})))
+    if settings.DEBUG == True:
+        raise Http404
+    else:
+        tmpl = loader.get_template('base/404.html')
+        return HttpResponse(tmpl.render(RequestContext(request,{})))
 
 def error_500(request):
     # Show 500 page
