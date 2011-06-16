@@ -2,6 +2,7 @@ from web.attachments.models import Attachment
 from django.contrib import admin
 from django.db import models
 
+#TODO: Destroy all of this, this is horrable code design. 
 class Prompt(models.Model):
     prompt_type = models.CharField(max_length=45, editable=False)
     download = models.ForeignKey(Attachment, blank=True, null=True, related_name="get_prompt_download")

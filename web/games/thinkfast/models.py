@@ -7,6 +7,7 @@ from web.games.models import Game
 from web.prompts.basic.models import BasicPrompt
 from web.responses.choices.models import ChoicesResponse
 
+#TODO: WOW, so foreign keys do not work this way.... fix this, this is bad.
 class ThinkFast(Game):
     prompt = models.ForeignKey(BasicPrompt, null=True, blank=True)
     response = models.ForeignKey(ChoicesResponse, null=True, blank=True)
