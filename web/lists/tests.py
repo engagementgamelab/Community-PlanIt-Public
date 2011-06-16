@@ -5,7 +5,7 @@ from web.accounts.models import UserProfile
 from django.test.client import Client
 from web.instances.models import Instance
 
-class IssuesWebTestCase(TestCase):
+class ListWebTestCase(TestCase):
     def setUp(self):
         self.c = Client()
         email = "test@localhost.com"

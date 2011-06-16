@@ -14,6 +14,9 @@ class QuerySetManager(models.Manager):
     def get_query_set(self):
         return self.model.QuerySet(self.model)
 
+#TODO: Set up a generic foreign key from game to mission, get rid of generic.GenericRelation
+#There is no need for that here.
+#Why does the description field exist if it can be null?
 class Mission(models.Model):
     topic = models.CharField(max_length=45)
     slug = models.SlugField(editable=False)
