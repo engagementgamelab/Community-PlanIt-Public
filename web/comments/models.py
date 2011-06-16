@@ -6,6 +6,9 @@ from django.db import models
 from django.contrib import admin
 
 #Change flagged to either a bitfield or change to flaggedBy and link a foreign key to a user. 
+#TODO: Make foreign keys to each object that the Comment can be referenced from.
+# For example Issue has a M:M relationship to Comment, add issue_id foreign key
+# to here.
 class Comment(models.Model):
     message = models.CharField(max_length=1000)
     posted_date = models.DateTimeField(auto_now_add=True)

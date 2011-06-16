@@ -7,6 +7,8 @@ from web.comments.models import Comment
 
 #TODO: change coins to something like coinsSpentOnIntance or something
 #more descriptive
+#Make the comments into a foreign key field. There is no reason why
+# a comment should belong to more than 1 issue
 class Issue(models.Model):
     message = models.CharField(max_length=260, verbose_name='Issue')
     coins = models.IntegerField(default=0)
