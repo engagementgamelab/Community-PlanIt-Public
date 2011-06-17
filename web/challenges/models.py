@@ -16,40 +16,62 @@ class QuerySetManager(models.Manager):
     def get_query_set(self):
         return self.model.QuerySet(self.model)
 
+#Create the base model for the view
+#This is where all of the data lies.
+class ChallengeView(models.Model):
+    map = GoogleMapsField()
+    name = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    flagged = models.BooleanField(default=0, editable=False)
+
+    instance = models.ForeignKey(Instance)
+    user = models.ForeignKey(User, editable=False)
+    attachments = models.ManyToManyField(Attachment, blank=True)
+    comments = models.ManyToManyField(Comment, blank=True)
+    game_type = models.CharField(max_length=45, editable=False)
+
 class Challenge(models.Model):
     map = GoogleMapsField()
     name = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    flagged = models.IntegerField(default=0, editable=False)
+    flagged = models.BooleanField(default=0, editable=False)
 
-    #TODO: Figure out why this is not required, or make it required. The view to add a challenge
-    #expects an instance from the user profile so why can it be blank here?
-    instance = models.ForeignKey(Instance, null=True, blank=True,editable=False)
+    instance = models.ForeignKey(Instance)
     user = models.ForeignKey(User, editable=False)
     attachments = models.ManyToManyField(Attachment, blank=True)
     comments = models.ManyToManyField(Comment, blank=True)
     game_type = models.CharField(max_length=45, editable=False)
+    is_active = models.BooleanField(editable=False)
+    is_expired = models.BooleanField(editable=False)
+
+    class Meta: 
+        managed = False
     
     def save(self):
         self.game_type = "challenge"
+        #TODO: Make sure this is correct, the None map I am not sure about - BMH
+        if self.map == "None":
+            self.map = self.instance.location
         super(Challenge, self).save()
     
     #TODO: Turn this into a view, GAH! -BMH
-    def is_active(self):
-        return self.end_date >= datetime.datetime.now()
+    #def is_active(self):
+    #    return self.end_date >= datetime.datetime.now()
 
-    def is_expired(self):
-        return self.end_date <= datetime.datetime.now()
+    #def is_expired(self):
+    #    return self.end_date <= datetime.datetime.now()
 
     # Faking out the objects collection to pull from the inner model
     # class.
-    objects = QuerySetManager()
+    #objects = QuerySetManager()
 
-    class QuerySet(models.query.QuerySet):
-        def active(self):
-            return self.filter(start_date__lt=datetime.datetime.now()).filter(end_date__gt=datetime.datetime.now()).order_by('end_date')
+    #class QuerySet(models.query.QuerySet):
+    #    def active(self):
+    #        return self.filter(start_date__lt=datetime.datetime.now()).filter(end_date__gt=datetime.datetime.now()).order_by('end_date')
 
     def __unicode__(self):
         label = self.name or 'None'
@@ -82,6 +104,9 @@ class ChallengeAdmin(admin.ModelAdmin):
             kwargs['queryset'] = Challenge.objects.filter(id=-2)
         return super(ChallengeAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
+#TODO: Split this out eventually into it's own project. Make sure that it goes after challenges
+#Perhaps it should be called playerchallenges
+#Once this is done make the foreign key point to Challenge
 class PlayerChallenge(models.Model):
     accepted = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
@@ -89,8 +114,7 @@ class PlayerChallenge(models.Model):
 
     attachments = models.ManyToManyField(Attachment, blank=True, null=True)
     response = models.ForeignKey(CommentResponse, null=True, blank=True)
-    player = models.ForeignKey(User)
-    challenge = models.ForeignKey(Challenge)
+    player = models.ForeignKey(ChallengeView)
 
     def __unicode__(self):
         label = self.player.username +"_"+ self.challenge.description

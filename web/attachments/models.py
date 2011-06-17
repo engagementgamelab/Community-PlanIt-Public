@@ -41,8 +41,6 @@ class Attachment(models.Model):
             self.type = m.from_file(instance.file.path)
         super(Attachment, self).save()
 
-models.signals.post_save.connect(attachment_post_save, sender=Attachment)
-
 class AttachmentAdmin(admin.ModelAdmin):
     def queryset(self, request):
         qs = super(AttachmentAdmin, self).queryset(request)
