@@ -1,3 +1,8 @@
+#
+#This contains all of the data which will populate the drop down
+# menus 
+
+#UserProfileEducation
 -   model: accounts.userprofileeducation
     pk: 1
     fields:
@@ -27,13 +32,13 @@
     fields:
         eduLevel: Master's Degree
         pos: 5
-
 -   model: accounts.userprofileeducation
     pk: 6
     fields:
         eduLevel: Doctoral Degree
         pos: 6
 
+#User ProfileIncomes
 -   model: accounts.userprofileincomes
     pk: 1
     fields:
@@ -63,7 +68,8 @@
     fields:
         income: $100,000 or more
         pos: 5
-        
+
+#UserProfileLiving
 -   model: accounts.userprofileliving
     pk: 1
     fields:
@@ -83,4 +89,80 @@
     pk: 4
     fields:
         livingSituation: other
+        pos: 4
+
+#UserProfileGender
+-   model: accounts.userprofilegender
+    pk: 1
+    fields:
+        gender: male
+        pos: 1
+-   model: accounts.userprofilegender
+    pk: 2
+    fields:
+        gender: female
+        pos: 2
+
+# UserProfileRace
+-   model: accounts.userprofilerace
+    pk: 1
+    fields:
+        race: Asian
+        pos: 1
+-   model: accounts.userprofilerace
+    pk: 2
+    fields:
+        race: American Indian or Alaska Native
+        pos: 2
+-   model: accounts.userprofilerace
+    pk: 3
+    fields:
+        race: Black or African American
+        pos: 3
+-   model: accounts.userprofilerace
+    pk: 4
+    fields:
+        race: Hispanic, Latino, or Spanish
+        pos: 4
+-   model: accounts.userprofilerace
+    pk: 5
+    fields:
+        race: Pacific Islander or Native Hawaiian
+        pos: 5
+-   model: accounts.userprofilerace
+    pk: 6
+    fields:
+        race: White
+        pos: 6
+-   model: accounts.userprofilerace
+    pk: 7
+    fields:
+        race: Multiracial
+        pos: 7
+-   model: accounts.userprofilerace
+    pk: 8
+    fields:
+        race: Other
+        pos: 8
+
+# UserProfileStake
+-   model: accounts.userprofilestake
+    pk: 1
+    fields:
+        stake: Live
+        pos: 1
+-   model: accounts.userprofilestake
+    pk: 2
+    fields:
+        stake: Work
+        pos: 2
+-   model: accounts.userprofilestake
+    pk: 3
+    fields:
+        stake: Play
+        pos: 3
+-   model: accounts.userprofilestake
+    pk: 4
+    fields:
+        stake: Learn
         pos: 4

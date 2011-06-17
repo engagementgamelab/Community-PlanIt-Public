@@ -12,7 +12,7 @@ def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
 
 class UserProfileIncomes(models.Model):
-    income = models.CharField(max_length=128, blank=False, null=False)
+    income = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
     
     
@@ -24,66 +24,57 @@ class UserProfileLiving(models.Model):
     livingSituation = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
 
-class UserProfile(models.Model):
-    accepted_term = models.BooleanField(blank=True)
-    accepted_research = models.BooleanField(blank=True)
-    phone_number = models.CharField(max_length=12, blank=True, help_text = '<p class="fine">Please use the following phone number format: <em>xxx-xxx-xxx</em>.</p>')
-    #Coins is the current number of coins that the player has
-    coins = models.IntegerField(default=0)
-    #Points is the total points that the player has accrewed
-    #TODO: rename this total points, add field for current points,
-    # get rid of point multiplier
-    points = models.IntegerField(default=0)
-    #This is the total number of coins accrewed and this is generally *100
-    # Basically TotalPoints - 100*multiplier gives you the number of points to coin
-    points_multiplier = models.IntegerField(default=0)
-    location_tracking = models.BooleanField(default=False)
-    flagged = models.IntegerField(default=0)
-    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
-    affiliations = models.TextField(blank=True, null=True)
-    is_of_age = models.BooleanField(default=False)
+class UserProfileGender(models.Model):
+    gender = models.CharField(max_length=128)
+    pos = models.IntegerField(blank=False, null=False)
 
-    # Additional profile fields
-    first_name = models.CharField(max_length=30, blank=True, null=True)
-    last_name = models.CharField(max_length=30, blank=True, null=True)
-    email = models.EmailField(max_length=255, unique=True, blank=True, null=True)
-    birth_year = models.IntegerField(blank=True, null=True)
-    gender = models.CharField(max_length=64, blank=True, null=True)
-    race = models.CharField(max_length=125, blank=True, null=True)
-    stake = models.CharField(max_length=125, blank=True, null=True)
+class UserProfileRace(models.Model):
+    race = models.CharField(max_length=128)
+    pos = models.IntegerField(blank=False, null=False)
+
+class UserProfileStake(models.Model):
+    stake = models.CharField(max_length=128)
+    pos = models.IntegerField(blank=False, null=False)
+    
+class UserProfile(models.Model):
+    #Foreign key fields
+    user = models.ForeignKey(User, unique=True)
+    instance = models.ForeignKey(Instance, blank=True, null=True)
+    gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
+    race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
+    stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
     education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
     income = models.ForeignKey(UserProfileIncomes, blank=True, null=True, default=None)
     living = models.ForeignKey(UserProfileLiving, blank=True, null=True, default=None)
+    
+    accepted_term = models.BooleanField(default=False)
+    accepted_research = models.BooleanField(default=False)
+    phone_number = models.CharField(max_length=12, blank=True, help_text = '<p class="fine">Please use the following phone number format: <em>xxx-xxx-xxx</em>.</p>')
+    #Coins is the current number of coins that the player has
+    currentCoins = models.IntegerField(default=0)
+    #Points is the total points that the player has accrewed
+    totalPoints = models.IntegerField(default=0)
+    # points to the next coin
+    coinPoints = models.IntegerField(default=0)
+        
+    flagged = models.IntegerField(default=0)
+    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
+    affiliations = models.TextField(blank=True, null=True)
+    
+    # Additional profile fields
+    birth_year = models.IntegerField(blank=True, null=True)
 
     # Internal fields
-    generated_password = models.CharField(max_length=260, editable=False)
-    username = models.CharField(max_length=30, unique=True, blank=True, null=True, editable=False)
-    completed = models.BooleanField(default=False)
-    player_challenges = models.ManyToManyField(PlayerChallenge, blank=True)
     following = models.ManyToManyField(User, related_name='following_user_set', blank=True, null=True)
-    user = models.ForeignKey(User, unique=True)
-    instance = models.ForeignKey(Instance, blank=True, null=True)
 
     # comments on the profile from others
     comments = models.ManyToManyField(Comment, blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-        if self.first_name:
-            self.user.first_name = self.first_name
-
-        if self.last_name:
-            self.user.last_name = self.last_name
-
-        if self.email:
-            self.user.email = self.email
-
-        super(UserProfile, self).save(*args, **kwargs)
-
     def points_to_coin(self):
-        return 100 - (self.points - self.points_multiplier*100)
+        return 100 - self.coinPoints
     
     def points_to_coin_for_fill(self):
-        return (self.points - self.points_multiplier*100)
+        return coinPoints
 
     def affiliations_csv(self):
         if self.affiliations:
@@ -92,7 +83,7 @@ class UserProfile(models.Model):
         return ""
     
     def points_progress(self):
-        return self.points % 100
+        return self.coinPoints
 
     class Meta:
         verbose_name = "User Profile"
@@ -102,14 +93,19 @@ class UserProfile(models.Model):
         return self.user.email[:25] +"'s Profile"
 
     def screen_name(self):
-        first = self.first_name or self.user.first_name or ''
-        last = self.last_name or self.user.last_name or ''
-        last = len(last) > 1 and last[0].upper() + '.' or last
-
-        if first or last:
-            return "%s%s" % (first, last and ' ' + last or '')
-
-        return 'Anonymous'
+        #First name and last name are required
+        first = self.user.first_name
+        first[0] = first[0].upper()
+        
+        last = self.user.last_name
+        last[0] = last[0].upper()
+        
+        if len(last) > 1:
+            last = "%s." % last[0]
+        else:
+            last = last[0]
+        
+        return "%s %s" % (first, last)
 
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
