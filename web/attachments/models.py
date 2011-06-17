@@ -15,7 +15,7 @@ ATTACHMENT_VALIDITY_CHECK_INTERVAL = 3600
 class Attachment(models.Model):
     file = models.FileField(upload_to=determine_path, blank=True, null=True)
     url = models.CharField(max_length=255, blank=True, null=True, editable=False)
-    type = models.CharField(max_length=45, blank=True, editable=False)
+    type = models.CharField(max_length=45)
     flagged = models.IntegerField(default=0)
     user = models.ForeignKey(User, blank=True, null=True, editable=False)
     instance = models.ForeignKey(Instance, blank=True, null=True, editable=False)
@@ -35,15 +35,11 @@ class Attachment(models.Model):
           return self.file.url[:25]
           
         return 'None'
-
-def attachment_post_save(instance, created, **kwargs):
-    if created:
-        try:
-            if not instance.type:
-                m = magic.Magic(mime=True)
-                instance.type = m.from_file(instance.file.path)
-                instance.save()
-        except: pass
+    def save(self):
+        if self.type == None:
+            m = magic.Magic(mime=True)
+            self.type = m.from_file(instance.file.path)
+        super(Attachment, self).save()
 
 models.signals.post_save.connect(attachment_post_save, sender=Attachment)
 

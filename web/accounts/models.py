@@ -57,7 +57,7 @@ class UserProfile(models.Model):
     # points to the next coin
     coinPoints = models.IntegerField(default=0)
         
-    flagged = models.IntegerField(default=0)
+    flagged = models.BooleanField(default=0)
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     affiliations = models.TextField(blank=True, null=True)
     
