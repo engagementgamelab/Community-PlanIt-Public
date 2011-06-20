@@ -1,5 +1,11 @@
---This is happy fun code which will provide happy fun views
+from django.db.models.signals import post_syncdb
+from django.db import connection, transaction
+import web.instances.models
 
+def challenge_post_syncdb(sender, **kwargs):
+    cursor = connection.cursor()
+    cursor.execute(
+"""
 CREATE OR REPLACE VIEW challenges_challenge AS
 SELECT challenges_challengeview.id, challenges_challengeview.map, challenges_challengeview.name, challenges_challengeview.description, challenges_challengeview.start_date, challenges_challengeview.end_date, challenges_challengeview.flagged, challenges_challengeview.instance_id, challenges_challengeview.user_id, challenges_challengeview.game_type, 
         CASE
@@ -24,4 +30,7 @@ CREATE OR REPLACE RULE update_challenge AS
 CREATE OR REPLACE RULE delete_challenge AS
     ON DELETE TO "challenges_challenge" DO INSTEAD  DELETE FROM challenges_challengeview
   WHERE challenges_challengeview.id = old.id;
- 
+""")
+    
+
+post_syncdb.connect(challenge_post_syncdb, sender=web.challenges.models)
