@@ -18,10 +18,6 @@ class Game(models.Model):
 
     comments = models.ManyToManyField(Comment, blank=True, null=True)
 
-    object_id = models.PositiveIntegerField()
-    content_type = models.ForeignKey(ContentType)
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
-
     def save(self):
         self.slug = slugify(self.title)
         super(Game, self).save()

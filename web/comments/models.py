@@ -1,4 +1,4 @@
-from web.instances.models import Instance
+from web.instances.models import InstanceView
 from web.attachments.models import Attachment
 from django.contrib.auth.models import User
 
@@ -17,7 +17,7 @@ class Comment(models.Model):
 
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
     user = models.ForeignKey(User, editable=False)
-    instance = models.ForeignKey(Instance, editable=False)
+    instance = models.ForeignKey(InstanceView, editable=False)
     comments = models.ManyToManyField('self', symmetrical=False, blank=True, editable=False)
     likes = models.ManyToManyField(User, blank=True, editable=False, related_name='liked_comments')
 

@@ -7,7 +7,7 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    {%if not instance.is_notstarted%}
+    {%if not instance.is_started%}
         {%if not user.is_active%}
             <form method="POST" action="">
                 <h4>One last step: Please verify that you have read our Terms of Use and Privacy Policy. 

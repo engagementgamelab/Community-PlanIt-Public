@@ -63,7 +63,7 @@
                 {%if instance%}
                     <a href="/neighborhood/{{instance.slug}}">{{instance}}</a>
 
-                    {%if instance.is_notstarted%}
+                    {%if not instance.is_started%}
                         <a href="/neighborhood/{{instance.slug}}">{{instance.region}} has not started yet</a>
                     {%endif%}
 
@@ -75,7 +75,7 @@
             <!-- Navigation -->
             <nav>
                 {%block nav%}
-                    {%if user.is_authenticated and not instance.is_notstarted%}
+                    {%if user.is_authenticated and instance.is_started%}
                         <a class="home" href = "/account/dashboard">Dashboard</a> <a class="missions" href="/mission">Missions</a> <a class="issues" href="/issue">Spend Coins</a> <a class="challenges" href="/challenge">Challenges</a>
                         {%if user.is_staff%}
                             <a class="right admin" href="/admin">Admin</a>
@@ -94,7 +94,7 @@
     <div class="divider">
         <div class="missionholder">
             <div class="missioncounter">
-                {%if user.is_authenticated and not instance.is_notstarted%}
+                {%if user.is_authenticated and instance.is_started%}
                     {%for mission in missions.past.all%}
                         <a href="/mission/{{mission.slug}}" class="past mission" title="{{mission.topic}}">
                             {{mission.topic}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
@@ -125,10 +125,10 @@
             <aside id="sidebar">
                 <div class="content">
                     <hr class="space">
-                    {%if instance.is_notstarted%}
+                    {%if not instance.is_started%}
                        <a class="neigborhood" href="/neighborhood/{{instance.slug}}">{{instance.region}} has not started yet</a>
                     {%else%}
-                        {%if user.is_authenticated and not instance.is_notstarted%}
+                        {%if user.is_authenticated and instance.is_started%}
                             <!-- TODO CSS: make the Update Profile in one line -->
                             <div class="third">
                                 {%if user.get_profile.avatar%}

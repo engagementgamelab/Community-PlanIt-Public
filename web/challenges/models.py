@@ -1,5 +1,5 @@
 import datetime
-from web.instances.models import Instance
+from web.instances.models import InstanceView
 from web.attachments.models import Attachment
 from web.comments.models import Comment
 from web.responses.models import Response
@@ -26,7 +26,7 @@ class ChallengeView(models.Model):
     end_date = models.DateTimeField()
     flagged = models.BooleanField(default=0, editable=False)
 
-    instance = models.ForeignKey(Instance)
+    instance = models.ForeignKey(InstanceView)
     user = models.ForeignKey(User, editable=False)
     attachments = models.ManyToManyField(Attachment, blank=True)
     comments = models.ManyToManyField(Comment, blank=True)
@@ -41,7 +41,7 @@ class Challenge(models.Model):
     end_date = models.DateTimeField()
     flagged = models.BooleanField(default=0, editable=False)
 
-    instance = models.ForeignKey(Instance)
+    instance = models.ForeignKey(InstanceView)
     user = models.ForeignKey(User, editable=False)
     attachments = models.ManyToManyField(Attachment, blank=True)
     comments = models.ManyToManyField(Comment, blank=True)

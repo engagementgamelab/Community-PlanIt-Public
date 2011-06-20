@@ -9,30 +9,37 @@ from gmapsfield.fields import GoogleMapsField
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
-#TODO: Make the slug field not null and not blank
-#Turn the is_active, is_expired, not started into a view
-#Worry about time zone issues, look up how to fix that
-#is_notstarted? Sersiouly? How about is_not<insert another noun>
-#Fix that and make it part of the view. 
-class Instance(models.Model):
-    region = models.CharField(max_length=45)
-    slug = models.SlugField(null=True, blank=True, editable=False)
+#TODO: Worry about time zone issues, look up how to fix that if it needs to be
+#Also test this.
+
+#This is the physical data. All FKs are made off of this, but all data
+#can be used through Instance. Look in the instances/management/__init__.py
+#to see the view that is created 
+class InstanceView(models.Model):
+    name = models.CharField(max_length=45)
+    slug = models.SlugField()
     start_date = models.DateField()
     end_date = models.DateField()
     location = GoogleMapsField()
     content = models.TextField(null=True, blank=True)
-
     curator = models.ForeignKey(User, default=0, null=True, blank=True)
 
-    def is_active(self):
-        return self.start_date <= datetime.date.today() and self.end_date >= datetime.date.today()
-
-    def is_expired(self):
-        return self.start_date < datetime.date.today() and self.end_date < datetime.date.today()
-
-    def is_notstarted(self):
-        return self.start_date > datetime.date.today() and self.end_date > datetime.date.today()
-
+#This is a view
+class Instance(models.Model):
+    name = models.CharField(max_length=45)
+    slug = models.SlugField()
+    start_date = models.DateField()
+    end_date = models.DateField()
+    location = GoogleMapsField()
+    content = models.TextField(null=True, blank=True)
+    curator = models.ForeignKey(User, default=0, null=True, blank=True)
+    is_active = models.BooleanField(editable=False)
+    is_expired = models.BooleanField(editable=False)
+    is_started = models.BooleanField(editable=False)
+    
+    class Meta: 
+        managed = False
+        
     def save(self, *args, **kwargs):
         self.slug = slugify(self.region)
         super(Instance, self).save()
@@ -40,14 +47,13 @@ class Instance(models.Model):
     def __unicode__(self):
         return self.region[:25]
 
-#TODO: Why is this like this? what possible actions can be taken on an
-#instance?
+#TODO: Perhaps this should be in it's own project
 class PointsAssignment(models.Model):
     action = models.CharField(max_length=260)
     points = models.IntegerField(default=0)
     coins = models.IntegerField(default=0)
 
-    instance = models.ForeignKey(Instance, editable=False)
+    instance = models.ForeignKey(InstanceView, editable=False)
 
 class PointsAssignmentAdmin(admin.ModelAdmin):
     list_display = ('action', 'points', 'coins',)
@@ -63,7 +69,7 @@ class PointsAssignmentAdmin(admin.ModelAdmin):
 class InstanceAdmin(admin.ModelAdmin):
     list_display = ('region', 'start_date', 'end_date',)
 
-#TODO: This just looks broken
+#TODO: Make sure that this is unit tested upon instance creation! DO IT!
 def instance_post_save(instance, created, **kwargs):
     if created:
         try:
@@ -72,7 +78,5 @@ def instance_post_save(instance, created, **kwargs):
                 p = PointsAssignment(action=action, points=10, instance=instance)
                 p.save()
         except: pass
-
-models.signals.post_save.connect(instance_post_save, sender=Instance)
-
+models.signals.post_save.connect(instance_post_save, sender=InstanceView)
 

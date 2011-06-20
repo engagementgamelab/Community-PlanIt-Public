@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.contenttypes import generic
 
-from web.instances.models import Instance
+from web.instances.models import InstanceView
 from web.games.models import Game
 from web.games.mapit.models import Mapit
 from web.games.thinkfast.models import ThinkFast
@@ -26,8 +26,8 @@ class Mission(models.Model):
     video = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
-    instance = models.ForeignKey(Instance, editable=False)
-    games = generic.GenericRelation(Game)
+    instance = models.ForeignKey(InstanceView, editable=False)
+    #games = generic.GenericRelation(Game)
 
     # Faking out the objects collection to pull from the inner model
     # class.
