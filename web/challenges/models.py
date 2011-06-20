@@ -32,6 +32,7 @@ class ChallengeView(models.Model):
     comments = models.ManyToManyField(Comment, blank=True)
     game_type = models.CharField(max_length=45, editable=False)
 
+#This is actually a view created by the challengeview.sql
 class Challenge(models.Model):
     map = GoogleMapsField()
     name = models.CharField(max_length=255, blank=True, null=True)

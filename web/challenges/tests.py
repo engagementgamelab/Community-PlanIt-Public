@@ -72,7 +72,6 @@ class ChallengesWebTestCases(TestCase):
         
         response = self.c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                   "lastName": "new_test", "email": self.email, "instance": instance.id})
-        out.write("Response Code: %d \nResponse Content: %s\n" % (response.status_code, response.content))
         self.assertTrue(response.status_code == 302, "User created successfully")
         
         user = User.objects.filter(email=self.email)
@@ -92,7 +91,6 @@ class ChallengesWebTestCases(TestCase):
     def test_fetch(self):
         response = self.c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                       "lastName": "new_test", "email": "root@localhost.com"})
-        out.write("Response Code: %d \nResponse Content: %s\n" % (response.status_code, response.content))
         self.assertTrue(response.status_code == 302, "User created successfully")
         user = User.objects.filter(email="root@localhost.com")
         self.assertTrue(len(user) == 1, "User created successfully")
