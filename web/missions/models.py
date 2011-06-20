@@ -51,15 +51,6 @@ class Mission(models.Model):
         def current(self):
             return self.filter(start_date__lte=datetime.datetime.now()).filter(end_date__gt=datetime.datetime.now()).order_by('start_date')
 
-    def is_active(self):
-        return self.start_date <= datetime.date.today() and self.end_date >= datetime.date.today()
-
-    def is_expired(self):
-        return self.start_date < datetime.date.today() and self.end_date < datetime.date.today()
-
-    def is_notstarted(self):
-        return self.start_date > datetime.date.today() and self.end_date > datetime.date.today()
-
     def save(self):
         self.slug = slugify(self.topic)
         super(Mission, self).save()
