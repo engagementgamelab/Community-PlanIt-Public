@@ -45,16 +45,16 @@ def all_instances(request):
     if request.user.is_superuser:
         for instance in i:
             if request.session.has_key('admin_instance') and instance == request.session['admin_instance']:
-                instances.append({ 'id': instance.id, 'region': instance.region, 'selected': True })
+                instances.append({ 'id': instance.id, 'name': instance.name, 'selected': True })
             else:
-                instances.append({ 'id': instance.id, 'region': instance.region, 'selected': False })
+                instances.append({ 'id': instance.id, 'name': instance.name, 'selected': False })
 
         if not request.session.has_key('admin_instance'):
             request.session['admin_instance'] = i[0]
     else:
         for instance in i:
             if request.user.get_profile().instance == instance:
-                instances.append({ 'id': instance.id, 'region': instance.region, 'selected': True })
+                instances.append({ 'id': instance.id, 'name': instance.name, 'selected': True })
 
     return HttpResponse(simplejson.dumps(instances))
 

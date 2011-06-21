@@ -9,9 +9,9 @@
     <div class="wrapper neighborhood">
         <div class="twothird">
             {%if not current_instance.is_expired%}
-                <h2>{{current_instance.region}} Updates and Leaderboard</h2>
+                <h2>{{current_instance.name}} Updates and Leaderboard</h2>
             {%else%}
-                <h2>{{current_instance.region}} has ended. Updates and Leaderboard</h2>
+                <h2>{{current_instance.name}} has ended. Updates and Leaderboard</h2>
             {%endif%}
             <p>{{current_instance.content|escape|safe}}</p>
             {# {current_instance.location|show} #}

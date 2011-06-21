@@ -64,11 +64,11 @@
                     <a href="/neighborhood/{{instance.slug}}">{{instance}}</a>
 
                     {%if not instance.is_started%}
-                        <a href="/neighborhood/{{instance.slug}}">{{instance.region}} has not started yet</a>
+                        <a href="/neighborhood/{{instance.slug}}">{{instance.name}} has not started yet</a>
                     {%endif%}
 
                     {%if instance.is_expired%}
-                        <a href="/neighborhood/{{instance.slug}}">{{instance.region}} has ended</a>
+                        <a href="/neighborhood/{{instance.slug}}">{{instance.name}} has ended</a>
                     {%endif%}
                 {%endif%}
             </div>
@@ -126,7 +126,7 @@
                 <div class="content">
                     <hr class="space">
                     {%if not instance.is_started%}
-                       <a class="neigborhood" href="/neighborhood/{{instance.slug}}">{{instance.region}} has not started yet</a>
+                       <a class="neigborhood" href="/neighborhood/{{instance.slug}}">{{instance.name}} has not started yet</a>
                     {%else%}
                         {%if user.is_authenticated and instance.is_started%}
                             <!-- TODO CSS: make the Update Profile in one line -->

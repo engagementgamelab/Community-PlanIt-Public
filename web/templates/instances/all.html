@@ -14,7 +14,7 @@
             <li class="griditem instance">
                 <p>
                     {% if instance.end_date > today %}<span class="highlight fine">Currently Active</span>{% else %}<span class="highlight fine">No longer Active</span>{% endif %}
-                    <a href="/neighborhood/{{instance.slug}}">{{instance.region}}</a> - {{instance.player_count}} player{%if instance.player_count > 1%}s{%endif%} {%if instance.player_count > 1%}have{%else%}has{%endif%} signed up.
+                    <a href="/neighborhood/{{instance.slug}}">{{instance.name}}</a> - {{instance.player_count}} player{%if instance.player_count > 1%}s{%endif%} {%if instance.player_count > 1%}have{%else%}has{%endif%} signed up.
                     <br>
                 {% if instance.end_date > today %}
                     <span class="fine">This neighborhood runs <span class="highlight">{{instance.start_date}}</span> through <span class="highlight">{{instance.end_date}}</span></span>

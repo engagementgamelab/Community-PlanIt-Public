@@ -26,11 +26,10 @@ def region(request, slug):
     for userProfile in userProfiles:
         users.append(userProfile.user)
     leaderboard = []
-    for userProfile in userProfiles.order_by("-points"):
+    for userProfile in userProfiles.order_by("-totalPoints"):
         leaderboard.append(userProfile.user)
     log = Activity.objects.filter(instance=instance).order_by('-date')[:100]
     attachments = Attachment.objects.filter(instance=instance).exclude(file='')
-
     tmpl = loader.get_template('instances/base.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'current_instance': instance,

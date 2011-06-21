@@ -26,7 +26,7 @@ class CommentTestCases(TestCase):
         self.assertTrue(len(user) > 0, "The user was created successfully")
         user = user[0]
         
-        instance = Instance(region = self.instanceName, 
+        instance = Instance(name = self.instanceName, 
                             start_date = self.instanceStart,
                             end_date = self.instanceEnd,
                             location = self.BostonMap,
@@ -59,7 +59,7 @@ class CommentWebTestCases(TestCase):
         self.assertTrue(len(user) > 0, "The user was created successfully")
         self.user1 = user[0]
         
-        self.instance = Instance(region = self.instanceName, 
+        self.instance = Instance(name = self.instanceName, 
                             start_date = self.instanceStart,
                             end_date = self.instanceEnd,
                             location = self.BostonMap,

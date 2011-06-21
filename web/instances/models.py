@@ -41,11 +41,11 @@ class Instance(models.Model):
         managed = False
         
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.region)
+        self.slug = slugify(self.name)
         super(Instance, self).save()
 
     def __unicode__(self):
-        return self.region[:25]
+        return self.name[:25]
 
 #TODO: Perhaps this should be in it's own project
 class PointsAssignment(models.Model):
@@ -67,7 +67,7 @@ class PointsAssignmentAdmin(admin.ModelAdmin):
         return qs.filter(instance=request.session.get('admin_instance'))
 
 class InstanceAdmin(admin.ModelAdmin):
-    list_display = ('region', 'start_date', 'end_date',)
+    list_display = ('name', 'start_date', 'end_date',)
 
 #TODO: Make sure that this is unit tested upon instance creation! DO IT!
 def instance_post_save(instance, created, **kwargs):

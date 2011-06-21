@@ -35,7 +35,7 @@ def instance(request, slug):
     instance = Instance.objects.get(slug=slug)
     players = User.objects.filter(is_active=True)
 
-    return display_list(request, players, instance.region +' Neighborhood')
+    return display_list(request, players, instance.name +' Neighborhood')
 
 @login_required
 def following(request, id):

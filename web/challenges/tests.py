@@ -21,7 +21,7 @@ class ChallengesTestCases(TestCase):
         self.assertTrue(len(user) == 1, "User created successfully")
         user = user[0]
         
-        instance = Instance(region="Test Add Challenge", 
+        instance = Instance(name="Test Add Challenge", 
                             start_date=datetime.datetime.now(),
                             end_date=datetime.datetime.now() + datetime.timedelta(days=30),
                             location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}',
@@ -63,7 +63,7 @@ class ChallengesWebTestCases(TestCase):
         self.assertTrue(len(user) == 1, "User created successfully")
         user = user[0]
         
-        instance = Instance(region = self.instanceName, 
+        instance = Instance(name = self.instanceName, 
                             start_date = self.instanceStart,
                             end_date = self.instanceEnd,
                             location = self.BostonMap,
@@ -96,7 +96,7 @@ class ChallengesWebTestCases(TestCase):
         self.assertTrue(len(user) == 1, "User created successfully")
         user = user[0]
         
-        instance = Instance(region = self.instanceName, 
+        instance = Instance(name = self.instanceName, 
                             start_date = self.instanceStart,
                             end_date = self.instanceEnd,
                             location = self.BostonMap,

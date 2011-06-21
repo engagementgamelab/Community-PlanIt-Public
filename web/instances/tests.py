@@ -18,7 +18,7 @@ class InstanceTestCase(TestCase):
         self.assertTrue(len(user) > 0, "The user was created successfully")
         user = user[0]
         
-        instance = Instance(region="Boston", 
+        instance = Instance(name="Boston", 
                             start_date=datetime.datetime.now(),
                             end_date=datetime.datetime.now() + datetime.timedelta(days=30),
                             location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}',
@@ -35,7 +35,7 @@ class InstanceWebTestCase(TestCase):
         self.assertTrue(response.status_code == 302, "The response status denotes that the user should have been created")
         self.user = User.objects.get(email=email)
         
-        instance = Instance(region="Boston", 
+        instance = Instance(name="Boston", 
                             start_date=datetime.datetime.now(),
                             end_date=datetime.datetime.now() + datetime.timedelta(days=30),
                             location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}',
