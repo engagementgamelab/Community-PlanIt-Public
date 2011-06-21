@@ -165,15 +165,11 @@ def edit(request):
                     profile.birth_year = int(profile_form.cleaned_data['birth_year'])
                 
                 #updating email address
-                #TODO: Either make email a required field in the database or allow the user to not have an
-                # email. (models.py located at web/accounts/models.py)
                 if (request.POST.get('email', None) == None or request.POST.get('email', None) == ''):
                     profile.user.email = None
                 else:
-                    #TODO: FIX THIS!!!!! THIS IS HORRIBLE!!!!!!! -BMH
                     profile.user.email = profile_form.cleaned_data['email']
                 
-                #AND IT CONTINUES, EXPECT BUGS! -bmh
                 if (request.POST.get('first_name', None) == None or request.POST.get('first_name', None) == ''):
                     profile.user.first_name = None
                 else:
@@ -184,34 +180,33 @@ def edit(request):
                 else:
                     profile.user.last_name = profile_form.cleaned_data['last_name']
                 
+                profile.user.save()
+                
                 #post = ""
                 #for x in request.POST:
                 #    post = "%s%s: %s<br>" % (post, x, request.POST[x])
                 #return HttpResponse(post)
                 
-                if (request.POST.get("education", None) == None or profile_form.cleaned_data['education'] == "0"):
-                    profile.education = None
-                else:
-                    profile.education = UserProfileEducation.objects.get(id=profile_form.cleaned_data['education'])
+                #if (request.POST.get("education", None) == None or profile_form.cleaned_data['education'] == "0"):
+                #    profile.education = None
+                #else:
+                #    profile.education = UserProfileEducation.objects.get(id=profile_form.cleaned_data['education'])
                 
-                if (request.POST.get("income", None) == None or profile_form.cleaned_data['income'] == "0"):
-                    profile.income = None
-                else:
-                    profile.income = UserProfileIncomes.objects.get(id=profile_form.cleaned_data['income'])
+                #if (request.POST.get("income", None) == None or profile_form.cleaned_data['income'] == "0"):
+                #    profile.income = None
+                #else:
+                #    profile.income = UserProfileIncomes.objects.get(id=profile_form.cleaned_data['income'])
                 
-                if (request.POST.get("living", None) == None or profile_form.cleaned_data['living'] == "0"):
-                    profile.living = None
-                else:
-                    profile.living = UserProfileLiving.objects.get(id=profile_form.cleaned_data['living'])
+                #if (request.POST.get("living", None) == None or profile_form.cleaned_data['living'] == "0"):
+                #    profile.living = None
+                #else:
+                #    profile.living = UserProfileLiving.objects.get(id=profile_form.cleaned_data['living'])
                 
-                if (request.POST.get("gender", None) == None or profile_form.cleaned_data['gender'] == "0"):
-                    profile.gender = None
-                else:
-                    profile.gender = UserProfileGender.objects.get(id=profile_form.cleaned_data['gender'])
+                #if (request.POST.get("gender", None) == None or profile_form.cleaned_data['gender'] == "0"):
+                #    profile.gender = None
+                #else:
+                #    profile.gender = profile_form.cleaned_data['gender']
                 
-                profile.user.save()
-                
-              
                 if request.FILES.get('avatar', None) != None:
                     profile.avatar = request.FILES['avatar']
                 profile.save()

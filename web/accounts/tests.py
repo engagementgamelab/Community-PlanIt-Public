@@ -101,7 +101,7 @@ class AccountsTestCase(TestCase):
     
     def test_upload(self):
         c = Client()
-        fout = open("/home/ben/djangoOut", "w")
+        #fout = open("/home/ben/djangoOut", "w")
         response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                   "lastName": "new_test", "email": "testUpload@localhost.com"})
 
@@ -115,7 +115,7 @@ class AccountsTestCase(TestCase):
         response = c.post("/account/profile/edit/", {"avatar": f,
                                                      "user": user, "form": "updated_profile", "email": "testUpload@localhost.com",
                                                      "first_name": "new_test", "last_name": "new_test"} )
-        fout.write("%s\n" % response.content)
+        #fout.write("%s\n" % response.content)
         self.assertTrue(response.status_code==302, "File uploaded")
         
         user = User.objects.get(email="testUpload@localhost.com")
@@ -128,5 +128,90 @@ class AccountsTestCase(TestCase):
             self.fail("The image at %s%s can not be found or is an invalid image" % (MEDIA_ROOT, profile.avatar))
         
         f.close()
-        fout.close()
     
+    def test_changeGender(self):
+        c = Client()
+        fout = open("/home/ben/djangoOut", "w")
+        response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
+                                                  "lastName": "new_test", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 302, "User Created")
+        user = User.objects.filter(email="testUpload@localhost.com")
+        self.assertTrue(len(user) == 1, "User exists")
+        
+        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 200, "Loged in")
+        
+        
+        response = c.post("/account/profile/edit/", {"user": user, "form": "updated_profile", "email": "testUpload@localhost.com",
+                                                     "first_name": "new_test", "last_name": "new_test", "gender": "2"})
+        user = UserProfile.objects.filter(user__email="testUpload@localhost.com")[0]
+        self.assertTrue(user.gender.pos == 2, "The gender is correct")
+    
+    def test_changeLiving(self):
+        c = Client()
+        response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
+                                                  "lastName": "new_test", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 302, "User Created")
+        user = User.objects.filter(email="testUpload@localhost.com")
+        self.assertTrue(len(user) == 1, "User exists")
+        
+        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 200, "Loged in")
+        
+        
+        response = c.post("/account/profile/edit/", {"user": user, "form": "updated_profile", "email": "testUpload@localhost.com",
+                                                     "first_name": "new_test", "last_name": "new_test", "living": "2"})
+        user = UserProfile.objects.filter(user__email="testUpload@localhost.com")[0]
+        self.assertTrue(user.living.pos == 2, "The living is correct")
+    
+    def test_changeIncome(self):
+        c = Client()
+        response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
+                                                  "lastName": "new_test", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 302, "User Created")
+        user = User.objects.filter(email="testUpload@localhost.com")
+        self.assertTrue(len(user) == 1, "User exists")
+        
+        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 200, "Loged in")
+        
+        
+        response = c.post("/account/profile/edit/", {"user": user, "form": "updated_profile", "email": "testUpload@localhost.com",
+                                                     "first_name": "new_test", "last_name": "new_test", "income": "2"})
+        user = UserProfile.objects.filter(user__email="testUpload@localhost.com")[0]
+        self.assertTrue(user.income.pos == 2, "The income is correct")
+    
+    
+    def test_changeEducation(self):
+        c = Client()
+        response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
+                                                  "lastName": "new_test", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 302, "User Created")
+        user = User.objects.filter(email="testUpload@localhost.com")
+        self.assertTrue(len(user) == 1, "User exists")
+        
+        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 200, "Loged in")
+        
+        
+        response = c.post("/account/profile/edit/", {"user": user, "form": "updated_profile", "email": "testUpload@localhost.com",
+                                                     "first_name": "new_test", "last_name": "new_test", "education": "2"})
+        user = UserProfile.objects.filter(user__email="testUpload@localhost.com")[0]
+        self.assertTrue(user.education.pos == 2, "The education is correct")
+        
+    def test_changeRace(self):
+        c = Client()
+        response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
+                                                  "lastName": "new_test", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 302, "User Created")
+        user = User.objects.filter(email="testUpload@localhost.com")
+        self.assertTrue(len(user) == 1, "User exists")
+        
+        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 200, "Loged in")
+        
+        
+        response = c.post("/account/profile/edit/", {"user": user, "form": "updated_profile", "email": "testUpload@localhost.com",
+                                                     "first_name": "new_test", "last_name": "new_test", "race": "2"})
+        user = UserProfile.objects.filter(user__email="testUpload@localhost.com")[0]
+        self.assertTrue(user.race.pos == 2, "The race is correct")

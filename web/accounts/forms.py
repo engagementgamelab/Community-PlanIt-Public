@@ -140,28 +140,58 @@ class UserProfileForm(forms.ModelForm):
         email = self.cleaned_data['email']
         return email
     
+    def clean_instance(self):
+        if (self.cleaned_data['instance'] == ""):
+            insance = None
+        else:
+            insance = Instance.objects.get(id=self.cleaned_data['instance'])
+        return instance
+    
     def clean_gender(self):
         if (self.cleaned_data['gender'] == ""):
             gender = None
         else:
-            gender = self.cleaned_data['gender']
+            gender = UserProfileGender.objects.get(pos=self.cleaned_data['gender'])
         return gender
     
     def clean_race(self):
         if (self.cleaned_data['race'] == ""):
             race = None
         else:
-            race = self.cleaned_data['race']
+            race = UserProfileRace.objects.get(pos=self.cleaned_data['race'])
         return race
     
     def clean_stake(self):
         if (self.cleaned_data['stake'] == ""):
             stake = None
         else:
-            stake = self.cleaned_data['stake']
+            stake = UserProfileStake.objects.get(pos=self.cleaned_data['stake'])
         return stake
+    
+    def clean_education(self):
+        if (self.cleaned_data['education'] == ""):
+            education = None
+        else:
+            education = UserProfileEducation.objects.get(pos=self.cleaned_data['education'])
+        return education
+    
+    def clean_income(self):
+        if (self.cleaned_data['income'] == ""):
+            income = None
+        else:
+            income = UserProfileIncomes.objects.get(pos=self.cleaned_data['income'])
+        return income
+    
+    def clean_living(self):
+        if (self.cleaned_data['living'] == ""):
+            living = None
+        else:
+            living = UserProfileLiving.objects.get(pos=self.cleaned_data['living'])
+        return living
+    
     
     class Meta:
         model = UserProfile
         #Adding to Meta.fields will display default settings in the browser and link it to the correct model object. 
-        fields = ( 'email', 'first_name', 'last_name', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'myInstance', 'affiliations', )
+        fields = ( 'email', 'first_name', 'last_name', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'myInstance', 'affiliations',
+                   'education', 'income', 'living' )
