@@ -70,12 +70,15 @@ class AccountsTestCase(TestCase):
         self.assertIsInstance(profile, UserProfile, 'Profile is instance of UserProfile')
     
     def test_register(self):
+        f = open("/home/ben/djangoOut", "w")
         c = Client()
         response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                   "lastName": "new_test", "email": "testRegister@localhost.com"})
+        f.write("%s\n" % response.content)
+        f.close()
         #status_code 302 denotes a redirect but that the same URI should still be used
         self.assertTrue(response.status_code == 302, "The response status denotes that the user should have been created")
-        user = User.objects.filter(email="new_test@localhost.com")
+        user = User.objects.filter(email="testRegister@localhost.com")
         self.assertTrue(len(user) > 0, "The user was created successfully")
     
     def test_login(self):
@@ -87,16 +90,14 @@ class AccountsTestCase(TestCase):
         self.assertTrue(response.status_code == 200, "Loged in")
         
     def test_logout(self):
-        fout = open("/home/ben/djangoOut", "w")
         c = Client()
         response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                   "lastName": "new_test", "email": "testLogout@localhost.com"})
         self.assertTrue(response.status_code == 302, "The response status denotes that the user should have been created")
         response = c.post("/account/login/", {"password": "pass", "email": "testLogout@localhost.com"})
         self.assertTrue(response.status_code == 200, "Loged in")
-        response = c.post("/acount/logout/")
-        fout.write("%s\n" % response.content)
-        self.assertTrue(response.status_code == 200, "Loged out")
+        response = c.post("/account/logout/")
+        self.assertTrue(response.status_code == 302, "Loged out")
     
     def test_upload(self):
         c = Client()
@@ -114,6 +115,7 @@ class AccountsTestCase(TestCase):
         response = c.post("/account/profile/edit/", {"avatar": f,
                                                      "user": user, "form": "updated_profile", "email": "testUpload@localhost.com",
                                                      "first_name": "new_test", "last_name": "new_test"} )
+        fout.write("%s\n" % response.content)
         self.assertTrue(response.status_code==302, "File uploaded")
         
         user = User.objects.get(email="testUpload@localhost.com")
@@ -128,18 +130,3 @@ class AccountsTestCase(TestCase):
         f.close()
         fout.close()
     
-
-# Organize the Accounts test suite
-def suite():
-    tests = [
-             'test_user_registration',
-             'test_large_email_registration',
-             'test_multiple_registrations',
-             'test_user_profile',
-             'test_register',
-             'test_login',
-             'test_logout',
-             'test_upload'
-            ]
-
-    return unittest.TestSuite(map(AccountsTestCase, tests))

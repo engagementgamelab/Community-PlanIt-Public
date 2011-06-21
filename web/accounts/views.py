@@ -46,18 +46,16 @@ def validate_and_generate(base_form, request, callback):
 
 def register(request):
     def valid(firstName, lastName, email, password, form):
-        try:
-            player = User.objects.create(email=email)
-            player.first_name = firstName
-            player.last_name = lastName
-            player.set_password(password)
-            player.full_clean()
-            player.save()
-
-            tmpl = loader.get_template('accounts/email/welcome.html')
-            body = tmpl.render(Context({ 'password': password,
-                                        'first_name': firstName }))
-        except: pass
+        player = User.objects.create(email=email)
+        player.first_name = firstName
+        player.last_name = lastName
+        player.set_password(password)
+        player.full_clean()
+        player.save()
+        
+        tmpl = loader.get_template('accounts/email/welcome.html')
+        body = tmpl.render(Context({ 'password': password,
+                                    'first_name': firstName }))
 
         if send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [email]):
             messages.success(request, _('Thanks for registering!'))
@@ -70,11 +68,6 @@ def register(request):
         uinfo.coins = 0
         uinfo.points = 0
         uinfo.points_multiplier = 0
-        uinfo.username = player.username
-        uinfo.email = player.email
-        uinfo.generated_password = player.password
-        uinfo.first_name = player.first_name;
-        uinfo.last_name = player.last_name;
         uinfo.accepted_term = False
         uinfo.accepted_research = False
         uinfo.save()
@@ -125,7 +118,10 @@ def edit(request):
                                    initial={'myInstance': profile.instance.id if profile.instance != None else 0,
                                             'education': profile.education.id if profile.education != None else 0,
                                             'income': profile.income.id if profile.income != None else 0,
-                                            'living': profile.living.id if profile.living != None else 0})
+                                            'living': profile.living.id if profile.living != None else 0,
+                                            'gender': profile.gender.id if profile.gender != None else 0,
+                                            'race': profile.race.id if profile.race != None else 0,
+                                            'stake': profile.stake.id if profile.stake != None else 0,})
     if request.method == 'POST':
         
         #files = ""
@@ -159,6 +155,7 @@ def edit(request):
                         profile.instance = ins[0]
                     else:
                         profile.instance = None
+                
                 #changing birth year (needed because of the int)
                 #This fails with the birth_year being blank and python can not convert
                 #a '' to an int
@@ -171,10 +168,9 @@ def edit(request):
                 #TODO: Either make email a required field in the database or allow the user to not have an
                 # email. (models.py located at web/accounts/models.py)
                 if (request.POST.get('email', None) == None or request.POST.get('email', None) == ''):
-                    profile.email = None
+                    profile.user.email = None
                 else:
                     #TODO: FIX THIS!!!!! THIS IS HORRIBLE!!!!!!! -BMH
-                    profile.email = profile_form.cleaned_data['email']
                     profile.user.email = profile_form.cleaned_data['email']
                 
                 #AND IT CONTINUES, EXPECT BUGS! -bmh
@@ -208,6 +204,11 @@ def edit(request):
                 else:
                     profile.living = UserProfileLiving.objects.get(id=profile_form.cleaned_data['living'])
                 
+                if (request.POST.get("gender", None) == None or profile_form.cleaned_data['gender'] == "0"):
+                    profile.gender = None
+                else:
+                    profile.gender = UserProfileGender.objects.get(id=profile_form.cleaned_data['gender'])
+                
                 profile.user.save()
                 
               
@@ -215,10 +216,8 @@ def edit(request):
                     profile.avatar = request.FILES['avatar']
                 profile.save()
                 profile_form.save()
-                #This will remove the log message. In the furture look for ActivityLogger.log
-                #ActivityLogger.log(request.user, request, 'account profile', 'updated', '/player/'+ str(request.user.id), 'profile')
 
-                if not profile.completed:
+                if not profile.editedProfile:
                     try:
                         # TODO: Break this out into a function
                         if len(profile.affiliations) and profile.accepted_term and profile.accepted_research and len(profile.phone_number):
@@ -230,6 +229,11 @@ def edit(request):
                         pass
 
                 return HttpResponseRedirect('/dashboard')
+            #else: #uncomment this
+            #    s = "error: "
+            #    for err in profile_form.errors:
+            #        s = "%s%s %s\n" % (s, err, profile_form.errors[err])
+            #    return HttpResponse(s)
 
     tmpl = loader.get_template('accounts/profile_edit.html')
     return HttpResponse(tmpl.render(RequestContext(request, {

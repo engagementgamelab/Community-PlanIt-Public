@@ -7,6 +7,9 @@ from web.accounts.models import UserProfile
 from web.accounts.models import UserProfileEducation
 from web.accounts.models import UserProfileIncomes
 from web.accounts.models import UserProfileLiving
+from web.accounts.models import UserProfileGender
+from web.accounts.models import UserProfileRace
+from web.accounts.models import UserProfileStake
 
 class RegisterForm(forms.Form):
     firstName = forms.CharField(required=True, max_length=30, label=_("First Name"))
@@ -90,40 +93,73 @@ class UserProfileForm(forms.ModelForm):
     email = forms.CharField(max_length=255, required=True, help_text="(Private)",)
 
     # Non-required fields
-    gender = forms.ChoiceField(required=False, help_text='(Private)', choices=(('', '------'), ('male','Male'), ('female', 'Female'), ('other', 'Other')))
-    race = forms.ChoiceField(required=False, help_text='<em class="fine">(Private)</em>', choices=(
-        ('','------'), ('asian','Asian'), ('american indian or alaska native','American Indian or Alaska Native'), ('black or african american', 'Black or African American'),
-        ('hispanic or latino or spanish','Hispanic, Latino, or Spanish'), ('pacific islander or native hawaiian', 'Pacific Islander or Native Hawaiian'), ('white','White'),
-        ('multiracial', 'Multiracial'), ('other','Other')))
-    stake = forms.ChoiceField(required=False, choices=(('','------'), ('live','Live'), ('work','Work'), ('play', 'Play'), ('learn', 'Learn')))
+    gen = []
+    gen.append((0, '------'))
+    for x in UserProfileGender.objects.all().order_by("pos"):
+        gen.append((x.id, x.gender))
+    gender = forms.ChoiceField(required=False, choices=gen)
+    
+    ra = []
+    ra.append((0, '------'))
+    for x in UserProfileRace.objects.all().order_by("pos"):
+        ra.append((x.id, x.race))
+    race = forms.ChoiceField(required=False, choices=ra)
+    
+    st = []
+    st.append((0, '------'))
+    for x in UserProfileStake.objects.all().order_by("pos"):
+        st.append((x.id, x.stake))
+    stake = forms.ChoiceField(required=False, choices=st)
+    
     birth_year = forms.CharField(max_length=30, label='Age', help_text='Private',required=False)
     phone_number = forms.CharField(max_length=30, help_text='Private',required=False)
     myInstance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Community'))
     affiliations = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}), 
                                    help_text = "Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club).")
-    c1 = []
-    c1.append((0, '------'))
+    edu = []
+    edu.append((0, '------'))
     for x in UserProfileEducation.objects.all().order_by("pos"):
-        c1.append((x.id, x.eduLevel))
-    education = forms.ChoiceField(required=False, choices=c1)
+        edu.append((x.id, x.eduLevel))
+    education = forms.ChoiceField(required=False, choices=edu)
     
-    c2 = []
-    c2.append((0, '------'))
+    inc = []
+    inc.append((0, '------'))
     for x in UserProfileIncomes.objects.all().order_by("pos"):
-        c2.append((x.id, x.income))
-    income = forms.ChoiceField(required=False, choices=c2)
+        inc.append((x.id, x.income))
+    income = forms.ChoiceField(required=False, choices=inc)
     
-    c3 = []
-    c3.append((0, '------'))
+    liv = []
+    liv.append((0, '------'))
     for x in UserProfileLiving.objects.all().order_by("pos"):
-        c3.append((x.id, x.livingSituation))
-    living = forms.ChoiceField(required=False, choices=c3)
+        liv.append((x.id, x.livingSituation))
+    living = forms.ChoiceField(required=False, choices=liv)
     
     avatar = forms.ImageField(required=False)
     
     def clean_email(self):
         email = self.cleaned_data['email']
         return email
+    
+    def clean_gender(self):
+        if (self.cleaned_data['gender'] == ""):
+            gender = None
+        else:
+            gender = self.cleaned_data['gender']
+        return gender
+    
+    def clean_race(self):
+        if (self.cleaned_data['race'] == ""):
+            race = None
+        else:
+            race = self.cleaned_data['race']
+        return race
+    
+    def clean_stake(self):
+        if (self.cleaned_data['stake'] == ""):
+            stake = None
+        else:
+            stake = self.cleaned_data['stake']
+        return stake
     
     class Meta:
         model = UserProfile

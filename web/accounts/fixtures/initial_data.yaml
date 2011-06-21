@@ -102,7 +102,12 @@
     fields:
         gender: female
         pos: 2
-
+-   model: accounts.userprofilegender
+    pk: 3
+    fields:
+        gender: other
+        pos: 3
+        
 # UserProfileRace
 -   model: accounts.userprofilerace
     pk: 1
