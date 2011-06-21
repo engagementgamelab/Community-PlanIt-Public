@@ -181,32 +181,7 @@ def edit(request):
                     profile.user.last_name = profile_form.cleaned_data['last_name']
                 
                 profile.user.save()
-                
-                #post = ""
-                #for x in request.POST:
-                #    post = "%s%s: %s<br>" % (post, x, request.POST[x])
-                #return HttpResponse(post)
-                
-                #if (request.POST.get("education", None) == None or profile_form.cleaned_data['education'] == "0"):
-                #    profile.education = None
-                #else:
-                #    profile.education = UserProfileEducation.objects.get(id=profile_form.cleaned_data['education'])
-                
-                #if (request.POST.get("income", None) == None or profile_form.cleaned_data['income'] == "0"):
-                #    profile.income = None
-                #else:
-                #    profile.income = UserProfileIncomes.objects.get(id=profile_form.cleaned_data['income'])
-                
-                #if (request.POST.get("living", None) == None or profile_form.cleaned_data['living'] == "0"):
-                #    profile.living = None
-                #else:
-                #    profile.living = UserProfileLiving.objects.get(id=profile_form.cleaned_data['living'])
-                
-                #if (request.POST.get("gender", None) == None or profile_form.cleaned_data['gender'] == "0"):
-                #    profile.gender = None
-                #else:
-                #    profile.gender = profile_form.cleaned_data['gender']
-                
+
                 if request.FILES.get('avatar', None) != None:
                     profile.avatar = request.FILES['avatar']
                 profile.save()
