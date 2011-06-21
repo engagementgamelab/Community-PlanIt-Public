@@ -28,7 +28,7 @@
             {%if not request.session.instances|length%}
                 <select class="instances_select">
                 {%for instance in request.session.instances%}
-                    <option value="{{instance.id}}">{{instance.region}}</option>
+                    <option value="{{instance.id}}">{{instance.name}}</option>
                 {%endfor%}
                 </select>
             {%else%}
