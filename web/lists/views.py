@@ -42,7 +42,7 @@ def following(request, id):
     player = User.objects.get(id=id)
     players = player.get_profile().following.all()
 
-    return display_list(request, players, player.get_profile().first_name +' is following')
+    return display_list(request, players, player.first_name +' is following')
 
 def followers(request, id):
 
@@ -56,4 +56,4 @@ def followers(request, id):
         except:
             pass
 
-    return display_list(request, players, player.get_profile().first_name +' followers')
+    return display_list(request, players, player.first_name +' followers')
