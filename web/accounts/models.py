@@ -74,7 +74,7 @@ class UserProfile(models.Model):
         return 100 - self.coinPoints
     
     def points_to_coin_for_fill(self):
-        return coinPoints
+        return self.coinPoints
 
     def affiliations_csv(self):
         if self.affiliations:

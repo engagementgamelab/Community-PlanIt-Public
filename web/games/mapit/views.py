@@ -38,9 +38,6 @@ def index(request, id):
     unplayed = []
     _played = []
 
-    today = datetime.date.today()
-    expired = mission.start_date < today and mission.end_date < today
-
     player_game = None
     try:
         player_game = PlayerGame.objects.get(user=request.user, game=game)
@@ -50,7 +47,7 @@ def index(request, id):
         map_form = MapResponseForm(instance=mapit.response)
         response = mapit.response
 
-    if request.method == 'POST' and not expired:
+    if request.method == 'POST' and not mission.is_expired:
         map_form = MapResponseForm(request.POST, instance=mapit.response)
 
         if map_form.is_valid():
@@ -109,7 +106,7 @@ def index(request, id):
         'map_form': map_form,
         'response': response,
         'player_game': player_game,
-        'expired': expired,
+        'expired': mission.is_expired,
     }, [ip])))
 
 #TODO: Make this only require a game id like everything else

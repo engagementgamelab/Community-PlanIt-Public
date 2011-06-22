@@ -14,8 +14,8 @@ class QuerySetManager(models.Manager):
 class Mission(models.Model):
     name = models.CharField(max_length=45)
     slug = models.SlugField(editable=False)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
 
     video = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
