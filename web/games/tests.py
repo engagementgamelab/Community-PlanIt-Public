@@ -136,7 +136,7 @@ class GamesWebTestCases(TestCase):
     def test_Index(self):
         response = self.c.get("/game/mapit/%s/" % self.mapit.id, {"user": self.user})
         self.assertTrue(response.status_code == 200, "mapit url works")
-        response = self.c.get("/games/thinkfast/%s/" % self.thinkfast.id)
+        response = self.c.get("/game/thinkfast/%s/" % self.thinkfast.id)
         self.assertTrue(response.status_code == 200, "mapit url works")
         
     
