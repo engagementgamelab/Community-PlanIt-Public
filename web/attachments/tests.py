@@ -35,6 +35,3 @@ class AttachmentsTestCases(TestCase):
         att = Attachment.objects.filter(user=user)
         self.assertTrue(len(att) == 1, "Attachment ")
         att = att[0] 
-        f = open("/home/ben/djangoOut", "w")
-        f.write("attachment file: %s" % att.file)
-        f.close()

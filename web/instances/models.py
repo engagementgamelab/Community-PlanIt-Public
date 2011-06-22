@@ -78,8 +78,6 @@ class InstanceAdmin(admin.ModelAdmin):
 #TODO: Make sure that this is unit tested upon instance creation! DO IT!
 def instance_post_save(instance, created, **kwargs):
     if (PointsAssignment.objects.filter(instance=instance).count() == 0):
-        f = open("/home/ben/djangoOut", "w")
-        f.write("InstanceID: %s created: %s" % (instance.id, created))
         actions = ['challenge_completed', 'mapit_completed', 'thinkfast_completed', 'othershoes_completed', 'profile_completed', 'account_created', 'challenge_created', 'comment_created']
         for action in actions:
             p = PointsAssignment(action=action, points=10, instance=instance)

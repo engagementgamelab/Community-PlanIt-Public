@@ -108,11 +108,10 @@ def spend(request, id):
     issue = Issue.objects.get(id=id)
 
     playerissue, created = PlayerIssue.objects.get_or_create(user=user, issue=issue)
-
-    if profile.coins > 0:
+    if profile.currentCoins > 0:
         issue.coins += 1
         playerissue.coins += 1
-        profile.coins -= 1
+        profile.currentCoins -= 1
     
         issue.save()
         playerissue.save()
@@ -135,7 +134,7 @@ def take(request, id):
     if playerissue.coins > 0:
         issue.coins -= 1
         playerissue.coins -= 1
-        profile.coins += 1
+        profile.currentCoins += 1
     
         issue.save()
         playerissue.save()

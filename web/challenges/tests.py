@@ -73,8 +73,6 @@ class ChallengesWebTestCases(TestCase):
         instance = Instance.objects.get(name = self.instanceName)
         response = self.c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                   "lastName": "new_test", "email": self.email, "instance": instance.id})
-        fout = open("/home/ben/djangoOut", "w")
-        fout.write("Content: %s" % response.content)
         self.assertTrue(response.status_code == 302, "User created successfully")
         
         user = User.objects.filter(email=self.email)

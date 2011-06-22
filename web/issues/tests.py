@@ -137,7 +137,7 @@ class IssuesWebTestCase(TestCase):
         self.assertTrue(pi[0].coins == 0, "The Player Issue correctly has 0 coins")
         
         up = UserProfile.objects.get(user = self.user)
-        self.assertTrue(up.coins == 0, "UserProfile has correct number of coins")
+        self.assertTrue(up.currentCoins == 0, "UserProfile has correct number of coins")
     
     def test_takeSuccess(self):
         pi = PlayerIssue()
@@ -154,7 +154,7 @@ class IssuesWebTestCase(TestCase):
         self.assertTrue(pi[0].coins == 0, "The Player Issue correctly has 0 coins")
         
         up = UserProfile.objects.get(user = self.user)
-        self.assertTrue(up.coins == 1, "UserProfile has correct number of coins")
+        self.assertTrue(up.currentCoins == 1, "UserProfile has correct number of coins")
     
     def test_spendFail(self):
         pi = PlayerIssue()
@@ -180,18 +180,16 @@ class IssuesWebTestCase(TestCase):
         pi.coins = 0
         pi.save()
         up = UserProfile.objects.get(user = self.user)
-        up.coins = 1
+        up.currentCoins = 1
         up.save()
         
         response = self.c.get("/issue/spend/%s/" % self.issue.id, {"user": self.user})
         self.assertTrue(response.status_code == 302, "The coin was taken away, and redirected.")
-        
         pi = PlayerIssue.objects.filter(issue=self.issue, user=self.user)
         self.assertTrue(len(pi) == 1, "Player Issue retreaved successfully")
-        self.assertTrue(pi[0].coins == 1, "The Player Issue correctly has 0 coins")
-        
+        self.assertTrue(pi[0].coins == 1, "The Player Issue correctly has 1 coin")
         up = UserProfile.objects.get(user = self.user)
-        self.assertTrue(up.coins == 0, "UserProfile has correct number of coins")
+        self.assertTrue(up.currentCoins == 0, "UserProfile has correct number of coins")
     
     
     
