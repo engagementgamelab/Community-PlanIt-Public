@@ -2,7 +2,7 @@ import unittest, datetime
 from django.test import TestCase
 from django.contrib.auth.models import User, Group
 from web.challenges.models import Challenge
-from web.instances.models import Instance
+from web.instances.models import Instance, InstanceView
 from django.test.client import Client
 
 class ChallengesTestCases(TestCase):
@@ -28,13 +28,13 @@ class ChallengesTestCases(TestCase):
                             curator=user)
         instance.save()
         self.assertTrue(Instance.objects.all().count() == 1, "The instance was created.")
-        
+        instance = Instance.objects.get(name="Test Add Challenge")
         challenge = Challenge(map = '{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}',
                               name = "Test challenge",
                               description = "Test challenge",
                               start_date = datetime.datetime.now(),
                               end_date = datetime.datetime.now() + datetime.timedelta(days=14),
-                              instance = instance,
+                              instance = InstanceView.objects.get(id = instance.id),
                               user=user
                               )
         challenge.save()
@@ -69,9 +69,12 @@ class ChallengesWebTestCases(TestCase):
                             location = self.BostonMap,
                             curator = user)
         instance.save()
-        
+        self.assertTrue(Instance.objects.all().count() == 1, "Instance created successfully")
+        instance = Instance.objects.get(name = self.instanceName)
         response = self.c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                   "lastName": "new_test", "email": self.email, "instance": instance.id})
+        fout = open("/home/ben/djangoOut", "w")
+        fout.write("Content: " % response.content)
         self.assertTrue(response.status_code == 302, "User created successfully")
         
         user = User.objects.filter(email=self.email)
@@ -102,7 +105,8 @@ class ChallengesWebTestCases(TestCase):
                             location = self.BostonMap,
                             curator = user)
         instance.save()
-        
+        self.assertTrue(Instance.objects.all().count() == 1, "Instance created successfully")
+        instance = Instance.objects.get(name = self.instanceName)
         response = self.c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                   "lastName": "new_test", "email": self.email, "instance": instance.id})
         self.assertTrue(response.status_code == 302, "User created successfully")

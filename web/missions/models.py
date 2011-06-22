@@ -22,16 +22,10 @@ class MissionView(models.Model):
 
     instance = models.ForeignKey(InstanceView, editable=False)
     
-class Mission(models.Model):
-    name = models.CharField(max_length=45)
-    slug = models.SlugField(editable=False)
-    start_date = models.DateField()
-    end_date = models.DateField()
-
-    video = models.TextField(blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-
-    instance = models.ForeignKey(InstanceView, editable=False)
+class Mission(MissionView):
+    is_active = models.BooleanField(editable=False)
+    is_expired = models.BooleanField(editable=False)
+    is_started = models.BooleanField(editable=False)
     
     class Meta:
         managed = False

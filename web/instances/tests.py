@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User, Group
 from web.accounts.models import UserProfile
 from django.test.client import Client
-from web.instances.models import Instance
+from web.instances.models import Instance, InstanceView, PointsAssignment
 
 class InstanceTestCase(TestCase):
     def test_create(self):
@@ -25,6 +25,10 @@ class InstanceTestCase(TestCase):
                             curator=user)
         instance.save()
         self.assertTrue(Instance.objects.all().count() == 1, "The instance was created.")
+        self.assertTrue(InstanceView.objects.all().count() == 1, "The instance view was created.")
+        self.assertTrue(Instance.objects.filter(name="Boston").count() == 1, "Correct instance exists")
+        instance = Instance.objects.all()[0]
+        self.assertTrue(PointsAssignment.objects.filter(instance=instance).count() != 0, "PointsAssignment objects are created")
         
 class InstanceWebTestCase(TestCase):
     def setUp(self):

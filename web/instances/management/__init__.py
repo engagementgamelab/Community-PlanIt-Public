@@ -20,7 +20,8 @@ instances_instanceview.location, instances_instanceview.content, instances_insta
     CASE
         WHEN now() > instances_instanceview.start_date THEN true
         ELSE false
-    END AS is_started
+    END AS is_started,
+    instances_instanceview.id as instanceview_ptr_id
    FROM instances_instanceview;
 
 --Happy fun insert, update, and delete for the view so that django doesn't even know that it's not a table

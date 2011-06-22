@@ -17,10 +17,11 @@ missions_missionview.video, missions_missionview.description, missions_missionvi
             WHEN now() > missions_missionview.end_date THEN true
             ELSE false
         END AS is_expired,
-    CASE
-        WHEN now() > missions_missionview.start_date THEN true
-        ELSE false
-    END AS is_started
+        CASE
+            WHEN now() > missions_missionview.start_date THEN true
+            ELSE false
+        END AS is_started,
+        missions_missionview.id as missionview_ptr_id
    FROM missions_missionview;
 
 --Happy fun insert, update, and delete for the view so that django doesn't even know that it's not a table

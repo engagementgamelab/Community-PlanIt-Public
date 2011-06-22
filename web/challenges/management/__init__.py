@@ -15,7 +15,8 @@ SELECT challenges_challengeview.id, challenges_challengeview.map, challenges_cha
         CASE
             WHEN now() > challenges_challengeview.end_date THEN true
             ELSE false
-        END AS is_expired
+        END AS is_expired,
+        challenges_challengeview.id as challengeview_ptr_id
    FROM challenges_challengeview;
 
 --Happy fun insert, update, and delete for the view so that django doesn't even know that it's not a table

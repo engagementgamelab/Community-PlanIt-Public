@@ -57,6 +57,13 @@ class RegisterForm(forms.Form):
         else:
             return passwordAgain
     
+    #def clean_instance(self):
+    #    if (self.cleaned_data['instance'] == ""):
+    #        instance = None
+    #    else:
+    #        instance = Instance.objects.get(id = self.cleaned_data['instance'])
+    #    return instance
+    
 class ActivationForm(forms.Form):
     accepted_term = forms.BooleanField(required=True, label=_("I have have read the <a href=\"/label/\">Terms of Use.</a>"))
     accepted_research = forms.BooleanField(required=True, label=_("Accepted research"))
