@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from web.prompts.models import Prompt
 from web.responses.models import Response
 from web.comments.models import Comment
-from web.missions.models import MissionView
+from web.missions.models import Mission
 
 from django.contrib.auth.models import User
 
@@ -16,7 +16,7 @@ class Game(models.Model):
     title = models.CharField(max_length=45)
     slug = models.SlugField(editable=False)
     active = models.BooleanField(editable=False,default=True)
-    #mission = models.ForeignKey(MissionView)
+    mission = models.ForeignKey(Mission)
     comments = models.ManyToManyField(Comment, blank=True, null=True)
 
     def save(self):

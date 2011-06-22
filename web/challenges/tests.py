@@ -2,7 +2,7 @@ import unittest, datetime
 from django.test import TestCase
 from django.contrib.auth.models import User, Group
 from web.challenges.models import Challenge
-from web.instances.models import Instance, InstanceView
+from web.instances.models import Instance
 from django.test.client import Client
 
 class ChallengesTestCases(TestCase):
@@ -34,7 +34,7 @@ class ChallengesTestCases(TestCase):
                               description = "Test challenge",
                               start_date = datetime.datetime.now(),
                               end_date = datetime.datetime.now() + datetime.timedelta(days=14),
-                              instance = InstanceView.objects.get(id = instance.id),
+                              instance = Instance.objects.get(id = instance.id),
                               user=user
                               )
         challenge.save()

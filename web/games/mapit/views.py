@@ -26,12 +26,12 @@ from web.responses.map.models import MapResponse
 
 @login_required
 #TODO: Make this only require a game id like everything else
-def index(request, mission_slug, id):
+def index(request, id):
     instance = request.user.get_profile().instance
-    mission = Mission.objects.get(slug=mission_slug)
     game = get_object_or_404(Game, id=id)
+    mission = game.mission
     mapit = game.mapit
-
+    
     if instance.is_expired() or mission.is_expired():
         return HttpResponseRedirect(reverse('games_mapit_overview', args=[mission_slug, id]))
 
@@ -114,7 +114,7 @@ def index(request, mission_slug, id):
 
 #TODO: Make this only require a game id like everything else
 @login_required
-def overview(request, mission_slug, id):
+def overview(request, id):
     mission = Mission.objects.get(slug=mission_slug)
     game = get_object_or_404(Game, id=id)
     mapit = game.mapit
@@ -210,7 +210,7 @@ def overview(request, mission_slug, id):
 
 @login_required
 #TODO: Make this only require a game id like everything else
-def response(request, mission_slug, id, user_id):
+def response(request, id, user_id):
     mission = Mission.objects.get(slug=mission_slug)
     game = Game.objects.get(id=id)
     mapit = game.mapit

@@ -2,7 +2,7 @@ import datetime
 from django.template.defaultfilters import slugify
 from django.db import models
 from django.contrib import admin
-from web.instances.models import InstanceView
+from web.instances.models import Instance
 
 class QuerySetManager(models.Manager):
     def get_query_set(self):
@@ -11,7 +11,7 @@ class QuerySetManager(models.Manager):
 #TODO: Set up a generic foreign key from game to mission, get rid of generic.GenericRelation
 #There is no need for that here.
 #Why does the description field exist if it can be null?
-class MissionView(models.Model):
+class Mission(models.Model):
     name = models.CharField(max_length=45)
     slug = models.SlugField(editable=False)
     start_date = models.DateField()
@@ -20,16 +20,25 @@ class MissionView(models.Model):
     video = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
-    instance = models.ForeignKey(InstanceView, editable=False)
+    instance = models.ForeignKey(Instance, editable=False)
     
-class Mission(MissionView):
-    is_active = models.BooleanField(editable=False)
-    is_expired = models.BooleanField(editable=False)
-    is_started = models.BooleanField(editable=False)
+    def is_active(self):
+        if datetime.datetime.now() >= self.start_date and datetime.datetime.now() <= self.end_date:
+            return True;
+        else:
+            return False;
+        
+    def is_expired(self):
+        if datetime.datetime.now() >= self.end_date:
+            return True
+        else:
+            return False
     
-    class Meta:
-        managed = False
-    
+    def is_started(self):
+        if datetime.datetime.now() >= self.start_date:
+            return True
+        else:
+            return False
     
     # Faking out the objects collection to pull from the inner model
     # class.

@@ -15,7 +15,7 @@ add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 #This is the physical data. All FKs are made off of this, but all data
 #can be used through Instance. Look in the instances/management/__init__.py
 #to see the view that is created 
-class InstanceView(models.Model):
+class Instance(models.Model):
     name = models.CharField(max_length=45)
     slug = models.SlugField()
     start_date = models.DateField()
@@ -24,14 +24,27 @@ class InstanceView(models.Model):
     content = models.TextField(null=True, blank=True)
     curator = models.ForeignKey(User, default=0, null=True, blank=True)
     
-#This is a view
-class Instance(InstanceView):
-    is_active = models.BooleanField(editable=False)
-    is_expired = models.BooleanField(editable=False)
-    is_started = models.BooleanField(editable=False)
+    #This should go into a view, djagno doesn't support views... this is
+    # a terrible thing and honestly, there are so many problems associated
+    # with trying to plug this into a view, that it's just simpler to do this
+    # bad bad, terrbile code - BMH
+    def is_active(self):
+        if datetime.datetime.now() >= self.start_date and datetime.datetime.now() <= self.end_date:
+            return True;
+        else:
+            return False;
+        
+    def is_expired(self):
+        if datetime.datetime.now() >= self.end_date:
+            return True
+        else:
+            return False
     
-    class Meta: 
-        managed = False
+    def is_started(self):
+        if datetime.datetime.now() >= self.start_date:
+            return True
+        else:
+            return False
         
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -46,7 +59,7 @@ class PointsAssignment(models.Model):
     points = models.IntegerField(default=0)
     coins = models.IntegerField(default=0)
 
-    instance = models.ForeignKey(InstanceView, editable=False)
+    instance = models.ForeignKey(Instance, editable=False)
 
 class PointsAssignmentAdmin(admin.ModelAdmin):
     list_display = ('action', 'points', 'coins',)

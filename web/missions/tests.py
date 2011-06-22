@@ -42,7 +42,7 @@ class MissionsTestCase(TestCase):
         createGame(Mapit())
         self.assertTrue(Game.objects.all().count() == 1, "Mapit created successfully")
         self.assertTrue(Mapit.objects.all().count() == 1, "Mapit created successfully")
-        self. game = Game.objects.all()[0]
+        self.game = Game.objects.all()[0]
         self.assertTrue(self.game.game_type == "mapit")
     
     def test_create(self):

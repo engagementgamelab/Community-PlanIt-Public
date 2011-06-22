@@ -1,5 +1,5 @@
 import datetime
-from web.instances.models import InstanceView
+from web.instances.models import Instance
 from web.attachments.models import Attachment
 from web.comments.models import Comment
 from web.responses.models import Response
@@ -18,7 +18,7 @@ class QuerySetManager(models.Manager):
 
 #Create the base model for the view
 #This is where all of the data lies.
-class ChallengeView(models.Model):
+class Challenge(models.Model):
     map = GoogleMapsField()
     name = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField()
@@ -26,19 +26,29 @@ class ChallengeView(models.Model):
     end_date = models.DateTimeField()
     flagged = models.BooleanField(default=0, editable=False)
 
-    instance = models.ForeignKey(InstanceView)
+    instance = models.ForeignKey(Instance)
     user = models.ForeignKey(User, editable=False)
     attachments = models.ManyToManyField(Attachment, blank=True)
     comments = models.ManyToManyField(Comment, blank=True)
     game_type = models.CharField(max_length=45, editable=False)
-
-#This is actually a view created by the challengeview.sql
-class Challenge(ChallengeView):
-    is_active = models.BooleanField(editable=False)
-    is_expired = models.BooleanField(editable=False)
-
-    class Meta: 
-        managed = False
+    
+    def is_active(self):
+        if datetime.datetime.now() >= self.start_date and datetime.datetime.now() <= self.end_date:
+            return True;
+        else:
+            return False;
+        
+    def is_expired(self):
+        if datetime.datetime.now() >= self.end_date:
+            return True
+        else:
+            return False
+    
+    def is_started(self):
+        if datetime.datetime.now() >= self.start_date:
+            return True
+        else:
+            return False
     
     def save(self):
         self.game_type = "challenge"
@@ -96,7 +106,7 @@ class PlayerChallenge(models.Model):
 
     attachments = models.ManyToManyField(Attachment, blank=True, null=True)
     response = models.ForeignKey(CommentResponse, null=True, blank=True)
-    challenge = models.ForeignKey(ChallengeView)
+    challenge = models.ForeignKey(Challenge)
     player = models.ForeignKey(User)
     
     def __unicode__(self):

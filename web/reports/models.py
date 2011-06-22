@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
-from web.instances.models import InstanceView
+from web.instances.models import Instance
 from gmapsfield.fields import GoogleMapsField
 
 class Activity(models.Model):
@@ -13,7 +13,7 @@ class Activity(models.Model):
     type = models.CharField(max_length=255)
 
     user = models.ForeignKey(User, blank=True, null=True)
-    instance = models.ForeignKey(InstanceView, blank=True, null=True, editable=False)
+    instance = models.ForeignKey(Instance, blank=True, null=True, editable=False)
     
     class Meta:
         verbose_name = 'Activity'

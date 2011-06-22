@@ -2,7 +2,7 @@ import datetime
 import magic
 
 from django.contrib.auth.models import User
-from web.instances.models import InstanceView
+from web.instances.models import Instance
 
 from django.contrib import admin
 from django.db import models
@@ -18,7 +18,7 @@ class Attachment(models.Model):
     type = models.CharField(max_length=45)
     flagged = models.IntegerField(default=0)
     user = models.ForeignKey(User, blank=True, null=True, editable=False)
-    instance = models.ForeignKey(InstanceView, blank=True, null=True, editable=False)
+    instance = models.ForeignKey(Instance, blank=True, null=True, editable=False)
 
     # we try to validate URLs, but it's expensive -- you don't want to 
     # check every comment attachment when loading a page with a discussion --

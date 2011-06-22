@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
 
-from web.instances.models import InstanceView
+from web.instances.models import Instance
 from web.comments.models import Comment
 
 #TODO: change coins to something like coinsSpentOnIntance or something
@@ -13,7 +13,7 @@ class Issue(models.Model):
     message = models.CharField(max_length=260, verbose_name='Issue')
     coins = models.IntegerField(default=0)
 
-    instance = models.ForeignKey(InstanceView)
+    instance = models.ForeignKey(Instance)
     comments = models.ManyToManyField(Comment, blank=True, null=True)
 
     def __unicode__(self):

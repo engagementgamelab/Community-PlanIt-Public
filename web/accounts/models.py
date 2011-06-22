@@ -1,6 +1,6 @@
 from uuid import uuid4 as uuid
 from django import forms
-from web.instances.models import InstanceView
+from web.instances.models import Instance
 from web.challenges.models import *
 from web.accounts.models import *
 from django.contrib import admin
@@ -39,7 +39,7 @@ class UserProfileStake(models.Model):
 class UserProfile(models.Model):
     #Foreign key fields
     user = models.ForeignKey(User, unique=True)
-    instance = models.ForeignKey(InstanceView, blank=True, null=True)
+    instance = models.ForeignKey(Instance, blank=True, null=True)
     gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
     race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
