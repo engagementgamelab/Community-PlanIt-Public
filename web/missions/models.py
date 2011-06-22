@@ -62,7 +62,7 @@ class Mission(models.Model):
         return self.topic[:25]
 
 class MissionAdmin(admin.ModelAdmin):
-    list_display = ('topic', 'start_date', 'end_date')
+    list_display = ('name', 'start_date', 'end_date')
 
     def queryset(self, request):
         qs = super(MissionAdmin, self).queryset(request)

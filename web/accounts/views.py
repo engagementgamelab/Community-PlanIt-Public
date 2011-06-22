@@ -56,9 +56,11 @@ def register(request):
         tmpl = loader.get_template('accounts/email/welcome.html')
         body = tmpl.render(Context({ 'password': password,
                                     'first_name': firstName }))
-
-        if send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [email]):
-            messages.success(request, _('Thanks for registering!'))
+        
+        #the inability to send an email should not stop the registering process
+        #during testing I got a error: [Errno 110] Connection timed out error. -BMH
+        send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=True)
+        messages.success(request, _('Thanks for registering!'))
 
         player = auth.authenticate(username=email, password=password)
         auth.login(request, player)
