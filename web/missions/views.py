@@ -22,11 +22,6 @@ def fetch(request, slug):
 
     player_games = PlayerGame.objects.filter(visible=True, completed=True, user=request.user)
 
-    if mission.end_date < datetime.date.today():
-        active = False
-    else:
-        active = True
-
     games = []
     
     for pg in player_games:
@@ -37,7 +32,7 @@ def fetch(request, slug):
         'mission': mission,
         'games': games,
         'comment_form': CommentForm(),
-        'active': active,
+        'active': mission.is_active(),
     }, [ip])))
 
 @login_required

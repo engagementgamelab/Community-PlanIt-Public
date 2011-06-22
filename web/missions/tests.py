@@ -10,10 +10,11 @@ from web.missions.models import Mission
 from web.games.models import *
 from web.games.mapit.models import *
 
-def createGame(game):
+def createGame(game, mission):
     game.title = "test %s" % game._meta.app_label
     game.content_type = ContentType.objects.get(app_label=game._meta.app_label, name=game._meta.verbose_name)
     game.object_id=1
+    game.mission = mission
     game.save()
     return game
 
@@ -38,12 +39,6 @@ class MissionsTestCase(TestCase):
         instance.save()
         self.assertTrue(Instance.objects.all().count() == 1, "The instance was created.")
         self.instance = Instance.objects.all()[0]
-        
-        createGame(Mapit())
-        self.assertTrue(Game.objects.all().count() == 1, "Mapit created successfully")
-        self.assertTrue(Mapit.objects.all().count() == 1, "Mapit created successfully")
-        self.game = Game.objects.all()[0]
-        self.assertTrue(self.game.game_type == "mapit")
     
     def test_create(self):
         mission = Mission()
@@ -76,15 +71,9 @@ class MissionsWebTestCase(TestCase):
         self.assertTrue(Instance.objects.all().count() == 1, "The instance was created.")
         self.instance = Instance.objects.all()[0]
         
-        createGame(Mapit())
-        self.assertTrue(Game.objects.all().count() == 1, "Mapit created successfully")
-        self.assertTrue(Mapit.objects.all().count() == 1, "Mapit created successfully")
-        self. game = Game.objects.all()[0]
-        self.assertTrue(self.game.game_type == "mapit")
-    
     def test_index(self):
-        response = self.c.get("/mission/")
-        self.assertTrue(response.status_code == 200, "Mission index page works", {"user": self.user})
+        response = self.c.get("/mission/", {"user": self.user})
+        self.assertTrue(response.status_code == 200, "Mission index page works")
     
     def test_fetchFromSlug(self):
         mission = Mission()
@@ -94,10 +83,10 @@ class MissionsWebTestCase(TestCase):
         mission.instance = self.instance
         mission.save()
         self.assertTrue(Mission.objects.all().count() == 1, "Mission created successfully")
-        misison = Misison.object.all()[0]
+        misison = Mission.objects.all()[0]
         
-        response = self.c.get("/mission/%s/" % mission.slug)
-        self.assertTrue(response.status_code == 200, "Mission fetch from slug page works", {"user": self.user})
+        response = self.c.get("/mission/%s/" % mission.slug, {"user": self.user})
+        self.assertTrue(response.status_code == 200, "Mission fetch from slug page works")
     
     
     
