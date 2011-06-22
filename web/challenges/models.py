@@ -96,8 +96,9 @@ class PlayerChallenge(models.Model):
 
     attachments = models.ManyToManyField(Attachment, blank=True, null=True)
     response = models.ForeignKey(CommentResponse, null=True, blank=True)
-    player = models.ForeignKey(ChallengeView)
-
+    challenge = models.ForeignKey(ChallengeView)
+    player = models.ForeignKey(User)
+    
     def __unicode__(self):
         label = self.player.username +"_"+ self.challenge.description
         return label[:25]
