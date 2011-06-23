@@ -2,7 +2,6 @@ from django.template.defaultfilters import slugify
 from django.db import models
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
-from web.prompts.models import Prompt
 from web.responses.models import Response
 from web.comments.models import Comment
 from web.missions.models import Mission
