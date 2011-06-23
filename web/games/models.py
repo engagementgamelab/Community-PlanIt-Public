@@ -31,7 +31,6 @@ class PlayerGame(models.Model):
     visible = models.BooleanField(default=True)
     completed = models.BooleanField(default=False)
 
-    response = models.ForeignKey(Response)
     game = models.ForeignKey(Game)
     user = models.ForeignKey(User)
 

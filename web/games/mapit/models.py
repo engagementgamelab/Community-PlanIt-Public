@@ -5,28 +5,17 @@ from django.contrib.contenttypes.models import ContentType
 
 from web.games.models import Game
 from web.prompts.basic.models import BasicPrompt
-from web.responses.map.models import MapResponse
 
 from gmapsfield.fields import GoogleMapsField
 
 # Mapit
 class Mapit(Game):
     prompt = models.ForeignKey(BasicPrompt, null=True, blank=True)
-    response = models.ForeignKey(MapResponse, null=True, blank=True)
-
-#    object_id = models.PositiveIntegerField()
-#    content_type = models.ForeignKey(ContentType)
-#    content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     # Set game type
     def save(self):
         self.game_type = "mapit"
         super(Mapit, self).save()
-
-    class Meta:
-        app_label = "games"
-        verbose_name = "MapIt Game"
-        verbose_name_plural = "MapIt Games"
 
     def __unicode__(self):
         return "Mapit"

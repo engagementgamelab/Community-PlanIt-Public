@@ -9,7 +9,6 @@ from web.comments.models import Comment
 from web.responses.comment.models import CommentResponse
 
 class OtherShoes(Game):
-    prompt = models.ForeignKey(ProfilePrompt, null=True, blank=True)
 
     def save(self):
         self.game_type = "othershoes"
