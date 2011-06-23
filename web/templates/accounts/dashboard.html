@@ -46,7 +46,7 @@
             
             <div class="twothird">
                 <h3>Latest Activity</h3>
-                {%if log|length%}
+                {%if log and log|length%}
                 <ul class="listless listview feed">
                     {%for activity in log%}
                     <li class="listitem {{activity.type}}">
