@@ -77,15 +77,14 @@
                 {%block nav%}
                     {%if user.is_authenticated and instance.is_started%}
                         <a class="home" href = "/account/dashboard">Dashboard</a> <a class="missions" href="/mission">Missions</a> <a class="issues" href="/issue">Spend Coins</a> <a class="challenges" href="/challenge">Challenges</a>
-                        {%if user.is_staff%}
-                            <a class="right admin" href="/admin">Admin</a>
-                        {%endif%}
-                        {%if user.is_authenticated%}
-                            <a class="right logout" href="/account/logout">Logout</a>
-                        {%endif%}
-                        
                     {%else%}
                         <a class="home" href="/">Home</a> <a class="neighborhoods" href="/neighborhood">Neighborhoods</a> <a class="about" href="/about">About</a> <a class="contact" href="/contact">Contact</a>
+                    {%endif%}
+                    {%if user.is_staff%}
+                        <a class="right admin" href="/admin">Admin</a>
+                    {%endif%}
+                    {%if user.is_authenticated%}
+                        <a class="right logout" href="/account/logout">Logout</a>
                     {%endif%}
                 {%endblock%}
             </nav>
