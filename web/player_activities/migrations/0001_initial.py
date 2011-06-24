@@ -8,43 +8,34 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding model 'Value'
-        db.create_table('values_value', (
+        # Adding model 'PlayerActivity'
+        db.create_table('player_activities_playeractivity', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('message', self.gf('django.db.models.fields.CharField')(max_length=260)),
-            ('coins', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('instance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['instances.Instance'])),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
+            ('question', self.gf('django.db.models.fields.CharField')(max_length=1000)),
+            ('creationUser', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('misison', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['missions.Mission'])),
+            ('createDate', self.gf('django.db.models.fields.DateTimeField')()),
         ))
-        db.send_create_signal('values', ['Value'])
+        db.send_create_signal('player_activities', ['PlayerActivity'])
 
-        # Adding M2M table for field comments on 'Value'
-        db.create_table('values_value_comments', (
+        # Adding M2M table for field attachment on 'PlayerActivity'
+        db.create_table('player_activities_playeractivity_attachment', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('value', models.ForeignKey(orm['values.value'], null=False)),
-            ('comment', models.ForeignKey(orm['comments.comment'], null=False))
+            ('playeractivity', models.ForeignKey(orm['player_activities.playeractivity'], null=False)),
+            ('attachment', models.ForeignKey(orm['attachments.attachment'], null=False))
         ))
-        db.create_unique('values_value_comments', ['value_id', 'comment_id'])
-
-        # Adding model 'PlayerValue'
-        db.create_table('values_playervalue', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('value', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['values.Value'])),
-            ('coins', self.gf('django.db.models.fields.IntegerField')(default=0)),
-        ))
-        db.send_create_signal('values', ['PlayerValue'])
+        db.create_unique('player_activities_playeractivity_attachment', ['playeractivity_id', 'attachment_id'])
 
 
     def backwards(self, orm):
         
-        # Deleting model 'Value'
-        db.delete_table('values_value')
+        # Deleting model 'PlayerActivity'
+        db.delete_table('player_activities_playeractivity')
 
-        # Removing M2M table for field comments on 'Value'
-        db.delete_table('values_value_comments')
-
-        # Deleting model 'PlayerValue'
-        db.delete_table('values_playervalue')
+        # Removing M2M table for field attachment on 'PlayerActivity'
+        db.delete_table('player_activities_playeractivity_attachment')
 
 
     models = {
@@ -89,19 +80,6 @@ class Migration(SchemaMigration):
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
-        'comments.comment': {
-            'Meta': {'object_name': 'Comment'},
-            'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
-            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['comments.Comment']", 'symmetrical': 'False', 'blank': 'True'}),
-            'flagged': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'hidden': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
-            'likes': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'liked_comments'", 'blank': 'True', 'to': "orm['auth.User']"}),
-            'message': ('django.db.models.fields.CharField', [], {'max_length': '1000'}),
-            'posted_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
-        },
         'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -120,21 +98,28 @@ class Migration(SchemaMigration):
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
             'start_date': ('django.db.models.fields.DateTimeField', [], {})
         },
-        'values.playervalue': {
-            'Meta': {'object_name': 'PlayerValue'},
-            'coins': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'value': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['values.Value']"})
-        },
-        'values.value': {
-            'Meta': {'object_name': 'Value'},
-            'coins': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['comments.Comment']", 'null': 'True', 'blank': 'True'}),
+        'missions.mission': {
+            'Meta': {'object_name': 'Mission'},
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'end_date': ('django.db.models.fields.DateTimeField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
-            'message': ('django.db.models.fields.CharField', [], {'max_length': '260'})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
+            'start_date': ('django.db.models.fields.DateTimeField', [], {}),
+            'video': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
+        },
+        'player_activities.playeractivity': {
+            'Meta': {'object_name': 'PlayerActivity'},
+            'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
+            'createDate': ('django.db.models.fields.DateTimeField', [], {}),
+            'creationUser': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'misison': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['missions.Mission']"}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'question': ('django.db.models.fields.CharField', [], {'max_length': '1000'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'})
         }
     }
 
-    complete_apps = ['values']
+    complete_apps = ['player_activities']

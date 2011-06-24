@@ -5,46 +5,72 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-
+    depends_on = (
+        ("web.comments", "0001_initial"),
+    )
+    
     def forwards(self, orm):
         
-        # Adding model 'Value'
-        db.create_table('values_value', (
+        # Adding model 'Game'
+        db.create_table('games_game', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('message', self.gf('django.db.models.fields.CharField')(max_length=260)),
-            ('coins', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('instance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['instances.Instance'])),
+            ('game_type', self.gf('django.db.models.fields.CharField')(max_length=45)),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=45)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
+            ('active', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('mission', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['missions.Mission'])),
         ))
-        db.send_create_signal('values', ['Value'])
+        db.send_create_signal('games', ['Game'])
 
-        # Adding M2M table for field comments on 'Value'
-        db.create_table('values_value_comments', (
+        # Adding M2M table for field comments on 'Game'
+        db.create_table('games_game_comments', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('value', models.ForeignKey(orm['values.value'], null=False)),
+            ('game', models.ForeignKey(orm['games.game'], null=False)),
             ('comment', models.ForeignKey(orm['comments.comment'], null=False))
         ))
-        db.create_unique('values_value_comments', ['value_id', 'comment_id'])
+        db.create_unique('games_game_comments', ['game_id', 'comment_id'])
 
-        # Adding model 'PlayerValue'
-        db.create_table('values_playervalue', (
+        # Adding model 'PlayerGame'
+        db.create_table('games_playergame', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('visible', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('completed', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('game', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['games.Game'])),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('value', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['values.Value'])),
-            ('coins', self.gf('django.db.models.fields.IntegerField')(default=0)),
         ))
-        db.send_create_signal('values', ['PlayerValue'])
+        db.send_create_signal('games', ['PlayerGame'])
+
+        # Adding M2M table for field comments on 'PlayerGame'
+        db.create_table('games_playergame_comments', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('playergame', models.ForeignKey(orm['games.playergame'], null=False)),
+            ('comment', models.ForeignKey(orm['comments.comment'], null=False))
+        ))
+        db.create_unique('games_playergame_comments', ['playergame_id', 'comment_id'])
+
+        # Adding model 'OtherShoes'
+        db.create_table('games_othershoes', (
+            ('game_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['games.Game'], unique=True, primary_key=True)),
+        ))
+        db.send_create_signal('games', ['OtherShoes'])
 
 
     def backwards(self, orm):
         
-        # Deleting model 'Value'
-        db.delete_table('values_value')
+        # Deleting model 'Game'
+        db.delete_table('games_game')
 
-        # Removing M2M table for field comments on 'Value'
-        db.delete_table('values_value_comments')
+        # Removing M2M table for field comments on 'Game'
+        db.delete_table('games_game_comments')
 
-        # Deleting model 'PlayerValue'
-        db.delete_table('values_playervalue')
+        # Deleting model 'PlayerGame'
+        db.delete_table('games_playergame')
+
+        # Removing M2M table for field comments on 'PlayerGame'
+        db.delete_table('games_playergame_comments')
+
+        # Deleting model 'OtherShoes'
+        db.delete_table('games_othershoes')
 
 
     models = {
@@ -109,6 +135,29 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        'games.game': {
+            'Meta': {'object_name': 'Game'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['comments.Comment']", 'null': 'True', 'blank': 'True'}),
+            'game_type': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'mission': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['missions.Mission']"}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '45'})
+        },
+        'games.othershoes': {
+            'Meta': {'object_name': 'OtherShoes', '_ormbases': ['games.Game']},
+            'game_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['games.Game']", 'unique': 'True', 'primary_key': 'True'})
+        },
+        'games.playergame': {
+            'Meta': {'object_name': 'PlayerGame'},
+            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['comments.Comment']", 'null': 'True', 'blank': 'True'}),
+            'completed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'game': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['games.Game']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'visible': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
+        },
         'instances.instance': {
             'Meta': {'object_name': 'Instance'},
             'content': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
@@ -120,21 +169,17 @@ class Migration(SchemaMigration):
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
             'start_date': ('django.db.models.fields.DateTimeField', [], {})
         },
-        'values.playervalue': {
-            'Meta': {'object_name': 'PlayerValue'},
-            'coins': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'value': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['values.Value']"})
-        },
-        'values.value': {
-            'Meta': {'object_name': 'Value'},
-            'coins': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['comments.Comment']", 'null': 'True', 'blank': 'True'}),
+        'missions.mission': {
+            'Meta': {'object_name': 'Mission'},
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'end_date': ('django.db.models.fields.DateTimeField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
-            'message': ('django.db.models.fields.CharField', [], {'max_length': '260'})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
+            'start_date': ('django.db.models.fields.DateTimeField', [], {}),
+            'video': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
         }
     }
 
-    complete_apps = ['values']
+    complete_apps = ['games']

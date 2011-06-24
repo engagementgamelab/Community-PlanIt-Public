@@ -3,7 +3,7 @@ from django.db import models
 from web.responses.models import Response
 from web.comments.models import Comment
 from web.missions.models import Mission
-from web.activities.models import Activity
+from web.player_activities.models import PlayerActivity
 from web.accounts.models import determine_path
 from django.contrib.auth.models import User
 from gmapsfield.fields import GoogleMapsField
@@ -15,7 +15,7 @@ class AnswerType(models.Model):
     
 class Answer(models.Model):
     #TODO: This might benefit from a 1:1 relationship
-    activity = models.ForeignKey(Activity)
+    activity = models.ForeignKey(PlayerActivity)
     type = models.ForeignKey(AnswerType)
     instructions = models.CharField(max_length=255)
     addInstructions = models.CharField(max_length=255)
