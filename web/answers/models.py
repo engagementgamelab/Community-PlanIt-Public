@@ -15,6 +15,12 @@ class AnswerType(models.Model):
     defaultPoints = models.IntegerField(deafult=10)
     points = models.IntegerField(blank=True, null=True, default=None)
     
+    def getPoints(self):
+        if points == None:
+            return defaultPoints
+        else:
+            return points
+    
 class Answer(models.Model):
     #TODO: This might benefit from a 1:1 relationship
     activity = models.ForeignKey(PlayerActivity)
