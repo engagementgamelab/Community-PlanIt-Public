@@ -2,7 +2,8 @@ import datetime
 from web.missions.models import Mission
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.challenges.models import Challenge, PlayerChallenge
-from web.games.models import Game, PlayerGame
+from web.player_activities.models import PlayerActivity
+from web.answers.models import Answer
 
 # Provides "globals" within the templates to populate things such as the sidebar
 # and other content that was previously only generated in the dashboard.
@@ -37,15 +38,17 @@ def instance_processor(request):
         #        ActivityLogger.log(request.user, request, 'to gain a coin', 'earned over '+ str((profile.points_multiplier - 1) * 99) +' points', '/player/'+ str(request.user.id), 'coin')
 
         player_games = PlayerGame.objects.filter(visible=True, completed=True, user=request.user)
-        games = []
-        for pg in player_games:
-            games.append(pg.game)
+        finished_activities = Answer.object.filter(user=request.user)
+        activities = []
+        
+        for fa in finished_activities:
+            activities.append(fa.activity)
 
         return {
             'instance': instance,
             'missions': missions,
             'challenges': challenges,
             'player_challenges': player_challenges,
-            'games': games,
+            'activities': activities,
         }
     except: return {}

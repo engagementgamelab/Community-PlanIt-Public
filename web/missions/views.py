@@ -9,7 +9,8 @@ from web.missions.models import *
 from web.instances.models import Instance
 from web.comments.models import Comment
 from web.comments.forms import CommentForm
-from web.games.models import PlayerGame
+from web.answers.models import Answer
+from web.player_activities import PlayerActivity
 from web.processors import instance_processor as ip
 
 @login_required
@@ -20,30 +21,29 @@ def fetch(request, slug):
     except:
         raise Http404
 
-    player_games = PlayerGame.objects.filter(visible=True, completed=True, user=request.user)
-
-    games = []
+    finished_activities = Answer.objects.filter(answerUser=request.user)
+    activities = []
     
-    for pg in player_games:
-        games.append(pg.game)
+    for fa in finished_activities:
+        activities.append(fa.activity)
     
     tmpl = loader.get_template('missions/base.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'mission': mission,
-        'games': games,
+        'activities': activities,
         'comment_form': CommentForm(),
         'active': mission.is_active(),
     }, [ip])))
 
 @login_required
 def all(request):
-    player_games = PlayerGame.objects.filter(visible=True, completed=True, user=request.user)
-    played = []
-
-    for pg in player_games:
-        played.append(pg.game)
+    finished_activities = Answer.objects.filter(answerUser=request.user)
+    activities = []
+    
+    for fa in finished_activities:
+        activities.append(fa.activity)
 
     tmpl = loader.get_template('missions/all.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
-        'played': played,
+        'played': activities,
     }, [ip])))
