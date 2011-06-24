@@ -32,7 +32,7 @@ class InstanceTestCase(TestCase):
         
 class InstanceWebTestCase(TestCase):
     def setUp(self):
-        email = "testGame@localhost.com"
+        email = "test@localhost.com"
         self.c = Client()
         response = self.c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                   "lastName": "new_test", "email": email})

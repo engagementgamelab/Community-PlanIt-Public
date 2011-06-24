@@ -8,7 +8,6 @@ from web.values.models import *
 from web.instances.models import *
 from web.accounts.models import *
 from web.missions.models import *
-from web.games.models import *
 from web.values.models import *
 from web.challenges.models import *
 from web.comments.models import *

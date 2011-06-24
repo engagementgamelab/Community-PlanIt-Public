@@ -7,8 +7,8 @@ from web.instances.models import Instance
 from web.values.models import Value, PlayerValue
 from web.comments.models import Comment
 from web.missions.models import Mission
-from web.games.models import *
-from web.games.mapit.models import *
+from web.player_activities.models import *
+from web.answers.models import *
 
 def createGame(game, mission):
     game.title = "test %s" % game._meta.app_label

@@ -12,7 +12,7 @@ from gmapsfield.fields import GoogleMapsField
 # open_ended, single_response, map, empathy, multi_reponse
 class AnswerType(models.Model):
     type = models.CharField(max_length=255)
-    defaultPoints = models.IntegerField(deafult=10)
+    defaultPoints = models.IntegerField(default=10)
     points = models.IntegerField(blank=True, null=True, default=None)
     
     def getPoints(self):
@@ -48,14 +48,18 @@ class AnswerSingleResponse(Answer):
         super(Answer, self).save()
         
 class AnswerMap(Answer):
-    map = GoogleMapsField()
     answerBox = models.TextField(blank=True, null=True)
     maxNumMarkers = models.IntegerField(default=5)
 
     def save(self):
         self.type = AnswerType.objects.get_or_create(type="map")
         super(Answer, self).save()
-            
+
+class UserMapPoints(models.Model):
+    user = models.ForeignKey(User)
+    map = models.ForeignKey(AnswerMap)
+    point = GoogleMapsField()
+
 class AnswerEmpathy(Answer):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     bio = models.CharField(max_length = 255)
