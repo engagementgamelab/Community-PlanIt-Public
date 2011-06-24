@@ -134,6 +134,8 @@ INSTALLED_APPS = (
     'web.lists',
     'web.curator',
     'web.flags',
+    'web.activities',
+    'web.answers',
 
     # 3rd party
     'compressor',
