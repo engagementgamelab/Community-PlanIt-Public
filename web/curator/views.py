@@ -4,12 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils import simplejson
 from django.core import serializers
-from web.issues.models import *
+from web.values.models import *
 from web.instances.models import *
 from web.accounts.models import *
 from web.missions.models import *
 from web.games.models import *
-from web.issues.models import *
+from web.values.models import *
 from web.challenges.models import *
 from web.comments.models import *
 from web.reports.models import *

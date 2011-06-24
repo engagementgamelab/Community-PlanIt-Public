@@ -76,7 +76,7 @@
             <nav>
                 {%block nav%}
                     {%if user.is_authenticated and instance.is_started%}
-                        <a class="home" href = "/account/dashboard">Dashboard</a> <a class="missions" href="/mission">Missions</a> <a class="issues" href="/issue">Spend Coins</a> <a class="challenges" href="/challenge">Challenges</a>
+                        <a class="home" href = "/account/dashboard">Dashboard</a> <a class="missions" href="/mission">Missions</a> <a class="values" href="/value">Spend Coins</a> <a class="challenges" href="/challenge">Challenges</a>
                     {%else%}
                         <a class="home" href="/">Home</a> <a class="neighborhoods" href="/neighborhood">Neighborhoods</a> <a class="about" href="/about">About</a> <a class="contact" href="/contact">Contact</a>
                     {%endif%}
@@ -149,7 +149,7 @@
                                 <div class="score">
                                     <div class="fill" style="width:{{user.get_profile.points_to_coin_for_fill}}%"></div>
                                     <span class="points">Next coin in {{ user.get_profile.points_to_coin }} pts!</span>
-                                    <a href="/issue" class="highlight coins{%if user.get_profile.coins%} has-coins{%endif%}">{{user.get_profile.coins}}</a>
+                                    <a href="/value" class="highlight coins{%if user.get_profile.coins%} has-coins{%endif%}">{{user.get_profile.coins}}</a>
                                 </div>
                                 {%if user.get_profile.coins > 0%}
                                     {%if user.get_profile.instance%}

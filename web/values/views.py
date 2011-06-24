@@ -13,53 +13,53 @@ from web.accounts.models import UserProfile
 from web.attachments.models import Attachment
 from web.comments.forms import CommentForm
 from web.comments.models import Comment
-from web.issues.models import *
+from web.values.models import *
 from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 
 @login_required
 def all(request):
-    issues = Issue.objects.filter(instance=request.user.get_profile().instance)
-    num_issues = len(issues)
+    values = Value.objects.filter(instance=request.user.get_profile().instance)
+    num_values = len(values)
     
     total_coins = 0
     total_playerCoins = 0
 
-    issue_wrapper = []
-    playerissues = PlayerIssue.objects.filter(user=request.user)
+    value_wrapper = []
+    playervalues = PlayerValue.objects.filter(user=request.user)
 
     # Calculate total coins for next iteration to generate percentages
-    for issue in issues:
-        total_coins += issue.coins
+    for value in values:
+        total_coins += value.coins
 
-    for issue in issues:
-        player_issue = playerissues.filter(issue=issue)
-        coins = issue.coins
-        if len(player_issue) > 0:
-            total_playerCoins += player_issue[0].coins
+    for value in values:
+        player_value = playervalues.filter(value=value)
+        coins = value.coins
+        if len(player_value) > 0:
+            total_playerCoins += player_value[0].coins
             # +0.0 coerces to a float for percentages
-            issue_wrapper.append({ 'issue': issue, 'coins': coins, 'player_coins': player_issue[0].coins, 
+            value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
                                   'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })
         else:
-            issue_wrapper.append({ 'issue': issue, 'coins': coins, 'player_coins': 0,
+            value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': 0,
                                    'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })    
 
-    tmpl = loader.get_template('issues/all.html')
+    tmpl = loader.get_template('values/all.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
-        'issues': issues,
-        'issue_wrapper': issue_wrapper,
+        'values': values,
+        'value_wrapper': value_wrapper,
         'total_coins' : total_coins,
         'total_playerCoins' : total_playerCoins,
     }, [ip])))
 
 @login_required
 def detail(request, id):
-    issue = get_object_or_404(Issue, id=id)
+    value = get_object_or_404(Value, id=id)
 
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
-            comment = issue.comments.create(
+            comment = value.comments.create(
                 message=form.cleaned_data['message'], 
                 user=request.user,
                 instance=request.user.get_profile().instance,
@@ -84,20 +84,20 @@ def detail(request, id):
                 )
 
             PointsAssigner.assign(request.user, 'comment_created')
-            log_url = reverse('issues_detail', args=[id]) + '#comment-' + str(comment.pk)
-            ActivityLogger.log(request.user, request, 'to issue', 'added comment', log_url, 'issue')
-            return HttpResponseRedirect(reverse('issues_detail', args=[id]))
+            log_url = reverse('values_detail', args=[id]) + '#comment-' + str(comment.pk)
+            ActivityLogger.log(request.user, request, 'to value', 'added comment', log_url, 'value')
+            return HttpResponseRedirect(reverse('values_detail', args=[id]))
 
-    issues = Issue.objects.filter(instance=request.user.get_profile().instance)
+    values = Value.objects.filter(instance=request.user.get_profile().instance)
     total_coins = 0
-    for i in issues:
+    for i in values:
         total_coins += i.coins
 
-    tmpl = loader.get_template('issues/base.html')
+    tmpl = loader.get_template('values/base.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
-        'issue': issue,
+        'value': value,
         'total_coins': total_coins,
-        'comments': issue,
+        'comments': value,
         'comment_form': CommentForm(),
     }, [ip])))
 
@@ -105,43 +105,43 @@ def detail(request, id):
 def spend(request, id):
     user = request.user
     profile = user.get_profile()
-    issue = Issue.objects.get(id=id)
+    value = Value.objects.get(id=id)
 
-    playerissue, created = PlayerIssue.objects.get_or_create(user=user, issue=issue)
+    playervalue, created = PlayerValue.objects.get_or_create(user=user, value=value)
     if profile.currentCoins > 0:
-        issue.coins += 1
-        playerissue.coins += 1
+        value.coins += 1
+        playervalue.coins += 1
         profile.currentCoins -= 1
     
-        issue.save()
-        playerissue.save()
+        value.save()
+        playervalue.save()
         profile.save()
         
-        ActivityLogger.log(request.user, request, 'on issue', 'spent coin', '/issue/'+ str(issue.id), 'issue')
+        ActivityLogger.log(request.user, request, 'on value', 'spent coin', '/value/'+ str(value.id), 'value')
     else:
         messages.info(request, 'No coins available to spend')
     
-    return HttpResponseRedirect("/issue")
+    return HttpResponseRedirect("/value")
 
 @login_required
 def take(request, id):
     user = request.user
     profile = user.get_profile()
-    issue = Issue.objects.get(id=id)
+    value = Value.objects.get(id=id)
 
-    playerissue, created = PlayerIssue.objects.get_or_create(user=user, issue=issue)
+    playervalue, created = PlayerValue.objects.get_or_create(user=user, value=value)
 
-    if playerissue.coins > 0:
-        issue.coins -= 1
-        playerissue.coins -= 1
+    if playervalue.coins > 0:
+        value.coins -= 1
+        playervalue.coins -= 1
         profile.currentCoins += 1
     
-        issue.save()
-        playerissue.save()
+        value.save()
+        playervalue.save()
         profile.save()
     
-        ActivityLogger.log(request.user, request, 'on issue', 'reclaimed coin', '/issue/'+ str(issue.id), 'issue')
+        ActivityLogger.log(request.user, request, 'on value', 'reclaimed coin', '/value/'+ str(value.id), 'value')
     else:
         messages.info(request, 'No coins available to take')
         
-    return HttpResponseRedirect("/issue")
+    return HttpResponseRedirect("/value")

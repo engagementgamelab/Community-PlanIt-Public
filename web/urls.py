@@ -32,7 +32,7 @@ urlpatterns = patterns('',
     (r'^challenge/', include('web.challenges.urls')),
     (r'^game/', include('web.games.urls')),
     (r'^challenge/', include('web.challenges.urls')),
-    (r'^issue/', include('web.issues.urls')),
+    (r'^value/', include('web.values.urls')),
     (r'^list/', include('web.lists.urls')),
     (r'^flag/', include('web.flags.urls')),
 

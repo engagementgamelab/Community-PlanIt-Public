@@ -1,14 +1,14 @@
 {%extends "layouts/base.html"%}
 {%block page_title%}{%endblock%}
 {%block section%}values{%endblock%}
-{%block title%} {{issue.message}} {%endblock%}
+{%block title%} {{value.message}} {%endblock%}
 
 {%block aside%}
 {%endblock%}
 {%block content-title%}{{instance}}{%endblock%}
 {%block main%}
-    <h2> {{issue.message}} </h2>
-    <p><span class="highlight">{{issue.coins}}</span> out of a total <span class="highlight">{{total_coins}}</span> coins have been spent on {{issue.message}}</p>
+    <h2> {{value.message}} </h2>
+    <p><span class="highlight">{{value.coins}}</span> out of a total <span class="highlight">{{total_coins}}</span> coins have been spent on {{value.message}}</p>
 
     <!-- Show comments -->
     <div id="comments">

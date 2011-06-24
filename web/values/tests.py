@@ -4,10 +4,10 @@ from django.contrib.auth.models import User, Group
 from web.accounts.models import UserProfile
 from django.test.client import Client
 from web.instances.models import Instance
-from web.issues.models import Issue, PlayerIssue
+from web.values.models import Value, PlayerValue
 from web.comments.models import Comment
 
-class IssuesTestCase(TestCase):
+class ValuesTestCase(TestCase):
     def setUp(self):
         c = Client()
         email = "test@localhost.com"
@@ -40,40 +40,40 @@ class IssuesTestCase(TestCase):
         self.comment = Comment.objects.all()[0]
     
     def test_create(self):
-        issue = Issue()
-        issue.message = "This is a message"
-        issue.coins = 0
-        issue.instance = self.instance
-        issue.save()
-        self.assertTrue(Issue.objects.all().count() == 1, "Issue created successfully")
+        value = Value()
+        value.message = "This is a message"
+        value.coins = 0
+        value.instance = self.instance
+        value.save()
+        self.assertTrue(Value.objects.all().count() == 1, "Value created successfully")
         
     def test_createCoin(self):
-        issue = Issue()
-        issue.message = "This is a message"
-        issue.coins = 10
-        issue.instance = self.instance
-        issue.save()
-        self.assertTrue(Issue.objects.all().count() == 1, "Issue created successfully")
-        issue = Issue.objects.all()[0]
-        self.assertTrue(issue.coins == 10, "The coins are correct")
-        self.assertTrue(issue.message == "This is a message", "Message is correct")
+        value = Value()
+        value.message = "This is a message"
+        value.coins = 10
+        value.instance = self.instance
+        value.save()
+        self.assertTrue(Value.objects.all().count() == 1, "Value created successfully")
+        value = Value.objects.all()[0]
+        self.assertTrue(value.coins == 10, "The coins are correct")
+        self.assertTrue(value.message == "This is a message", "Message is correct")
         
     def test_createComment(self):
-        issue = Issue()
-        issue.message = "This is a message"
-        issue.coins = 0
-        issue.instance = self.instance
+        value = Value()
+        value.message = "This is a message"
+        value.coins = 0
+        value.instance = self.instance
         #TODO: This should not be like this, fix it.
-        issue.save()
+        value.save()
         
-        issue = Issue.objects.all()[0]
-        issue.comments = [self.comment]
-        issue.save()
-        self.assertTrue(Issue.objects.all().count() == 1, "Issue is created successfully")
-        issue = Issue.objects.all()[0]
-        self.assertTrue(issue.comments != None, "The comment section is not blank")
+        value = Value.objects.all()[0]
+        value.comments = [self.comment]
+        value.save()
+        self.assertTrue(Value.objects.all().count() == 1, "Value is created successfully")
+        value = Value.objects.all()[0]
+        self.assertTrue(value.comments != None, "The comment section is not blank")
 
-class IssuesWebTestCase(TestCase):
+class ValuesWebTestCase(TestCase):
     def setUp(self):
         self.c = Client()
         email = "test@localhost.com"
@@ -105,89 +105,89 @@ class IssuesWebTestCase(TestCase):
         self.assertTrue(Comment.objects.all().count() == 1, "Comment is created")
         self.comment = Comment.objects.all()[0]
         
-        issue = Issue()
-        issue.message = "This is a message"
-        issue.coins = 0
-        issue.instance = self.instance
-        issue.comment = self.comment
-        issue.save()
-        self.assertTrue(Issue.objects.all().count() == 1, "Issue is created successfully")
-        self.issue = Issue.objects.all()[0]
+        value = Value()
+        value.message = "This is a message"
+        value.coins = 0
+        value.instance = self.instance
+        value.comment = self.comment
+        value.save()
+        self.assertTrue(Value.objects.all().count() == 1, "Value is created successfully")
+        self.value = Value.objects.all()[0]
     
     def test_index(self):
-        response = self.c.get("/issue/")
-        self.assertTrue(response.status_code == 200, "/issue/ exists and works")
+        response = self.c.get("/value/")
+        self.assertTrue(response.status_code == 200, "/value/ exists and works")
     
     def test_detail(self):
-        response = self.c.get("/issue/%s/" % self.issue.id)
-        self.assertTrue(response.status_code == 200, "/issue/%s/ exists and works" % self.issue.id)
+        response = self.c.get("/value/%s/" % self.value.id)
+        self.assertTrue(response.status_code == 200, "/value/%s/ exists and works" % self.value.id)
     
     def test_takeFail(self):
-        pi = PlayerIssue()
+        pi = PlayerValue()
         pi.user = self.user
-        pi.issue = self.issue
+        pi.value = self.value
         pi.coins = 0
         pi.save()
         
-        response = self.c.get("/issue/take/%s/" % self.issue.id, {"user": self.user})
+        response = self.c.get("/value/take/%s/" % self.value.id, {"user": self.user})
         self.assertTrue(response.status_code == 302, "The coin was taken away, and redirected.")
         
-        pi = PlayerIssue.objects.filter(issue=self.issue, user=self.user)
-        self.assertTrue(len(pi) == 1, "Player Issue retreaved successfully")
-        self.assertTrue(pi[0].coins == 0, "The Player Issue correctly has 0 coins")
+        pi = PlayerValue.objects.filter(value=self.value, user=self.user)
+        self.assertTrue(len(pi) == 1, "Player Value retreaved successfully")
+        self.assertTrue(pi[0].coins == 0, "The Player Value correctly has 0 coins")
         
         up = UserProfile.objects.get(user = self.user)
         self.assertTrue(up.currentCoins == 0, "UserProfile has correct number of coins")
     
     def test_takeSuccess(self):
-        pi = PlayerIssue()
+        pi = PlayerValue()
         pi.user = self.user
-        pi.issue = self.issue
+        pi.value = self.value
         pi.coins = 1
         pi.save()
         
-        response = self.c.get("/issue/take/%s/" % self.issue.id, {"user": self.user})
+        response = self.c.get("/value/take/%s/" % self.value.id, {"user": self.user})
         self.assertTrue(response.status_code == 302, "The coin was taken away, and redirected.")
         
-        pi = PlayerIssue.objects.filter(issue=self.issue, user=self.user)
-        self.assertTrue(len(pi) == 1, "Player Issue retreaved successfully")
-        self.assertTrue(pi[0].coins == 0, "The Player Issue correctly has 0 coins")
+        pi = PlayerValue.objects.filter(value=self.value, user=self.user)
+        self.assertTrue(len(pi) == 1, "Player Value retreaved successfully")
+        self.assertTrue(pi[0].coins == 0, "The Player Value correctly has 0 coins")
         
         up = UserProfile.objects.get(user = self.user)
         self.assertTrue(up.currentCoins == 1, "UserProfile has correct number of coins")
     
     def test_spendFail(self):
-        pi = PlayerIssue()
+        pi = PlayerValue()
         pi.user = self.user
-        pi.issue = self.issue
+        pi.value = self.value
         pi.coins = 0
         pi.save()
         
-        response = self.c.get("/issue/spend/%s/" % self.issue.id, {"user": self.user})
+        response = self.c.get("/value/spend/%s/" % self.value.id, {"user": self.user})
         self.assertTrue(response.status_code == 302, "The coin was taken away, and redirected.")
         
-        pi = PlayerIssue.objects.filter(issue=self.issue, user=self.user)
-        self.assertTrue(len(pi) == 1, "Player Issue retreaved successfully")
-        self.assertTrue(pi[0].coins == 0, "The Player Issue correctly has 0 coins")
+        pi = PlayerValue.objects.filter(value=self.value, user=self.user)
+        self.assertTrue(len(pi) == 1, "Player Value retreaved successfully")
+        self.assertTrue(pi[0].coins == 0, "The Player Value correctly has 0 coins")
         
         up = UserProfile.objects.get(user = self.user)
         self.assertTrue(up.coins == 0, "UserProfile has correct number of coins")
     
     def test_spendFail(self):
-        pi = PlayerIssue()
+        pi = PlayerValue()
         pi.user = self.user
-        pi.issue = self.issue
+        pi.value = self.value
         pi.coins = 0
         pi.save()
         up = UserProfile.objects.get(user = self.user)
         up.currentCoins = 1
         up.save()
         
-        response = self.c.get("/issue/spend/%s/" % self.issue.id, {"user": self.user})
+        response = self.c.get("/value/spend/%s/" % self.value.id, {"user": self.user})
         self.assertTrue(response.status_code == 302, "The coin was taken away, and redirected.")
-        pi = PlayerIssue.objects.filter(issue=self.issue, user=self.user)
-        self.assertTrue(len(pi) == 1, "Player Issue retreaved successfully")
-        self.assertTrue(pi[0].coins == 1, "The Player Issue correctly has 1 coin")
+        pi = PlayerValue.objects.filter(value=self.value, user=self.user)
+        self.assertTrue(len(pi) == 1, "Player Value retreaved successfully")
+        self.assertTrue(pi[0].coins == 1, "The Player Value correctly has 1 coin")
         up = UserProfile.objects.get(user = self.user)
         self.assertTrue(up.currentCoins == 0, "UserProfile has correct number of coins")
     

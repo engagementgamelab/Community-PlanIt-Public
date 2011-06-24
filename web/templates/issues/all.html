@@ -15,11 +15,11 @@
            coin{%if user.get_profile.coins == 0 or user.get_profile.coins > 1%}s{%endif%} to spend.
        </p>
         <!--
-        {%if issue_wrapper|length%}
+        {%if value_wrapper|length%}
             <ul class="chartlist">
-            {%for wrapper in issue_wrapper%}
+            {%for wrapper in value_wrapper%}
                   <li>
-                    <a>{{wrapper.issue.message}}</a> 
+                    <a>{{wrapper.value.message}}</a> 
                     <span class="count">{{wrapper.coins}}</span>
                     <span class="index" style="width: {{wrapper.percent}}%">({{wrapper.percent}}%)</span>
 
@@ -47,36 +47,36 @@
         
         <div style="clear:both;"></div>
         
-        <div class="issues-wrapper">
-            {%if issues|length%}
-            <table class="issues"> 
+        <div class="values-wrapper">
+            {%if values|length%}
+            <table class="values"> 
                 <th>Community Values</th>
                 <th>Community Spending</th>
                 <th>Your Spending</th>
                 <th>&nbsp;</th>
-                {%for wrapper in issue_wrapper%}
+                {%for wrapper in value_wrapper%}
                     <tr>
                         <td class="alignleft">
-                            <a href="/issue/{{wrapper.issue.id}}" class="issue-message">{{wrapper.issue.message}}</a>
-                            <span class="fine">({{wrapper.issue.comments.all|length}} comments)</span>
+                            <a href="/value/{{wrapper.value.id}}" class="value-message">{{wrapper.value.message}}</a>
+                            <span class="fine">({{wrapper.value.comments.all|length}} comments)</span>
                         </td>
                         <td>
-                            {{wrapper.issue.coins}}
+                            {{wrapper.value.coins}}
                         </td>
                         <td>
                             <span class="coin-count">{{wrapper.player_coins}}</span>
                         </td>
                         <td>
                             {%if not instance.is_expired%}
-                            <a href="/issue/spend/{{wrapper.issue.id}}" class="button">Spend</a>
-                            <a href="/issue/take/{{wrapper.issue.id}}" class="right fine">[-]</a>
+                            <a href="/value/spend/{{wrapper.value.id}}" class="button">Spend</a>
+                            <a href="/value/take/{{wrapper.value.id}}" class="right fine">[-]</a>
                             {%endif%}
                         </td>
                     </tr>
                 {%endfor%}
             </table>
             {%else%}
-                <span>No issues created yet for this instance</span>
+                <span>No values created yet for this instance</span>
             {%endif%}
         </div>
     </div>
@@ -88,13 +88,13 @@
         var globalData = [];
         var i = 0;
         {%if total_coins == 0 %}
-            {%for wrapper in issue_wrapper%}
-                globalData[i] = { label: "{{ wrapper.issue.message }}", data: 1 }
+            {%for wrapper in value_wrapper%}
+                globalData[i] = { label: "{{ wrapper.value.message }}", data: 1 }
                 i++;
             {%endfor%}
         {%else%}
-            {%for wrapper in issue_wrapper%}
-                globalData[i] = { label: "{{ wrapper.issue.message }}", data: {{ wrapper.issue.coins }} }
+            {%for wrapper in value_wrapper%}
+                globalData[i] = { label: "{{ wrapper.value.message }}", data: {{ wrapper.value.coins }} }
                 i++;
             {%endfor%}
         {%endif%}
@@ -102,13 +102,13 @@
         var userData = [];
         i = 0;
         {%if total_playerCoins == 0 %}
-            {%for wrapper in issue_wrapper%}
-                userData[i] = { label: "{{ wrapper.issue.message }}", data: 1 }
+            {%for wrapper in value_wrapper%}
+                userData[i] = { label: "{{ wrapper.value.message }}", data: 1 }
                 i++;
             {%endfor%}
         {%else%}
-            {%for wrapper in issue_wrapper%}
-                userData[i] = { label: "{{ wrapper.issue.message }}", data: {{ wrapper.player_coins }} }
+            {%for wrapper in value_wrapper%}
+                userData[i] = { label: "{{ wrapper.value.message }}", data: {{ wrapper.player_coins }} }
                 i++;
             {%endfor%}
         {%endif%}

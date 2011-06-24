@@ -130,7 +130,7 @@ INSTALLED_APPS = (
     'web.attachments',
     'web.challenges',
     'web.comments',
-    'web.issues',
+    'web.values',
     'web.lists',
     'web.curator',
     'web.flags',

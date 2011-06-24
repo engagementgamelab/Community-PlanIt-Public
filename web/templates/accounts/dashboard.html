@@ -12,7 +12,7 @@
             <form method="POST" action="">
                 <h4>One last step: Please verify that you have read our Terms of Use and Privacy Policy. 
                 It is our commitment to provide a safe, friendly environment
-                for community members to discuss important issues.</h4>
+                for community members to discuss important values.</h4>
                 {%csrf_token%}
                 <div class="fieldWrapper">
                     {{ activation_form.accepted_term.errors }}
@@ -34,7 +34,7 @@
                     As part of Sustainability Week, we invite you to play Community PlanIt to help 
                     shape the city's vision for a sustainable future. Earn points by completing the 
                     <a class="red" href="/mission/{{mission.slug}}" title="{{mission.topic}}">mission</a>
-                    activities, which you can trade in for <a class="red" href="/issue">coins</a> to spend
+                    activities, which you can trade in for <a class="red" href="/value">coins</a> to spend
                     on promoting your top community values. Keep checking back from 
                     June 15 – June 25 to stay on top of the lively discussion—and tell your friends!
                 

@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from web.instances.models import Instance
 from web.accounts.models import UserProfile
-from web.issues.models import *
+from web.values.models import *
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.processors import instance_processor as ip
 

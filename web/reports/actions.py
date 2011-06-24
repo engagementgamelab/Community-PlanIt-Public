@@ -53,8 +53,8 @@ class PointsAssigner:
         up.save()
                 
         #if new_coins > 1:
-        #    ActivityLogger.log(request.user, request, 'to gain '+ str(up.coins) +' coins', 'earned over '+ str((up.points_multiplier - 1) * 100) +' points', 'issue')
+        #    ActivityLogger.log(request.user, request, 'to gain '+ str(up.coins) +' coins', 'earned over '+ str((up.points_multiplier - 1) * 100) +' points', 'value')
         #else:
-        #    ActivityLogger.log(request.user, request, 'to gain a coin', 'earned over '+ str((up.points_multiplier - 1) * 100) +' points', 'issue')
+        #    ActivityLogger.log(request.user, request, 'to gain a coin', 'earned over '+ str((up.points_multiplier - 1) * 100) +' points', 'value')
 
 PointsAssigner = PointsAssigner()
