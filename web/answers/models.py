@@ -8,23 +8,9 @@ from web.accounts.models import determine_path
 from django.contrib.auth.models import User
 from gmapsfield.fields import GoogleMapsField
 
-#valid types are:
-# open_ended, single_response, map, empathy, multi_reponse
-class AnswerType(models.Model):
-    type = models.CharField(max_length=255)
-    defaultPoints = models.IntegerField(default=10)
-    points = models.IntegerField(blank=True, null=True, default=None)
-    
-    def getPoints(self):
-        if points == None:
-            return defaultPoints
-        else:
-            return points
-    
 class Answer(models.Model):
     #TODO: This might benefit from a 1:1 relationship
     activity = models.ForeignKey(PlayerActivity)
-    type = models.ForeignKey(AnswerType)
     instructions = models.CharField(max_length=255)
     addInstructions = models.CharField(max_length=255)
     answerUser = models.ForeignKey(User)

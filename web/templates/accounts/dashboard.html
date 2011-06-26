@@ -84,41 +84,23 @@
                             <div class="dashboardmoduleinner">
                                  <ul class="listview listless">
                                      {%if not mission_activities|length == finished_activities|length%}
-                                         {%for activity in mission_activities%}
-                                             {%if not activity in finished_activities%}
+                                         {%for activity in unfinished_activities%}
                                              <li class="listitem game {{game.game_type}}"> <!--TODO: make this class tied to activities -->
-
-                                                {%with game.game_type as type%}
-                                                     <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}">{{game.title}}  
-                                                        {%if type == "mapit"%}
-                                                            <span class="fine highlight green">{% get_points for completed mapit %}</span>
-                                                        {%endif%}
-
-                                                        {%if type == "thinkfast"%}
-                                                            <span class="fine highlight green">{% get_points for completed thinkfast %}</span>
-                                                        {%endif%}
-
-                                                        {%if type == "othershoes"%}
-                                                            <span class="fine highlight green">{% get_points for completed othershoes %}</span>
-                                                        {%endif%}
+                                                <!-- this will get the string for the type -->
+                                                {%with activity.type.type as type%}
+                                                    <!--TODO: make the link to the activity and insert it here -->
+                                                    <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}">{{game.title}}
+                                                        <span class="fine highlight green">{{ activity.get_points }}</span>
                                                     </a>
                                                 {%endwith%}
+                                                    <!-- TODO: Make this the same link as above -->
                                                  <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}" class="button">Go</a>
-                                             {%endif%}
                                              </li>
                                          {%endfor%}
                                      {%else%}
                                          <h3>You completed all the actives. Great work!</h3>
                                          <h4>Go to the current mission to see all responses or change your answers.</h4>
                                      {%endif%}
-
-                                     <!-- {%for game in games%}
-                                         <li class="listitem game played {{game.game_type}}">
-                                             <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}/overview">{{game.title}}</a>
-                                             <span class="fancy fine">({{game.game_type}})</span>
-                                             <span class="buttons"><a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">Change Answer</a>
-                                         </li>
-                                     {%endfor%} -->
                                  </ul>
                             </div>
                             <hr class="space">
