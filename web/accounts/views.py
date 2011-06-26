@@ -19,6 +19,7 @@ from web.instances.models import Instance
 from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
+from web.missions.models import Mission
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
@@ -320,8 +321,14 @@ def dashboard(request):
 
     # Fetch activity log feed for dashboard.
     log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
-
+    mission = Mission.objects.filter(instance=instance).current()
+    activities = None
+    if (len(mission) > 0):
+        mission = mission[0]
+        activities = PlayerActivity.objects.filter(mission=mission)
+    
     return HttpResponse(tmpl.render(RequestContext(request, {
         'activation_form': activation_form,
         'log': log,
+        'mission_activities' : activities,
     },[ip])))
