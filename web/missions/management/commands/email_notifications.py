@@ -8,6 +8,7 @@ from django.template import Context, loader
 from web.accounts.models import UserProfile
 from web.instances.models import Instance
 from web.missions.models import Mission
+from web.activities.models import Activity
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -20,11 +21,19 @@ class Command(BaseCommand):
                 past_missions = missions.past()
 
                 past = past_missions[len(past_missions)-1]
-                current = missions.current()[0]
+                current = None
+                activities = []
+                if len(missions.current() > 0):
+                    current = missions.current()[0]
+                    act = Activity.objects.filter(mission=current)
+                    for a in act:
+                        activities.append(a)
+                    
 
                 first_place = users.order_by("-points")[0]
 
                 for user in users:
-                    body = tmpl.render(Context({ 'past': past, 'current': current, 'users': users, 'first_place': first_place, 'user': user }))
+                    body = tmpl.render(Context({ 'past': past, 'current': current, 'users': users,
+                                                 'first_place': first_place, 'user': user, 'activities': activities }))
                     if email_re.search(user.email or ''):
                         send_mail(_('Community PlanIT Weekly Mission Update'), body, settings.NOREPLY_EMAIL, [user.email])
