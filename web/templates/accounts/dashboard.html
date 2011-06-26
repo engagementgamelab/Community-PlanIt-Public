@@ -83,10 +83,10 @@
                         <div class="dashboardmodule">
                             <div class="dashboardmoduleinner">
                                  <ul class="listview listless">
-                                     {%if not mission.games.all|length == games|length%}
-                                         {%for game in mission.games.all%}
-                                             {%if not game in games%}
-                                             <li class="listitem game {{game.game_type}}">
+                                     {%if not mission_activities|length == finished_activities|length%}
+                                         {%for activity in mission_activities%}
+                                             {%if not activity in finished_activities%}
+                                             <li class="listitem game {{game.game_type}}"> <!--TODO: make this class tied to activities -->
 
                                                 {%with game.game_type as type%}
                                                      <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}">{{game.title}}  

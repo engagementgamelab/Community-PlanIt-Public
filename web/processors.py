@@ -37,7 +37,6 @@ def instance_processor(request):
         #    else:
         #        ActivityLogger.log(request.user, request, 'to gain a coin', 'earned over '+ str((profile.points_multiplier - 1) * 99) +' points', '/player/'+ str(request.user.id), 'coin')
 
-        player_games = PlayerGame.objects.filter(visible=True, completed=True, user=request.user)
         finished_activities = Answer.object.filter(user=request.user)
         activities = []
         
@@ -49,6 +48,6 @@ def instance_processor(request):
             'missions': missions,
             'challenges': challenges,
             'player_challenges': player_challenges,
-            'activities': activities,
+            'finished_activities': activities,
         }
     except: return {}
