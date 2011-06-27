@@ -2,6 +2,7 @@ from django.template.defaultfilters import slugify
 from django.db import models
 from web.attachments.models import Attachment
 from web.missions.models import Mission
+from django.contrib import admin
 from django.contrib.auth.models import User
 import datetime
 
@@ -35,5 +36,10 @@ class PlayerActivity(models.Model):
             return type.defaultPoints
         else:
             return points
-    
+
+class PlayerActivityTypeAdmin(admin.ModelAdmin):
+    list_display = ('type', 'defaultPoints',)
+
+class PlayerActivityAdmin(admin.ModelAdmin):
+    list_display = ('name', 'question', 'creationUser', 'misison', 'type', 'createDate', 'points')
     
