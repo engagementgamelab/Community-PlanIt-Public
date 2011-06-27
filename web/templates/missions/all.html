@@ -27,20 +27,24 @@
                 {%if not game in played%}
                     {%with game.game_type as type%}
                     <li class="listitem game {{game.game_type}}">
-                        <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">{{game.title}}</a>
-                        {%if type == "mapit"%}
-                          <span class="fine highlight green">{% get_points for completed mapit %}</span>
-                        {%endif%}
-
-                        {%if type == "thinkfast"%}
-                          <span class="fine highlight green">{% get_points for completed thinkfast %}</span>
-                        {%endif%}
-
-                        {%if type == "othershoes"%}
-                          <span class="fine highlight green">{% get_points for completed othershoes %}</span>
-                        {%endif%}
-
-                        <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">Play</a>
+                        {% if mission.instance.is_active %}
+                            <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">{{game.title}}</a>
+                            {%if type == "mapit"%}
+                              <span class="fine highlight green">{% get_points for completed mapit %}</span>
+                            {%endif%}
+    
+                            {%if type == "thinkfast"%}
+                              <span class="fine highlight green">{% get_points for completed thinkfast %}</span>
+                            {%endif%}
+    
+                            {%if type == "othershoes"%}
+                              <span class="fine highlight green">{% get_points for completed othershoes %}</span>
+                            {%endif%}
+    
+                            <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">Play</a>
+                        {% else %}
+                            <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview/">{{game.title}}</a>
+                        {% endif %}
                     {%endwith%}
                 {%else%}
                     <li class="listitem game played {{game.game_type}}">

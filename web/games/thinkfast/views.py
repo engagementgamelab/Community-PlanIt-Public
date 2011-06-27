@@ -121,9 +121,9 @@ def overview(request, mission_slug, id):
     first_time = request.session.has_key('justplayed') and request.session['justplayed'] or False
     request.session['justplayed'] = False
 
-    if not thinkfast.playergame_set.filter(user=request.user).count():
-        messages.success(request, "You'll have to complete this activity to join its discussion.", extra_tags='sticky')
-        return HttpResponseRedirect(reverse('games_thinkfast_index', args=[mission_slug, id]))
+    #if not thinkfast.playergame_set.filter(user=request.user).count():
+    #    messages.success(request, "You'll have to complete this activity to join its discussion.", extra_tags='sticky')
+    #    return HttpResponseRedirect(reverse('games_thinkfast_index', args=[mission_slug, id]))
 
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
