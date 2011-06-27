@@ -21,8 +21,11 @@ from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
 from web.missions.models import Mission
+<<<<<<< HEAD
 from web.answers.models import Answer
 from web.player_activities.models import PlayerActivity
+=======
+>>>>>>> 64f210c... More dashbaord updates
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
@@ -290,6 +293,11 @@ def dashboard(request):
 
     profile = request.user.get_profile()
     instance = profile.instance
+    last_mission = Mission.objects.filter(instance=instance)
+    if len(last_mission) > 0:
+        last_mission = last_mission[len(last_mission)-1]
+    else:
+        last_mission = None
     
     # Dashboard related forms
     activation_form = ActivationForm()
@@ -339,4 +347,5 @@ def dashboard(request):
         'activation_form': activation_form,
         'log': log,
         'unfinished_activities' : unfinished_activities,
+        'last_mission': last_mission,
     },[ip])))

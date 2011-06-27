@@ -40,9 +40,16 @@
                 
                 {%else%}
                     <span><img style="padding-bottom:25px" src="{{MEDIA_URL}}/img/Lowell_header.png"></span>
-                    All of the <a class="red" href="/mission/{{mission.slug}}" title="{{mission.topic}}">activities</a>
+                    Community PlanIt Lowell ended on June 25, 2011. More than 175 participants spent 411 coins and left more than 1,000 comments!
+                    All of the 
+                    {% if last_mission %}
+                        <a class="red" href="/mission/{{last_mission.slug}}" title="{{last_mission.topic}}">activities</a>
+                    {% else %}
+                        <a class="red" href="/mission/" title="mission">activities</a>
+                    {% endif %}
                     are now unlocked so you can view the results—and don't forget to see how the community spent its 
                     <a class="red" href="/issue/">coins</a>!
+                    Thanks for playing!
                 {%endif%}
             </p>
             <hr class="space">
