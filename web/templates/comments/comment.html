@@ -45,7 +45,9 @@
             {% if comment.user != user %}
             <a href="{% url comments_like comment.id %}" title="click to say you like this"><img src="{{MEDIA_URL}}img/icons/up-small.png" alt="like"/></a>
             {% endif %}
-            <a class="small button reply" href="#reply-{{comment.id}}">reply</a>
+            {% if mission.instance.is_active %}
+                <a class="small button reply" href="#reply-{{comment.id}}">reply</a>
+            {% endif %}
         </div>
         <div class="reply-modal">
             <form enctype="multipart/form-data" method="POST" action="/comment/reply/{{comment.id}}/">
