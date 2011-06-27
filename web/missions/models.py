@@ -20,7 +20,7 @@ class Mission(models.Model):
     video = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
-    instance = models.ForeignKey(Instance, editable=False)
+    instance = models.ForeignKey(Instance)
     
     def is_active(self):
         if datetime.datetime.now() >= self.start_date and datetime.datetime.now() <= self.end_date:
@@ -55,21 +55,21 @@ class Mission(models.Model):
             return self.filter(start_date__lte=datetime.datetime.now()).filter(end_date__gt=datetime.datetime.now()).order_by('start_date')
 
     def save(self):
-        self.slug = slugify(self.topic)
+        self.slug = slugify(self.name)
         super(Mission, self).save()
 
     def __unicode__(self):
-        return self.topic[:25]
+        return self.name[:25]
 
 class MissionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'start_date', 'end_date')
+    list_display = ('name', 'start_date', 'end_date', 'instance')
 
     def queryset(self, request):
         qs = super(MissionAdmin, self).queryset(request)
         return qs.filter(instance=request.session.get('admin_instance'))
 
     def save_model(self, request, obj, form, change):
-        obj.instance = request.session.get('admin_instance')
+        #obj.instance = request.session.get('admin_instance')
         obj.save()
 
     obj = None

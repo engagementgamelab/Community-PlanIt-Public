@@ -17,7 +17,7 @@ add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 #to see the view that is created 
 class Instance(models.Model):
     name = models.CharField(max_length=45)
-    slug = models.SlugField()
+    slug = models.SlugField(editable=False)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     location = GoogleMapsField()
