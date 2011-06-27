@@ -21,11 +21,8 @@ from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
 from web.missions.models import Mission
-<<<<<<< HEAD
 from web.answers.models import Answer
 from web.player_activities.models import PlayerActivity
-=======
->>>>>>> 64f210c... More dashbaord updates
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
