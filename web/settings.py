@@ -1,6 +1,10 @@
 # Manage different settings
 import os
+import re
 from ConfigParser import RawConfigParser
+
+ROOTDIR = os.path.dirname(os.path.realpath(__file__))
+
 config = RawConfigParser()
 
 # dev/staging/prod constants
@@ -11,7 +15,7 @@ PRODUCTION = 'communityplanit.org'
 # Toggle based on hostname
 import socket
 host = socket.gethostname()
-config.read('../config/development.ini')
+config.read(os.path.join(ROOTDIR, '../config/development.ini'))
 
 # General settings
 DEBUG = config.getboolean('general', 'DEBUG')
@@ -77,6 +81,23 @@ LANGUAGE_CODE = config.get('localization', 'LANGUAGE_CODE')
 USE_I18N = config.getboolean('localization', 'USE_I18N') 
 USE_L10N = config.getboolean('localization', 'USE_L10N')
 
+
+ugettext = lambda s: s
+LANGUAGES = (
+  ('ru', ugettext('Russian')),
+  ('en', ugettext('English')),
+)
+#django-localeurl
+LOCALE_INDEPENDENT_PATHS = (
+    #re.compile('^/$'),
+    re.compile('^/ajax/'),
+    re.compile('^/assets/'),
+    re.compile('^/favicon.ico$'),
+)
+LOCALE_INDEPENDENT_MEDIA_URL = config.getboolean('localeurl', 'LOCALE_INDEPENDENT_MEDIA_URL')
+PREFIX_DEFAULT_LOCALE = config.getboolean('localeurl', 'PREFIX_DEFAULT_LOCALE')
+
+
 # Media
 MEDIA_ROOT = config.get('media', 'MEDIA_ROOT')
 MEDIA_URL = '/assets/'
@@ -98,6 +119,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'localeurl.middleware.LocaleURLMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -110,6 +132,8 @@ AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 AUTHENTICATION_BACKENDS = ( 'web.accounts.backends.EmailBackend', )
 ROOT_URLCONF = 'web.urls'
 INSTALLED_APPS = (
+    # localeurl should be first
+    'localeurl',
     # Internal
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -142,6 +166,8 @@ INSTALLED_APPS = (
     'south',
     'gmapsfield',
     'gmapsfield.templatetags',
+    'nani',
+    'django_extensions',
 )
 
 # Google maps settings

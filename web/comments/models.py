@@ -3,13 +3,15 @@ from web.attachments.models import Attachment
 from django.contrib.auth.models import User
 
 from django.db import models
-from django.contrib import admin
+
+from nani import admin
+from nani.models import TranslatableModel, TranslatedFields
 
 #Change flagged to either a bitfield or change to flaggedBy and link a foreign key to a user. 
 #TODO: Make foreign keys to each object that the Comment can be referenced from.
 # For example Issue has a M:M relationship to Comment, add issue_id foreign key
 # to here.
-class Comment(models.Model):
+class Comment(TranslatableModel):
     message = models.CharField(max_length=1000)
     posted_date = models.DateTimeField(auto_now_add=True)
     flagged = models.IntegerField(default=0)
@@ -21,8 +23,12 @@ class Comment(models.Model):
     comments = models.ManyToManyField('self', symmetrical=False, blank=True, editable=False)
     likes = models.ManyToManyField(User, blank=True, editable=False, related_name='liked_comments')
 
-    def __unicode__(self):
-        return self.message[:25] or ''
+    translations = TranslatedFields(
+        message = models.CharField(max_length=1000)
+    )
+
+    #def __unicode__(self):
+    #    return self.safe_translation_getter('message', self.message[:25])
 
     @property
     def discussion_count(self):
@@ -31,9 +37,9 @@ class Comment(models.Model):
             total += comment.discussion_count
         return total
 
-class CommentAdmin(admin.ModelAdmin):
+class CommentAdmin(admin.TranslatableAdmin):
     list_filter = ('posted_date', 'flagged', 'hidden')
-    list_display = ('posted_date', 'user', 'flagged', 'hidden', 'message')
+    list_display = ('posted_date', 'user', 'flagged', 'hidden') # could not be used with nani:, 'message')
 
     actions = ['hide_selected', 'reveal_selected']
 

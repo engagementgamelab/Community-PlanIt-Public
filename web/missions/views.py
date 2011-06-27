@@ -10,7 +10,7 @@ from web.instances.models import Instance
 from web.comments.models import Comment
 from web.comments.forms import CommentForm
 from web.answers.models import Answer
-from web.player_activities import PlayerActivity
+from web.player_activities.models import PlayerActivity
 from web.processors import instance_processor as ip
 
 @login_required
