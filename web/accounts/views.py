@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import Context, RequestContext, loader
 from django.utils.translation import ugettext as _
-from django.db.models.Q import Q
+from django.db.models import Q
 
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -22,7 +22,7 @@ from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
 from web.missions.models import Mission
 from web.answers.models import Answer
-from web.player_activities import PlayerActivity
+from web.player_activities.models import PlayerActivity
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
