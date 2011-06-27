@@ -27,8 +27,8 @@ class PlayerActivity(models.Model):
     points = models.IntegerField(blank=True, null=True, default=None)
     
     def save(self):
-        slug = slugify(self.name)
-        createDate = datetime.datetime.now()
+        self.slug = slugify(self.name)
+        self.createDate = datetime.datetime.now()
         super(PlayerActivity, self).save()
     
     def getPoints(self):
