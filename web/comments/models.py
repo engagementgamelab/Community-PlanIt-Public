@@ -12,23 +12,22 @@ from nani.models import TranslatableModel, TranslatedFields
 # For example Issue has a M:M relationship to Comment, add issue_id foreign key
 # to here.
 class Comment(TranslatableModel):
-    message = models.CharField(max_length=1000)
     posted_date = models.DateTimeField(auto_now_add=True)
     flagged = models.IntegerField(default=0)
     hidden = models.BooleanField(default=False)
 
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
-    user = models.ForeignKey(User, editable=False)
-    instance = models.ForeignKey(Instance, editable=False)
+    user = models.ForeignKey(User, null=True, editable=False)
+    instance = models.ForeignKey(Instance, null=True, editable=False)
     comments = models.ManyToManyField('self', symmetrical=False, blank=True, editable=False)
     likes = models.ManyToManyField(User, blank=True, editable=False, related_name='liked_comments')
 
     translations = TranslatedFields(
-        message = models.CharField(max_length=1000)
+        message = models.CharField(max_length=1000, blank=True, null=True)
     )
 
-    #def __unicode__(self):
-    #    return self.safe_translation_getter('message', self.message[:25])
+    def __unicode__(self):
+        return self.safe_translation_getter('message', self.message[:25])
 
     @property
     def discussion_count(self):
