@@ -32,10 +32,10 @@ class PlayerActivity(models.Model):
         super(PlayerActivity, self).save()
     
     def getPoints(self):
-        if points == None:
-            return type.defaultPoints
+        if self.points == None:
+            return self.type.defaultPoints
         else:
-            return points
+            return self.points
 
 class PlayerActivityTypeAdmin(admin.ModelAdmin):
     list_display = ('type', 'defaultPoints',)
