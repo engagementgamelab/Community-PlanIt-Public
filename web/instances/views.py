@@ -41,16 +41,14 @@ def region(request, slug):
 
 def all(request):
     instances = Instance.objects.all()
-    today = datetime.date.today()
+    now = datetime.datetime.now()
     
     # Get number of players in instance
     for instance in instances:
-        #This works because there is a strict 1:1 relationship between UserProfile and Users.
-        #TODO: fix the db to make this relationship much more transparent and forced.
         instance.player_count = UserProfile.objects.filter(instance=instance).count()
 
     tmpl = loader.get_template('instances/all.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'instances': instances,
-        'today': today,
+        'now': now,
     }, [ip])))
