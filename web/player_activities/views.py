@@ -41,7 +41,8 @@ def get_activity(request, id):
         raise Http404
     
     return HttpResponse(tmpl.render(RequestContext(request, {
-        "form": form
+        "form": form, 
+        "activity": activity,
         }, [ip])))
     return HttpResponse("web page not created yet")
 
