@@ -8,6 +8,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
+        # Adding model 'PlayerActivityType'
+        db.create_table('player_activities_playeractivitytype', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('type', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('defaultPoints', self.gf('django.db.models.fields.IntegerField')(default=10)),
+        ))
+        db.send_create_signal('player_activities', ['PlayerActivityType'])
+
         # Adding model 'PlayerActivity'
         db.create_table('player_activities_playeractivity', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -15,8 +23,10 @@ class Migration(SchemaMigration):
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
             ('question', self.gf('django.db.models.fields.CharField')(max_length=1000)),
             ('creationUser', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('misison', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['missions.Mission'])),
+            ('mission', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['missions.Mission'])),
+            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['player_activities.PlayerActivityType'])),
             ('createDate', self.gf('django.db.models.fields.DateTimeField')()),
+            ('points', self.gf('django.db.models.fields.IntegerField')(default=None, null=True, blank=True)),
         ))
         db.send_create_signal('player_activities', ['PlayerActivity'])
 
@@ -28,14 +38,28 @@ class Migration(SchemaMigration):
         ))
         db.create_unique('player_activities_playeractivity_attachment', ['playeractivity_id', 'attachment_id'])
 
+        # Adding model 'MultiChoiceActivity'
+        db.create_table('player_activities_multichoiceactivity', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['player_activities.PlayerActivity'])),
+            ('value', self.gf('django.db.models.fields.CharField')(max_length=255)),
+        ))
+        db.send_create_signal('player_activities', ['MultiChoiceActivity'])
+
 
     def backwards(self, orm):
         
+        # Deleting model 'PlayerActivityType'
+        db.delete_table('player_activities_playeractivitytype')
+
         # Deleting model 'PlayerActivity'
         db.delete_table('player_activities_playeractivity')
 
         # Removing M2M table for field attachment on 'PlayerActivity'
         db.delete_table('player_activities_playeractivity_attachment')
+
+        # Deleting model 'MultiChoiceActivity'
+        db.delete_table('player_activities_multichoiceactivity')
 
 
     models = {
@@ -109,16 +133,30 @@ class Migration(SchemaMigration):
             'start_date': ('django.db.models.fields.DateTimeField', [], {}),
             'video': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
         },
+        'player_activities.multichoiceactivity': {
+            'Meta': {'object_name': 'MultiChoiceActivity'},
+            'activity': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['player_activities.PlayerActivity']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'value': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
         'player_activities.playeractivity': {
             'Meta': {'object_name': 'PlayerActivity'},
             'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
             'createDate': ('django.db.models.fields.DateTimeField', [], {}),
             'creationUser': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'misison': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['missions.Mission']"}),
+            'mission': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['missions.Mission']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'points': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'question': ('django.db.models.fields.CharField', [], {'max_length': '1000'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'})
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
+            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['player_activities.PlayerActivityType']"})
+        },
+        'player_activities.playeractivitytype': {
+            'Meta': {'object_name': 'PlayerActivityType'},
+            'defaultPoints': ('django.db.models.fields.IntegerField', [], {'default': '10'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         }
     }
 

@@ -1,5 +1,5 @@
 from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import Context, RequestContext, loader
 from django.contrib import auth
 from django.contrib.auth.models import User
@@ -12,13 +12,37 @@ from web.missions.models import Mission
 from web.instances.models import Instance
 
 from web.processors import instance_processor as ip
+from web.player_activities.forms import *
 
 @login_required
-def overview(request):
+def overview(request, id):
     return HttpResponse("web page not created yet")
 
 @login_required
-def getGame(request):
+def get_activity(request, id):
+    activity = PlayerActivity.objects.get(id=id)
+    tmpl = None
+    form = None
+    if (activity.type.type == "open_ended"):
+        tmpl = loader.get_template('player_activities/open_ended.html')
+        form = OpenForm()
+    elif (activity.type.type == "single_response"):
+        tmpl = loader.get_template('player_activities/single_response.html')
+        form = SingleForm()
+    elif (activity.type.type == "map"):
+        tmpl = loader.get_template('player_activities/map.html')
+        form = MapForm()
+    elif (activity.type.type == "empathy"):
+        tmpl = loader.get_template('player_activities/empathy.html')
+        form = EmpathyForm()
+    elif (activity.type.type == "multi_reponse"):
+        tmpl = loader.get_template('player_activities/multi_reponse.html')
+    else:
+        raise Http404
+    
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "form": form
+        }, [ip])))
     return HttpResponse("web page not created yet")
 
 @login_required

@@ -37,6 +37,10 @@ class PlayerActivity(models.Model):
         else:
             return self.points
 
+class MultiChoiceActivity(models.Model):
+    activity = models.ForeignKey(PlayerActivity)
+    value = models.CharField(max_length=255)
+
 class PlayerActivityTypeAdmin(admin.ModelAdmin):
     list_display = ('type', 'defaultPoints',)
 
