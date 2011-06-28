@@ -70,6 +70,8 @@
                     {%if instance.is_expired%}
                         <a href="/neighborhood/{{instance.slug}}">{{instance.name}} has ended</a>
                     {%endif%}
+                {%else%}
+                    <label>HERE</label>
                 {%endif%}
             </div>
             <!-- Navigation -->
@@ -95,21 +97,21 @@
             <div class="missioncounter">
                 {%if user.is_authenticated and instance.is_started%}
                     {%for mission in missions.past.all%}
-                        <a href="/mission/{{mission.slug}}" class="past mission" title="{{mission.topic}}">
-                            {{mission.topic}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
+                        <a href="/mission/{{mission.slug}}" class="past mission" title="{{mission.name}}">
+                            {{mission.name}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
                         </a>
                     {%endfor%}
                     {%for mission in missions.current.all%}
-                        <a href="/mission/{{mission.slug}}" class="current mission" title="{{mission.topic}}">
+                        <a href="/mission/{{mission.slug}}" class="current mission" title="{{mission.name}}">
                             <span class="tailupper"></span>
                             <span class="taillower"></span>
                             <span class="suit"></span>
-                            {{mission.topic}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
+                            {{mission.name}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
                     {%endfor%}
                     </a>
                     {%for mission in missions.future.all%}
-                        <div class="future mission" title="{{mission.topic}}">
-                            {{mission.topic}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
+                        <div class="future mission" title="{{mission.name}}">
+                            {{mission.name}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
                         </div>
                     {%endfor%}
                 {%endif%}
@@ -168,7 +170,7 @@
                             
                             {%if user.is_authenticated and instance%}
                                 {%for mission in missions.current.all%}
-                                    <a class="mission" href="/mission/{{mission.slug}}" title="{{mission.topic}}">View Current Mission &rarr;</a>
+                                    <a class="mission" href="/mission/{{mission.slug}}" title="{{mission.name}}">View Current Mission &rarr;</a>
                                 {%endfor%}
                             {%endif%}
                             

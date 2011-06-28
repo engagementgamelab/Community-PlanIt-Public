@@ -7,7 +7,7 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    {%if not instance.is_started%}
+    {%if instance.is_started%}
         {%if not user.is_active%}
             <form method="POST" action="">
                 <h4>One last step: Please verify that you have read our Terms of Use and Privacy Policy. 
@@ -33,7 +33,7 @@
                     
                     As part of Sustainability Week, we invite you to play Community PlanIt to help 
                     shape the city's vision for a sustainable future. Earn points by completing the 
-                    <a class="red" href="/mission/{{mission.slug}}" title="{{mission.topic}}">mission</a>
+                    <a class="red" href="/mission/{{mission.slug}}" title="{{mission.name}}">mission</a>
                     activities, which you can trade in for <a class="red" href="/value">coins</a> to spend
                     on promoting your top community values. Keep checking back from 
                     June 15 – June 25 to stay on top of the lively discussion—and tell your friends!
@@ -43,7 +43,7 @@
                     Community PlanIt Lowell ended on June 25, 2011. More than 175 participants spent 411 coins and left more than 1,000 comments!
                     All of the 
                     {% if last_mission %}
-                        <a class="red" href="/mission/{{last_mission.slug}}" title="{{last_mission.topic}}">activities</a>
+                        <a class="red" href="/mission/{{last_mission.slug}}" title="{{last_mission.name}}">activities</a>
                     {% else %}
                         <a class="red" href="/mission/" title="mission">activities</a>
                     {% endif %}
@@ -89,7 +89,7 @@
                 <div class="modules">
                     {%if missions.current.all|length%}
                         {%for mission in missions.current.all%}
-                        <h3 class="missions">Current Mission <span class="fine">(<a href="/mission/{{mission.slug}}">{{mission.topic}}</a>)</span></h3>
+                        <h3 class="missions">Current Mission <span class="fine">(<a href="/mission/{{mission.slug}}">{{mission.name}}</a>)</span></h3>
                         <div class="dashboardmodule">
                             <div class="dashboardmoduleinner">
                                  <ul class="listview listless">
@@ -114,7 +114,7 @@
                                  </ul>
                             </div>
                             <hr class="space">
-                            <a class="right fine" href="/mission/{{mission.slug}}" title="{{mission.topic}}">View Current Mission &rarr;</a>
+                            <a class="right fine" href="/mission/{{mission.slug}}" title="{{mission.name}}">View Current Mission &rarr;</a>
                             <hr class="space">
                         </div>
                         <hr class="space">

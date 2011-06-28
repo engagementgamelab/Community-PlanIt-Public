@@ -14,7 +14,7 @@
     <div class="currentmission divetbox">
         <hr class="space"/>
         <h3>
-            <a href="/mission/{{mission.slug}}">{{mission.topic}}</a> Activities
+            <a href="/mission/{{mission.slug}}">{{mission.name}}</a> Activities
         </h3>
         <hr class="space"/>
         <div class="date">
@@ -66,7 +66,7 @@
         <ul class="missions gridview listless">
             {%for mission in missions.future%}
                 <li class="griditem mission">
-                    {{mission.topic}}
+                    {{mission.name}}
                     <div class="date">
                         <span class="datenum">{{mission.start_date|date:"j"}}</span> {{mission.start_date|date:"M"}}
                     </div>
@@ -89,7 +89,7 @@
         <ul class="listview listless pastmissions">
             {%for mission in missions.past%}
                 <li class="listitem">
-                    <p>{{mission.topic}}</p>
+                    <p>{{mission.name}}</p>
                     <a class="fine right" href="/mission/{{mission.slug}}">View &rarr;</a>
                 </li>
             {%endfor%}

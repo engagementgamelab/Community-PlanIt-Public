@@ -20,7 +20,7 @@ class PlayerActivity(models.Model):
     slug = models.SlugField(editable=False)
     question = models.CharField(max_length=1000)
     creationUser = models.ForeignKey(User)
-    misison = models.ForeignKey(Mission)
+    mission = models.ForeignKey(Mission)
     type = models.ForeignKey(PlayerActivityType)
     createDate = models.DateTimeField(editable=False)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
@@ -41,5 +41,5 @@ class PlayerActivityTypeAdmin(admin.ModelAdmin):
     list_display = ('type', 'defaultPoints',)
 
 class PlayerActivityAdmin(admin.ModelAdmin):
-    list_display = ('name', 'question', 'creationUser', 'misison', 'type', 'createDate', 'points')
+    list_display = ('name', 'question', 'creationUser', 'mission', 'type', 'createDate', 'points')
     

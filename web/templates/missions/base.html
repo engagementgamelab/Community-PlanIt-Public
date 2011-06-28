@@ -3,13 +3,13 @@
 {% load game_extras %}
 {%block section%}missions{%endblock%}
 
-{%block title%}{{mission.topic}} Mission{%endblock%}
+{%block title%}{{mission.name}} Mission{%endblock%}
 {%block page_title%}{%endblock%}
 
 {%block main%}
     <div class="wrapper">
         <h2 class="currentmission">
-            {{mission.topic}}
+            {{mission.name}}
             <span class="highlight fine right {%if active %}green{% endif %}">
                 {{mission.start_date|date:"M"}} {{mission.start_date|date:"j"}} - {{mission.end_date|date:"M"}} {{mission.end_date|date:"j"}}
             </span>
