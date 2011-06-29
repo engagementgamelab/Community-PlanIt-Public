@@ -40,7 +40,7 @@ def get_activity(request, id):
         form = MakeSingleForm(choices)
         #form = SingleForm(choices)
     elif (activity.type.type == "map"):
-        tmpl = loader.get_template('player_activities/map.html')
+        tmpl = loader.get_template('player_activities/map_response.html')
         form = MapForm()
     elif (activity.type.type == "empathy"):
         tmpl = loader.get_template('player_activities/empathy.html')
