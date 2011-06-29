@@ -61,19 +61,18 @@
             No submissions yet.
         {%endif%}
         
-        {% if mission.instance.is_active %}
-            <div style="clear: both; padding: 1em 0;"></div>
-            <div id="comments">
-                <div class="sleeper"></div>
-                <h4>Comments:</h4>
-                <ul class="listless comments">
-                    {% with game as comments %}
-                    {%include "comments/post.html"%}
-                    {% endwith %}
-                </ul>
-                <div style="clear: both;"></div>
-            </div>
-        {% endif %}
+        <div style="clear: both; padding: 1em 0;"></div>
+        <div id="comments">
+            <div class="sleeper"></div>
+            <h4>Comments:</h4>
+            <ul class="listless comments">
+                {% with game as comments %}
+                {%include "comments/post.html"%}
+                {% endwith %}
+            </ul>
+            <div style="clear: both;"></div>
+        </div>
+
     </div>
    
 <!-- this is the chart -->
