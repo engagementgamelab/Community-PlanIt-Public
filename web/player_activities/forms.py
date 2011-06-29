@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate
+from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 from web.instances.models import Instance
 from web.player_activities.models import PlayerActivity
 from web.answers.models import *
@@ -12,9 +13,19 @@ class OpenForm(forms.Form):
     class Meta:
         model = AnswerOpenEnded
 
-class SingleForm(forms.Form):
-    class Meta:
-        model = AnswerSingleResponse
+def MakeSingleForm(choices):
+    class SingleForm(forms.Form):
+        response = forms.ChoiceField(widget=RadioSelect, choices=choices)
+        class Meta:
+            model = AnswerSingleResponse
+    return SingleForm
+
+def MakeMultiForm(choices):
+    class MultiForm(forms.Form):
+        response = forms.ChoiceField(widget=CheckboxSelectMultiple, choices=choices)
+        class Meta:
+            model = AnswerMultiChoice
+    return MultiForm
 
 class MapForm(forms.Form):
     class Meta:

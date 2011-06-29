@@ -4,7 +4,6 @@ from web.responses.models import Response
 from web.comments.models import Comment
 from web.missions.models import Mission
 from web.player_activities.models import PlayerActivity, MultiChoiceActivity
-from web.accounts.models import determine_path
 from django.contrib.auth.models import User
 from gmapsfield.fields import GoogleMapsField
 
@@ -43,8 +42,6 @@ class UserMapPoints(models.Model):
     point = GoogleMapsField()
 
 class AnswerEmpathy(Answer):
-    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
-    bio = models.CharField(max_length=255)
     answerBox = models.TextField()
     
     def save(self):

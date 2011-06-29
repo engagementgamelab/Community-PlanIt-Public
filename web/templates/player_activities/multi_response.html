@@ -10,13 +10,16 @@
         {% csrf_token %}
         <h2>{{activity.question}}</h2>
         <div class="fieldWrapper">
-            {{ form.answerbox.errors }}
-            <label for="id_answerbox">Your Response:</label>
-            {{ form.answerbox }}
+            {{ form.response.errors }}
+            <label for="id_answerbox">Your Choices:</label>
+            <ul style="list-style-type: none;">
+            {% for choice in form.response.field.choices %}
+              <li><label for="id_response_{{choice.0}}"><input type="checkbox" name="response" value="{{choice.0}}">{{choice.1}}</label></li>
+            {% endfor %}
+            </ul>
         </div>
         <input type="submit" class="button submit" value="Submit" />
     </form>
-    
 {%endblock%}
 
 {%block body%}

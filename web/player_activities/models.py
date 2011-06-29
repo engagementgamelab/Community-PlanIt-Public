@@ -1,9 +1,10 @@
 from django.template.defaultfilters import slugify
 from django.db import models
-from web.attachments.models import Attachment
-from web.missions.models import Mission
 from django.contrib import admin
 from django.contrib.auth.models import User
+from web.attachments.models import Attachment
+from web.missions.models import Mission
+from web.accounts.models import determine_path
 import datetime
 
 #from django.contrib.auth.models import User
@@ -24,6 +25,8 @@ class PlayerActivity(models.Model):
     type = models.ForeignKey(PlayerActivityType)
     createDate = models.DateTimeField(editable=False)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
+    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
+    bio = models.CharField(max_length=255, null=True, blank=True)
     points = models.IntegerField(blank=True, null=True, default=None)
     
     def save(self):

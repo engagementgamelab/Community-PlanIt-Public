@@ -13,6 +13,7 @@ from web.instances.models import Instance
 
 from web.processors import instance_processor as ip
 from web.player_activities.forms import *
+import settings
 
 @login_required
 def overview(request, id):
@@ -28,7 +29,16 @@ def get_activity(request, id):
         form = OpenForm()
     elif (activity.type.type == "single_response"):
         tmpl = loader.get_template('player_activities/single_response.html')
-        form = SingleForm()
+        mc = MultiChoiceActivity.objects.filter(activity=activity)
+        choices = []
+        for x in mc:
+            choices.append((x.id, x.value))
+        if settings.DEBUG == True and len(choices) == 0:
+            choices.append((1, "Test data"))
+            choices.append((2, "More test data"))
+            choices.append((3, "This is another test"))
+        form = MakeSingleForm(choices)
+        #form = SingleForm(choices)
     elif (activity.type.type == "map"):
         tmpl = loader.get_template('player_activities/map.html')
         form = MapForm()
@@ -36,7 +46,16 @@ def get_activity(request, id):
         tmpl = loader.get_template('player_activities/empathy.html')
         form = EmpathyForm()
     elif (activity.type.type == "multi_reponse"):
-        tmpl = loader.get_template('player_activities/multi_reponse.html')
+        mc = MultiChoiceActivity.objects.filter(activity=activity)
+        choices = []
+        for x in mc:
+            choices.append((x.id, x.value))
+        if settings.DEBUG == True and len(choices) == 0:
+            choices.append((1, "Test data"))
+            choices.append((2, "More test data"))
+            choices.append((3, "This is another test"))
+        tmpl = loader.get_template('player_activities/multi_response.html')
+        form = MakeMultiForm(choices)
     else:
         raise Http404
     
