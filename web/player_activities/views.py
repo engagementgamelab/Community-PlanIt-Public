@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
 from web.player_activities.models import PlayerActivity
-from web.answers.models import Answer
+from web.answers.models import *
 from web.missions.models import Mission
 from web.instances.models import Instance
 
@@ -24,6 +24,7 @@ def get_activity(request, id):
     activity = PlayerActivity.objects.get(id=id)
     tmpl = None
     form = None
+    map = None
     if (activity.type.type == "open_ended"):
         tmpl = loader.get_template('player_activities/open_ended.html')
         form = OpenForm()
@@ -42,6 +43,7 @@ def get_activity(request, id):
     elif (activity.type.type == "map"):
         tmpl = loader.get_template('player_activities/map_response.html')
         form = MapForm()
+        map = activity.mission.instance.location 
     elif (activity.type.type == "empathy"):
         tmpl = loader.get_template('player_activities/empathy.html')
         form = EmpathyForm()
@@ -62,6 +64,7 @@ def get_activity(request, id):
     return HttpResponse(tmpl.render(RequestContext(request, {
         "form": form, 
         "activity": activity,
+        "map": map,
         }, [ip])))
     return HttpResponse("web page not created yet")
 

@@ -31,10 +31,7 @@ class AnswerSingleResponse(Answer):
 class AnswerMap(Answer):
     answerBox = models.TextField(blank=True, null=True)
     maxNumMarkers = models.IntegerField(default=5)
-
-    def save(self):
-        self.type = AnswerType.objects.get_or_create(type="map")
-        super(Answer, self).save()
+    map = GoogleMapsField()
 
 class UserMapPoints(models.Model):
     user = models.ForeignKey(User)
