@@ -7,6 +7,7 @@
 
 {%block main%}
     <form action="" method="post" class="narrow">
+        <input type="hidden" name="form" value="map">
         {% csrf_token %}
         <div class="fieldWrapper">
             {{form.errors}}
@@ -15,6 +16,14 @@
             <button class="button rm">Clear All Points</button>
             <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
             <div class="google-map" data-type="Point"/>
+        </div>
+        <div class="fieldWrapper">
+            {{form.answerBox.error}}
+            <label for="id_answerBox">Your Response:</label>
+            {{ form.answerBox }}
+        </div>
+        <div class="markers">
+            <button class="button submit">Submit response</button>
         </div>
     </form>
     

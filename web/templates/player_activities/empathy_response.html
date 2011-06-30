@@ -7,6 +7,7 @@
 
 {%block main%}
     <form action="" method="post">
+        <input type="hidden" name="form" value="empathy">
         {% csrf_token %}
         <h2>{{activity.question}}</h2>
         {% if activity.bio %}

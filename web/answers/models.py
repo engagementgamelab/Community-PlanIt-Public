@@ -13,7 +13,7 @@ class Answer(models.Model):
     answerUser = models.ForeignKey(User)
 
 class AnswerOpenEnded(Answer):
-    answerbox = models.CharField(max_length=1000)
+    answerBox = models.CharField(max_length=1000)
     
     def save(self):
         self.type = AnswerType.objects.get_or_create(type="open_ended")
@@ -28,7 +28,6 @@ class AnswerSingleResponse(Answer):
         
 class AnswerMap(Answer):
     answerBox = models.CharField(max_length=1000, blank=True, null=True)
-    map = GoogleMapsField()
 
 class UserMapPoints(models.Model):
     user = models.ForeignKey(User)

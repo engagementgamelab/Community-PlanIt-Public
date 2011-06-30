@@ -31,7 +31,7 @@ def MakeMultiForm(choices):
 
 class MapForm(forms.Form):
     map = GoogleMapsField()
-
+    answerBox = forms.CharField(required=True, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
     def clean(self):
         map = self.cleaned_data.get('map')
         if not map or not simplejson.loads(map).has_key('coordinates'):
