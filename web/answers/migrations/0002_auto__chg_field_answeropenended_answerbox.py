@@ -8,87 +8,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding model 'Answer'
-        db.create_table('answers_answer', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['player_activities.PlayerActivity'])),
-            ('instructions', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('addInstructions', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('answerUser', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-        ))
-        db.send_create_signal('answers', ['Answer'])
-
-        # Adding model 'AnswerOpenEnded'
-        db.create_table('answers_answeropenended', (
-            ('answer_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['answers.Answer'], unique=True, primary_key=True)),
-            ('answerbox', self.gf('django.db.models.fields.TextField')()),
-        ))
-        db.send_create_signal('answers', ['AnswerOpenEnded'])
-
-        # Adding model 'AnswerSingleResponse'
-        db.create_table('answers_answersingleresponse', (
-            ('answer_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['answers.Answer'], unique=True, primary_key=True)),
-            ('selected', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['player_activities.MultiChoiceActivity'])),
-        ))
-        db.send_create_signal('answers', ['AnswerSingleResponse'])
-
-        # Adding model 'AnswerMap'
-        db.create_table('answers_answermap', (
-            ('answer_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['answers.Answer'], unique=True, primary_key=True)),
-            ('answerBox', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('maxNumMarkers', self.gf('django.db.models.fields.IntegerField')(default=5)),
-        ))
-        db.send_create_signal('answers', ['AnswerMap'])
-
-        # Adding model 'UserMapPoints'
-        db.create_table('answers_usermappoints', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('map', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['answers.AnswerMap'])),
-            ('point', self.gf('gmapsfield.fields.GoogleMapsField')()),
-        ))
-        db.send_create_signal('answers', ['UserMapPoints'])
-
-        # Adding model 'AnswerEmpathy'
-        db.create_table('answers_answerempathy', (
-            ('answer_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['answers.Answer'], unique=True, primary_key=True)),
-            ('avatar', self.gf('django.db.models.fields.files.ImageField')(max_length=100, null=True, blank=True)),
-            ('bio', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('answerBox', self.gf('django.db.models.fields.TextField')()),
-        ))
-        db.send_create_signal('answers', ['AnswerEmpathy'])
-
-        # Adding model 'AnswerMultiChoice'
-        db.create_table('answers_answermultichoice', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('option', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['player_activities.MultiChoiceActivity'])),
-        ))
-        db.send_create_signal('answers', ['AnswerMultiChoice'])
+        # Changing field 'AnswerOpenEnded.answerbox'
+        db.alter_column('answers_answeropenended', 'answerbox', self.gf('django.db.models.fields.CharField')(max_length=1000))
 
 
     def backwards(self, orm):
         
-        # Deleting model 'Answer'
-        db.delete_table('answers_answer')
-
-        # Deleting model 'AnswerOpenEnded'
-        db.delete_table('answers_answeropenended')
-
-        # Deleting model 'AnswerSingleResponse'
-        db.delete_table('answers_answersingleresponse')
-
-        # Deleting model 'AnswerMap'
-        db.delete_table('answers_answermap')
-
-        # Deleting model 'UserMapPoints'
-        db.delete_table('answers_usermappoints')
-
-        # Deleting model 'AnswerEmpathy'
-        db.delete_table('answers_answerempathy')
-
-        # Deleting model 'AnswerMultiChoice'
-        db.delete_table('answers_answermultichoice')
+        # Changing field 'AnswerOpenEnded.answerbox'
+        db.alter_column('answers_answeropenended', 'answerbox', self.gf('django.db.models.fields.TextField')())
 
 
     models = {
@@ -122,7 +49,7 @@ class Migration(SchemaMigration):
         'answers.answeropenended': {
             'Meta': {'object_name': 'AnswerOpenEnded', '_ormbases': ['answers.Answer']},
             'answer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['answers.Answer']", 'unique': 'True', 'primary_key': 'True'}),
-            'answerbox': ('django.db.models.fields.TextField', [], {})
+            'answerbox': ('django.db.models.fields.CharField', [], {'max_length': '1000'})
         },
         'answers.answersingleresponse': {
             'Meta': {'object_name': 'AnswerSingleResponse', '_ormbases': ['answers.Answer']},

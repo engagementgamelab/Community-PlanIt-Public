@@ -1,0 +1,27 @@
+{%extends "layouts/base.html"%}
+{%load gmap%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Neighborhood overview{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <form action="" method="post">
+        {% csrf_token %}
+        <h2>{{activity.question}}</h2>
+        <div class="fieldWrapper">
+            {{ form.response.errors }}
+            <label for="id_answerbox">Your Choices:</label>
+            <ul style="list-style-type: none;">
+            {% for choice in form.response.field.choices %}
+              <li><label for="id_response_{{choice.0}}"><input type="checkbox" name="response" value="{{choice.0}}">{{choice.1}}</label></li>
+            {% endfor %}
+            </ul>
+        </div>
+        <input type="submit" class="button submit" value="Submit" />
+    </form>
+{%endblock%}
+
+{%block body%}
+    {%gmap_includes%}
+{%endblock%}

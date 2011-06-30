@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import Context, RequestContext, loader
 from django.utils.translation import ugettext as _
+from django.db.models import Q
 
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -20,6 +21,8 @@ from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
 from web.missions.models import Mission
+from web.answers.models import Answer
+from web.player_activities.models import PlayerActivity
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
@@ -287,6 +290,11 @@ def dashboard(request):
 
     profile = request.user.get_profile()
     instance = profile.instance
+    last_mission = Mission.objects.filter(instance=instance)
+    if len(last_mission) > 0:
+        last_mission = last_mission[len(last_mission)-1]
+    else:
+        last_mission = None
     
     # Dashboard related forms
     activation_form = ActivationForm()
@@ -322,13 +330,18 @@ def dashboard(request):
     # Fetch activity log feed for dashboard.
     log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
     mission = Mission.objects.filter(instance=instance).current()
-    activities = None
+    unfinished_activities = None
     if (len(mission) > 0):
         mission = mission[0]
-        activities = PlayerActivity.objects.filter(mission=mission)
-    
+        pks = []
+        for pk in Answer.objects.filter(answerUser=request.user):
+            pks.append(pk.id)
+        #We want to get all activities that the user has for this mission
+        #And the user has no answer for
+        unfinished_activities = PlayerActivity.objects.filter(Q(mission=mission) & ~Q(pk__in=pks))
     return HttpResponse(tmpl.render(RequestContext(request, {
         'activation_form': activation_form,
         'log': log,
-        'mission_activities' : activities,
+        'unfinished_activities' : unfinished_activities,
+        'last_mission': last_mission,
     },[ip])))

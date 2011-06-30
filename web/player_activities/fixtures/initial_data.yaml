@@ -3,32 +3,32 @@
 # menus 
 
 #UserProfileEducation
--   model: answers.answertype
+-   model: player_activities.playeractivitytype
     pk: 1
     fields:
         type: open_ended
         defaultPoints: 10
         
--   model: answers.answertype
+-   model: player_activities.playeractivitytype
     pk: 2
     fields:
         type: single_response
         defaultPoints: 10
         
--   model: answers.answertype
-    pk: 1
+-   model: player_activities.playeractivitytype
+    pk: 3
     fields:
         type: map
         defaultPoints: 10
         
--   model: answers.answertype
-    pk: 1
+-   model: player_activities.playeractivitytype
+    pk: 4
     fields:
         type: empathy
         defaultPoints: 10
         
--   model: answers.answertype
-    pk: 1
+-   model: player_activities.playeractivitytype
+    pk: 5
     fields:
         type: multi_reponse
         defaultPoints: 10

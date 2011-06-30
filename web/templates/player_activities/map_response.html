@@ -1,0 +1,33 @@
+{%extends "layouts/base.html"%}
+{%load gmap%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Neighborhood overview{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <form action="" method="post" class="narrow">
+        {% csrf_token %}
+        <div class="fieldWrapper">
+            {{form.errors}}
+            <h2>{{activity.question}}</h2>
+            <button class="button add">Add Point</button>
+            <button class="button rm">Clear All Points</button>
+            <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
+            <div class="google-map" data-type="Point"></div>
+        </div>
+    </form>
+    
+{%endblock%}
+
+
+{%block body%}
+    <script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript" charset="utf-8"></script>
+    <script src="{{MEDIA_URL}}js/games/mapit.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        jQuery(function($) {
+            $(".google-map").mapit({{map|safe|escape}});
+            $(".remove-map").remove();
+        });
+    </script>
+{%endblock%}

@@ -42,7 +42,7 @@ class GamesTestCases(TestCase):
         self.instance = Instance.objects.all()[0]
         
         mission = Mission()
-        mission.topic = "this is a topic"
+        mission.name = "this is a name"
         mission.start_date = datetime.datetime.now()
         mission.end_date = datetime.datetime.now() + datetime.timedelta(days=30)
         mission.instance = self.instance
@@ -114,7 +114,7 @@ class GamesWebTestCases(TestCase):
         up.save()
         
         mission = Mission()
-        mission.topic = "this is a topic"
+        mission.name = "this is a name"
         mission.start_date = datetime.datetime.now()
         mission.end_date = datetime.datetime.now() + datetime.timedelta(days=30)
         mission.instance = self.instance

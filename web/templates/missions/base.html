@@ -3,13 +3,13 @@
 {% load game_extras %}
 {%block section%}missions{%endblock%}
 
-{%block title%}{{mission.topic}} Mission{%endblock%}
+{%block title%}{{mission.name}} Mission{%endblock%}
 {%block page_title%}{%endblock%}
 
 {%block main%}
     <div class="wrapper">
         <h2 class="currentmission">
-            {{mission.topic}}
+            {{mission.name}}
             <span class="highlight fine right {%if active %}green{% endif %}">
                 {{mission.start_date|date:"M"}} {{mission.start_date|date:"j"}} - {{mission.end_date|date:"M"}} {{mission.end_date|date:"j"}}
             </span>
@@ -26,33 +26,11 @@
             <h3>Activities</h3>
             {%if active%}
                 <ul class="listview listless">
-                    {%for game in mission.games.all%}
-                        {%with game.game_type as type%}
-                        {%if not game in games%}
-                            <li class="listitem game {{game.game_type}}">
-                                <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">{{game.title}}</a>
-                                {%if type == "mapit"%}
-                                    <span class="fine highlight green">{% get_points for completed mapit %}</span>
-                                {%endif%}
-                                
-                                {%if type == "thinkfast"%}
-                                    <span class="fine highlight green">{% get_points for completed thinkfast %}</span>
-                                {%endif%}
-
-                                {%if type == "othershoes"%}
-                                    <span class="fine highlight green">{% get_points for completed othershoes %}</span>
-                                {%endif%}
-                                
-                                <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">Play</a>
-                        {%else%}
-                            <li class="listitem game played {{game.game_type}}">
-                                <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">{{game.title}}</a>
-                                <span class="fine highlight">Complete!</span>
-                                <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">Replay</a>
-                        {%endif%}
-                        </li>
-                        {%endwith%}
-                    {%endfor%}
+                    <!-- requires:
+                        unfinished_activities: a list of activites which the user has not completed yet
+                        activities: a list of all activites
+                    -->
+                    {% include "player_activities/all_activities.html" %}
                 </ul>
             {%else%}
                 <hr class="space">

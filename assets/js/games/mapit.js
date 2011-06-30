@@ -10,6 +10,7 @@
             zoom: 16,
             markers: [],
             add: ".add",
+            rm: ".rm",
             submit: ".submit",
         }, opts);
 
@@ -98,19 +99,24 @@
 
                 update();
             }
-
+                
             // Actions for Point/Line/Shape
             switch(type) {
                 case 'Point':
-                    marker && marker.setMap(null);
-                    marker = new google.maps.Marker({
-                        position: map.getCenter(),
-                        draggable: true,
-                        map: map
-                    });
-                    markers.push(marker);
-                    refresh(marker);
-                    that.attr("disabled", "disabled");
+                    maxPoints = parseInt(document.getElementById("max_points_input").value);
+                    if (markers.length < maxPoints)
+                    {
+                        marker = new google.maps.Marker({
+                            position: map.getCenter(),
+                            draggable: true,
+                            map: map
+                        });
+                        markers.push(marker);
+                        for (x = 0; x < markers.length; x++)
+                        {
+                            refresh(markers[x]);
+                        }
+                    }
 
                     break;
                 case 'Shape':
@@ -155,6 +161,14 @@
 
 
             return false;
+        });
+
+        $(opts.rm).bind("click", function() {
+            for (x = 0; x < markers.length; x++)
+            {
+                markers[x].setMap(null);
+            }
+            markers = [];
         });
 
         $(opts.submit).bind("click", function() {
