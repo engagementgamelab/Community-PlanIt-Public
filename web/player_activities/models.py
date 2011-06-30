@@ -28,7 +28,8 @@ class PlayerActivity(models.Model):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     bio = models.CharField(max_length=255, null=True, blank=True)
     points = models.IntegerField(blank=True, null=True, default=None)
-    
+    maxNumMarkers = models.IntegerField(default=5, null=True, blank=None)
+
     def save(self):
         self.slug = slugify(self.name)
         self.createDate = datetime.datetime.now()

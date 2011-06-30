@@ -13,6 +13,7 @@
             <h2>{{activity.question}}</h2>
             <button class="button add">Add Point</button>
             <button class="button rm">Clear All Points</button>
+            <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
             <div class="google-map" data-type="Point"></div>
         </div>
     </form>

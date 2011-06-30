@@ -30,7 +30,6 @@ class AnswerSingleResponse(Answer):
         
 class AnswerMap(Answer):
     answerBox = models.TextField(blank=True, null=True)
-    maxNumMarkers = models.IntegerField(default=5)
     map = GoogleMapsField()
 
 class UserMapPoints(models.Model):

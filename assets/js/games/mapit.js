@@ -103,18 +103,20 @@
             // Actions for Point/Line/Shape
             switch(type) {
                 case 'Point':
-                    //marker && marker.setMap(null);
-                    marker = new google.maps.Marker({
-                        position: map.getCenter(),
-                        draggable: true,
-                        map: map
-                    });
-                    markers.push(marker);
-                    for (x = 0; x < markers.length; x++)
+                    maxPoints = parseInt(document.getElementById("max_points_input").value);
+                    if (markers.length < maxPoints)
                     {
-                        refresh(markers[x]);
+                        marker = new google.maps.Marker({
+                            position: map.getCenter(),
+                            draggable: true,
+                            map: map
+                        });
+                        markers.push(marker);
+                        for (x = 0; x < markers.length; x++)
+                        {
+                            refresh(markers[x]);
+                        }
                     }
-                    //that.attr("disabled", "disabled");
 
                     break;
                 case 'Shape':
