@@ -1,0 +1,61 @@
+
+
+localeurl - Any URLs without a language prefix will be redirected to add the prefix for the default language (or, optionally, the language preferred in the user’s browser settings).
+
+full documentation here 
+http://packages.python.org/django-localeurl/
+
+#django-localeurl
+
+INSTALLED_APPS = (
+    'localeurl',
+    ...
+)
+
+LOCALE_INDEPENDENT_PATHS = (
+    re.compile('^/ajax/'),
+    re.compile('^/assets/'),
+    re.compile('^/favicon.ico$'),
+)
+
+#define all available languages in the settings file
+ugettext = lambda s: s
+LANGUAGES = (
+  ('ru', ugettext('Russian')),
+  ('en', ugettext('English')),
+)
+
+localeurl tags
+
+{% load localeurl_tags %}
+
+<a href="{% locale_url "de" articles.views.display id=article.id %}">Show article in German</a>
+
+-----------------------------------
+django-nani
+
+1) add 'nani' to your INSTALLED_APPS
+2) define multilingual model. for instance on the Comment model
+
+from django.db import models
+from nani.models import TranslatableModel, TranslatedFields
+
+class Comment(TranslatableModel):
+    posted_date = models.DateTimeField(auto_now_add=True)
+    flagged = models.IntegerField(default=0)
+    hidden = models.BooleanField(default=False)
+
+    attachment = models.ManyToManyField(Attachment, blank=True, null=True)
+    user = models.ForeignKey(User, null=True, editable=False)
+    instance = models.ForeignKey(Instance, null=True, editable=False)
+    comments = models.ManyToManyField('self', symmetrical=False, blank=True, editable=False)
+    likes = models.ManyToManyField(User, blank=True, editable=False, related_name='liked_comments')
+
+    translations = TranslatedFields(
+        message = models.CharField(max_length=1000, blank=True, null=True)
+    )
+
+
+
+full documentation here 
+http://readthedocs.org/docs/django-nani/en/0.0.3/index.html
