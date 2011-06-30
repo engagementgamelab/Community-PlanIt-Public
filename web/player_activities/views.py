@@ -45,7 +45,7 @@ def get_activity(request, id):
         form = MapForm()
         map = activity.mission.instance.location 
     elif (activity.type.type == "empathy"):
-        tmpl = loader.get_template('player_activities/empathy.html')
+        tmpl = loader.get_template('player_activities/empathy_response.html')
         form = EmpathyForm()
     elif (activity.type.type == "multi_reponse"):
         mc = MultiChoiceActivity.objects.filter(activity=activity)

@@ -1,0 +1,25 @@
+{%extends "layouts/base.html"%}
+{%load gmap%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Neighborhood overview{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <form action="" method="post">
+        {% csrf_token %}
+        <h2>{{activity.question}}</h2>
+        {% if activity.bio %}
+            <h3>{{activity.bio}}</h3>
+        {% endif %}
+        {% if activity.question %}
+            <h4>{{acitivty.question}}</h4>
+        {% endif %}
+        <div class="fieldWrapper">
+            {{ form.answerBox.errors }}
+            <label for="id_answerbox">Your Response:</label>
+            {{ form.answerBox }}
+        </div>
+        <input type="submit" class="button submit" value="Submit" />
+    </form>
+{%endblock%}

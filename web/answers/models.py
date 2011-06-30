@@ -10,8 +10,6 @@ from gmapsfield.fields import GoogleMapsField
 class Answer(models.Model):
     #TODO: This might benefit from a 1:1 relationship
     activity = models.ForeignKey(PlayerActivity)
-    instructions = models.CharField(max_length=255)
-    addInstructions = models.CharField(max_length=255)
     answerUser = models.ForeignKey(User)
 
 class AnswerOpenEnded(Answer):
@@ -29,7 +27,7 @@ class AnswerSingleResponse(Answer):
         super(Answer, self).save()
         
 class AnswerMap(Answer):
-    answerBox = models.TextField(blank=True, null=True)
+    answerBox = models.CharField(max_length=1000, blank=True, null=True)
     map = GoogleMapsField()
 
 class UserMapPoints(models.Model):
@@ -38,7 +36,7 @@ class UserMapPoints(models.Model):
     point = GoogleMapsField()
 
 class AnswerEmpathy(Answer):
-    answerBox = models.TextField()
+    answerBox = models.CharField(max_length=1000)
     
     def save(self):
         self.type = AnswerType.objects.get_or_create(type="empathy")

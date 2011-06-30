@@ -15,7 +15,6 @@ class PlayerActivityType(models.Model):
     type = models.CharField(max_length=255)
     defaultPoints = models.IntegerField(default=10)
     
-    
 class PlayerActivity(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(editable=False)
@@ -24,12 +23,12 @@ class PlayerActivity(models.Model):
     mission = models.ForeignKey(Mission)
     type = models.ForeignKey(PlayerActivityType)
     createDate = models.DateTimeField(editable=False)
+    instructions = models.CharField(max_length=255, null=True, blank=True)
+    addInstructions = models.CharField(max_length=255, null=True, blank=True)
+    points = models.IntegerField(blank=True, null=True, default=None)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
-    bio = models.CharField(max_length=255, null=True, blank=True)
-    points = models.IntegerField(blank=True, null=True, default=None)
-    maxNumMarkers = models.IntegerField(default=5, null=True, blank=None)
-
+    
     def save(self):
         self.slug = slugify(self.name)
         self.createDate = datetime.datetime.now()
@@ -40,6 +39,24 @@ class PlayerActivity(models.Model):
             return self.type.defaultPoints
         else:
             return self.points
+
+class PlayerMapActivity(PlayerActivity):
+    maxNumMarkers = models.IntegerField(default=5)
+    
+    def save(self):
+        self.slug = slugify(self.name)
+        self.createDate = datetime.datetime.now()
+        self.type = PlayerActivityType.objects.get(type="map")
+        super(PlayerMapActivity, self).save()
+
+class PlayerEmpathyActivity(PlayerActivity):
+    bio = models.CharField(max_length=255)
+    
+    def save(self):
+        self.slug = slugify(self.name)
+        self.createDate = datetime.datetime.now()
+        self.type = PlayerActivityType.objects.get(type="empathy")
+        super(PlayerMapActivity, self).save()
 
 class MultiChoiceActivity(models.Model):
     activity = models.ForeignKey(PlayerActivity)

@@ -43,6 +43,7 @@ class MapForm(forms.Form):
         fields = ('map',)
                 
 class EmpathyForm(forms.Form):
+    answerBox = forms.CharField(required=True, widget=forms.Textarea(attrs={"rows": 4, "cols": 60}))
     class Meta:
         model = AnswerEmpathy
         
