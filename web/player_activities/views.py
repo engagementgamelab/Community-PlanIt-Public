@@ -26,6 +26,11 @@ def get_activity(request, id):
     form = None
     map = None
     if request.method == "POST":
+        #s = ""
+        #for x in request.POST:
+        #    s = "%s%s: %s<br>" % (s, x, request.POST[x])
+        #return HttpResponse(s)
+        
         if request.POST["form"] == "open_ended":
             form = OpenForm(request.POST)
             if form.is_valid():
@@ -46,25 +51,23 @@ def get_activity(request, id):
             form = MapForm(request.POST)
             if form.is_valid():
                 map = form.cleaned_data["map"]
-                #typically I would NEVER do this, but this is acceptable here because
-                #map is a generated dictionary. I need to take all of the points and put
-                #them in as different answers.  
-                mapDict = eval(map)
-                markers = mapDict["markers"]
                 answerBox = form.cleaned_data["answerBox"]
-                answer = AnswerMap.objects.get_or_create(activity=activity, answerUser=request.user)
+                answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+                if (len(answer) > 0):
+                    answer = answer[0]
+                else:
+                    answer = AnswerMap()
+                    answer.activity = activity
+                    answer.answerUser = request.user
                 answer.answerBox = answerBox
+                answer.map = map;
                 answer.save()
                 answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
-                for marker in markers:
-                    mapStr = '{"coordinates":%s,"zoom":%s,"markers":[{"coordinates":%s}],"type":"Point"}' % (mapDict["coordinates"], 
-                                                                                                             mapDict["zoom"], 
-                                                                                                             marker["coordinates"])
-                    point = UserMapPoints()
-                    point.user = request.user
-                    point.map = answer
-                    point.point = mapStr
-                    point.save()
+                return HttpResponseRedirect('/dashboard/')
+            else:
+                map = request.POST["map"]
+                activity = PlayerMapActivity.objects.get(pk=activity.id)
+                tmpl = loader.get_template('player_activities/map_response.html')
         elif request.POST["form"] == "empathy":
             form = EmpathyForm(request.POST)
             if form.is_valid():

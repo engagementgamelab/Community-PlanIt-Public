@@ -28,12 +28,8 @@ class AnswerSingleResponse(Answer):
         
 class AnswerMap(Answer):
     answerBox = models.CharField(max_length=1000, blank=True, null=True)
-
-class UserMapPoints(models.Model):
-    user = models.ForeignKey(User)
-    map = models.ForeignKey(AnswerMap)
-    point = GoogleMapsField()
-
+    map = GoogleMapsField()
+    
 class AnswerEmpathy(Answer):
     answerBox = models.CharField(max_length=1000)
         

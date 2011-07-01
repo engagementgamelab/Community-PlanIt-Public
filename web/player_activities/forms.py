@@ -29,18 +29,22 @@ def MakeMultiForm(choices):
             model = AnswerMultiChoice
     return MultiForm
 
-class MapForm(forms.Form):
+class MapForm(forms.ModelForm):
     map = GoogleMapsField()
     answerBox = forms.CharField(required=True, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
-    def clean(self):
+
+    def clean_map(self):
         map = self.cleaned_data.get('map')
-        if not map or not simplejson.loads(map).has_key('coordinates'):
-          raise forms.ValidationError('Please make a selection on the map.')
-        return self.cleaned_data
+        if not map:
+            raise forms.ValidationError("The map doesn't exist")
+        mapDict = simplejson.loads(map);
+        if len(mapDict["markers"]) == 0:
+            raise forms.ValidationError("Please select a point on the map")
+        return map
 
     class Meta:
         model = AnswerMap
-        fields = ('map',)
+        fields = ('map', 'answerBox')
                 
 class EmpathyForm(forms.Form):
     answerBox = forms.CharField(required=True, widget=forms.Textarea(attrs={"rows": 4, "cols": 60}))

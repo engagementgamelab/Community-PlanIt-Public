@@ -8,17 +8,18 @@
 {%block main%}
     <form action="" method="post" class="narrow">
         <input type="hidden" name="form" value="map">
+        <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
         {% csrf_token %}
+        <h2>{{activity.question}}</h2>
+        <button class="button add">Add Point</button>
+        <button class="button rm">Clear All Points</button>
+
         <div class="fieldWrapper">
-            {{form.errors}}
-            <h2>{{activity.question}}</h2>
-            <button class="button add">Add Point</button>
-            <button class="button rm">Clear All Points</button>
-            <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
+            {{form.map.errors}}
             <div class="google-map" data-type="Point"/>
         </div>
         <div class="fieldWrapper">
-            {{form.answerBox.error}}
+            {{form.answerBox.errors}}
             <label for="id_answerBox">Your Response:</label>
             {{ form.answerBox }}
         </div>
