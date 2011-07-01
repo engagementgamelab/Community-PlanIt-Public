@@ -15,7 +15,10 @@
             <label for="id_answerbox">Your Choices:</label>
             <ul style="list-style-type: none;">
             {% for choice in form.response.field.choices %}
+              <!--
               <li><label for="id_response_{{choice.0}}"><input type="checkbox" name="response_{{choice.0}}" value="{{choice.0}}">{{choice.1}}</label></li>
+              -->
+              <li><label for="response_{{choice.0}}"><input type="checkbox" name="response_{{choice.0}}" value="{{choice.0}}">{{choice.1}}</label></li>
             {% endfor %}
             </ul>
         </div>

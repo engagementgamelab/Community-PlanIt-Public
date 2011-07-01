@@ -22,13 +22,10 @@ def overview(request, id):
 @login_required
 def get_activity(request, id):
     activity = PlayerActivity.objects.get(id=id)
-
+    tmpl = None
+    form = None
+    map = None
     if request.method == "POST":
-        s = ""
-        for x in request.POST:
-            s = "%s%s: %s<br>" % (s, x, request.POST[x])
-        return HttpResponse(s)
-    
         if request.POST["form"] == "open_ended":
             form = OpenForm(request.POST)
             if form.is_valid():
@@ -40,10 +37,6 @@ def get_activity(request, id):
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
-            if settings.DEBUG == True and len(choices) == 0:
-                choices.append((1, "Test data"))
-                choices.append((2, "More test data"))
-                choices.append((3, "This is another test"))
             form = MakeSingleForm(choices)(request.POST)
             if form.is_valid():
                 answer = AnswerSingleResponse.objects.get_or_create(activity=activity, answerUser = request.user)
@@ -84,10 +77,6 @@ def get_activity(request, id):
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
-            if settings.DEBUG == True and len(choices) == 0:
-                choices.append((1, "Test data"))
-                choices.append((2, "More test data"))
-                choices.append((3, "This is another test"))
             form = MakeMultiForm(choices)(request.POST)
             if form.is_valid():
                 #this gets very very messy....
@@ -95,16 +84,21 @@ def get_activity(request, id):
                 ids = []
                 for choice in choices:
                     ids.append(choice.id)
-                #test for this to delete them all
-                AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids))
-                if form.cleaned_data.has_key("response_1"):
-                    
-             
+                #cleans out all of the choices that the user selected from the check boxes
+                AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)).delete()
+                for key in request.POST.keys():
+                    if key.find("response_") >= 0:
+                        answer = AnswerMultiChoice()
+                        answer.user = request.user
+                        #This is tricky, the reponse: value returned object is response_$(id): id
+                        #So basically if the response exists it means that checkbox was checked and the
+                        # value returned will be the ID and will always be an int
+                        answer.option = MultiChoiceActivity.objects.get(id=int(request.POST[key]))
+                        answer.save()
+                return HttpResponseRedirect('/dashboard/')
+            else:
+                tmpl = loader.get_template('player_activities/multi_response.html')
     else:
-
-        tmpl = None
-        form = None
-        map = None
         if (activity.type.type == "open_ended"):
             tmpl = loader.get_template('player_activities/open_ended.html')
             form = OpenForm()
@@ -114,10 +108,6 @@ def get_activity(request, id):
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
-            if settings.DEBUG == True and len(choices) == 0:
-                choices.append((1, "Test data"))
-                choices.append((2, "More test data"))
-                choices.append((3, "This is another test"))
             form = MakeSingleForm(choices)
         elif (activity.type.type == "map"):
             activity = PlayerMapActivity.objects.get(pk=activity.id)
@@ -132,10 +122,6 @@ def get_activity(request, id):
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
-            if settings.DEBUG == True and len(choices) == 0:
-                choices.append((1, "Test data"))
-                choices.append((2, "More test data"))
-                choices.append((3, "This is another test"))
             tmpl = loader.get_template('player_activities/multi_response.html')
             form = MakeMultiForm(choices)
         else:

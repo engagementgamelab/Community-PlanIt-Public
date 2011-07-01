@@ -24,7 +24,7 @@ def MakeSingleForm(choices):
 
 def MakeMultiForm(choices):
     class MultiForm(forms.Form):
-        response = forms.ChoiceField(widget=CheckboxSelectMultiple, choices=choices)
+        response = forms.ChoiceField(widget=CheckboxSelectMultiple, choices=choices, required=False)
         class Meta:
             model = AnswerMultiChoice
     return MultiForm

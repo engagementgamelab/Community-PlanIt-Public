@@ -46,7 +46,3 @@ class AnswerEmpathy(Answer):
 class AnswerMultiChoice(models.Model):
     user = models.ForeignKey(User)
     option = models.ForeignKey(MultiChoiceActivity)
-
-    def save(self):
-        self.type = AnswerType.objects.get_or_create(type="multi_reponse")
-        super(Answer, self).save()
