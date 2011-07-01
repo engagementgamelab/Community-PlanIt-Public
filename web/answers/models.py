@@ -36,10 +36,6 @@ class UserMapPoints(models.Model):
 
 class AnswerEmpathy(Answer):
     answerBox = models.CharField(max_length=1000)
-    
-    def save(self):
-        self.type = AnswerType.objects.get_or_create(type="empathy")
-        super(Answer, self).save()
         
 #This is nasty but it's the simple way to get many checked values
 #for the user stored

@@ -69,9 +69,18 @@ def get_activity(request, id):
             form = EmpathyForm(request.POST)
             if form.is_valid():
                 answerBox = form.cleaned_data["answerBox"]
-                answer = AnswerEmpathy.objects.get_or_create(activity=activity, answerUser=request.user)
+                answer = AnswerEmpathy.objects.filter(activity=activity, answerUser=request.user)
+                if (len(answer) > 0):
+                    answer = answer[0]
+                else:
+                    answer = AnswerEmpathy()
+                    answer.activity = activity
+                    answer.answerUser = request.user
                 answer.answerBox = answerBox
                 answer.save()
+                return HttpResponseRedirect('/dashboard/')
+            else:
+                tmpl = loader.get_template('player_activities/empathy_response.html')
         elif request.POST["form"] == "multi_reponse":
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
@@ -115,6 +124,7 @@ def get_activity(request, id):
             form = MapForm()
             map = activity.mission.instance.location 
         elif (activity.type.type == "empathy"):
+            activity = PlayerEmpathyActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/empathy_response.html')
             form = EmpathyForm()
         elif (activity.type.type == "multi_reponse"):

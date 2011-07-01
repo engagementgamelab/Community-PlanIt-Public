@@ -27,7 +27,6 @@ class PlayerActivity(models.Model):
     addInstructions = models.CharField(max_length=255, null=True, blank=True)
     points = models.IntegerField(blank=True, null=True, default=None)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
-    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     
     def save(self):
         self.slug = slugify(self.name)
@@ -50,7 +49,8 @@ class PlayerMapActivity(PlayerActivity):
         super(PlayerMapActivity, self).save()
 
 class PlayerEmpathyActivity(PlayerActivity):
-    bio = models.CharField(max_length=255)
+    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
+    bio = models.CharField(max_length=1000)
     
     def save(self):
         self.slug = slugify(self.name)

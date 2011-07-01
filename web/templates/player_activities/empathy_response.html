@@ -10,9 +10,17 @@
         <input type="hidden" name="form" value="empathy">
         {% csrf_token %}
         <h2>{{activity.question}}</h2>
+        
+        {%if activity.avatar%}
+            <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
+        {%else%}               
+            <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+        {%endif%}
+         
         {% if activity.bio %}
             <h3>{{activity.bio}}</h3>
         {% endif %}
+
         {% if activity.question %}
             <h4>{{acitivty.question}}</h4>
         {% endif %}
