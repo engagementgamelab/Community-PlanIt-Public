@@ -34,9 +34,18 @@ def get_activity(request, id):
         if request.POST["form"] == "open_ended":
             form = OpenForm(request.POST)
             if form.is_valid():
-                answer = AnswerOpenEnded.objects.get_or_create(activity=activity, answerUser = request.user)
+                answer = AnswerOpenEnded.objects.filter(activity=activity, answerUser=request.user)
+                if (len(answer) > 0):
+                    answer = answer[0]
+                else:
+                    answer = AnswerSingleResponse()
+                    answer.activity = activity
+                    answer.answerUser = request.user
                 answer.answerBox = form.cleaned_data["answerBox"]
                 answer.save()
+                return HttpResponseRedirect('/dashboard/')
+            else:
+                tmpl = loader.get_template('player_activities/open_response.html')
         elif request.POST["form"] == "single_response":
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
@@ -44,9 +53,19 @@ def get_activity(request, id):
                 choices.append((x.id, x.value))
             form = MakeSingleForm(choices)(request.POST)
             if form.is_valid():
-                answer = AnswerSingleResponse.objects.get_or_create(activity=activity, answerUser = request.user)
-                answer.selected = MultiChoiceActivity.objects.filter(id=int(form.cleaned_data["response"]))
+                answer = AnswerSingleResponse.objects.filter(activity=activity, answerUser = request.user)
+                if (len(answer) > 0):
+                    answer = answer[0]
+                else:
+                    answer = AnswerSingleResponse()
+                    answer.activity = activity
+                    answer.answerUser = request.user
+                answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
                 answer.save()
+                return HttpResponseRedirect('/dashboard/')
+            else:
+                tmpl = loader.get_template('player_activities/single_response.html')
+                
         elif request.POST["form"] == "map":
             form = MapForm(request.POST)
             if form.is_valid():
@@ -112,7 +131,7 @@ def get_activity(request, id):
                 tmpl = loader.get_template('player_activities/multi_response.html')
     else:
         if (activity.type.type == "open_ended"):
-            tmpl = loader.get_template('player_activities/open_ended.html')
+            tmpl = loader.get_template('player_activities/open_response.html')
             form = OpenForm()
         elif (activity.type.type == "single_response"):
             tmpl = loader.get_template('player_activities/single_response.html')

@@ -15,17 +15,9 @@ class Answer(models.Model):
 class AnswerOpenEnded(Answer):
     answerBox = models.CharField(max_length=1000)
     
-    def save(self):
-        self.type = AnswerType.objects.get_or_create(type="open_ended")
-        super(Answer, self).save()
-    
 class AnswerSingleResponse(Answer):
     selected = models.ForeignKey(MultiChoiceActivity)
-    
-    def save(self):
-        self.type = AnswerType.objects.get_or_create(type="single_response")
-        super(Answer, self).save()
-        
+
 class AnswerMap(Answer):
     answerBox = models.CharField(max_length=1000, blank=True, null=True)
     map = GoogleMapsField()

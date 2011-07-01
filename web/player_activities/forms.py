@@ -10,7 +10,7 @@ from web.answers.models import *
 from gmapsfield.fields import *
 
 class OpenForm(forms.Form):
-    answerbox = forms.CharField(required=True, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
+    answerBox = forms.CharField(required=True, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
     
     class Meta:
         model = AnswerOpenEnded
