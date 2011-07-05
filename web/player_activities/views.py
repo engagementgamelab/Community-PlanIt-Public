@@ -38,7 +38,7 @@ def get_activity(request, id):
                 if (len(answer) > 0):
                     answer = answer[0]
                 else:
-                    answer = AnswerSingleResponse()
+                    answer = AnswerOpenEnded()
                     answer.activity = activity
                     answer.answerUser = request.user
                 answer.answerBox = form.cleaned_data["answerBox"]
