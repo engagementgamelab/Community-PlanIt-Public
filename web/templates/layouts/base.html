@@ -151,7 +151,7 @@
                                 <div class="score">
                                     <div class="fill" style="width:{{user.get_profile.points_to_coin_for_fill}}%"></div>
                                     <span class="points">Next coin in {{ user.get_profile.points_to_coin }} pts!</span>
-                                    <a href="/value" class="highlight coins{%if user.get_profile.coins%} has-coins{%endif%}">{{user.get_profile.coins}}</a>
+                                    <a href="/value" class="highlight coins{%if user.get_profile.coins%} has-coins{%endif%}">{{user.get_profile.currentCoins}}</a>
                                 </div>
                                 {%if user.get_profile.coins > 0%}
                                     {%if user.get_profile.instance%}

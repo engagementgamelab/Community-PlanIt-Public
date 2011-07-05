@@ -95,10 +95,10 @@ class UserProfile(models.Model):
     def screen_name(self):
         #First name and last name are required
         first = self.user.first_name
-        first[0] = first[0].upper()
+        first = first[0].upper() + first[1:]
         
         last = self.user.last_name
-        last[0] = last[0].upper()
+        last = last[0].upper() + last[1:]
         
         if len(last) > 1:
             last = "%s." % last[0]
