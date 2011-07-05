@@ -25,7 +25,8 @@ def fetch(request, slug):
     activities = PlayerActivity.objects.filter(mission=mission)
     pks = []
     for pk in Answer.objects.filter(answerUser=request.user):
-        pks.append(pk.id)
+        if (pk.activity.id not in pks):
+            pks.append(pk.activity.id)
     #We want to get all activities that the user has for this mission
     #And the user has no answer for
     unfinished_activities = PlayerActivity.objects.filter(Q(mission=mission) & ~Q(pk__in=pks))

@@ -26,11 +26,6 @@ def get_activity(request, id):
     form = None
     map = None
     if request.method == "POST":
-        #s = ""
-        #for x in request.POST:
-        #    s = "%s%s: %s<br>" % (s, x, request.POST[x])
-        #return HttpResponse(s)
-        
         if request.POST["form"] == "open_ended":
             form = OpenForm(request.POST)
             if form.is_valid():

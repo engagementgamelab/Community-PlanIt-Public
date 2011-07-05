@@ -334,13 +334,14 @@ def dashboard(request):
     activities = None
     if (len(mission) > 0):
         mission = mission[0]
+        activities = PlayerActivity.objects.filter(mission=mission)
         pks = []
         for pk in Answer.objects.filter(answerUser=request.user):
-            pks.append(pk.id)
+            if (pk.activity.id not in pks):
+                pks.append(pk.activity.id)
         #We want to get all activities that the user has for this mission
         #And the user has no answer for
         unfinished_activities = PlayerActivity.objects.filter(Q(mission=mission) & ~Q(pk__in=pks))
-        activities = PlayerActivity.objects.filter(mission=mission)
     return HttpResponse(tmpl.render(RequestContext(request, {
         'activation_form': activation_form,
         'log': log,
