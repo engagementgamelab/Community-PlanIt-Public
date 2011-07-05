@@ -166,7 +166,7 @@ def index(request):
     user = request.user
     profile = user.get_profile()
     instance = profile.instance
-    tmpl = loader.get_template('player_activities/base.html')
+    tmpl = loader.get_template('player_activities/index.html')
     if (instance == None):
         return HttpResponse(tmpl.render(RequestContext(request, {
             'instance': instance,

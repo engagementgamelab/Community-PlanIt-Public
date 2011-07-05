@@ -1,9 +1,6 @@
-{%extends "layouts/base.html"%}
-{%load gmap%}
+{%extends "player_activities/base.html"%}
 
-{%block section%}instances{%endblock%}
-{%block title%}Neighborhood overview{%endblock%}
-{%block page_title%}{%endblock%}
+{%block title%}Single Response{%endblock%}
 
 {%block main%}
     <form action="" method="post">
@@ -23,8 +20,4 @@
         <input type="submit" class="button submit" value="Submit" />
     </form>
     
-{%endblock%}
-
-{%block body%}
-    {%gmap_includes%}
 {%endblock%}

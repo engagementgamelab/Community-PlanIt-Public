@@ -1,11 +1,9 @@
-{%extends "layouts/base.html"%}
+{%extends "player_activities/base.html"%}
 {%load gmap%}
 
-{%block section%}instances{%endblock%}
-{%block title%}Neighborhood overview{%endblock%}
-{%block page_title%}{%endblock%}
+{%block title%}Map Response{%endblock%}
 
-{%block main%}
+{%block activity%}
     <form action="" method="post" class="narrow">
         <input type="hidden" name="form" value="map">
         <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
