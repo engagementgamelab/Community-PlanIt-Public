@@ -10,6 +10,7 @@ from web.player_activities.models import *
 from web.answers.models import *
 from web.missions.models import Mission
 from web.instances.models import Instance
+from web.reports.actions import *
 
 from web.processors import instance_processor as ip
 from web.player_activities.forms import *
@@ -26,19 +27,24 @@ def get_activity(request, id):
     form = None
     map = None
     if request.method == "POST":
+        #If this game is a replay it should be set below. The reason to not check here
+        # is because the type of the game might have changed. If that is the case, the Answer.objects.filteer
+        # will exist but it will be the wrong one.  
+        replay = False 
+
         if request.POST["form"] == "open_ended":
             form = OpenForm(request.POST)
             if form.is_valid():
                 answer = AnswerOpenEnded.objects.filter(activity=activity, answerUser=request.user)
                 if (len(answer) > 0):
                     answer = answer[0]
+                    replay = True
                 else:
                     answer = AnswerOpenEnded()
                     answer.activity = activity
                     answer.answerUser = request.user
                 answer.answerBox = form.cleaned_data["answerBox"]
                 answer.save()
-                return HttpResponseRedirect('/dashboard/')
             else:
                 tmpl = loader.get_template('player_activities/open_response.html')
         elif request.POST["form"] == "single_response":
@@ -51,16 +57,15 @@ def get_activity(request, id):
                 answer = AnswerSingleResponse.objects.filter(activity=activity, answerUser = request.user)
                 if (len(answer) > 0):
                     answer = answer[0]
+                    replay = True
                 else:
                     answer = AnswerSingleResponse()
                     answer.activity = activity
                     answer.answerUser = request.user
                 answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
                 answer.save()
-                return HttpResponseRedirect('/dashboard/')
             else:
                 tmpl = loader.get_template('player_activities/single_response.html')
-                
         elif request.POST["form"] == "map":
             form = MapForm(request.POST)
             if form.is_valid():
@@ -69,6 +74,7 @@ def get_activity(request, id):
                 answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
                 if (len(answer) > 0):
                     answer = answer[0]
+                    replay = True
                 else:
                     answer = AnswerMap()
                     answer.activity = activity
@@ -77,7 +83,6 @@ def get_activity(request, id):
                 answer.map = map;
                 answer.save()
                 answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
-                return HttpResponseRedirect('/dashboard/')
             else:
                 map = request.POST["map"]
                 activity = PlayerMapActivity.objects.get(pk=activity.id)
@@ -89,13 +94,13 @@ def get_activity(request, id):
                 answer = AnswerEmpathy.objects.filter(activity=activity, answerUser=request.user)
                 if (len(answer) > 0):
                     answer = answer[0]
+                    replay = True
                 else:
                     answer = AnswerEmpathy()
                     answer.activity = activity
                     answer.answerUser = request.user
                 answer.answerBox = answerBox
                 answer.save()
-                return HttpResponseRedirect('/dashboard/')
             else:
                 tmpl = loader.get_template('player_activities/empathy_response.html')
         elif request.POST["form"] == "multi_reponse":
@@ -107,6 +112,8 @@ def get_activity(request, id):
             if form.is_valid():
                 #this gets very very messy....
                 choices = MultiChoiceActivity.objects.filter(activity=activity)
+                if len(choices) > 0:
+                    replay = True
                 ids = []
                 for choice in choices:
                     ids.append(choice.id)
@@ -121,9 +128,16 @@ def get_activity(request, id):
                         # value returned will be the ID and will always be an int
                         answer.option = MultiChoiceActivity.objects.get(id=int(request.POST[key]))
                         answer.save()
-                return HttpResponseRedirect('/dashboard/')
             else:
                 tmpl = loader.get_template('player_activities/multi_response.html')
+        
+        #If the template is None then there wasn't an error so assign the points and redirect
+        #Otherwise fall through. Only assign the points if the replay is false, but still redirect
+        if replay == False:
+            PointsAssigner.assignAct(request.user, activity)
+
+        if tmpl == None:
+            return HttpResponseRedirect('/dashboard/')
     else:
         if (activity.type.type == "open_ended"):
             tmpl = loader.get_template('player_activities/open_response.html')
