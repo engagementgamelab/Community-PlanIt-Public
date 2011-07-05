@@ -27,7 +27,13 @@ class Comment(TranslatableModel):
     )
 
     def __unicode__(self):
-        return self.safe_translation_getter('message', self.message[:25])
+        if self.message:
+            try:
+                msg = self.message[:25]
+            except:
+                msg = self.message
+            return self.safe_translation_getter('message', msg)
+        return u''
 
     @property
     def discussion_count(self):
