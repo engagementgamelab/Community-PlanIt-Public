@@ -76,7 +76,11 @@
                 {%if completed_challenges%}
                     {%for challenge in completed_challenges%}
                         <li class="">
-                            <p><a href="/challenge/{{challenge.challenge.id}}/">{{challenge.challenge.name}} <span class="highlight">Completed!</span></a></p>
+                            {% if challenge.accepted %}
+                                <p><a href="/challenge/{{challenge.challenge.id}}/">{{challenge.challenge.name}} <span class="highlight">Completed!</span></a></p>
+                            {% else %}
+                                <p><a href="/challenge/{{challenge.challenge.id}}/">{{challenge.challenge.name}} <span class="highlight">Declined.</span></a></p>
+                            {% endif %}
                         </li>
                     {%endfor%}
                 {%else%}
