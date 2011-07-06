@@ -1,5 +1,5 @@
 {% load compress %}
-{% load extras %}
+{% load extras localeurl_tags %}
 <!doctype html>
 <html lang="en" class="no-js" -->
 <head>
@@ -82,6 +82,14 @@
                     {%else%}
                         <a class="home" href="/">Home</a> <a class="neighborhoods" href="/neighborhood">Neighborhoods</a> <a class="about" href="/about">About</a> <a class="contact" href="/contact">Contact</a>
                     {%endif%}
+                    {% for lang in LANGUAGES %}
+                        {% ifequal lang.0 LANGUAGE_CODE %}
+                            <a class="flag" href="#"><img src="{{MEDIA_URL}}img/flags/{{lang.0}}.png" border="0" title="{{ lang.1 }}"/></a>
+                        {% else %}
+                            <a class="flag" href="{{ request.path|chlocale:lang.0 }}"><img src="{{MEDIA_URL}}img/flags/{{lang.0}}.png" border="0" title="{{lang.1}}"/></a>
+                        {% endifequal %}
+                    {% endfor %}
+
                     {%if user.is_staff%}
                         <a class="right admin" href="/admin">Admin</a>
                     {%endif%}

@@ -1,5 +1,5 @@
 {%extends "layouts/base.html"%}
-{% load game_extras %}
+{% load game_extras i18n %}
 
 {%block section%}accounts{%endblock%}
 
@@ -130,7 +130,7 @@
             </div>
         {%endif%}
     {%else%}
-        <div> The neighborhood {{instance}} has not started yet we will alert you once it has begun.  </div>
+    <div> {% blocktrans %} The neighborhood {{instance}} has not started yet we will alert you once it has begun.{% endblocktrans%}  </div>
         <br>
         <a href="/account/logout">Logout</a>
     {%endif%}

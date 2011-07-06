@@ -471,6 +471,7 @@ hr.space {
       background: url("/assets/img/icons/info-small.png") center left no-repeat; }
     .page #header nav .contact {
       background: url("/assets/img/icons/postage-medium.png") center left no-repeat; }
+    .page #header nav .flag { width: 16px; }
 .page .date {
   float: right;
   padding: 0 0 10px 10px;

@@ -86,6 +86,7 @@ ugettext = lambda s: s
 LANGUAGES = (
   ('ru', ugettext('Russian')),
   ('en', ugettext('English')),
+  ('de', ugettext('German')),
 )
 #django-localeurl
 LOCALE_INDEPENDENT_PATHS = (
@@ -168,6 +169,7 @@ INSTALLED_APPS = (
     'gmapsfield.templatetags',
     'nani',
     'django_extensions',
+    'rosetta',
 )
 
 # Google maps settings
