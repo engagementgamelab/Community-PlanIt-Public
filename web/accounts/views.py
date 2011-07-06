@@ -23,6 +23,8 @@ from web.reports.models import Activity
 from web.missions.models import Mission
 from web.answers.models import Answer
 from web.player_activities.models import PlayerActivity
+from web.values.models import *
+
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
@@ -263,12 +265,36 @@ def profile(request, id):
         except:
             pass
 
+    
+    
+    value_wrapper = []
+    playervalues = PlayerValue.objects.filter(user=request.user)
+    
+    values = Value.objects.filter(instance=instance)
+    total_coins = 0
+    for value in values:
+        total_coins += value.coins
+    
+    total_playerCoins = 0
+    for value in values:
+        player_value = playervalues.filter(value=value)
+        coins = value.coins
+        if len(player_value) > 0:
+            total_playerCoins += player_value[0].coins
+            # +0.0 coerces to a float for percentages
+            value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
+                                  'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })
+        else:
+            value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': 0,
+                                   'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })    
+    
     tmpl = loader.get_template('accounts/profile.html')
-
     return HttpResponse(tmpl.render(RequestContext(request, {
         'player': player,
         'followingme': followingme,
         'log': log,
+        'total_playerCoins': total_playerCoins,
+        'value_wrapper': value_wrapper,
     },[ip])))
 
 @login_required

@@ -33,6 +33,10 @@
     </p>    
     <hr class="clear">
     <div class="twothird">
+        <h3>Your coin spending</h3>
+        <div id="userPie" class="graph" style="width:350px;height:300px; margin-right:auto; 
+            margin-top: 25px; margin-bottom: 25px; "></div>
+            
         <h3>{{player.get_profile.screen_name}}'s Activity Log</h3>
         {%if log|length%}
         <ul class="listless listview feed">
@@ -124,7 +128,49 @@
         </ul>
         <div style="clear: both;"></div>
     </div>
+
+<script type="text/javascript">
+    $(function () {
+        var globalData = [];
+        var i = 0;
+        
+        var userData = [];
+        i = 0;
+        {%if total_playerCoins == 0 %}
+            {%for wrapper in value_wrapper%}
+                userData[i] = { label: "{{ wrapper.value.message }}", data: 1 }
+                i++;
+            {%endfor%}
+        {%else%}
+            {%for wrapper in value_wrapper%}
+                userData[i] = { label: "{{ wrapper.value.message }}", data: {{ wrapper.player_coins }} }
+                i++;
+            {%endfor%}
+        {%endif%}
+         
+        $.plot($("#userPie"), userData, {
+            series: { 
+                pie: { 
+                    show: true,
+                    radius: 1,
+                    label: {
+                        show: true,
+                        radius: 2/3,
+                        formatter: function(label, series) {
+                            //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
+                            return '<div style="font-size:small;text-align:center;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                        },
+                        threshold: 0.1
+                    }
+                }
+            },
+            legend: { 
+                show: false
+            }
+        });
+    });
     
+</script>    
 {%endblock%}
 
 {%block footer%} {%endblock%}
