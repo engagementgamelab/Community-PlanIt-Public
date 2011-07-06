@@ -268,7 +268,7 @@ def profile(request, id):
     
     
     value_wrapper = []
-    playervalues = PlayerValue.objects.filter(user=request.user)
+    playervalues = PlayerValue.objects.filter(user=player)
     
     values = Value.objects.filter(instance=instance)
     total_coins = 0
