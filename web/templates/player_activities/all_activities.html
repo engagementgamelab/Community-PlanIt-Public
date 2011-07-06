@@ -8,12 +8,14 @@
     <!-- type is defined in player_activities.models
         They are: open_ended, single_response, map, empathy, multi_reponse 
     -->
+    <!-- TODO: This use to have a {{type}} assoicated with the li elements, this cuased very strange
+        behivoirs and was removed -->
     {% if activity in unfinished_activities %}
-        <li class="listitem game {{type}}">
+        <li class="listitem game">
         <a href="/activity/{{activity.id}}">{{activity.name}}</a>
         <span class="fine highlight green">{{ activity.getPoints }}</span> 
     {% else %}
-        <li class="listitem game played {{type}}">
+        <li class="listitem game played">
         <a href="/activity/{{activity.id}}">{{activity.name}}</a>
         <span class="fine highlight">Complete!</span>
         <a class="button" href="/activity/{{activity.id}}/overview/">Replay</a>

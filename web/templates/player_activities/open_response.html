@@ -1,0 +1,17 @@
+{%extends "player_activities/base.html"%}
+
+{%block title%}Open Response{%endblock%}
+
+{%block main%}
+    <form action="" method="post">
+        <input type="hidden" name="form" value="open_ended">
+        {% csrf_token %}
+        <h2>{{activity.question}}</h2>
+        <div class="fieldWrapper">
+            {{ form.answerBox.errors }}
+            <label for="id_answerBox">Your Response:</label>
+            {{ form.answerBox }}
+        </div>
+        <input type="submit" class="button submit" value="Submit" />
+    </form>
+{%endblock%}

@@ -331,11 +331,14 @@ def dashboard(request):
     log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
     mission = Mission.objects.filter(instance=instance).current()
     unfinished_activities = None
+    activities = None
     if (len(mission) > 0):
         mission = mission[0]
+        activities = PlayerActivity.objects.filter(mission=mission)
         pks = []
         for pk in Answer.objects.filter(answerUser=request.user):
-            pks.append(pk.id)
+            if (pk.activity.id not in pks):
+                pks.append(pk.activity.id)
         #We want to get all activities that the user has for this mission
         #And the user has no answer for
         unfinished_activities = PlayerActivity.objects.filter(Q(mission=mission) & ~Q(pk__in=pks))
@@ -344,4 +347,5 @@ def dashboard(request):
         'log': log,
         'unfinished_activities' : unfinished_activities,
         'last_mission': last_mission,
+        'activities': activities,
     },[ip])))

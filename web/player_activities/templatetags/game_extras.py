@@ -42,6 +42,7 @@ def do_get_points(parser, token):
       usage: {% get_points for completed action_type %}
       usage: {% get_points for created action_type %}
       usage: {% get_points for all action_type %}
+      usage: {% get_points for game game_id %}
     """
     bits = token.contents.split()
     if len(bits) != 4:

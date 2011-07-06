@@ -93,24 +93,11 @@
                         <div class="dashboardmodule">
                             <div class="dashboardmoduleinner">
                                  <ul class="listview listless">
-                                     {%if not mission_activities|length == finished_activities|length%}
-                                         {%for activity in unfinished_activities%}
-                                             <li class="listitem game {{game.game_type}}"> <!--TODO: make this class tied to activities -->
-                                                <!-- this will get the string for the type -->
-                                                {%with activity.type.type as type%}
-                                                    <!--TODO: make the link to the activity and insert it here -->
-                                                    <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}">{{game.title}}
-                                                        <span class="fine highlight green">{{ activity.get_points }}</span>
-                                                    </a>
-                                                {%endwith%}
-                                                    <!-- TODO: Make this the same link as above -->
-                                                 <a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}" class="button">Go</a>
-                                             </li>
-                                         {%endfor%}
-                                     {%else%}
+                                    {% include "player_activities/all_activities.html" %}
+                                    <!--
                                          <h3>You completed all the actives. Great work!</h3>
                                          <h4>Go to the current mission to see all responses or change your answers.</h4>
-                                     {%endif%}
+                                    -->
                                  </ul>
                             </div>
                             <hr class="space">

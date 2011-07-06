@@ -169,6 +169,7 @@
                 markers[x].setMap(null);
             }
             markers = [];
+            return false;
         });
 
         $(opts.submit).bind("click", function() {
