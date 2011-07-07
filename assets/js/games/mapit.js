@@ -205,21 +205,25 @@
             opts.autocomplete.bindTo('bounds', map)
             
             google.maps.event.addListener(opts.autocomplete, 'place_changed', function() {
-                var place = opts.autocomplete.getPlace();
-                if (place.geometry.viewport) {
-                  map.fitBounds(place.geometry.viewport);
-                } else {
-                  map.setCenter(place.geometry.location);
-                  map.setZoom(16);
+                maxPoints = parseInt(document.getElementById("max_points_input").value);
+                if (markers.length < maxPoints)
+                {
+                    var place = opts.autocomplete.getPlace();
+                    if (place.geometry.viewport) {
+                      map.fitBounds(place.geometry.viewport);
+                    } else {
+                      map.setCenter(place.geometry.location);
+                      map.setZoom(16);
+                    }
+                    var marker = new google.maps.Marker({
+                        position: place.geometry.location,
+                        draggable: true,
+                        map: map
+                    });
+                    markers.push(marker);
+                    var input = document.getElementById('google_search');
+                    input.value = "";
                 }
-                var marker = new google.maps.Marker({
-                    position: place.geometry.location,
-                    draggable: true,
-                    map: map
-                });
-                markers.push(marker);
-                var input = document.getElementById('google_search');
-                input.value = "";
             });
             
             
