@@ -9,13 +9,25 @@
         <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
         {% csrf_token %}
         <h2>{{activity.question|urlize}}</h2>
+        
         <button class="button add">Add Point</button>
         <button class="button rm">Clear All Points</button>
+    
+        
+    </form>
+    
+    <div class="fieldWrapper">
+        {{form.map.errors}}
+        <div id="map" class="google-map" data-type="Point"/>
+    </div>
 
-        <div class="fieldWrapper">
-            {{form.map.errors}}
-            <div class="google-map" data-type="Point"/>
-        </div>
+    <div>
+        <label>Search for a copmany or address:</label>
+        <input type="text" name="google_search" id="google_search" />
+    </div>
+    
+    
+    <form action="" method="post" class="narrow">
         <div class="fieldWrapper">
             {{form.answerBox.errors}}
             <label for="id_answerBox">Your Response:</label>
@@ -26,11 +38,15 @@
         </div>
     </form>
     
+    
+    
+    
 {%endblock%}
 
 
 {%block body%}
-    <script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript" charset="utf-8"></script>
+    <script src="http://maps.google.com/maps/api/js?sensor=false&libraries=places" type="text/javascript"></script>
+    <!-- script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript" charset="utf-8"></script -->
     <script src="{{MEDIA_URL}}js/games/mapit.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
         jQuery(function($) {

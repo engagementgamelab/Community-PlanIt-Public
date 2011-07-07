@@ -12,7 +12,16 @@
             add: ".add",
             rm: ".rm",
             submit: ".submit",
+            autocomplete: [],
         }, opts);
+
+        function callback(results, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                for (var i = 0; i < results.length; i++) {
+                    var place = results[i];
+                }
+            }
+        }
 
 
         function updatePolygons(color, keep) {
@@ -103,6 +112,7 @@
             // Actions for Point/Line/Shape
             switch(type) {
                 case 'Point':
+               
                     maxPoints = parseInt(document.getElementById("max_points_input").value);
                     if (markers.length < maxPoints)
                     {
@@ -175,12 +185,11 @@
         $(opts.submit).bind("click", function() {
             update();
         });
-
+        
         return this.each(function() {
             var coordinates = new google.maps.LatLng(opts.coordinates[0], opts.coordinates[1]),
                 bounds = new google.maps.LatLngBounds(),
                 that = $(this);
-
             type = that.attr("data-type");
             state = that.attr("data-state");
 
@@ -190,7 +199,30 @@
                 center: coordinates,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             });
-
+            
+            var input = document.getElementById('google_search');
+            opts.autocomplete = new google.maps.places.Autocomplete(input);
+            opts.autocomplete.bindTo('bounds', map)
+            
+            google.maps.event.addListener(opts.autocomplete, 'place_changed', function() {
+                var place = opts.autocomplete.getPlace();
+                if (place.geometry.viewport) {
+                  map.fitBounds(place.geometry.viewport);
+                } else {
+                  map.setCenter(place.geometry.location);
+                  map.setZoom(16);
+                }
+                var marker = new google.maps.Marker({
+                    position: place.geometry.location,
+                    draggable: true,
+                    map: map
+                });
+                markers.push(marker);
+                var input = document.getElementById('google_search');
+                input.value = "";
+            });
+            
+            
             if(state === "played") {
                 var marker_coordinates;
                 if(type === "Point" && opts.markers && opts.markers.length) {
