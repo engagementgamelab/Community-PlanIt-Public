@@ -93,6 +93,7 @@ LOCALE_INDEPENDENT_PATHS = (
     #re.compile('^/$'),
     re.compile('^/ajax/'),
     re.compile('^/assets/'),
+    re.compile('^/admin-media/'),
     re.compile('^/favicon.ico$'),
 )
 LOCALE_INDEPENDENT_MEDIA_URL = config.getboolean('localeurl', 'LOCALE_INDEPENDENT_MEDIA_URL')
