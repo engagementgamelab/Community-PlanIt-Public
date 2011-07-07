@@ -1,4 +1,5 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
 {%block section%}accounts{%endblock%}
 {%block title%}Edit Profile{%endblock%}
@@ -12,7 +13,7 @@
             the image without having to resort to style="width:100%" as this
             is a bad anoying hack. -->
         <div class="half">
-            <label>Your current avatar</label>
+            <label>{% trans "Your current avatar" %}</label>
             {%if user.get_profile.avatar%}
                 <img class="avatar-edit" src="{{MEDIA_URL}}{{user.get_profile.avatar}}" style="width:100%;">
             {%else%}
@@ -45,34 +46,34 @@
                 {%csrf_token%}
                 <div class="fieldWrapper">
                     {{ profile_form.avatar.errors }}
-                    <label for="id_stake">Avatar:</label>
+                    <label for="id_stake">{% trans "Avatar" %}:</label>
                     {{ profile_form.avatar }}
                 </div>
                 
                 <div class="fieldWrapper">
                     {{ profile_form.email.errors }}
-                    <label for="id_email">Email:*</label>
+                    <label for="id_email">{% trans "Email" %}:*</label>
                     {{ profile_form.email }}
                     <p style="font-size: .75em; font-style:italic;">{{ profile_form.affiliations.help_text }}</p>
                 </div>
                 <div class="fieldWrapper">
                     {{ profile_form.first_name.errors }}
-                    <label for="id_first_name">First Name:*</label>
+                    <label for="id_first_name">{% trans "First Name" %}:*</label>
                     {{ profile_form.first_name }}
                 </div>
                 <div class="fieldWrapper">
                     {{ profile_form.last_name.errors }}
-                    <label for="id_last_name">Last Name:*</label>
+                    <label for="id_last_name">{% trans "Last Name" %}:*</label>
                     {{ profile_form.last_name }}
                 </div>
                 <div class="fieldWrapper">
                     {{ profile_form.stake.errors }}
-                    <label for="id_stake">stake</label>
+                    <label for="id_stake">{% trans "stake" %}</label>
                     {{ profile_form.stake }}
                 </div>
                 <div class="fieldWrapper">
                     {{ profile_form.affiliations.errors }}
-                    <label for="id_affiliations">Affiliations:</label>
+                    <label for="id_affiliations">{% trans "Affiliations" %}:</label>
                     {{ profile_form.affiliations }}
                    <p style="font-size: .75em; font-style:italic;">{{ profile_form.affiliations.help_text }}</p>
                 </div>

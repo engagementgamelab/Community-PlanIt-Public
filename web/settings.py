@@ -80,6 +80,9 @@ TIME_ZONE = config.get('localization', 'TIME_ZONE')
 LANGUAGE_CODE = config.get('localization', 'LANGUAGE_CODE')
 USE_I18N = config.getboolean('localization', 'USE_I18N') 
 USE_L10N = config.getboolean('localization', 'USE_L10N')
+LOCALE_PATHS = (
+        os.path.join(ROOTDIR, '../locale'),
+)
 
 
 ugettext = lambda s: s
