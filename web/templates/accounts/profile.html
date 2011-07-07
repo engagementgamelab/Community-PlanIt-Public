@@ -1,17 +1,18 @@
 {%extends "layouts/base.html"%}
+{% load i18n %}
 
 {%block section%}accounts{%endblock%}
 
-{%block title%}Dashboard{%endblock%}
+{%block title%}{% trans "Dashboard" %}{%endblock%}
 {%block page_title%} {{player.get_profile.screen_name}} {%endblock%}
 
 {%block main%}
     <h2>
         {%if request.user and not player == request.user and not request.user.username = ''%}
             {%if player not in request.user.get_profile.following.all%}
-                <a class="button" href="/player/follow/{{player.id}}">Follow</a>
+                <a class="button" href="/player/follow/{{player.id}}">{% trans "Follow" %}</a>
             {%else%}
-                <a class="button" href="/player/unfollow/{{player.id}}">Unfollow</a>
+                <a class="button" href="/player/unfollow/{{player.id}}">{% trans "Unfollow" %}</a>
             {%endif%}
         {%endif%}
 
@@ -23,9 +24,9 @@
             <img class="left avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
         {%endif%} 
         <!--Lives in East Boston, works in Fort Point and Plays in Fort Point.-->
-        <span style="font-size: 1em">Points: {{player.get_profile.points}}</span><br>
-        <span style="font-size: 1em">Community Stake: {{player.get_profile.stake}}</span><br>
-        <span style="font-size: 1em">Affiliated With:
+        <span style="font-size: 1em">{% trans "Points" %}: {{player.get_profile.points}}</span><br>
+        <span style="font-size: 1em">{% trans "Community Stake" %}: {{player.get_profile.stake}}</span><br>
+        <span style="font-size: 1em">{% trans "Affiliated With" %}:
             {%for a in player.get_profile.affiliations_csv %} 
                 <a href="/affiliation/{{a}}" class="highlight">{{a}}</a>
             {%endfor%}
@@ -33,7 +34,7 @@
     </p>    
     <hr class="clear">
     <div class="twothird">
-        <h3>Your coin spending</h3>
+        <h3>{% trans "Your coin spending" %}</h3>
         <div id="userPie" class="graph" style="width:350px;height:300px; margin-right:auto; 
             margin-top: 25px; margin-bottom: 25px; "></div>
             
@@ -59,13 +60,13 @@
             {%endfor%}
         </ul>
         {%else%}
-            No activities created.   
+            {% trans "No activities created." %}   
         {%endif%}
     </div>
     
     <div class="third last">        
         <div class="modules">
-            <h3><a class="highlight" href="/list/following/{{player.id}}">Following <span class="fine">({{player.get_profile.following.all|length}})</span></a></h3>
+            <h3><a class="highlight" href="/list/following/{{player.id}}">{% trans "Following" %} <span class="fine">({{player.get_profile.following.all|length}})</span></a></h3>
             <div class="dashboardmodule">
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
@@ -89,7 +90,7 @@
             
             <hr class="space">
 
-            <h3><a class="highlight" href="/list/followers/{{player.id}}">Followers <span class="fine">({{followingme|length}})</span></a></h3>
+            <h3><a class="highlight" href="/list/followers/{{player.id}}">{% trans "Followers" %} <span class="fine">({{followingme|length}})</span></a></h3>
             <div class="dashboardmodule">
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
@@ -120,10 +121,10 @@
     <div style="clear: both; padding: 1em 0;"></div>
     <div id="comments">
         <div class="sleeper"></div>
-        <h4>Comments for {{player.get_profile.screen_name}}</h4>
+        <h4>{% trans "Comments for" %} {{player.get_profile.screen_name}}</h4>
         <ul class="listless comments">
             {% with player.get_profile as comments %}
-            {%include "comments/post.html"%}
+            {% include "comments/post.html" %}
             {% endwith %}
         </ul>
         <div style="clear: both;"></div>

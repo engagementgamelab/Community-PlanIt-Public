@@ -1,3 +1,4 @@
+# -- coding: utf-8 --
 # Manage different settings
 import os
 import re
@@ -84,12 +85,12 @@ LOCALE_PATHS = (
         os.path.join(ROOTDIR, '../locale'),
 )
 
-
 ugettext = lambda s: s
 LANGUAGES = (
   ('ru', ugettext('Russian')),
   ('en', ugettext('English')),
-  ('de', ugettext('German')),
+  ('de', ugettext(u'Deutsch')),
+  ('fr', ugettext(u'Français')),
 )
 #django-localeurl
 LOCALE_INDEPENDENT_PATHS = (

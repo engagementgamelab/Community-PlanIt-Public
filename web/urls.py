@@ -24,7 +24,7 @@ urlpatterns = patterns('',
 
     # NOTE: Fixed to singular
     (r'^$', 'web.views.index'),
-    (r'^dashboard/$', 'web.views.index'),
+    url(r'^dashboard/$', 'web.views.index', name='dashboard'),
     (r'^account/', include('web.accounts.urls')),
     (r'^comment/', include('web.comments.urls')),
     (r'^mission/', include('web.missions.urls')),
