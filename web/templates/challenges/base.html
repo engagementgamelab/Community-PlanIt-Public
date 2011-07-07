@@ -8,7 +8,13 @@
     <div class="fourfifth">
         <h2>
             {{challenge.name}}
-            {%if completed%}<span class="fine highlight">Completed!</span>{%endif%}
+            {% if completed %}
+                {% if accepted %}
+                    <span class="fine highlight">Completed!</span>
+                {% else %}
+                    <span class="fine highlight">Declined</span>
+                {% endif %}
+            {% endif %}
         </h2>
         
         <h3 class="black">{{challenge.description}}</h3>
@@ -20,6 +26,12 @@
                 <a class="button" href="/challenge/{{challenge.id}}/accept">I'll do it</a>
                 <a class="button orange" href="/challenge/{{challenge.id}}/decline">No Thanks</a>
             {%endif%}
+            {% if playerchallenge_accepted %}
+                <a class="button orange" href="/challenge/{{challenge.id}}/decline">No Thanks</a>
+            {% endif %}
+            {% if playerchallenge_decline %}
+                <a class="button" href="/challenge/{{challenge.id}}/accept">I'll do it</a>
+            {% endif %}
         {%else%}
             {%if challenge.is_expired%}
                 This challenge has expired.

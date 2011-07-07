@@ -20,11 +20,14 @@ def fetch(request, id):
     playerchallenge = PlayerChallenge.objects.filter(player=request.user, challenge=challenge,accepted=True)
     playerchallenge_completed = PlayerChallenge.objects.filter(player=request.user, challenge=challenge,completed=True)
     playerchallenge_accepted = PlayerChallenge.objects.filter(player=request.user, challenge=challenge,accepted=True).exclude(completed=True)
+    playerchallenge_decline = PlayerChallenge.objects.filter(player=request.user, challenge=challenge,accepted=False, completed=True)
     
     completed = False
+    accepted = False
     try:
         pc = PlayerChallenge.objects.filter(player=request.user, challenge=challenge, completed=True)
         if len(pc) > 0:
+            accepted = pc[0].accepted
             completed = True
     except:
         pass
@@ -41,9 +44,11 @@ def fetch(request, id):
     return HttpResponse(tmpl.render(RequestContext(request, {
         'challenge': challenge,
         'comments': challenge,
+        'accepted': accepted,
         'playerchallenge': playerchallenge,
         'playerchallenge_completed': playerchallenge_completed,
         'playerchallenge_accepted': playerchallenge_accepted,
+        'playerchallenge_decline': playerchallenge_decline,
         'playerchallenge_all': pc_all,
         'comment_form': CommentForm(),
         'completed': completed,
@@ -108,6 +113,7 @@ def accept(request, id):
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
     ActivityLogger.log(request.user, request, 'a challenge', 'accepted', '/challenge/'+ id, 'challenge')
 
+    pc.completed = False
     pc.accepted = True
     pc.save()
 
@@ -121,7 +127,8 @@ def decline(request, id):
     except:
         challenge = Challenge.objects.get(id=id)
         pc = PlayerChallenge(player=request.user, challenge=challenge)
-
+    
+    pc.completed = True
     pc.accepted = False
     pc.save()
         

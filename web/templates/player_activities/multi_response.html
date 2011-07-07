@@ -6,7 +6,7 @@
     <form action="" method="post">
         <input type="hidden" name="form" value="multi_reponse">
         {% csrf_token %}
-        <h2>{{activity.question}}</h2>
+        <h2>{{activity.question|urlize}}</h2>
         <div class="fieldWrapper">
             {{ form.response.errors }}
             <label for="id_answerbox">Your Choices:</label>

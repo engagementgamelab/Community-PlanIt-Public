@@ -6,7 +6,7 @@
     <form action="" method="post">
         <input type="hidden" name="form" value="empathy">
         {% csrf_token %}
-        <h2>{{activity.question}}</h2>
+        <h2>{{activity.question|urlize}}</h2>
         
         {%if activity.avatar%}
             <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">

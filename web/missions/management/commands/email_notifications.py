@@ -8,7 +8,7 @@ from django.template import Context, loader
 from web.accounts.models import UserProfile
 from web.instances.models import Instance
 from web.missions.models import Mission
-from web.activities.models import Activity
+from web.player_activities.models import PlayerActivity
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 activities = []
                 if len(missions.current() > 0):
                     current = missions.current()[0]
-                    act = Activity.objects.filter(mission=current)
+                    act = PlayerActivity.objects.filter(mission=current)
                     for a in act:
                         activities.append(a)
                     
