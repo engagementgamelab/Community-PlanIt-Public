@@ -1,0 +1,28 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>Edit or Create a New Instance</h2>
+    <form action="" method="post">
+        {%csrf_token%}
+        <div class="fieldWrapper">
+            {{ form.instances.errors }}
+            <label for="id_instances">Edit Instance:</label>
+            {{ form.instances }}
+        </div>
+        
+        <label>Or create a new instance</label>
+        <div class="fieldWrapper">
+            {{ form.instance_name.errors }}
+            <label for="id_instance_name">New Instance Name:</label>
+            {{ form.instance_name }}
+        </div>
+        <div>
+            <input type="submit" name="submit_btn" value="Submit" />
+            <input type="submit" name="submit_btn" value="Cancel" />
+        </div>
+    </form>
+{%endblock%}

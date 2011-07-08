@@ -1,0 +1,103 @@
+{%extends "layouts/base.html"%}
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    {% if new %}
+        <h2>Create a New Instance</h2>
+    {% else %}
+        <h2>Edit Instance</h2>
+    {% endif %}
+    <form action="{% url instance-save %}" method="post">
+        {%csrf_token%}
+        
+        {{ form.errors }}
+        
+        {% if new %}
+            <input type="hidden" id="max_points_input" name="max_points_input" value="1">
+        {% else %}
+            <input type="hidden" name="instance_id" value="{{instance.id}}">
+        {% endif %}
+        
+        <div class="fieldWrapper">
+            {{ form.name.errors }}
+            <label for="id_name">Instance Name</label>
+            {{ form.name }}
+        </div>
+        
+        <div class="fieldWrapper">
+            {{ form.start_date.errors }}
+            <label for="id_start_date">Start Date:</label>
+            {{ form.start_date }}
+        </div>
+        
+        <div class="fieldWrapper">
+            {{ form.end_date.errors }}
+            <label for="id_end_date">End Date:</label>
+            {{ form.end_date }}
+        </div>
+        
+        
+        <div>
+            <button class="button add">Add Point</button>
+            <button class="button rm">Clear All Points</button>
+            <div class="fieldWrapper">
+                {{form.location.errors}}
+                <div id="location" class="google-map" data-type="Point"/>
+            </div>
+        </div>
+        
+        {% if new %}
+            <input type="submit" name="submit_btn" value="Create" />
+        {% else %}
+            <input type="submit" name="submit_btn" value="Update" />
+        {% endif %}
+        <input type="submit" name="submit_btn" value="Cancel" />
+    </form>
+
+
+    
+    <!-- so I tried with this, I really did. The problem is that the google box
+        needs to be outside the form. The reason is that to select a drop down place list
+        enter needs to be hit. If the input is within the form, the enter will trigger
+        a submit. There must be a fix for this, but the location div has to be in the form
+        for post back. Also right now, the enter will trigger the add button, adding a point.
+        The java script will then see that the max number of points has been reached and not
+        add anything else.-->
+    <!--
+    <div>
+        <label>Search for a copmany or address:</label>
+        <input type="text" name="google_search" id="google_search" />
+    </div>
+    -->
+    
+{%endblock%}
+
+{%block body%}
+    <script src="http://maps.google.com/maps/api/js?sensor=false&libraries=places" type="text/javascript"></script>
+    <script type="text/javascript" src="/admin/gmapsfield/admin/admin.js"></script>
+    <script src="{{MEDIA_URL}}js/games/mapit.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{MEDIA_URL}}3pty/js/date.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        jQuery(function($) {
+            $(".google-map").mapit({{location|safe|escape}});
+            $(".remove-map").remove();
+    
+            $("#id_end_date").datetimepicker({
+                    hourGrid: 6,
+                    minuteGrid: 10,
+                    ampm: false
+                });
+            
+            $("#id_start_date").datetimepicker({
+                hourGrid: 6,
+                minuteGrid: 10,
+                ampm: false,
+                onClose: function() {
+                    $("#id_end_date").datetimepicker( 'setDate', Date.parse( $("#id_start_date").val() ).add(1).hours());
+                }
+            });
+        });
+    </script>
+{%endblock%}

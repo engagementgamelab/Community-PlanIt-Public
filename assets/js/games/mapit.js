@@ -112,9 +112,13 @@
             // Actions for Point/Line/Shape
             switch(type) {
                 case 'Point':
-               
-                    maxPoints = parseInt(document.getElementById("max_points_input").value);
-                    if (markers.length < maxPoints)
+                    
+                    maxPoints = -1; parseInt(document.getElementById("max_points_input").value);
+                    input = document.getElementById("max_points_input");
+                    if (input != null && input.value != "")
+                        if (parseInt(input.value) != NaN)
+                            maxPoints = parseInt(input.value);
+                    if (maxPoints > 0 && markers.length < maxPoints)
                     {
                         marker = new google.maps.Marker({
                             position: map.getCenter(),
@@ -201,30 +205,34 @@
             });
             
             var input = document.getElementById('google_search');
-            opts.autocomplete = new google.maps.places.Autocomplete(input);
-            opts.autocomplete.bindTo('bounds', map)
-            
-            google.maps.event.addListener(opts.autocomplete, 'place_changed', function() {
-                maxPoints = parseInt(document.getElementById("max_points_input").value);
-                if (markers.length < maxPoints)
-                {
-                    var place = opts.autocomplete.getPlace();
-                    if (place.geometry.viewport) {
-                      map.fitBounds(place.geometry.viewport);
-                    } else {
-                      map.setCenter(place.geometry.location);
-                      map.setZoom(16);
+            if (input != null)
+            {
+                opts.autocomplete = new google.maps.places.Autocomplete(input);
+                opts.autocomplete.bindTo('bounds', map)
+                
+                google.maps.event.addListener(opts.autocomplete, 'place_changed', function() {
+                    maxPoints = parseInt(document.getElementById("max_points_input").value);
+                    if (markers.length < maxPoints)
+                    {
+                        var place = opts.autocomplete.getPlace();
+                        if (place.geometry.viewport) {
+                          map.fitBounds(place.geometry.viewport);
+                        } else {
+                          map.setCenter(place.geometry.location);
+                          map.setZoom(16);
+                        }
+                        var marker = new google.maps.Marker({
+                            position: place.geometry.location,
+                            draggable: true,
+                            map: map
+                        });
+                        markers.push(marker);
+                        var input = document.getElementById('google_search');
+                        input.value = "";
                     }
-                    var marker = new google.maps.Marker({
-                        position: place.geometry.location,
-                        draggable: true,
-                        map: map
-                    });
-                    markers.push(marker);
-                    var input = document.getElementById('google_search');
-                    input.value = "";
-                }
-            });
+                    return false;
+                });
+            }
             
             
             if(state === "played") {

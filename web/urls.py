@@ -36,7 +36,6 @@ urlpatterns = patterns('',
     (r'^list/', include('web.lists.urls')),
     (r'^flag/', include('web.flags.urls')),
     (r"^activity/", include("web.player_activities.urls")),
-    (r"^backend/", include("web.backend.urls")),
 
     # Admin stuff
     (r'^curator/', include('web.curator.urls')),
