@@ -81,7 +81,7 @@ def instance_save(request):
     s = ""
     for x in request.POST:
         s = "%s%s: %s<br>" % (s, x, request.POST[x])
-    return HttpResponse(s)
+    #return HttpResponse(s)
 
     form = InstanceEditForm(request.POST)
     new = request.POST["submit_btn"] == "Create"
@@ -89,14 +89,18 @@ def instance_save(request):
         return HttpResponse("Here")
     else:
         
-        tmpl = loader.get_template("admin/instance_edit.html")
         location = None
-        if new:
+        if (request.POST["map"] != ""):
+            location = request.POST["map"]
+        elif (new):
             location = '{"frozen": null, "zoom": 13, "markers": null, "coordinates": [42.36475475505694, -71.05134683227556], "size": [500, 400]}'
-        #else:
-            
+        else:
+            instance = Instance.objects.get(id=int(request.POST["instance_id"]))
+            location = instance.location
+        
+        tmpl = loader.get_template("admin/instance_edit.html")
         return HttpResponse(tmpl.render(RequestContext(request, {
             "new": new,
             "form": form,
-            "location": '{"frozen": null, "zoom": 13, "markers": null, "coordinates": [42.36475475505694, -71.05134683227556], "size": [500, 400]}',                                       
+            "location": location                                       
             }, [ip])))
