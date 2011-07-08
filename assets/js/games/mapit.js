@@ -113,7 +113,7 @@
             switch(type) {
                 case 'Point':
                     
-                    maxPoints = -1; parseInt(document.getElementById("max_points_input").value);
+                    maxPoints = -1; 
                     input = document.getElementById("max_points_input");
                     if (input != null && input.value != "")
                         if (parseInt(input.value) != NaN)

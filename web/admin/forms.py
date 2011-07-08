@@ -21,16 +21,18 @@ class InstanceEditForm(forms.Form):
     name = forms.CharField(required=True, max_length=45)
     start_date = forms.DateTimeField(required=True)
     end_date = forms.DateTimeField(required=True)
-    location = GoogleMapsField().formfield()
+    #This has to be named map, there can be only one and I am guessing it's a huge JS hack to make this work
+    map = GoogleMapsField().formfield()
     
-    def clean_location(self):
-        location = self.cleaned_data.get("location")
-        if location == None:
-            {"frozen": null, "zoom": 13, "markers": null, "coordinates": [42.36475475505694, -71.05134683227556], "size": [500, 400]}
-        raise forms.ValidationError("location: %s" % location)
-        if not location or not simplejson.loads(location).has_key('coordinates'):
-          raise forms.ValidationError('Please make a selection on the map.')
+    
+    def clean_map(self):
+        map = self.cleaned_data.get('map')
+        if not map:
+            raise forms.ValidationError("The map doesn't exist")
+        mapDict = simplejson.loads(map);
+        if len(mapDict["markers"]) == 0:
+            raise forms.ValidationError("Please select a point on the map")
+        return map
 
-        return self.cleaned_data
 
     

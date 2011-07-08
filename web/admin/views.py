@@ -55,8 +55,7 @@ def instance_base(request):
                 formEdit = InstanceEditForm(initial={"name": instance.name,
                                                      "start_date": instance.start_date,
                                                      "end_date": instance.end_date,
-                                                     "location": instance.location,
-                                                     "content": instance.content})
+                                                     })
                 return HttpResponse(tmpl.render(RequestContext(request, { 
                      "new": False, 
                      "form": formEdit, 
@@ -91,6 +90,11 @@ def instance_save(request):
     else:
         
         tmpl = loader.get_template("admin/instance_edit.html")
+        location = None
+        if new:
+            location = '{"frozen": null, "zoom": 13, "markers": null, "coordinates": [42.36475475505694, -71.05134683227556], "size": [500, 400]}'
+        #else:
+            
         return HttpResponse(tmpl.render(RequestContext(request, {
             "new": new,
             "form": form,
