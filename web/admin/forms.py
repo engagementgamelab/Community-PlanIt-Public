@@ -29,7 +29,7 @@ class InstanceEditForm(forms.Form):
         map = self.cleaned_data.get('map')
         if not map:
             raise forms.ValidationError("The map doesn't exist")
-        mapDict = simplejson.loads(map);
+        mapDict = simplejson.loads(map)
         if len(mapDict["markers"]) == 0:
             raise forms.ValidationError("Please select a point on the map")
         return map

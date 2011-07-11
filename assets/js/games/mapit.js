@@ -204,6 +204,24 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             });
             
+            var x = 0;
+            var elem_str = "init_coords".concat(x);
+            while (document.getElementById(elem_str) != null)
+            {
+                elem = document.getElementById(elem_str).attributes;
+                lat = parseFloat(elem.lat.value);
+                lon = parseFloat(elem.lon.value);
+                marker = new google.maps.Marker({
+                    //position: map.getCenter(),
+                    position: new google.maps.LatLng(lat,lon),
+                    draggable: true,
+                    map: map
+                });
+                markers.push(marker);
+                x++;
+                elem_str = "init_coords".concat(x)
+            }
+            
             var input = document.getElementById('google_search');
             if (input != null)
             {

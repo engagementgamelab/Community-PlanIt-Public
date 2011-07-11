@@ -7,6 +7,7 @@ from django.template import Context, RequestContext, loader
 from web.instances.models import Instance
 from web.processors import instance_processor as ip
 from web.admin.forms import *
+from django.utils import simplejson
 
 def verify(request):
     user = request.user
@@ -43,11 +44,12 @@ def instance_base(request):
                 formEdit = InstanceEditForm(initial={"name": form.cleaned_data["instance_name"],
                                                      "start_date": start_date,
                                                      "end_date": end_date,
-                                                      })                
+                                                      })
                 return HttpResponse(tmpl.render(RequestContext(request, { 
                      "new": True,
                      "form": formEdit,
                      "location": '{"frozen": null, "zoom": 13, "markers": null, "coordinates": [42.36475475505694, -71.05134683227556], "size": [500, 400]}',
+                     "init_coords": [],
                      }, [ip])))
             else:
                 instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
@@ -56,11 +58,19 @@ def instance_base(request):
                                                      "start_date": instance.start_date,
                                                      "end_date": instance.end_date,
                                                      })
+                markers = simplejson.loads("%s" % instance.location)["markers"]
+                x = 0
+                init_coords = []
+                for coor in markers:
+                    coor = coor["coordinates"]
+                    init_coords.append( [x, coor[0], coor[1]] )
+                    x = x + 1
                 return HttpResponse(tmpl.render(RequestContext(request, { 
                      "new": False, 
                      "form": formEdit, 
                      "instance": instance,
                      "location": instance.location,
+                     "init_coords": init_coords,
                      }, [ip])))
     ok = verify(request)
     if ok != None:

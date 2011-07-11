@@ -43,7 +43,15 @@
             <div class="fieldWrapper">
                 {{form.map.errors}}
                 <!-- this links up with the map object in the form. -->
+                {% for x, lat, lon in init_coords %}
+                    <input type="hidden" id="init_coords{{x}}" 
+                        name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
+                {% endfor %}
+                
                 <div id="map" class="google-map" data-type="Point"/>
+                
+                
+
             </div>
         </div>
         
