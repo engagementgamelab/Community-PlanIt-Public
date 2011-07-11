@@ -217,7 +217,12 @@
                     draggable: true,
                     map: map
                 });
+                google.maps.event.addListener(marker, "dragend", function() {
+                    update();
+                    type === 'Shape' && updatePolygons();
+                }); 
                 markers.push(marker);
+                
                 x++;
                 elem_str = "init_coords".concat(x)
             }

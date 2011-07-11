@@ -92,15 +92,39 @@ def instance_save(request):
     s = ""
     for x in request.POST:
         s = "%s%s: %s<br>" % (s, x, request.POST[x])
-    return HttpResponse(s)
+    
+    #return HttpResponse(s)
 
     form = InstanceEditForm(request.POST)
-    new = request.POST["submit_btn"] == "Create"
     if form.is_valid():
-        return HttpResponse("Here")
-    else:
+        for x in form.cleaned_data.keys():
+            s = "%s%s: %s (key)<br>" % (s, x, form.cleaned_data[x])
+        #return HttpResponse(s)
+    
+        instance = None
+        if request.POST.has_key("instance_id"):
+            instance = Instance.objects.get(id=int(request.POST["instance_id"]))
+        else:
+            instance = Instance()
         
+        #return HttpResponse("id: %s <br> instance location %s <br> map %s" % 
+        #                    (instance.id, instance.location, form.cleaned_data["map"]))
+        
+        s = "map: %s <br> %s<br>" % (request.POST["map"], instance.location)
+        
+        instance.start_date = form.cleaned_data["start_date"]
+        instance.end_date = form.cleaned_data["end_date"]
+        instance.location = form.cleaned_data["map"]
+        instance.curator = request.user
+        
+        s = "%s %s<br> %s<br>" % (s, instance.location, form.cleaned_data["map"])
+        return HttpResponse(s)
+        instance.save()
+        
+        return HttpResponseRedirect("/admin/")
+    else:
         location = None
+        init_coords = []
         if (request.POST["map"] != ""):
             location = request.POST["map"]
         elif (new):
@@ -108,10 +132,18 @@ def instance_save(request):
         else:
             instance = Instance.objects.get(id=int(request.POST["instance_id"]))
             location = instance.location
+            markers = simplejson.loads("%s" % instance.location)["markers"]
+            x = 0
+            init_coords = []
+            for coor in markers if markers != None else []:
+                coor = coor["coordinates"]
+                init_coords.append( [x, coor[0], coor[1]] )
+                x = x + 1
         
         tmpl = loader.get_template("admin/instance_edit.html")
         return HttpResponse(tmpl.render(RequestContext(request, {
-            "new": new,
+            "new": request.POST.has_key("instance_id"),
             "form": form,
-            "location": location                                       
+            "location": location,
+            "init_coords": init_coords,
             }, [ip])))
