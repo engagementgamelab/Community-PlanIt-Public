@@ -33,6 +33,7 @@ def instance_base(request):
         #for x in request.POST:
         #    s = "%s%s: %s<br>" % (s, x, request.POST[x])
         #return HttpResponse(s)
+        
         if (request.POST["submit_btn"] == "Cancel"):
             return HttpResponseRedirect("/admin/")
         form = InstanceBaseForm(request.POST)
@@ -61,7 +62,7 @@ def instance_base(request):
                 markers = simplejson.loads("%s" % instance.location)["markers"]
                 x = 0
                 init_coords = []
-                for coor in markers:
+                for coor in markers if markers != None else []:
                     coor = coor["coordinates"]
                     init_coords.append( [x, coor[0], coor[1]] )
                     x = x + 1
@@ -91,7 +92,7 @@ def instance_save(request):
     s = ""
     for x in request.POST:
         s = "%s%s: %s<br>" % (s, x, request.POST[x])
-    #return HttpResponse(s)
+    return HttpResponse(s)
 
     form = InstanceEditForm(request.POST)
     new = request.POST["submit_btn"] == "Create"

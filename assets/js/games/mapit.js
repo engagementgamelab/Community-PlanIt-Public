@@ -459,6 +459,11 @@
             }
 
             _map = $("<input type='hidden' name='map' value=''/>").insertAfter(this);
+            try {
+                update()
+            }catch(err){
+                alert(error)
+            }
 
             bounds.extend(coordinates);
             map.panToBounds(bounds);
