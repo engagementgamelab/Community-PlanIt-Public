@@ -97,8 +97,8 @@ def instance_save(request):
 
     form = InstanceEditForm(request.POST)
     if form.is_valid():
-        for x in form.cleaned_data.keys():
-            s = "%s%s: %s (key)<br>" % (s, x, form.cleaned_data[x])
+        #for x in form.cleaned_data.keys():
+        #    s = "%s%s: %s (key)<br>" % (s, x, form.cleaned_data[x])
         #return HttpResponse(s)
     
         instance = None
@@ -107,18 +107,10 @@ def instance_save(request):
         else:
             instance = Instance()
         
-        #return HttpResponse("id: %s <br> instance location %s <br> map %s" % 
-        #                    (instance.id, instance.location, form.cleaned_data["map"]))
-        
-        s = "map: %s <br> %s<br>" % (request.POST["map"], instance.location)
-        
         instance.start_date = form.cleaned_data["start_date"]
         instance.end_date = form.cleaned_data["end_date"]
         instance.location = form.cleaned_data["map"]
         instance.curator = request.user
-        
-        s = "%s %s<br> %s<br>" % (s, instance.location, form.cleaned_data["map"])
-        return HttpResponse(s)
         instance.save()
         
         return HttpResponseRedirect("/admin/")
