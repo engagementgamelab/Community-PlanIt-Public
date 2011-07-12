@@ -154,6 +154,10 @@ def values_base(request):
         
         form = ValueBaseForm(request.POST)
         if form.is_valid():
+            #s = ""
+            #for x in form.cleaned_data.keys():
+            #    s = "%s%s: %s" % (s, x, form.cleaned_data[x])
+            #return HttpResponse("%s" % form.cleaned_data["instances"])
             instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
             values = Value.objects.filter(instance=instance)
             index_values = []
@@ -183,12 +187,19 @@ def values_save(request):
         return ok
     if (request.method != "POST"):
         return HttpResponseServerError("The request method was not POST")
-    s = ""
-    for x in request.POST:
-        s = "%s%s: %s<br>" % (s, x, request.POST[x])
     
-    return HttpResponse(s)
-
+    instance_id = request.POST["instance_id"]
+    instance = Instance.objects.get(id=int(instance_id))
+    Value.objects.filter(instance=instance).delete()
+    
+    x = 0
+    while request.POST.get("value_%s" % x, None) != None and request.POST.get("value_%s" % x) != "":
+        value = Value()
+        value.instance = instance
+        value.message = request.POST["value_%s" % x]
+        value.save()
+        x = x + 1
+    return HttpResponseRedirect("/admin/")
 
 
 

@@ -13,6 +13,7 @@
     {% endif %}
     <form action="{% url value-save %}" method="post">
         {%csrf_token%}
+        <input type="hidden" name="instance_id" id="instance_id" value="{{instance.id}}"/>
         <div id="values"></div>
 
         <input type="button" name="add" value="Add another value" onclick="addInput()"/> <br>
@@ -57,7 +58,7 @@
         
         function appendText(id)
         {
-            textboxArray[id] = '<input id="value_' + id + '" name="value_' + id + 'value="" style="width: 150pt" + onchange="storeValue(' + id + ', this.value)"> ';
+            textboxArray[id] = '<input id="value_' + id + '" name="value_' + id + '" value="" style="width: 150pt" + onchange="storeValue(' + id + ', this.value)"> ';
             textboxArray[id] += '<input type="button" name="remove' + id + '" value="Remove" onclick="deleteInput(' + id + ')"/> ';
             textboxArray[id] += '<br>';
         }
