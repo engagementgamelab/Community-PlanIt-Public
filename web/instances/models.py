@@ -19,7 +19,7 @@ class Instance(models.Model):
     name = models.CharField(max_length=45)
     slug = models.SlugField(editable=False)
     start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
     content = models.TextField(null=True, blank=True)
     curator = models.ForeignKey(User, default=0, null=True, blank=True)
