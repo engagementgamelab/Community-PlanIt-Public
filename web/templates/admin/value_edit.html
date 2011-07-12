@@ -1,0 +1,93 @@
+{%extends "layouts/base.html"%}
+{% load game_extras %}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    {% if new %}
+        <h2>Create a New Instance</h2>
+    {% else %}
+        <h2>Edit Instance</h2>
+    {% endif %}
+    <form action="{% url value-save %}" method="post">
+        {%csrf_token%}
+        <div id="values"></div>
+
+        <input type="button" name="add" value="Add another value" onclick="addInput()"/> <br>
+        <hr>
+        
+        
+        <input type="submit" name="submit_btn" value="Submit" />
+        <input type="submit" name="submit_btn" value="Cancel" />
+    </form>
+{%endblock%}
+
+{%block body%}
+    <script>
+        var fields = {{values|length}}; //0 is given above
+        var storeValues = new Array(0);
+        var textboxArray = new Array(0);
+        
+        function storeValue(id, value) {
+            storeValues[id] = value;
+        }
+        
+        function display()
+        {
+            values = document.getElementById("values");
+            values.innerHTML = "";
+            for (x in textboxArray)
+            {
+                if (textboxArray[x] != null)
+                {
+                    values.innerHTML += textboxArray[x];
+                }
+            }
+            for (x in storeValues)
+            {
+                if (storeValues[x] != null)
+                {
+                    elem = document.getElementById("value_" + x);
+                    elem.value = storeValues[x];
+                }
+            }
+        }
+        
+        function appendText(id)
+        {
+            textboxArray[id] = '<input id="value_' + id + '" name="value_' + id + 'value="" style="width: 150pt" + onchange="storeValue(' + id + ', this.value)"> ';
+            textboxArray[id] += '<input type="button" name="remove' + id + '" value="Remove" onclick="deleteInput(' + id + ')"/> ';
+            textboxArray[id] += '<br>';
+        }
+        
+        function deleteInput(id) {
+            textboxArray[id] = null;
+            storeValues[id] = null;
+            display();
+        }
+        
+        function addInput() {
+            fields++; //fields is set to the vector length, this is fine except that the next one is fields+1
+            appendText(fields);
+            display();
+            return false;
+        }
+        
+        $(document).ready(function() {
+            {% for x, value in values %}
+                storeValue({{x}}, "{{value.message}}");
+                appendText({{x}});
+            {% endfor %}
+                storeValue({{values|length}}, "");
+                appendText({{values|length}});
+                try {
+                    display();
+                } catch(err) {
+                    alert(err);
+                }
+        });
+        
+    </script>
+{%endblock%}

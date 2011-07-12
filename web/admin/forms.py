@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from django.utils import simplejson
 from django.contrib.auth import authenticate
 from web.instances.models import Instance
+from web.values.models import Value
 from gmapsfield.fields import GoogleMapsField
 
 class InstanceBaseForm(forms.Form):
@@ -34,5 +35,10 @@ class InstanceEditForm(forms.Form):
             raise forms.ValidationError("Please select a point on the map")
         return map
 
-
+class ValueBaseForm(forms.Form):
+    ins = []
+    ins.append((0, '------'))
+    for x in Instance.objects.all().order_by("name"):
+        ins.append((x.id, x.name))
+    instances = forms.ChoiceField(required=False, choices=ins)
     

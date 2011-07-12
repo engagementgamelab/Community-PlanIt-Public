@@ -5,6 +5,7 @@ from django.contrib.auth.models import User, Group
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
 from django.template import Context, RequestContext, loader
 from web.instances.models import Instance
+from web.values.models import Value
 from web.processors import instance_processor as ip
 from web.admin.forms import *
 from django.utils import simplejson
@@ -139,3 +140,75 @@ def instance_save(request):
             "location": location,
             "init_coords": init_coords,
             }, [ip])))
+        
+@login_required
+def values_base(request):
+    if request.method == 'POST':
+        #s = ""
+        #for x in request.POST:
+        #    s = "%s%s: %s<br>" % (s, x, request.POST[x])
+        #return HttpResponse(s)
+        
+        if (request.POST["submit_btn"] == "Cancel"):
+            return HttpResponseRedirect("/admin/")
+        
+        form = ValueBaseForm(request.POST)
+        if form.is_valid():
+            instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
+            values = Value.objects.filter(instance=instance)
+            index_values = []
+            x = 0
+            for value in values:
+                index_values.append([x, value])
+                x = x + 1
+            tmpl = loader.get_template("admin/value_edit.html")
+            return HttpResponse(tmpl.render(RequestContext(request, {
+                "instance": instance,
+                "values": index_values, 
+                }, [ip])))
+    
+    ok = verify(request)
+    if ok != None:
+        return ok
+    form = ValueBaseForm()
+    tmpl = loader.get_template("admin/value_base.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "form": form,   
+        }, [ip])))
+
+@login_required
+def values_save(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    if (request.method != "POST"):
+        return HttpResponseServerError("The request method was not POST")
+    s = ""
+    for x in request.POST:
+        s = "%s%s: %s<br>" % (s, x, request.POST[x])
+    
+    return HttpResponse(s)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
