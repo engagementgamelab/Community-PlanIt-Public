@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpRespons
 from django.template import Context, RequestContext, loader
 from web.instances.models import Instance
 from web.values.models import Value
+from web.missions.models import Mission
 from web.processors import instance_processor as ip
 from web.admin.forms import *
 from django.utils import simplejson
@@ -201,8 +202,40 @@ def values_save(request):
         x = x + 1
     return HttpResponseRedirect("/admin/")
 
-
-
+@login_required
+def mission_base(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    
+    if request.method == 'POST':
+        if (request.POST["submit_btn"] == "Cancel"):
+                return HttpResponseRedirect("/admin/")
+            
+        form = MissionBaseForm(request.POST)
+        if form.is_valid():
+            #s = ""
+            #for x in form.cleaned_data.keys():
+            #    s = "%s%s: %s" % (s, x, form.cleaned_data[x])
+            #return HttpResponse("%s" % form.cleaned_data["instances"])
+            instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
+            missions = Mission.objects.filter(instance=instance)
+            index_missions = []
+            x = 0
+            for mission in missions:
+                index_missions.append([x, mission])
+                x = x + 1
+            tmpl = loader.get_template("admin/mission_edit.html")
+            return HttpResponse(tmpl.render(RequestContext(request, {
+                "instance": instance,
+                "values": index_missions, 
+                }, [ip])))
+            
+    form = MissionBaseForm()
+    tmpl = loader.get_template("admin/mission_base.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "form": form,   
+        }, [ip])))
 
 
 

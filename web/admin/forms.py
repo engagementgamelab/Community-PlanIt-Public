@@ -41,4 +41,11 @@ class ValueBaseForm(forms.Form):
     for x in Instance.objects.all().order_by("name"):
         ins.append((x.id, x.name))
     instances = forms.ChoiceField(required=False, choices=ins)
+
+class MissionBaseForm(forms.Form):
+    ins = []
+    ins.append((0, '------'))
+    for x in Instance.objects.all().order_by("name"):
+        ins.append((x.id, x.name))
+    instances = forms.ChoiceField(required=False, choices=ins)
     

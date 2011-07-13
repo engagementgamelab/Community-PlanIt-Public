@@ -1,18 +1,19 @@
 {%extends "layouts/base.html"%}
 {% load game_extras %}
 
-{%block section%}instances{%endblock%}
+{%block section%}misisons{%endblock%}
 {%block title%}Administration{%endblock%}
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h2>Values for Instance: {{instance.name}}</h2>
+    <h2>Missions for Instance: {{instance.name}}</h2>
+
     <form action="{% url value-save %}" method="post">
         {%csrf_token%}
         <input type="hidden" name="instance_id" id="instance_id" value="{{instance.id}}"/>
-        <div id="values"></div>
+        <div id="missions"></div>
 
-        <input type="button" name="add" value="Add another value" onclick="addInput()"/> <br>
+        <input type="button" name="add" value="Add another mission" onclick="addInput()"/> <br>
         <hr>
         
         
@@ -26,14 +27,22 @@
         var fields = {{values|length}}; //0 is given above
         var storeValues = new Array(0);
         var textboxArray = new Array(0);
+        var missionList = new Array(0);
         
+        
+        function Mission(id, name, location) {
+            this.id = id;
+            this.name = name;
+            this.location = location;
+        }
+        /*
         function storeValue(id, value) {
             storeValues[id] = value;
         }
         
         function display()
         {
-            values = document.getElementById("values");
+            values = document.getElementById("missions");
             values.innerHTML = "";
             for (x in textboxArray)
             {
@@ -52,11 +61,25 @@
             }
         }
         
-        function appendText(id)
+        function appendText(id, mission_id)
         {
-            textboxArray[id] = '<input id="value_' + id + '" name="value_' + id + '" value="" style="width: 150pt" + onchange="storeValue(' + id + ', this.value)"> ';
+            textboxArray[id] = '<input id="value_' + id + '" ';
+            textboxArray[id] += 'name="value_' + id + '" ';
+            textboxArray[id] += 'value="" style="width: 150pt" onchange="storeValue(' + id + ', this.value)"> ';
+            textboxArray[id] += '<input type="button" name="up' + id + '" value="-" onclick="moveUp(' + id + ')"/> ';
+            textboxArray[id] += '<input type="button" name="down' + id + '" value="+" onclick="moveDown(' + id + ')"/> ';
             textboxArray[id] += '<input type="button" name="remove' + id + '" value="Remove" onclick="deleteInput(' + id + ')"/> ';
             textboxArray[id] += '<br>';
+        }
+        
+        function moveUp(id) {
+            if (id == 0)
+                return;
+
+            temp = storeValues[id-1];
+            storeValues[id-1] = storeValues[id];
+            storeValues[id] = temp;
+            display();
         }
         
         function deleteInput(id) {
@@ -67,23 +90,25 @@
         
         function addInput() {
             fields++; //fields is set to the vector length, this is fine except that the next one is fields+1
-            appendText(fields);
+            appendText(fields, -1);
             display();
             return false;
-        }
+        }*/
         
         $(document).ready(function() {
+            try {
             {% for x, value in values %}
-                storeValue({{x}}, "{{value.message}}");
-                appendText({{x}});
+                missionList[missionList.length] = new Mission({{value.id}}, "{{value.name}}", {{x}});
+                
+                //missionList[missionList.length] = mission;
+                //storeValue({{x}}, "{{value.name}}");
+                //appendText({{x}}, {{value.id}});
             {% endfor %}
-                storeValue({{values|length}}, "");
-                appendText({{values|length}});
-                try {
-                    display();
-                } catch(err) {
-                    alert(err);
-                }
+                missionList[missionList.length] = new Mission(-1, "", {{values|length}})
+            } catch(err)
+            {
+                alert(err);
+            }
         });
         
     </script>
