@@ -8,16 +8,24 @@
 {%block main%}
     <h2>Missions for Instance: {{instance.name}}</h2>
 
-    <form action="{% url value-save %}" method="post">
+    <form action="{% url mission-save %}" method="post">
         {%csrf_token%}
         <input type="hidden" name="instance_id" id="instance_id" value="{{instance.id}}"/>
+        
+        <div class="fieldWrapper">
+            {{ form.days.errors }}
+            <label for="id_days">Days per mission, start time is the start of the instance</label>
+            {{ form.days }}
+        </div>
+        
         <div id="missions"></div>
 
         <input type="button" name="add" value="Add another mission" onclick="addInput()"/> <br>
         <hr>
         
+        <div id="returns"></div>
         
-        <input type="submit" name="submit_btn" value="Submit" />
+        <input type="submit" name="submit_btn" value="Submit" onclick="return_values()"/>
         <input type="submit" name="submit_btn" value="Cancel" />
     </form>
 {%endblock%}
@@ -25,9 +33,34 @@
 {%block body%}
     <script>
         var fields = {{values|length}}; //0 is given above
-        var storeValues = new Array(0);
-        var textboxArray = new Array(0);
         var missionList = new Array(0);
+        var deleteMission = new Array(0);
+        
+        //this will set up the return tags as hidden inputs with values.
+        // The name will be index_X_id_X and if the mission is removed
+        // then the value will be ""
+        function return_values() {
+            returns = document.getElementById("returns");
+            returns.innerHTML = "";
+            for (x in missionList)
+            {
+                mission = missionList[x]
+                str = '<input type="hidden" name="index_' + mission.location + '_id_' + mission.id + '" ';
+                str += 'id="index_' + mission.location + '_id_' + mission.id + '" ';
+                str += 'value="' + mission.name + '"/>';
+                returns.innerHTML += str;
+            }
+            
+            for (x in deleteMission)
+            {
+                mission = deleteMission[x]
+                str = '<input type="hidden" name="delete_id_' + mission.id + '" ';
+                str += 'id="delete_id_' + mission.id + '" ';
+                str += 'value="' + mission.name + '"/>';
+                returns.innerHTML += str;
+            }
+            return true;
+        }
         
         
         function Mission(id, name, location) {
@@ -35,76 +68,82 @@
             this.name = name;
             this.location = location;
         }
-        /*
-        function storeValue(id, value) {
-            storeValues[id] = value;
-        }
         
-        function display()
-        {
+        function redraw() {
             values = document.getElementById("missions");
             values.innerHTML = "";
-            for (x in textboxArray)
+            for (x in missionList)
             {
-                if (textboxArray[x] != null)
-                {
-                    values.innerHTML += textboxArray[x];
-                }
+                mission = missionList[x];
+                //input text
+                str = '<input type="text" id="value_' + mission.location + '" ';
+                str += 'name="value_' + mission.location + '" ';
+                str += 'value="' + mission.name + '" ';
+                str += 'style="width: 150pt" onchange="storeValue(' + mission.location + ', this.value)"> ';
+                //- button
+                str += '<input type="button" name="up' + mission.location + '" value="-" onclick="moveUp(' + mission.location + ')"/> ';
+                //+ button
+                str += '<input type="button" name="down' + mission.location + '" value="+" onclick="moveDown(' + mission.location + ')"/> ';
+                str += '<input type="button" name="remove' + mission.location + '" value="Remove" onclick="deleteInput(' + mission.location + ')"/> ';
+                //new line
+                str += '<br>'
+                values.innerHTML += str;
             }
-            for (x in storeValues)
-            {
-                if (storeValues[x] != null)
-                {
-                    elem = document.getElementById("value_" + x);
-                    elem.value = storeValues[x];
-                }
-            }
-        }
-        
-        function appendText(id, mission_id)
-        {
-            textboxArray[id] = '<input id="value_' + id + '" ';
-            textboxArray[id] += 'name="value_' + id + '" ';
-            textboxArray[id] += 'value="" style="width: 150pt" onchange="storeValue(' + id + ', this.value)"> ';
-            textboxArray[id] += '<input type="button" name="up' + id + '" value="-" onclick="moveUp(' + id + ')"/> ';
-            textboxArray[id] += '<input type="button" name="down' + id + '" value="+" onclick="moveDown(' + id + ')"/> ';
-            textboxArray[id] += '<input type="button" name="remove' + id + '" value="Remove" onclick="deleteInput(' + id + ')"/> ';
-            textboxArray[id] += '<br>';
         }
         
         function moveUp(id) {
             if (id == 0)
                 return;
 
-            temp = storeValues[id-1];
-            storeValues[id-1] = storeValues[id];
-            storeValues[id] = temp;
-            display();
+            temp = missionList[id-1];
+            missionList[id-1] = missionList[id];
+            missionList[id-1].location = missionList[id-1].location - 1; //it moved up
+            missionList[id] = temp;
+            missionList[id].location = missionList[id].location + 1; //it moved down
+            redraw();
+        }
+        
+        function moveDown(id) {
+            if (id == missionList.length-1)
+                return;
+
+            temp = missionList[id+1];
+            missionList[id+1] = missionList[id];
+            missionList[id+1].location = missionList[id+1].location + 1; //it moved down
+            missionList[id] = temp;
+            missionList[id].location = missionList[id].location - 1; //it moved up
+            redraw();
         }
         
         function deleteInput(id) {
-            textboxArray[id] = null;
-            storeValues[id] = null;
-            display();
+            mission = missionList[id];
+            deleteMission[deleteMission.length] = new Mission(mission.id, mission.name, mission.location);
+            missionList.splice(id, 1);
+            for (x = id; x < missionList.length; x++)
+            {
+                //missionList[x] = missionList[x+1]
+                missionList[x].location = missionList[x].location - 1;
+            }
+            redraw();
+        }
+        
+        function storeValue(id, value) {
+            mission = missionList[id];
+            mission.name = value;
         }
         
         function addInput() {
-            fields++; //fields is set to the vector length, this is fine except that the next one is fields+1
-            appendText(fields, -1);
-            display();
-            return false;
-        }*/
+            missionList[missionList.length] = new Mission(0, "", missionList.length);
+            redraw();
+        }
         
         $(document).ready(function() {
             try {
             {% for x, value in values %}
                 missionList[missionList.length] = new Mission({{value.id}}, "{{value.name}}", {{x}});
-                
-                //missionList[missionList.length] = mission;
-                //storeValue({{x}}, "{{value.name}}");
-                //appendText({{x}}, {{value.id}});
             {% endfor %}
-                missionList[missionList.length] = new Mission(-1, "", {{values|length}})
+                missionList[missionList.length] = new Mission(0, "", {{values|length}})
+                redraw()
             } catch(err)
             {
                 alert(err);

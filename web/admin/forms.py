@@ -48,4 +48,6 @@ class MissionBaseForm(forms.Form):
     for x in Instance.objects.all().order_by("name"):
         ins.append((x.id, x.name))
     instances = forms.ChoiceField(required=False, choices=ins)
-    
+
+class MissionSaveForm(forms.Form):
+    days = forms.IntegerField()

@@ -10,6 +10,7 @@ from web.missions.models import Mission
 from web.processors import instance_processor as ip
 from web.admin.forms import *
 from django.utils import simplejson
+import re
 
 def verify(request):
     user = request.user
@@ -219,14 +220,16 @@ def mission_base(request):
             #    s = "%s%s: %s" % (s, x, form.cleaned_data[x])
             #return HttpResponse("%s" % form.cleaned_data["instances"])
             instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
-            missions = Mission.objects.filter(instance=instance)
+            missions = Mission.objects.filter(instance=instance).order_by("start_date")
             index_missions = []
             x = 0
             for mission in missions:
                 index_missions.append([x, mission])
                 x = x + 1
             tmpl = loader.get_template("admin/mission_edit.html")
+            form = MissionSaveForm()
             return HttpResponse(tmpl.render(RequestContext(request, {
+                "form": form,                                                    
                 "instance": instance,
                 "values": index_missions, 
                 }, [ip])))
@@ -237,8 +240,86 @@ def mission_base(request):
         "form": form,   
         }, [ip])))
 
+@login_required
+def mission_save(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    if (request.method != "POST"):
+        return HttpResponseServerError("The request method was not POST")
+    
+    if (request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect("/admin/")
+    
+    
+    instance = Instance.objects.get(id=int(request.POST["instance_id"]))
+    form = MissionSaveForm(request.POST)
+    if form.is_valid():
+        s = ""
+        for x in form.cleaned_data.keys():
+            s = "%s%s: %s<br>" % (s, x, form.cleaned_data[x])
+        
+        s = "%s Post variables <br>" % s
+        for x in request.POST.keys():
+            s = "%s%s: %s<br>" % (s, x, request.POST[x])
+        #return HttpResponse(s)
+        #so the ones to keep are index_X_id_Y where if Y is 0, it's a new one
+        # if it's anything else, the mission existed in the db and should be edited
+        # index is the index that this mission should be in
+        toAdd = {};
+        addPat = re.compile("index_(?P<index_id>\d+)_id_(?P<mission_id>\d+)")
+        delPat = re.compile("delete_id_(?P<delete_id>\d+)")
+        for key in request.POST.keys():
+            if addPat.match(key) != None and request.POST[key] != "":
+                matchDict = addPat.match(key).groupdict()
+                mission_id = int(matchDict["mission_id"])
+                mission = None
+                if mission_id != 0:
+                    mission = Mission.objects.get(id=mission_id)
+                else:
+                    mission = Mission()
+                index_id = int(matchDict["index_id"])
+                toAdd[index_id] = (mission, request.POST[key])
+            elif delPat.match(key) != None:
+                matchDict = delPat.match(key).groupdict()
+                delete_id = int(matchDict["delete_id"])
+                if delete_id != 0:
+                    mission = Mission.objects.get(id=delete_id).delete()
 
-
+        #first delete all missions that should be
+        x = 0
+        lastMission = None
+        for x in toAdd.keys():
+            mission, name = toAdd[x]
+            mission.name = name
+            if x == 0:
+                mission.start_date = instance.start_date
+            else:
+                mission.start_date = lastMission.end_date
+            mission.end_date = mission.start_date + datetime.timedelta(days=form.cleaned_data["days"])
+            mission.instance = instance
+            mission.save()
+            lastMission = mission
+        instance.end_date = lastMission.end_date
+        instance.save()
+        return HttpResponseRedirect("/admin/")
+    
+    
+    
+    tmpl = loader.get_template("admin/mission_edit.html")
+    form = MissionSaveForm(request.POST)
+    missions = Mission.objects.filter(instance=instance).order_by("start_date")
+    index_missions = []
+    x = 0
+    for mission in missions:
+        index_missions.append([x, mission])
+        x = x + 1
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "form": form,                                                    
+        "instance": instance,
+        "values": index_missions, 
+        }, [ip])))
+    
 
 
 
