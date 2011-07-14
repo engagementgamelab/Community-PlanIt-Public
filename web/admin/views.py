@@ -4,9 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
 from django.template import Context, RequestContext, loader
+from django.core.urlresolvers import reverse
 from web.instances.models import Instance
 from web.values.models import Value
 from web.missions.models import Mission
+from web.player_activities.models import PlayerActivity, PlayerActivityType
 from web.processors import instance_processor as ip
 from web.admin.forms import *
 from django.utils import simplejson
@@ -38,7 +40,7 @@ def instance_base(request):
         #return HttpResponse(s)
         
         if (request.POST["submit_btn"] == "Cancel"):
-            return HttpResponseRedirect("/admin/")
+            return HttpResponseRedirect(reverse("admin-base"))
         form = InstanceBaseForm(request.POST)
         if form.is_valid():
             tmpl = loader.get_template("admin/instance_edit.html")
@@ -116,7 +118,7 @@ def instance_save(request):
         instance.curator = request.user
         instance.save()
         
-        return HttpResponseRedirect("/admin/")
+        return HttpResponseRedirect(reverse("admin-base"))
     else:
         location = None
         init_coords = []
@@ -152,7 +154,7 @@ def values_base(request):
         #return HttpResponse(s)
         
         if (request.POST["submit_btn"] == "Cancel"):
-            return HttpResponseRedirect("/admin/")
+            return HttpResponseRedirect(reverse("admin-base"))
         
         form = ValueBaseForm(request.POST)
         if form.is_valid():
@@ -201,7 +203,7 @@ def values_save(request):
         value.message = request.POST["value_%s" % x]
         value.save()
         x = x + 1
-    return HttpResponseRedirect("/admin/")
+    return HttpResponseRedirect(reverse("admin-base"))
 
 @login_required
 def mission_base(request):
@@ -211,7 +213,7 @@ def mission_base(request):
     
     if request.method == 'POST':
         if (request.POST["submit_btn"] == "Cancel"):
-                return HttpResponseRedirect("/admin/")
+            return HttpResponseRedirect(reverse("admin-base"))
             
         form = MissionBaseForm(request.POST)
         if form.is_valid():
@@ -249,19 +251,19 @@ def mission_save(request):
         return HttpResponseServerError("The request method was not POST")
     
     if (request.POST["submit_btn"] == "Cancel"):
-        return HttpResponseRedirect("/admin/")
+        return HttpResponseRedirect(reverse("admin-base"))
     
     
     instance = Instance.objects.get(id=int(request.POST["instance_id"]))
     form = MissionSaveForm(request.POST)
     if form.is_valid():
-        s = ""
-        for x in form.cleaned_data.keys():
-            s = "%s%s: %s<br>" % (s, x, form.cleaned_data[x])
+        #s = ""
+        #for x in form.cleaned_data.keys():
+        #    s = "%s%s: %s<br>" % (s, x, form.cleaned_data[x])
         
-        s = "%s Post variables <br>" % s
-        for x in request.POST.keys():
-            s = "%s%s: %s<br>" % (s, x, request.POST[x])
+        #s = "%s Post variables <br>" % s
+        #for x in request.POST.keys():
+        #    s = "%s%s: %s<br>" % (s, x, request.POST[x])
         #return HttpResponse(s)
         #so the ones to keep are index_X_id_Y where if Y is 0, it's a new one
         # if it's anything else, the mission existed in the db and should be edited
@@ -302,7 +304,7 @@ def mission_save(request):
             lastMission = mission
         instance.end_date = lastMission.end_date
         instance.save()
-        return HttpResponseRedirect("/admin/")
+        return HttpResponseRedirect(reverse("admin-base"))
     
     
     
@@ -320,10 +322,61 @@ def mission_save(request):
         "values": index_missions, 
         }, [ip])))
     
-
-
-
-
+@login_required
+def activity_base(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    
+    if request.method == 'POST':
+        if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+            return HttpResponseRedirect(reverse("admin-base"))
+        form = ActivityBaseForm(request.POST)
+        if form.is_valid():
+            instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
+            missions = Mission.objects.filter(instance=instance).order_by("start_date")
+            index_missions = []
+            formMission = []
+            x = 0
+            for mission in missions:
+                activities = PlayerActivity.objects.filter(mission=mission).order_by("createDate")
+                index_missions.append([x, mission, activities])
+                x = x + 1
+                formMission.append((mission.id, mission.name))
+            
+            formTypes = []
+            types = PlayerActivityType.objects.all()
+            for type in types:
+                formTypes.append((type.id, type.type))
+            
+            form = ActivitySaveForm(initial={'missions': formMission})
+            editForm = ActivityEditForm(initial={"missions": formMission,
+                                                 "types": formTypes})
+            tmpl = loader.get_template("admin/activity_edit.html")
+            return HttpResponse(tmpl.render(RequestContext(request, {
+                "form": form,
+                "editForm": editForm,
+                "instance": instance,
+                "values": index_missions, 
+                }, [ip])))
+        
+    form = ActivityBaseForm()
+    tmpl = loader.get_template("admin/activity_base.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "form": form,   
+        }, [ip])))
+    
+@login_required
+def activity_save(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    if (request.method != "POST"):
+        return HttpResponseServerError("The request method was not POST")
+    s = "%s Post variables <br>"
+    for x in request.POST.keys():
+        s = "%s%s: %s<br>" % (s, x, request.POST[x])
+    return HttpResponse(s)
 
 
 

@@ -1,0 +1,180 @@
+{%extends "layouts/base.html"%}
+{% load game_extras %}
+
+{%block section%}misisons{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>Missions for Instance: {{instance.name}}</h2>
+
+    <div id="baseDisplay"> 
+        <input type="hidden" name="instance_id" id="instance_id" value="{{instance.id}}"/>
+        
+        <div class="fieldWrapper">
+            {{ form.missions.errors }}
+            <label for="id_missions">Select Mission</label>
+            {{ form.missions }}
+        </div>
+        <div>
+            <label id="getAct_label">Get all activities for the selected mission: </label>
+            <button id="getAct_button" type="button" onclick="getActivities()">Activities</button>
+        </div>
+        <div>
+            <label id="newAct_label">Create a new activity for the selected mission: </label>
+            <button id="newAct_button" type="button" onclick="newActivity()">New Activity</button>
+        </div>
+        <div id="actDiv"></div>
+
+    </div>
+    <div id="editDisplay" style="display:none">
+        <input type="hidden" id="activity_id" name="activity_id" value="">
+        <!--
+        {{editForm.as_p}}
+        -->
+
+        <div class="fieldWrapper">
+            {{ editForm.name.errors }}
+            <label for="id_name">Name:</label>
+            {{ editForm.name }}
+        </div>
+        
+        <div class="fieldWrapper">
+            {{ editForm.question.errors }}
+            <label for="id_question">Question:</label>
+            {{ editForm.question }}
+        </div>
+        
+        <div class="fieldWrapper">
+            {{ editForm.missions.errors }}
+            <label for="id_missions">Mission:</label>
+            {{ editForm.missions }}
+        </div>
+        
+        <div class="fieldWrapper">
+            {{ editForm.types.errors }}
+            <label for="id_types">Type</label>
+            {{ editForm.types }}
+        </div>
+        
+        <div class="fieldWrapper">
+            {{ editForm.instructions.errors }}
+            <label for="id_instructions">Instructions:</label>
+            {{ editForm.instructions }}
+        </div>
+        
+        <div class="fieldWrapper">
+            {{ editForm.addInstructions.errors }}
+            <label for="id_addInstructions">addInstructions:</label>
+            {{ editForm.addInstructions }}
+        </div>
+        
+        <div class="fieldWrapper">
+            {{ editForm.points.errors }}
+            <label for="id_points">Points:</label>
+            {{ editForm.points }}
+        </div>
+        
+        <div class="fieldWrapper">
+            {{ editForm.attachment.errors }}
+            <label for="id_attachment">attachment:</label>
+            {{ editForm.attachment }}
+        </div>
+        
+        
+        <div id="open_ended" style="hidden">
+            
+        </div>
+        
+        <div id="single_response" style="hidden">
+            
+        </div>
+        
+        <div id="map" style="hidden">
+            
+        </div>
+        
+        <div id="empathy" style="hidden">
+            
+        </div>
+        
+        <div id="multi_reponse" style="hidden">
+            
+        </div>
+        
+        <input type="submit" name="submit_btn" value="Submit" onclick="return_values()"/>
+        <input type="submit" name="submit_btn" value="Cancel" />        
+    </div>
+    <div id="newDisplay" style="display:none">
+        
+    </div>
+{%endblock%}
+
+{%block body%}
+    <script>
+        var fields = {{values|length}}; //0 is given above
+        var missionList = new Array(0);
+        var deleteMission = new Array(0);
+        
+        function Mission(id, name, location) {
+            this.id = id;
+            this.name = name;
+            this.location = location;
+            this.activities = new Array(0);
+        }
+        
+        function Activity(id, name, question, mission, type, instructions, addInstructions, points) {
+            this.id = id;
+            this.name = name;
+            this.question = question;
+            this.mission = mission;
+            this.type = type;
+            this.instructions = instructions;
+            this.addInstructions = addInstructions;
+            this.points = points;
+        }
+        
+        function getActivities() {
+            acts = document.getElementById("actDiv");
+            mission_select = document.getElementById("id_missions");
+            mission_id = parseInt(mission_select.options[mission_select.selectedIndex].value);
+            acts.innerHTML = "<h2>Activities</h2>";
+            for (x in missionList[mission_id].activities)
+            {
+                activity = missionList[mission_id].activities[x];
+                str = '<label>' + activity.name + ' (' + activity.type + ')</label>';
+                str += '<button value="edit" type="button" id="activity_' + activity.id + '" ';
+                str +='name="activity_' + activity.id + '" ';
+                str += 'onclick="editActivity(' + mission_id + ', ' + x + ')">'
+                str += 'Edit</button><br>'
+                acts.innerHTML += str;
+            }
+            return false;
+        }
+        
+        function newActivity() {
+            return false;
+        }
+        
+        function editActivity(mission, id) {
+            document.getElementById("baseDisplay").style.display = "none";
+            document.getElementById("editDisplay").style.display = "";
+            return false;
+        }
+        
+        $(document).ready(function() {
+            try {
+            {% for x, value, activities in values %}
+                missionList[{{value.id}}] = new Mission({{value.id}}, "{{value.name}}", {{x}});
+                {% for activity in activities %}
+                    len = missionList[{{value.id}}].activities.length;
+                    //(id, name, question, mission, type, instructions, addInstructions, points)
+                    missionList[{{value.id}}].activities[len] = new Activity({{activity.id}}, "{{activity.name}}", "{{activity.question}}", {{value.id}}, "{{activity.type.type}}", "{{activity.instructions}}", "{{activity.addInstructions}}", {{activity.getPoints}});
+                {% endfor %}
+            {% endfor %}
+            } catch(err) {
+                alert(err)
+            }
+        });
+    </script>
+{%endblock%}

@@ -7,5 +7,7 @@ urlpatterns = patterns("",
                        url(r"^value/", "admin.views.values_base", name="value-base"),
                        url(r"^mission/save/", "admin.views.mission_save", name="mission-save"),
                        url(r"^mission/", "admin.views.mission_base", name="mission-base"),
-                       url(r"^$", "admin.views.index", name="instance-index"),
+                       url(r"^activity/save/", "admin.views.activity_save", name="activity-save"),
+                       url(r"^activity/", "admin.views.activity_base", name="activity-base"),
+                       url(r"^$", "admin.views.index", name="admin-base"),
 )
