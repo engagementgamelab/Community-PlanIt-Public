@@ -76,10 +76,13 @@ class ActivityEditForm(forms.Form):
     question = forms.CharField()
     missions = forms.ChoiceField()
     types = forms.ChoiceField()
-    instructions = forms.ChoiceField(required=False)
-    addInstructions = forms.ChoiceField(required=False)
+    instructions = forms.CharField(required=False)
+    addInstructions = forms.CharField(required=False)
     points = forms.IntegerField(required=False)
     attachment = forms.ImageField(required=False)
+    maxNumMarkers = forms.IntegerField(required=False)
+    avatar = forms.FileField(required=False)
+    bio = forms.CharField(required=False)
     
     def __init__(self, *args, **kwargs):
         initial =  kwargs.get("initial", {})
@@ -96,6 +99,6 @@ class ActivityEditForm(forms.Form):
             self.fields["missions"].choices.append(mission)
         
         for type in types:
-            self.fields["types"].choices.append(mission)
+            self.fields["types"].choices.append(type)
 
     

@@ -80,27 +80,37 @@
             <label for="id_attachment">attachment:</label>
             {{ editForm.attachment }}
         </div>
-        
-        
-        <div id="open_ended" style="hidden">
+
+        <div id="single_response_edit" style="display:none">
             
         </div>
         
-        <div id="single_response" style="hidden">
+        <div id="multi_reponse_edit" style="display:none">
             
         </div>
         
-        <div id="map" style="hidden">
-            
+        <div id="map_edit" style="display:none">
+            <div class="fieldWrapper">
+                {{ editForm.maxNumMarkers.errors }}
+                <label for="id_maxNumMarkers">Maximum number of markers per person:</label>
+                {{ editForm.maxNumMarkers }}
+            </div>
         </div>
         
-        <div id="empathy" style="hidden">
-            
+        <div id="empathy_edit" style="display:none">
+            <div class="fieldWrapper">
+                {{ editForm.avatar.errors }}
+                <label for="id_avatar">Avatar:</label>
+                {{ editForm.avatar }}
+            </div>
+            <div class="fieldWrapper">
+                {{ editForm.bio.errors }}
+                <label for="id_bio">Biography:</label>
+                {{ editForm.bio }}
+            </div>
         </div>
         
-        <div id="multi_reponse" style="hidden">
-            
-        </div>
+
         
         <input type="submit" name="submit_btn" value="Submit" onclick="return_values()"/>
         <input type="submit" name="submit_btn" value="Cancel" />        
@@ -114,7 +124,7 @@
     <script>
         var fields = {{values|length}}; //0 is given above
         var missionList = new Array(0);
-        var deleteMission = new Array(0);
+        var typeList = new Array(0);
         
         function Mission(id, name, location) {
             this.id = id;
@@ -129,9 +139,33 @@
             this.question = question;
             this.mission = mission;
             this.type = type;
-            this.instructions = instructions;
-            this.addInstructions = addInstructions;
+            if (instructions == "None")
+                this.instructions = null;
+            else 
+                this.instructions = instructions;
+            
+            if (addInstructions == "None")
+                this.addInstructions = null;
+            else
+                this.addInstructions = addInstructions;
+            
             this.points = points;
+            
+            //PlayerMapActivity
+            this.maxNumMarkers = null; //an int that should be initialized if the type is map
+            
+            //PlayerEmpathyActivity
+            this.avatar = null; //an immage field for the empathy activity
+            this.bio = null; //string for the bio
+            
+            //MultiChoiceActivity
+            this.choices = null; //This should be an array initized if the type of the activity is multi_choice or single choice
+        }
+        
+        function Type(id, type, display) {
+            this.id = id;
+            this.type = type;
+            this.display = display;
         }
         
         function getActivities() {
@@ -142,7 +176,7 @@
             for (x in missionList[mission_id].activities)
             {
                 activity = missionList[mission_id].activities[x];
-                str = '<label>' + activity.name + ' (' + activity.type + ')</label>';
+                str = '<label>' + activity.name + ' (' + typeList[activity.type].display + ')</label>';
                 str += '<button value="edit" type="button" id="activity_' + activity.id + '" ';
                 str +='name="activity_' + activity.id + '" ';
                 str += 'onclick="editActivity(' + mission_id + ', ' + x + ')">'
@@ -153,23 +187,62 @@
         }
         
         function newActivity() {
+            mission = missionList[document.getElementById("id_missions").value];
+            mission.activities[mission.activities.length] = new Activity(0, "", "", 0, 1, "", "", null);
+            editActivity(document.getElementById("id_missions").value, mission.activities.length-1)
             return false;
         }
         
         function editActivity(mission, id) {
+            try {
+            activity = missionList[mission].activities[id];
+            
             document.getElementById("baseDisplay").style.display = "none";
             document.getElementById("editDisplay").style.display = "";
+            
+            nameElem = document.getElementById("id_name");
+            questionElem = document.getElementById("id_question");
+            missionElem = document.getElementById("id_missions");
+            typeElem = document.getElementById("id_types");
+            instructionsElem = document.getElementById("id_instructions");
+            addInstructionsElem = document.getElementById("id_addInstructions");
+            pointsElem = document.getElementById("id_points");
+            //TODO: deal with attachments later
+            nameElem.value = activity.name;
+            questionElem.value = activity.question;
+            missionElem.value = mission;
+            typeElem.value = activity.type;
+            instructionsElem.value = activity.instructions;
+            addInstructionsElem.value = activity.addInstructions;
+            pointsElem.value = activity.points;
+            
+            if (typeList[activity.type].type == "map"){
+                document.getElementById("map_edit").style.display = "";
+                document.getElementById("id_maxNumMarkers").value = activity.maxNumMarkers;
+            }
+            } catch(err)
+            {
+                alert(err)
+            }
             return false;
         }
         
         $(document).ready(function() {
             try {
+            
+            {% for type in types %}
+                typeList[{{type.id}}] = new Type("{{type.id}}", "{{type.type}}", "{{type.displayType}}");
+            {% endfor %}
+            
             {% for x, value, activities in values %}
                 missionList[{{value.id}}] = new Mission({{value.id}}, "{{value.name}}", {{x}});
                 {% for activity in activities %}
                     len = missionList[{{value.id}}].activities.length;
                     //(id, name, question, mission, type, instructions, addInstructions, points)
-                    missionList[{{value.id}}].activities[len] = new Activity({{activity.id}}, "{{activity.name}}", "{{activity.question}}", {{value.id}}, "{{activity.type.type}}", "{{activity.instructions}}", "{{activity.addInstructions}}", {{activity.getPoints}});
+                    missionList[{{value.id}}].activities[len] = new Activity({{activity.id}}, "{{activity.name}}", "{{activity.question}}", {{value.id}}, {{activity.type.id}}, "{{activity.instructions}}", "{{activity.addInstructions}}", {{activity.getPoints}});
+                    {% if activity.type.type == "map" %}
+                        missionList[{{value.id}}].activities[len].maxNumMarkers = {{activity.maxNumMarkers}};
+                    {% endif %}
                 {% endfor %}
             {% endfor %}
             } catch(err) {

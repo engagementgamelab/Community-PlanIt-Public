@@ -8,11 +8,13 @@ from django.core.urlresolvers import reverse
 from web.instances.models import Instance
 from web.values.models import Value
 from web.missions.models import Mission
-from web.player_activities.models import PlayerActivity, PlayerActivityType
+from web.player_activities.models import *
 from web.processors import instance_processor as ip
 from web.admin.forms import *
 from django.utils import simplejson
 import re
+from django.contrib.contenttypes.models import ContentType
+
 
 def verify(request):
     user = request.user
@@ -337,9 +339,26 @@ def activity_base(request):
             missions = Mission.objects.filter(instance=instance).order_by("start_date")
             index_missions = []
             formMission = []
+            responses = []
+            
             x = 0
             for mission in missions:
-                activities = PlayerActivity.objects.filter(mission=mission).order_by("createDate")
+                acts = PlayerActivity.objects.filter(mission=mission).order_by("createDate")
+                activities = []
+                for act in acts:
+                    if act.type.type == "map": 
+                        activities.append(PlayerMapActivity.objects.get(pk=act.pk))
+                    elif act.type.type == "empathy":
+                        activities.append(PlayerEmpathyActivity.objects.get(pk=act.pk))
+                    elif act.type.type == "single_response" or act.type.type == "multi_reponse":
+                        choices = MultiChoiceActivity.objects.filter(activity=activity)
+                        l = []
+                        for choice in choices:
+                            l.append(choice.value)
+                        responses.append(act, l)
+                    else:
+                        activities.append(act)
+                   
                 index_missions.append([x, mission, activities])
                 x = x + 1
                 formMission.append((mission.id, mission.name))
@@ -347,7 +366,7 @@ def activity_base(request):
             formTypes = []
             types = PlayerActivityType.objects.all()
             for type in types:
-                formTypes.append((type.id, type.type))
+                formTypes.append((type.id, type.displayType))
             
             form = ActivitySaveForm(initial={'missions': formMission})
             editForm = ActivityEditForm(initial={"missions": formMission,
@@ -357,7 +376,9 @@ def activity_base(request):
                 "form": form,
                 "editForm": editForm,
                 "instance": instance,
-                "values": index_missions, 
+                "values": index_missions,
+                "types": types,
+                "responses": responses, 
                 }, [ip])))
         
     form = ActivityBaseForm()

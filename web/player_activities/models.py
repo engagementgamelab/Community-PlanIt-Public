@@ -6,6 +6,8 @@ from web.attachments.models import Attachment
 from web.missions.models import Mission
 from web.accounts.models import determine_path
 import datetime
+from django.contrib.contenttypes.models import ContentType
+
 
 #from django.contrib.auth.models import User
 
@@ -13,6 +15,7 @@ import datetime
 # open_ended, single_response, map, empathy, multi_reponse
 class PlayerActivityType(models.Model):
     type = models.CharField(max_length=255)
+    displayType = models.CharField(max_length=255)
     defaultPoints = models.IntegerField(default=10)
     
 class PlayerActivity(models.Model):
