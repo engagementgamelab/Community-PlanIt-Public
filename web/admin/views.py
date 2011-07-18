@@ -348,7 +348,7 @@ def activity_base(request):
                         activities.append(PlayerMapActivity.objects.get(pk=act.pk))
                     elif act.type.type == "empathy":
                         activities.append(PlayerEmpathyActivity.objects.get(pk=act.pk))
-                    elif act.type.type == "single_response" or act.type.type == "multi_reponse":
+                    elif act.type.type == "single_response" or act.type.type == "multi_response":
                         activities.append(act)
                         choices = MultiChoiceActivity.objects.filter(activity=act)
                         for choice in choices:
