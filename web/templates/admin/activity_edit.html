@@ -94,7 +94,7 @@
     
             <div id="responses_edit" style="display:none">
                 <div id="responses"></div>
-                <input type="button" name="add" value="Add another mission" onclick="addInput()"/> <br>
+                <input type="button" name="add" value="Add another response" onclick="addInput()"/> <br>
             </div>
             
             <div id="map_edit" style="display:none">
@@ -133,6 +133,7 @@
     <script>
         var missionList = new Array(0);
         var typeList = new Array(0);
+        var responseList = null;
         
         function Mission(id, name) {
             this.id = id;
@@ -175,9 +176,10 @@
             this.display = display;
         }
         
-        function Response(id, value) {
+        function Response(id, value, loc) {
             this.id = id;
             this.value = value;
+            this.location = loc;
         }
         
         function getActivities() {
@@ -203,6 +205,20 @@
             mission.activities[mission.activities.length] = new Activity(0, "", "", 0, 1, "", "", null);
             editActivity(document.getElementById("id_missions").value, mission.activities.length-1)
             return false;
+        }
+        
+        function displayResponseList() {
+            document.getElementById("responses_edit").style.display = "";
+            response_div = document.getElementById("responses");
+            response_div.innerHTML = "<label>Responses:</label>";
+            for (x in responseList) {
+                response = activity.responses[x];
+                str = '<input style="width:40em" type="text" id="act_response_id_' + response.id + '" ';
+                str += 'name="act_response_id_' + response.id + '" ';
+                str += 'value="' + response.value + '">';
+                str += '<br>'
+                response_div.innerHTML += str;
+            }
         }
         
         function editActivity(mission, id) {
@@ -244,25 +260,20 @@
             }
             
             if (typeList[activity.type].type == "single_response" || typeList[activity.type].type == "multi_response") {
-                document.getElementById("responses_edit").style.display = "";
-                response_div = document.getElementById("responses");
-                response_div.innerHTML = "<label>Responses:</label>";
-                for (x in activity.responses) {
-                    response = activity.responses[x];
-                    str = '<input style="width:40em" type="text" id="act_response_id_' + response.id + '" ';
-                    str += 'name="act_response_id_' + response.id + '" ';
-                    str += 'value="' + response.value + '">';
-                    str += '<br>'
-                    response_div.innerHTML += str;
-                }
+                responseList = activity.responses; //set this global to be able to add to it
+                displayResponseList();
             }
-            
 
             } catch(err)
             {
                 alert(err)
             }
             return false;
+        }
+        
+        function addInput() {
+            responseList[responseList.length] = new Response(0, "", responseList.length);
+            displayResponseList();
         }
         
         function changetype(newValue){
@@ -287,6 +298,9 @@
         $(document).ready(function() {
             try {
             
+            //This basically dumps all of the django data onto the web page and then organizses it.
+            //The arrays are for state and displayed using html, return values are <input hidden> objects.  
+            
             {% for type in types %}
                 typeList[{{type.id}}] = new Type("{{type.id}}", "{{type.type}}", "{{type.displayType}}");
             {% endfor %}
@@ -300,11 +314,13 @@
                     {% endif %}
                 {% endfor %}
             {% endfor %}
+            var x = 1; //location variable
             {% for id, mission_id, act_id, value in responses %}
                 responses = missionList[{{mission_id}}].activities[{{act_id}}].responses;
-                responses[responses.length] = new Response({{id}}, "{{value}}");
+                responses[responses.length] = new Response({{id}}, "{{value}}", x);
+                x = x + 1;
             {% endfor %}
-            
+            responses[responses.length] = new Response(0, "", x);
             } catch(err) {
                 alert(err)
             }
