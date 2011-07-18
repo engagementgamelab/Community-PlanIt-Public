@@ -134,6 +134,7 @@
         var missionList = new Array(0);
         var typeList = new Array(0);
         var responseList = null;
+        var deleteResponseList = new Array(0);
         
         function Mission(id, name) {
             this.id = id;
@@ -213,9 +214,15 @@
             response_div.innerHTML = "<label>Responses:</label>";
             for (x in responseList) {
                 response = activity.responses[x];
-                str = '<input style="width:40em" type="text" id="act_response_id_' + response.id + '" ';
-                str += 'name="act_response_id_' + response.id + '" ';
+                str = '<input style="width:50%" type="text" id="act_response_id_' + response.location + '" ';
+                str += 'name="act_response_id_' + response.location + '" ';
                 str += 'value="' + response.value + '">';
+                //- button
+                str += '<input type="button" name="up' + response.location + '" value="-" onclick="moveUp(' + response.location + ')"/> ';
+                //+ button
+                str += '<input type="button" name="down' + response.location + '" value="+" onclick="moveDown(' + response.location + ')"/> ';
+                str += '<input type="button" name="remove' + response.location + '" value="Remove" onclick="deleteInput(' + response.location + ')"/> ';
+
                 str += '<br>'
                 response_div.innerHTML += str;
             }
@@ -276,6 +283,41 @@
             displayResponseList();
         }
         
+        function moveUp(location) {
+            if (location == 0)
+                return;
+
+            temp = responseList[location-1];
+            responseList[location-1] = responseList[location];
+            responseList[location-1].location = responseList[location-1].location - 1; //it moved up
+            responseList[location] = temp;
+            responseList[location].location = responseList[location].location + 1; //it moved down
+            displayResponseList();
+        }
+        
+        function moveDown(location) {
+            if (location == responseList.length-1)
+                return;
+
+            temp = responseList[location+1];
+            responseList[location+1] = responseList[location];
+            responseList[location+1].location = responseList[location+1].location + 1; //it moved down
+            responseList[location] = temp;
+            responseList[location].location = responseList[location].location - 1; //it moved up
+            displayResponseList();
+        }
+        
+        function deleteInput(location) {
+            response = responseList[location];
+            deleteResponseList[deleteResponseList.length] = new Response(response.id, response.value, response.location);
+            responseList.splice(location, 1);
+            for (x = location; x < responseList.length; x++)
+            {
+                responseList[x].location = responseList[x].location - 1;
+            }
+            displayResponseList();
+        }
+        
         function changetype(newValue){
             document.getElementById("responses_edit").style.display = "None";
             document.getElementById("map_edit").style.display = "None";
@@ -317,10 +359,10 @@
             var x = 1; //location variable
             {% for id, mission_id, act_id, value in responses %}
                 responses = missionList[{{mission_id}}].activities[{{act_id}}].responses;
-                responses[responses.length] = new Response({{id}}, "{{value}}", x);
+                responses[x] = new Response({{id}}, "{{value}}", x);
                 x = x + 1;
             {% endfor %}
-            responses[responses.length] = new Response(0, "", x);
+            responses[x] = new Response(0, "", x);
             } catch(err) {
                 alert(err)
             }
