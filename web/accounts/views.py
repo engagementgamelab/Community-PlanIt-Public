@@ -59,15 +59,6 @@ def register(request):
         player.full_clean()
         player.save()
         
-        tmpl = loader.get_template('accounts/email/welcome.html')
-        body = tmpl.render(Context({ 'password': password,
-                                    'first_name': firstName }))
-        
-        #the inability to send an email should not stop the registering process
-        #during testing I got a error: [Errno 110] Connection timed out error. -BMH
-        send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=True)
-        messages.success(request, _('Thanks for registering!'))
-
         player = auth.authenticate(username=email, password=password)
         auth.login(request, player)
         player.save()
@@ -79,6 +70,16 @@ def register(request):
         uinfo.accepted_term = False
         uinfo.accepted_research = False
         uinfo.save()
+        
+        tmpl = loader.get_template('accounts/email/welcome.html')
+        body = tmpl.render(Context({ 'password': password,
+                                    'first_name': firstName }))
+        
+        #the inability to send an email should not stop the registering process
+        #during testing I got a error: [Errno 110] Connection timed out error. -BMH
+        send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=True)
+        messages.success(request, _('Thanks for registering!'))
+        
         return HttpResponseRedirect('/account/dashboard')
 
     # If not valid, show normal form
