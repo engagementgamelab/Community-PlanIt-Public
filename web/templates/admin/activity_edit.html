@@ -12,9 +12,12 @@
         <input type="hidden" name="instance_id" id="instance_id" value="{{instance.id}}"/>
         
         <div class="fieldWrapper">
-            {{ form.missions.errors }}
-            <label for="id_missions">Select Mission</label>
-            {{ form.missions }}
+            <label for="id_types">Select Mission:</label>
+            <select name="missions" id="id_missions">
+                {% for mission in list_missions %}
+                    <option value="{{mission.id}}">{{mission.name}}</option>
+                {% endfor %}
+            </select>
         </div>
         <div>
             <label id="getAct_label">Get all activities for the selected mission: </label>
@@ -28,92 +31,98 @@
 
     </div>
     <div id="editDisplay" style="display:none">
-        <input type="hidden" id="activity_id" name="activity_id" value="">
-        <!--
-        {{editForm.as_p}}
-        -->
+        <form action="{% url activity-save %}" method="post">
+            {%csrf_token%}
+            <input type="hidden" id="activity_id" name="activity_id" value="">
 
-        <div class="fieldWrapper">
-            {{ editForm.name.errors }}
-            <label for="id_name">Name:</label>
-            {{ editForm.name }}
-        </div>
-        
-        <div class="fieldWrapper">
-            {{ editForm.question.errors }}
-            <label for="id_question">Question:</label>
-            {{ editForm.question }}
-        </div>
-        
-        <div class="fieldWrapper">
-            {{ editForm.missions.errors }}
-            <label for="id_missions">Mission:</label>
-            {{ editForm.missions }}
-        </div>
-        
-        <div class="fieldWrapper">
-            {{ editForm.types.errors }}
-            <label for="id_types">Type</label>
-            {{ editForm.types }}
-        </div>
-        
-        <div class="fieldWrapper">
-            {{ editForm.instructions.errors }}
-            <label for="id_instructions">Instructions:</label>
-            {{ editForm.instructions }}
-        </div>
-        
-        <div class="fieldWrapper">
-            {{ editForm.addInstructions.errors }}
-            <label for="id_addInstructions">addInstructions:</label>
-            {{ editForm.addInstructions }}
-        </div>
-        
-        <div class="fieldWrapper">
-            {{ editForm.points.errors }}
-            <label for="id_points">Points:</label>
-            {{ editForm.points }}
-        </div>
-        
-        <div class="fieldWrapper">
-            {{ editForm.attachment.errors }}
-            <label for="id_attachment">attachment:</label>
-            {{ editForm.attachment }}
-        </div>
-
-        <div id="single_response_edit" style="display:none">
+            {{form.errors}}
+            {{editForm.errors}}
+            <div class="fieldWrapper">
+                {{ editForm.name.errors }}
+                <label for="id_name">Name:</label>
+                {{ editForm.name }}
+            </div>
             
-        </div>
-        
-        <div id="multi_reponse_edit" style="display:none">
+            <div class="fieldWrapper">
+                {{ editForm.question.errors }}
+                <label for="id_question">Question:</label>
+                {{ editForm.question }}
+            </div>
             
-        </div>
-        
-        <div id="map_edit" style="display:none">
             <div class="fieldWrapper">
-                {{ editForm.maxNumMarkers.errors }}
-                <label for="id_maxNumMarkers">Maximum number of markers per person:</label>
-                {{ editForm.maxNumMarkers }}
+                <label for="id_types">Missions:</label>
+                <select name="missions" id="id_missions">
+                    {% for mission in list_missions %}
+                        <option value="{{mission.id}}">{{mission.name}}</option>
+                    {% endfor %}
+                </select>
             </div>
-        </div>
-        
-        <div id="empathy_edit" style="display:none">
+            
             <div class="fieldWrapper">
-                {{ editForm.avatar.errors }}
-                <label for="id_avatar">Avatar:</label>
-                {{ editForm.avatar }}
+                <label for="id_types">Type</label>
+                <!-- {{ editForm.types }} -->
+                <select name="types" id="id_types" onchange="changetype(this.value)">
+                    {% for type in types %}
+                        <option value="{{type.id}}">{{type.displayType}}</option>
+                    {% endfor %}
+                </select>
             </div>
+            
             <div class="fieldWrapper">
-                {{ editForm.bio.errors }}
-                <label for="id_bio">Biography:</label>
-                {{ editForm.bio }}
+                {{ editForm.instructions.errors }}
+                <label for="id_instructions">Instructions:</label>
+                {{ editForm.instructions }}
             </div>
-        </div>
-        
-
-        
-        <input type="submit" name="submit_btn" value="Submit" onclick="return_values()"/>
-        <input type="submit" name="submit_btn" value="Cancel" />        
+            
+            <div class="fieldWrapper">
+                {{ editForm.addInstructions.errors }}
+                <label for="id_addInstructions">addInstructions:</label>
+                {{ editForm.addInstructions }}
+            </div>
+            
+            <div class="fieldWrapper">
+                {{ editForm.points.errors }}
+                <label for="id_points">Points:</label>
+                {{ editForm.points }}
+            </div>
+            
+            <div class="fieldWrapper">
+                {{ editForm.attachment.errors }}
+                <label for="id_attachment">attachment:</label>
+                {{ editForm.attachment }}
+            </div>
+    
+            <div id="responses_edit" style="display:none">
+                <div id="responses"></div>
+                <input type="button" name="add" value="Add another mission" onclick="addInput()"/> <br>
+            </div>
+            
+            <div id="map_edit" style="display:none">
+                <div class="fieldWrapper">
+                    {{ editForm.maxNumMarkers.errors }}
+                    <label for="id_maxNumMarkers">Maximum number of markers per person:</label>
+                    {{ editForm.maxNumMarkers }}
+                </div>
+            </div>
+            
+            <div id="empathy_edit" style="display:none">
+                <div class="fieldWrapper">
+                    {{ editForm.avatar.errors }}
+                    <label for="id_avatar">Avatar:</label>
+                    {{ editForm.avatar }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ editForm.bio.errors }}
+                    <label for="id_bio">Biography:</label>
+                    {{ editForm.bio }}
+                </div>
+            </div>
+            
+    
+            
+            <input type="submit" name="submit_btn" value="Submit" onclick="return_values()"/>
+            <input type="submit" name="submit_btn" value="Cancel" />        
+        </form>
     </div>
     <div id="newDisplay" style="display:none">
         
@@ -122,14 +131,12 @@
 
 {%block body%}
     <script>
-        var fields = {{values|length}}; //0 is given above
         var missionList = new Array(0);
         var typeList = new Array(0);
         
-        function Mission(id, name, location) {
+        function Mission(id, name) {
             this.id = id;
             this.name = name;
-            this.location = location;
             this.activities = new Array(0);
         }
         
@@ -159,13 +166,18 @@
             this.bio = null; //string for the bio
             
             //MultiChoiceActivity
-            this.choices = null; //This should be an array initized if the type of the activity is multi_choice or single choice
+            this.responses = new Array(0); //This should be an array initized if the type of the activity is multi_choice or single choice
         }
         
         function Type(id, type, display) {
             this.id = id;
             this.type = type;
             this.display = display;
+        }
+        
+        function Response(id, value) {
+            this.id = id;
+            this.value = value;
         }
         
         function getActivities() {
@@ -179,7 +191,7 @@
                 str = '<label>' + activity.name + ' (' + typeList[activity.type].display + ')</label>';
                 str += '<button value="edit" type="button" id="activity_' + activity.id + '" ';
                 str +='name="activity_' + activity.id + '" ';
-                str += 'onclick="editActivity(' + mission_id + ', ' + x + ')">'
+                str += 'onclick="editActivity(' + mission_id + ', ' + activity.id + ')">'
                 str += 'Edit</button><br>'
                 acts.innerHTML += str;
             }
@@ -199,6 +211,7 @@
             
             document.getElementById("baseDisplay").style.display = "none";
             document.getElementById("editDisplay").style.display = "";
+            document.getElementById("activity_id").value = activity.id;
             
             nameElem = document.getElementById("id_name");
             questionElem = document.getElementById("id_question");
@@ -216,13 +229,57 @@
             addInstructionsElem.value = activity.addInstructions;
             pointsElem.value = activity.points;
             
+            document.getElementById("responses_edit").style.display = "None";
+            document.getElementById("map_edit").style.display = "None";
+            document.getElementById("empathy_edit").style.display = "None";
+            
             if (typeList[activity.type].type == "map"){
                 document.getElementById("map_edit").style.display = "";
                 document.getElementById("id_maxNumMarkers").value = activity.maxNumMarkers;
             }
+            if (typeList[activity.type].type == "empathy") {
+                document.getElementById("empathy_edit").style.display = "";
+                document.getElementById("id_avatar").value = activity.avatar;
+                document.getElementById("id_bio").value = activity.bio
+            }
+            
+            if (typeList[activity.type].type == "single_response" || typeList[activity.type].type == "multi_response") {
+                document.getElementById("responses_edit").style.display = "";
+                response_div = document.getElementById("responses");
+                response_div.innerHTML = "<label>Responses:</label>";
+                for (x in activity.responses) {
+                    response = activity.responses[x];
+                    str = '<input style="width:40em" type="text" id="act_response_id_' + response.id + '" ';
+                    str += 'name="act_response_id_' + response.id + '" ';
+                    str += 'value="' + response.value + '">';
+                    str += '<br>'
+                    response_div.innerHTML += str;
+                }
+            }
+            
+
             } catch(err)
             {
                 alert(err)
+            }
+            return false;
+        }
+        
+        function changetype(newValue){
+            document.getElementById("responses_edit").style.display = "None";
+            document.getElementById("map_edit").style.display = "None";
+            document.getElementById("empathy_edit").style.display = "None";
+            
+            if (typeList[newValue].type == "map") {
+                document.getElementById("map_edit").style.display = "";
+            }
+            
+            if (typeList[newValue].type == "empathy") {
+                document.getElementById("empathy_edit").style.display = "";
+            }
+            
+            if (typeList[newValue].type == "single_response" || typeList[newValue].type == "multi_response") {
+                document.getElementById("responses_edit").style.display = "";
             }
             return false;
         }
@@ -234,17 +291,20 @@
                 typeList[{{type.id}}] = new Type("{{type.id}}", "{{type.type}}", "{{type.displayType}}");
             {% endfor %}
             
-            {% for x, value, activities in values %}
-                missionList[{{value.id}}] = new Mission({{value.id}}, "{{value.name}}", {{x}});
+            {% for value, activities in values %}
+                missionList[{{value.id}}] = new Mission({{value.id}}, "{{value.name}}");
                 {% for activity in activities %}
-                    len = missionList[{{value.id}}].activities.length;
-                    //(id, name, question, mission, type, instructions, addInstructions, points)
-                    missionList[{{value.id}}].activities[len] = new Activity({{activity.id}}, "{{activity.name}}", "{{activity.question}}", {{value.id}}, {{activity.type.id}}, "{{activity.instructions}}", "{{activity.addInstructions}}", {{activity.getPoints}});
+                    missionList[{{value.id}}].activities[{{activity.id}}] = new Activity({{activity.id}}, "{{activity.name}}", "{{activity.question}}", {{value.id}}, {{activity.type.id}}, "{{activity.instructions}}", "{{activity.addInstructions}}", {{activity.getPoints}});
                     {% if activity.type.type == "map" %}
-                        missionList[{{value.id}}].activities[len].maxNumMarkers = {{activity.maxNumMarkers}};
+                        missionList[{{value.id}}].activities[{{activity.id}}].maxNumMarkers = {{activity.maxNumMarkers}};
                     {% endif %}
                 {% endfor %}
             {% endfor %}
+            {% for id, mission_id, act_id, value in responses %}
+                responses = missionList[{{mission_id}}].activities[{{act_id}}].responses;
+                responses[responses.length] = new Response({{id}}, "{{value}}");
+            {% endfor %}
+            
             } catch(err) {
                 alert(err)
             }

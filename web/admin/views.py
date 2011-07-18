@@ -338,10 +338,8 @@ def activity_base(request):
             instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
             missions = Mission.objects.filter(instance=instance).order_by("start_date")
             index_missions = []
-            formMission = []
             responses = []
             
-            x = 0
             for mission in missions:
                 acts = PlayerActivity.objects.filter(mission=mission).order_by("createDate")
                 activities = []
@@ -351,32 +349,25 @@ def activity_base(request):
                     elif act.type.type == "empathy":
                         activities.append(PlayerEmpathyActivity.objects.get(pk=act.pk))
                     elif act.type.type == "single_response" or act.type.type == "multi_reponse":
-                        choices = MultiChoiceActivity.objects.filter(activity=activity)
-                        l = []
+                        activities.append(act)
+                        choices = MultiChoiceActivity.objects.filter(activity=act)
                         for choice in choices:
-                            l.append(choice.value)
-                        responses.append(act, l)
+                            responses.append([choice.pk, mission.pk, act.pk, choice.value])
                     else:
                         activities.append(act)
-                   
-                index_missions.append([x, mission, activities])
-                x = x + 1
-                formMission.append((mission.id, mission.name))
+               
+                index_missions.append([mission, activities])
             
-            formTypes = []
             types = PlayerActivityType.objects.all()
-            for type in types:
-                formTypes.append((type.id, type.displayType))
-            
-            form = ActivitySaveForm(initial={'missions': formMission})
-            editForm = ActivityEditForm(initial={"missions": formMission,
-                                                 "types": formTypes})
+            form = ActivitySaveForm()
+            editForm = ActivityEditForm()
             tmpl = loader.get_template("admin/activity_edit.html")
             return HttpResponse(tmpl.render(RequestContext(request, {
                 "form": form,
                 "editForm": editForm,
                 "instance": instance,
                 "values": index_missions,
+                "list_missions": missions,
                 "types": types,
                 "responses": responses, 
                 }, [ip])))
@@ -392,12 +383,93 @@ def activity_save(request):
     ok = verify(request)
     if ok != None:
         return ok
+    
     if (request.method != "POST"):
         return HttpResponseServerError("The request method was not POST")
+    
+    if (not request.POST.has_key("activity_id") or request.POST["activity_id"] == ""):
+        return HttpResponseServerError("POST did not contain activity_id")
+    
     s = "%s Post variables <br>"
     for x in request.POST.keys():
         s = "%s%s: %s<br>" % (s, x, request.POST[x])
-    return HttpResponse(s)
+    #return HttpResponse(s)
+    
+    form = ActivityEditForm(request.POST)
+    tmpl = loader.get_template("admin/activity_edit.html")
+    
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+    
+    if form.is_valid():
+        activity = None
+        if (request.POST["activity_id"] == "0"):
+            activity = PlayerActivity()
+        else:
+            activity = PlayerActivity.objects.get(id=int(request.POST["activity_id"]))
+        activity.name = form.cleaned_data["name"]
+        activity.question = form.cleaned_data["question"]
+        activity.creationUser = request.user
+        activity.mission = Mission.objects.get(id=int(request.POST["missions"]))
+        activity.type = PlayerActivityType.objects.get(id=int(request.POST["types"]));
+        activity.instructions = form.cleaned_data["instructions"] if form.cleaned_data.has_key("instructions") and form.cleaned_data["instructions"] != "" else None 
+        activity.addInstructions = form.cleaned_data["addInstructions"] if form.cleaned_data.has_key("addInstructions") and form.cleaned_data["addInstructions"] != "" else None  
+        activity.points = form.cleaned_data["points"] if form.cleaned_data.has_key("points") and form.cleaned_data["points"] != "" else None
+        activity.save()
+        #insert various types here but
+        return HttpResponseRedirect(reverse("admin-base"))     
+    else:
+        s = ""
+        for x in form.errors:
+            s = "%s%s: %s<br>" % (s, x, form.errors[x])
+        return HttpResponse(s)
+        mission = Mission.objects.get(id=int(request.POST["mission_id"]))
+        instance = mission.instance
+        missions = Mission.objects.filter(instance=instance)
+        index_missions = []
+        formMission = []
+        responses = []
+        
+        x = 0
+        for mission in missions:
+            acts = PlayerActivity.objects.filter(mission=mission).order_by("createDate")
+            activities = []
+            for act in acts:
+                if act.type.type == "map": 
+                    activities.append(PlayerMapActivity.objects.get(pk=act.pk))
+                elif act.type.type == "empathy":
+                    activities.append(PlayerEmpathyActivity.objects.get(pk=act.pk))
+                elif act.type.type == "single_response" or act.type.type == "multi_reponse":
+                    activities.append(act)
+                    choices = MultiChoiceActivity.objects.filter(activity=act)
+                    for choice in choices:
+                        responses.append([choice.pk, mission.pk, act.pk, choice.value])
+                else:
+                    activities.append(act)
+           
+            index_missions.append([x, mission, activities])
+            x = x + 1
+            formMission.append((mission.id, mission.name))
+        
+        formTypes = []
+        types = PlayerActivityType.objects.all()
+        for type in types:
+            formTypes.append((type.id, type.displayType))
+        
+        form = ActivitySaveForm(request.POST, initial={"missions": formMission})
+        editForm = ActivityEditForm(request.POST, initial={"missions": formMission,
+                                             "types": formTypes})
+        
+        tmpl = loader.get_template("admin/activity_edit.html")
+        return HttpResponse(tmpl.render(RequestContext(request, {
+            "form": form,
+            "editForm": editForm,
+            "instance": instance,
+            "values": index_missions,
+            "types": types,
+            "responses": responses, 
+            }, [ip]))) 
+
 
 
 

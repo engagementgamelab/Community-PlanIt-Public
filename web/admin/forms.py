@@ -60,7 +60,7 @@ class ActivityBaseForm(forms.Form):
     instances = forms.ChoiceField(required=False, choices=ins)
 
 class ActivitySaveForm(forms.Form):
-    missions = forms.ChoiceField()
+    missions = forms.ChoiceField(required=False)
     
     def __init__(self, *args, **kwargs):
         initial =  kwargs.get("initial", {})
@@ -68,14 +68,13 @@ class ActivitySaveForm(forms.Form):
         if missions:
             kwargs['initial']['missions'] = missions[0]
         super(ActivitySaveForm, self).__init__(*args, **kwargs)
-        for mission in missions:
-            self.fields["missions"].choices.append(mission)
+        if missions:
+            for mission in missions:
+                self.fields["missions"].choices.append(mission)
 
 class ActivityEditForm(forms.Form):
     name = forms.CharField()
     question = forms.CharField()
-    missions = forms.ChoiceField()
-    types = forms.ChoiceField()
     instructions = forms.CharField(required=False)
     addInstructions = forms.CharField(required=False)
     points = forms.IntegerField(required=False)
@@ -83,22 +82,4 @@ class ActivityEditForm(forms.Form):
     maxNumMarkers = forms.IntegerField(required=False)
     avatar = forms.FileField(required=False)
     bio = forms.CharField(required=False)
-    
-    def __init__(self, *args, **kwargs):
-        initial =  kwargs.get("initial", {})
-        missions = initial.get("missions", None)
-        types = initial.get("types", None)
-        
-        if missions:
-            kwargs['initial']['missions'] = missions[0]
-        if types:
-            kwargs['initial']['types'] = types[0]
-        
-        super(ActivityEditForm, self).__init__(*args, **kwargs)
-        for mission in missions:
-            self.fields["missions"].choices.append(mission)
-        
-        for type in types:
-            self.fields["types"].choices.append(type)
-
     
