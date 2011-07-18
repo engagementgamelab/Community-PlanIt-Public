@@ -113,7 +113,7 @@ def instance_save(request):
             instance = Instance.objects.get(id=int(request.POST["instance_id"]))
         else:
             instance = Instance()
-        
+        instance.name = form.cleaned_data["name"]
         instance.start_date = form.cleaned_data["start_date"]
         instance.end_date = form.cleaned_data["end_date"]
         instance.location = form.cleaned_data["map"]
@@ -149,6 +149,7 @@ def instance_save(request):
         
 @login_required
 def values_base(request):
+    instances = Instance.objects.all().order_by("name")
     if request.method == 'POST':
         #s = ""
         #for x in request.POST:
@@ -158,7 +159,7 @@ def values_base(request):
         if (request.POST["submit_btn"] == "Cancel"):
             return HttpResponseRedirect(reverse("admin-base"))
         
-        form = ValueBaseForm(request.POST)
+        form = ValueBaseForm(request.POST, initial={"instances": instances})
         if form.is_valid():
             #s = ""
             #for x in form.cleaned_data.keys():
@@ -180,7 +181,7 @@ def values_base(request):
     ok = verify(request)
     if ok != None:
         return ok
-    form = ValueBaseForm()
+    form = ValueBaseForm(initial={"instances": instances})
     tmpl = loader.get_template("admin/value_base.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
         "form": form,   
@@ -212,12 +213,12 @@ def mission_base(request):
     ok = verify(request)
     if ok != None:
         return ok
-    
+    instances = Instance.objects.all().order_by("name")
     if request.method == 'POST':
         if (request.POST["submit_btn"] == "Cancel"):
             return HttpResponseRedirect(reverse("admin-base"))
             
-        form = MissionBaseForm(request.POST)
+        form = MissionBaseForm(request.POST, initial={"instances": instances})
         if form.is_valid():
             #s = ""
             #for x in form.cleaned_data.keys():
@@ -237,8 +238,8 @@ def mission_base(request):
                 "instance": instance,
                 "values": index_missions, 
                 }, [ip])))
-            
-    form = MissionBaseForm()
+    
+    form = MissionBaseForm(initial={"instances": instances})
     tmpl = loader.get_template("admin/mission_base.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
         "form": form,   
@@ -290,7 +291,6 @@ def mission_save(request):
                 if delete_id != 0:
                     mission = Mission.objects.get(id=delete_id).delete()
 
-        #first delete all missions that should be
         x = 0
         lastMission = None
         for x in toAdd.keys():
@@ -416,7 +416,33 @@ def activity_save(request):
         activity.addInstructions = form.cleaned_data["addInstructions"] if form.cleaned_data.has_key("addInstructions") and form.cleaned_data["addInstructions"] != "" else None  
         activity.points = form.cleaned_data["points"] if form.cleaned_data.has_key("points") and form.cleaned_data["points"] != "" else None
         activity.save()
-        #insert various types here but
+        
+        #to see what is going on here, look at the mission save
+        toAdd = {};
+        addPat = re.compile("index_(?P<index_id>\d+)_id_(?P<response_id>\d+)")
+        delPat = re.compile("delete_id_(?P<delete_id>\d+)")
+        for key in request.POST.keys():
+            if addPat.match(key) != None and request.POST[key] != "":
+                matchDict = addPat.match(key).groupdict()
+                response_id = int(matchDict["response_id"])
+                response = None
+                if response_id != 0:
+                    response = MultiChoiceActivity.objects.get(id=response_id)
+                else:
+                    response = MultiChoiceActivity()
+                    
+                index_id = int(matchDict["index_id"])
+                toAdd[index_id] = (response, request.POST[key])
+            elif delPat.match(key) != None:
+                matchDict = delPat.match(key).groupdict()
+                delete_id = int(matchDict["delete_id"])
+                if delete_id != 0:
+                    MultiChoiceActivity.objects.get(id=delete_id).delete()
+        #if any form of implementing ordering is required, do it here
+        for x in toAdd:
+            toAdd[x][0].value = toAdd[x][1]
+            toAdd[x][0].activity = activity
+            toAdd[x][0].save()
         return HttpResponseRedirect(reverse("admin-base"))     
     else:
         s = ""

@@ -34,6 +34,6 @@
 -   model: player_activities.playeractivitytype
     pk: 5
     fields:
-        type: multi_reponse
+        type: multi_response
         displayType: Multiple Responses
         defaultPoints: 10

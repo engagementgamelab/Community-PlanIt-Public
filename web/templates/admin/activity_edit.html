@@ -119,7 +119,7 @@
             </div>
             
     
-            
+            <div id="returns" name="return_values" values=""></div>
             <input type="submit" name="submit_btn" value="Submit" onclick="return_values()"/>
             <input type="submit" name="submit_btn" value="Cancel" />        
         </form>
@@ -135,6 +135,29 @@
         var typeList = new Array(0);
         var responseList = null;
         var deleteResponseList = new Array(0);
+        
+        function return_values() {
+            returns = document.getElementById("returns");
+            returns.innerHTML = "";
+            for (x in responseList)
+            {
+                response = responseList[x]
+                str = '<input type="hidden" name="index_' + response.location + '_id_' + response.id + '" ';
+                str += 'id="index_' + response.location + '_id_' + response.id + '" ';
+                str += 'value="' + response.value + '"/>';
+                returns.innerHTML += str;
+            }
+            
+            for (x in deleteResponseList)
+            {
+                response = deleteResponseList[x]
+                str = '<input type="hidden" name="delete_id_' + response.id + '" ';
+                str += 'id="delete_id_' + response.id + '" ';
+                str += 'value="' + response.name + '"/>';
+                returns.innerHTML += str;
+            }
+            return true;
+        }
         
         function Mission(id, name) {
             this.id = id;
@@ -204,6 +227,7 @@
         function newActivity() {
             mission = missionList[document.getElementById("id_missions").value];
             mission.activities[mission.activities.length] = new Activity(0, "", "", 0, 1, "", "", null);
+            responseList = mission.activities[mission.activities.length-1].responses
             editActivity(document.getElementById("id_missions").value, mission.activities.length-1)
             return false;
         }
@@ -216,7 +240,8 @@
                 response = activity.responses[x];
                 str = '<input style="width:50%" type="text" id="act_response_id_' + response.location + '" ';
                 str += 'name="act_response_id_' + response.location + '" ';
-                str += 'value="' + response.value + '">';
+                str += 'value="' + response.value + '" '
+                str += 'onchange="storeValue(' + response.location + ', this.value)"> '
                 //- button
                 str += '<input type="button" name="up' + response.location + '" value="-" onclick="moveUp(' + response.location + ')"/> ';
                 //+ button
@@ -280,6 +305,11 @@
         
         function addInput() {
             responseList[responseList.length] = new Response(0, "", responseList.length);
+            displayResponseList();
+        }
+        
+        function storeValue(location, value) {
+            responseList[location].value = value;
             displayResponseList();
         }
         
@@ -362,7 +392,8 @@
                 responses[x] = new Response({{id}}, "{{value}}", x);
                 x = x + 1;
             {% endfor %}
-            responses[x] = new Response(0, "", x);
+            //TODO: This causes issues when there are no responses
+            //responses[x] = new Response(0, "", x);
             } catch(err) {
                 alert(err)
             }

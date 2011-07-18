@@ -75,13 +75,4 @@ class PointsAssignmentAdmin(admin.ModelAdmin):
 class InstanceAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'end_date',)
 
-#TODO: Make sure that this is unit tested upon instance creation! DO IT!
-def instance_post_save(instance, created, **kwargs):
-    if (PointsAssignment.objects.filter(instance=instance).count() == 0):
-        actions = ['challenge_completed', 'mapit_completed', 'thinkfast_completed', 'othershoes_completed', 'profile_completed', 'account_created', 'challenge_created', 'comment_created']
-        for action in actions:
-            p = PointsAssignment(action=action, points=10, instance=instance)
-            p.save()
-
-models.signals.post_save.connect(instance_post_save, sender=Instance)
 

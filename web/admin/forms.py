@@ -36,18 +36,31 @@ class InstanceEditForm(forms.Form):
         return map
 
 class ValueBaseForm(forms.Form):
-    ins = []
-    ins.append((0, '------'))
-    for x in Instance.objects.all().order_by("name"):
-        ins.append((x.id, x.name))
-    instances = forms.ChoiceField(required=False, choices=ins)
+    instances = forms.ChoiceField()
+    
+    def __init__(self, *args, **kwargs):
+        initial =  kwargs.get("initial", {})
+        instances = initial.get("instances", None)
+        if instances:
+            kwargs['initial']['instances'] = instances[0]
+        super(ValueBaseForm, self).__init__(*args, **kwargs)
+        if instances:
+            for instance in instances:
+                self.fields["instances"].choices.append((instance.id, instance.name))
 
 class MissionBaseForm(forms.Form):
-    ins = []
-    ins.append((0, '------'))
-    for x in Instance.objects.all().order_by("name"):
-        ins.append((x.id, x.name))
-    instances = forms.ChoiceField(required=False, choices=ins)
+    instances = forms.ChoiceField()
+    
+    def __init__(self, *args, **kwargs):
+        initial =  kwargs.get("initial", {})
+        instances = initial.get("instances", None)
+        if instances:
+            kwargs['initial']['instances'] = instances[0]
+        super(MissionBaseForm, self).__init__(*args, **kwargs)
+        if instances:
+            for instance in instances:
+                self.fields["instances"].choices.append((instance.id, instance.name))
+
 
 class MissionSaveForm(forms.Form):
     days = forms.IntegerField()
