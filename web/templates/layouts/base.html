@@ -126,6 +126,8 @@
                     <hr class="space">
                     {%if not instance.is_started%}
                        <a class="neigborhood" href="/neighborhood/{{instance.slug}}">{{instance.name}} has not started yet</a>
+                       <br>
+                       <a href="/account/profile/edit" class="fine icon edit">Update Your Profile</a>
                     {%else%}
                         {%if user.is_authenticated and instance.is_started%}
                             <!-- TODO CSS: make the Update Profile in one line -->
