@@ -160,9 +160,9 @@ def get_activity(request, id):
         elif (activity.type.type == "map"):
             activity = PlayerMapActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/map_response.html')
-            form = MapForm()
             answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
             if (len(answer) > 0):
+                form = MapForm(initial={"answerBox": answer[0].answerBox})
                 map = answer[0].map
                 markers = simplejson.loads("%s" % map)["markers"]
                 x = 0
@@ -171,7 +171,9 @@ def get_activity(request, id):
                     init_coords.append( [x, coor[0], coor[1]] )
                     x = x + 1
             else:
-                map = activity.mission.instance.location 
+                map = activity.mission.instance.location
+                form = MapForm()
+        
         elif (activity.type.type == "empathy"):
             activity = PlayerEmpathyActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/empathy_response.html')
