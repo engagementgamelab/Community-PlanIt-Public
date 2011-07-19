@@ -239,7 +239,7 @@ def mission_base(request):
             form = MissionSaveForm()
             return HttpResponse(tmpl.render(RequestContext(request, {
                 "form": form,                                                    
-                "instance": instance,
+                "instance_value": instance,
                 "values": index_missions, 
                 }, [ip])))
     form = MissionBaseForm(initial={"instances": instances})
@@ -311,8 +311,6 @@ def mission_save(request):
         instance.save()
         return HttpResponseRedirect(reverse("admin-base"))
     
-    
-    
     tmpl = loader.get_template("admin/mission_edit.html")
     form = MissionSaveForm(request.POST)
     missions = Mission.objects.filter(instance=instance).order_by("start_date")
@@ -323,7 +321,7 @@ def mission_save(request):
         x = x + 1
     return HttpResponse(tmpl.render(RequestContext(request, {
         "form": form,                                                    
-        "instance": instance,
+        "instance_value": instance,
         "values": index_missions, 
         }, [ip])))
     
