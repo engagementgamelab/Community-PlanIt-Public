@@ -4,23 +4,10 @@
 {%block title%}Map Response{%endblock%}
 
 {%block activity%}
-    <form action="" method="post" class="narrow">
-        <input type="hidden" name="form" value="map">
-        <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
-        {% csrf_token %}
-        <h2>{{activity.question|urlize}}</h2>
+    <h2>{{activity.question|urlize}}</h2>
         
-        <button class="button add">Add Point</button>
-        <button class="button rm">Clear All Points</button>
-    
-        
-    </form>
-    
-    <div class="fieldWrapper">
-        {{form.map.errors}}
-        <div id="map" class="google-map" data-type="Point"/>
-    </div>
-
+    <button class="button add">Add Point</button>
+    <button class="button rm">Clear All Points</button>
     <div>
         <label>Search for a copmany or address:</label>
         <input type="text" name="google_search" id="google_search" />
@@ -28,6 +15,19 @@
     
     
     <form action="" method="post" class="narrow">
+        {% csrf_token %}
+        <input type="hidden" name="form" value="map">
+        <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
+        
+        <div class="fieldWrapper">
+            {% for x, lat, lon in init_coords %}
+                    <input type="hidden" id="init_coords{{x}}" 
+                        name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
+            {% endfor %}
+            {{form.map.errors}}
+            <div id="map" class="google-map" data-type="Point"/>
+        </div>
+        
         <div class="fieldWrapper">
             {{form.answerBox.errors}}
             <label for="id_answerBox">Your Response:</label>

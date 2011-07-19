@@ -377,7 +377,18 @@ def activity_base(request):
     return HttpResponse(tmpl.render(RequestContext(request, {
         "form": form,   
         }, [ip])))
-    
+
+def actCopy(copyTo, copyFrom):
+    copyTo.name = copyFrom.name
+    copyTo.question = copyFrom.question
+    copyTo.creationUser = copyFrom.creationUser
+    copyTo.mission = copyFrom.mission
+    copyTo.type = copyFrom.type
+    copyTo.instructions = copyFrom.instructions
+    copyTo.addInstructions = copyFrom.addInstructions
+    copyTo.points = copyFrom.points
+    copyTo.attachment = copyFrom.attachment
+
 @login_required
 def activity_save(request):
     ok = verify(request)
@@ -403,15 +414,41 @@ def activity_save(request):
     
     if form.is_valid():
         activity = None
+        type = PlayerActivityType.objects.get(id=int(request.POST["types"]));
         if (request.POST["activity_id"] == "0"):
-            activity = PlayerActivity()
+            if type.type == "map":
+                activity = PlayerMapActivity()
+            elif type.type == "empathy":
+                activity = PlayerEmpathyActivity()
+            else: 
+                activity = PlayerActivity()
         else:
             activity = PlayerActivity.objects.get(id=int(request.POST["activity_id"]))
+            
+            if type.type == "map":
+                if activity.type.type != "map":
+                    tempAct = PlayerMapActivity()
+                    actCopy(tempAct, activity)
+                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                    activity = tempAct
+                else:
+                    activity = PlayerMapActivity.objects.get(id=int(request.POST["activity_id"]))
+            elif type.type == "empathy":
+                if activity.type.type != "empathy":
+                    tempAct = PlayerEmpathyActivity()
+                    actCopy(tempAct, activity)
+                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                    activity = tempAct
+                else:
+                    activity = PlayerEmpathyActivity.objects.get(id=int(request.POST["activity_id"]))
+            else: 
+                activity = PlayerActivity.objects.get(id=int(request.POST["activity_id"]))                
+        
         activity.name = form.cleaned_data["name"]
         activity.question = form.cleaned_data["question"]
         activity.creationUser = request.user
         activity.mission = Mission.objects.get(id=int(request.POST["missions"]))
-        activity.type = PlayerActivityType.objects.get(id=int(request.POST["types"]));
+        activity.type = type
         activity.instructions = form.cleaned_data["instructions"] if form.cleaned_data.has_key("instructions") and form.cleaned_data["instructions"] != "" else None 
         activity.addInstructions = form.cleaned_data["addInstructions"] if form.cleaned_data.has_key("addInstructions") and form.cleaned_data["addInstructions"] != "" else None  
         activity.points = form.cleaned_data["points"] if form.cleaned_data.has_key("points") and form.cleaned_data["points"] != "" else None
@@ -465,7 +502,7 @@ def activity_save(request):
                     activities.append(PlayerMapActivity.objects.get(pk=act.pk))
                 elif act.type.type == "empathy":
                     activities.append(PlayerEmpathyActivity.objects.get(pk=act.pk))
-                elif act.type.type == "single_response" or act.type.type == "multi_reponse":
+                elif act.type.type == "single_response" or act.type.type == "multi_response":
                     activities.append(act)
                     choices = MultiChoiceActivity.objects.filter(activity=act)
                     for choice in choices:

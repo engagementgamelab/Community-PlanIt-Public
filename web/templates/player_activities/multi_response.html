@@ -4,7 +4,7 @@
 
 {%block main%}
     <form action="" method="post">
-        <input type="hidden" name="form" value="multi_reponse">
+        <input type="hidden" name="form" value="multi_response">
         {% csrf_token %}
         <h2>{{activity.question|urlize}}</h2>
         <div class="fieldWrapper">
