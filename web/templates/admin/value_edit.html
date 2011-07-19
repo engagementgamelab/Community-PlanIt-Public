@@ -6,10 +6,10 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h2>Values for Instance: {{instance.name}}</h2>
+    <h2>Values for Instance: {{instance_value.name}}</h2>
     <form action="{% url value-save %}" method="post">
         {%csrf_token%}
-        <input type="hidden" name="instance_id" id="instance_id" value="{{instance.id}}"/>
+        <input type="hidden" name="instance_id" id="instance_id" value="{{instance_value.id}}"/>
         <div id="values"></div>
 
         <input type="button" name="add" value="Add another value" onclick="addInput()"/> <br>

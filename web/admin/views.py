@@ -83,7 +83,8 @@ def instance_base(request):
     ok = verify(request)
     if ok != None:
         return ok
-    form = InstanceBaseForm()
+    instances = Instance.objects.all().order_by("name")
+    form = InstanceBaseForm(initial={"instances": instances})
     tmpl = loader.get_template("admin/instance_base.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
          "form": form,                                            
@@ -174,7 +175,7 @@ def values_base(request):
                 x = x + 1
             tmpl = loader.get_template("admin/value_edit.html")
             return HttpResponse(tmpl.render(RequestContext(request, {
-                "instance": instance,
+                "instance_value": instance, #can't name it that, that would be bad because it conflicts with ip.instance. call it something like value or soemthing
                 "values": index_values, 
                 }, [ip])))
     
@@ -196,6 +197,9 @@ def values_save(request):
         return HttpResponseServerError("The request method was not POST")
     
     instance_id = request.POST["instance_id"]
+    if (instance_id == ""): 
+        return HttpResponseServerError("instance_id not set by POST")
+    
     instance = Instance.objects.get(id=int(instance_id))
     Value.objects.filter(instance=instance).delete()
     
@@ -238,7 +242,6 @@ def mission_base(request):
                 "instance": instance,
                 "values": index_missions, 
                 }, [ip])))
-    
     form = MissionBaseForm(initial={"instances": instances})
     tmpl = loader.get_template("admin/mission_base.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
@@ -329,11 +332,11 @@ def activity_base(request):
     ok = verify(request)
     if ok != None:
         return ok
-    
+    instances = Instance.objects.all().order_by("name")
     if request.method == 'POST':
         if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
             return HttpResponseRedirect(reverse("admin-base"))
-        form = ActivityBaseForm(request.POST)
+        form = ActivityBaseForm(request.POST, initial={"instances": instances})
         if form.is_valid():
             instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
             missions = Mission.objects.filter(instance=instance).order_by("start_date")
@@ -371,8 +374,7 @@ def activity_base(request):
                 "types": types,
                 "responses": responses, 
                 }, [ip])))
-        
-    form = ActivityBaseForm()
+    form = ActivityBaseForm(initial={"instances": instances})
     tmpl = loader.get_template("admin/activity_base.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
         "form": form,   

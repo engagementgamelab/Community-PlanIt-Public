@@ -8,15 +8,20 @@ from web.values.models import Value
 from gmapsfield.fields import GoogleMapsField
 
 class InstanceBaseForm(forms.Form):
-    ins = []
-    ins.append((0, '------'))
-    for x in Instance.objects.all().order_by("name"):
-        ins.append((x.id, x.name))
-    instances = forms.ChoiceField(required=False, choices=ins)
+    instances = forms.ChoiceField(required=False)
     instance_name = forms.CharField(required=False, max_length=45)
     
-    #def clean(self):
-    #    instances
+    def __init__(self, *args, **kwargs):
+        initial =  kwargs.get("initial", {})
+        instances = initial.get("instances", None)
+        if instances:
+            kwargs['initial']['instances'] = instances[0]
+        super(InstanceBaseForm, self).__init__(*args, **kwargs)
+        self.fields["instances"].choices = [] 
+        self.fields["instances"].choices.append((0, "------"))
+        if instances:
+            for instance in instances:
+                self.fields["instances"].choices.append((instance.id, instance.name))
     
 class InstanceEditForm(forms.Form):
     name = forms.CharField(required=True, max_length=45)
@@ -44,6 +49,7 @@ class ValueBaseForm(forms.Form):
         if instances:
             kwargs['initial']['instances'] = instances[0]
         super(ValueBaseForm, self).__init__(*args, **kwargs)
+        self.fields["instances"].choices = []
         if instances:
             for instance in instances:
                 self.fields["instances"].choices.append((instance.id, instance.name))
@@ -57,6 +63,7 @@ class MissionBaseForm(forms.Form):
         if instances:
             kwargs['initial']['instances'] = instances[0]
         super(MissionBaseForm, self).__init__(*args, **kwargs)
+        self.fields["instances"].choices = []
         if instances:
             for instance in instances:
                 self.fields["instances"].choices.append((instance.id, instance.name))
@@ -66,12 +73,19 @@ class MissionSaveForm(forms.Form):
     days = forms.IntegerField()
     
 class ActivityBaseForm(forms.Form):
-    ins = []
-    ins.append((0, '------'))
-    for x in Instance.objects.all().order_by("name"):
-        ins.append((x.id, x.name))
-    instances = forms.ChoiceField(required=False, choices=ins)
-
+    instances = forms.ChoiceField()
+    
+    def __init__(self, *args, **kwargs):
+        initial =  kwargs.get("initial", {})
+        instances = initial.get("instances", None)
+        if instances:
+            kwargs['initial']['instances'] = instances[0]
+        super(ActivityBaseForm, self).__init__(*args, **kwargs)
+        self.fields["instances"].choices = []
+        if instances:
+            for instance in instances:
+                self.fields["instances"].choices.append((instance.id, instance.name))
+                
 class ActivitySaveForm(forms.Form):
     missions = forms.ChoiceField(required=False)
     
@@ -81,6 +95,7 @@ class ActivitySaveForm(forms.Form):
         if missions:
             kwargs['initial']['missions'] = missions[0]
         super(ActivitySaveForm, self).__init__(*args, **kwargs)
+        self.fields["missions"].choices = []
         if missions:
             for mission in missions:
                 self.fields["missions"].choices.append(mission)

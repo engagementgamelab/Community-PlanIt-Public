@@ -93,8 +93,11 @@
             </div>
     
             <div id="responses_edit" style="display:none">
+                <label>Responses:</label>
                 <div id="responses"></div>
-                <input type="button" name="add" value="Add another response" onclick="addInput()"/> <br>
+                <input type="button" name="add" value="Add another response" onclick="addInput()"/> 
+                <br>
+                <br>
             </div>
             
             <div id="map_edit" style="display:none">
@@ -235,7 +238,7 @@
         function displayResponseList() {
             document.getElementById("responses_edit").style.display = "";
             response_div = document.getElementById("responses");
-            response_div.innerHTML = "<label>Responses:</label>";
+            response_div.innerHTML = "";
             for (x in responseList) {
                 response = activity.responses[x];
                 str = '<input style="width:50%" type="text" id="act_response_id_' + response.location + '" ';
