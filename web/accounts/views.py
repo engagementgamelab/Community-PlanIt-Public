@@ -130,7 +130,13 @@ def edit(request):
                                             'living': profile.living.id if profile.living != None else 0,
                                             'gender': profile.gender.id if profile.gender != None else 0,
                                             'race': profile.race.id if profile.race != None else 0,
-                                            'stake': profile.stake.id if profile.stake != None else 0,})
+                                            'stake': profile.stake.id if profile.stake != None else 0,
+                                            'first_name': profile.user.first_name if profile.user.first_name != None else "",
+                                            'last_name': profile.user.last_name if profile.user.last_name != None else "",
+                                            'email': profile.user.email if profile.user.email != None else "",
+                                            'birth_year': profile.birth_year if profile.birth_year != None else "",
+                                            
+                                            })
     if request.method == 'POST':
         
         #files = ""
