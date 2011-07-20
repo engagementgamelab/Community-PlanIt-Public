@@ -17,6 +17,9 @@ class PlayerActivityType(models.Model):
     type = models.CharField(max_length=255)
     displayType = models.CharField(max_length=255)
     defaultPoints = models.IntegerField(default=10)
+
+    def __unicode__(self):
+        return self.type
     
 class PlayerActivity(models.Model):
     name = models.CharField(max_length=255)
@@ -30,7 +33,13 @@ class PlayerActivity(models.Model):
     addInstructions = models.CharField(max_length=255, null=True, blank=True)
     points = models.IntegerField(blank=True, null=True, default=None)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Player Activities'
     
+    def __unicode__(self):
+        return self.name
+
     def save(self):
         self.slug = slugify(self.name)
         self.createDate = datetime.datetime.now()

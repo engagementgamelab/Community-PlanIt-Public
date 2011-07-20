@@ -35,7 +35,8 @@ class Attachment(models.Model):
           return self.file.url[:25]
           
         return 'None'
-    def save(self):
+
+    def save(self, *args, **kwargs):
         if self.type == None:
             m = magic.Magic(mime=True)
             self.type = m.from_file(instance.file.path)
