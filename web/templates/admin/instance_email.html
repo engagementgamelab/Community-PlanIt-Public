@@ -5,27 +5,23 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h2>Edit or Create a New Instance</h2>
-    <form action="" method="post">
+    <h2>Send an Email</h2>
+    <form action="{% url admin-sendemail %}" method="post">
+        <input type="hidden" id="instance_id" name="instance_id" value="{{instance.id}}">
         {%csrf_token%}
         <div class="fieldWrapper">
-            {{ form.instances.errors }}
-            <label for="id_instances">Edit Instance:</label>
-            <select name="instances" id="id_instances" onchange="instanceChange()">
-                <option value="0">------</option>
-                {% for instance in instance_values %}
-                <option value="{{instance.id}}">{{instance.name}}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" name="email_btn" id="email_bnt" style="display:none">Send Email to all in Instance</button>
+            {{ form.subject.errors }}
+            <label for="id_subject">Email Subject:</label>
+            {{form.subject}}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.email.errors }}
+            <label for="id_email">Email Message to Send:</label>
+            {{form.email}}
         </div>
         
-        <label>Or create a new instance</label>
-        <div class="fieldWrapper">
-            {{ form.instance_name.errors }}
-            <label for="id_instance_name">New Instance Name:</label>
-            {{ form.instance_name }}
-        </div>
+        <div id="preview_id"></div>
+        
         <div>
             <input type="submit" name="submit_btn" value="Submit" />
             <input type="submit" name="submit_btn" value="Cancel" />
@@ -34,7 +30,9 @@
 {%endblock%}
 
 {%block body%}
+    <!--
     <script>
+        /*
         function instanceChange() {
             if (document.getElementById("id_instances").value != "0")
             {
@@ -51,5 +49,7 @@
                 document.getElementById("email_bnt").style.display = "";
             }
         });
+        */
     </script>
+    -->
 {%endblock%}

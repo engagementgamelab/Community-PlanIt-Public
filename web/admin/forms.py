@@ -40,6 +40,10 @@ class InstanceEditForm(forms.Form):
             raise forms.ValidationError("Please select a point on the map")
         return map
 
+class InstanceEmailForm(forms.Form):
+    subject = forms.CharField()
+    email = forms.CharField(widget=forms.Textarea(attrs={"rows": 6, "cols": 40}))
+
 class ValueBaseForm(forms.Form):
     instances = forms.ChoiceField()
     

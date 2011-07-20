@@ -1,20 +1,23 @@
 import datetime
+import re
+from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
+from django.contrib.contenttypes.models import ContentType
+from django.core.mail import send_mail, send_mass_mail
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
 from django.template import Context, RequestContext, loader
-from django.core.urlresolvers import reverse
+from django.utils import simplejson
+from django.utils.translation import ugettext as _
+from web.accounts.models import UserProfile
+from web.admin.forms import *
 from web.instances.models import Instance
-from web.values.models import Value
 from web.missions.models import Mission
 from web.player_activities.models import *
 from web.processors import instance_processor as ip
-from web.admin.forms import *
-from django.utils import simplejson
-import re
-from django.contrib.contenttypes.models import ContentType
-
+from web.values.models import Value
 
 def verify(request):
     user = request.user
@@ -34,6 +37,35 @@ def index(request):
         }, [ip])))
 
 @login_required
+def sendemail(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    if (request.method != "POST"):
+        return HttpResponseServerError("The request method was not POST")
+    s = ""
+    for x in request.POST:
+        s = "%s%s: %s<br>" % (s, x, request.POST[x])
+    
+    #return HttpResponse(s)
+    instance = Instance.objects.get(id=int(request.POST["instance_id"]))
+    form = InstanceEmailForm(request.POST)
+    if form.is_valid():
+        email = form.cleaned_data["email"]
+        subject = form.cleaned_data["subject"]
+        emailList = []
+        ups = UserProfile.objects.filter(instance=instance, receaveEmail=True)
+        for up in ups:
+            emailList.append(up.user.email)
+        return HttpResponseRedirect(reverse("admin-base"))
+        
+    tmpl = loader.get_template("admin/instance_email.html")
+    return HttpResponse(tmpl.render(RequestContext(request, { 
+             "form": form,
+             "instance_value": instance,  
+             }, [ip])))
+
+@login_required
 def instance_base(request):
     if request.method == 'POST':
         #s = ""
@@ -41,8 +73,16 @@ def instance_base(request):
         #    s = "%s%s: %s<br>" % (s, x, request.POST[x])
         #return HttpResponse(s)
         
-        if (request.POST["submit_btn"] == "Cancel"):
+        if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
             return HttpResponseRedirect(reverse("admin-base"))
+        if request.POST.has_key("email_btn"):
+            instance = Instance.objects.get(id=int(request.POST["instances"]))
+            form = InstanceEmailForm()
+            tmpl = loader.get_template("admin/instance_email.html")
+            return HttpResponse(tmpl.render(RequestContext(request, { 
+                     "form": form,
+                     "instance_value": instance,  
+                     }, [ip])))
         form = InstanceBaseForm(request.POST)
         if form.is_valid():
             tmpl = loader.get_template("admin/instance_edit.html")
@@ -87,7 +127,8 @@ def instance_base(request):
     form = InstanceBaseForm(initial={"instances": instances})
     tmpl = loader.get_template("admin/instance_base.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
-         "form": form,                                            
+         "form": form,
+         "instance_values": instances,                                            
         }, [ip])))
 
 @login_required

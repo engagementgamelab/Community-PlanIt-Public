@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns("",
+                       url(r"^instance/sendemail/", "admin.views.sendemail", name="admin-sendemail"),
                        url(r"^instance/save/", "admin.views.instance_save", name="instance-save"),
                        url(r"^instance/", "admin.views.instance_base", name="instance-base"),
                        url(r"^value/save/", "admin.views.values_save", name="value-save"),
