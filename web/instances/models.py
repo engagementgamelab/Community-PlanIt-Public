@@ -17,13 +17,16 @@ add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 #to see the view that is created 
 class Instance(models.Model):
     name = models.CharField(max_length=45)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=2)
     slug = models.SlugField(editable=False)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
     content = models.TextField(null=True, blank=True)
     curator = models.ForeignKey(User, default=0, null=True, blank=True)
-    
+    process_name = models.CharField(max_length=255, null=True, blank=True)
+    process_description = models.TextField(null=True, blank=True)
     #This should go into a view, djagno doesn't support views... this is
     # a terrible thing and honestly, there are so many problems associated
     # with trying to plug this into a view, that it's just simpler to do this
@@ -60,17 +63,6 @@ class PointsAssignment(models.Model):
     coins = models.IntegerField(default=0)
 
     instance = models.ForeignKey(Instance, editable=False)
-
-class PointsAssignmentAdmin(admin.ModelAdmin):
-    list_display = ('action', 'points', 'coins',)
-
-    def save_model(self, request, obj, form, change):
-        obj.instance = request.session.get('admin_instance')
-        obj.save()
-
-    def queryset(self, request):
-        qs = super(PointsAssignmentAdmin, self).queryset(request)
-        return qs.filter(instance=request.session.get('admin_instance'))
 
 class InstanceAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'end_date',)

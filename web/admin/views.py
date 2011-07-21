@@ -37,6 +37,82 @@ def index(request):
         }, [ip])))
 
 @login_required
+def instance_initial_index(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+
+    if request.method == "POST" and request.POST.has_key("continue_btn"):
+        form = InstanceEditForm()
+        tmpl = loader.get_template("admin/instance_initial_edit.html")
+        return HttpResponse(tmpl.render(RequestContext(request, { 
+                 "form": form,
+                 "location": '{"frozen": null, "zoom": 13, "markers": null, "coordinates": [42.36475475505694, -71.05134683227556], "size": [500, 400]}',
+                 "init_coords": [],
+                 }, [ip])))
+    tmpl = loader.get_template("admin/instance_initial_base.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        }, [ip])))
+    
+@login_required
+def instance_initial_save(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    
+    if (request.method != "POST"):
+        return HttpResponseServerError("The request method was not POST")
+
+    #s = "%s<br>" % request.method
+    #for x in request.POST:
+    #    s = "%s%s: %s<br>" % (s, x, request.POST[x])
+    #return HttpResponse(s)
+
+    
+    form = InstanceEditForm(request.POST)
+    if form.is_valid():
+        instance = Instance()
+        instance.name = form.cleaned_data["name"]
+        instance.city = form.cleaned_data["city"]
+        instance.state = form.cleaned_data["state"]
+        instance.start_date = form.cleaned_data["start_date"]
+        instance.end_date = None
+        instance.location = form.cleaned_data["map"]
+        instance.curator = request.user
+        instance.save()
+        tmpl = loader.get_template("admin/value_initial_edit.html")
+        return HttpResponse(tmpl.render(RequestContext(request, { 
+             "instance_value": instance,
+             }, [ip])))
+    
+    location = None
+    init_coords = []
+    if (request.POST["map"] != ""):
+        location = request.POST["map"]
+        markers = simplejson.loads("%s" % instance.location)["markers"]
+        x = 0
+        init_coords = []
+        for coor in markers if markers != None else []:
+            coor = coor["coordinates"]
+            init_coords.append( [x, coor[0], coor[1]] )
+            x = x + 1
+    else:
+        location = '{"frozen": null, "zoom": 13, "markers": null, "coordinates": [42.36475475505694, -71.05134683227556], "size": [500, 400]}'
+
+    tmpl = loader.get_template("admin/instance_initial_edit.html")
+    return HttpResponse(tmpl.render(RequestContext(request, { 
+             "form": form,
+             "location": location,
+             "init_coords": init_coords,
+             }, [ip])))
+
+@login_required
+def values_initial(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+
+@login_required
 def sendemail(request):
     ok = verify(request)
     if ok != None:
@@ -83,6 +159,7 @@ def instance_base(request):
                      "form": form,
                      "instance_value": instance,  
                      }, [ip])))
+            
         form = InstanceBaseForm(request.POST)
         if form.is_valid():
             tmpl = loader.get_template("admin/instance_edit.html")
@@ -188,7 +265,7 @@ def instance_save(request):
             "location": location,
             "init_coords": init_coords,
             }, [ip])))
-        
+
 @login_required
 def values_base(request):
     instances = Instance.objects.all().order_by("name")

@@ -10,7 +10,7 @@ from gmapsfield.fields import GoogleMapsField
 class InstanceBaseForm(forms.Form):
     instances = forms.ChoiceField(required=False)
     instance_name = forms.CharField(required=False, max_length=45)
-    
+   
     def __init__(self, *args, **kwargs):
         initial =  kwargs.get("initial", {})
         instances = initial.get("instances", None)
@@ -25,8 +25,10 @@ class InstanceBaseForm(forms.Form):
     
 class InstanceEditForm(forms.Form):
     name = forms.CharField(required=True, max_length=45)
+    city = forms.CharField(required=False, max_length=255)
+    state = forms.CharField(required=False, max_length=2)
     start_date = forms.DateTimeField(required=True)
-    end_date = forms.DateTimeField(required=True)
+    end_date = forms.DateTimeField(required=False)
     #This has to be named map, there can be only one and I am guessing it's a huge JS hack to make this work
     map = GoogleMapsField().formfield()
     
@@ -39,6 +41,10 @@ class InstanceEditForm(forms.Form):
         if len(mapDict["markers"]) == 0:
             raise forms.ValidationError("Please select a point on the map")
         return map
+
+class InstanceProcesForm(forms.Form):
+    process_name = forms.CharField(max_length=255)
+    process_name = forms.CharField(widget=forms.Textarea(attrs={"rows": 15, "cols": 160}))
 
 class InstanceEmailForm(forms.Form):
     subject = forms.CharField()
@@ -71,7 +77,6 @@ class MissionBaseForm(forms.Form):
         if instances:
             for instance in instances:
                 self.fields["instances"].choices.append((instance.id, instance.name))
-
 
 class MissionSaveForm(forms.Form):
     days = forms.IntegerField()
