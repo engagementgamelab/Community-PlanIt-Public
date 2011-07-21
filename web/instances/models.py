@@ -24,9 +24,10 @@ class Instance(models.Model):
     end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
     content = models.TextField(null=True, blank=True)
-    curator = models.ForeignKey(User, default=0, null=True, blank=True)
     process_name = models.CharField(max_length=255, null=True, blank=True)
     process_description = models.TextField(null=True, blank=True)
+    curators = models.ManyToManyField(User)
+    
     #This should go into a view, djagno doesn't support views... this is
     # a terrible thing and honestly, there are so many problems associated
     # with trying to plug this into a view, that it's just simpler to do this

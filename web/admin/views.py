@@ -78,8 +78,8 @@ def instance_initial_save(request):
         instance.start_date = form.cleaned_data["start_date"]
         instance.end_date = None
         instance.location = form.cleaned_data["map"]
-        instance.curator = request.user
         instance.save()
+        instance.curators.add(request.user)
         tmpl = loader.get_template("admin/value_initial_edit.html")
         return HttpResponse(tmpl.render(RequestContext(request, { 
              "instance_value": instance,
