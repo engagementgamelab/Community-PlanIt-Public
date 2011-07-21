@@ -1,0 +1,44 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>Staff Only</h2>
+    <form action="" method="post">
+        {%csrf_token%}
+        <div class="fieldWrapper">
+            {{ form.admin_first_name.errors }}
+            <span style="font-size:1.25em;">Admin First Name:</span>
+            {{ form.admin_first_name }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.admin_last_name.errors }}
+            <span style="font-size:1.25em;">Admin Last Name:</span>
+            {{ form.admin_last_name }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.admin_email.errors }}
+            <span style="font-size:1.25em;">Admin Email:</span>
+            {{ form.admin_email }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.admin_temp_pass.errors }}
+            <span style="font-size:1.25em;">Admin Temprary Password:</span>
+            {{ form.admin_temp_pass }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.admin_temp_pass_again.errors }}
+            <span style="font-size:1.25em;">Admin Temprary Password Again:</span>
+            {{ form.admin_temp_pass_again }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.instances.errors }}
+            <span style="font-size:1.25em;">Admin Instance:</span>
+            {{ form.instances }}
+        </div>
+        <button type="submit" id="submit_btn" name="submit_btn">Submit</button>
+    </form>
+
+{%endblock%}

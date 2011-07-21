@@ -35,11 +35,10 @@ def validate_and_generate(base_form, request, callback):
         form = base_form(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            
             password = None
             firstName = None
             lastName = None
-            if request.POST.get('password', None) != None:
+            if form.cleaned_data.has_key("password"):
                 password = form.cleaned_data['password']
             else:
                 password = User.objects.make_random_password(length=10)
@@ -56,9 +55,8 @@ def register(request):
         player.first_name = firstName
         player.last_name = lastName
         player.set_password(password)
-        player.full_clean()
+        player.is_active = True
         player.save()
-        
         player = auth.authenticate(username=email, password=password)
         auth.login(request, player)
         player.save()

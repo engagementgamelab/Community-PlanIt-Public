@@ -32,7 +32,58 @@ def index(request):
     ok = verify(request)
     if ok != None:
         return ok
-    tmpl = loader.get_template("admin/backend_index.html")
+    if request.user.is_staff:
+        instances = Instance.objects.all()
+        if request.method == "POST":
+            form = StaffBaseForm(request.POST, initial={"instances": instances})
+            if form.is_valid():
+                player = User.objects.create(email=form.cleaned_data["admin_email"])
+                player.first_name = form.cleaned_data["admin_first_name"]
+                player.last_name = form.cleaned_data["admin_last_name"]
+                player.set_password(form.cleaned_data["admin_temp_pass"])
+                player.is_active = True
+                player.is_superuser = True
+                player.is_staff = False
+                player.save()
+                uinfo = player.get_profile()
+                email_tmpl = None
+                body = None
+                if form.cleaned_data["instances"] != None:
+                    instance = form.cleaned_data["instances"]
+                    uinfo.instance = instance
+                    instance.curators.add(player)
+                    tmpl = loader.get_template('accounts/email/welcome_admin_instance.html')
+                    body = tmpl.render(Context({'password': form.cleaned_data["admin_temp_pass"],
+                                                'first_name': player.first_name,
+                                                'instance': instance }))
+                else:
+                    tmpl = loader.get_template('accounts/email/welcome_admin_no_instance.html')
+                    body = tmpl.render(Context({'password': form.cleaned_data["admin_temp_pass"],
+                                                'first_name': player.first_name,}))
+                uinfo.save()
+                send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [player.email], fail_silently=True)
+                messages.success(request, _('New admin successfully registered.'))
+                
+                return HttpResponseRedirect(reverse("admin-base"))
+            else:
+                tmpl = loader.get_template("admin/backend_staff_index.html")
+                return HttpResponse(tmpl.render(RequestContext(request, {
+                         "form": form,
+                         "instances": instances,
+                         }, [ip])))
+        else:
+            tmpl = loader.get_template("admin/backend_staff_index.html")
+            form = StaffBaseForm(initial={"instances": instances})
+            return HttpResponse(tmpl.render(RequestContext(request, {
+                 "form": form,
+                 }, [ip])))
+    
+    #you are a super user
+    instance = Instance.objects.filter(curators=request.user)
+    if len(instance) == 0:
+        return HttpResponseRedirect(reverse("instance-initial-index")) 
+    
+    
     return HttpResponse(tmpl.render(RequestContext(request, {
         }, [ip])))
 

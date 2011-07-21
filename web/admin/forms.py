@@ -7,6 +7,50 @@ from web.instances.models import Instance
 from web.values.models import Value
 from gmapsfield.fields import GoogleMapsField
 
+class StaffBaseForm(forms.Form):
+    admin_first_name = forms.CharField(required=True, max_length=45)
+    admin_last_name = forms.CharField(required=True, max_length=45)
+    admin_email = forms.CharField(required=True, max_length=45)
+    admin_temp_pass = forms.CharField(widget=forms.PasswordInput(), required=True)
+    admin_temp_pass_again = forms.CharField(widget=forms.PasswordInput(), required=True)
+    instances = forms.ChoiceField(required=False)
+    
+    def __init__(self, *args, **kwargs):
+        initial =  kwargs.get("initial", {})
+        instances = initial.get("instances", None)
+        if instances:
+            kwargs['initial']['instances'] = instances[0]
+        super(StaffBaseForm, self).__init__(*args, **kwargs)
+        self.fields["instances"].choices = [] 
+        self.fields["instances"].choices.append((0, "------"))
+        if instances:
+            for instance in instances:
+                self.fields["instances"].choices.append((instance.id, instance.name))
+    
+    def clean_admin_email(self):
+        user = User.objects.filter(email=self.cleaned_data["admin_email"])
+        if len(user) != 0:
+            raise forms.ValidationError("A user already exists with that email")
+        else:
+            return self.cleaned_data["admin_email"]
+    
+    def clean_admin_temp_pass_again(self):
+        admin_temp_pass = self.cleaned_data["admin_temp_pass"]
+        admin_temp_pass_again = self.cleaned_data["admin_temp_pass_again"]
+        if (admin_temp_pass != admin_temp_pass_again):
+            raise forms.ValidationError("The passwords do not match")
+        else:
+            return admin_temp_pass_again
+    
+    def clean_instances(self):
+        instance_id = int(self.cleaned_data["instances"])
+        if instance_id == 0:
+            return None
+        else:
+            instance = Instance.objects.get(id=instance_id)
+            return instance
+        
+    
 class InstanceBaseForm(forms.Form):
     instances = forms.ChoiceField(required=False)
     instance_name = forms.CharField(required=False, max_length=45)
