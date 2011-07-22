@@ -88,7 +88,7 @@ class InstanceEditForm(forms.Form):
 
 class InstanceProcesForm(forms.Form):
     process_name = forms.CharField(max_length=255)
-    process_name = forms.CharField(widget=forms.Textarea(attrs={"rows": 15, "cols": 160}))
+    process_description = forms.CharField(widget=forms.Textarea(attrs={"rows": 15, "cols": 160}))
 
 class InstanceEmailForm(forms.Form):
     subject = forms.CharField()

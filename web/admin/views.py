@@ -318,6 +318,54 @@ def instance_save(request):
             }, [ip])))
 
 @login_required
+def instance_manage_base(request):
+    temp_instances = Instance.objects.filter(curators=request.user)
+    instance_missions = []
+    mission_activities = []
+    responses = []
+    
+    instances = []
+    missions = []
+    activities = []
+    responses = []
+    for instance in temp_instances:
+        instances.append((instance, UserProfile.objects.filter(instance=instance).count()))
+        temp_missions = Mission.objects.filter(instance=instance)
+        for mission in temp_missions:
+            missions.append((instance.pk, mission))
+            temp_activities = PlayerActivity.objects.filter(mission=mission)
+            for activity in temp_activities:
+                if activity.type.type == "map": 
+                    activities.append((mission.pk, PlayerMapActivity.objects.get(pk=activity.pk)))
+                elif activity.type.type == "empathy":
+                    activities.append((mission.pk, PlayerEmpathyActivity.objects.get(pk=activity.pk)))
+                elif activity.type.type == "single_response" or activity.type.type == "multi_response":
+                    activities.append((mission.pk, activity))
+                    choices = MultiChoiceActivity.objects.filter(activity=activity)
+                    for choice in choices:
+                        responses.append([choice.pk, mission.pk, activity.pk, choice.value])
+                else:
+                    activities.append((mission.pk, activity))
+    types = []
+    t = PlayerActivityType.objects.all()
+    for type in t:
+        types.append(type)
+        
+    editForm = InstanceEditForm()
+    form = InstanceProcesForm()
+    tmpl = loader.get_template("admin/instance_manage_base.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+            "single": len(instances) == 1,
+            "editForm": editForm,
+            "form": form,
+            "instances": instances,
+            "missions": missions,
+            "activities": mission_activities,
+            "responses": responses,
+            "types": types,
+            }, [ip])))
+    
+@login_required
 def values_base(request):
     instances = Instance.objects.all().order_by("name")
     if request.method == 'POST':
