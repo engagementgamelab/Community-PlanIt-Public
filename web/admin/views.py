@@ -82,7 +82,7 @@ def index(request):
     instance = Instance.objects.filter(curators=request.user)
     if len(instance) == 0:
         return HttpResponseRedirect(reverse("instance-initial-index")) 
-    
+    tmpl = loader.get_template("admin/backend_index.html")
     
     return HttpResponse(tmpl.render(RequestContext(request, {
         }, [ip])))
