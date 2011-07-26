@@ -80,7 +80,7 @@
                     {%else%}
                         <a class="home" href="/">Home</a> <a class="neighborhoods" href="/neighborhood">Neighborhoods</a> <a class="about" href="/about">About</a> <a class="contact" href="/contact">Contact</a>
                     {%endif%}
-                    {%if user.is_staff%}
+                    {%if user.is_superuser or user.is_staff%}
                         <a class="right admin" href="/admin">Admin</a>
                     {%endif%}
                     {%if user.is_authenticated%}
