@@ -1,25 +1,27 @@
 {%extends "layouts/base.html"%}
 {%load gmap%}
 
-{%block title%}All neighborhoods{%endblock%}
+{% block section %}communities{% endblock %}
+
+{%block title%}All communities{%endblock%}
 {%block page_title%}{%endblock%}
 
 {%block main%}
-<h2>All neighborhoods</h2>
+<h2>All communities</h2>
     <ul class="instances gridview listless">
         {%if instance|length == 0%}
-            <li class="griditem">No active Neighborhoods</li>
+            <li class="griditem">No active communities</li>
         {%endif%}
         {%for instance in instances%}
             <li class="griditem instance">
                 <p>
                     {% if instance.end_date > now %}<span class="highlight fine">Currently Active</span>{% else %}<span class="highlight fine">No longer Active</span>{% endif %}
-                    <a href="/neighborhood/{{instance.slug}}">{{instance.name}}</a> - {{instance.player_count}} player{%if instance.player_count > 1%}s{%endif%} {%if instance.player_count > 1%}have{%else%}has{%endif%} signed up.
+                    <a href="{% url instances_instance instance.slug %}">{{instance}}</a> - {{instance.player_count}} player{%if instance.player_count > 1%}s{%endif%} {%if instance.player_count > 1%}have{%else%}has{%endif%} signed up.
                     <br>
                 {% if instance.end_date > now %}
-                    <span class="fine">This neighborhood runs <span class="highlight">{{instance.start_date}}</span> through <span class="highlight">{{instance.end_date}}</span></span>
+                    <span class="fine">This community runs <span class="highlight">{{instance.start_date}}</span> through <span class="highlight">{{instance.end_date}}</span></span>
                 {% else %}
-                    <span class="fine">This neighborhood ran from <span class="highlight">{{instance.start_date}}</span> through <span class="highlight">{{instance.end_date}}</span></span>
+                    <span class="fine">This community ran from <span class="highlight">{{instance.start_date}}</span> through <span class="highlight">{{instance.end_date}}</span></span>
                     {% endif %}
                 </p>
                 <div class="date">

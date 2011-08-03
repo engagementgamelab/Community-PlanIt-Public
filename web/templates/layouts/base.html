@@ -1,318 +1,170 @@
-{% load compress %}
+<!DOCTYPE html>
 {% load extras %}
-<!doctype html>
-<html lang="en" class="no-js" -->
+<html lang="en" class="no-js">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   
-    <title>{%block title%}{%endblock%} | Community Planit</title>
+    <title>{% block title %}{% endblock %} | Community Planit</title>
 
     <meta name="viewport" content="width=240, initial-scale=1.0, maximum-scale=1.0">
     <link rel="shortcut icon" href="{{MEDIA_URL}}img/favicon.png">
     <link rel="apple-touch-icon" href="{{MEDIA_URL}}img/apple-touch-icon.png">
 
-    {%block css%}
-    {%compress css%}
+    {% block css %}
     <link rel="stylesheet" href="{{MEDIA_URL}}css/base.css">
     <link rel="stylesheet" href="{{MEDIA_URL}}3pty/css/ui-lightness/jquery-ui-1.8.9.custom.css">
     <link rel="stylesheet" href="{{MEDIA_URL}}3pty/fancybox/jquery.fancybox-1.3.4.css" media="screen" />
     <link rel="stylesheet" href="{{MEDIA_URL}}3pty/css/community-planit/jquery-ui-.custom.css">
     <link rel="stylesheet" href="{{MEDIA_URL}}3pty/css/jquery.ui.notification.css">
-    <link rel="stylesheet" href="{{MEDIA_URL}}css/mobile.css" media="screen and (max-width: 600px)">
-    {%endcompress%}
 	
-    {%compress js%}
     <script src="{{MEDIA_URL}}3pty/js/jquery-1.4.4.min.js"></script>
-    <script language="javascript" type="text/javascript" src="{{MEDIA_URL}}3pty/js/jquery.flot.js"></script>
-    <script language="javascript" type="text/javascript" src="{{MEDIA_URL}}3pty/js/jquery.flot.pie.js"></script>
+    <script src="{{MEDIA_URL}}3pty/js/jquery.flot.js"></script>
+    <script src="{{MEDIA_URL}}3pty/js/jquery.flot.pie.js"></script>
     
     <!--[if lte IE 8]>
         <script language="javascript" type="text/javascript" src="../excanvas.min.js"></script>
     <![endif]-->
-    {%endcompress%}
     
     
     <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    {%endblock%}
-    {%block head%}{%endblock%}
+    {% endblock %}
+    {% block head %}{% endblock %}
 </head>
 
-<body class="page {%block section%}default{%endblock%}{%if user.is_authenticated%} loggedin{%endif%}">
-    {%if messages%}
-        {%for message in messages%}
-        <div class="ui-notification-container message-{{forloop.counter}}"></div>
-        {%endfor%}
-    {%endif%}
-    
-    <!-- Header -->
-    <div id="header">
-        <div class="wrapper">
-            {%block header%}
-                {%if user.is_authenticated%}
-                    <a href="/"><img src="{{MEDIA_URL}}img/logo-3.png" alt="Community Planit"></a>
-                {%else%}
-                    <a href="/"><img src="{{MEDIA_URL}}img/logo-2.png" alt="Community Planit"></a>
-                {%endif%}
-            {%endblock%}
-            
-            <div class="page-title">
-                {%if instance%}
-                    <a href="/neighborhood/{{instance.slug}}">{{instance}}</a>
-
-                    {%if not instance.is_started%}
-                        <a href="/neighborhood/{{instance.slug}}">{{instance.name}} has not started yet</a>
-                    {%endif%}
-
-                    {%if instance.is_expired%}
-                        <a href="/neighborhood/{{instance.slug}}">{{instance.name}} has ended</a>
-                    {%endif%}
-                {%endif%}
-            </div>
-            <!-- Navigation -->
+<body class="page {% block section %}default{% endblock %}{% if user.is_authenticated %} loggedin{% endif %} {% block extra_body_class %}{% endblock %}">
+    <div class="wrapper">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="ui-notification-container message-{{forloop.counter}}"></div>
+            {% endfor %}
+        {% endif %}
+        
+        <div id="header">
+            <div class="logo"><a href="{% url home %}"><img src="{{MEDIA_URL}}img/logo-3.png" alt="Home"/></a></div>
             <nav>
-                {%block nav%}
-                    {%if user.is_authenticated and instance.is_started%}
-                        <a class="home" href = "/account/dashboard">Dashboard</a> <a class="missions" href="/mission">Missions</a> <a class="values" href="/value">Spend Coins</a> <a class="challenges" href="/challenge">Challenges</a>
-                    {%else%}
-                        <a class="home" href="/">Home</a> <a class="neighborhoods" href="/neighborhood">Neighborhoods</a> <a class="about" href="/about">About</a> <a class="contact" href="/contact">Contact</a>
-                    {%endif%}
-                    {%if user.is_superuser or user.is_staff%}
-                        <a class="right admin" href="/admin">Admin</a>
-                    {%endif%}
-                    {%if user.is_authenticated%}
-                        <a class="right logout" href="/account/logout">Logout</a>
-                    {%endif%}
-                {%endblock%}
+                <ul>
+                {% block nav %}
+                    {% if user.is_authenticated and instance.is_started %}
+                    <li><div class="home"><a href="{% url accounts_dashboard %}"><span>Home</span></a></div></li>
+                    <li><div class="missions"><a href="{% url missions %}"><span>Missions</span></a></div></li>
+                    <li><div class="challenges"><a href="{% url challenges %}"><span>Challenges</span></a></div></li>
+                    <li><div class="values"><a href="{% url values %}"><span>Token Depot</span></a></div></li>
+                    {% else %}
+                    <li><div class="home"><a href="{% url home %}"><span>Home</span></a></div></li>
+                    <li><div class="communities"><a href="{% url instances %}"><span>Communities</span></a></div></li>
+                    <li><div class="about"><a href="{% url about %}"><span>About</span></a></div></li>
+                    <li><div class="contact"><a href="{% url contact %}"><span>Contact</span></a></div></li>
+                    {% endif %}
+                    {% if user.is_superuser or user.is_staff %}
+                    <li><div class="admin"><a href="{% url admin-base %}"><span>Admin</span></a></div></li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                    <li class="final"><div class="logout"><a href="{% url accounts_logout %}"><span>Logout</span></a></div></li>
+                    {% endif %}
+                {% endblock %}
+                </ul>
             </nav>
+            <div class="clear"></div>
         </div>
-    </div>
-    <div class="divider">
-        <div class="missionholder">
-            <div class="missioncounter">
-                {%if user.is_authenticated and instance.is_started%}
-                    {%for mission in missions.past.all%}
-                        <a href="/mission/{{mission.slug}}" class="past mission" title="{{mission.name}}">
-                            {{mission.name}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
-                        </a>
-                    {%endfor%}
-                    {%for mission in missions.current.all%}
-                        <a href="/mission/{{mission.slug}}" class="current mission" title="{{mission.name}}">
-                            <span class="tailupper"></span>
-                            <span class="taillower"></span>
-                            <span class="suit"></span>
-                            {{mission.name}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
-                    {%endfor%}
-                    </a>
-                    {%for mission in missions.future.all%}
-                        <div class="future mission" title="{{mission.name}}">
-                            {{mission.name}} <br/>{{mission.start_date|date:"j"}} {{mission.start_date|date:"M"}} - {{mission.end_date|date:"j"}} {{mission.end_date|date:"M"}}
-                        </div>
-                    {%endfor%}
-                {%endif%}
-            </div>            
-        </div>
-    </div>
-    <div class="pattern">
-    <!-- Main content -->
-    <div id="main">
-        <div id="balancer">
-            {%block asideholder%}
+
+        <div id="main">
+            {% block asideholder %}
             <aside id="sidebar">
-                <div class="content">
-                    <hr class="space">
-                    {%if not instance.is_started%}
-                       <a class="neigborhood" href="/neighborhood/{{instance.slug}}">{{instance.name}} has not started yet</a>
-                       <br>
-                       <a href="/account/profile/edit" class="fine icon edit">Update Your Profile</a>
-                    {%else%}
-                        {%if user.is_authenticated and instance.is_started%}
-                            <!-- TODO CSS: make the Update Profile in one line -->
-                            <div class="third">
-                                {%if user.get_profile.avatar%}
-                                    <img class="avatar-large" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}">
-                                {%else%}
-                                    <img class="avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-                                {%endif%}
-                            </div>
-                            <div class="twpthirds">
-                                <h2 class="profile-name">
-                                    <a href="/player/{{user.id}}/">{{user.get_profile.screen_name}}</a>
-                                    <label style="font-weight: bold; font-size: 1em">{{user.get_profile.points}} Total Points</label>
-                                </h2>
-                                <a href="/account/profile/edit" class="fine icon edit">Update Profile</a>
-                            </div>
-                            <hr class="space"/>
+                <div class="profile">
+                {% if user.is_authenticated %}
+                    <div class="pic">
+                        <a href="{% url accounts_profile_edit %}">
+                            {% if user.get_profile.avatar %}
+                            <img class="avatar-large" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}" alt="">
+                            {% else %}
+                            <img class="avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg" alt="">
+                            {% endif %}
+                        </a>
+                        <a href="{% url accounts_profile_edit %}">
+                            Full Profile
+                        </a>
+                    </div>
+                    <div class="details">
+                        <h2 class="profile-name">{{user.get_profile.screen_name}}</h2>
+                        <div>{{user.get_profile.totalPoints|default:"0"}} pts</div>
+                    </div>
+                    <hr class="space"/>
 
-                            {%block aside_progress%}
-                                <div class="score">
-                                    <div class="fill" style="width:{{user.get_profile.points_to_coin_for_fill}}%"></div>
-                                    <span class="points">Next coin in {{ user.get_profile.points_to_coin }} pts!</span>
-                                    <a href="/value" class="highlight coins{%if user.get_profile.coins%} has-coins{%endif%}">{{user.get_profile.currentCoins}}</a>
-                                </div>
-                                {%if user.get_profile.coins > 0%}
-                                    {%if user.get_profile.instance%}
-                                    {%endif%}
-                                {%endif%}
-                            {%endblock%}
-                            
-                            {%if instance%}
-                                   <hr>
-                                   <hr class="space">
-                                   <a class="neigborhood" href="/neighborhood/{{instance.slug}}">Updates &amp; Leaderboard &rarr;</a>
-                                   <hr class="space">
-                            {%endif%}
+                    {% if instance.is_started %}
+                    {% block aside_progress %}
+                    <div class="score">
+                        <span>{{ user.get_profile.points_to_coin }} pts to your next token!</span>
+                        <div class="fill" style="width:{{user.get_profile.points_to_coin_for_fill}}%;"></div>
+                    </div>
+                    <a href="{% url values %}" class="coins{% if user.get_profile.coins %} has-coins{% endif %}">
+                        <span class="label">Tokens earned:</span> <span class="value">{{user.get_profile.currentCoins}}</span>
+                        <span class="visit">Visit your Token Depot</span>
+                        <div class="clear"></div>
+                    </a>
+                    {% endblock %}
+                    {% endif %}
+                {% else %}
+                <h3>New Player? <a href="{% url accounts_register %}" class="button">Sign Up</a></h3>
+                {% endif %}
+                </div>
+                <div class="clear"></div>
 
+                {% block aside %}
+                {% endblock %}
+            </aside>
+            {% endblock %}
+            <div class="content">
+                {% block page_title %}
+                    <h2 id="page_title">Community PlanIT</h2>
+                {% endblock %}
+                <div class="maincontent">
+                {% block main %}{% endblock %}
+                </div>
+                <div class="rightsidebar">
+                    {% block rightsidebar %}{% endblock %}
+                </div>
+            </div>
+        </div>
 
-                            
-                            {%if user.is_authenticated and instance%}
-                                {%for mission in missions.current.all%}
-                                    <a class="mission" href="/mission/{{mission.slug}}" title="{{mission.name}}">View Current Mission &rarr;</a>
-                                {%endfor%}
-                            {%endif%}
-                            
-<!--
-                            <hr class="space">
-                            <hr>
-                            <h2 class="profile-name">Your Game Summary</h2>
-                            <p>
-                                You have <span class="highlight">{{user.get_profile.points}}</span> points, 
-
-                                {%if user.get_profile.stake%}
-                                  {{user.get_profile.stake}} in <a class="highlight" href="/neighborhood/{{instance.slug}}">{{instance}}</a>,
-                                {%else%}
-                                  are a citizen of <a class="highlight" href="/neighborhood/{{instance.slug}}">{{instance}}</a>,
-                                {%endif%}
-
-                                are following <a href="/list/following/{{user.id}}" class="highlight">{{user.get_profile.following.all|length}}</a> players,
-                                {%if not user.get_profile.affiliations_csv|length%}
-                                    and
-                                {%endif%}
-                                are followed by <a href="/list/followers/{{user.id}}" class="highlight">{{followingme|length}}</a> players{%if not user.get_profile.affiliations_csv|length%}.{%endif%}{%if user.get_profile.affiliations_csv|length%}, and are affiliated with 
-                                    {%for a in user.get_profile.affiliations_csv %} 
-                                        {% if forloop.counter == user.get_profile.affiliations_csv|length and user.get_profile.affiliations_csv|length > 1%}
-                                            and 
-                                        {%endif%}
-                                        <a href="/affiliation/{{a}}" class="highlight">{{a}}</a>{% if forloop.counter < user.get_profile.affiliations_csv|length and not user.get_profile.affiliations_csv|length == 2 %}, {%endif%}{%endfor%}.{%endif%}
-                            </p>
-                            <hr class="space"/>
--->
-                            {%block aside_actions%}
-                            {%endblock%}
-                        {%else%}
-                            <h3>New Player? <a href="/account/register" class="button">Sign Up</a></h3>
-                            <hr class="space"/>
-                        {%endif%}
-                    {%endif%}
-
-                    {%block aside%}
-                    {%endblock%}
-                 </div>
-              </aside>
-              {%endblock%}
-              <div class="content">
-                  <!-- <div class="content-title">
-                    {%block content-title%}
-                          {%if instance%}
-                                <a href="/neighborhood/{{instance.slug}}">{{instance}}</a>
-                            {%else%}
-                                {%if session%}
-                                    <a href="/neighborhood/{{instance.slug}}">{{session}} has not started yet</a>
-                                {%else%}
-                                    Not associated with a neighborhood
-                                {%endif%}
-                            {%endif%}
-                      {%endblock%}
-                  </div> -->
-
-                  <div class="alignleft">
-                      <h2>
-                          {%block page_title%}
-                              Community PlanIT
-                          {%endblock%}
-                      </h2>
-                      {%block main%}{%endblock%}
-                  </div>
-              </div>
-          </div>
-          <div class="fine footer">
-              <span class="left">&copy; 2011 Community PlanIT | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Use</a> | <a href="/about">About</a> | <a href="/contact">Contact</a></span>
-              <span class="right"><a href="http://engagementgamelab.org/" target="blank">Powered By The Engagement Lab</a> at <a href="http://emerson.edu">Emerson College</a> with support from the <a href="http://knightfdn.org/">Knight Foundation</a>
-              </span>
+        <div id="footer">
+            <div class="logo">
+                <img src="{{MEDIA_URL}}img/logo-3.png" alt="Community PlanIT logo">
+            </div>
+            <div class="content">
+                <nav>
+                    <ul>
+                        <li><a href="{% url about %}">About</a></li>
+                        <li><a href="{% url contact %}">Contact</a></li>
+                        <li><a href="{% url privacy %}">Privacy Policy</a></li>
+                        <li class="final"><a href="{% url terms %}">Terms of Use</a></li>
+                    </ul>
+                </nav>
+                <div class="right">
+                    <div>&copy; 2011 Community PlanIT &#8212; All Rights Reserved</div>
+                    <div>Powered By <a href="http://engagementgamelab.org/" target="blank">The Engagement Lab</a> at <a href="http://emerson.edu">Emerson College</a> with support from the <a href="http://knightfdn.org/">Knight Foundation</a></div>
+                </div>
+            </div>
+            <div class="clear"></div>
         </div>
     </div>
-      
-      <!-- Footer content -->
-      <div id="footer" class="fine">
-          {%block footer%}{%endblock%}
-      </div>
-    </div>
 
-    <!-- Scripts -->
-    {%block scripts%}
-    {%compress js%}
-    <script src="{{MEDIA_URL}}3pty/js/jquery-ui.min.js" type="text/javascript"></script>
-    <script src="{{MEDIA_URL}}3pty/js/jquery-ui-timepicker-addon.js" type="text/javascript"></script>
-    <script src="{{MEDIA_URL}}3pty/js/jquery.ui.notification.js" type="text/javascript"></script>
+    {% block scripts %}
+    <script src="{{MEDIA_URL}}3pty/js/jquery-ui.min.js"></script>
+    <script src="{{MEDIA_URL}}3pty/js/jquery-ui-timepicker-addon.js"></script>
+    <script src="{{MEDIA_URL}}3pty/js/jquery.ui.notification.js"></script>
     <script src="{{MEDIA_URL}}3pty/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
-    <script src="http://maps.google.com/maps/api/js?sensor=false&libraries=places" type="text/javascript"></script>
+    <script src="http://maps.google.com/maps/api/js?sensor=false&amp;libraries=places"></script>
     <script src="{{MEDIA_URL}}js/base.js"></script>
     <script>
-        window.scrollTo(0,1);
-		/*
-		 *Turning off location tracking, tracking_location tracking location which 
-		 * will hopefully disable the message, wants to know the location
-		*/
-		/*
-        {%if user.get_profile.location_tracking%}
-            (function(window) {
-
-                var geolocation = this.navigator && this.navigator.geolocation;
-                if(geolocation) {
-                    geolocation.getCurrentPosition(function(position) {
-                        document.cookie = escape( [ "position", JSON.stringify(position) ].join("=") );
-                    });
-                }
-
-            })(this);
-        {%else%}*/
-            document.cookie = "position=";
-        /*{%endif%} */
-
         $(function(){
-            var sidebarHeight = $('#sidebar').height(),
-                balancer = $('#balancer'),
-                balancerHeight = balancer.height();
-                
-            $(".ui-notification-container").notification({
-                duration: 8000,
-            });
-
-            {%for message in messages%}
-            $(".message-{{forloop.counter}}").notification("create", 
-                {content: "{{message}}"},
-                {
-                {% if "sticky" in message.tags.split %}
-                sticky: true
-                {% endif %}
-                }
-            );
-            {%endfor%}
-        
-            // Make sure the content area is never shorter than the sidebar
-            if( balancerHeight < sidebarHeight ) {
-                balancer.css('minHeight', sidebarHeight);
-            }
-            
-
             jQuery.each(jQuery.browser, function(i, val) {if(i=="msie" && (jQuery.browser.version.substr(0,3) == "6.0" || jQuery.browser.version.substr(0,3) == "5.0")){$('body').html('<center><div style="width: 800px; text-align: left"><h1>We noticed you&#8217re using an old version of Microsoft Internet Explorer.</h1><h2>To play Community Planit, please install <a href="http://www.google.com/chrome/">Google Chrome</a>, <a href="http://www.mozilla.com/firefox/">Firefox 4</a>  or <a href="http://www.microsoft.com/windows/downloads/ie/getitnow.mspx">IE 8+</a></h2></div></center>');}});
         });
     </script>
-    {%endcompress%}
-    {%endblock%}
-    {%block body%}{%endblock%}
+    {% endblock %}
+    {% block body %}{% endblock %}
 </body>
 </html>

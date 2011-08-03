@@ -1,18 +1,16 @@
-from django.template.defaultfilters import slugify
+import datetime
+
 from django.db import models
+from django.template.defaultfilters import slugify
+
 from django.contrib import admin
 from django.contrib.auth.models import User
-from web.attachments.models import Attachment
-from web.missions.models import Mission
-from web.accounts.models import determine_path
-import datetime
 from django.contrib.contenttypes.models import ContentType
 
+from web.accounts.models import determine_path
+from web.attachments.models import Attachment
+from web.missions.models import Mission
 
-#from django.contrib.auth.models import User
-
-#valid types are:
-# open_ended, single_response, map, empathy, multi_response
 class PlayerActivityType(models.Model):
     type = models.CharField(max_length=255)
     displayType = models.CharField(max_length=255)
@@ -26,7 +24,7 @@ class PlayerActivity(models.Model):
     slug = models.SlugField(editable=False)
     question = models.CharField(max_length=1000)
     creationUser = models.ForeignKey(User)
-    mission = models.ForeignKey(Mission)
+    mission = models.ForeignKey(Mission, related_name='activities')
     type = models.ForeignKey(PlayerActivityType)
     createDate = models.DateTimeField(editable=False)
     instructions = models.CharField(max_length=255, null=True, blank=True)
@@ -36,6 +34,8 @@ class PlayerActivity(models.Model):
 
     class Meta:
         verbose_name_plural = 'Player Activities'
+        unique_together = ('name', 'mission', 'type')
+        ordering = ('name',)
     
     def __unicode__(self):
         return self.name
@@ -68,7 +68,7 @@ class PlayerEmpathyActivity(PlayerActivity):
         self.slug = slugify(self.name)
         self.createDate = datetime.datetime.now()
         self.type = PlayerActivityType.objects.get(type="empathy")
-        super(PlayerMapActivity, self).save()
+        super(PlayerEmpathyActivity, self).save()
 
 class MultiChoiceActivity(models.Model):
     activity = models.ForeignKey(PlayerActivity)

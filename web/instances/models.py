@@ -1,20 +1,35 @@
 import datetime
+
 from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils.safestring import mark_safe
+
 from django.contrib import admin
 from django.contrib.auth.models import User
 
-from django.template.defaultfilters import slugify
-
 from gmapsfield.fields import GoogleMapsField
 from south.modelsinspector import add_introspection_rules
+
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
-#TODO: Worry about time zone issues, look up how to fix that if it needs to be
-#Also test this.
+class InstanceQueryMixin(object):
+    def past(self):
+        return self.filter(end_date__lt=datetime.datetime.now()).order_by('start_date')
 
-#This is the physical data. All FKs are made off of this, but all data
-#can be used through Instance. Look in the instances/management/__init__.py
-#to see the view that is created 
+    def future(self):
+        return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
+
+    def active(self):
+        now = datetime.datetime.now()
+        return self.filter(start_date__lte=now).filter(end_date__gte=now).order_by('start_date')
+
+class InstanceQuerySet(models.query.QuerySet, InstanceQueryMixin):
+    pass
+
+class InstanceManager(models.Manager, InstanceQueryMixin):
+    def get_query_set(self):
+        return InstanceQuerySet(self.model, using=self._db)
+
 class Instance(models.Model):
     name = models.CharField(max_length=45)
     city = models.CharField(max_length=255)
@@ -27,11 +42,18 @@ class Instance(models.Model):
     process_name = models.CharField(max_length=255, null=True, blank=True)
     process_description = models.TextField(null=True, blank=True)
     curators = models.ManyToManyField(User)
+
+    objects = InstanceManager()
+
+    class Meta:
+        get_latest_by = 'start_date'
+        
+    def __unicode__(self):
+        return '%s: %s' % (self.city, self.name)
     
-    #This should go into a view, djagno doesn't support views... this is
-    # a terrible thing and honestly, there are so many problems associated
-    # with trying to plug this into a view, that it's just simpler to do this
-    # bad bad, terrbile code - BMH
+    def header(self):
+        return mark_safe('<h2 class="instance"><span class="city">%s</span> &#8211; %s</h2>' % (self.city, self.name))
+
     def is_active(self):
         if datetime.datetime.now() >= self.start_date and datetime.datetime.now() <= self.end_date:
             return True;
@@ -53,9 +75,9 @@ class Instance(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super(Instance,self).save()
-        
-    def __unicode__(self):
-        return self.name[:25]
+
+    def coin_count(self):
+        return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
 
 #TODO: Perhaps this should be in it's own project
 class PointsAssignment(models.Model):

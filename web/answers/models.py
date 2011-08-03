@@ -9,8 +9,8 @@ from gmapsfield.fields import GoogleMapsField
 
 class Answer(models.Model):
     #TODO: This might benefit from a 1:1 relationship
-    activity = models.ForeignKey(PlayerActivity)
-    answerUser = models.ForeignKey(User)
+    activity = models.ForeignKey(PlayerActivity, related_name='answers')
+    answerUser = models.ForeignKey(User, related_name='answers')
 
 class AnswerOpenEnded(Answer):
     answerBox = models.CharField(max_length=1000)

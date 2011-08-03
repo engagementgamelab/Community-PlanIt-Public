@@ -10,12 +10,11 @@
     <h2> {{value.message}} </h2>
     <p><span class="highlight">{{value.coins}}</span> out of a total <span class="highlight">{{total_coins}}</span> coins have been spent on {{value.message}}</p>
 
-    <!-- Show comments -->
     <div id="comments">
-        <div class="sleeper"></div>
         <h4>Comments:</h4>
-        <!-- Add Comment-->
+        {% with value.comments as comments %}
         {%include "comments/post.html"%}
+        {% endwith %}
     </div>
     
 {%endblock%}

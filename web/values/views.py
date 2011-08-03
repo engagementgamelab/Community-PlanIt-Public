@@ -2,6 +2,7 @@ import datetime
 import re
 
 from django.core.urlresolvers import reverse
+from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.template import Context, RequestContext, loader
@@ -13,43 +14,36 @@ from web.accounts.models import UserProfile
 from web.attachments.models import Attachment
 from web.comments.forms import CommentForm
 from web.comments.models import Comment
-from web.values.models import *
 from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
+from web.values.models import *
 
 @login_required
 def all(request):
     values = Value.objects.filter(instance=request.user.get_profile().instance)
-    num_values = len(values)
+    community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
     
-    total_coins = 0
-    total_playerCoins = 0
-
     value_wrapper = []
-    playervalues = PlayerValue.objects.filter(user=request.user)
-
-    # Calculate total coins for next iteration to generate percentages
-    for value in values:
-        total_coins += value.coins
+    player_values = PlayerValue.objects.filter(user=request.user)
+    
+    player_spent = player_values.aggregate(Sum('coins'))['coins__sum'] or 0
 
     for value in values:
-        player_value = playervalues.filter(value=value)
-        coins = value.coins
+        player_value = player_values.filter(value=value)
+        coins = float(value.coins)
         if len(player_value) > 0:
-            total_playerCoins += player_value[0].coins
-            # +0.0 coerces to a float for percentages
             value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
-                                  'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })
+                                  'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })
         else:
             value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': 0,
-                                   'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })    
+                                   'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
 
     tmpl = loader.get_template('values/all.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'values': values,
         'value_wrapper': value_wrapper,
-        'total_coins' : total_coins,
-        'total_playerCoins' : total_playerCoins,
+        'community_spent' : community_spent,
+        'player_spent' : player_spent,
     }, [ip])))
 
 @login_required
@@ -121,7 +115,7 @@ def spend(request, id):
     else:
         messages.info(request, 'No coins available to spend')
     
-    return HttpResponseRedirect("/value")
+    return HttpResponseRedirect(reverse('values'))
 
 @login_required
 def take(request, id):
@@ -144,4 +138,4 @@ def take(request, id):
     else:
         messages.info(request, 'No coins available to take')
         
-    return HttpResponseRedirect("/value")
+    return HttpResponseRedirect(reverse('values'))

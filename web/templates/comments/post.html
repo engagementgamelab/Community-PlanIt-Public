@@ -1,14 +1,13 @@
 {% if not comment_form.just_one_form %}
-    {%if comments.comments.all %}
-        {%for comment in comments.comments.all reversed%}
-            {%include "comments/comment.html"%}
-        {%endfor%}
-        </ul>
-    {% else%}
-        No comments found.
-    {%endif%}
+<ul class="comments">
+    {%for comment in comments.all reversed%}
+        {%include "comments/comment.html"%}
+    {% empty %}
+    <li class="comment">No comments found.</li>
+    {%endfor%}
+</ul>
 {%endif%}
-<h2>Add a comment</h2>
+<h3>Add a comment</h3>
 <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
     {%if request.REQUEST.error%}
         <span class="error">Please enter a valid comment.</span>

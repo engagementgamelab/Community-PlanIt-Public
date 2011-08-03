@@ -1,13 +1,16 @@
 import datetime
 import math
 import re
+
 from django.conf import settings
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import Context, RequestContext, loader
+from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
-from django.db.models import Q
 
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -15,14 +18,14 @@ from django.contrib.auth.models import User, Group
 
 from web.accounts.forms import *
 from web.accounts.models import UserProfile
+from web.answers.models import Answer
+from web.challenges.models import Challenge, PlayerChallenge
 from web.comments.forms import CommentForm
 from web.instances.models import Instance
-from web.processors import instance_processor as ip
+from web.missions.models import Mission
+from web.player_activities.models import PlayerActivity
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
-from web.missions.models import Mission
-from web.answers.models import Answer
-from web.player_activities.models import PlayerActivity
 from web.values.models import *
 
 
@@ -78,7 +81,7 @@ def register(request):
         send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=True)
         messages.success(request, _('Thanks for registering!'))
         
-        return HttpResponseRedirect('/account/dashboard')
+        return HttpResponseRedirect(reverse('accounts_dashboard'))
 
     # If not valid, show normal form
     form = validate_and_generate(RegisterForm, request, valid)
@@ -100,7 +103,7 @@ def forgot(request):
         send_mail(_('Password Changed'), _('Your temporary password is: %(password)s') % { 'password': password }, settings.NOREPLY_EMAIL, [email])
         messages.success(request, _('A temporary password has been sent to your email address.'))
 
-        return HttpResponseRedirect('/account/login')
+        return HttpResponseRedirect(reverse('accounts_login'))
         
     # If not valid, show normal form
     form = validate_and_generate(ForgotForm, request, valid)
@@ -223,7 +226,7 @@ def edit(request):
         'profile_form': profile_form,
         'change_password_form': change_password_form,
         'user': request.user,
-    },[ip])))
+    })))
 
 @login_required
 def profile(request, id):
@@ -300,7 +303,7 @@ def profile(request, id):
         'log': log,
         'total_playerCoins': total_playerCoins,
         'value_wrapper': value_wrapper,
-    },[ip])))
+    })))
 
 @login_required
 def follow(request, id):
@@ -319,13 +322,19 @@ def unfollow(request, id):
 def dashboard(request):
     tmpl = loader.get_template('accounts/dashboard.html')
 
+    instance = None
+
     profile = request.user.get_profile()
-    instance = profile.instance
-    last_mission = Mission.objects.filter(instance=instance)
-    if len(last_mission) > 0:
-        last_mission = last_mission[len(last_mission)-1]
-    else:
-        last_mission = None
+    if profile.instance:
+        instance = profile.instance
+    elif request.user.is_staff or request.user.is_superuser:
+        instance = Instance.objects.active().latest()
+
+    last_mission = None
+    if instance:
+        Mission.objects.filter(instance=instance).latest()
+
+    page = request.GET.get('page', 1)
     
     # Dashboard related forms
     activation_form = ActivationForm()
@@ -350,7 +359,7 @@ def dashboard(request):
             ActivityLogger.log(request.user, request, 'account', 'created', '/player/'+ str(user.id), 'profile')
             PointsAssigner.assign(request.user, 'account_created')
 
-            return HttpResponseRedirect('/account/dashboard')
+            return HttpResponseRedirect(reverse('accounts_dashboard'))
     
     # List all users following for filtering the activity feed later on.
     feed = []
@@ -360,23 +369,29 @@ def dashboard(request):
 
     # Fetch activity log feed for dashboard.
     log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
-    mission = Mission.objects.filter(instance=instance).current()
-    unfinished_activities = None
-    activities = None
-    if (len(mission) > 0):
-        mission = mission[0]
-        activities = PlayerActivity.objects.filter(mission=mission)
-        pks = []
-        for pk in Answer.objects.filter(answerUser=request.user):
-            if (pk.activity.id not in pks):
-                pks.append(pk.activity.id)
-        #We want to get all activities that the user has for this mission
-        #And the user has no answer for
-        unfinished_activities = PlayerActivity.objects.filter(Q(mission=mission) & ~Q(pk__in=pks))
+    missions = instance and instance.missions.active() or Mission.objects.none()
+    activities = PlayerActivity.objects.none()
+    
+    if (missions.count() > 0):
+        mission = missions[0]
+        activities = PlayerActivity.objects.distinct().filter(mission=mission)
+        activities = activities.filter(Q(answers__isnull=True)|Q(answers__answerUser=request.user))
+
+    completed_challenges = PlayerChallenge.objects.completed().filter(player=request.user)
+    challenges = instance and instance.challenges.active().exclude(player_challenges__in=completed_challenges) or Challenge.objects.none()
+
+    paginator = Paginator(activities, 5)
+    activities_page = paginator.page(page)
+
+    leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20]
+
     return HttpResponse(tmpl.render(RequestContext(request, {
         'activation_form': activation_form,
         'log': log,
-        'unfinished_activities' : unfinished_activities,
         'last_mission': last_mission,
-        'activities': activities,
-    },[ip])))
+        'paginator': paginator,
+        'activities_page': activities_page,
+        'challenges': challenges,
+        'leaderboard': leaderboard,
+        'instance': instance
+    })))

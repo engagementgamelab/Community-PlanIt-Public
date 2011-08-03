@@ -45,15 +45,8 @@
             $("#id_start_date").datetimepicker({
                 hourGrid: 6,
                 minuteGrid: 10,
-            	ampm: false,
-                onClose: function() {
-                    $("#id_end_date").datetimepicker( 'setDate', Date.parse( $("#id_start_date").val() ).add(1).hours());
-                }
+            	ampm: false
             });
-
-            // Set defaults to the date pickers
-            $("#id_start_date").datetimepicker( 'setDate', Date.now() );
-            $("#id_end_date").datetimepicker( 'setDate', Date.now().add(1).hours() );
         });
     </script>
 {%endblock%}

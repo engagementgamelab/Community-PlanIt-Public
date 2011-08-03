@@ -2,11 +2,74 @@
 {% load game_extras %}
 
 {%block section%}accounts{%endblock%}
+{% block extra_body_class %}rightsidebar{% endblock %}
 
 {%block title%}Dashboard{%endblock%}
-{%block page_title%}{%endblock%}
+{%block page_title%}
+<h2 id="page_title"><span>{{instance.city}}</span> &#8211; {{instance.name}}</h2>
+{%endblock%}
+
+{% block rightsidebar %}
+{% if instance.is_started %}
+    <div class="section">
+        {%if instance.missions.active.count%}
+            {%for mission in instance.missions.active%}
+            <h2>Current Mission <span class="fine">{{mission.start_date|date:"n/j"}}&#8211;{{mission.end_date|date:"n/j"}}</span></h2>
+            <div class="video">{{mission.video|safe}}</div>
+            <h3>{{mission.name}}</h3>
+            <p class="separate">{{mission.description}}</p>
+            {% include "player_activities/all_activities_paginated.html" %}
+            <div class="buttons">
+                <a class="button" href="{% url missions_mission mission.slug %}" title="{{mission.name}}">View Current Mission</a>
+            </div>
+            {%endfor%}
+        {%else%}
+            {%if instance.missions.past.all|length%}
+            <label>
+                Your missions have ended for now. Great work!
+                Your community is better because of your efforts.
+                You'll be notified when a new mission starts.
+            </label>
+            {%else%}
+                {%if instance.missions.future.all|length%}
+                    <label>
+                        The mission has not yet started. You will
+                        be notified when the mission starts.
+                    </label>
+                {%else%}
+                    No missions created.
+                {%endif%}
+            {%endif%}
+        {%endif%}
+    </div>
+
+    <div class="section">
+        <h2 class="missions">Available Challenges</h2>
+        <div class="challenges">
+            <table>
+                <tbody>
+                {% for challenge in challenges %}
+                    <tr class="{% cycle "odd" "even" %}">
+                        <td><a href="{% url challenges_challenge challenge.pk %}">{{challenge.name}}</a></td>
+                    </tr>
+                {% empty %}
+                    <tr class="odd">
+                        <td>No active challenges found.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="buttons">
+            <a class="button left" href="{% url challenges_add %}">Create Challenge</a>
+            <a class="button right" href="{% url challenges %}">All Challenges</a>
+        </div>
+    </div>
+{% endif %}
+{% endblock rightsidebar %}
 
 {%block main%}
+{% if instance %}
     {%if instance.is_started%}
         {%if not user.is_active%}
             <form method="POST" action="">
@@ -16,124 +79,105 @@
                 {%csrf_token%}
                 <div class="fieldWrapper">
                     {{ activation_form.accepted_term.errors }}
-                    <label for="id_accepted_term">I have have read the <a href="/terms/" target="_blank">Terms of Use.</a></label>
+                    <label for="id_accepted_term">I have have read the <a href="{% url terms %}" target="_blank">Terms of Use.</a></label>
                     {{ activation_form.accepted_term }}
                 </div>
                 <div class="fieldWrapper">
                     {{ activation_form.accepted_research.errors }}
-                    <label for="id_accepted_research">I have read the <a href="/privacy/" target="_blank">Privacy Policy.</a></label>
+                    <label for="id_accepted_research">I have read the <a href="{% url privacy %}" target="_blank">Privacy Policy.</a></label>
                     {{ activation_form.accepted_research }}
                 </div>
                 <button class="button">Activate my account!</button>
             </form>
         {%else%}
-            <p class="welcome">
-                {%if not instance.is_expired%}                    
-                    <span><img style="padding-bottom:25px" src="{{MEDIA_URL}}/img/Lowell_header.png"></span>
-                    
-                    As part of Sustainability Week, we invite you to play Community PlanIt to help 
-                    shape the city's vision for a sustainable future. Earn points by completing the 
-                    <a class="red" href="/mission/{{mission.slug}}" title="{{mission.name}}">mission</a>
-                    activities, which you can trade in for <a class="red" href="/value">coins</a> to spend
+            {%if not instance.is_expired%}                    
+                <div class="welcome">
+                    <p>As part of {{instance.name}}, we invite you to play
+                    Community PlanIt to help shape the city's vision for the
+                    future. Complete <a class="red" href="{% url player_activities_all %}" title="activities">activities</a> to earn points, which
+                    you can trade in for <a class="red" href="{% url values %}">coins</a> to spend
                     on promoting your top community values. Keep checking back from 
-                    June 15 – June 25 to stay on top of the lively discussion—and tell your friends!
+                    {{instance.start_date|date:"F j"}} through
+                    {{instance.end_date|date:"F j"}} to stay on top of the
+                    lively discussion&#8212;and tell your friends!</p>
+                </div>
                 
-                {%else%}
-                    <span><img style="padding-bottom:25px" src="{{MEDIA_URL}}/img/Lowell_header.png"></span>
-                    Community PlanIt Lowell ended on June 25, 2011. More than 175 participants spent 411 coins and left more than 1,000 comments!
-                    All of the 
-                    {% if last_mission %}
-                        <a class="red" href="/mission/{{last_mission.slug}}" title="{{last_mission.name}}">activities</a>
-                    {% else %}
-                        <a class="red" href="/mission/" title="mission">activities</a>
-                    {% endif %}
-                    are now unlocked so you can view the results—and don't forget to see how the community spent its 
-                    <a class="red" href="/issue/">coins</a>!
-                    Thanks for playing!
-                {%endif%}
-            </p>
-            <hr class="space">
-            
-            <div class="twothird">
-                <h3>Latest Activity</h3>
-                {%if log and log|length%}
-                <ul class="listless listview feed">
-                    {%for activity in log%}
-                    <li class="listitem {{activity.type}}">
-                        {%if activity.user.get_profile.avatar%}
-                            <img class="avatar" src="{{MEDIA_URL}}/{{activity.user.get_profile.avatar}}">
-                        {%else%}               
-                            <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-                        {%endif%} 
-                        <a href="/player/{{activity.user.id}}">{{activity.user.get_profile.screen_name}}</a>
-                        {{activity.data}} 
-                        {%if activity.url%}
-                            <a href="{{activity.url}}">{{activity.action}}</a>
-                        {%else%}
-                            {{activity.action}}
-                        {%endif%}
-                        <div class="timestamp fine">{{activity.date|date:"F j, Y, g:i a"}}</div>
-                    </li>
-                    {%endfor%}
+            {%else%}
+                <div class="welcome">
+                    <p>{{instance}} ended on {{instance.end_date|date:"F j, Y"}}, with:</p>
+                <ul>
+                    <li><strong>{{instance.user_profiles.count}}</strong> participant{{instance.user_profiles.count|pluralize}}
+                    <li><strong>{{instance.coin_count}}</strong> coin{{instance.coin_count|pluralize}} spent on issues
+                    <li><strong>{{instance.comments.count}}</strong> comments
                 </ul>
-                {%else%}
-                    No news found.   
-                {%endif%}
-                <hr class="space">
+
+                <p>All of the 
+                {% if last_mission %}
+                    <a class="red" href="{% url missions_mission last_mission.slug %}" title="{{last_mission.name}}">activities</a>
+                {% else %}
+                <a class="red" href="{% url missions_home %}" title="mission">activities</a>
+                {% endif %}
+                are now unlocked so you can view the results—and don't forget to see how the community spent its 
+                <a class="red" href="{% url values %}">coins</a>!
+                </p>
+                <p>Thanks for playing!</p>
+                </div>
+            {%endif%}
+            
+            <div class="feed">
+                <h3>Latest Events</h3>
+                <table>
+                    <tbody>
+                        {%for activity in log%}
+                        <tr class="{% cycle "odd" "even" %}">
+                            <td>{{activity.date|date:"m/d/Y"}}</td>
+                            <td>
+                                <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
+                                {{activity.data}} 
+                                {%if activity.url%}
+                                    <a href="{{activity.url}}">{{activity.action}}</a>
+                                {%else%}
+                                    {{activity.action}}
+                                {%endif%}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td class="odd">No news found.</td></tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
                 
                 <p>
-                <a href="/neighborhood/{{user.get_profile.instance.slug}}" class="right fine">View more community news &rarr;</a>
+                <a href="{% url instances_instance user.get_profile.instance.slug %}" class="right button">View more community news</a>
                 </p>
-            </div>
-            <div class="third last">        
-                <div class="modules">
-                    {%if missions.current.all|length%}
-                        {%for mission in missions.current.all%}
-                        <h3 class="missions">Current Mission <span class="fine">(<a href="/mission/{{mission.slug}}">{{mission.name}}</a>)</span></h3>
-                        <div class="dashboardmodule">
-                            <div class="dashboardmoduleinner">
-                                 <ul class="listview listless">
-                                    {% include "player_activities/all_activities.html" %}
-                                    <!--
-                                         <h3>You completed all the actives. Great work!</h3>
-                                         <h4>Go to the current mission to see all responses or change your answers.</h4>
-                                    -->
-                                 </ul>
-                            </div>
-                            <hr class="space">
-                            <a class="right fine" href="/mission/{{mission.slug}}" title="{{mission.name}}">View Current Mission &rarr;</a>
-                            <hr class="space">
-                        </div>
-                        <hr class="space">
-                        {%endfor%}
-                    {%else%}
-                        {%if missions.past.all|length%}
-                        <label>
-                            Your missions have ended for now. Great work!
-                            Your community is better because of your efforts.
-                            You'll be notified when a new mission starts.
-                        </label>
-                        {%else%}
-                            {%if missions.future.all|length%}
-                                <label>
-                                    The mission has not yet started. You will
-                                    be notified when the mission starts.
-                                </label>
-                            {%else%}
-                                No missions created.
-                            {%endif%}
-                        {%endif%}
-                    {%endif%}
-
-                    <hr class="space">
-                </div>
             </div>
         {%endif%}
     {%else%}
-        <div> The neighborhood {{instance}} has not started yet we will alert you once it has begun.  </div>
+        <div>The community has not started yet. We will notify you once it has begun.  </div>
         <br>
-        <a href="/account/logout">Logout</a>
+        <a href="{% url logout %}">Logout</a>
     {%endif%}
+{% endif %}
 
     <div style="clear:both;"></div>
 {%endblock%}
+
+{% block aside %}
+{%if leaderboard.count %}
+<div class="leaderboard">
+    <table>
+        <thead>
+            <tr><th>Leader</th><th>Board</th></tr>
+        </thead>
+        <tbody>
+        {%for profile in leaderboard%}
+            <tr>
+                <td><a href="{% url accounts_profile profile.user.id %}">{{profile.screen_name}}</a></td>
+                <td>{{profile.totalPoints}}</td>
+            </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

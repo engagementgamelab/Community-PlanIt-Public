@@ -1,34 +1,27 @@
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.conf import settings
+from django.views.decorators.cache import never_cache
+from django.http import HttpResponse, HttpResponseServerError
 from django.template import loader, Context, RequestContext
-import settings
 
+from django.contrib.sites.models import Site
 
 from web.accounts.views import dashboard
 
 def index(request):
     # Show index page
     if not request.user.is_authenticated():
-        tmpl = loader.get_template('base/index.html')
+        tmpl = loader.get_template('index.html')
         return HttpResponse(tmpl.render(RequestContext(request,{})))
     return dashboard(request)
 
-def indexTemp(request):
-    # This is the altered temporary index
-    if not request.user.is_authenticated():
-        tmpl = loader.get_template('base/indexTemp.html')
-        return HttpResponse(tmpl.render(RequestContext(request,{})))
-    # Show dashboard
-    return dashboard(request)
-
-def error_404(request):
-    # Show 404 page
-    if settings.DEBUG == True:
-        raise Http404
-    else:
-        tmpl = loader.get_template('base/404.html')
-        return HttpResponse(tmpl.render(RequestContext(request,{})))
-
-def error_500(request):
-    # Show 500 page
-    tmpl = loader.get_template('base/500.html')
-    return HttpResponse(tmpl.render(Context({})))
+@never_cache
+def server_error(request, template_name='500.html'):
+    t = loader.get_template(template_name)
+    return HttpResponseServerError(
+        t.render(
+            Context({
+                'MEDIA_URL': settings.MEDIA_URL,
+                'site': Site.objects.get_current()
+            })
+        )
+    )

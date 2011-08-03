@@ -9,9 +9,9 @@
     <h2>
         {%if request.user and not player == request.user and not request.user.username = ''%}
             {%if player not in request.user.get_profile.following.all%}
-                <a class="button" href="/player/follow/{{player.id}}">Follow</a>
+            <a class="button" href="{% url player_follow player.id %}">Follow</a>
             {%else%}
-                <a class="button" href="/player/unfollow/{{player.id}}">Unfollow</a>
+            <a class="button" href="{% url player_unfollow player.id %}">Unfollow</a>
             {%endif%}
         {%endif%}
 
@@ -27,7 +27,7 @@
         <span style="font-size: 1em">Community Stake: {{player.get_profile.stake}}</span><br>
         <span style="font-size: 1em">Affiliated With:
             {%for a in player.get_profile.affiliations_csv %} 
-                <a href="/affiliation/{{a}}" class="highlight">{{a}}</a>
+            <a href="{% url affiliations_affiliation a %}" class="highlight">{{a}}</a>
             {%endfor%}
         </span>
     </p>    
@@ -47,7 +47,7 @@
                 {%else%}               
                     <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
                 {%endif%} 
-                <a href="/player/{{activity.user.id}}">{{activity.user.get_profile.screen_name}}</a>
+                <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
                 {{activity.data}} 
                 {%if activity.url%}
                     <a href="{{activity.url}}">{{activity.action}}</a>
@@ -65,7 +65,7 @@
     
     <div class="third last">        
         <div class="modules">
-            <h3><a class="highlight" href="/list/following/{{player.id}}">Following <span class="fine">({{player.get_profile.following.all|length}})</span></a></h3>
+            <h3><a class="highlight" href="{% url lists_following player.id %}">Following <span class="fine">({{player.get_profile.following.all|length}})</span></a></h3>
             <div class="dashboardmodule">
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
@@ -73,9 +73,9 @@
                         {%if player.get_profile.following.all %}
                           {% for player in player.get_profile.following.all %}
                               {%if player.get_profile.avatar %}
-                              <a href="/player/{{player.id}}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
+                              <a href="{% url accounts_profile player.id %}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
                               {%else%}               
-                                  <a href="/player/{{player.id}}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
+                              <a href="{% url accounts_profile player.id %}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
                               {%endif%} 
                           {%endfor%}
                         {%else%}
@@ -89,7 +89,7 @@
             
             <hr class="space">
 
-            <h3><a class="highlight" href="/list/followers/{{player.id}}">Followers <span class="fine">({{followingme|length}})</span></a></h3>
+            <h3><a class="highlight" href="{% url list_followers player.id %}">Followers <span class="fine">({{followingme|length}})</span></a></h3>
             <div class="dashboardmodule">
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
@@ -97,9 +97,9 @@
                         {%if followingme %}
                           {% for player in followingme %}
                               {%if player.get_profile.avatar %}
-                                  <a href="/player/{{player.id}}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
+                              <a href="{% url accounts_profile player.id %}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
                               {%else%}               
-                                  <a href="/player/{{player.id}}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
+                              <a href="{% url accounts_profile player.id %}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
                               {%endif%} 
                           {%endfor%}
                         {%else%}
@@ -119,7 +119,6 @@
     
     <div style="clear: both; padding: 1em 0;"></div>
     <div id="comments">
-        <div class="sleeper"></div>
         <h4>Comments for {{player.get_profile.screen_name}}</h4>
         <ul class="listless comments">
             {% with player.get_profile as comments %}
@@ -172,5 +171,3 @@
     
 </script>    
 {%endblock%}
-
-{%block footer%} {%endblock%}

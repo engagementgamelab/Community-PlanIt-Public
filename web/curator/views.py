@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils import simplejson
 from django.core import serializers
+from django.core.urlresolvers import reverse
 from web.values.models import *
 from web.instances.models import *
 from web.accounts.models import *
@@ -22,7 +23,7 @@ def admin(request, id):
         if request.user == instance.curator:
             request.session['admin_instance'] = instance
 
-        return HttpResponseRedirect('/admin')
+        return HttpResponseRedirect(reverse('admin-base'))
     except:
         return Http404
 

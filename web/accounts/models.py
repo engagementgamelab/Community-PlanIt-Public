@@ -1,12 +1,15 @@
 from uuid import uuid4 as uuid
+
 from django import forms
-from web.instances.models import Instance
-from web.challenges.models import *
-from web.accounts.models import *
+
 from django.contrib import admin
-from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.models import User, Group, Permission
+
+from web.accounts.models import *
+from web.challenges.models import *
+from web.instances.models import Instance
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
@@ -14,32 +17,49 @@ def determine_path(instance, filename):
 class UserProfileIncomes(models.Model):
     income = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
-    
+
+    def __unicode__(self):
+        return self.income
     
 class UserProfileEducation(models.Model):
     eduLevel = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
 
+    def __unicode__(self):
+        return self.eduLevel
+
 class UserProfileLiving(models.Model):
     livingSituation = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
+
+    def __unicode__(self):
+        return self.livingSituation
 
 class UserProfileGender(models.Model):
     gender = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
 
+    def __unicode__(self):
+        return self.gender
+
 class UserProfileRace(models.Model):
     race = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
 
+    def __unicode__(self):
+        return self.race
+
 class UserProfileStake(models.Model):
     stake = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
+
+    def __unicode__(self):
+        return self.stake
     
 class UserProfile(models.Model):
     #Foreign key fields
     user = models.ForeignKey(User, unique=True)
-    instance = models.ForeignKey(Instance, blank=True, null=True)
+    instance = models.ForeignKey(Instance, blank=True, null=True, related_name='user_profiles')
     gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
     race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
@@ -61,7 +81,7 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     affiliations = models.TextField(blank=True, null=True)
     editedProfile = models.BooleanField(default=0)
-    receaveEmail = models.BooleanField(default=True)
+    receive_email = models.BooleanField(default=True)
     # Additional profile fields
     birth_year = models.IntegerField(blank=True, null=True)
 
@@ -69,7 +89,10 @@ class UserProfile(models.Model):
     following = models.ManyToManyField(User, related_name='following_user_set', blank=True, null=True)
 
     # comments on the profile from others
-    comments = models.ManyToManyField(Comment, blank=True, null=True)
+    comments = models.ManyToManyField(Comment, blank=True, null=True, related_name='user_profiles')
+
+    def earned_tokens(self):
+        return self.totalPoints // 100
 
     def points_to_coin(self):
         return 100 - self.coinPoints
@@ -107,7 +130,10 @@ class UserProfile(models.Model):
             else:
                 last = last[0]
         
-        return "%s %s" % (first, last)
+        if first or last:
+            return "%s %s" % (first, last)
+
+        return self.user.username
 
 class UserProfileInline(admin.StackedInline):
     model = UserProfile

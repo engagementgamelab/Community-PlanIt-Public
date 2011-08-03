@@ -13,10 +13,10 @@
     </p>
     <br>
     <p>
-        <a href="/privacy" target="_blank">View Privacy Policy</a>
+    <a href="{% url privacy %}" target="_blank">View Privacy Policy</a>
     </p>
     <p>
-        <a href="/terms" target="_blank">View Terms of Use</a>
+    <a href="{% url terms %}" target="_blank">View Terms of Use</a>
     </p>
 {%endblock%}
 {%block main%}
@@ -32,5 +32,3 @@
 	  	</div>
     </form>
 {%endblock%}
-
-{%block footer%} {%endblock%}

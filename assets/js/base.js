@@ -14,10 +14,23 @@ jQuery(function($) {
             location.href = button.find("a").attr("href");
         }
     });
+
+    $('.togglereplies').live('click', function(evt) {
+        var replies = $($(this).attr('href'));
+        replies.toggle();
+        if (replies.is(':visible')) {
+            $('.closed', this).hide();
+            $('.open', this).show();
+        } else {
+            $('.open', this).hide();
+            $('.closed', this).show();
+        }
+        return false;
+    });
     
     var reply = $('.cancel').bind('click', function(evt) {
         $(this).parents('.controls').find('.reply-modal').slideUp(200);
-        $(this).parents('.controls').find('.reply').show();
+        $(this).parents('.controls').find('.actions').show();
         return false;
     });
 
@@ -26,7 +39,7 @@ jQuery(function($) {
         evt.preventDefault();
 
         $(this).parents('.controls').find('.reply-modal').slideDown(200);
-        $(this).hide();
+        $(this).parents('.controls').find('.actions').hide();
 
         return false;
     }).delegate('form', 'submit', function() {

@@ -29,8 +29,9 @@ class CommentTestCases(TestCase):
         instance = Instance(name = self.instanceName, 
                             start_date = self.instanceStart,
                             end_date = self.instanceEnd,
-                            location = self.BostonMap,
-                            curator = user)
+                            location = self.BostonMap)
+        instance.save(commit=False)
+        instance.curators.add(user)
         instance.save()
 
         c = Comment(message = "Test Comment", posted_date=datetime.datetime.now(),
@@ -62,8 +63,9 @@ class CommentWebTestCases(TestCase):
         self.instance = Instance(name = self.instanceName, 
                             start_date = self.instanceStart,
                             end_date = self.instanceEnd,
-                            location = self.BostonMap,
-                            curator = self.user1)
+                            location = self.BostonMap)
+        self.instance.save(commit=False)
+        self.instance.curators.add(self.user1)
         self.instance.save()
         
         com1 = Comment(message = "Test Comment", posted_date=datetime.datetime.now(),

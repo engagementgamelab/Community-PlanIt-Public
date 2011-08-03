@@ -49,24 +49,11 @@ class StaffBaseForm(forms.Form):
         else:
             instance = Instance.objects.get(id=instance_id)
             return instance
-        
-    
+
 class InstanceBaseForm(forms.Form):
-    instances = forms.ChoiceField(required=False)
+    instance = forms.ModelChoiceField(required=False, queryset=Instance.objects.all())
     instance_name = forms.CharField(required=False, max_length=45)
    
-    def __init__(self, *args, **kwargs):
-        initial =  kwargs.get("initial", {})
-        instances = initial.get("instances", None)
-        if instances:
-            kwargs['initial']['instances'] = instances[0]
-        super(InstanceBaseForm, self).__init__(*args, **kwargs)
-        self.fields["instances"].choices = [] 
-        self.fields["instances"].choices.append((0, "------"))
-        if instances:
-            for instance in instances:
-                self.fields["instances"].choices.append((instance.id, instance.name))
-    
 class InstanceEditForm(forms.Form):
     name = forms.CharField(required=True, max_length=45)
     city = forms.CharField(required=False, max_length=255)
@@ -86,7 +73,7 @@ class InstanceEditForm(forms.Form):
             raise forms.ValidationError("Please select a point on the map")
         return map
 
-class InstanceProcesForm(forms.Form):
+class InstanceProcessForm(forms.Form):
     process_name = forms.CharField(max_length=255)
     process_description = forms.CharField(widget=forms.Textarea(attrs={"rows": 15, "cols": 160}))
 

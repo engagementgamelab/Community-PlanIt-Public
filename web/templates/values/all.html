@@ -1,83 +1,222 @@
-{%extends "layouts/base.html"%}
+{% extends "layouts/base.html" %}
+{% load humanize %}
 
-{%block section%}values{%endblock%}
-{%block title%}All values{%endblock%}
-{%block page_title%}{%endblock%}
+{% block section %}values{% endblock %}
+{% block title %}Token Depot{% endblock %}
+{% block page_title %}
+<h2 id="page_title">Token <span>Depot</span></h2>
+{% endblock %}
 
-{%block main%}
+{% block head %}
+<style>
+    .banner {
+        padding: 10px 0;
+        text-transform: uppercase;
+        line-height: 1;
+        overflow: auto;
+    }
+
+    .banner th {
+        font-size: .9em;
+        font-weight: normal;
+        text-align: left;
+        vertical-align: bottom;
+    }
+
+    .banner td {
+        font-family: UbuntuBold;
+        font-size: 2.75em;
+        padding: .25em 1em 0 .25em;
+        color: #fff;
+        text-align: left;
+        vertical-align: bottom;
+    }
+
+    .spent {
+        font-family: UbuntuBold;
+        font-size: 2.25em;
+    }
+
+    .chart_wrapper {
+        position: relative;
+        z-index: -999;
+        float: none;
+        clear: both;
+        background-repeat: no-repeat;
+    }
+
+    .chart {
+        -moz-box-shadow: 0px 0px 5px #999;
+        -webkit-box-shadow: 0px 0px 5px #999;
+        -o-box-shadow: 0px 0px 5px #999;
+        box-shadow: 0px 0px 5px #999;
+    }
+
+    #player_spend {
+        float: left;
+        position: relative;
+        z-index: 2;
+        width: 400px;
+        margin: 0 -25px 0 0;
+    }
+
+    #player_spend .banner {
+        float: right;
+        width: 375px;
+        padding-left: 25px;
+        background-color: #FF8712;
+        color: #FFCC66;
+    }
+
+    #player_spend .chart_wrapper {
+        background-image: url({{MEDIA_URL}}img/player_spend_bg.png);
+    }
+
+    #player_spend .banner table {
+        width: auto;
+        float: left;
+    }
+
+    #player_spend .chart {
+        background-color: #FFECD8; 
+        padding: 10px;
+        margin: 0 25px;
+    }
+    
+    #player_spend .graph {
+        width:350px;
+        height:300px;
+        margin-left:auto;
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+
+    #community_spend {
+        float: left;
+        position: relative;
+        z-index: 1;
+        width: 325px;
+        padding: 20px 25px 0 25px;
+        margin-left: -25px;
+    }
+
+    #community_spend .banner {
+        width: 325px;
+        background-color: #FFCC66;
+        color: #FF9900;
+    }
+
+    #community_spend .banner table {
+        width: auto;
+        float: right;
+    }
+
+    #community_spend .chart_wrapper {
+        background-image: url({{MEDIA_URL}}img/community_spend_bg.png);
+    }
+
+    #community_spend .chart {
+        background-color: #DBDBDB;
+        padding: 10px 75px 10px 0;
+        margin-right: 25px;
+    }
+    
+    #community_spend .graph {
+        width:300px;
+        height:250px;
+        margin-right:auto;
+        margin-bottom: 25px;
+    }
+
+    .values-wrapper {
+        margin: 4em 1em;
+    }
+
+</style>
+{% endblock head %}
+
+{% block main %}
     <div class="full">
-        <h2>Community Coins</h2>
-        <p style="font-size: 1.25em;">Once you've earned some coins in the system, you can spend them below
+        <p style="font-size: 1.25em;">Once you've earned some tokens in the system, you can spend them below
            on community values. Watch the graphs shift as the community spends
-           its coins and voices its priorities for a sustainable future in Lowell.
-           Be sure to use the links below to discuss each community value.<br><br>
-           You have <span style="font-weight: bold">{{user.get_profile.coins}}</span> 
-           coin{%if user.get_profile.coins == 0 or user.get_profile.coins > 1%}s{%endif%} to spend.
+           its tokens and voices its priorities.  Be sure to use the links below
+           to discuss each community value.</p>
+        <p style="font-size: 1.25em;">
+           You have <span style="font-weight: bold">{{user.get_profile.currentCoins|default:"no"|apnumber}}</span> 
+           token{{user.get_profile.currentCoins|pluralize}} to spend.
        </p>
-        <!--
-        {%if value_wrapper|length%}
-            <ul class="chartlist">
-            {%for wrapper in value_wrapper%}
-                  <li>
-                    <a>{{wrapper.value.message}}</a> 
-                    <span class="count">{{wrapper.coins}}</span>
-                    <span class="index" style="width: {{wrapper.percent}}%">({{wrapper.percent}}%)</span>
-
-                  </li>
-            {%endfor%}
-            </ul>
-        {%endif%}
-        -->
-        <hr class="space">
-        <div style="clear:both;"></div>
         
-        <!-- placeholder for chart -->
         <div>
-            <div style="float: left">
-                <h3>Your coin spending</h3>
-                <div id="userPie" class="graph" style="width:350px;height:300px; margin-right:auto; 
-                    margin-top: 25px; margin-bottom: 25px; "></div>
+            <div id="player_spend">
+                <div class="banner">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Your <div class="spent">tokens:</div></th>
+                                <td>{{player_spent}}</td>
+                                <th>Your total <div class="spent">earned:</div></th>
+                                <td>{{user.get_profile.earned_tokens}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="chart_wrapper">
+                    <div class="chart">
+                        <div class="graph"></div>
+                    </div>
+                </div>
             </div>
-            <div style="float: right">
-                <h3> Community's coin spending</h3>
-                <div id="pie" class="graph" style="width:350px;height:300px; margin-left:auto; 
-                    margin-top: 25px; margin-bottom: 25px;"></div>
+            <div id="community_spend">
+                <div class="banner">
+                    <table>
+                        <tbody>
+                            <tr><th>Community <div class="spent">spent:</div></th><td>{{community_spent}}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="chart_wrapper">
+                    <div class="chart">
+                        <div class="graph"></div>
+                    </div>
+                </div>
             </div>
         </div>
         
         <div style="clear:both;"></div>
         
         <div class="values-wrapper">
-            {%if values|length%}
+            {% if values|length %}
             <table class="values"> 
                 <th>Community Values</th>
                 <th>Community Spending</th>
                 <th>Your Spending</th>
                 <th>&nbsp;</th>
-                {%for wrapper in value_wrapper%}
+                {% for wrapper in value_wrapper %}
                     <tr>
                         <td class="alignleft">
-                            <a href="/value/{{wrapper.value.id}}" class="value-message">{{wrapper.value.message}}</a>
+                            <a href="{% url values_detail wrapper.value.id %}" class="value-message">{{wrapper.value.message}}</a>
                             <span class="fine">({{wrapper.value.comments.all|length}} comments)</span>
                         </td>
                         <td>
                             {{wrapper.value.coins}}
                         </td>
                         <td>
-                            <span class="coin-count">{{wrapper.player_coins}}</span>
+                            <span class="token-count">{{wrapper.player_coins}}</span>
                         </td>
                         <td>
-                            {%if not instance.is_expired%}
-                            <a href="/value/spend/{{wrapper.value.id}}" class="button">Spend</a>
-                            <a href="/value/take/{{wrapper.value.id}}" class="right fine">[-]</a>
-                            {%endif%}
+                            {% if not instance.is_expired %}
+                            <a href="{% url values_spend wrapper.value.id %}" class="button">Spend</a>
+                            {% if wrapper.player_coins %}
+                            <a href="{% url values_take wrapper.value.id %}" class="button">Take back</a>
+                            {% endif %}
+                            {% endif %}
                         </td>
                     </tr>
-                {%endfor%}
+                {% endfor %}
             </table>
-            {%else%}
+            {% else %}
                 <span>No values created yet for this instance</span>
-            {%endif%}
+            {% endif %}
         </div>
     </div>
     <div style="clear:both;"></div>
@@ -87,34 +226,31 @@
     $(function () {
         var globalData = [];
         var i = 0;
-        {%if total_coins == 0 %}
-            {%for wrapper in value_wrapper%}
-                globalData[i] = { label: "{{ wrapper.value.message }}", data: 1 }
-                i++;
-            {%endfor%}
-        {%else%}
-            {%for wrapper in value_wrapper%}
-                globalData[i] = { label: "{{ wrapper.value.message }}", data: {{ wrapper.value.coins }} }
-                i++;
-            {%endfor%}
-        {%endif%}
+        {% if community_spent == 0 %}
+        globalData[i] = { label: "No coins have been spent.", data: 1 }
+        {% else %}
+        {% for wrapper in value_wrapper %}
+        globalData[i] = {
+            label: "{{ wrapper.value.message }}",
+            data: {{ wrapper.value.coins }}
+        }
+        i++;
+        {% endfor %}
+        {% endif %}
         
         var userData = [];
         i = 0;
-        {%if total_playerCoins == 0 %}
-            {%for wrapper in value_wrapper%}
-                userData[i] = { label: "{{ wrapper.value.message }}", data: 1 }
-                i++;
-            {%endfor%}
-        {%else%}
-            {%for wrapper in value_wrapper%}
+        {% if player_spent == 0 %}
+        userData[i] = { label: "You haven't spent any coins yet.", data: 1 }
+        i++;
+        {% else %}
+            {% for wrapper in value_wrapper %}
                 userData[i] = { label: "{{ wrapper.value.message }}", data: {{ wrapper.player_coins }} }
                 i++;
-            {%endfor%}
-        {%endif%}
+            {% endfor %}
+        {% endif %}
         
-        //uncoment the grid and function pieHover to enable the hover feature. 
-        $.plot($("#pie"), globalData, {
+        $.plot($("#community_spend .graph"), globalData, {
             series: { 
                 pie: { 
                     show: true,
@@ -123,19 +259,26 @@
                         show: true,
                         radius: 2/3,
                         formatter: function(label, series) {
-                            //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
                             return '<div style="font-size:small;text-align:center;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
                         },
                         threshold: 0.1
                     }
                 }
             },
+            colors: [
+                '#3D76A0',
+                '#669933',
+                '#8DDEDB',
+                '#FB9C8F',
+                '#D89BE5',
+                '#F0CB48'
+            ],
             legend: { 
                 show: false
             }
         });
         
-        $.plot($("#userPie"), userData, {
+        $.plot($("#player_spend .graph"), userData, {
             series: { 
                 pie: { 
                     show: true,
@@ -144,13 +287,20 @@
                         show: true,
                         radius: 2/3,
                         formatter: function(label, series) {
-                            //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
                             return '<div style="font-size:small;text-align:center;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
                         },
                         threshold: 0.1
                     }
                 }
             },
+            colors: [
+                '#3D76A0',
+                '#669933',
+                '#8DDEDB',
+                '#FB9C8F',
+                '#D89BE5',
+                '#F0CB48'
+            ],
             legend: { 
                 show: false
             }
@@ -159,4 +309,4 @@
     
 </script>
 
-{%endblock%}
+{% endblock %}

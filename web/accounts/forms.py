@@ -143,59 +143,47 @@ class UserProfileForm(forms.ModelForm):
     
     avatar = forms.ImageField(required=False)
     
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        return email
-    
     def clean_instance(self):
-        if (self.cleaned_data['instance'] == ""):
-            insance = None
-        else:
-            insance = Instance.objects.get(id=self.cleaned_data['instance'])
-        return instance
+        try:
+            return Instance.objects.get(id=self.cleaned_data['instance'])
+        except:
+            return None
     
     def clean_gender(self):
-        if (self.cleaned_data['gender'] == "0"):
-            gender = None
-        else:
-            gender = UserProfileGender.objects.get(pos=self.cleaned_data['gender'])
-        return gender
+        try:
+            return UserProfileGender.objects.get(pos=self.cleaned_data['gender'])
+        except:
+            return None
     
     def clean_race(self):
-        if (self.cleaned_data['race'] == "0"):
-            race = None
-        else:
-            race = UserProfileRace.objects.get(pos=self.cleaned_data['race'])
-        return race
+        try:
+            return UserProfileRace.objects.get(pos=self.cleaned_data['race'])
+        except:
+            return None
     
     def clean_stake(self):
-        if (self.cleaned_data['stake'] == "0"):
-            stake = None
-        else:
-            stake = UserProfileStake.objects.get(pos=self.cleaned_data['stake'])
-        return stake
+        try:
+            return UserProfileStake.objects.get(pos=self.cleaned_data['stake'])
+        except:
+            return None
     
     def clean_education(self):
-        if (self.cleaned_data['education'] == "0"):
-            education = None
-        else:
-            education = UserProfileEducation.objects.get(pos=self.cleaned_data['education'])
-        return education
+        try:
+            return UserProfileEducation.objects.get(pos=self.cleaned_data['education'])
+        except:
+            return None
     
     def clean_income(self):
-        if (self.cleaned_data['income'] == "0"):
-            income = None
-        else:
-            income = UserProfileIncomes.objects.get(pos=self.cleaned_data['income'])
-        return income
+        try:
+            return UserProfileIncomes.objects.get(pos=self.cleaned_data['income'])
+        except:
+            return None
     
     def clean_living(self):
-        if (self.cleaned_data['living'] == "0"):
-            living = None
-        else:
-            living = UserProfileLiving.objects.get(pos=self.cleaned_data['living'])
-        return living
-    
+        try:
+            return UserProfileLiving.objects.get(pos=self.cleaned_data['living'])
+        except:
+            return None
     
     class Meta:
         model = UserProfile

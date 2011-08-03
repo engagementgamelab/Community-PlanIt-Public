@@ -1,0 +1,26 @@
+{% load cpi_tags %}
+{% if activities_page.object_list %}
+<table class="activities">
+    <thead>
+        <tr><th>Activities</th><th colspan="2">Points</th></tr>
+    </thead>
+    <tbody>
+    {% for activity in activities_page.object_list %}
+    {% if activity.answers.count %}
+    <tr>
+        <td class="{{activity.type.type}}_activity"><a href="{% url player_activities_overview activity.id %}">{{activity.name}}</a></td>
+        <td>{{ activity.getPoints }}</td> 
+        <td class="final"><a href="{% url player_activities_overview activity.id %}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a></td>
+    </tr>
+    {% else %}
+    <tr>
+        <td class="{{activity.type.type}}_activity"><a href="{% url player_activities_activity activity.id %}">{{activity.name}}</a></td>
+        <td>{{ activity.getPoints }}</td> 
+        <td class="final"><a href="{% url player_activities_activity activity.id %}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a></td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+{% pagenavigator activities_page request.get_full_path %}
+{% endif %}

@@ -1,103 +1,46 @@
-{%extends "layouts/base.html"%}
+{% extends "layouts/base.html" %}
 
 {% load game_extras %}
 
-{%block section%}missions{%endblock%}
+{% block section %}missions rightsidebar{% endblock %}
 
-{%block title%}All Missions{%endblock%}
-{%block page_title%}{%endblock%}
+{% block title %}Missions{% endblock %}
+{% block page_title %}
+<h2 id="page_title">
+{% if instance.is_expired %}
+    {{instance}} is not active at this time.
+{% else %}
+    Current Mission{{missions.active.count|pluralize}}
+{% endif %}
+</h2>
+{% endblock %}
 
-{%block main%}
-    {%if not instance.is_expired%}
-    <h2>Current Mission</h2>
-    {%for mission in missions.current%}
-    <div class="currentmission divetbox">
-        <hr class="space"/>
-        <h3>
-            <a href="/mission/{{mission.slug}}">{{mission.name}}</a> Activities
-        </h3>
-        <hr class="space"/>
-        <div class="date">
-            <span class="datenum">{{mission.start_date|date:"j"}}</span> {{mission.start_date|date:"M"}}
-        </div>
-        <hr class="space"/>
-        <hr class="space"/>
-        <ul class="games listless listview">
-            {%for game in mission.games.all%}
-                {%if not game in played%}
-                    {%with game.game_type as type%}
-                    <li class="listitem game {{game.game_type}}">
-                        {% if mission.instance.is_active %}
-                            <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">{{game.title}}</a>
-                            {%if type == "mapit"%}
-                              <span class="fine highlight green">{% get_points for completed mapit %}</span>
-                            {%endif%}
-    
-                            {%if type == "thinkfast"%}
-                              <span class="fine highlight green">{% get_points for completed thinkfast %}</span>
-                            {%endif%}
-    
-                            {%if type == "othershoes"%}
-                              <span class="fine highlight green">{% get_points for completed othershoes %}</span>
-                            {%endif%}
-    
-                            <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}">Play</a>
-                        {% else %}
-                            <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview/">{{game.title}}</a>
-                        {% endif %}
-                    {%endwith%}
-                {%else%}
-                    <li class="listitem game played {{game.game_type}}">
-                        <a href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">{{game.title}}</a>
-                        <span class="fine highlight">Complete!</span>
-                        <a class="button" href="/mission/{{mission.slug}}/game/{{game.game_type|slugify}}/{{game.id}}/overview">Replay</a>
-                {%endif%}
-                </li>
-            {%endfor%}
-        </ul>
-        <a href="/mission/{{mission.slug}}" class="right">View Mission Brief &rarr;</a>
-    </div>
-    {%endfor%}
+{% block main %}
+<ul class="listless">
+{% for mission in missions.active %}
+    <li>
+        <a href="{% url missions_mission mission.slug %}">{{mission.name}}</a>
+        <span class="dates">
+            {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
+        </span>
+        <div class="description">{{mission.description|linebreaksbr}}</div>
+    </li>
+{% empty %}
+    <li>There are no active missions at this time.</li>
+{% endfor %}
+</ul>
 
-    <hr class="space">
-    <div class="twothird">
-        <h2>Upcoming Missions</h2>
-        {%if missions.future%}
-        <ul class="missions gridview listless">
-            {%for mission in missions.future%}
-                <li class="griditem mission">
-                    {{mission.name}}
-                    <div class="date">
-                        <span class="datenum">{{mission.start_date|date:"j"}}</span> {{mission.start_date|date:"M"}}
-                    </div>
-                </li>
-            {%endfor%}
-        </ul>
-        {%else%}
-            <span>No upcoming missions found</span>
-        {%endif%}
-    </div>
-    {%else%}
-        <h2>The {{instance.name}} neighborhood has ended.</h2>
-        <div class="twothird">
-            There are no current or upcoming missions.
-        </div>
-    {%endif%}
-    <div class="third last">
-        <h2>Past Missions</h2>
-        {%if missions.past%}
-        <ul class="listview listless pastmissions">
-            {%for mission in missions.past%}
-                <li class="listitem">
-                    <p>{{mission.name}}</p>
-                    <a class="fine right" href="/mission/{{mission.slug}}">View &rarr;</a>
-                </li>
-            {%endfor%}
-        </ul>
-        {%else%}
-            <span>No past missions found</span>
-        {%endif%}
-    </div>
-
-    <div style="clear:both;"></div>
-{%endblock%}
+<h2>Upcoming Missions</h2>
+<ul class="listless">
+{% for mission in missions.future %}
+    <li>
+        <a href="{% url missions_mission mission.slug %}">{{mission.name}}</a>
+        <span class="dates">
+            {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
+        </span>
+    </li>
+{% empty %}
+    <li>There are no upcoming missions at this time.</li>
+{% endfor %}
+</ul>
+{% endblock %}

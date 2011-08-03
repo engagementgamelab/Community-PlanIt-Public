@@ -28,7 +28,7 @@
     pk: 4
     fields:
         type: empathy
-        displayType: Empahty
+        displayType: Empathy
         defaultPoints: 10
         
 -   model: player_activities.playeractivitytype

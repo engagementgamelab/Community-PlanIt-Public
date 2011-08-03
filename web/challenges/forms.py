@@ -23,6 +23,11 @@ class AddChallenge(forms.Form):
     start_date = forms.DateTimeField(label="Challenge Start", help_text='<br>When will your challenge start?')
     end_date = forms.DateTimeField(label="Challenge End", help_text='<br>When will your challenge end? (cannot be the same as start)')
 
+    def __init__(self, instance, *args, **kwargs):
+        super(AddChallenge, self).__init__(*args, **kwargs)
+        self.fields['start_date'].initial = instance.start_date
+        self.fields['end_date'].initial = instance.end_date
+
     def clean_end_date(self):
         # Ensure end date is in the present or the future
         if self.cleaned_data.get('end_date') < datetime.datetime.now():

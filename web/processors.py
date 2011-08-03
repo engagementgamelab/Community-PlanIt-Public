@@ -8,28 +8,27 @@ from web.instances.models import Instance
 # Provides "globals" within the templates to populate things such as the sidebar
 # and other content that was previously only generated in the dashboard.
 def instance_processor(request):
-    try:
-        profile = request.user.get_profile()
-        instance = profile.instance
-        missions = Mission.objects.filter(instance=instance)
-        challenges = Challenge.objects.filter(instance=instance).active()
-        
-        # Filter out challenges that have already been accepted or played.
-        player_challenges = PlayerChallenge.objects.filter(player=request.user).filter(challenge__start_date__lt=datetime.datetime.now()).filter(challenge__end_date__gt=datetime.datetime.now()).order_by('challenge__end_date')
-        
-        for player_challenge in player_challenges:
-            challenges = challenges.exclude(id=player_challenge.challenge.id)
+    if request.user.is_anonymous():
+        return {}
+
+    instance = request.user.get_profile().instance
+    if not instance:
+        if request.user.is_staff or request.user.is_superuser:
+            instance = Instance.objects.active().latest()
+
+    if not instance:
+        return {}
+
+    missions = instance.missions.all()
+    challenges = instance.challenges.available(request.user)
+    player_challenges = PlayerChallenge.objects.filter(challenge__instance=instance).available().order_by('challenge__end_date')
     
-        finished_activities = Answer.objects.filter(answerUser=request.user)
-        activities = []
-        
-        for fa in finished_activities:
-            activities.append(fa.activity)
-        return {
-            'instance': instance,
-            'missions': missions,
-            'challenges': challenges,
-            'player_challenges': player_challenges,
-            'finished_activities': activities,
-        }
-    except: return {}
+    finished_activities = PlayerActivity.objects.filter(answers__answerUser=request.user)
+
+    return {
+        'instance': instance,
+        'missions': missions,
+        'challenges': challenges,
+        'player_challenges': player_challenges,
+        'finished_activities': finished_activities,
+    }

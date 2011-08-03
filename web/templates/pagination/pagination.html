@@ -1,0 +1,32 @@
+{% if is_paginated %}
+{% load i18n %}
+<ul class="pagination">
+    <li>
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{{ getvars }}{{ hashtag }}" class="prev"><img src="{{MEDIA_URL}}img/icons/pagination_previous.png" alt="{% trans "previous" %}"/></a>
+    {% else %}
+    <span class="disabled prev"><img src="{{MEDIA_URL}}img/icons/pagination_previous.png" alt="{% trans "previous" %}"/></span>
+    {% endif %}
+    </li>
+    {% for page in pages %}
+        <li class="page{% if forloop.last %} final{% endif %}">
+        {% if page %}
+            {% ifequal page page_obj.number %}
+                <span class="current">{{ page }}</span>
+            {% else %}
+                <a href="?page={{ page }}{{ getvars }}{{ hashtag }}">{{ page }}</a>
+            {% endifequal %}
+        {% else %}
+            ...
+        {% endif %}
+        </li>
+    {% endfor %}
+    <li>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{{ getvars }}{{ hashtag }}" class="next"><img src="{{MEDIA_URL}}img/icons/pagination_next.png" alt="{% trans "next" %}"/></a>
+    {% else %}
+    <span class="disabled next"><img src="{{MEDIA_URL}}img/icons/pagination_next.png" alt="{% trans "next" %}"/></span>
+    {% endif %}
+    </li>
+</ul>
+{% endif %}

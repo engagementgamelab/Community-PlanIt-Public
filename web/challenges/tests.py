@@ -24,8 +24,9 @@ class ChallengesTestCases(TestCase):
         instance = Instance(name="Test Add Challenge", 
                             start_date=datetime.datetime.now(),
                             end_date=datetime.datetime.now() + datetime.timedelta(days=30),
-                            location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}',
-                            curator=user)
+                            location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}')
+        instance.save(commit=False)
+        instance.curators.add(user)
         instance.save()
         self.assertTrue(Instance.objects.all().count() == 1, "The instance was created.")
         instance = Instance.objects.get(name="Test Add Challenge")
@@ -66,8 +67,9 @@ class ChallengesWebTestCases(TestCase):
         instance = Instance(name = self.instanceName, 
                             start_date = self.instanceStart,
                             end_date = self.instanceEnd,
-                            location = self.BostonMap,
-                            curator = user)
+                            location = self.BostonMap)
+        instance.save(commit=False)
+        instance.curators.add(user)
         instance.save()
         self.assertTrue(Instance.objects.all().count() == 1, "Instance created successfully")
         instance = Instance.objects.get(name = self.instanceName)
@@ -100,8 +102,9 @@ class ChallengesWebTestCases(TestCase):
         instance = Instance(name = self.instanceName, 
                             start_date = self.instanceStart,
                             end_date = self.instanceEnd,
-                            location = self.BostonMap,
-                            curator = user)
+                            location = self.BostonMap)
+        instance.save(commit=False)
+        instance.curators.add(user)
         instance.save()
         self.assertTrue(Instance.objects.all().count() == 1, "Instance created successfully")
         instance = Instance.objects.get(name = self.instanceName)

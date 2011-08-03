@@ -3,7 +3,7 @@ from django.contrib.auth.views import login, logout
 
 urlpatterns = patterns('',
     # Comment on detail
-    (r'^neighborhood/(?P<slug>.*)/$', 'lists.views.instance'),
-    (r'^following/(?P<id>.*)/$', 'lists.views.following'),
-    (r'^followers/(?P<id>.*)/$', 'lists.views.followers'),
+    url(r'^community/(?P<slug>.*)/$', 'lists.views.instance', name='lists_instance'),
+    url(r'^following/(?P<id>.*)/$', 'lists.views.following', name='lists_following'),
+    url(r'^followers/(?P<id>.*)/$', 'lists.views.followers', name='lists_followers'),
 )
