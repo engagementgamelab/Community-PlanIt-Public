@@ -9,6 +9,7 @@ ADMINS = ( ('Benedict Holland', 'sheepskin505@gmail.com'), )
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 AUTHENTICATION_BACKENDS = ( 'web.accounts.backends.EmailBackend', )
 DEBUG = False
+DEFAULT_FROM_EMAIL = 'webmaster@communityplanit.org'
 DIRNAME = os.path.dirname(__file__)
 
 CACHES = {
@@ -80,6 +81,7 @@ SERIALIZATION_MODULES = {
     'yaml': "django.core.serializers.pyyaml"
 } 
 
+SERVER_EMAIL = 'webmaster@communityplanit.org'
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 SITE_ID = 1
 
