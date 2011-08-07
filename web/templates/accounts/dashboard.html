@@ -115,7 +115,7 @@
                 {% if last_mission %}
                     <a class="red" href="{% url missions_mission last_mission.slug %}" title="{{last_mission.name}}">activities</a>
                 {% else %}
-                <a class="red" href="{% url missions_home %}" title="mission">activities</a>
+                <a class="red" href="{% url missions %}" title="mission">activities</a>
                 {% endif %}
                 are now unlocked so you can view the results—and don't forget to see how the community spent its 
                 <a class="red" href="{% url values %}">coins</a>!
