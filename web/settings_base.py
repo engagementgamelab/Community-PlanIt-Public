@@ -45,7 +45,6 @@ INSTALLED_APPS = (
     'web.lists',
     'web.missions',
     'web.player_activities',
-    'web.prompts',
     'web.reports',
     'web.responses',
     'web.values',

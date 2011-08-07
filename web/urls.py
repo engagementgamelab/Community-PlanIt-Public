@@ -1,9 +1,5 @@
 from django.conf.urls.defaults import *
-from django.contrib import admin
 from django.views.generic.simple import direct_to_template
-
-# Setup admin
-admin.autodiscover()
 
 # Override server URLS
 handler500 = 'web.views.server_error'
@@ -36,5 +32,4 @@ urlpatterns = patterns('',
     (r'^admin/gmapsfield/admin/(?P<file>.*)$', 'gmapsfield.views.serve'),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include("web.admin.urls")),
-    (r'^djadmin/', include(admin.site.urls)),
 )

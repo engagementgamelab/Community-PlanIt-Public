@@ -4,7 +4,6 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from web.instances.models import Instance
-from web.responses.models import Response
 
 from gmapsfield.fields import GoogleMapsField
 

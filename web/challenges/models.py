@@ -2,7 +2,6 @@ import datetime
 from web.instances.models import Instance
 from web.attachments.models import Attachment
 from web.comments.models import Comment
-from web.responses.models import Response
 from web.responses.comment.models import CommentResponse
 from gmapsfield.fields import GoogleMapsField
 from django.contrib.auth.models import User

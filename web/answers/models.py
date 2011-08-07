@@ -1,6 +1,5 @@
 from django.template.defaultfilters import slugify
 from django.db import models
-from web.responses.models import Response
 from web.comments.models import Comment
 from web.missions.models import Mission
 from web.player_activities.models import PlayerActivity, MultiChoiceActivity

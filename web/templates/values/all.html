@@ -259,7 +259,11 @@
                         show: true,
                         radius: 2/3,
                         formatter: function(label, series) {
-                            return '<div style="font-size:small;text-align:center;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                            var output = '<div style="font-size:small;text-align:center;padding:2px;color:black;">' + label;
+                            {% if community_spent > 0 %}
+                            output += '<br/>'+Math.round(series.percent)+'%</div>';
+                            {% endif %}
+                            return output;
                         },
                         threshold: 0.1
                     }
@@ -287,7 +291,11 @@
                         show: true,
                         radius: 2/3,
                         formatter: function(label, series) {
-                            return '<div style="font-size:small;text-align:center;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                            var output = '<div style="font-size:small;text-align:center;padding:2px;color:black;">' + label;
+                            {% if player_spent > 0 %}
+                            output += '<br/>'+Math.round(series.percent)+'%</div>';
+                            {% endif %}
+                            return output;
                         },
                         threshold: 0.1
                     }

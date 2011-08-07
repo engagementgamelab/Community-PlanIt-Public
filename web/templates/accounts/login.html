@@ -3,7 +3,7 @@
 {%block section%}accounts{%endblock%}
 
 {%block title%}Player Login{%endblock%}
-{%block page_title%}Player Login{%endblock%}
+{%block page_title%}<h2 id="page_title">Player Login</h2>{%endblock%}
 
 {%block aside%}
     <h2>Forgot Password</h2>
@@ -16,7 +16,7 @@
             {%if form.errors%}
                 <p class="error">Sorry, that's not a valid email address or password.</p>
 
-                <p>Not a member? <a href="{% url community %}">Find your community and sign up now!</a></p>
+                <p>Not a member? <a href="{% url instances %}">Find your community and sign up now!</a></p>
             {%endif%}
             {%csrf_token%}
             <label for="email">Email address:</label>
