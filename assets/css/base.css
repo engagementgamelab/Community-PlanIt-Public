@@ -1224,16 +1224,16 @@ p.separate {
       width: 20%;
       text-align: center; }
       .wrapper #footer .logo img {
-        padding: 12px;
-        height: 75px; }
+        height: 75px;
+        padding: 4px; }
     .wrapper #footer .content {
       position: relative;
       float: left;
       width: 80%;
-      background-color: #082949;
-      text-align: right; }
-      .wrapper #footer .content nav, .wrapper #footer .content div {
-        padding: 10px; }
+      text-align: right;
+      background-color: #082949; }
+      .wrapper #footer .content div {
+        padding: 4px 2px; }
       .wrapper #footer .content ul {
         list-style: none; }
         .wrapper #footer .content ul li {

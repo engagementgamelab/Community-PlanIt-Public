@@ -1441,8 +1441,8 @@ p.separate {
             text-align: center;
 
             img {
-                padding: 12px;
                 height: 75px;
+                padding: 4px;
             }
         }
 
@@ -1450,11 +1450,11 @@ p.separate {
             position: relative;
             float: left;
             width: 80%;
-            background-color: $navyblue;
             text-align: right;
+            background-color: $navyblue;
 
-            nav, div {
-                padding: 10px;
+            div {
+                padding: 4px 2px;
             }
 
             ul {
