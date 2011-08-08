@@ -21,7 +21,7 @@ CPI.sort_comments_by_activity = function(evt) {
     comments.sort(function(o1, o2) {
         var cmp =  o2.activity - o1.activity;
         if (cmp === 0) {
-            cmp = o2.data('timestamp') - o1.data('timestamp');
+            cmp = o2['comment'].data('timestamp') - o1['comment'].data('timestamp');
         }
         return cmp;
     });
