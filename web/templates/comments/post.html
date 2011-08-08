@@ -16,6 +16,7 @@
     {% else %}
     <h2>Comments</h2>
     {%endif%}
+    {% if instance.is_active %}
     <h3>Add a comment</h3>
     <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
         {%if request.REQUEST.error%}
@@ -49,4 +50,7 @@
         <button type="submit" class="button right">Add Comment</button>
         <hr class="space">
     </form>
+    {% else %}
+    <p>This community is no longer active.</p>
+    {% endif %}
 </div>
