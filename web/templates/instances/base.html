@@ -44,6 +44,7 @@
     {% endif %}
     </div>
 {% else %}
+{% if not community.is_started %}
 <p>If you'd like to be notified via email when this community gets going, just leave us your email address. This is all we'll use it for, and we won't share it with anyone.</p>
 <form action="{% url instances_instance community.slug %}" method="POST">
     {% csrf_token %}
@@ -52,6 +53,7 @@
         <input type="submit" value="Let me know"/>
     </div>
 </form>
+{% endif %}
 {% endif %}
 {% endblock main %}
 

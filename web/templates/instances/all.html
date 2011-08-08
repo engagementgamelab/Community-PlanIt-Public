@@ -17,7 +17,9 @@
                 <span class="dates">{{instance.start_date|date:"m/d/Y"}} &#8211; {{instance.end_date|date:"m/d/Y"}}</span>
                 {% if instance.is_active %}<span class="highlight fine">Active</span>{% endif %}
             </h3>
+            {% if not instance.is_expired %}
             <p>{{instance.player_count|default:"No"}} player{{instance.player_count|pluralize}} {{instance.player_count|pluralize:"has,have"}} signed up.</p>
+            {% endif %}
             </li>
         {% empty %}
             <li>No active communities</li>
