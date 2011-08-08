@@ -1,5 +1,5 @@
 {% load attachment_tags %}
-<li class="comment" id="comment-{{comment.pk}}">
+<li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
     <div class="likes">
         <div class="count">{{comment.likes.count}}</div>
         <div>Like{{comment.likes.count|pluralize}}</div>
@@ -9,15 +9,15 @@
     </div>
     <div class="main">
         <div class="meta">
+            {% if not comment.hidden %}
+            <div class="right">
+                <a href="{% url flags_add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
+            </div>
+            {% endif %}
             On {{comment.posted_date|date:"F j, Y"}} at {{comment.posted_date|date:"g:i a"}},
             <a href="{% url accounts_profile comment.user.id %}/">{{comment.user.get_profile.screen_name}}</a>
             wrote:
         </div>
-        {% if not comment.hidden %}
-        <div class="right">
-            <a href="{% url flags_add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
-        </div>
-        {% endif %}
         <div class="message">
             {% if comment.hidden %}
                 <div class="notice">This content has been flagged by the community and hidden by the administrator.</div>

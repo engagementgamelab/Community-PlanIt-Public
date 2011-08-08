@@ -38,7 +38,7 @@ def fetch(request, id):
 @login_required
 def complete(request, id):
     challenge = Challenge.objects.get(id=id)
-    pc = PlayerChallenge.objects.get(player=request.user, challenge=challenge)
+    pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
 
     a = None
     b = None

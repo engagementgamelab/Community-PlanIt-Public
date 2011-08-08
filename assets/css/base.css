@@ -217,12 +217,6 @@ html, body {
   font-size: 90%;
   background-color: #333; }
 
-blockquote {
-  margin: 1em;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
-  padding: 1em; }
-
 .bar-placeholder {
   width: 100%;
   height: 400px; }
@@ -332,8 +326,7 @@ p.separate {
   .wrapper .thumbnail img {
     width: 64px;
     height: auto;
-    padding: 3px;
-    border: 1px solid #c5d6f2; }
+    border: 1px solid #f0f0f0; }
   .wrapper .orange {
     color: #D2A801; }
   .wrapper .green, .wrapper h4.green {
@@ -563,9 +556,9 @@ p.separate {
     border-bottom: 1px solid #CCC; }
   .wrapper .feed {
     border-top: 3px solid #ff7812; }
-    .wrapper .feed h3, .wrapper .feed td {
-      min-height: 0;
-      padding-left: 1em; }
+    .wrapper .feed h3 {
+      padding-left: .75em;
+      margin: .25em 0 0 0; }
     .wrapper .feed td {
       padding: .5em 1em; }
   .wrapper .issue .timestamp {
@@ -825,8 +818,9 @@ p.separate {
   .wrapper h2, .wrapper h3, .wrapper h3, .wrapper h4, .wrapper h5, .wrapper h6 {
     position: relative;
     overflow: auto;
-    font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
-    color: #4c4d4f; }
+    font-family: UbuntuBold;
+    font-weight: normal;
+    color: #999999; }
   .wrapper h2, .wrapper h3 {
     font-size: 2em; }
   .wrapper h3 {
@@ -1040,42 +1034,34 @@ p.separate {
       .wrapper #main .content #comments {
         position: relative; }
         .wrapper #main .content #comments h2 {
-          margin-top: 1em; }
+          margin: 1em 0 0 0; }
+          .wrapper #main .content #comments h2 .controls {
+            line-height: 2.25;
+            font-size: .5em;
+            text-transform: uppercase; }
         .wrapper #main .content #comments iframe {
           width: 320px;
           height: 185px; }
         .wrapper #main .content #comments .hidden {
           position: absolute;
           opacity: 0; }
-        .wrapper #main .content #comments #attachments {
-          overflow: auto; }
-          .wrapper #main .content #comments #attachments .form {
-            display: none;
-            padding: 8px;
-            margin: 8px;
-            background: #f0f0f0; }
-            .wrapper #main .content #comments #attachments .form label {
-              font-size: .9em;
-              padding: 0; }
-            .wrapper #main .content #comments #attachments .form .controls {
-              text-align: right; }
-          .wrapper #main .content #comments #attachments .notification {
-            float: right;
-            clear: right;
-            font-style: italic; }
         .wrapper #main .content #comments .limited {
           color: #f00; }
         .wrapper #main .content #comments .nested {
           padding: 0; }
         .wrapper #main .content #comments .comments {
-          margin-top: 4em;
+          position: relative;
           padding: 0;
           list-style: none; }
           .wrapper #main .content #comments .comments .comment {
+            position: relative;
             float: none;
             clear: both;
             margin: 1em 0 2em 0;
-            overflow: auto; }
+            min-width: 30em;
+            overflow: auto;
+            background: #f9fafa;
+            border-top: 1px solid #f0f0f0; }
             .wrapper #main .content #comments .comments .comment .likes {
               float: left;
               width: 10%;
@@ -1090,12 +1076,11 @@ p.separate {
               .wrapper #main .content #comments .comments .comment .likes .button {
                 margin-top: 1em; }
             .wrapper #main .content #comments .comments .comment .main {
-              border-top: 1px solid #f0f0f0;
-              margin-left: 10%;
-              padding-left: 1em;
-              overflow: auto; }
+              float: right;
+              width: 89%; }
               .wrapper #main .content #comments .comments .comment .main .meta {
-                float: left;
+                padding-left: 1em;
+                overflow: auto;
                 font-family: UbuntuMedium;
                 white-space: nowrap; }
                 .wrapper #main .content #comments .comments .comment .main .meta a {
@@ -1125,13 +1110,11 @@ p.separate {
                   float: right;
                   margin: 2px; }
               .wrapper #main .content #comments .comments .comment .main .message {
-                float: left;
-                clear: right;
-                margin: 1em 0;
+                padding: 1em;
                 word-wrap: break-word; }
               .wrapper #main .content #comments .comments .comment .main .attachments div {
-                clear: both;
-                margin-top: 1em; }
+                margin-top: 1em;
+                padding: 0 1em; }
               .wrapper #main .content #comments .comments .comment .main .replies {
                 display: none;
                 float: none;
@@ -1422,6 +1405,7 @@ table.activities {
     text-align: left;
     text-transform: uppercase;
     font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
+    font-weight: normal;
     font-size: 1.25em;
     padding: 2px 10px 2px 4px; }
   table.activities td {
@@ -1544,3 +1528,41 @@ p {
 
 .video {
   border: 1px solid #f0f0f0; }
+
+.mask {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.75); }
+
+.response {
+  background: #f9fafa;
+  border-top: 1px solid #f0f0f0;
+  padding: 4px 0;
+  overflow: auto; }
+  .response .meta {
+    overflow: auto;
+    float: none;
+    clear: both; }
+  .response .main {
+    padding-left: 40px; }
+
+.attachments {
+  overflow: auto; }
+  .attachments .form {
+    display: none;
+    padding: 8px;
+    margin: 8px;
+    background: #f0f0f0; }
+    .attachments .form label {
+      font-size: .9em;
+      padding: 0; }
+    .attachments .form .controls {
+      text-align: right; }
+  .attachments .notification {
+    float: right;
+    clear: right;
+    font-style: italic; }

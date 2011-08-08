@@ -2,10 +2,11 @@
 {% load gmap attachment_tags %}
 {% block section %}challenges{% endblock %}
 {% block title %}Challenge{% endblock %}
-{% block page_title %}{% endblock %}
+{% block page_title %}
+<h2 id="page_title">{{challenge.name}}</h2>
+{% endblock %}
 
 {% block main %}
-<h2>{{challenge.name}}</h2>
 
 <p>{{challenge.description}}</p>
 
@@ -33,57 +34,53 @@
 {% if not local_player_challenges.completed %}
     <p>Provide evidence to complete this challenge:</p>
 
-    <div id="comments">
-        <form enctype="multipart/form-data" action="{% url challenges_complete challenge.pk %}" method="POST">
-            {% if request.REQUEST.error %}
-                <span class="error">Please enter a valid comment.</span>
-            {% endif %}
+    <form enctype="multipart/form-data" action="{% url challenges_complete challenge.pk %}" method="POST">
+        {% if request.REQUEST.error %}
+            <span class="error">Please enter a valid comment.</span>
+        {% endif %}
 
-            {% csrf_token %}
-            <div id="attachments">
-                <div class="controls">
-                    Include <a id="add-video" href="#add-video" class="button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="button small">Picture</a>
-                </div>
-                <div class="add-video form">
-                    <label for="yt-url">Paste the URL of your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID.</label>
-                    <textarea name="yt-url" type="text" maxlength="255"></textarea>
-                    <div class="controls">
-                        <button class="button small add">add</button>
-                        <button type="reset" class="button small reset">remove</button>
-                    </div>
-                </div>
-                <div class="add-picture form">
-                    <label for="picture">Picture (max size 5MB):</label> <input name="picture" type="file">
-                    <div class="controls">
-                        <button class="button small add">add</button>
-                        <button type="reset" class="button small reset">remove</button>
-                    </div>
-                </div>
-                <div class="notification"></div>
+        {% csrf_token %}
+        <div class="attachments">
+            <div class="controls">
+                Include <a id="add-video" href="#add-video" class="add-video button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="add-picture button small">Picture</a>
             </div>
-            <textarea name="message" class="comment_message" cols="80" rows="6"></textarea>
-            {{comment_form.message.help_text|safe}}
-            <button type="submit" class="button submit right">Submit response</button>
-            <div style="clear: both;"></div>
-        </form>
-    </div>
-    <hr class="space">
+            <div class="add-video form">
+                <label for="yt-url">Paste the URL of your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID.</label>
+                <textarea name="yt-url" type="text" maxlength="255"></textarea>
+                <div class="controls">
+                    <button class="button small add">add</button>
+                    <button type="reset" class="button small reset">remove</button>
+                </div>
+            </div>
+            <div class="add-picture form">
+                <label for="picture">Picture (max size 5MB):</label> <input name="picture" type="file">
+                <div class="controls">
+                    <button class="button small add">add</button>
+                    <button type="reset" class="button small reset">remove</button>
+                </div>
+            </div>
+            <div class="notification"></div>
+        </div>
+        <textarea name="message" class="comment_message" cols="80" rows="6"></textarea>
+        {{comment_form.message.help_text|safe}}
+        <button type="submit" class="button submit right">Submit response</button>
+        <div style="clear: both;"></div>
+    </form>
 {% endif %}
 
-<h2>Other People's Responses</h2>
+<h2>Responses</h2>
 
 {% for pc in challenge.player_challenges.completed %}
-{% if pc.player.user.get_profile.avatar %}
+<div class="response">
+    <div class="meta">
+    {% if pc.player.user.get_profile.avatar %}
         <img class="avatar" src="{{MEDIA_URL}}/{{pc.player.get_profile.avatar}}">
     {% else %}               
         <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
     {% endif %} 
-    {% if pc.attachments.all %}
-        <p>
-            {{pc.player.get_profile.screen_name}} completed this challenge 
-            and provided the following evidence:
-        </p>
-        <div class="left">
+        <p>{{pc.player.get_profile.screen_name}} completed this challenge.</p>
+    </div>
+    <div class="main">
         {% for attachment in pc.attachments.all %}
             {% if attachment.is_valid %}
             <div>
@@ -97,29 +94,18 @@
             <div class="notice">This content is currently unavailable.</div>
             {% endif %}
         {% endfor %}
-        </div>
-    {% else %}
-        <p>
-            {{pc.player.get_profile.screen_name}} completed this challenge 
-        </p>
-    {% endif %}
-    {% if pc.response.message %}
-    <div class="left">
-        <blockquote>{{pc.response.message}}</blockquote>
+        <p>{{pc.response.message}}</p>
     </div>
-    {% endif %}
-    <div style="clear: both;"></div>
+</div>
 {% empty %}
     <p>No one has completed this challenge</p>
 {% endfor %}
 
-<div id="comments">
-    <h2>Comments</h2>
-    {% url challenges_comment challenge.id as comment_post_url %}
-    {% with challenge.comments as comments %}
-    {% include "comments/post.html" %}
-    {% endwith %}
-</div>
+{% url challenges_comment challenge.id as comment_post_url %}
+{% with challenge.comments as comments %}
+{% include "comments/post.html" %}
+{% endwith %}
+
 {% endblock %}
 
 {% block body %}
