@@ -1150,11 +1150,6 @@ p.separate {
                     }
                 }
 
-                iframe {
-                    width: 320px;
-                    height: 185px;
-                }
-
                 .hidden {
                     position: absolute;
                     opacity: 0;
@@ -1868,6 +1863,14 @@ p {
     .main {
         padding-left: 40px;
     }
+
+    textarea {
+        width: 98%;
+        border-width: 1px;
+        color: $darkblue;
+        margin-bottom: 0;
+    }
+
 }
 
 .attachments {
@@ -1893,6 +1896,11 @@ p {
         float: right;
         clear: right;
         font-style: italic;
+    }
+
+    iframe {
+        width: 320px;
+        height: 185px;
     }
 }
 

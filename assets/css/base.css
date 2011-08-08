@@ -1039,9 +1039,6 @@ p.separate {
             line-height: 2.25;
             font-size: .5em;
             text-transform: uppercase; }
-        .wrapper #main .content #comments iframe {
-          width: 320px;
-          height: 185px; }
         .wrapper #main .content #comments .hidden {
           position: absolute;
           opacity: 0; }
@@ -1549,6 +1546,11 @@ p {
     clear: both; }
   .response .main {
     padding-left: 40px; }
+  .response textarea {
+    width: 98%;
+    border-width: 1px;
+    color: #001a39;
+    margin-bottom: 0; }
 
 .attachments {
   overflow: auto; }
@@ -1566,3 +1568,6 @@ p {
     float: right;
     clear: right;
     font-style: italic; }
+  .attachments iframe {
+    width: 320px;
+    height: 185px; }

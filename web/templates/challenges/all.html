@@ -1,9 +1,9 @@
 {% extends "layouts/base.html" %}
 {% load game_extras %}
 
-{% block title %}All challenges{% endblock %}
+{% block title %}Challenges{% endblock %}
 {% block page_title %}
-<h2 id="page_title">Your Active Challenges</h2>
+<h2 id="page_title">Current Challenges</h2>
 {% endblock %}
 
 {% block section %}challenges{% endblock %}
@@ -62,27 +62,6 @@
 {% block main %}
 {% if not instance.is_expired %}
     <ul class="challenge_list">
-    {% for player_challenge in request.user.player_challenges.current %}
-    <li class="challenge">
-        <a href="{% url challenges_challenge player_challenge.challenge.pk %}">
-            {{player_challenge.challenge.name}}<span>{% get_points for completed challenge %} points</span>
-            <br/>
-            <span class="dates">{{player_challenge.challenge.start_date|date:"m/d/Y"}} &#8211; {{player_challenge.challenge.end_date|date:"m/d/Y"}}</span>
-        </a>
-    </li>
-    {% empty %}
-    <li>
-        You do not have any current challenges. You can
-        {% if new_challenges.count %}
-        accept one from the list below or
-        {% endif %}
-        <a href="{% url challenges_add %}">create a new one</a> if you like. It's easy!
-    </li>
-    {% endfor %}
-    </ul>
-
-    <h2>Available Challenges</h2>
-    <ul class="challenge_list">
     {% for challenge in new_challenges %}
     <li class="challenge">
         <a href="{% url challenges_challenge challenge.pk %}">
@@ -93,7 +72,7 @@
     </li>
     {% empty %}
     <li>
-        There are no new challenges. <a href="{% url challenges_add %}" class="button">Create one!</a>
+        There are no active challenges. <a href="{% url challenges_add %}" class="button">Create one!</a>
     </li>
     {% endfor %}
     </ul>

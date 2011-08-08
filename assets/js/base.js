@@ -118,7 +118,7 @@ jQuery(function($) {
         evt.preventDefault();
         evt.stopPropagation();
 
-        var form = $('.attachments .' + this.id);
+        var form = $(this).parents('.attachments').find('.form.' + this.id);
         form.slideToggle(200);
         var inputs = form.find('textarea, input');
         if (inputs.val()) {

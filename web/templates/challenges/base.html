@@ -11,16 +11,7 @@
 <p>{{challenge.description}}</p>
 
 <div>
-{% if challenge.is_active %}
-    <div class="buttons alignleft">
-    {% if not local_player_challenges.completed and not local_player_challenges.accepted %}
-        <a class="button" href="{% url challenges_accept challenge.id %}">I'll do it</a>
-    {% endif %}
-    {% if not local_player_challenges.completed and not local_player_challenges.declined %}
-        <a class="button orange" href="{% url challenges_decline challenge.id %}">No thanks</a>
-    {% endif %}
-    </div>
-{% else %}
+{% if not challenge.is_active %}
     {% if challenge.is_expired %}
         This challenge has expired.
     {% else %}
@@ -31,10 +22,10 @@
 
 {{challenge.map|show}}
 
-{% if not local_player_challenges.completed %}
+{% if challenge.is_active and not local_player_challenges.completed %}
     <p>Provide evidence to complete this challenge:</p>
 
-    <form enctype="multipart/form-data" action="{% url challenges_complete challenge.pk %}" method="POST">
+    <form class="response" enctype="multipart/form-data" action="{% url challenges_complete challenge.pk %}" method="POST">
         {% if request.REQUEST.error %}
             <span class="error">Please enter a valid comment.</span>
         {% endif %}
@@ -68,6 +59,7 @@
     </form>
 {% endif %}
 
+{% if challenge.is_started %}
 <h2>Responses</h2>
 
 {% for pc in challenge.player_challenges.completed %}
@@ -81,6 +73,7 @@
         <p>{{pc.player.get_profile.screen_name}} completed this challenge.</p>
     </div>
     <div class="main">
+        <div class="attachments">
         {% for attachment in pc.attachments.all %}
             {% if attachment.is_valid %}
             <div>
@@ -94,12 +87,14 @@
             <div class="notice">This content is currently unavailable.</div>
             {% endif %}
         {% endfor %}
+        </div>
         <p>{{pc.response.message}}</p>
     </div>
 </div>
 {% empty %}
     <p>No one has completed this challenge</p>
 {% endfor %}
+{% endif %}
 
 {% url challenges_comment challenge.id as comment_post_url %}
 {% with challenge.comments as comments %}
@@ -110,14 +105,4 @@
 
 {% block body %}
     {% gmap_includes %}
-    <script type="text/javascript">
-        $("#complete").bind("click", function(evt) {
-            evt.preventDefault();
-            
-            // Redirect to complete
-            window.open("complete/", "_self");
-
-            return false;
-        });
-    </script>
 {% endblock %}
