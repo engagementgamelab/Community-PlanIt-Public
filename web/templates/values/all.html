@@ -255,9 +255,13 @@
                 pie: { 
                     show: true,
                     radius: 1,
+                    stroke: {
+                        color: '#DBDBDB',
+                        width: 2
+                    },
                     label: {
                         show: true,
-                        radius: 2/3,
+                        radius: 1/2,
                         formatter: function(label, series) {
                             var output = '<div style="font-size:small;text-align:center;padding:2px;color:black;">' + label;
                             {% if community_spent > 0 %}
@@ -287,9 +291,13 @@
                 pie: { 
                     show: true,
                     radius: 1,
+                    stroke: {
+                        color: '#FFECD8',
+                        width: 2
+                    },
                     label: {
                         show: true,
-                        radius: 2/3,
+                        radius: 1/2,
                         formatter: function(label, series) {
                             var output = '<div style="font-size:small;text-align:center;padding:2px;color:black;">' + label;
                             {% if player_spent > 0 %}
