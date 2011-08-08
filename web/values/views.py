@@ -83,9 +83,7 @@ def detail(request, id):
             return HttpResponseRedirect(reverse('values_detail', args=[id]))
 
     values = Value.objects.filter(instance=request.user.get_profile().instance)
-    total_coins = 0
-    for i in values:
-        total_coins += i.coins
+    total_coins = values.aggregate(Sum('coins'))['coins__sum'] or 0
 
     tmpl = loader.get_template('values/base.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
@@ -111,7 +109,8 @@ def spend(request, id):
         playervalue.save()
         profile.save()
         
-        ActivityLogger.log(request.user, request, 'on value', 'spent coin', '/value/'+ str(value.id), 'value')
+        log_url = reverse('values_detail', args=[id])
+        ActivityLogger.log(request.user, request, 'on value', 'spent token', log_url, 'value')
     else:
         messages.info(request, 'No coins available to spend')
     
@@ -134,7 +133,8 @@ def take(request, id):
         playervalue.save()
         profile.save()
     
-        ActivityLogger.log(request.user, request, 'on value', 'reclaimed coin', '/value/'+ str(value.id), 'value')
+        log_url = reverse('values_detail', args=[id])
+        ActivityLogger.log(request.user, request, 'on value', 'reclaimed token', log_url, 'value')
     else:
         messages.info(request, 'No coins available to take')
         
