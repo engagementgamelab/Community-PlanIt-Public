@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
 
@@ -21,7 +22,7 @@ class InstanceQueryMixin(object):
 
     def active(self):
         now = datetime.datetime.now()
-        return self.filter(start_date__lte=now).filter(end_date__gte=now).order_by('start_date')
+        return self.filter(start_date__lte=now).filter(Q(end_date__isnull=True)|Q(end_date__gte=now)).order_by('start_date')
 
 class InstanceQuerySet(models.query.QuerySet, InstanceQueryMixin):
     pass
@@ -53,13 +54,13 @@ class Instance(models.Model):
     
     def is_active(self):
         now = datetime.datetime.now()
-        if now >= self.start_date and now <= self.end_date:
+        if now >= self.start_date and (self.end_date is None or now <= self.end_date):
             return True;
         else:
             return False;
         
     def is_expired(self):
-        if datetime.datetime.now() >= self.end_date:
+        if self.end_date and datetime.datetime.now() >= self.end_date:
             return True
         else:
             return False

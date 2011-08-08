@@ -9,8 +9,8 @@ class NotificationRequestForm(forms.ModelForm):
         model = NotificationRequest
         fields = ['email']
 
-    def __init__(self, instance, *args, **kwargs):
-        self.community = instance
+    def __init__(self, community, *args, **kwargs):
+        self.community = community
         super(NotificationRequestForm, self).__init__(*args, **kwargs)
 
     def clean(self):

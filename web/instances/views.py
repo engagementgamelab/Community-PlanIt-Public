@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib import auth
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
@@ -34,8 +35,10 @@ def region(request, slug):
                 existing_request = NotificationRequest.objects.get(instance=community, email=notification_request.email)
             except NotificationRequest.DoesNotExist:
                 # good
+                notification_request.instance = community
                 notification_request.save()
             messages.success(request, "We'll let you know when {0} is active. Thanks for your interest!".format(community))
+            return HttpResponseRedirect(reverse('instances'))
     else:
         notification_form = NotificationRequestForm(community)
 
