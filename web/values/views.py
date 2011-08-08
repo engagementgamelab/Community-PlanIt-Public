@@ -77,7 +77,7 @@ def detail(request, id):
                     instance=request.user.get_profile().instance,
                 )
 
-            PointsAssigner.assign(request.user, 'comment_created')
+            PointsAssigner().assign(request.user, 'comment_created')
             log_url = reverse('values_detail', args=[id]) + '#comment-' + str(comment.pk)
             ActivityLogger.log(request.user, request, 'to value', 'added comment', log_url, 'value')
             return HttpResponseRedirect(reverse('values_detail', args=[id]))

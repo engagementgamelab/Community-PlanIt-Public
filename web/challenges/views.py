@@ -68,8 +68,8 @@ def complete(request, id):
 
                 b.save()
 
-            ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges_challenge', args=[id]), 'challenge')
-            PointsAssigner.assign(request.user, 'challenge_completed')
+            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges_challenge', args=[id]), 'challenge')
+            PointsAssigner().assign(request.user, 'challenge_completed')
 
             if a:
                 pc.attachments.add(a)
@@ -138,8 +138,8 @@ def add(request):
             )
             challenge.save()
 
-            PointsAssigner.assign(request.user, 'challenge_created')
-            ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'created', '/challenge/'+ str(challenge.id), 'challenge')
+            PointsAssigner().assign(request.user, 'challenge_created')
+            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'created', '/challenge/'+ str(challenge.id), 'challenge')
 
             return HttpResponseRedirect(reverse('challenges'))
     else:
@@ -222,8 +222,8 @@ def comment(request, id):
             challenge.comments.add(c)
             challenge.save()
 
-            PointsAssigner.assign(request.user, 'comment_created')
-            ActivityLogger.log(request.user, request, 'to a challenge: ' + challenge.name, 'added comment', reverse('challenges_challenge', args=[id]), 'challenge')
+            PointsAssigner().assign(request.user, 'comment_created')
+            ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name, 'added comment', reverse('challenges_challenge', args=[id]), 'challenge')
         else:
             return HttpResponseRedirect(reverse('challenges_challenge', args=[id]) +'?error=true')
 

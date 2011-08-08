@@ -12,48 +12,6 @@ html, body {
     background-color: #333;
 }
 
-.bar-placeholder {
-    width: 100%;
-    height: 400px;
-}
-
-    .chartlist {
-        padding: 0;
-        width: 100%;
-    }
-    .chartlist li { 
-         position: relative;
-         display: block; 
-    }
-    .chartlist .count { 
-        display: block; 
-        position: absolute; 
-        top: 0; 
-        right: -15px; 
-        margin: 0 0.3em; 
-        text-align: right; 
-        color: #999; 
-        font-weight: bold; 
-        font-size: 0.875em; 
-    }
-    .chartlist li a { 
-        display: block; 
-        padding: 0.4em 4.5em 0.4em 0.5em;
-        position: relative; 
-        z-index: 2; 
-        cursor: default;
-    }
-    .chartlist .index { 
-        display: block; 
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        height: 100%; 
-        background: #B8E4F5; 
-        text-indent: -9999px; 
-        overflow: hidden; 
-    }
-
 a {
     cursor: pointer;
     text-decoration: none;
@@ -93,7 +51,7 @@ hr.space {
 
 .highlight, .highlight a {
     color: $white;
-    background-color: $blue;
+    background-color: $vibrantblue;
     padding: 5px 10px 5px 10px;
 }
 .fine.highlight {
@@ -190,16 +148,10 @@ p.separate {
     .alignright {
         text-align:right;
     }
-    .game-wrapper {
-        margin-top: 30px;
-    }
-    .listless, .game-wrapper ul {
+    .listless {
         list-style-type: none;
         margin: 0;
         padding: 0;
-    }
-    .inline, .inline li {
-        display: inline;
     }
     .timestamp {
         color: $gray;
@@ -216,30 +168,9 @@ p.separate {
         margin-right: 0;
         float: right;
     }
-    .half, .third, .twothird, .quarter, .twoquarter, .threequarter, .fifth, .sixth, .quarter, .fifth, .twofifth, .threefifth, .fourfifth  {
+    .half, .third, .twothird {
         float: left;
         text-align: left;
-    }
-    .quarter {
-        width: 25%;
-    }
-    .twoquarter {
-        width: 50%;
-    }
-    .threequarter {
-        width: 66%;
-    }
-    .fifth {
-        width:19%
-    }
-    .twofifth {
-        width:39%
-    }
-    .threefifth {
-        width:59%
-    }
-    .fourfifth {
-        width:76%
     }
     .half {
       width: 45%;
@@ -275,18 +206,6 @@ p.separate {
         color: $darkgray;
         vertical-align: top;
         line-height: 2;
-    }
-    .game-wrapper {
-        
-        label {
-            font-weight: normal;
-            padding: 10px;
-            line-height: 1.4;
-        }
-        
-        li {
-            margin: 0px 0;
-        }
     }
     
     .button, input[type=submit] {
@@ -441,29 +360,6 @@ p.separate {
 
         }
     }
-    .date {
-        float: right;
-        padding: 0 0 10px 10px;
-        width: 45px;
-        text-align: center;
-    }
-    .datenum {
-        color: $green;
-        font-size: 24px;
-        font-weight: bold;
-        clear:both;
-        display:block;
-    }
-    .datenum.gray {
-      color: $darkgray;
-    }
-    .game-wrapper ul {
-        li {
-            background: none;
-            padding-left: 0px;
-            border-bottom: 1px solid #CCC;
-        }
-    }
 
     .feed {
         border-top: 3px solid $orange;
@@ -486,13 +382,6 @@ p.separate {
             height: 20px;
         }
     }
-    .game {
-        .timestamp {
-            background: url('../img/icons/16/trophy.png') 42px 3px no-repeat;
-            padding: 2px 0 0 63px;
-            height: 20px;
-        }
-    }
     .rightsidebar {
         width: 30%;
         position: relative;
@@ -500,6 +389,7 @@ p.separate {
         clear: right;
 
         h2, h3, h4 {
+            font-family: YanoneKaffeesatzRegular, Tahoma, Helvetica, Arial, sans-serif;
             margin: 0;
             color: $orange;
         }
@@ -576,66 +466,8 @@ p.separate {
         }
         
     }
-    .griditem {
-        width: 160px;
-        min-height: 115px;
-        margin: 20px 10px;
-        float: left;
-        padding: 15px;
-        background: $lightgray;
-        position: relative;
 
-        .state {
-            position: absolute;
-            top: -10px;
-            right: -20px;
-            background-repeat:no-repeat;
-            height: 50px;
-            width: 50px;
-            background-image: url('../img/icons/new.png');
-        }
-        
-        .button {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            color: $white;
-        }
-    }
-    .griditem.accepted .state, .listitem.accepted .state {
-        top:-24px;
-        background-image: url('../img/icons/up.png');
-    }
-    .griditem.declined .state, .listitem.declined .state {
-        background-image: url('../img/icons/down.png');
-    }
-    .griditem.mission, .griditem.instance {
-        min-height: 43px;
-        width: 76%;
-        padding-left: 20px;
-        
-        .date {
-            background-color: $blue;
-            color: $white;
-            padding: 14px;
-            position: absolute;
-            right: -1px;
-            top: 0px;
-            border-left:2px solid $darkgray;
-        }
-
-        .datenum {
-            color: $green;
-            font-size: 24px;
-            font-weight: bold;
-        }
-    }
-    .griditem.instance {
-        padding-left: 70px;
-        width: 84%;
-        height: 40px;
-    }
-    .pastchallenges, .pastmissions, .dashboardmodule {
+    .dashboardmodule {
         background-color: $lightgray;
         padding: 10px;
         padding-left: 10px;
@@ -664,43 +496,6 @@ p.separate {
         padding: 1px 10px 10px 25px;
     }
     
-    .currentmission {
-        position: relative;
-        padding: 5px 10px 30px 10px;
-        
-        .date {
-            top: 0px;
-            right: 0px;
-            position: absolute;
-            background: $blue;
-            color: $white;
-            padding: 13px;
-            position: absolute;
-        }
-    }
-    .pastmissions li, .currentmission h3, .missions .griditem, h2.currentmission, h3.currentmission{
-        padding: 20px 20px 20px 70px;
-        background-position: 10px center ;
-        background-image: url('../img/icons/suitecase.png');
-        background-repeat: no-repeat;
-        margin-bottom: 30px;
-    }
-    .instances li {
-        padding: 20px 20px 10px 70px;
-        background-position: 10px center ;
-        background-image: url('../img/icons/location.png');
-        background-repeat: no-repeat;
-    }
-
-    .player h3{
-        padding: 20px 10px 20px 50px;
-        background-position: 10px center ;
-        background-image: url('../img/icons/player.png');
-        background-repeat: no-repeat;
-    }
-    .missions .griditem {
-        padding:30px 20px 0px 70px;
-    }
     // For profile page
     .module {
         width: 100%;
@@ -720,119 +515,12 @@ p.separate {
         border: 1px solid $gray;
         background-color: $white;
     }
-    .pattern {
-        background: url('../img/background.png');
-    }
 
-    .divider {
-        border-top: 1px solid $darkgray;
-        background-color: $gray;
-        text-align: center;
-        color: $white;
-        background-color: $blue;
-        background-image: -moz-linear-gradient(top, $vibrantblue, $blue);
-        background-image: -o-linear-gradient($vibrantblue, $blue);
-        background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, $vibrantblue),color-stop(1, $blue));
-        filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#4fb4f2', EndColorStr='#275491');
-        -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4fb4f2', EndColorStr='#275491')";
-        position:relative;
-    }
-    
-    .missionarrow {
-        position:absolute;
-        color: $darkgray;
-        font-weight: bold;
-        margin: 0px;
-        background: url('../img/arrow.png') center center no-repeat;
-        width: 224px;
-        height: 23px;
-        top: -20px;
-        margin-left: -50px;
-        float: left;
-        padding: 26px 10px 30px 10px;
-        line-height: 1;
-    }
-    .missionholder {
-        margin: 0 auto;
-        overflow: hidden;
-        font-size: 12px;
-    }
-    .missioncounter {
-        min-width: 950px;
-        font-size: 12px;
-        margin-left: 170px;
-        font-weight: bold;
-
-        a {
-            height: 26px;
-            display: inline-block;
-        }
-
-        .mission:nth-child(1) {
-        }
-        .mission:last-child {
-            border-right: none;
-        }
-        .mission:first-child {
-            border-left: none;
-        }
-        .mission {
-            color: $white;
-            padding: 6px 5% 4px 1%;
-            display:inline-block;
-            font-size: 9px;
-            white-space: nowrap;
-            overflow: visible;
-            text-align: center;
-            margin-right: -3px;
-            background: url('../img/forward.png') top right no-repeat;
-        }
-        
-        .current {
-            border-left: none;
-            background:  $darkgreen url('../img/forward.png') top right no-repeat;
-            position: relative;
-            font-weight: bold;
-        }
-        
-        .suit {
-            right: 16%;
-            top:8px;
-            height: 16px;
-            width: 16px;
-            position: absolute;
-            background:  url('../img/icons/suitecase-small-white.png') top right no-repeat;
-        }
-        .tailupper {
-            border-color: transparent $darkgreen transparent transparent;
-            border-style: solid;
-            border-width: 0 19px 19px 0;
-            height: 0;
-            width: 0;
-            left: -19px;
-            top: 0px;
-            position: absolute;
-        }
-        .taillower {
-            border-color: transparent $darkgreen transparent transparent;
-            border-style: solid;
-            border-width: 17px 17px 0 0;
-            height: 0;
-            width: 0;
-            left: -17px;
-            bottom: 0px;
-            position: absolute;
-        }
-        .future , .past {
-        }
-        
-    }
     h2, h3, h3, h4, h5, h6 {
         position: relative;
         overflow: auto;
         font-family: UbuntuBold;
         font-weight: normal;
-        color: $gray;
     }
     h2, h3 {
         font-size: 2em;
@@ -1114,8 +802,7 @@ p.separate {
             
             p {
                 .highlight {
-                    font-size: 9px;
-                    padding: 1px 5px;
+                    padding: 1px 2px;
                     margin-top: 0;
                     float:none;
                 }
@@ -1499,10 +1186,6 @@ p.separate {
     .blue {
         background-color: $darkblue;
     }
-    .games {
-        color: #FFF;
-        font-size: 16px;
-    }
     .profile-wrapper p.fine {
         font-size: 12px;
         font-style: italic;
@@ -1548,9 +1231,6 @@ p.separate {
             }
             p {
                 margin-bottom: 10px;
-            }
-            .game-wrapper {
-                margin: 30px auto 0px auto;
             }
             .markers {
                 margin-bottom: 25px;
@@ -1601,36 +1281,7 @@ table {
     padding: 5px;
 }
 
-// Twitter list styles
-.twitter-posts ul {
-    margin:0px;
-    padding: 0px;
-    font-size:12px;
-    width: 310px;
-}
-.twitter-posts li {
-    margin:0px 0px 15px 0px;
-    clear: both;
-    list-style-type:none;
-}
-.twitter-posts li img {
-    float:left;
-    width: 48px;
-    margin:0px 10px 10px 0px;
-}
-.twitter-posts li a {
-    text-decoration:none;
-    color: #009;
-}
-
-.modal, .gamemodal {
-    display: none;
-}
 // Error/success/notice
-.errorlist {
-    list-style-type: none;
-    padding: 0;
-}
 .errorlist li, .error, .notice, .success {
     padding: 9px;
     margin-bottom: 1em;
@@ -1645,22 +1296,13 @@ table {
 .notice a {color:#514721;}
 .success a {color:#264409;}
 
-#ui-datepicker-div {
-    font-size: 75%;
-}
-
-.bigq{
-    float: left;
-    font-size: 50px;
-    font-weight: bold;
-    line-height: 1;
-    margin: 0 10px 0 0;
-}
 .hidden {
     position: absolute;
     opacity: 0;
 }
+
 #ui-datepicker-div {
+    font-size: 75%;
     display: none;
 }
 
@@ -1822,7 +1464,7 @@ p {
 }
 
 #page_title {
-    margin-left: 10px;
+    padding-left: 10px;
     font-family: UbuntuBold;
     color: $black;
     font-weight: normal;
@@ -1904,3 +1546,8 @@ p {
     }
 }
 
+body.communities {
+    ul.communities {
+        list-style: none;
+    }
+}

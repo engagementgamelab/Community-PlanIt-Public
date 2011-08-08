@@ -34,7 +34,7 @@ class Instance(models.Model):
     name = models.CharField(max_length=45)
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=2)
-    slug = models.SlugField(editable=False)
+    slug = models.SlugField(unique=True, editable=False)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
@@ -49,13 +49,11 @@ class Instance(models.Model):
         get_latest_by = 'start_date'
         
     def __unicode__(self):
-        return '%s: %s' % (self.city, self.name)
+        return self.name
     
-    def header(self):
-        return mark_safe('<h2 class="instance"><span class="city">%s</span> &#8211; %s</h2>' % (self.city, self.name))
-
     def is_active(self):
-        if datetime.datetime.now() >= self.start_date and datetime.datetime.now() <= self.end_date:
+        now = datetime.datetime.now()
+        if now >= self.start_date and now <= self.end_date:
             return True;
         else:
             return False;
@@ -90,4 +88,12 @@ class PointsAssignment(models.Model):
 class InstanceAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'end_date',)
 
+class NotificationRequest(models.Model):
+    instance = models.ForeignKey(Instance, related_name='notification_requests')
+    email = models.EmailField()
 
+    class Meta:
+        unique_together = ['instance', 'email']
+
+    def __unicode__(self):
+        return '{0}: {1}'.format(self.instance, self.email)

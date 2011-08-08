@@ -210,7 +210,7 @@ def edit(request):
 
                             profile.completed = True
                             profile.save()
-                            PointsAssigner.assign(request.user, 'profile_completed')
+                            PointsAssigner().assign(request.user, 'profile_completed')
                     except:
                         pass
 
@@ -309,7 +309,7 @@ def profile(request, id):
 def follow(request, id):
     u = User.objects.get(id=id)
     request.user.get_profile().following.add( u )
-    ActivityLogger.log(request.user, request, u.get_profile().first_name, 'started following', '/player/'+ id, 'profile')
+    ActivityLogger().log(request.user, request, u.get_profile().first_name, 'started following', '/player/'+ id, 'profile')
 
     return HttpResponseRedirect('/player/'+ str(id))
 
@@ -356,8 +356,8 @@ def dashboard(request):
             user.is_active = True
             user.save()
 
-            ActivityLogger.log(request.user, request, 'account', 'created', '/player/'+ str(user.id), 'profile')
-            PointsAssigner.assign(request.user, 'account_created')
+            ActivityLogger().log(request.user, request, 'account', 'created', '/player/'+ str(user.id), 'profile')
+            PointsAssigner().assign(request.user, 'account_created')
 
             return HttpResponseRedirect(reverse('accounts_dashboard'))
     

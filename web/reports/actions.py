@@ -14,9 +14,7 @@ class ActivityLogger:
         a.save()
 
         # Push to messages queue
-        messages.success(request, str(data) +' '+ str(action))
-
-ActivityLogger = ActivityLogger()
+        messages.success(request, 'You ' + str(data) +' '+ str(action))
 
 class PointsAssigner:
     def fetch(self, action):
@@ -44,8 +42,6 @@ class PointsAssigner:
             up.save()
     
     def assign(self, user, action):
-        #p = PointsAssignment.objects.get(action=action)
-        #return HttpResponse("action: %s, points: %s, coins: %s" % (p.action, p.points, p.coins))
         p = PointsAssignment.objects.filter(action=action)
         if len(p) > 0:
             self.assignPoints(user, p[0].points)
@@ -54,11 +50,3 @@ class PointsAssigner:
     
     def assignAct(self, user, activity):
         self.assignPoints(user, activity.getPoints())
-        
-                
-        #if new_coins > 1:
-        #    ActivityLogger.log(request.user, request, 'to gain '+ str(up.coins) +' coins', 'earned over '+ str((up.points_multiplier - 1) * 100) +' points', 'value')
-        #else:
-        #    ActivityLogger.log(request.user, request, 'to gain a coin', 'earned over '+ str((up.points_multiplier - 1) * 100) +' points', 'value')
-
-PointsAssigner = PointsAssigner()

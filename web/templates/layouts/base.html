@@ -37,12 +37,6 @@
 
 <body class="page {% block section %}default{% endblock %}{% if user.is_authenticated %} loggedin{% endif %} {% block extra_body_class %}{% endblock %}">
     <div class="wrapper">
-        {% if messages %}
-            {% for message in messages %}
-            <div class="ui-notification-container message-{{forloop.counter}}"></div>
-            {% endfor %}
-        {% endif %}
-        
         <div id="header">
             <div class="logo"><a href="{% url home %}"><img src="{{MEDIA_URL}}img/logo-3.png" alt="Home"/></a></div>
             <nav>
@@ -118,6 +112,16 @@
             </aside>
             {% endblock %}
             <div class="content">
+                {% if messages %}
+                <div id="notifications">
+                    <ul>
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
                 {% block page_title %}
                     <h2 id="page_title">Community PlanIT</h2>
                 {% endblock %}

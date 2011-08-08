@@ -1,15 +1,15 @@
-import datetime
+from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import Context, RequestContext, loader
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator
-from web.instances.models import Instance
+
 from web.accounts.models import UserProfile
-from web.values.models import *
-from web.reports.actions import ActivityLogger, PointsAssigner
+from web.instances.models import Instance
 from web.processors import instance_processor as ip
+from web.values.models import *
 
 def display_list(request, players, title):
     p = Paginator(players, 10)

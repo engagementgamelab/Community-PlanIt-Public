@@ -19,10 +19,12 @@
 <ul class="listless">
 {% for mission in missions.active %}
     <li>
-        <a href="{% url missions_mission mission.slug %}">{{mission.name}}</a>
-        <span class="dates">
-            {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
-        </span>
+        <h3>
+            <a href="{% url missions_mission mission.slug %}">{{mission.name}}</a>
+            <span class="dates">
+                {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
+            </span>
+        </h3>
         <div class="description">{{mission.description|linebreaksbr}}</div>
     </li>
 {% empty %}
@@ -34,10 +36,12 @@
 <ul class="listless">
 {% for mission in missions.future %}
     <li>
-        <a href="{% url missions_mission mission.slug %}">{{mission.name}}</a>
-        <span class="dates">
-            {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
-        </span>
+        <h3>
+            <a href="{% url missions_mission mission.slug %}">{{mission.name}}</a>
+            <span class="dates">
+                {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
+            </span>
+        </h3>
     </li>
 {% empty %}
     <li>There are no upcoming missions at this time.</li>

@@ -217,46 +217,6 @@ html, body {
   font-size: 90%;
   background-color: #333; }
 
-.bar-placeholder {
-  width: 100%;
-  height: 400px; }
-
-.chartlist {
-  padding: 0;
-  width: 100%; }
-
-.chartlist li {
-  position: relative;
-  display: block; }
-
-.chartlist .count {
-  display: block;
-  position: absolute;
-  top: 0;
-  right: -15px;
-  margin: 0 0.3em;
-  text-align: right;
-  color: #999;
-  font-weight: bold;
-  font-size: 0.875em; }
-
-.chartlist li a {
-  display: block;
-  padding: 0.4em 4.5em 0.4em 0.5em;
-  position: relative;
-  z-index: 2;
-  cursor: default; }
-
-.chartlist .index {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: #B8E4F5;
-  text-indent: -9999px;
-  overflow: hidden; }
-
 a {
   cursor: pointer;
   text-decoration: none;
@@ -282,7 +242,7 @@ hr.space {
 
 .highlight, .highlight a {
   color: white;
-  background-color: #275491;
+  background-color: #00aeef;
   padding: 5px 10px 5px 10px; }
 
 .fine.highlight {
@@ -354,14 +314,10 @@ p.separate {
     text-align: left; }
   .wrapper .alignright {
     text-align: right; }
-  .wrapper .game-wrapper {
-    margin-top: 30px; }
-  .wrapper .listless, .wrapper .game-wrapper ul {
+  .wrapper .listless {
     list-style-type: none;
     margin: 0;
     padding: 0; }
-  .wrapper .inline, .wrapper .inline li {
-    display: inline; }
   .wrapper .timestamp {
     color: #999999;
     font-style: italic; }
@@ -373,23 +329,9 @@ p.separate {
     clear: right;
     margin-right: 0;
     float: right; }
-  .wrapper .half, .wrapper .third, .wrapper .twothird, .wrapper .quarter, .wrapper .twoquarter, .wrapper .threequarter, .wrapper .fifth, .wrapper .sixth, .wrapper .quarter, .wrapper .fifth, .wrapper .twofifth, .wrapper .threefifth, .wrapper .fourfifth {
+  .wrapper .half, .wrapper .third, .wrapper .twothird {
     float: left;
     text-align: left; }
-  .wrapper .quarter {
-    width: 25%; }
-  .wrapper .twoquarter {
-    width: 50%; }
-  .wrapper .threequarter {
-    width: 66%; }
-  .wrapper .fifth {
-    width: 19%; }
-  .wrapper .twofifth {
-    width: 39%; }
-  .wrapper .threefifth {
-    width: 59%; }
-  .wrapper .fourfifth {
-    width: 76%; }
   .wrapper .half {
     width: 45%;
     margin-right: 5%; }
@@ -418,12 +360,6 @@ p.separate {
     color: #4c4d4f;
     vertical-align: top;
     line-height: 2; }
-  .wrapper .game-wrapper label {
-    font-weight: normal;
-    padding: 10px;
-    line-height: 1.4; }
-  .wrapper .game-wrapper li {
-    margin: 0px 0; }
   .wrapper .button, .wrapper input[type=submit] {
     cursor: pointer;
     text-decoration: none;
@@ -537,23 +473,6 @@ p.separate {
             vertical-align: bottom; }
       .wrapper #header nav li.final {
         background-image: none; }
-  .wrapper .date {
-    float: right;
-    padding: 0 0 10px 10px;
-    width: 45px;
-    text-align: center; }
-  .wrapper .datenum {
-    color: #b9d32c;
-    font-size: 24px;
-    font-weight: bold;
-    clear: both;
-    display: block; }
-  .wrapper .datenum.gray {
-    color: #4c4d4f; }
-  .wrapper .game-wrapper ul li {
-    background: none;
-    padding-left: 0px;
-    border-bottom: 1px solid #CCC; }
   .wrapper .feed {
     border-top: 3px solid #ff7812; }
     .wrapper .feed h3 {
@@ -565,16 +484,13 @@ p.separate {
     background: url("../img/icons/16/piggybank-small.png") 42px 3px no-repeat;
     padding: 2px 0 0 63px;
     height: 20px; }
-  .wrapper .game .timestamp {
-    background: url("../img/icons/16/trophy.png") 42px 3px no-repeat;
-    padding: 2px 0 0 63px;
-    height: 20px; }
   .wrapper .rightsidebar {
     width: 30%;
     position: relative;
     float: left;
     clear: right; }
     .wrapper .rightsidebar h2, .wrapper .rightsidebar h3, .wrapper .rightsidebar h4 {
+      font-family: YanoneKaffeesatzRegular, Tahoma, Helvetica, Arial, sans-serif;
       margin: 0;
       color: #ff7812; }
     .wrapper .rightsidebar div.section {
@@ -626,57 +542,11 @@ p.separate {
       padding: 10px;
       top: -9px;
       position: relative; }
-  .wrapper .griditem {
-    width: 160px;
-    min-height: 115px;
-    margin: 20px 10px;
-    float: left;
-    padding: 15px;
-    background: #f0f0f0;
-    position: relative; }
-    .wrapper .griditem .state {
-      position: absolute;
-      top: -10px;
-      right: -20px;
-      background-repeat: no-repeat;
-      height: 50px;
-      width: 50px;
-      background-image: url("../img/icons/new.png"); }
-    .wrapper .griditem .button {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      color: white; }
-  .wrapper .griditem.accepted .state, .wrapper .listitem.accepted .state {
-    top: -24px;
-    background-image: url("../img/icons/up.png"); }
-  .wrapper .griditem.declined .state, .wrapper .listitem.declined .state {
-    background-image: url("../img/icons/down.png"); }
-  .wrapper .griditem.mission, .wrapper .griditem.instance {
-    min-height: 43px;
-    width: 76%;
-    padding-left: 20px; }
-    .wrapper .griditem.mission .date, .wrapper .griditem.instance .date {
-      background-color: #275491;
-      color: white;
-      padding: 14px;
-      position: absolute;
-      right: -1px;
-      top: 0px;
-      border-left: 2px solid #4c4d4f; }
-    .wrapper .griditem.mission .datenum, .wrapper .griditem.instance .datenum {
-      color: #b9d32c;
-      font-size: 24px;
-      font-weight: bold; }
-  .wrapper .griditem.instance {
-    padding-left: 70px;
-    width: 84%;
-    height: 40px; }
-  .wrapper .pastchallenges, .wrapper .pastmissions, .wrapper .dashboardmodule {
+  .wrapper .dashboardmodule {
     background-color: #f0f0f0;
     padding: 10px;
     padding-left: 10px; }
-    .wrapper .pastchallenges h4, .wrapper .pastmissions h4, .wrapper .dashboardmodule h4 {
+    .wrapper .dashboardmodule h4 {
       margin-top: 5px; }
   .wrapper .dashboardmodule.white {
     background-color: white; }
@@ -689,35 +559,6 @@ p.separate {
       color: white; }
   .wrapper .dashboardmoduleinner {
     padding: 1px 10px 10px 25px; }
-  .wrapper .currentmission {
-    position: relative;
-    padding: 5px 10px 30px 10px; }
-    .wrapper .currentmission .date {
-      top: 0px;
-      right: 0px;
-      position: absolute;
-      background: #275491;
-      color: white;
-      padding: 13px;
-      position: absolute; }
-  .wrapper .pastmissions li, .wrapper .currentmission h3, .wrapper .missions .griditem, .wrapper h2.currentmission, .wrapper h3.currentmission {
-    padding: 20px 20px 20px 70px;
-    background-position: 10px center;
-    background-image: url("../img/icons/suitecase.png");
-    background-repeat: no-repeat;
-    margin-bottom: 30px; }
-  .wrapper .instances li {
-    padding: 20px 20px 10px 70px;
-    background-position: 10px center;
-    background-image: url("../img/icons/location.png");
-    background-repeat: no-repeat; }
-  .wrapper .player h3 {
-    padding: 20px 10px 20px 50px;
-    background-position: 10px center;
-    background-image: url("../img/icons/player.png");
-    background-repeat: no-repeat; }
-  .wrapper .missions .griditem {
-    padding: 30px 20px 0px 70px; }
   .wrapper .module {
     width: 100%;
     min-height: 30px;
@@ -732,95 +573,11 @@ p.separate {
     padding: 20px;
     border: 1px solid #999999;
     background-color: white; }
-  .wrapper .pattern {
-    background: url("../img/background.png"); }
-  .wrapper .divider {
-    border-top: 1px solid #4c4d4f;
-    background-color: #999999;
-    text-align: center;
-    color: white;
-    background-color: #275491;
-    background-image: -moz-linear-gradient(top, #00aeef, #275491);
-    background-image: -o-linear-gradient(#00aeef, #275491);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #00aeef), color-stop(1, #275491));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#4fb4f2', EndColorStr='#275491');
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4fb4f2', EndColorStr='#275491')";
-    position: relative; }
-  .wrapper .missionarrow {
-    position: absolute;
-    color: #4c4d4f;
-    font-weight: bold;
-    margin: 0px;
-    background: url("../img/arrow.png") center center no-repeat;
-    width: 224px;
-    height: 23px;
-    top: -20px;
-    margin-left: -50px;
-    float: left;
-    padding: 26px 10px 30px 10px;
-    line-height: 1; }
-  .wrapper .missionholder {
-    margin: 0 auto;
-    overflow: hidden;
-    font-size: 12px; }
-  .wrapper .missioncounter {
-    min-width: 950px;
-    font-size: 12px;
-    margin-left: 170px;
-    font-weight: bold; }
-    .wrapper .missioncounter a {
-      height: 26px;
-      display: inline-block; }
-    .wrapper .missioncounter .mission:last-child {
-      border-right: none; }
-    .wrapper .missioncounter .mission:first-child {
-      border-left: none; }
-    .wrapper .missioncounter .mission {
-      color: white;
-      padding: 6px 5% 4px 1%;
-      display: inline-block;
-      font-size: 9px;
-      white-space: nowrap;
-      overflow: visible;
-      text-align: center;
-      margin-right: -3px;
-      background: url("../img/forward.png") top right no-repeat; }
-    .wrapper .missioncounter .current {
-      border-left: none;
-      background: #617c00 url("../img/forward.png") top right no-repeat;
-      position: relative;
-      font-weight: bold; }
-    .wrapper .missioncounter .suit {
-      right: 16%;
-      top: 8px;
-      height: 16px;
-      width: 16px;
-      position: absolute;
-      background: url("../img/icons/suitecase-small-white.png") top right no-repeat; }
-    .wrapper .missioncounter .tailupper {
-      border-color: transparent #617c00 transparent transparent;
-      border-style: solid;
-      border-width: 0 19px 19px 0;
-      height: 0;
-      width: 0;
-      left: -19px;
-      top: 0px;
-      position: absolute; }
-    .wrapper .missioncounter .taillower {
-      border-color: transparent #617c00 transparent transparent;
-      border-style: solid;
-      border-width: 17px 17px 0 0;
-      height: 0;
-      width: 0;
-      left: -17px;
-      bottom: 0px;
-      position: absolute; }
   .wrapper h2, .wrapper h3, .wrapper h3, .wrapper h4, .wrapper h5, .wrapper h6 {
     position: relative;
     overflow: auto;
     font-family: UbuntuBold;
-    font-weight: normal;
-    color: #999999; }
+    font-weight: normal; }
   .wrapper h2, .wrapper h3 {
     font-size: 2em; }
   .wrapper h3 {
@@ -1016,8 +773,7 @@ p.separate {
       .wrapper #main .content .icon {
         padding-right: 20px !important; }
       .wrapper #main .content p .highlight {
-        font-size: 9px;
-        padding: 1px 5px;
+        padding: 1px 2px;
         margin-top: 0;
         float: none; }
       .wrapper #main .content h3 a.sub-header, .wrapper #main .content h2 a.sub-header {
@@ -1255,9 +1011,6 @@ p.separate {
   color: darkred; }
 .accounts .blue {
   background-color: #001a39; }
-.accounts .games {
-  color: #FFF;
-  font-size: 16px; }
 .accounts .profile-wrapper p.fine {
   font-size: 12px;
   font-style: italic; }
@@ -1287,8 +1040,6 @@ p.separate {
   font-style: italic; }
 .challenges #main .content p {
   margin-bottom: 10px; }
-.challenges #main .content .game-wrapper {
-  margin: 30px auto 0px auto; }
 .challenges #main .content .markers {
   margin-bottom: 25px; }
 .challenges #main .content .othershoes-avatar {
@@ -1315,33 +1066,6 @@ table {
   padding: 5px; }
   .page #main .issues td, .page #main .leaderboard td {
     padding-left: 10px !important; }
-
-.twitter-posts ul {
-  margin: 0px;
-  padding: 0px;
-  font-size: 12px;
-  width: 310px; }
-
-.twitter-posts li {
-  margin: 0px 0px 15px 0px;
-  clear: both;
-  list-style-type: none; }
-
-.twitter-posts li img {
-  float: left;
-  width: 48px;
-  margin: 0px 10px 10px 0px; }
-
-.twitter-posts li a {
-  text-decoration: none;
-  color: #009; }
-
-.modal, .gamemodal {
-  display: none; }
-
-.errorlist {
-  list-style-type: none;
-  padding: 0; }
 
 .errorlist li, .error, .notice, .success {
   padding: 9px;
@@ -1377,21 +1101,12 @@ table {
 .success a {
   color: #264409; }
 
-#ui-datepicker-div {
-  font-size: 75%; }
-
-.bigq {
-  float: left;
-  font-size: 50px;
-  font-weight: bold;
-  line-height: 1;
-  margin: 0 10px 0 0; }
-
 .hidden {
   position: absolute;
   opacity: 0; }
 
 #ui-datepicker-div {
+  font-size: 75%;
   display: none; }
 
 table.activities {
@@ -1514,7 +1229,7 @@ p {
   margin: 0 10px; }
 
 #page_title {
-  margin-left: 10px;
+  padding-left: 10px;
   font-family: UbuntuBold;
   color: black;
   font-weight: normal;
@@ -1571,3 +1286,6 @@ p {
   .attachments iframe {
     width: 320px;
     height: 185px; }
+
+body.communities ul.communities {
+  list-style: none; }

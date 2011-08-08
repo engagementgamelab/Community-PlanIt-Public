@@ -143,7 +143,7 @@ def get_activity(request, id):
         #If the template is None then there wasn't an error so assign the points and redirect
         #Otherwise fall through. Only assign the points if the replay is false, but still redirect
         if replay == False:
-            PointsAssigner.assignAct(request.user, activity)
+            PointsAssigner().assignAct(request.user, activity)
 
         if tmpl == None:
             return HttpResponseRedirect(reverse('missions_mission', args=[activity.mission.slug]))

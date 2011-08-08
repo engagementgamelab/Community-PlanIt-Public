@@ -1,12 +1,16 @@
-import datetime
-from web.missions.models import Mission
-from web.reports.actions import ActivityLogger, PointsAssigner
 from web.challenges.models import Challenge, PlayerChallenge
-from web.player_activities.models import PlayerActivity
-from web.answers.models import Answer
 from web.instances.models import Instance
+from web.player_activities.models import PlayerActivity
+
 # Provides "globals" within the templates to populate things such as the sidebar
 # and other content that was previously only generated in the dashboard.
+#
+# TODO: this should be eliminated in favor of explicitly supplying the info
+# to templates that need it; having variables magically appear in the template
+# context, possibly conflicting with context variables from the view, can be
+# problematic. There are also cases where users may not have profiles or be
+# associated with an instance (non-participatory admin users); they require
+# extra care here to avoid exceptions. JH
 def instance_processor(request):
     if request.user.is_anonymous():
         return {}
