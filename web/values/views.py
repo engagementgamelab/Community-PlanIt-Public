@@ -79,7 +79,7 @@ def detail(request, id):
 
             PointsAssigner().assign(request.user, 'comment_created')
             log_url = reverse('values_detail', args=[id]) + '#comment-' + str(comment.pk)
-            ActivityLogger.log(request.user, request, 'to value', 'added comment', log_url, 'value')
+            ActivityLogger().log(request.user, request, 'to value: ' + value.message, 'added comment', log_url, 'value')
             return HttpResponseRedirect(reverse('values_detail', args=[id]))
 
     values = Value.objects.filter(instance=request.user.get_profile().instance)
@@ -110,7 +110,7 @@ def spend(request, id):
         profile.save()
         
         log_url = reverse('values_detail', args=[id])
-        ActivityLogger.log(request.user, request, 'on value', 'spent token', log_url, 'value')
+        ActivityLogger().log(request.user, request, 'on value: ' + value.message, 'spent token', log_url, 'value')
     else:
         messages.info(request, 'No coins available to spend')
     
@@ -134,7 +134,7 @@ def take(request, id):
         profile.save()
     
         log_url = reverse('values_detail', args=[id])
-        ActivityLogger.log(request.user, request, 'on value', 'reclaimed token', log_url, 'value')
+        ActivityLogger().log(request.user, request, 'from value: ' + value.message, 'reclaimed token', log_url, 'value')
     else:
         messages.info(request, 'No coins available to take')
         
