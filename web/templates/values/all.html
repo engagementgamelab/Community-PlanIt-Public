@@ -263,7 +263,7 @@
                         show: true,
                         radius: 1/2,
                         formatter: function(label, series) {
-                            var output = '<div style="font-size:small;text-align:center;padding:2px;color:black;">' + label;
+                            var output = '<div style="font-size:.8em;text-align:center;color:black;">' + label;
                             {% if community_spent > 0 %}
                             output += '<br/>'+Math.round(series.percent)+'%</div>';
                             {% endif %}
@@ -299,7 +299,7 @@
                         show: true,
                         radius: 1/2,
                         formatter: function(label, series) {
-                            var output = '<div style="font-size:small;text-align:center;padding:2px;color:black;">' + label;
+                            var output = '<div style="font-size:.8em;text-align:center;color:black;">' + label;
                             {% if player_spent > 0 %}
                             output += '<br/>'+Math.round(series.percent)+'%</div>';
                             {% endif %}
