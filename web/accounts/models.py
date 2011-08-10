@@ -114,7 +114,7 @@ class UserProfile(models.Model):
         verbose_name_plural = "User Profiles"
 
     def __unicode__(self):
-        return self.user.email[:25] +"'s Profile"
+        return self.user.email +"'s Profile"
 
     def screen_name(self):
         #First name and last name are required
@@ -192,26 +192,19 @@ class UserProfileAdmin(UserAdmin):
 
 # Custom hook for adding an anonymous username to the User model.
 def user_pre_save(instance, **kwargs):
-    anon = str(uuid().hex)[:30]
-
     if not instance.username:
-        instance.username = anon
+        instance.username = str(uuid().hex)[:30]
 
 # Custom post save hook for adding group and user profile
 def user_post_save(instance, created, **kwargs):
     if created:
         # Create a user profile for the player and add them to the
         # `Player` group.  Default the player to inactive.
-        try:
-            UserProfile.objects.create(user=instance)
-            instance.groups.add(Group.objects.get(name='Player'))
-            instance.is_active = False
-        
-        # If the Player group is deleted, recreate it.
-        except Group.DoesNotExist:
-            group = Group(name='Player')
-            group.save()
-            instance.groups.add(group)
+        player_group, created = Group.objects.get_or_create(name='Player')
+
+        UserProfile.objects.create(user=instance)
+        instance.is_active = False
+        instance.groups.add(player_group)
 
 models.signals.pre_save.connect(user_pre_save, sender=User)
 models.signals.post_save.connect(user_post_save, sender=User)

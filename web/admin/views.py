@@ -67,7 +67,7 @@ def index(request):
                     body = tmpl.render(Context({'password': form.cleaned_data["admin_temp_pass"],
                                                 'first_name': player.first_name,}))
                 uinfo.save()
-                send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [player.email], fail_silently=True)
+                send_mail(_('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [player.email], fail_silently=True)
                 messages.success(request, _('New admin successfully registered.'))
                 
                 return HttpResponseRedirect(reverse("admin-base"))

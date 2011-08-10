@@ -9,7 +9,7 @@ ADMINS = ( ('Benedict Holland', 'sheepskin505@gmail.com'), )
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 AUTHENTICATION_BACKENDS = ( 'web.accounts.backends.EmailBackend', )
 DEBUG = False
-DEFAULT_FROM_EMAIL = 'webmaster@communityplanit.org'
+DEFAULT_FROM_EMAIL = 'noreply@communityplanit.org'
 DIRNAME = os.path.dirname(__file__)
 
 CACHES = {
@@ -21,7 +21,7 @@ CACHES = {
 
 # DATABASES: complete your database configuration in settings.py
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'web.values',
 
     # 3rd party
+    'django_mailer',
     'gmapsfield',
     'gmapsfield.templatetags',
     'south',
@@ -81,7 +82,7 @@ SERIALIZATION_MODULES = {
     'yaml': "django.core.serializers.pyyaml"
 } 
 
-SERVER_EMAIL = 'webmaster@communityplanit.org'
+SERVER_EMAIL = 'noreply@communityplanit.org'
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 SITE_ID = 1
 

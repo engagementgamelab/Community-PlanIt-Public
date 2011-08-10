@@ -73,13 +73,14 @@ def register(request):
         uinfo.save()
         
         tmpl = loader.get_template('accounts/email/welcome.html')
-        body = tmpl.render(Context({ 'password': password,
-                                    'first_name': firstName }))
+        context = Context({
+            'instance': uinfo.instance,
+            'first_name': firstName
+        })
+        body = tmpl.render(context)
         
-        #the inability to send an email should not stop the registering process
-        #during testing I got a error: [Errno 110] Connection timed out error. -BMH
-        send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=True)
-        messages.success(request, _('Thanks for registering!'))
+        send_mail(_('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
+        messages.success(request, _("Thanks for signing up!"))
         
         return HttpResponseRedirect(reverse('accounts_dashboard'))
 

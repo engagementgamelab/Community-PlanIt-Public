@@ -631,6 +631,8 @@ p.separate {
       width: 20%;
       height: 100%;
       color: white; }
+      .wrapper #main aside a {
+        color: white; }
       .wrapper #main aside .leaderboard {
         padding-bottom: 20px;
         background-repeat: no-repeat;
@@ -649,8 +651,6 @@ p.separate {
         .wrapper #main aside .leaderboard th:first-child {
           color: #def86b;
           text-align: right; }
-        .wrapper #main aside .leaderboard a {
-          color: white; }
         .wrapper #main aside .leaderboard table {
           margin: 0 auto; }
         .wrapper #main aside .leaderboard td {

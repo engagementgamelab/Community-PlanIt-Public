@@ -17,7 +17,7 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(required=True, label=_("Email:"))
     password = forms.CharField(required=True, label=_("Password"), widget=forms.PasswordInput(render_value=False))
     passwordAgain = forms.CharField(required=True, label=_("Password Again"), widget=forms.PasswordInput(render_value=False))
-    instance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Community'))
+    instance = forms.ModelChoiceField(queryset=Instance.objects.active(), required=False, label=_('Community'))
 
     # Ensure that a user has not already registered an account with that email address.
     def clean_email(self):
