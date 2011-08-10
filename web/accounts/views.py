@@ -332,8 +332,8 @@ def dashboard(request):
         instance = Instance.objects.active().latest()
 
     last_mission = None
-    if instance:
-        Mission.objects.filter(instance=instance).latest()
+    if instance and instance.missions.count():
+        last_mission = instance.missions.latest()
 
     page = request.GET.get('page', 1)
     
