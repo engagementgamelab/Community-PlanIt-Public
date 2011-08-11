@@ -85,7 +85,6 @@ p.separate {
 }
 
 .wrapper {
-    background-color: $lightgreen;
     position: relative;
     max-width: 1200px;
     min-width: 960px;
@@ -564,9 +563,24 @@ p.separate {
     }
     
     #main {
-        overflow: auto;
         position: relative;
-        width: 100%;
+        @include clearfix;
+
+        .column2 {
+            position: relative;
+            overflow: hidden;
+            float: left;
+            width: 100%;
+            background-color: $white;
+        }
+
+        .column1 {
+            position: relative;
+            float: left;
+            width: 100%;
+            right: 80%;
+            background-color: $lightgreen;
+        }
 
         .leaderboard-wrapper, .issues-wrapper {
             position: relative;
@@ -594,11 +608,32 @@ p.separate {
             position: relative;
             float: left;
             width: 20%;
-            height: 100%;
+            left: 80%;
             color: $white;
 
             a {
                 color: $white;
+            }
+
+            div {
+                padding: 5px 10px 0 10px;
+            }
+
+            h3 {
+                font-family: YanoneKaffeesatzRegular, Tahoma, Helvetica, Arial, sans-serif;
+                font-size: 1.5em;
+                margin: .5em 0 .25em 0;
+                padding: 0;
+            }
+
+            h4 {
+                margin: .5em 0 0 0;
+            }
+
+            ul {
+                list-style: none;
+                margin: 0;
+                padding: 0 .5em 1em .5em;
             }
 
             .leaderboard {
@@ -653,9 +688,6 @@ p.separate {
             }
 
             .profile {
-                padding: 10px 10px 0 10px;
-                position: relative;
-                color: $white;
                 -moz-box-shadow: inset 0px 0px 4px $darkgray;
                 -webkit-box-shadow: inset 0px 0px 4px $darkgray;
                 -o-box-shadow: inset 0px 0px 4px $darkgray;
@@ -765,6 +797,7 @@ p.separate {
             position: relative;
             float: left;
             width: 80%;
+            left: 80%;
             background-color: $white;
 
             .maincontent {

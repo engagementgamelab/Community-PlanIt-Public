@@ -66,70 +66,76 @@
         </div>
 
         <div id="main">
-            {% block asideholder %}
-            <aside id="sidebar">
-                <div class="profile">
-                {% if user.is_authenticated %}
-                    <div class="pic">
-                        <a href="{% url accounts_profile_edit %}">
-                            {% if user.get_profile.avatar %}
-                            <img class="avatar-large" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}" alt="">
-                            {% else %}
-                            <img class="avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg" alt="">
+            <div class="column2">
+                <div class="column1">
+                    {% block asideholder %}
+                    <aside id="sidebar">
+                        <div class="profile">
+                        {% if user.is_authenticated %}
+                            <div class="pic">
+                                <a href="{% url accounts_profile_edit %}">
+                                    {% if user.get_profile.avatar %}
+                                    <img class="avatar-large" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}" alt="">
+                                    {% else %}
+                                    <img class="avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg" alt="">
+                                    {% endif %}
+                                </a>
+                                <a href="{% url accounts_profile_edit %}">
+                                    Full Profile
+                                </a>
+                            </div>
+                            <div class="details">
+                                <h2 class="profile-name">{{user.get_profile.screen_name}}</h2>
+                                <div>{{user.get_profile.totalPoints|default:"0"}} pts</div>
+                            </div>
+                            <hr class="space"/>
+
+                            {% if instance.is_started %}
+                            {% block aside_progress %}
+                            <div class="score">
+                                <span>{{ user.get_profile.points_to_coin }} pts to your next token!</span>
+                                <div class="fill" style="width:{{user.get_profile.points_to_coin_for_fill}}%;"></div>
+                            </div>
+                            <a href="{% url values %}" class="coins{% if user.get_profile.coins %} has-coins{% endif %}">
+                                <span class="label">Tokens earned:</span> <span class="value">{{user.get_profile.currentCoins}}</span>
+                                <span class="visit">Visit your Token Depot</span>
+                                <div class="clear"></div>
+                            </a>
+                            {% endblock %}
                             {% endif %}
-                        </a>
-                        <a href="{% url accounts_profile_edit %}">
-                            Full Profile
-                        </a>
-                    </div>
-                    <div class="details">
-                        <h2 class="profile-name">{{user.get_profile.screen_name}}</h2>
-                        <div>{{user.get_profile.totalPoints|default:"0"}} pts</div>
-                    </div>
-                    <hr class="space"/>
-
-                    {% if instance.is_started %}
-                    {% block aside_progress %}
-                    <div class="score">
-                        <span>{{ user.get_profile.points_to_coin }} pts to your next token!</span>
-                        <div class="fill" style="width:{{user.get_profile.points_to_coin_for_fill}}%;"></div>
-                    </div>
-                    <a href="{% url values %}" class="coins{% if user.get_profile.coins %} has-coins{% endif %}">
-                        <span class="label">Tokens earned:</span> <span class="value">{{user.get_profile.currentCoins}}</span>
-                        <span class="visit">Visit your Token Depot</span>
+                        {% else %}
+                        {% if instances.active.count %}
+                        <h3>New Player? <a href="{% url accounts_register %}" class="button">Sign Up</a></h3>
+                        {% endif %}
+                        {% endif %}
+                        </div>
                         <div class="clear"></div>
-                    </a>
-                    {% endblock %}
-                    {% endif %}
-                {% else %}
-                <h3>New Player? <a href="{% url accounts_register %}" class="button">Sign Up</a></h3>
-                {% endif %}
-                </div>
-                <div class="clear"></div>
 
-                {% block aside %}
-                {% endblock %}
-            </aside>
-            {% endblock %}
-            <div class="content">
-                {% if messages %}
-                <div id="notifications">
-                    <ul>
-                        {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
-                
-                {% block page_title %}
-                    <h2 id="page_title">Community PlanIT</h2>
-                {% endblock %}
-                <div class="maincontent">
-                {% block main %}{% endblock %}
-                </div>
-                <div class="rightsidebar">
-                    {% block rightsidebar %}{% endblock %}
+                        {% block aside %}
+                        {% endblock %}
+                    </aside>
+                    {% endblock %}
+                    <div class="content">
+                        {% if messages %}
+                        <div id="notifications">
+                            <ul>
+                                {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                        {% block page_title %}
+                            <h2 id="page_title">Community PlanIT</h2>
+                        {% endblock %}
+                        <div class="maincontent">
+                        {% block main %}{% endblock %}
+                        </div>
+                        <div class="rightsidebar">
+                            {% block rightsidebar %}{% endblock %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

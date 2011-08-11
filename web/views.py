@@ -1,17 +1,22 @@
 from django.conf import settings
-from django.views.decorators.cache import never_cache
 from django.http import HttpResponse, HttpResponseServerError
+from django.shortcuts import render_to_response
 from django.template import loader, Context, RequestContext
+from django.views.decorators.cache import never_cache
 
 from django.contrib.sites.models import Site
 
 from web.accounts.views import dashboard
+from web.instances.models import Instance
 
 def index(request):
     # Show index page
     if not request.user.is_authenticated():
-        tmpl = loader.get_template('index.html')
-        return HttpResponse(tmpl.render(RequestContext(request,{})))
+        data = {
+            'instances': Instance.objects.all(),
+        }
+        return render_to_response('index.html', data, context_instance=RequestContext(request))
+
     return dashboard(request)
 
 @never_cache

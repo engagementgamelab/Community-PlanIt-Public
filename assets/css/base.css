@@ -274,7 +274,6 @@ p.separate {
   background-repeat: no-repeat; }
 
 .wrapper {
-  background-color: #869f00;
   position: relative;
   max-width: 1200px;
   min-width: 960px; }
@@ -608,9 +607,27 @@ p.separate {
     margin-right: 10px;
     float: left; }
   .wrapper #main {
-    overflow: auto;
-    position: relative;
-    width: 100%; }
+    position: relative; }
+    .wrapper #main:after {
+      content: ".";
+      display: block;
+      height: 0;
+      clear: both;
+      visibility: hidden; }
+    * html .wrapper #main {
+      height: 1px; }
+    .wrapper #main .column2 {
+      position: relative;
+      overflow: hidden;
+      float: left;
+      width: 100%;
+      background-color: white; }
+    .wrapper #main .column1 {
+      position: relative;
+      float: left;
+      width: 100%;
+      right: 80%;
+      background-color: #869f00; }
     .wrapper #main .leaderboard-wrapper, .wrapper #main .issues-wrapper {
       position: relative;
       top: 30px; }
@@ -629,10 +646,23 @@ p.separate {
       position: relative;
       float: left;
       width: 20%;
-      height: 100%;
+      left: 80%;
       color: white; }
       .wrapper #main aside a {
         color: white; }
+      .wrapper #main aside div {
+        padding: 5px 10px 0 10px; }
+      .wrapper #main aside h3 {
+        font-family: YanoneKaffeesatzRegular, Tahoma, Helvetica, Arial, sans-serif;
+        font-size: 1.5em;
+        margin: .5em 0 .25em 0;
+        padding: 0; }
+      .wrapper #main aside h4 {
+        margin: .5em 0 0 0; }
+      .wrapper #main aside ul {
+        list-style: none;
+        margin: 0;
+        padding: 0 .5em 1em .5em; }
       .wrapper #main aside .leaderboard {
         padding-bottom: 20px;
         background-repeat: no-repeat;
@@ -667,9 +697,6 @@ p.separate {
         background: none;
         color: white; }
       .wrapper #main aside .profile {
-        padding: 10px 10px 0 10px;
-        position: relative;
-        color: white;
         -moz-box-shadow: inset 0px 0px 4px #4c4d4f;
         -webkit-box-shadow: inset 0px 0px 4px #4c4d4f;
         -o-box-shadow: inset 0px 0px 4px #4c4d4f;
@@ -752,6 +779,7 @@ p.separate {
       position: relative;
       float: left;
       width: 80%;
+      left: 80%;
       background-color: white; }
       .wrapper #main .content .maincontent {
         padding: 0 1em 1em 1em;
