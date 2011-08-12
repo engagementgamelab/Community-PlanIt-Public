@@ -619,6 +619,16 @@ p.separate {
                 padding: 5px 10px 0 10px;
             }
 
+            h2 {
+                font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
+                font-size: 1.5em;
+                margin: 0;
+                padding: 0;
+                margin-bottom: 10px;
+                background: none;
+                color: $white;
+            }
+
             h3 {
                 font-family: YanoneKaffeesatzRegular, Tahoma, Helvetica, Arial, sans-serif;
                 font-size: 1.5em;
@@ -628,12 +638,23 @@ p.separate {
 
             h4 {
                 margin: .5em 0 0 0;
+                 
+                a {
+                    padding-right: 20px;
+                    background-image: url(../img/go.png);
+                    background-position: 100% 50%;
+                    background-repeat: no-repeat;
+                }
             }
 
             ul {
                 list-style: none;
                 margin: 0;
                 padding: 0 .5em 1em .5em;
+            }
+
+            .dates {
+                font-size: .8em;
             }
 
             .leaderboard {
@@ -677,16 +698,6 @@ p.separate {
                 }
             }
 
-            h2 {
-                font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
-                font-size: 1.5em;
-                margin: 0;
-                padding: 0;
-                margin-bottom: 10px;
-                background: none;
-                color: $white;
-            }
-
             .profile {
                 -moz-box-shadow: inset 0px 0px 4px $darkgray;
                 -webkit-box-shadow: inset 0px 0px 4px $darkgray;
@@ -696,7 +707,7 @@ p.separate {
 
                 .pic {
                     float: left;
-                    margin-right: 8px;
+                    margin-right: 2px;
                     font-size: .75em;
 
                     img {

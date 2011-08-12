@@ -9,6 +9,9 @@
 
 {% block aside %}
 <div>
+{% if instances.count %}
+<p>Interested in playing? Click on a community below to find out more.</p>
+{% endif %}
 {% if instances.future.count %}
 <h3>Upcoming Communities</h3>
     <ul class="communities">

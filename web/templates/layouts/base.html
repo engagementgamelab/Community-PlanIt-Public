@@ -99,7 +99,6 @@
                             <a href="{% url values %}" class="coins{% if user.get_profile.coins %} has-coins{% endif %}">
                                 <span class="label">Tokens earned:</span> <span class="value">{{user.get_profile.currentCoins}}</span>
                                 <span class="visit">Visit your Token Depot</span>
-                                <div class="clear"></div>
                             </a>
                             {% endblock %}
                             {% endif %}
@@ -109,7 +108,6 @@
                         {% endif %}
                         {% endif %}
                         </div>
-                        <div class="clear"></div>
 
                         {% block aside %}
                         {% endblock %}
