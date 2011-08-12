@@ -5,7 +5,9 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-
+    depends_on = (
+        ("comments", "0001_initial"),
+    )
     def forwards(self, orm):
         
         # Adding model 'Response'
@@ -39,7 +41,6 @@ class Migration(SchemaMigration):
             ('map', self.gf('gmapsfield.fields.GoogleMapsField')()),
             ('type', self.gf('django.db.models.fields.CharField')(default='Point', max_length=260)),
             ('message', self.gf('django.db.models.fields.CharField')(default=' ', max_length=1000)),
-            ('game', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='mapresponse_game', null=True, to=orm['games.Game'])),
         ))
         db.send_create_signal('responses', ['MapResponse'])
 
@@ -162,16 +163,6 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'games.game': {
-            'Meta': {'object_name': 'Game'},
-            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['comments.Comment']", 'null': 'True', 'blank': 'True'}),
-            'game_type': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'mission': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['missions.Mission']"}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '45'})
-        },
         'instances.instance': {
             'Meta': {'object_name': 'Instance'},
             'content': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
@@ -212,7 +203,6 @@ class Migration(SchemaMigration):
         },
         'responses.mapresponse': {
             'Meta': {'object_name': 'MapResponse', '_ormbases': ['responses.Response']},
-            'game': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'mapresponse_game'", 'null': 'True', 'to': "orm['games.Game']"}),
             'map': ('gmapsfield.fields.GoogleMapsField', [], {}),
             'message': ('django.db.models.fields.CharField', [], {'default': "' '", 'max_length': '1000'}),
             'response_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['responses.Response']", 'unique': 'True', 'primary_key': 'True'}),
