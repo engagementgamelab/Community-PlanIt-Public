@@ -1,41 +1,66 @@
 import datetime
+
 from django.db import models
+from django.db.models import Q
+from django.template.defaultfilters import slugify
+from django.utils.safestring import mark_safe
+
 from django.contrib import admin
 from django.contrib.auth.models import User
 
-from django.template.defaultfilters import slugify
-
 from gmapsfield.fields import GoogleMapsField
 from south.modelsinspector import add_introspection_rules
+
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
-#TODO: Worry about time zone issues, look up how to fix that if it needs to be
-#Also test this.
+class InstanceQueryMixin(object):
+    def past(self):
+        return self.filter(end_date__lt=datetime.datetime.now()).order_by('start_date')
 
-#This is the physical data. All FKs are made off of this, but all data
-#can be used through Instance. Look in the instances/management/__init__.py
-#to see the view that is created 
+    def future(self):
+        return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
+
+    def active(self):
+        now = datetime.datetime.now()
+        return self.filter(start_date__lte=now).filter(Q(end_date__isnull=True)|Q(end_date__gte=now)).order_by('start_date')
+
+class InstanceQuerySet(models.query.QuerySet, InstanceQueryMixin):
+    pass
+
+class InstanceManager(models.Manager, InstanceQueryMixin):
+    def get_query_set(self):
+        return InstanceQuerySet(self.model, using=self._db)
+
 class Instance(models.Model):
     name = models.CharField(max_length=45)
-    slug = models.SlugField(editable=False)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=2)
+    slug = models.SlugField(unique=True, editable=False)
     start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
     content = models.TextField(null=True, blank=True)
-    curator = models.ForeignKey(User, default=0, null=True, blank=True)
+    process_name = models.CharField(max_length=255, null=True, blank=True)
+    process_description = models.TextField(null=True, blank=True)
+    curators = models.ManyToManyField(User)
+
+    objects = InstanceManager()
+
+    class Meta:
+        get_latest_by = 'start_date'
+        
+    def __unicode__(self):
+        return self.name
     
-    #This should go into a view, djagno doesn't support views... this is
-    # a terrible thing and honestly, there are so many problems associated
-    # with trying to plug this into a view, that it's just simpler to do this
-    # bad bad, terrbile code - BMH
     def is_active(self):
-        if datetime.datetime.now() >= self.start_date and datetime.datetime.now() <= self.end_date:
+        now = datetime.datetime.now()
+        if now >= self.start_date and (self.end_date is None or now <= self.end_date):
             return True;
         else:
             return False;
         
     def is_expired(self):
-        if datetime.datetime.now() >= self.end_date:
+        if self.end_date and datetime.datetime.now() >= self.end_date:
             return True
         else:
             return False
@@ -49,9 +74,9 @@ class Instance(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super(Instance,self).save()
-        
-    def __unicode__(self):
-        return self.name[:25]
+
+    def coin_count(self):
+        return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
 
 #TODO: Perhaps this should be in it's own project
 class PointsAssignment(models.Model):
@@ -61,27 +86,15 @@ class PointsAssignment(models.Model):
 
     instance = models.ForeignKey(Instance, editable=False)
 
-class PointsAssignmentAdmin(admin.ModelAdmin):
-    list_display = ('action', 'points', 'coins',)
-
-    def save_model(self, request, obj, form, change):
-        obj.instance = request.session.get('admin_instance')
-        obj.save()
-
-    def queryset(self, request):
-        qs = super(PointsAssignmentAdmin, self).queryset(request)
-        return qs.filter(instance=request.session.get('admin_instance'))
-
 class InstanceAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'end_date',)
 
-#TODO: Make sure that this is unit tested upon instance creation! DO IT!
-def instance_post_save(instance, created, **kwargs):
-    if (PointsAssignment.objects.filter(instance=instance).count() == 0):
-        actions = ['challenge_completed', 'mapit_completed', 'thinkfast_completed', 'othershoes_completed', 'profile_completed', 'account_created', 'challenge_created', 'comment_created']
-        for action in actions:
-            p = PointsAssignment(action=action, points=10, instance=instance)
-            p.save()
+class NotificationRequest(models.Model):
+    instance = models.ForeignKey(Instance, related_name='notification_requests')
+    email = models.EmailField()
 
-models.signals.post_save.connect(instance_post_save, sender=Instance)
+    class Meta:
+        unique_together = ['instance', 'email']
 
+    def __unicode__(self):
+        return '{0}: {1}'.format(self.instance, self.email)

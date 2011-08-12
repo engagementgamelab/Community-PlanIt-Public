@@ -4,62 +4,54 @@ from django.db import models
 from django.contrib import admin
 from web.instances.models import Instance
 
-class QuerySetManager(models.Manager):
-    def get_query_set(self):
-        return self.model.QuerySet(self.model)
+class MissionQueryMixin(object):
+    def past(self):
+        return self.filter(end_date__lt=datetime.datetime.now()).order_by('-end_date')
 
-#TODO: Set up a generic foreign key from game to mission, get rid of generic.GenericRelation
-#There is no need for that here.
-#Why does the description field exist if it can be null?
+    def future(self):
+        return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
+
+    def active(self):
+        now = datetime.datetime.now()
+        return self.filter(start_date__lte=now, end_date__gte=now).order_by('start_date')
+
+class MissionQuerySet(models.query.QuerySet, MissionQueryMixin):
+    pass
+
+class MissionManager(models.Manager, MissionQueryMixin):
+    def get_query_set(self):
+        return MissionQuerySet(self.model, using=self._db)
+
 class Mission(models.Model):
+    instance = models.ForeignKey(Instance, related_name='missions')
     name = models.CharField(max_length=45)
     slug = models.SlugField(editable=False)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-
-    video = models.TextField(blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-
-    instance = models.ForeignKey(Instance)
+    description = models.TextField(blank=True)
+    video = models.TextField(blank=True)
     
+    objects = MissionManager()
+
+    class Meta:
+        get_latest_by = 'start_date'
+        
     def is_active(self):
-        if datetime.datetime.now() >= self.start_date and datetime.datetime.now() <= self.end_date:
-            return True;
-        else:
-            return False;
+        now = datetime.datetime.now()
+        return self.start_date <= now and now <= self.end_date
         
     def is_expired(self):
-        if datetime.datetime.now() >= self.end_date:
-            return True
-        else:
-            return False
+        return datetime.datetime.now() > self.end_date
     
     def is_started(self):
-        if datetime.datetime.now() >= self.start_date:
-            return True
-        else:
-            return False
+        return datetime.datetime.now() >= self.start_date
     
-    # Faking out the objects collection to pull from the inner model
-    # class.
-    objects = QuerySetManager()
-
-    class QuerySet(models.query.QuerySet):
-        def past(self):
-            return self.filter(end_date__lte=datetime.datetime.now()).order_by('start_date')
-
-        def future(self):
-            return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
-
-        def current(self):
-            return self.filter(start_date__lte=datetime.datetime.now()).filter(end_date__gt=datetime.datetime.now()).order_by('start_date')
-
     def save(self):
         self.slug = slugify(self.name)
         super(Mission, self).save()
 
     def __unicode__(self):
-        return self.name[:25]
+        return self.name
 
 class MissionAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'end_date', 'instance')

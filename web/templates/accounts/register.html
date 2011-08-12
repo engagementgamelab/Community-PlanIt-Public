@@ -13,24 +13,16 @@
     </p>
     <br>
     <p>
-        <a href="/privacy" target="_blank">View Privacy Policy</a>
+    <a href="{% url privacy %}" target="_blank">View Privacy Policy</a>
     </p>
     <p>
-        <a href="/terms" target="_blank">View Terms of Use</a>
+    <a href="{% url terms %}" target="_blank">View Terms of Use</a>
     </p>
 {%endblock%}
 {%block main%}
     <form action="" method="post">
         {%csrf_token%}
-        <!-- TODO CSS: Fix this to make it less bad from the CSS perspective -->
-        <div class="registerleft"> 
-        	<iframe class="reg-video" src="http://player.vimeo.com/video/15813894?title=0&amp;byline=0&amp;portrait=0" width="400" height="225" frameborder="0"></iframe> 
-        </div>
-        <div style="registerright"> 
-        	{{form.as_p}}
-    	   	<input type="submit" class="button submit" value="Register" />
-	  	</div>
+        {{form.as_p}}
+        <input type="submit" class="button submit" value="Register" />
     </form>
 {%endblock%}
-
-{%block footer%} {%endblock%}

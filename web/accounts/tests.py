@@ -1,10 +1,17 @@
+import tempfile
 import unittest
+
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.contrib.auth.models import User, Group
-from web.accounts.models import UserProfile
 from django.test.client import Client
-from PIL import Image
-from settings import MEDIA_ROOT
+
+from django.contrib.auth.models import User, Group
+
+from PIL import Image, ImageDraw
+
+from web.accounts.models import UserProfile
+
 # For testing Accounts
 # TODO: Testing the registration of users with an instance is tested under
 # challenges. Creation of an instance via the web and directly using models
@@ -83,7 +90,7 @@ class AccountsTestCase(TestCase):
         response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                   "lastName": "new_test", "email": "testLogin@localhost.com"})
         self.assertTrue(response.status_code == 302, "The response status denotes that the user should have been created")
-        response = c.post("/account/login/", {"password": "pass", "email": "testLogin@localhost.com"})
+        response = c.post(reverse('accounts_login'), {"password": "pass", "email": "testLogin@localhost.com"})
         self.assertTrue(response.status_code == 200, "Loged in")
         
     def test_logout(self):
@@ -91,7 +98,7 @@ class AccountsTestCase(TestCase):
         response = c.post("/account/register/", {"password": "pass", "passwordAgain": "pass", "firstName": "new_test",
                                                   "lastName": "new_test", "email": "testLogout@localhost.com"})
         self.assertTrue(response.status_code == 302, "The response status denotes that the user should have been created")
-        response = c.post("/account/login/", {"password": "pass", "email": "testLogout@localhost.com"})
+        response = c.post(reverse('accounts_login'), {"password": "pass", "email": "testLogout@localhost.com"})
         self.assertTrue(response.status_code == 200, "Loged in")
         response = c.post("/account/logout/")
         self.assertTrue(response.status_code == 302, "Loged out")
@@ -103,24 +110,31 @@ class AccountsTestCase(TestCase):
 
         self.assertTrue(response.status_code == 302, "User Created")
         
-        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
-        self.assertTrue(response.status_code == 200, "Loged in")
+        response = c.post(reverse('accounts_login'), {"password": "pass", "email": "testUpload@localhost.com"})
+        self.assertTrue(response.status_code == 200, "Logged in")
         
         user = User.objects.get(email="testUpload@localhost.com")
-        f = open("/home/ben/Desktop/Viconia.jpg", "r")
+        image = Image.new("RGB", (75, 75))
+        draw = ImageDraw.Draw(image)
+        draw.rectangle(((25,25), (50, 50)), fill="#ff0000")
+
+        f = tempfile.NamedTemporaryFile()
+        image.save(f, "PNG")
+        f.seek(0)
+
         response = c.post("/account/profile/edit/", {"avatar": f,
                                                      "user": user, "form": "updated_profile", "email": "testUpload@localhost.com",
                                                      "first_name": "new_test", "last_name": "new_test"} )
-        self.assertTrue(response.status_code==302, "File uploaded")
+        self.assertTrue(response.status_code==302, "File upload failed")
         
         user = User.objects.get(email="testUpload@localhost.com")
         profile = user.get_profile()
         self.assertTrue(profile.avatar != None and profile.avatar != "", "Avatar filename is in the database")
         
         try:
-            img = Image.open("%s%s" % (MEDIA_ROOT, profile.avatar))
+            img = Image.open("%s%s" % (settings.MEDIA_ROOT, profile.avatar))
         except:
-            self.fail("The image at %s%s can not be found or is an invalid image" % (MEDIA_ROOT, profile.avatar))
+            self.fail("The image at %s%s can not be found or is an invalid image" % (settings.MEDIA_ROOT, profile.avatar))
     
     def test_changeGender(self):
         c = Client()
@@ -130,7 +144,7 @@ class AccountsTestCase(TestCase):
         user = User.objects.filter(email="testUpload@localhost.com")
         self.assertTrue(len(user) == 1, "User exists")
         
-        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        response = c.post(reverse('accounts_login'), {"password": "pass", "email": "testUpload@localhost.com"})
         self.assertTrue(response.status_code == 200, "Loged in")
         
         
@@ -147,7 +161,7 @@ class AccountsTestCase(TestCase):
         user = User.objects.filter(email="testUpload@localhost.com")
         self.assertTrue(len(user) == 1, "User exists")
         
-        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        response = c.post(reverse('accounts_login'), {"password": "pass", "email": "testUpload@localhost.com"})
         self.assertTrue(response.status_code == 200, "Loged in")
         
         
@@ -164,7 +178,7 @@ class AccountsTestCase(TestCase):
         user = User.objects.filter(email="testUpload@localhost.com")
         self.assertTrue(len(user) == 1, "User exists")
         
-        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        response = c.post(reverse('accounts_login'), {"password": "pass", "email": "testUpload@localhost.com"})
         self.assertTrue(response.status_code == 200, "Loged in")
         
         
@@ -182,7 +196,7 @@ class AccountsTestCase(TestCase):
         user = User.objects.filter(email="testUpload@localhost.com")
         self.assertTrue(len(user) == 1, "User exists")
         
-        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        response = c.post(reverse('accounts_login'), {"password": "pass", "email": "testUpload@localhost.com"})
         self.assertTrue(response.status_code == 200, "Loged in")
         
         
@@ -199,7 +213,7 @@ class AccountsTestCase(TestCase):
         user = User.objects.filter(email="testUpload@localhost.com")
         self.assertTrue(len(user) == 1, "User exists")
         
-        response = c.post("/account/login/", {"password": "pass", "email": "testUpload@localhost.com"})
+        response = c.post(reverse('accounts_login'), {"password": "pass", "email": "testUpload@localhost.com"})
         self.assertTrue(response.status_code == 200, "Loged in")
         
         

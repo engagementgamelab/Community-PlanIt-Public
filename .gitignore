@@ -4,6 +4,7 @@
 *.sass-cache
 *designs
 
+assets/CACHE
 assets/uploads
 web/settings.py
 data/

@@ -1,198 +1,108 @@
-{%extends "layouts/base.html"%}
-{%load gmap attachment_tags %}
-{%block section%}challenges{%endblock%}
-{%block title%}Challenge{%endblock%}
-{%block page_title%}{%endblock%}
+{% extends "layouts/base.html" %}
+{% load gmap attachment_tags %}
+{% block section %}challenges{% endblock %}
+{% block title %}Challenge{% endblock %}
+{% block page_title %}
+<h2 id="page_title">{{challenge.name}}</h2>
+{% endblock %}
 
-{%block main%}
-    <div class="fourfifth">
-        <h2>
-            {{challenge.name}}
-            {% if completed %}
-                {% if accepted %}
-                    <span class="fine highlight">Completed!</span>
-                {% else %}
-                    <span class="fine highlight">Declined</span>
-                {% endif %}
-            {% endif %}
-        </h2>
-        
-        <h3 class="black">{{challenge.description}}</h3>
+{% block main %}
 
+<p>{{challenge.description}}</p>
 
-        {%if challenge.is_active%}
-            <hr class="space">
-            {%if not playerchallenge_accepted and not completed%}
-                <a class="button" href="/challenge/{{challenge.id}}/accept">I'll do it</a>
-                <a class="button orange" href="/challenge/{{challenge.id}}/decline">No Thanks</a>
-            {%endif%}
-            {% if playerchallenge_accepted %}
-                <a class="button orange" href="/challenge/{{challenge.id}}/decline">No Thanks</a>
-            {% endif %}
-            {% if playerchallenge_decline %}
-                <a class="button" href="/challenge/{{challenge.id}}/accept">I'll do it</a>
-            {% endif %}
-        {%else%}
-            {%if challenge.is_expired%}
-                This challenge has expired.
-            {%else%}
-                This challenge has not yet started.
-            {%endif%}
-        {%endif%}
+<div>
+{% if not challenge.is_active %}
+    {% if challenge.is_expired %}
+        This challenge has expired.
+    {% else %}
+        This challenge has not yet started.
+    {% endif %}
+{% endif %}
+</div>
 
-        <hr class="space">
+{{challenge.map|show}}
 
-        {{challenge.map|show}}
+{% if challenge.is_active and not local_player_challenges.completed %}
+    <p>Provide evidence to complete this challenge:</p>
 
-        <hr class="space">
-        {% if playerchallenge_accepted and not completed %}
-            <h4>You've accepted this challenge</h4>
-            
-            <h3>Provide evidence to complete this challenge:</h3>
-        
-            <div id="comments">
-                <form enctype="multipart/form-data" action="/challenge/{{challenge.id}}/complete/" method="POST">
-                    {%if request.REQUEST.error%}
-                        <span class="error">Please enter a valid comment.</span>
-                    {%endif%}
-
-                    {%csrf_token%}
-                    <div id="attachments">
-                        <div class="controls">
-                            Include <a id="add-video" href="#add-video" class="button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="button small">Picture</a>
-                        </div>
-                        <div class="add-video form">
-                            <label for="yt-url">Paste the URL of your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID.</label>
-                            <textarea name="yt-url" type="text" maxlength="255"></textarea>
-                            <div class="controls">
-                                <button class="button small add">add</button>
-                                <button type="reset" class="button small reset">remove</button>
-                            </div>
-                        </div>
-                        <div class="add-picture form">
-                            <label for="picture">Picture (max size 5MB):</label> <input name="picture" type="file">
-                            <div class="controls">
-                                <button class="button small add">add</button>
-                                <button type="reset" class="button small reset">remove</button>
-                            </div>
-                        </div>
-                        <div class="notification"></div>
-                    </div>
-                    <textarea name="message" class="comment_message" cols="80" rows="6"></textarea>
-                    {{comment_form.message.help_text|safe}}
-                    <button type="submit" class="button submit right">Submit response</button>
-                    <div style="clear: both;"></div>
-                </form>
-            </div>
-            <hr class="space">
-        {%endif%}
-        {%if playerchallenge_all|length%}
-            {%for pc in playerchallenge_all.all%}
-                {%if pc.player.user.get_profile.avatar%}
-                    <img class="avatar" src="{{MEDIA_URL}}/{{pc.player.get_profile.avatar}}">
-                {%else%}               
-                    <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-                {%endif%} 
-                {% if pc.attachments.all %}
-                    <h4>
-                        {{pc.player.get_profile.screen_name}} completed this challenge 
-                        and provided the following evidence
-                    </h4>
-                    <div class="left">
-                    {%for attachment in pc.attachments.all%}
-                        {% if attachment.is_valid %}
-                        <div>
-                            {% if attachment.type == 'video' %}
-                            {% youtube_video attachment.url %}
-                            {% else %}
-                            <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                            {% endif %}
-                        </div>
-                        {% else %}
-                        <div class="notice">This content is currently unavailable.</div>
-                        {% endif %}
-                    {%endfor%}
-                    </div>
-                {% else %}
-                    <h4>
-                        {{pc.player.get_profile.screen_name}} completed this challenge 
-                    </h4>
-                {% endif %}
-                {% if pc.response.message %}
-                <div class="left">
-                    <blockquote>{{pc.response.message}}</blockquote>
-                </div>
-                {% endif %}
-                <div style="clear: both;"></div>
-            {%endfor%}
-        {%else%}
-            <h4>No one has completed this challenge</h4>
-        {%endif%}
-
-        {%if completed%}
-        <!-- Show comments -->
-        <div id="comments">
-            <div class="sleeper"></div>
-            <h4>Comments:</h4>
-            <!-- Add Comment-->
-            {% url challenges_comment challenge.id as comment_post_url %}
-            {%include "comments/post.html"%}
-        </div>
-        {%endif%}
-    </div>
-    <div class="fifth right">
-        <a class="right red normal" href="/flag/challenge/{{challenge.id}}">Flag challenge</a>
-        <hr class="space">
-        <div class="dashboardmodule">
-            <span class="datenum gray">{{challenge.start_date|date:"M"}} {{challenge.start_date|date:"j"}}</span>
-            <span class="fine">{{challenge.start_date|date:"P"}}</span>
-            <h3 class="black">Through</h3>
-            <span class="datenum gray">{{challenge.end_date|date:"M"}} {{challenge.end_date|date:"j"}}</span>
-            <span class="fine">at {{challenge.end_date|date:"P"}}</span>
-        </div>
-        <hr class="space">
-        {% if playerchallenge_accepted|length %}
-            <h3>
-                <span class="highlight">{{playerchallenge_accepted|length}}</span>
-                player{%if playerchallenge_accepted|length > 1%}s{%endif%} {%if playerchallenge_accepted|length > 1%}have{%else%}has{%endif%}
-                accepted this challenge and not yet completed it yet
-            </h3>
-        {% else %}
-            {%if playerchallenge_completed|length%}
-                <h3>Everyone who has accepted this challenge has completed it.</h3>
-            {%else%}
-                <h3>No players have accepted this challenge.</h3>
-            {%endif%}
+    <form class="response" enctype="multipart/form-data" action="{% url challenges_complete challenge.pk %}" method="POST">
+        {% if request.REQUEST.error %}
+            <span class="error">Please enter a valid comment.</span>
         {% endif %}
-        <p>
-        {%for player in playerchallenge_accepted%}
-            {% if not completed %}
-                <a href="/player/{{player.player.id}}">
-                    {%if player.player.get_profile.avatar%}
-                    <img class="avatar" src="{{MEDIA_URL}}/{{player.player.get_profile.avatar}}">
-                    {%else%}
-                        <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-                    {%endif%} 
-                </a>
-            {%endif%}
-        {%endfor%}
-        </p>
 
-        <hr class="space">
+        {% csrf_token %}
+        <div class="attachments">
+            <div class="controls">
+                Include <a id="add-video" href="#add-video" class="add-video button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="add-picture button small">Picture</a>
+            </div>
+            <div class="add-video form">
+                <label for="yt-url">Paste the URL of your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID.</label>
+                <textarea name="yt-url" type="text" maxlength="255"></textarea>
+                <div class="controls">
+                    <button class="button small add">add</button>
+                    <button type="reset" class="button small reset">remove</button>
+                </div>
+            </div>
+            <div class="add-picture form">
+                <label for="picture">Picture (max size 5MB):</label> <input name="picture" type="file">
+                <div class="controls">
+                    <button class="button small add">add</button>
+                    <button type="reset" class="button small reset">remove</button>
+                </div>
+            </div>
+            <div class="notification"></div>
+        </div>
+        <textarea name="message" class="comment_message" cols="80" rows="6"></textarea>
+        {{comment_form.message.help_text|safe}}
+        <button type="submit" class="button submit right">Submit response</button>
+        <div style="clear: both;"></div>
+    </form>
+{% endif %}
+
+{% if challenge.is_started %}
+<h2>Responses</h2>
+
+{% for pc in challenge.player_challenges.completed %}
+<div class="response">
+    <div class="meta">
+    {% if pc.player.user.get_profile.avatar %}
+        <img class="avatar" src="{{MEDIA_URL}}/{{pc.player.get_profile.avatar}}">
+    {% else %}               
+        <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+    {% endif %} 
+        <p>{{pc.player.get_profile.screen_name}} completed this challenge.</p>
     </div>
-    <hr class="space">
-{%endblock%}
+    <div class="main">
+        <div class="attachments">
+        {% for attachment in pc.attachments.all %}
+            {% if attachment.is_valid %}
+            <div>
+                {% if attachment.type == 'video' %}
+                {% youtube_video attachment.url %}
+                {% else %}
+                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="notice">This content is currently unavailable.</div>
+            {% endif %}
+        {% endfor %}
+        </div>
+        <p>{{pc.response.message}}</p>
+    </div>
+</div>
+{% empty %}
+    <p>No one has completed this challenge</p>
+{% endfor %}
+{% endif %}
 
-{%block body%}
-    {%gmap_includes%}
-    <script type="text/javascript">
-        $("#complete").bind("click", function(evt) {
-            evt.preventDefault();
-            
-            // Redirect to complete
-            window.open("complete/", "_self");
+{% url challenges_comment challenge.id as comment_post_url %}
+{% with challenge.comments as comments %}
+{% include "comments/post.html" %}
+{% endwith %}
 
-            return false;
-        });
-    </script>
-{%endblock%}
+{% endblock %}
+
+{% block body %}
+    {% gmap_includes %}
+{% endblock %}

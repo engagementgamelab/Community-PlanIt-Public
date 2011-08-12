@@ -17,15 +17,13 @@
     {%endif%}
 {%endblock%}
 {%block main%}
-    <div class="narrow game-wrapper">
-        <h2>Create new Challenge</h2>
-        <form action="" method="POST">
-            {%csrf_token%}
-            <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
-            {{form.as_p}}
-            <input type="submit" class="button submit" value="Create Challenge">
-        </form>
-    </div>
+    <h2>Create new Challenge</h2>
+    <form action="" method="POST">
+        {%csrf_token%}
+        <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
+        {{form.as_p}}
+        <input type="submit" class="button submit" value="Create Challenge">
+    </form>
 {%endblock%}
     
 {%block body%}
@@ -45,15 +43,8 @@
             $("#id_start_date").datetimepicker({
                 hourGrid: 6,
                 minuteGrid: 10,
-            	ampm: false,
-                onClose: function() {
-                    $("#id_end_date").datetimepicker( 'setDate', Date.parse( $("#id_start_date").val() ).add(1).hours());
-                }
+            	ampm: false
             });
-
-            // Set defaults to the date pickers
-            $("#id_start_date").datetimepicker( 'setDate', Date.now() );
-            $("#id_end_date").datetimepicker( 'setDate', Date.now().add(1).hours() );
         });
     </script>
 {%endblock%}

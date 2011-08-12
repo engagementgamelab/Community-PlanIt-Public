@@ -1,8 +1,13 @@
-import unittest, datetime
+import datetime
+import unittest
+
+from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.contrib.auth.models import User, Group
-from web.accounts.models import UserProfile
 from django.test.client import Client
+
+from django.contrib.auth.models import User, Group
+
+from web.accounts.models import UserProfile
 from web.instances.models import Instance
 
 class ListWebTestCase(TestCase):
@@ -21,8 +26,9 @@ class ListWebTestCase(TestCase):
         instance = Instance(name="Boston", 
                             start_date=datetime.datetime.now(),
                             end_date=datetime.datetime.now() + datetime.timedelta(days=30),
-                            location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}',
-                            curator=self.user1)
+                            location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}')
+        instance.save(commit=False)
+        instance.curators.add(self.user1)
         instance.save()
         self.assertTrue(Instance.objects.all().count() == 1, "The instance was created.")
         self.instance = Instance.objects.all()[0]
@@ -45,9 +51,10 @@ class ListWebTestCase(TestCase):
         profile2.following = [self.user1]
         profile2.save()
         
-    def test_neighborhood(self):
-        response = self.c.get("/list/neighborhood/%s/" % self.instance.slug)
-        self.assertTrue(response.status_code == 200, "The neighborhood link is valid")
+    def test_instance(self):
+        url = reverse('instance', args=[self.instance.slug])
+        response = self.c.get(url)
+        self.assertTrue(response.status_code == 200, "The instance link is valid")
     
     def test_following(self):
         response = self.c.get("/list/following/%s/" % self.user1.id)

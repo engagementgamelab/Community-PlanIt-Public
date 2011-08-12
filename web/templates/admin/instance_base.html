@@ -1,0 +1,50 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>Edit or Create a New Instance</h2>
+    <form action="" method="post">
+        {%csrf_token%}
+        <div class="fieldWrapper">
+            {{ form.instances.errors }}
+            {{ form.instance }}
+            <button type="submit" name="email_btn" id="email_btn" style="display:none">Send Email to all in Instance</button>
+        </div>
+        
+        <label>Or create a new instance</label>
+        <div class="fieldWrapper">
+            {{ form.instance_name.errors }}
+            <label for="id_instance_name">New Instance Name:</label>
+            {{ form.instance_name }}
+        </div>
+        <div>
+            <input type="submit" name="submit_btn" value="Submit" />
+            <input type="submit" name="submit_btn" value="Cancel" />
+        </div>
+    </form>
+{%endblock%}
+
+{%block body%}
+    <script>
+        function instanceChange() {
+            if (document.getElementById("id_instance").value != "0")
+            {
+                document.getElementById("email_btn").style.display = "";
+            }
+            if (document.getElementById("id_instance").value == "0")
+            {
+                document.getElementById("email_btn").style.display = "none";
+            }
+        }
+        $(document).ready(function() {
+            if (document.getElementById("id_instance").value != "0")
+            {
+                document.getElementById("email_btn").style.display = "";
+            }
+            $('#id_instance').change(instanceChange);
+        });
+    </script>
+{%endblock%}

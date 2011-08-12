@@ -1,0 +1,30 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>The Administration Pages</h2>
+    <label>Please make a selection below to create or edit</label>
+    <form method="get" action="{% url instance-base %}">
+        {%csrf_token%}
+        <input type="submit" value="Instances" />
+    </form>
+    
+    <form method="get" action="{% url value-base %}">
+        {%csrf_token%}
+        <input type="submit" value="Values" />
+    </form>
+    
+    <form method="get" action="/admin/mission">
+        {%csrf_token%}
+        <input type="submit" value="Missions" />
+    </form>
+    
+    <form method="get" action="/admin/activity">
+        {%csrf_token%}
+        <input type="submit" value="Activities" />
+    </form>
+
+{%endblock%}

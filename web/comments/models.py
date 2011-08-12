@@ -1,11 +1,12 @@
-from web.instances.models import Instance
-from web.attachments.models import Attachment
-from django.contrib.auth.models import User
-
 from django.db import models
 
 from nani import admin
 from nani.models import TranslatableModel, TranslatedFields
+from django.contrib import admin
+from django.contrib.auth.models import User
+
+from web.attachments.models import Attachment
+from web.instances.models import Instance
 
 #Change flagged to either a bitfield or change to flaggedBy and link a foreign key to a user. 
 #TODO: Make foreign keys to each object that the Comment can be referenced from.
@@ -17,8 +18,8 @@ class Comment(TranslatableModel):
     hidden = models.BooleanField(default=False)
 
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
-    user = models.ForeignKey(User, null=True, editable=False)
-    instance = models.ForeignKey(Instance, null=True, editable=False)
+    user = models.ForeignKey(User, editable=False)
+    instance = models.ForeignKey(Instance, editable=False, related_name='comments')
     comments = models.ManyToManyField('self', symmetrical=False, blank=True, editable=False)
     likes = models.ManyToManyField(User, blank=True, editable=False, related_name='liked_comments')
 

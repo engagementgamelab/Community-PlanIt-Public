@@ -1,0 +1,81 @@
+{%extends "layouts/base.html"%}
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    
+    <form action="{% url value-initial %}" method="post">
+        <input type="hidden" id="instance_id" name="instance_id" value="{{instance.id}}">
+        {%csrf_token%}
+        <h2>The Planning Process</h2>
+        <label>
+            Now we need some more information about the planning process in which your
+            community will participate. This information will be displayed on your game’s home
+            screen to remind participants of the planning process and its goals.
+        </label>
+        <ol>
+            <li>
+                What is the official name of your planning process that will utilize Community PlanIt?
+                Please keep your title succinct. (Ex. “Lowell Sustainability Week” or “Chinatown Master Plan.”)
+                <br>
+                <div class="fieldWrapper">
+                    {{ form.process_name.errors }}
+                    <span style="font-size:1.25em;">Process Name:</span>
+                    {{ form.process_name }}
+                </div>
+            </li>
+            <li>
+                In a short paragraph, describe the planning process, its goals, and how participation
+                in this process through Community PlanIt will impact its outcomes. Please keep your
+                paragraph between 100–200 words.
+                <br>                    
+                (Ex. As part of Chinatown’s master planning process—a process that helps set the
+                community’s development priorities for the next ten years—we are asking for your input
+                and knowledge. Each week, we invite you to complete one mission to help us make
+                the best possible future for Chinatown. Each mission explores one of the community’s
+                priorities—from Open Space to Housing Choice. Please lend your voice and be heard by
+                fellow community members and decision-makers—and help shape the master plan. Our
+                game will culminate in a gathering of players, public officials, and planners on Friday,
+                June 13, at 7:30 p.m. at the Asian Community Development Corporation to discuss the
+                results.)
+                <div class="fieldWrapper">
+                    {{ form.process_description.errors }}
+                    <span style="font-size:1.25em;">Process Description:</span>
+                    {{ form.process_description }}
+                </div>
+            </li>
+        </ol>
+        
+        <button type="submit" id="submit_btn" name="submit_btn">Submit</button>
+    </form>
+
+{%endblock%}
+
+{%block body%}
+    <script src="http://maps.google.com/maps/api/js?sensor=false&libraries=places" type="text/javascript"></script>
+    <script type="text/javascript" src="/admin/gmapsfield/admin/admin.js"></script>
+    <script src="{{MEDIA_URL}}js/games/mapit.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{MEDIA_URL}}3pty/js/date.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        jQuery(function($) {
+            $(".google-map").mapit({{location|safe|escape}});
+            $(".remove-map").remove();
+    
+            $("#id_end_date").datetimepicker({
+                    hourGrid: 6,
+                    minuteGrid: 10,
+                    ampm: false
+                });
+            
+            $("#id_start_date").datetimepicker({
+                hourGrid: 6,
+                minuteGrid: 10,
+                ampm: false,
+                onClose: function() {
+                    $("#id_end_date").datetimepicker( 'setDate', Date.parse( $("#id_start_date").val() ).add(1).hours());
+                }
+            });
+        });
+    </script>
+{%endblock%}

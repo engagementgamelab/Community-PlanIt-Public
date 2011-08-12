@@ -1,12 +1,17 @@
 Django==1.3
 PIL
 PyYAML
-django_compressor
 gunicorn
 python-magic
 python-memcached
 south
 supervisor
+
+# django-mailer-2 provides asynchronous sending of email,
+# which improves user experience because responses don't have
+# to wait for a SMTP conversation to finish, and errors
+# don't cause exceptions
+git+https://github.com/SmileyChris/django-mailer-2.git
 
 # this fork should be short-lived, if my South
 # introspection rules are accepted upstream

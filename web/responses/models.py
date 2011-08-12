@@ -12,6 +12,3 @@ class Response(models.Model):
 
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
     comments = models.ManyToManyField(Comment, blank=True)
-
-from web.responses.map.models import *
-from web.responses.choices.models import *
