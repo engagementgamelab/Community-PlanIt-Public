@@ -329,7 +329,9 @@ def dashboard(request):
     if profile.instance:
         instance = profile.instance
     elif request.user.is_staff or request.user.is_superuser:
-        instance = Instance.objects.active().latest()
+        instances = Instance.objects.active()
+        if instances.count():
+            instance = instances.latest()
 
     last_mission = None
     if instance and instance.missions.count():
