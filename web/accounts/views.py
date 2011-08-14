@@ -314,6 +314,7 @@ def follow(request, id):
 
     return HttpResponseRedirect('/player/'+ str(id))
 
+@login_required
 def unfollow(request, id):
     request.user.get_profile().following.remove( User.objects.get(id=id) )
 
