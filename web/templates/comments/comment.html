@@ -15,7 +15,7 @@
             </div>
             {% endif %}
             On {{comment.posted_date|date:"F j, Y"}} at {{comment.posted_date|date:"g:i a"}},
-            <a href="{% url accounts_profile comment.user.id %}/">{{comment.user.get_profile.screen_name}}</a>
+            <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a>
             wrote:
         </div>
         <div class="message">

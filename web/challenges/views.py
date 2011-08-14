@@ -68,9 +68,6 @@ def complete(request, id):
 
                 b.save()
 
-            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges_challenge', args=[id]), 'challenge')
-            PointsAssigner().assign(request.user, 'challenge_completed')
-
             if a:
                 pc.attachments.add(a)
                 pc.save()
@@ -84,6 +81,17 @@ def complete(request, id):
             
             pc.completed = True
             pc.save()
+
+            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges_challenge', args=[id]), 'challenge')
+            PointsAssigner().assign(request.user, 'challenge_completed')
+
+            if pc.player != challenge.user:
+                message = "%s completed %s" % (
+                    request.user.get_profile().screen_name,
+                    challenge.name
+                )
+                challenge.user.notifications.create(content_object=challenge, message=message)
+
             return HttpResponseRedirect(reverse('challenges'))
 
     return HttpResponseRedirect(reverse('challenges_challenge', args=[id]))

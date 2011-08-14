@@ -1,12 +1,17 @@
 import datetime
-from web.instances.models import Instance
+
+from django.db import models
+
+from django.contrib import admin
+from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
+
+from gmapsfield.fields import GoogleMapsField
+
 from web.attachments.models import Attachment
 from web.comments.models import Comment
+from web.instances.models import Instance
 from web.responses.comment.models import CommentResponse
-from gmapsfield.fields import GoogleMapsField
-from django.contrib.auth.models import User
-from django.db import models
-from django.contrib import admin
 
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
@@ -41,13 +46,17 @@ class Challenge(models.Model):
     instance = models.ForeignKey(Instance, related_name='challenges')
     user = models.ForeignKey(User, editable=False)
     attachments = models.ManyToManyField(Attachment, blank=True)
-    comments = models.ManyToManyField(Comment, blank=True)
+    comments = generic.GenericRelation(Comment)
     game_type = models.CharField(max_length=45, editable=False)
 
     objects = ChallengeManager()
 
     class Meta:
         ordering = ['start_date']
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('challenges_challenge', [str(self.id)])
     
     def is_active(self):
         now = datetime.datetime.now()
@@ -130,7 +139,7 @@ class PlayerChallenge(models.Model):
     response_type = models.CharField(max_length=30, blank=True, null=True)
 
     attachments = models.ManyToManyField(Attachment, blank=True, null=True)
-    response = models.ForeignKey(CommentResponse, null=True, blank=True)
+    response = models.OneToOneField(CommentResponse, null=True, blank=True, related_name='player_challenge')
     challenge = models.ForeignKey(Challenge, related_name='player_challenges')
     player = models.ForeignKey(User, related_name='player_challenges')
 

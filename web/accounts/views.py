@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
@@ -17,7 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 
 from web.accounts.forms import *
-from web.accounts.models import UserProfile
+from web.accounts.models import Notification, UserProfile
 from web.answers.models import Answer
 from web.challenges.models import Challenge, PlayerChallenge
 from web.comments.forms import CommentForm
@@ -51,6 +52,34 @@ def validate_and_generate(base_form, request, callback):
                 lastName = form.cleaned_data['lastName']
             return callback(firstName, lastName, email, password, form)
     return form
+
+@login_required
+def notifications(request):
+    notifications = Notification.objects.filter(user=request.user)
+    paginator = Paginator(notifications, 5)
+
+    page = request.GET.get('page', 1)
+    notifications_page = paginator.page(page)
+
+    data = {
+        'paginator': paginator,
+        'notifications_page': notifications_page,
+    }
+
+    if request.user.get_profile().instance:
+        data['instance'] = request.user.get_profile().instance
+
+    for notification in notifications_page.object_list:
+        if notification.read == False:
+            notification.unread = True
+        notification.read = True
+        notification.save()
+
+    return render_to_response(
+        'accounts/notifications.html',
+        data,
+        context_instance=RequestContext(request)
+    )
 
 def register(request):
     def valid(firstName, lastName, email, password, form):
@@ -231,19 +260,27 @@ def edit(request):
 
 @login_required
 def profile(request, id):
-    player = User.objects.get(id=id)
+    player = get_object_or_404(User, id=id)
+    profile = player.get_profile()
     
-    instance = player.get_profile().instance
+    instance = profile.instance
     log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]
 
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
-            comment = player.get_profile().comments.create(
+            comment = profile.comments.create(
+                content_object=profile,
                 message=comment_form.cleaned_data['message'], 
                 user=request.user,
                 instance=instance,
             )
+
+            if request.user != player:
+                message = "%s commented on your profile" % (
+                    request.user.get_profile().screen_name
+                )
+                player.notifications.create(content_object=profile, message=message)
 
             if request.POST.has_key('yt-url'):
                 url = request.POST.get('yt-url')
@@ -253,14 +290,14 @@ def profile(request, id):
                         url=url,
                         type='video',
                         user=request.user,
-                        instance=request.user.get_profile().instance,
+                        instance=instance
                     )
 
             if request.FILES.has_key('picture'):
                 comment.attachment.create(
                     file=request.FILES.get('picture'),
                     user=request.user,
-                    instance=request.user.get_profile().instance,
+                    instance=instance
                 )
 
             return HttpResponseRedirect(reverse('accounts_profile', args=[id]))
@@ -300,6 +337,7 @@ def profile(request, id):
     tmpl = loader.get_template('accounts/profile.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'player': player,
+        'instance': instance,
         'followingme': followingme,
         'log': log,
         'total_playerCoins': total_playerCoins,

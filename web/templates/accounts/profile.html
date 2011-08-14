@@ -1,66 +1,69 @@
-{%extends "layouts/base.html"%}
+{% extends "layouts/base.html" %}
 
-{%block section%}accounts{%endblock%}
+{% block section %}accounts{% endblock %}
 
-{%block title%}Dashboard{%endblock%}
-{%block page_title%} {{player.get_profile.screen_name}} {%endblock%}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}
+<h2 id="page_title">{{player.get_profile.screen_name}}</h2>
+{% endblock %}
 
-{%block main%}
-    <h2>
-        {%if request.user and not player == request.user and not request.user.username = ''%}
-            {%if player not in request.user.get_profile.following.all%}
+{% block main %}
+    <div>
+        {% if request.user and not player == request.user and not request.user.username = '' %}
+            {% if player not in request.user.get_profile.following.all %}
             <a class="button" href="{% url player_follow player.id %}">Follow</a>
-            {%else%}
+            {% else %}
             <a class="button" href="{% url player_unfollow player.id %}">Unfollow</a>
-            {%endif%}
-        {%endif%}
-
-    </h2>
+            {% endif %}
+        {% endif %}
+    </div>
     <p class="highlighted">
-        {%if player.get_profile.avatar%}
+        {% if player.get_profile.avatar %}
             <img class="left avatar-large" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}">
-        {%else%}
+        {% else %}
             <img class="left avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-        {%endif%} 
+        {% endif %} 
         <!--Lives in East Boston, works in Fort Point and Plays in Fort Point.-->
-        <span style="font-size: 1em">Points: {{player.get_profile.points}}</span><br>
+        <span style="font-size: 1em">Points: {{player.get_profile.totalPoints}}</span><br>
         <span style="font-size: 1em">Community Stake: {{player.get_profile.stake}}</span><br>
+        {% if player.get_profile.affiliations %}
         <span style="font-size: 1em">Affiliated With:
-            {%for a in player.get_profile.affiliations_csv %} 
+            {% for a in player.get_profile.affiliations_csv %} 
             <a href="{% url affiliations_affiliation a %}" class="highlight">{{a}}</a>
-            {%endfor%}
+            {% endfor %}
         </span>
+        {% endif %}
     </p>    
     <hr class="clear">
     <div class="twothird">
-        <h3>Your coin spending</h3>
+        <h3>Token spending</h3>
         <div id="userPie" class="graph" style="width:350px;height:300px; margin-right:auto; 
             margin-top: 25px; margin-bottom: 25px; "></div>
             
         <h3>{{player.get_profile.screen_name}}'s Activity Log</h3>
-        {%if log|length%}
+        {% if log|length %}
         <ul class="listless listview feed">
-            {%for activity in log%}
+            {% for activity in log %}
             <li class="listitem {{activity.type}}">
-                {%if activity.user.get_profile.avatar%}
+                {% if activity.user.get_profile.avatar %}
                     <img class="avatar" src="{{MEDIA_URL}}/{{activity.user.get_profile.avatar}}">
-                {%else%}               
+                {% else %}               
                     <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-                {%endif%} 
+                {% endif %} 
                 <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
                 {{activity.data}} 
-                {%if activity.url%}
+                {% if activity.url %}
                     <a href="{{activity.url}}">{{activity.action}}</a>
-                {%else%}
+                {% else %}
                     {{activity.action}}
-                {%endif%}
+                {% endif %}
                 <div class="timestamp fine">{{activity.date|date:"F j, Y, g:i a"}}</div>
             </li>
-            {%endfor%}
+            {% endfor %}
         </ul>
-        {%else%}
+        {% else %}
             No activities created.   
-        {%endif%}
+        {% endif %}
     </div>
     
     <div class="third last">        
@@ -70,17 +73,17 @@
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
                         <hr class="space">
-                        {%if player.get_profile.following.all %}
+                        {% if player.get_profile.following.all %}
                           {% for player in player.get_profile.following.all %}
-                              {%if player.get_profile.avatar %}
+                              {% if player.get_profile.avatar %}
                               <a href="{% url accounts_profile player.id %}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
-                              {%else%}               
+                              {% else %}               
                               <a href="{% url accounts_profile player.id %}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
-                              {%endif%} 
-                          {%endfor%}
-                        {%else%}
-                           {{player.get_profile.first_name}} is not following anyone.
-                        {%endif%} 
+                              {% endif %} 
+                          {% endfor %}
+                        {% else %}
+                           {{player.get_profile.screen_name}} is not following anyone.
+                        {% endif %} 
                     </div>
     
                     <div style="clear:both;"></div>
@@ -94,17 +97,17 @@
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
                         <hr class="space">
-                        {%if followingme %}
+                        {% if followingme %}
                           {% for player in followingme %}
-                              {%if player.get_profile.avatar %}
+                              {% if player.get_profile.avatar %}
                               <a href="{% url accounts_profile player.id %}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
-                              {%else%}               
+                              {% else %}               
                               <a href="{% url accounts_profile player.id %}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
-                              {%endif%} 
-                          {%endfor%}
-                        {%else%}
-                           {{player.get_profile.first_name}} is not following anyone.
-                        {%endif%} 
+                              {% endif %} 
+                          {% endfor %}
+                        {% else %}
+                           {{player.get_profile.screen_name}} has no followers.
+                        {% endif %} 
                     </div>
     
                     <div style="clear:both;"></div>
@@ -120,11 +123,9 @@
     <div style="clear: both; padding: 1em 0;"></div>
     <div id="comments">
         <h4>Comments for {{player.get_profile.screen_name}}</h4>
-        <ul class="listless comments">
-            {% with player.get_profile as comments %}
-            {%include "comments/post.html"%}
-            {% endwith %}
-        </ul>
+        {% with player.get_profile.comments as comments %}
+        {% include "comments/post.html" %}
+        {% endwith %}
         <div style="clear: both;"></div>
     </div>
 
@@ -135,17 +136,17 @@
         
         var userData = [];
         i = 0;
-        {%if total_playerCoins == 0 %}
-            {%for wrapper in value_wrapper%}
+        {% if total_playerCoins == 0 %}
+            {% for wrapper in value_wrapper %}
                 userData[i] = { label: "{{ wrapper.value.message }}", data: 1 }
                 i++;
-            {%endfor%}
-        {%else%}
-            {%for wrapper in value_wrapper%}
+            {% endfor %}
+        {% else %}
+            {% for wrapper in value_wrapper %}
                 userData[i] = { label: "{{ wrapper.value.message }}", data: {{ wrapper.player_coins }} }
                 i++;
-            {%endfor%}
-        {%endif%}
+            {% endfor %}
+        {% endif %}
          
         $.plot($("#userPie"), userData, {
             series: { 
@@ -170,4 +171,4 @@
     });
     
 </script>    
-{%endblock%}
+{% endblock %}

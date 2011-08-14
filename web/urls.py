@@ -53,9 +53,9 @@ urlpatterns = patterns('',
         name='terms'
     ),
 
-    url(r'^player/follow/(?P<id>.*)/$', 'web.accounts.views.follow', name="player_follow"),
-    url(r'^player/unfollow/(?P<id>.*)/$', 'web.accounts.views.unfollow', name="player_unfollow"),
-    url(r'^player/(?P<id>.*)/$', 'web.accounts.views.profile', name='accounts_profile'),
+    url(r'^player/follow/(?P<id>\d+)/$', 'web.accounts.views.follow', name="player_follow"),
+    url(r'^player/unfollow/(?P<id>\d+)/$', 'web.accounts.views.unfollow', name="player_unfollow"),
+    url(r'^player/(?P<id>\d+)/$', 'web.accounts.views.profile', name='accounts_profile'),
 
     url(r'^dashboard/$', 'web.views.index', name='dashboard'),
     (r'^accounts/', include('web.accounts.urls')),
@@ -68,6 +68,9 @@ urlpatterns = patterns('',
     (r'^lists/', include('web.lists.urls')),
     (r'^flags/', include('web.flags.urls')),
     (r"^activities/", include("web.player_activities.urls")),
+
+    # generic content redirect, used for comments and notifications
+    url(r'^gr/(\d+)/(.+)/$', 'django.contrib.contenttypes.views.shortcut', name='generic_redirect'),
 
     # Admin stuff
     (r'^curator/', include('web.curator.urls')),

@@ -150,6 +150,15 @@ jQuery(function($) {
         form.slideUp(200);
     });
 
+    if (window.location.hash.search(/^#comment-/) != -1) {
+        $(window.location.hash).parents('.replies').show();
+        $(window.location.hash).parents('.comment').find('.closed').hide();
+        $(window.location.hash).parents('.comment').find('.open').show();
+        $('.replies', window.location.hash).hide();
+        $('.open', window.location.hash).hide();
+        $('.closed', window.location.hash).show();
+    }
+
     // Game Points earned modal
     $('.gamemodal').dialog({
         title: 'Hey Player!',

@@ -227,7 +227,7 @@
         var globalData = [];
         var i = 0;
         {% if community_spent == 0 %}
-        globalData[i] = { label: "No coins have been spent.", data: 1 }
+        globalData[i] = { label: "No tokens have been spent.", data: 1 }
         {% else %}
         {% for wrapper in value_wrapper %}
         globalData[i] = {
@@ -241,7 +241,7 @@
         var userData = [];
         i = 0;
         {% if player_spent == 0 %}
-        userData[i] = { label: "You haven't spent any coins yet.", data: 1 }
+        userData[i] = { label: "You haven't spent any tokens yet.", data: 1 }
         i++;
         {% else %}
             {% for wrapper in value_wrapper %}

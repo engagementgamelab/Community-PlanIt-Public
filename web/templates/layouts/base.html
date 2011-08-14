@@ -96,8 +96,8 @@
                                 <span>{{ user.get_profile.points_to_coin }} pts to your next token!</span>
                                 <div class="fill" style="width:{{user.get_profile.points_to_coin_for_fill}}%;"></div>
                             </div>
-                            <a href="{% url values %}" class="coins{% if user.get_profile.coins %} has-coins{% endif %}">
-                                <span class="label">Tokens earned:</span> <span class="value">{{user.get_profile.currentCoins}}</span>
+                            <a href="{% url values %}" class="tokens{% if user.get_profile.coins %} has-tokens{% endif %}">
+                                <span class="label">Tokens to spend:</span> <span class="value">{{user.get_profile.currentCoins}}</span>
                                 <span class="visit">Visit your Token Depot</span>
                             </a>
                             {% endblock %}
@@ -109,19 +109,26 @@
                         {% endif %}
                         </div>
 
+                        {% if user.is_authenticated %}
+                        <div class="notifications">
+                            <a href="{% url accounts_notifications %}">
+                                <span class="count">{{user.notifications.unread.count|default:"no"}}</span>
+                                new notification{{user.notifications.unread.count|pluralize}}
+                            </a>
+                        </div>
+                        {% endif %}
+
                         {% block aside %}
                         {% endblock %}
                     </aside>
                     {% endblock %}
                     <div class="content">
                         {% if messages %}
-                        <div id="notifications">
-                            <ul>
-                                {% for message in messages %}
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                        <ul id="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
                         {% endif %}
                         
                         {% block page_title %}

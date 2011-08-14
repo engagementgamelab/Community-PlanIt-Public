@@ -1,15 +1,20 @@
+import datetime
+
 from django.db import models
+
 from django.contrib import admin
 from django.contrib.auth.models import User
-from web.instances.models import Instance
+
 from gmapsfield.fields import GoogleMapsField
+
+from web.instances.models import Instance
 
 class Activity(models.Model):
     action = models.CharField(max_length=48)
     data = models.TextField()
     url = models.URLField(blank=True, null=True)
     location = GoogleMapsField(blank=True, null=True) # Make editable false
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=datetime.datetime.now)
     type = models.CharField(max_length=255)
 
     user = models.ForeignKey(User, blank=True, null=True)
