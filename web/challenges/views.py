@@ -213,6 +213,13 @@ def comment(request, id):
 
             PointsAssigner().assign(request.user, 'comment_created')
             ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name, 'added comment', reverse('challenges_challenge', args=[id]), 'challenge')
+
+            if request.user != challenge.user:
+                message = "%s commented on %s" % (
+                    request.user.get_profile().screen_name,
+                    challenge
+                )
+                challenge.user.notifications.create(content_object=challenge, message=message)
         else:
             return HttpResponseRedirect(reverse('challenges_challenge', args=[id]) +'?error=true')
 
