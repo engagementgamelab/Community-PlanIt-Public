@@ -1,10 +1,10 @@
 import datetime
 import re
 
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import get_object_or_404
-from django.template import Context, RequestContext, loader
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404, render_to_response
+from django.template import Context, RequestContext, loader
 
 from django.contrib.auth.decorators import login_required
 
@@ -19,82 +19,63 @@ from web.responses.comment.forms import CommentAttachmentResponseForm
 @login_required
 def fetch(request, id):
     challenge = get_object_or_404(Challenge, id=id)
-    local_player_challenges = challenge.player_challenges.filter(player=request.user)
-
-    if local_player_challenges.accepted().count():
-        pc = local_player_challenges.accepted()[0]
-        carf = CommentAttachmentResponseForm(instance=pc.response)
-    else:
-        carf = None
-
-    tmpl = loader.get_template('challenges/base.html')
-    return HttpResponse(tmpl.render(RequestContext(request, {
-        'challenge': challenge,
-        'local_player_challenges': local_player_challenges,
-        'comment_form': CommentForm(),
-        'response_form': carf,
-    },[ip])))
-
-@login_required
-def complete(request, id):
-    challenge = Challenge.objects.get(id=id)
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-
-    a = None
-    b = None
 
     if request.method == 'POST':
         if not pc.completed:
             carf = CommentAttachmentResponseForm(request.POST)
+            if carf.is_valid():
+                pc.response = carf.save()
+                pc.completed = True
+                pc.save()
 
-            if request.POST.has_key('yt-url'):
-                if request.POST.get('yt-url'):
-                    a = Attachment(
-                        file=None,
-                        url=request.POST.get('yt-url'),
-                        type='video',
+                ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges_challenge', args=[id]), 'challenge')
+                PointsAssigner().assign(request.user, 'challenge_completed')
+
+                if pc.player != challenge.user:
+                    message = "%s completed %s" % (
+                        request.user.get_profile().screen_name,
+                        challenge.name
+                    )
+                    challenge.user.notifications.create(content_object=challenge, message=message)
+
+                if request.POST.has_key('yt-url'):
+                    if request.POST.get('yt-url'):
+                        pc.attachments.create(
+                            file=None,
+                            url=request.POST.get('yt-url'),
+                            type='video',
+                            user=request.user,
+                            instance=request.user.get_profile().instance
+                        )
+                
+                if request.FILES.has_key('picture'):
+                    pc.attachments.create(
+                        file=request.FILES.get('picture'),
                         user=request.user,
                         instance=request.user.get_profile().instance
                     )
 
-                    a.save()
-            
-            if request.FILES.has_key('picture'):
-                b = Attachment(
-                    file=request.FILES.get('picture'),
-                    user=request.user,
-                    instance=request.user.get_profile().instance
-                )
+                return HttpResponseRedirect(reverse('challenges_challenge', args=[id]))
+    else:
+        if pc.completed:
+            carf = None
+        else:
+            carf = CommentAttachmentResponseForm(instance=pc.response)
 
-                b.save()
+    data = {
+        'challenge': challenge,
+        'player_challenge': pc,
+        'instance': challenge.instance,
+        'comment_form': CommentForm(),
+        'response_form': carf,
+    }
 
-            if a:
-                pc.attachments.add(a)
-                pc.save()
-
-            if b:
-                pc.attachments.add(b)
-                pc.save()
-
-            if carf.is_valid():
-                pc.response = carf.save()
-            
-            pc.completed = True
-            pc.save()
-
-            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges_challenge', args=[id]), 'challenge')
-            PointsAssigner().assign(request.user, 'challenge_completed')
-
-            if pc.player != challenge.user:
-                message = "%s completed %s" % (
-                    request.user.get_profile().screen_name,
-                    challenge.name
-                )
-                challenge.user.notifications.create(content_object=challenge, message=message)
-
-            return HttpResponseRedirect(reverse('challenges'))
-
-    return HttpResponseRedirect(reverse('challenges_challenge', args=[id]))
+    return render_to_response(
+        'challenges/base.html',
+        data,
+        context_instance=RequestContext(request)
+    )
 
 @login_required
 def accept(request, id):
