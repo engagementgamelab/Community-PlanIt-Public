@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
@@ -313,26 +313,23 @@ def profile(request, id):
         except:
             pass
     
+    values = Value.objects.filter(instance=request.user.get_profile().instance)
+    community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
+    
     value_wrapper = []
-    playervalues = PlayerValue.objects.filter(user=player)
+    player_values = PlayerValue.objects.filter(user=request.user)
     
-    values = Value.objects.filter(instance=instance)
-    total_coins = 0
+    player_spent = player_values.aggregate(Sum('coins'))['coins__sum'] or 0
+
     for value in values:
-        total_coins += value.coins
-    
-    total_playerCoins = 0
-    for value in values:
-        player_value = playervalues.filter(value=value)
-        coins = value.coins
+        player_value = player_values.filter(value=value)
+        coins = float(value.coins)
         if len(player_value) > 0:
-            total_playerCoins += player_value[0].coins
-            # +0.0 coerces to a float for percentages
             value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
-                                  'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })
+                                  'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })
         else:
             value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': 0,
-                                   'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })    
+                                   'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
     
     tmpl = loader.get_template('accounts/profile.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
@@ -341,7 +338,7 @@ def profile(request, id):
         'instance': instance,
         'followingme': followingme,
         'log': log,
-        'total_playerCoins': total_playerCoins,
+        'player_spent': player_spent,
         'value_wrapper': value_wrapper,
     })))
 

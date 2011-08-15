@@ -141,11 +141,9 @@
         
         var userData = [];
         i = 0;
-        {% if total_playerCoins == 0 %}
-            {% for wrapper in value_wrapper %}
-                userData[i] = { label: "{{ wrapper.value.message }}", data: 1 }
-                i++;
-            {% endfor %}
+        {% if player_spent == 0 %}
+        userData[i] = { label: "No tokens spent yet.", data: 1 }
+        i++;
         {% else %}
             {% for wrapper in value_wrapper %}
                 userData[i] = { label: "{{ wrapper.value.message }}", data: {{ wrapper.player_coins }} }
@@ -158,17 +156,32 @@
                 pie: { 
                     show: true,
                     radius: 1,
+                    stroke: {
+                        color: '#FFECD8',
+                        width: 2
+                    },
                     label: {
                         show: true,
-                        radius: 2/3,
+                        radius: 1/2,
                         formatter: function(label, series) {
-                            //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
-                            return '<div style="font-size:small;text-align:center;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                            var output = '<div style="font-size:.8em;text-align:center;color:black;">' + label;
+                            {% if player_spent > 0 %}
+                            output += '<br/>'+Math.round(series.percent)+'%</div>';
+                            {% endif %}
+                            return output;
                         },
                         threshold: 0.1
                     }
                 }
             },
+            colors: [
+                '#3D76A0',
+                '#669933',
+                '#8DDEDB',
+                '#FB9C8F',
+                '#D89BE5',
+                '#F0CB48'
+            ],
             legend: { 
                 show: false
             }
