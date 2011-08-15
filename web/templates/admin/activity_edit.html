@@ -12,7 +12,7 @@
         <input type="hidden" name="instance_id" id="instance_id" value="{{instance.id}}"/>
         
         <div class="fieldWrapper">
-            <label for="id_types">Select Mission:</label>
+            <label for="id_missions">Select Mission:</label>
             <select name="missions" id="id_missions">
                 {% for mission in list_missions %}
                     <option value="{{mission.id}}">{{mission.name}}</option>
@@ -50,7 +50,7 @@
             </div>
             
             <div class="fieldWrapper">
-                <label for="id_types">Missions:</label>
+                <label for="id_missions">Missions:</label>
                 <select name="missions" id="id_missions">
                     {% for mission in list_missions %}
                         <option value="{{mission.id}}">{{mission.name}}</option>
@@ -142,23 +142,28 @@
         function return_values() {
             returns = document.getElementById("returns");
             returns.innerHTML = "";
-            for (x in responseList)
+            type = document.getElementById("id_types").value;
+            if (typeList[type].type == "single_response" || typeList[type].type == "multi_response")
             {
-                response = responseList[x]
-                str = '<input type="hidden" name="index_' + response.location + '_id_' + response.id + '" ';
-                str += 'id="index_' + response.location + '_id_' + response.id + '" ';
-                str += 'value="' + response.value + '"/>';
-                returns.innerHTML += str;
+                for (x in responseList)
+                {
+                    response = responseList[x]
+                    str = '<input type="hidden" name="index_' + response.location + '_id_' + response.id + '" ';
+                    str += 'id="index_' + response.location + '_id_' + response.id + '" ';
+                    str += 'value="' + response.value + '"/>';
+                    returns.innerHTML += str;
+                }
+                
+                for (x in deleteResponseList)
+                {
+                    response = deleteResponseList[x]
+                    str = '<input type="hidden" name="delete_id_' + response.id + '" ';
+                    str += 'id="delete_id_' + response.id + '" ';
+                    str += 'value="' + response.name + '"/>';
+                    returns.innerHTML += str;
+                }
             }
             
-            for (x in deleteResponseList)
-            {
-                response = deleteResponseList[x]
-                str = '<input type="hidden" name="delete_id_' + response.id + '" ';
-                str += 'id="delete_id_' + response.id + '" ';
-                str += 'value="' + response.name + '"/>';
-                returns.innerHTML += str;
-            }
             return true;
         }
         
@@ -295,7 +300,19 @@
             }
             
             if (typeList[activity.type].type == "single_response" || typeList[activity.type].type == "multi_response") {
-                responseList = activity.responses; //set this global to be able to add to it
+                activity_id = parseInt(document.getElementById("activity_id").value);
+                responses = null;
+                if (activity_id == 0)
+                {
+                    activities = missionList[missionElem.value].activities;
+                    responses = activities[activities.length-1].responses;
+                }
+                else
+                {
+                    responses = missionList[missionElem.value].activities[activity_id].responses;
+                }
+                responses[responses.length] = new Response(0, "", responses.length);
+                responseList = responses;
                 displayResponseList();
             }
 
@@ -352,6 +369,7 @@
         }
         
         function changetype(newValue){
+            try {
             document.getElementById("responses_edit").style.display = "None";
             document.getElementById("map_edit").style.display = "None";
             document.getElementById("empathy_edit").style.display = "None";
@@ -366,7 +384,25 @@
             
             if (typeList[newValue].type == "single_response" || typeList[newValue].type == "multi_response") {
                 document.getElementById("responses_edit").style.display = "";
+                missionElem = document.getElementById("id_missions");
+                activity_id = parseInt(document.getElementById("activity_id").value);
+                responses = null;
+                if (activity_id == 0)
+                {
+                    activities = missionList[parseInt(missionElem.value)].activities;
+                    responses = activities[activities.length-1].responses;
+                }
+                else
+                {
+                    responses = missionList[parseInt(missionElem.value)].activities[activity_id].responses;
+                }
+                responses[responses.length] = new Response(0, "", responses.length);
+                responseList = responses;
+                displayResponseList();
             }
+            } catch(err) {
+                alert(err);
+            }    
             return false;
         }
         
@@ -395,6 +431,7 @@
                 responses[x] = new Response({{id}}, "{{value}}", x);
                 x = x + 1;
             {% endfor %}
+            
             //TODO: This causes issues when there are no responses
             //responses[x] = new Response(0, "", x);
             } catch(err) {
