@@ -605,7 +605,6 @@ def actCopy(copyTo, copyFrom):
     copyTo.instructions = copyFrom.instructions
     copyTo.addInstructions = copyFrom.addInstructions
     copyTo.points = copyFrom.points
-    copyTo.attachment = copyFrom.attachment
 
 @login_required
 def activity_save(request):
@@ -642,6 +641,11 @@ def activity_save(request):
                 activity = PlayerActivity()
         else:
             activity = PlayerActivity.objects.get(id=int(request.POST["activity_id"]))
+            
+            
+            if (type.type == "single_response" and activity.type.type != "single_response" or
+                type.type == "multi_response" and activity.type.type != multi_reponse):
+                MultiChoiceActivity.objects.filter(activity=activity).delete()
             
             if type.type == "map":
                 if activity.type.type != "map":
@@ -682,7 +686,7 @@ def activity_save(request):
                 response_id = int(matchDict["response_id"])
                 response = None
                 if response_id != 0:
-                    response = MultiChoiceActivity.objects.get(id=response_id)
+                    response = MultiChoiceActivity.objects.get(pk=response_id)
                 else:
                     response = MultiChoiceActivity()
                     
