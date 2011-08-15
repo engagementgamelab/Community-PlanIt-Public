@@ -48,9 +48,8 @@
             <div class="notification"></div>
         </div>
         <textarea name="message" class="comment_message" cols="80" rows="6"></textarea>
-        {{comment_form.message.help_text|safe}}
+        <div class="fine counter">(<span class="count">1000</span> characters left)</div>
         <button type="submit" class="button right">Add Comment</button>
-        <hr class="space">
     </form>
     {% else %}
     <p>This community is no longer active.</p>

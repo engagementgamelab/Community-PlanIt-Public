@@ -8,6 +8,11 @@
 {% endblock %}
 
 {% block main %}
+    {% if request.user == player %}
+    <div class="right">
+        <a class="button" href="{% url accounts_profile_edit %}">Edit Profile</a>
+    </div>
+    {% endif %}
     <div>
         {% if request.user and not player == request.user and not request.user.username = '' %}
             {% if player not in request.user.get_profile.following.all %}

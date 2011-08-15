@@ -25,7 +25,7 @@ def affiliation(request, affiliation):
         players.append(up.user)
     
     affiliation_leaderboard = []
-    for up in UserProfile.objects.filter(affiliations__contains=affiliation).order_by("-points"):
+    for up in UserProfile.objects.filter(affiliations__contains=affiliation).order_by("-totalPoints"):
         affiliation_leaderboard.append(up.user)
     
     affiliation_points = 0

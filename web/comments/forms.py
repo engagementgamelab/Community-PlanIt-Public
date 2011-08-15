@@ -13,11 +13,7 @@ class CommentForm(forms.Form):
                 'cols': 80,
             }
         ),
-        label='Comment',
-        help_text=(
-            '<div class="fine counter">(<span class="count">1000</span>'
-            ' characters left)</div>'
-        )
+        label='Comment'
     )
 
     def __init__(self, *args, **kwargs):

@@ -301,6 +301,8 @@ def profile(request, id):
                 )
 
             return HttpResponseRedirect(reverse('accounts_profile', args=[id]))
+    else:
+        comment_form = CommentForm()
 
     followingme = []
 
@@ -310,8 +312,6 @@ def profile(request, id):
                 followingme.append(p)
         except:
             pass
-
-    
     
     value_wrapper = []
     playervalues = PlayerValue.objects.filter(user=player)
@@ -337,6 +337,7 @@ def profile(request, id):
     tmpl = loader.get_template('accounts/profile.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'player': player,
+        'comment_form': comment_form,
         'instance': instance,
         'followingme': followingme,
         'log': log,
@@ -348,7 +349,7 @@ def profile(request, id):
 def follow(request, id):
     u = User.objects.get(id=id)
     request.user.get_profile().following.add( u )
-    ActivityLogger().log(request.user, request, u.get_profile().first_name, 'started following', '/player/'+ id, 'profile')
+    ActivityLogger().log(request.user, request, u.get_profile().screen_name, 'started following', '/player/'+ id, 'profile')
 
     return HttpResponseRedirect('/player/'+ str(id))
 

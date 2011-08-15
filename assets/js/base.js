@@ -62,7 +62,7 @@ CPI.sort_comments_by_timestamp = function(evt) {
 jQuery(function($) {
 
     // Ensure "buttons" work 
-    $(".button").live("click", function(evt) {
+    $("a.button").live("click", function(evt) {
         var button = $(this);
         if(button.is(".submit") || button.is("button[type=submit]")) {
             button.closest("form").submit();

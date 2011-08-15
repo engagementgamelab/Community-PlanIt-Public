@@ -205,10 +205,19 @@
                         </td>
                         <td>
                             {% if not instance.is_expired %}
+
+                            {% if user.get_profile.currentCoins > 0 %}
                             <a href="{% url values_spend wrapper.value.id %}" class="button">Spend</a>
+                            {% else %}
+                            <div class="button disabled">Spend</div>
+                            {% endif %}
+
                             {% if wrapper.player_coins %}
                             <a href="{% url values_take wrapper.value.id %}" class="button">Take back</a>
+                            {% else %}
+                            <div class="button disabled">Take back</div>
                             {% endif %}
+
                             {% endif %}
                         </td>
                     </tr>

@@ -41,6 +41,7 @@ def reply(request, id):
 
     topic = p.topic
 
+    recipient = None
     if request.user != p.user:
         message = "%s replied to your comment on %s" % (
             request.user.get_profile().screen_name,
@@ -59,6 +60,7 @@ def reply(request, id):
         )
         recipient = topic.user
 
-    recipient.notifications.create(content_object=c, message=message)
+    if recipient:
+        recipient.notifications.create(content_object=c, message=message)
 
     return HttpResponseRedirect(c.get_absolute_url())

@@ -59,7 +59,7 @@
                     <textarea name="message" class="comment_message" cols="40" rows="6" id="id-{{comment.id}}_message"></textarea>
                     <button type="submit" class="button small submit">save reply</button>
                     <button type="reset" class="button small cancel">cancel</button>
-                    {{comment_form.message.help_text|safe}}
+                    <div class="fine counter">(<span class="count">1000</span> characters left)</div>
                 </form>
             </div>
             {% endif %}

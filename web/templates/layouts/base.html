@@ -73,14 +73,14 @@
                         <div class="profile">
                         {% if user.is_authenticated %}
                             <div class="pic">
-                                <a href="{% url accounts_profile_edit %}">
+                                <a href="{% url accounts_profile request.user.id %}">
                                     {% if user.get_profile.avatar %}
                                     <img class="avatar-large" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}" alt="">
                                     {% else %}
                                     <img class="avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg" alt="">
                                     {% endif %}
                                 </a>
-                                <a href="{% url accounts_profile_edit %}">
+                                <a href="{% url accounts_profile request.user.id %}">
                                     Full Profile
                                 </a>
                             </div>

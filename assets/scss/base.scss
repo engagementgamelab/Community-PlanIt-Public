@@ -38,6 +38,14 @@ hr.space {
     clear: both;
 }
 
+@mixin disable_selection {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
 @mixin clearfix {
   &:after {
     content: ".";
@@ -207,7 +215,8 @@ p.separate {
         line-height: 2;
     }
     
-    .button, input[type=submit] {
+    .button, button, input[type=submit] {
+        font-family: UbuntuRegular, Verdana, Helvetica, Arial, sans-serif;
         cursor: pointer;
         text-decoration: none;
         font-size: .75em;
@@ -217,10 +226,14 @@ p.separate {
         display: inline-block;
         padding: 4px 8px;
         margin: 4px 0;
-
         background-color: $darkgreen;
-        
         border: 0;
+        @include disable_selection;
+    }
+
+    .button.disabled {
+        opacity: .5;
+        cursor: default;
     }
 
    .button.green {
@@ -740,6 +753,7 @@ p.separate {
                         display:block;
                         height: 100%;
                         background-color: $lightgreen;
+                        padding: 0;
                     }
                     span {
                         position: absolute;
@@ -969,10 +983,6 @@ p.separate {
                                 a {
                                     color: $vibrantblue;
                                 }
-                            }
-
-                            .button {
-                                padding: 2px 4px 2px 4px;
                             }
 
                             .actions {

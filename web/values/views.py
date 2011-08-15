@@ -113,7 +113,7 @@ def spend(request, id):
         log_url = reverse('values_detail', args=[id])
         ActivityLogger().log(request.user, request, 'on value: ' + value.message, 'spent token', log_url, 'value')
     else:
-        messages.info(request, 'No coins available to spend')
+        messages.error(request, 'No tokens available to spend')
     
     return HttpResponseRedirect(reverse('values'))
 
