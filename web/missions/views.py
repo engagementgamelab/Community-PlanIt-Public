@@ -20,7 +20,7 @@ from web.processors import instance_processor as ip
 
 @login_required
 def fetch(request, slug):
-    mission = get_object_or_404(Mission, slug=slug)
+    mission = get_object_or_404(Mission, slug=slug, instance=request.user.get_profile().instance)
 
     answers = request.user.answers.filter(activity__mission=mission)
 

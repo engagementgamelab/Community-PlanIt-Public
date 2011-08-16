@@ -9,6 +9,7 @@ from django.core.mail import send_mail, send_mass_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
 from django.template import Context, RequestContext, loader
+from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from web.accounts.models import UserProfile
@@ -511,7 +512,28 @@ def mission_save(request):
                 delete_id = int(matchDict["delete_id"])
                 if delete_id != 0:
                     mission = Mission.objects.get(id=delete_id).delete()
-
+        
+        #slug testing
+        slugs = {}
+        for x in toAdd.keys():
+            mission, name = toAdd[x]
+            if (slugify(name) in slugs):
+                tmpl = loader.get_template("admin/mission_edit.html")
+                form = MissionSaveForm(request.POST)
+                missions = Mission.objects.filter(instance=instance).order_by("start_date")
+                index_missions = []
+                x = 0
+                for mission in missions:
+                    index_missions.append([x, mission])
+                    x = x + 1
+                return HttpResponse(tmpl.render(RequestContext(request, {
+                    "form": form,                                                    
+                    "instance_value": instance,
+                    "values": index_missions,
+                    "slug_error": "Mission name: %s conflicts with mission name: %s" % (name, slugs[slugify(name)])
+                    }, [ip])))
+            else:
+                slugs[slugify(name)] = name
         x = 0
         lastMission = None
         for x in toAdd.keys():
