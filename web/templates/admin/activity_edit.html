@@ -31,7 +31,7 @@
 
     </div>
     <div id="editDisplay" style="display:none">
-        <form action="{% url activity-save %}" method="post">
+        <form action="{% url activity-save %}" method="post" enctype="multipart/form-data">
             {%csrf_token%}
             <input type="hidden" id="activity_id" name="activity_id" value="">
 
@@ -88,7 +88,7 @@
             
             <div class="fieldWrapper">
                 {{ editForm.attachment.errors }}
-                <label for="id_attachment">attachment:</label>
+                <label id="attachment_label" for="id_attachment">Attachment:</label>
                 {{ editForm.attachment }}
             </div>
     
@@ -173,7 +173,7 @@
             this.activities = new Array(0);
         }
         
-        function Activity(id, name, question, mission, type, instructions, addInstructions, points) {
+        function Activity(id, name, question, mission, type, instructions, addInstructions, points, attachment) {
             this.id = id;
             this.name = name;
             this.question = question;
@@ -190,6 +190,11 @@
                 this.addInstructions = addInstructions;
             
             this.points = points;
+            
+            if (attachment == "None")
+                this.attachment = null;
+            else
+                this.attachment = attachment
             
             //PlayerMapActivity
             this.maxNumMarkers = null; //an int that should be initialized if the type is map
@@ -276,7 +281,8 @@
             instructionsElem = document.getElementById("id_instructions");
             addInstructionsElem = document.getElementById("id_addInstructions");
             pointsElem = document.getElementById("id_points");
-            //TODO: deal with attachments later
+            attachmentElem = document.getElementById("attachment_label"); 
+
             nameElem.value = activity.name;
             questionElem.value = activity.question;
             missionElem.value = mission;
@@ -284,6 +290,17 @@
             instructionsElem.value = activity.instructions;
             addInstructionsElem.value = activity.addInstructions;
             pointsElem.value = activity.points;
+            
+            if (activity.attachment != null)
+            {
+                attachmentElem.style.display = "";
+                attachmentElem.innerHTML = "Attachment (currently: " + activity.attachment + "):";
+            }
+            else 
+            {
+                attachmentElem.innerHTML = "Attachment:";
+            }
+            
             
             document.getElementById("responses_edit").style.display = "None";
             document.getElementById("map_edit").style.display = "None";
@@ -418,8 +435,8 @@
             
             {% for value, activities in values %}
                 missionList[{{value.id}}] = new Mission({{value.id}}, "{{value.name}}");
-                {% for activity in activities %}
-                    missionList[{{value.id}}].activities[{{activity.id}}] = new Activity({{activity.id}}, "{{activity.name}}", "{{activity.question}}", {{value.id}}, {{activity.type.id}}, "{{activity.instructions}}", "{{activity.addInstructions}}", {{activity.getPoints}});
+                {% for activity, attachment in activities %}
+                    missionList[{{value.id}}].activities[{{activity.id}}] = new Activity({{activity.id}}, "{{activity.name}}", "{{activity.question}}", {{value.id}}, {{activity.type.id}}, "{{activity.instructions}}", "{{activity.addInstructions}}", {{activity.getPoints}}, "{{attachment}}");
                     {% if activity.type.type == "map" %}
                         missionList[{{value.id}}].activities[{{activity.id}}].maxNumMarkers = {{activity.maxNumMarkers}};
                     {% endif %}

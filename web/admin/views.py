@@ -563,17 +563,23 @@ def activity_base(request):
                 acts = PlayerActivity.objects.filter(mission=mission).order_by("createDate")
                 activities = []
                 for act in acts:
+                    attachment = act.attachment.all().count()
+                    if attachment > 0:
+                        attachment = act.attachment.all()[0].file
+                    else:
+                        attachment = None
+                    
                     if act.type.type == "map": 
-                        activities.append(PlayerMapActivity.objects.get(pk=act.pk))
+                        activities.append((PlayerMapActivity.objects.get(pk=act.pk), attachment))
                     elif act.type.type == "empathy":
-                        activities.append(PlayerEmpathyActivity.objects.get(pk=act.pk))
+                        activities.append((PlayerEmpathyActivity.objects.get(pk=act.pk), attachment))
                     elif act.type.type == "single_response" or act.type.type == "multi_response":
-                        activities.append(act)
+                        activities.append((act, attachment))
                         choices = MultiChoiceActivity.objects.filter(activity=act)
                         for choice in choices:
                             responses.append([choice.pk, mission.pk, act.pk, choice.value])
                     else:
-                        activities.append(act)
+                        activities.append((act, attachment))
                
                 index_missions.append([mission, activities])
             
@@ -621,6 +627,9 @@ def activity_save(request):
     s = "%s Post variables <br>"
     for x in request.POST.keys():
         s = "%s%s: %s<br>" % (s, x, request.POST[x])
+    s = "%s FILES: <br> " % s
+    for x in request.FILES.keys():
+        s = "%s%s: %s<br>" % (s, x, request.FILES[x])
     #return HttpResponse(s)
     
     form = ActivityEditForm(request.POST)
@@ -684,8 +693,15 @@ def activity_save(request):
         activity.points = form.cleaned_data["points"] if form.cleaned_data.has_key("points") and form.cleaned_data["points"] != "" else None
         if activity.type.type == "empathy":
             activity.bio  = form.cleaned_data["bio"]
+            activity.avatar = request.FILES["avatar"]
         activity.save()
         
+        if request.FILES.has_key("attachment"):
+            activity.attachment.clear()
+            activity.attachment.create(file=request.FILES.get("attachment"),
+                                       user=request.user,
+                                       instance=request.user.get_profile().instance)
+
         #to see what is going on here, look at the mission save
         toAdd = {};
         addPat = re.compile("index_(?P<index_id>\d+)_id_(?P<response_id>\d+)")
