@@ -642,30 +642,38 @@ def activity_save(request):
         else:
             activity = PlayerActivity.objects.get(id=int(request.POST["activity_id"]))
             
+            #if the current type is single or multi and it's not going to single or multi, delete all of the response choices
+            if activity.type.type == "single_response" or activity.type.type == "multi_response":
+                if type.type != "single_response" and type.type != "multi_response":
+                    MultiChoiceActivity.objects.filter(activity=activity).delete()
             
-            if (type.type == "single_response" and activity.type.type != "single_response" or
-                type.type == "multi_response" and activity.type.type != multi_reponse):
-                MultiChoiceActivity.objects.filter(activity=activity).delete()
-            
-            if type.type == "map":
-                if activity.type.type != "map":
-                    tempAct = PlayerMapActivity()
-                    actCopy(tempAct, activity)
-                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
-                    activity = tempAct
-                else:
-                    activity = PlayerMapActivity.objects.get(id=int(request.POST["activity_id"]))
-            elif type.type == "empathy":
-                if activity.type.type != "empathy":
+            #Get the activity as a map or empathy or deal with the change in type
+            if activity.type.type == "map" and type.type == "map":
+                activity = PlayerMapActivity(pk=activity.pk)
+            elif activity.type.type == "empathy" and type.type == "empathy":
+                activity = PlayerEmpathyActivity(pk=activity.pk)
+            elif activity.type.type != type.type:
+                if activity.type.type == "map" and type.type == "empathy":
                     tempAct = PlayerEmpathyActivity()
                     actCopy(tempAct, activity)
-                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
                     activity = tempAct
-                else:
-                    activity = PlayerEmpathyActivity.objects.get(id=int(request.POST["activity_id"]))
-            else: 
-                activity = PlayerActivity.objects.get(id=int(request.POST["activity_id"]))                
-        
+                    PlayerMapActivity.objects.filter(id=int(request.POST["activity_id"])).delete()    
+                elif activity.type.type == "map" and type.type != "empathy":
+                    tempAct = PlayerActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerMapActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                elif activity.type.type == "empathy" and type.type == "map":
+                    tempAct = PlayerMapActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerEmpathyActivity.objects.filter(id=int(request.POST["activity_id"])).delete()    
+                elif activity.type.type == "empathy" and type.type != "map":
+                    tempAct = PlayerActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerEmpathyActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+ 
         activity.name = form.cleaned_data["name"]
         activity.question = form.cleaned_data["question"]
         activity.creationUser = request.user
@@ -674,6 +682,8 @@ def activity_save(request):
         activity.instructions = form.cleaned_data["instructions"] if form.cleaned_data.has_key("instructions") and form.cleaned_data["instructions"] != "" else None 
         activity.addInstructions = form.cleaned_data["addInstructions"] if form.cleaned_data.has_key("addInstructions") and form.cleaned_data["addInstructions"] != "" else None  
         activity.points = form.cleaned_data["points"] if form.cleaned_data.has_key("points") and form.cleaned_data["points"] != "" else None
+        if activity.type.type == "empathy":
+            activity.bio  = form.cleaned_data["bio"]
         activity.save()
         
         #to see what is going on here, look at the mission save
