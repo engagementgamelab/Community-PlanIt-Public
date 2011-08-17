@@ -1,0 +1,22 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}issues{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>Edit or Create a New Value Set For an Instance</h2>
+    <form action="" method="post">
+        {%csrf_token%}
+        <div class="fieldWrapper">
+            {{ form.instances.errors }}
+            <label for="id_instances">Edit Values for Instance:</label>
+            {{ form.instances }}
+        </div>
+
+        <div>
+            <input type="submit" name="submit_btn" value="Submit" />
+            <input type="submit" name="submit_btn" value="Cancel" />
+        </div>
+    </form>
+{%endblock%}

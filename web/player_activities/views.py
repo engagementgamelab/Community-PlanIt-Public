@@ -5,6 +5,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.utils import simplejson
 
 from web.player_activities.models import *
 from web.answers.models import *
@@ -26,7 +27,14 @@ def get_activity(request, id):
     tmpl = None
     form = None
     map = None
+    init_coords = []
     if request.method == "POST":
+        
+        s = ""
+        for x in request.POST.keys():
+            s = "%s%s: %s" % (s, x, request.POST[x])
+        #return HttpResponse(s)
+        
         #If this game is a replay it should be set below. The reason to not check here
         # is because the type of the game might have changed. If that is the case, the Answer.objects.filteer
         # will exist but it will be the wrong one.  
@@ -103,7 +111,7 @@ def get_activity(request, id):
                 answer.save()
             else:
                 tmpl = loader.get_template('player_activities/empathy_response.html')
-        elif request.POST["form"] == "multi_reponse":
+        elif request.POST["form"] == "multi_response":
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
             for x in mc:
@@ -152,13 +160,25 @@ def get_activity(request, id):
         elif (activity.type.type == "map"):
             activity = PlayerMapActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/map_response.html')
-            form = MapForm()
-            map = activity.mission.instance.location 
+            answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+            if (len(answer) > 0):
+                form = MapForm(initial={"answerBox": answer[0].answerBox})
+                map = answer[0].map
+                markers = simplejson.loads("%s" % map)["markers"]
+                x = 0
+                for coor in markers if markers != None else []:
+                    coor = coor["coordinates"]
+                    init_coords.append( [x, coor[0], coor[1]] )
+                    x = x + 1
+            else:
+                map = activity.mission.instance.location
+                form = MapForm()
+        
         elif (activity.type.type == "empathy"):
             activity = PlayerEmpathyActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/empathy_response.html')
             form = EmpathyForm()
-        elif (activity.type.type == "multi_reponse"):
+        elif (activity.type.type == "multi_response"):
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
             for x in mc:
@@ -172,6 +192,7 @@ def get_activity(request, id):
         "form": form, 
         "activity": activity,
         "map": map,
+        "init_coords": init_coords,
         }, [ip])))
     return HttpResponse("web page not created yet")
 

@@ -5,5 +5,5 @@ from django.contrib.auth.views import login, logout
 urlpatterns = patterns('',
     (r'^(?P<mission_slug>.*)/game/', include('web.games.urls')),
     (r'^(?P<slug>.*)/$', 'missions.views.fetch'),
-    (r'^$', 'missions.views.all'),
+    url(r'^$', 'missions.views.all', name='index'),
 )

@@ -1,0 +1,24 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <form action="" method="post">
+        {%csrf_token%}
+        <h2>Welcome!</h2>
+        <label>
+            Welcome to the Community PlanIt moderation system. This process will take you
+            through setting up and populating your community’s instance of Community PlanIt!
+        </label>
+        <label>
+            Please remember that you can edit all of your game’s content and information before the
+            game begins.
+        </label>
+        <label>
+            Let’s get started!
+        </label>
+        <button type="submit" id="continue_btn" name="continue_btn">Continue</button>
+    </form>
+{%endblock%}

@@ -7,28 +7,33 @@
     pk: 1
     fields:
         type: open_ended
+        displayType: Open Ended
         defaultPoints: 10
         
 -   model: player_activities.playeractivitytype
     pk: 2
     fields:
         type: single_response
+        displayType: Single Response
         defaultPoints: 10
         
 -   model: player_activities.playeractivitytype
     pk: 3
     fields:
         type: map
+        displayType: Map
         defaultPoints: 10
         
 -   model: player_activities.playeractivitytype
     pk: 4
     fields:
         type: empathy
+        displayType: Empahty
         defaultPoints: 10
         
 -   model: player_activities.playeractivitytype
     pk: 5
     fields:
-        type: multi_reponse
+        type: multi_response
+        displayType: Multiple Responses
         defaultPoints: 10

@@ -166,6 +166,7 @@ INSTALLED_APPS = (
     'web.flags',
     'web.player_activities',
     'web.answers',
+    'web.admin',
 
     # 3rd party
     'compressor',

@@ -9,20 +9,30 @@ from gmapsfield.fields import GoogleMapsField
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
+from nani import admin
+from nani.models import TranslatableModel, TranslatedFields
+
 #TODO: Worry about time zone issues, look up how to fix that if it needs to be
 #Also test this.
 
 #This is the physical data. All FKs are made off of this, but all data
 #can be used through Instance. Look in the instances/management/__init__.py
 #to see the view that is created 
-class Instance(models.Model):
-    name = models.CharField(max_length=45)
+class Instance(TranslatableModel):
+    state = models.CharField(max_length=2)
     slug = models.SlugField(editable=False)
     start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
-    content = models.TextField(null=True, blank=True)
-    curator = models.ForeignKey(User, default=0, null=True, blank=True)
+    curators = models.ManyToManyField(User)
+
+    translations = TranslatedFields(
+        name = models.CharField(max_length=45),
+        city = models.CharField(max_length=255),
+        content = models.TextField(null=True, blank=True),
+        process_name = models.CharField(max_length=255, null=True, blank=True),
+        process_description = models.TextField(null=True, blank=True),
+    )
     
     #This should go into a view, djagno doesn't support views... this is
     # a terrible thing and honestly, there are so many problems associated
@@ -47,11 +57,12 @@ class Instance(models.Model):
             return False
         
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        #TODO make this work with unicode
+        self.slug = slugify(self.pk)
         super(Instance,self).save()
         
     def __unicode__(self):
-        return self.name[:25]
+        return self.safe_translation_getter('name', 'Instance: %s' % self.pk)
 
 #TODO: Perhaps this should be in it's own project
 class PointsAssignment(models.Model):
@@ -61,27 +72,7 @@ class PointsAssignment(models.Model):
 
     instance = models.ForeignKey(Instance, editable=False)
 
-class PointsAssignmentAdmin(admin.ModelAdmin):
-    list_display = ('action', 'points', 'coins',)
+class InstanceAdmin(admin.TranslatableAdmin):
+    list_display = ('start_date', 'end_date',) #could not be used with nani:, 'name', 
 
-    def save_model(self, request, obj, form, change):
-        obj.instance = request.session.get('admin_instance')
-        obj.save()
-
-    def queryset(self, request):
-        qs = super(PointsAssignmentAdmin, self).queryset(request)
-        return qs.filter(instance=request.session.get('admin_instance'))
-
-class InstanceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'start_date', 'end_date',)
-
-#TODO: Make sure that this is unit tested upon instance creation! DO IT!
-def instance_post_save(instance, created, **kwargs):
-    if (PointsAssignment.objects.filter(instance=instance).count() == 0):
-        actions = ['challenge_completed', 'mapit_completed', 'thinkfast_completed', 'othershoes_completed', 'profile_completed', 'account_created', 'challenge_created', 'comment_created']
-        for action in actions:
-            p = PointsAssignment(action=action, points=10, instance=instance)
-            p.save()
-
-models.signals.post_save.connect(instance_post_save, sender=Instance)
 

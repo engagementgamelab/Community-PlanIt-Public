@@ -12,7 +12,16 @@
             add: ".add",
             rm: ".rm",
             submit: ".submit",
+            autocomplete: [],
         }, opts);
+
+        function callback(results, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                for (var i = 0; i < results.length; i++) {
+                    var place = results[i];
+                }
+            }
+        }
 
 
         function updatePolygons(color, keep) {
@@ -103,8 +112,13 @@
             // Actions for Point/Line/Shape
             switch(type) {
                 case 'Point':
-                    maxPoints = parseInt(document.getElementById("max_points_input").value);
-                    if (markers.length < maxPoints)
+                    
+                    maxPoints = -1; 
+                    input = document.getElementById("max_points_input");
+                    if (input != null && input.value != "")
+                        if (parseInt(input.value) != NaN)
+                            maxPoints = parseInt(input.value);
+                    if (maxPoints > 0 && markers.length < maxPoints)
                     {
                         marker = new google.maps.Marker({
                             position: map.getCenter(),
@@ -175,12 +189,11 @@
         $(opts.submit).bind("click", function() {
             update();
         });
-
+        
         return this.each(function() {
             var coordinates = new google.maps.LatLng(opts.coordinates[0], opts.coordinates[1]),
                 bounds = new google.maps.LatLngBounds(),
                 that = $(this);
-
             type = that.attr("data-type");
             state = that.attr("data-state");
 
@@ -190,7 +203,61 @@
                 center: coordinates,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             });
-
+            
+            var x = 0;
+            var elem_str = "init_coords".concat(x);
+            while (document.getElementById(elem_str) != null)
+            {
+                elem = document.getElementById(elem_str).attributes;
+                lat = parseFloat(elem.lat.value);
+                lon = parseFloat(elem.lon.value);
+                marker = new google.maps.Marker({
+                    //position: map.getCenter(),
+                    position: new google.maps.LatLng(lat,lon),
+                    draggable: true,
+                    map: map
+                });
+                google.maps.event.addListener(marker, "dragend", function() {
+                    update();
+                    type === 'Shape' && updatePolygons();
+                }); 
+                markers.push(marker);
+                
+                x++;
+                elem_str = "init_coords".concat(x)
+            }
+            
+            var input = document.getElementById('google_search');
+            if (input != null)
+            {
+                opts.autocomplete = new google.maps.places.Autocomplete(input);
+                opts.autocomplete.bindTo('bounds', map)
+                
+                google.maps.event.addListener(opts.autocomplete, 'place_changed', function() {
+                    maxPoints = parseInt(document.getElementById("max_points_input").value);
+                    if (markers.length < maxPoints)
+                    {
+                        var place = opts.autocomplete.getPlace();
+                        if (place.geometry.viewport) {
+                          map.fitBounds(place.geometry.viewport);
+                        } else {
+                          map.setCenter(place.geometry.location);
+                          map.setZoom(16);
+                        }
+                        var marker = new google.maps.Marker({
+                            position: place.geometry.location,
+                            draggable: true,
+                            map: map
+                        });
+                        markers.push(marker);
+                        var input = document.getElementById('google_search');
+                        input.value = "";
+                    }
+                    return false;
+                });
+            }
+            
+            
             if(state === "played") {
                 var marker_coordinates;
                 if(type === "Point" && opts.markers && opts.markers.length) {
@@ -397,6 +464,11 @@
             }
 
             _map = $("<input type='hidden' name='map' value=''/>").insertAfter(this);
+            try {
+                update()
+            }catch(err){
+                alert(error)
+            }
 
             bounds.extend(coordinates);
             map.panToBounds(bounds);

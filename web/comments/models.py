@@ -1,6 +1,7 @@
 from web.instances.models import Instance
 from web.attachments.models import Attachment
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
 
 from django.db import models
 
@@ -56,7 +57,7 @@ class CommentAdmin(admin.TranslatableAdmin):
     def hide_selected(self, request, queryset):
         queryset.update(hidden=True)
         count = queryset.count()
-        self.message_user(request, "Hid %d comment%s." % (count, (count == 1 and '' or 's')))
+        self.message_user(request, _("Hid %d comment%s.") % (count, (count == 1 and '' or 's')))
 
     def queryset(self, request):
         qs = super(CommentAdmin, self).queryset(request)
@@ -70,5 +71,5 @@ class CommentAdmin(admin.TranslatableAdmin):
     def reveal_selected(self, request, queryset):
         queryset.update(hidden=False)
         count = queryset.count()
-        self.message_user(request, "Revealed %d comment%s." % (count, (count == 1 and '' or 's')))
+        self.message_user(request, _("Revealed %d comment%s.") % (count, (count == 1 and '' or 's')))
 

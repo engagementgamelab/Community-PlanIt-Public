@@ -35,11 +35,10 @@ def validate_and_generate(base_form, request, callback):
         form = base_form(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            
             password = None
             firstName = None
             lastName = None
-            if request.POST.get('password', None) != None:
+            if form.cleaned_data.has_key("password"):
                 password = form.cleaned_data['password']
             else:
                 password = User.objects.make_random_password(length=10)
@@ -56,18 +55,8 @@ def register(request):
         player.first_name = firstName
         player.last_name = lastName
         player.set_password(password)
-        player.full_clean()
+        player.is_active = True
         player.save()
-        
-        tmpl = loader.get_template('accounts/email/welcome.html')
-        body = tmpl.render(Context({ 'password': password,
-                                    'first_name': firstName }))
-        
-        #the inability to send an email should not stop the registering process
-        #during testing I got a error: [Errno 110] Connection timed out error. -BMH
-        send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=True)
-        messages.success(request, _('Thanks for registering!'))
-
         player = auth.authenticate(username=email, password=password)
         auth.login(request, player)
         player.save()
@@ -79,6 +68,16 @@ def register(request):
         uinfo.accepted_term = False
         uinfo.accepted_research = False
         uinfo.save()
+        
+        tmpl = loader.get_template('accounts/email/welcome.html')
+        body = tmpl.render(Context({ 'password': password,
+                                    'first_name': firstName }))
+        
+        #the inability to send an email should not stop the registering process
+        #during testing I got a error: [Errno 110] Connection timed out error. -BMH
+        send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=True)
+        messages.success(request, _('Thanks for registering!'))
+        
         return HttpResponseRedirect('/account/dashboard')
 
     # If not valid, show normal form
@@ -129,7 +128,13 @@ def edit(request):
                                             'living': profile.living.id if profile.living != None else 0,
                                             'gender': profile.gender.id if profile.gender != None else 0,
                                             'race': profile.race.id if profile.race != None else 0,
-                                            'stake': profile.stake.id if profile.stake != None else 0,})
+                                            'stake': profile.stake.id if profile.stake != None else 0,
+                                            'first_name': profile.user.first_name if profile.user.first_name != None else "",
+                                            'last_name': profile.user.last_name if profile.user.last_name != None else "",
+                                            'email': profile.user.email if profile.user.email != None else "",
+                                            'birth_year': profile.birth_year if profile.birth_year != None else "",
+                                            
+                                            })
     if request.method == 'POST':
         
         #files = ""

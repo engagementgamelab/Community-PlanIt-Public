@@ -1,0 +1,237 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h1>Manage Game</h1>
+
+    <div id="chooose_instance">
+        <div class="fieldWrapper">
+            <label for="id_instances">Select Instance:</label>
+            <select name="instances" id="id_instances">
+                {% for instance, count in instances %}
+                    <option value="{{instance.id}}">{{instance.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="button" id="pick_instance" onclick="pickInstance()">Select</button>
+    </div>
+
+    <div id="instance_edit" style="display: none">
+        <h2>Instance Options</h2>
+        <button type="button" onclick="displayDetails()">(click to expand/reduce)</button>
+        <div id="instance_details">
+            <form action="{% url instance-save %}" method="post">
+                {%csrf_token%}
+                
+                <input type="hidden" id="max_points_input" name="max_points_input" value="1">
+                
+                <div class="fieldWrapper">
+                    {{ editForm.name.errors }}
+                    <label for="id_name">Instance Name</label>
+                    {{ editForm.name }}
+                </div>
+                
+                <div class="fieldWrapper">
+                    {{ editForm.city.errors }}
+                    <label for="id_city">City:</label>
+                    {{ editForm.city }}
+                </div>
+                
+                <div class="fieldWrapper">
+                    {{ editForm.state.errors }}
+                    <label for="id_state">State:</label>
+                    {{ editForm.state }}
+                </div>
+                
+                <div class="fieldWrapper">
+                    {{ editForm.start_date.errors }}
+                    <label for="id_start_date">Start Date:</label>
+                    {{ editForm.start_date }}
+                </div>
+                
+                <div class="fieldWrapper">
+                    {{ form.process_name.errors }}
+                    <label for="id_process_name">Process Name:</label>
+                    {{ form.process_name }}
+                </div>
+                
+                <div class="fieldWrapper">
+                    {{ form.process_description.errors }}
+                    <label for="id_process_description">Process Description:</label>
+                    {{ form.process_description }}
+                </div>
+                
+                <div>
+                    <button class="button add">Add Point</button>
+                    <button class="button rm">Clear All Points</button>
+                    <div class="fieldWrapper">
+                        {{editForm.map.errors}}
+                        <!-- this links up with the map object in the form. -->
+                        {% for x, lat, lon in init_coords %}
+                            <input type="hidden" id="init_coords{{x}}" 
+                                name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
+                        {% endfor %}
+                        
+                        <div id="map" class="google-map" data-type="Point"></div>
+                        
+                    </div>
+                </div>
+                
+                <input type="submit" name="submit_btn" value="Submit" />
+            </form>
+        </div>
+    </div>
+
+{%endblock%}
+
+{%block body%}
+    <script>
+        var instances = new Array(0);
+        var missions = new Array(0);
+        var activities = new Array(0);
+        var responses = new Array(0);
+        var types = new Array(0);
+        var instance_detail = false;
+        function Instance(id, name, city, state, start_date, location, process_name, process_description, userCount) {
+            this.id = id
+            this.name = name;
+            this.city = city;
+            this.state = state;
+            this.start_date = start_date;
+            this.location = location;
+            this.process_name = process_name;
+            this.process_description = process_description;
+            this.missions = new Array(0);
+            this.userCount = userCount
+        }
+        
+        function Mission(id, name, start_date, end_date, description, instance_id) {
+            this.name = name;
+            this.description = description;
+            this.instance_id = instance_id;
+            this.activities = new Array(0);
+        }
+        
+        function Activity(id, name, question, mission, type, instructions, addInstructions, points) {
+            this.id = id;
+            this.name = name;
+            this.question = question;
+            this.mission = mission;
+            this.type = type;
+            if (instructions == "None")
+                this.instructions = null;
+            else 
+                this.instructions = instructions;
+            
+            if (addInstructions == "None")
+                this.addInstructions = null;
+            else
+                this.addInstructions = addInstructions;
+            
+            this.points = points;
+            
+            //PlayerMapActivity
+            this.maxNumMarkers = null; //an int that should be initialized if the type is map
+            
+            //PlayerEmpathyActivity
+            this.avatar = null; //an immage field for the empathy activity
+            this.bio = null; //string for the bio
+            
+            //MultiChoiceActivity
+            this.responses = new Array(0); //This should be an array initized if the type of the activity is multi_choice or single choice
+        }
+        
+        function Type(id, type, display) {
+            this.id = id;
+            this.type = type;
+            this.display = display;
+        }
+        
+        function Response(id, value, loc) {
+            this.id = id;
+            this.value = value;
+            this.location = loc;
+        }
+        
+        function pickInstance() {
+            try {
+                instance_id = document.getElementById("id_instances").value;
+                document.getElementById("instance_edit").style.display = "";
+                instance = instances[instance_id];
+                document.getElementById("id_name").value = instance.name;
+                document.getElementById("id_city").value = instance.city;
+                document.getElementById("id_state").value = instance.state;
+                document.getElementById("id_start_date").value = instance.start_date;
+                document.getElementById("id_process_name").value = instance.process_name;
+                document.getElementById("id_process_description").value = instance.process_description;
+            } catch (err) {
+                alert(err);
+            }
+        } 
+        
+        $(document).ready(function() {
+            try {
+            
+                //This basically dumps all of the django data onto the web page and then organizses it.
+                //The arrays are for state and displayed using html, return values are <input hidden> objects.  
+                
+                {% for type in types %}
+                    types[{{type.id}}] = new Type("{{type.id}}", "{{type.type}}", "{{type.displayType}}");
+                {% endfor %}
+
+                {% for instance, count in instances %}
+                    instances[{{instance.id}}] = new Instance({{instance.id}}, "{{instance.name}}", "{{instance.city}}", "{{instance.state}}", "{{instance.start_date}}", "{{instance.location}}", "{{instance.process_name}}", "{{instance.process_description}}", {{count}} ); 
+                {% endfor %}
+                
+                {% for instance_id, mission in missions %}
+                    missions[{{mission.id}}] = new Mission({{mission.id}}, "{{mission.name}}", "{{mission.description}}", {{instance_id}});
+                    instances[{{instance_id}}].missions[{{mission.id}}] = {{mission.id}};
+                {% endfor %}
+
+                {% for mission_id, activity in activities %}
+                    activities[{{activity.id}}] = new Activity({{activity.id}}, "{{acitivity.name}}", "{{acitivity.question}}", {{acitivity.mission.id}}, {{acitivity.type.id}}, "{{acitivity.instructions}}", "{{acitivity.addInstructions}}", {{acitivity.points}})
+                    missions[{{mission_id}}].activities[{{activity.id}}] = {{activity.id}};
+                {% endfor %}
+                var x = 1;
+                {% for choice_pk, mission_pk, activity_pk, choice_value in responses %}
+                    activities[{{activity_pk}}].responses[{{choice_pk}}] = new Response({{choice_pk}}, "{{choice_value}}", x);
+                    x++;
+                {% endfor %}
+                
+                if (instances.length == 1)
+                {
+                    for (instance in instances)
+                    {
+                        pickInstance(instance);
+                    }
+                    
+                }
+            } catch(err) {
+                alert(err)
+            }
+        });
+        
+        jQuery(function($) {
+            $(".google-map").mapit({{location|safe|escape}});
+            $(".remove-map").remove();
+    
+            $("#id_end_date").datetimepicker({
+                    hourGrid: 6,
+                    minuteGrid: 10,
+                    ampm: false
+                });
+            
+            $("#id_start_date").datetimepicker({
+                hourGrid: 6,
+                minuteGrid: 10,
+                ampm: false,
+                onClose: function() {
+                    $("#id_end_date").datetimepicker( 'setDate', Date.parse( $("#id_start_date").val() ).add(1).hours());
+                }
+            });
+        });
+    </script>
+{%endblock%}

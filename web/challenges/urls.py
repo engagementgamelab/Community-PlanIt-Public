@@ -16,5 +16,5 @@ urlpatterns = patterns('',
     # Fetch
     (r'^(?P<id>.*)/$', 'challenges.views.fetch'),
     # Show all
-    (r'^$', 'challenges.views.all'),
+    url(r'^$', 'challenges.views.all', name='index'),
 )

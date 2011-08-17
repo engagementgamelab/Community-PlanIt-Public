@@ -61,6 +61,7 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     affiliations = models.TextField(blank=True, null=True)
     editedProfile = models.BooleanField(default=0)
+    receaveEmail = models.BooleanField(default=True)
     # Additional profile fields
     birth_year = models.IntegerField(blank=True, null=True)
 

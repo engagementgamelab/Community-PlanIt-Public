@@ -1,0 +1,55 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>Edit or Create a New Instance</h2>
+    <form action="" method="post">
+        {%csrf_token%}
+        <div class="fieldWrapper">
+            {{ form.instances.errors }}
+            <label for="id_instances">Edit Instance:</label>
+            <select name="instances" id="id_instances" onchange="instanceChange()">
+                <option value="0">------</option>
+                {% for instance in instance_values %}
+                <option value="{{instance.id}}">{{instance.name}}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" name="email_btn" id="email_bnt" style="display:none">Send Email to all in Instance</button>
+        </div>
+        
+        <label>Or create a new instance</label>
+        <div class="fieldWrapper">
+            {{ form.instance_name.errors }}
+            <label for="id_instance_name">New Instance Name:</label>
+            {{ form.instance_name }}
+        </div>
+        <div>
+            <input type="submit" name="submit_btn" value="Submit" />
+            <input type="submit" name="submit_btn" value="Cancel" />
+        </div>
+    </form>
+{%endblock%}
+
+{%block body%}
+    <script>
+        function instanceChange() {
+            if (document.getElementById("id_instances").value != "0")
+            {
+                document.getElementById("email_bnt").style.display = "";
+            }
+            if (document.getElementById("id_instances").value == "0")
+            {
+                document.getElementById("email_bnt").style.display = "none";
+            }
+        }
+        $(document).ready(function() {
+            if (document.getElementById("id_instances").value != "0")
+            {
+                document.getElementById("email_bnt").style.display = "";
+            }
+        });
+    </script>
+{%endblock%}
