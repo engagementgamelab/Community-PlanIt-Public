@@ -1,0 +1,40 @@
+{%extends "player_activities/base.html"%}
+
+{%block title%}Map Response Overview{%endblock%}
+
+{%block main%}
+    <h1>Open Response Overview</h1>
+    <h2>{{activity.question}}</h2>
+
+    {% for x, lat, lon in init_coords %}
+        <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
+    {% endfor %}
+    <div id="map" class="google-map" data-type="Point"></div>
+
+    <div id="comments">
+        <ul class="comments">
+            {%for answer in answers%}
+                <li class="comment">
+                    {{answer.answerUser.get_profile.screen_name}} said: {{answer.answerBox}} 
+                </li>
+            {% empty %}
+                <li class="comment">No comments found.</li>
+            {%endfor%}
+        </ul>
+        <div style="clear: both;"></div>
+    </div>
+
+{%endblock%}
+
+
+{%block body%}
+    <script src="http://maps.google.com/maps/api/js?sensor=false&libraries=places" type="text/javascript"></script>
+    <!-- script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript" charset="utf-8"></script -->
+    <script src="{{MEDIA_URL}}js/games/mapit.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        jQuery(function($) {
+            $(".google-map").mapit({{map|safe|escape}});
+            $(".remove-map").remove();
+        });
+    </script>
+{%endblock%}

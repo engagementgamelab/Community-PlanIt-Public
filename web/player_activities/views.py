@@ -66,6 +66,20 @@ def overview(request, id):
     elif activity.type.type == "map":
         answers = AnswerMap.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/map_overview.html')
+        init_coords = []
+        x = 0
+        for answer in answers:
+            map = answer.map
+            markers = simplejson.loads("%s" % map)["markers"]
+            for coor in markers if markers != None else []:
+                coor = coor["coordinates"]
+                init_coords.append( [x, coor[0], coor[1]] )
+                x = x + 1
+        map = activity.mission.instance.location
+        return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
+                                                                 "answers": answers,
+                                                                 "init_coords": init_coords,
+                                                                 "map": map}, [ip])))
     elif activity.type.type == "empathy":
         answers = AnswerEmpathy.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/empathy_overview.html')
