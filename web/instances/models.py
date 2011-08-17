@@ -13,8 +13,9 @@ from south.modelsinspector import add_introspection_rules
 
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
-from nani import admin
+from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
+from nani.manager import TranslationManager
 
 class InstanceQueryMixin(object):
     def past(self):
@@ -30,7 +31,7 @@ class InstanceQueryMixin(object):
 class InstanceQuerySet(models.query.QuerySet, InstanceQueryMixin):
     pass
 
-class InstanceManager(models.Manager, InstanceQueryMixin):
+class InstanceManager(TranslationManager, InstanceQueryMixin):
     def get_query_set(self):
         return InstanceQuerySet(self.model, using=self._db)
 
@@ -92,7 +93,7 @@ class PointsAssignment(models.Model):
 
     instance = models.ForeignKey(Instance, editable=False)
 
-class InstanceAdmin(admin.TranslatableAdmin):
+class InstanceAdmin(TranslatableAdmin):
     list_display = ('start_date', 'end_date',) #could not be used with nani:, 'name', 
 
 class NotificationRequest(models.Model):

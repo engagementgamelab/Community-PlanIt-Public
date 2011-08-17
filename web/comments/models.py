@@ -2,10 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-
-from nani import admin
+from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
-from django.contrib import admin
 from django.contrib.auth.models import User
 
 from web.attachments.models import Attachment
@@ -42,7 +40,7 @@ class Comment(TranslatableModel):
             total += comment.discussion_count
         return total
 
-class CommentAdmin(admin.TranslatableAdmin):
+class CommentAdmin(TranslatableAdmin):
     list_filter = ('posted_date', 'flagged', 'hidden')
     list_display = ('posted_date', 'user', 'flagged', 'hidden') # could not be used with nani:, 'message')
 
