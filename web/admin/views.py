@@ -727,6 +727,8 @@ def activity_save(request):
         if activity.type.type == "empathy":
             activity.bio  = form.cleaned_data["bio"]
             activity.avatar = request.FILES["avatar"]
+        if activity.type.type == "map":
+            activity.maxNumMarkers = form.cleaned_data["maxNumMarkers"]
         activity.save()
         
         if request.FILES.has_key("attachment"):
