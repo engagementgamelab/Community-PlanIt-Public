@@ -2,7 +2,7 @@
     <tbody>
     {% for activity in activities %}
     <tr class="{% cycle 'odd' 'even' %}">
-    {% if activity.pk in answered_activities %}
+    {% if activity in answered_activities %}
         <td class="{{activity.type.type}}_activity"><a href="{% url player_activities_overview activity.id %}">{{activity.name}}</a></td>
         <td>{{ activity.getPoints }} pts</td> 
         <td class="final"><a href="{% url player_activities_overview activity.id %}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a></td>
