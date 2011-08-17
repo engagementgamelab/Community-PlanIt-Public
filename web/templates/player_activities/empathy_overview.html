@@ -1,0 +1,35 @@
+{%extends "player_activities/base.html"%}
+
+{%block title%}Open Response Overview{%endblock%}
+
+{%block main%}
+    <h1>Empathy Response Overview</h1>
+    <h2>{{activity.question}}</h2>
+    
+    {%if activity.avatar%}
+        <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
+    {%else%}               
+        <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+    {%endif%}
+     
+    {% if activity.bio %}
+        <h3>{{activity.bio}}</h3>
+    {% endif %}
+    
+    {% if activity.question %}
+        <h4>{{activity.question}}</h4>
+    {% endif %}
+
+    <div id="comments">
+        <ul class="comments">
+            {%for answer in answers%}
+                <li class="comment">
+                    {{answer.answerUser.get_profile.screen_name}} said: {{answer.answerBox}} 
+                </li>
+            {% empty %}
+                <li class="comment">No comments found.</li>
+            {%endfor%}
+        </ul>
+        <div style="clear: both;"></div>
+    </div>
+{%endblock%}

@@ -7,9 +7,11 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
-from web.accounts.models import determine_path
 from web.attachments.models import Attachment
 from web.missions.models import Mission
+
+def determine_path(instance, filename):
+    return 'uploads/'+ str(instance.creationUser.id) +'/'+ filename
 
 class PlayerActivityType(models.Model):
     type = models.CharField(max_length=255)

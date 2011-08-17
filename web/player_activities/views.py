@@ -83,10 +83,8 @@ def overview(request, id):
     elif activity.type.type == "empathy":
         answers = AnswerEmpathy.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/empathy_overview.html')
-
-    return HttpResponse(answerStr)
-    
-    
+        return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
+                                                                 "answers": answers}, [ip])))
     return HttpResponse("web page not created yet")
 
 @login_required
