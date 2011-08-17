@@ -1,12 +1,15 @@
 from uuid import uuid4 as uuid
+
 from django import forms
-from web.instances.models import Instance
-from web.challenges.models import *
-from web.accounts.models import *
+
 from django.contrib import admin
-from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.models import User, Group, Permission
+
+from web.accounts.models import *
+from web.challenges.models import *
+from web.instances.models import Instance
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
@@ -14,32 +17,49 @@ def determine_path(instance, filename):
 class UserProfileIncomes(models.Model):
     income = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
-    
+
+    def __unicode__(self):
+        return self.income
     
 class UserProfileEducation(models.Model):
     eduLevel = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
 
+    def __unicode__(self):
+        return self.eduLevel
+
 class UserProfileLiving(models.Model):
     livingSituation = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
+
+    def __unicode__(self):
+        return self.livingSituation
 
 class UserProfileGender(models.Model):
     gender = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
 
+    def __unicode__(self):
+        return self.gender
+
 class UserProfileRace(models.Model):
     race = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
 
+    def __unicode__(self):
+        return self.race
+
 class UserProfileStake(models.Model):
     stake = models.CharField(max_length=128)
     pos = models.IntegerField(blank=False, null=False)
+
+    def __unicode__(self):
+        return self.stake
     
 class UserProfile(models.Model):
     #Foreign key fields
     user = models.ForeignKey(User, unique=True)
-    instance = models.ForeignKey(Instance, blank=True, null=True)
+    instance = models.ForeignKey(Instance, blank=True, null=True, related_name='user_profiles')
     gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
     race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
@@ -61,7 +81,7 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     affiliations = models.TextField(blank=True, null=True)
     editedProfile = models.BooleanField(default=0)
-    receaveEmail = models.BooleanField(default=True)
+    receive_email = models.BooleanField(default=True)
     # Additional profile fields
     birth_year = models.IntegerField(blank=True, null=True)
 
@@ -69,7 +89,10 @@ class UserProfile(models.Model):
     following = models.ManyToManyField(User, related_name='following_user_set', blank=True, null=True)
 
     # comments on the profile from others
-    comments = models.ManyToManyField(Comment, blank=True, null=True)
+    comments = models.ManyToManyField(Comment, blank=True, null=True, related_name='user_profiles')
+
+    def earned_tokens(self):
+        return self.totalPoints // 100
 
     def points_to_coin(self):
         return 100 - self.coinPoints
@@ -91,22 +114,26 @@ class UserProfile(models.Model):
         verbose_name_plural = "User Profiles"
 
     def __unicode__(self):
-        return self.user.email[:25] +"'s Profile"
+        return self.user.email +"'s Profile"
 
     def screen_name(self):
         #First name and last name are required
-        first = self.user.first_name
-        first = first[0].upper() + first[1:]
+        first = self.user.first_name or ''
+        if first and len(first) > 1:
+            first = first[0].upper() + first[1:]
         
-        last = self.user.last_name
-        last = last[0].upper() + last[1:]
+        last = self.user.last_name or ''
+        if last:
+            if len(last) > 1:
+                last = last[0].upper() + last[1:]
+                last = "%s." % last[0]
+            else:
+                last = last[0]
         
-        if len(last) > 1:
-            last = "%s." % last[0]
-        else:
-            last = last[0]
-        
-        return "%s %s" % (first, last)
+        if first or last:
+            return "%s %s" % (first, last)
+
+        return self.user.username
 
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
@@ -165,26 +192,19 @@ class UserProfileAdmin(UserAdmin):
 
 # Custom hook for adding an anonymous username to the User model.
 def user_pre_save(instance, **kwargs):
-    anon = str(uuid().hex)[:30]
-
     if not instance.username:
-        instance.username = anon
+        instance.username = str(uuid().hex)[:30]
 
 # Custom post save hook for adding group and user profile
 def user_post_save(instance, created, **kwargs):
     if created:
         # Create a user profile for the player and add them to the
         # `Player` group.  Default the player to inactive.
-        try:
-            UserProfile.objects.create(user=instance)
-            instance.groups.add(Group.objects.get(name='Player'))
-            instance.is_active = False
-        
-        # If the Player group is deleted, recreate it.
-        except Group.DoesNotExist:
-            group = Group(name='Player')
-            group.save()
-            instance.groups.add(group)
+        player_group, created = Group.objects.get_or_create(name='Player')
+
+        UserProfile.objects.create(user=instance)
+        instance.is_active = False
+        instance.groups.add(player_group)
 
 models.signals.pre_save.connect(user_pre_save, sender=User)
 models.signals.post_save.connect(user_post_save, sender=User)

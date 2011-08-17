@@ -5,35 +5,26 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.validators import email_re
 from django.utils.translation import ugettext as _
 from django.template import Context, loader
-from web.accounts.models import UserProfile
 from web.instances.models import Instance
-from web.missions.models import Mission
-from web.player_activities.models import PlayerActivity
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
         tmpl = loader.get_template('missions/email/overview.html')
 
-        for instance in Instance.objects.all():
-            if instance.is_active():
-                users = UserProfile.objects.filter(instance=instance)
-                missions = Mission.objects.filter(instance=instance)
-                past_missions = missions.past()
+        for instance in Instance.objects.active():
+            data = {
+                'instance': instance,
+            }
 
-                past = past_missions[len(past_missions)-1]
-                current = None
-                activities = []
-                if len(missions.current() > 0):
-                    current = missions.current()[0]
-                    act = PlayerActivity.objects.filter(mission=current)
-                    for a in act:
-                        activities.append(a)
-                    
+            user_profiles = instance.user_profiles.order_by("-totalPoints")
+            if user_profiles.count() > 0:
+                data['first_place'] = user_profiles[0]
 
-                first_place = users.order_by("-points")[0]
+            print data
 
-                for user in users:
-                    body = tmpl.render(Context({ 'past': past, 'current': current, 'users': users,
-                                                 'first_place': first_place, 'user': user, 'activities': activities }))
-                    if email_re.search(user.email or ''):
-                        send_mail(_('Community PlanIT Weekly Mission Update'), body, settings.NOREPLY_EMAIL, [user.email])
+            for user_profile in instance.user_profiles.filter(user__is_active=True):
+                user = user_profile.user
+                if email_re.search(user.email or ''):
+                    data['user'] = user
+                    body = tmpl.render(Context(data))
+                    send_mail(_('Community PlanIT Weekly Mission Update'), body, settings.NOREPLY_EMAIL, [user.email])

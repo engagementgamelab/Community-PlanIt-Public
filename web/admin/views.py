@@ -32,7 +32,13 @@ def index(request):
     ok = verify(request)
     if ok != None:
         return ok
-    if request.user.is_staff:
+    if request.user.is_superuser:
+        instance = Instance.objects.filter(curators=request.user)
+        tmpl = loader.get_template("admin/backend_index.html")
+        
+        return HttpResponse(tmpl.render(RequestContext(request, {
+            }, [ip])))
+    else:
         instances = Instance.objects.all()
         if request.method == "POST":
             form = StaffBaseForm(request.POST, initial={"instances": instances})
@@ -43,7 +49,7 @@ def index(request):
                 player.set_password(form.cleaned_data["admin_temp_pass"])
                 player.is_active = True
                 player.is_superuser = True
-                player.is_staff = False
+                player.is_staff = True
                 player.save()
                 uinfo = player.get_profile()
                 email_tmpl = None
@@ -61,7 +67,7 @@ def index(request):
                     body = tmpl.render(Context({'password': form.cleaned_data["admin_temp_pass"],
                                                 'first_name': player.first_name,}))
                 uinfo.save()
-                send_mail(_('Welcome to Community PlanIt Lowell!'), body, settings.NOREPLY_EMAIL, [player.email], fail_silently=True)
+                send_mail(_('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [player.email], fail_silently=True)
                 messages.success(request, _('New admin successfully registered.'))
                 
                 return HttpResponseRedirect(reverse("admin-base"))
@@ -78,15 +84,6 @@ def index(request):
                  "form": form,
                  }, [ip])))
     
-    #you are a super user
-    instance = Instance.objects.filter(curators=request.user)
-    if len(instance) == 0:
-        return HttpResponseRedirect(reverse("instance-initial-index")) 
-    tmpl = loader.get_template("admin/backend_index.html")
-    
-    return HttpResponse(tmpl.render(RequestContext(request, {
-        }, [ip])))
-
 @login_required
 def instance_initial_index(request):
     ok = verify(request)
@@ -174,16 +171,15 @@ def sendemail(request):
     for x in request.POST:
         s = "%s%s: %s<br>" % (s, x, request.POST[x])
     
-    #return HttpResponse(s)
     instance = Instance.objects.get(id=int(request.POST["instance_id"]))
     form = InstanceEmailForm(request.POST)
     if form.is_valid():
-        email = form.cleaned_data["email"]
+        body = form.cleaned_data["email"]
         subject = form.cleaned_data["subject"]
         emailList = []
-        ups = UserProfile.objects.filter(instance=instance, receaveEmail=True)
+        ups = UserProfile.objects.filter(instance=instance, receive_email=True)
         for up in ups:
-            emailList.append(up.user.email)
+            send_mail(subject, body, settings.NOREPLY_EMAIL, [up.user.email], fail_silently=False)
         return HttpResponseRedirect(reverse("admin-base"))
         
     tmpl = loader.get_template("admin/instance_email.html")
@@ -202,21 +198,27 @@ def instance_base(request):
         
         if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
             return HttpResponseRedirect(reverse("admin-base"))
-        if request.POST.has_key("email_btn"):
-            instance = Instance.objects.get(id=int(request.POST["instances"]))
-            form = InstanceEmailForm()
-            tmpl = loader.get_template("admin/instance_email.html")
-            return HttpResponse(tmpl.render(RequestContext(request, { 
-                     "form": form,
-                     "instance_value": instance,  
-                     }, [ip])))
-            
+
         form = InstanceBaseForm(request.POST)
-        if form.is_valid():
+
+        if not form.is_valid():
+            print "INVALID FORM:", form
+        else:
+            print "VALID FORM:", form
+
+            if request.POST.has_key("email_btn"):
+                instance = form.cleaned_data["instance"]
+                email_form = InstanceEmailForm()
+                tmpl = loader.get_template("admin/instance_email.html")
+                return HttpResponse(tmpl.render(RequestContext(request, { 
+                         "form": email_form,
+                         "instance_value": instance,  
+                         }, [ip])))
+                
             tmpl = loader.get_template("admin/instance_edit.html")
             if (form.cleaned_data.has_key("instance_name") and form.cleaned_data["instance_name"] != ""):
                 start_date = datetime.datetime.now()
-                end_date = start_date + datetime.timedelta(hours=1)
+                end_date = start_date + datetime.timedelta(days=10)
                 formEdit = InstanceEditForm(initial={"name": form.cleaned_data["instance_name"],
                                                      "start_date": start_date,
                                                      "end_date": end_date,
@@ -228,7 +230,8 @@ def instance_base(request):
                      "init_coords": [],
                      }, [ip])))
             else:
-                instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
+                instance = form.cleaned_data["instance"]
+                print "INSTANCE:", instance
                 #location = "[42.36475475505694, -71.05134683227556]"
                 formEdit = InstanceEditForm(initial={"name": instance.name,
                                                      "start_date": instance.start_date,
@@ -251,12 +254,10 @@ def instance_base(request):
     ok = verify(request)
     if ok != None:
         return ok
-    instances = Instance.objects.all().order_by("name")
-    form = InstanceBaseForm(initial={"instances": instances})
+    form = InstanceBaseForm()
     tmpl = loader.get_template("admin/instance_base.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
          "form": form,
-         "instance_values": instances,                                            
         }, [ip])))
 
 @login_required
@@ -352,7 +353,7 @@ def instance_manage_base(request):
         types.append(type)
         
     editForm = InstanceEditForm()
-    form = InstanceProcesForm()
+    form = InstanceProcessForm()
     tmpl = loader.get_template("admin/instance_manage_base.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
             "single": len(instances) == 1,

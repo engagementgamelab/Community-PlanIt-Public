@@ -11,7 +11,7 @@
             has <span class="highlight">{{affiliation_leaderboard|length}}</span> players, who have scored a collective <span class="highlight">{{affiliation_points}}</span> points.
         </p>
         {%for user in players%}
-            <a href="/player/{{user.id}}">
+        <a href="{% url accounts_profile user.id %}">
             {%if user.get_profile.avatar%}
                 <img class="avatar" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}">
             {%else%}               

@@ -16,6 +16,9 @@ class Value(models.Model):
     instance = models.ForeignKey(Instance)
     comments = models.ManyToManyField(Comment, blank=True, null=True)
 
+    class Meta:
+        ordering = ['message']
+
     def __unicode__(self):
         return self.message[:25]
 

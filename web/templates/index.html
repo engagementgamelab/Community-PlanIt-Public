@@ -1,0 +1,86 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}base rightsidebar{%endblock%}
+
+{%block title%}Welcome{%endblock%}
+{%block page_title%}
+<h2 id="page_title">Community PlanIT</h2>
+{%endblock%}
+
+{% block aside %}
+<div>
+{% if instances.count %}
+<p>Interested in playing? Click on a community below to find out more.</p>
+{% endif %}
+{% if instances.future.count %}
+<h3>Upcoming Communities</h3>
+    <ul class="communities">
+        {% for instance in instances.future %}
+        <li>
+            <h4>
+                <a href="{% url instances_instance instance.slug %}">{{instance}}</a>
+                <div class="dates">{% if not instance.end_date %}Starts {% endif %}{{instance.start_date|date:"m/d/Y"}} {% if instance.end_date %}&#8211; {{instance.end_date|date:"m/d/Y"}}{% endif %}</div>
+            </h4>
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if instances.active.count %}
+<h3>Active Communities</h3>
+    <ul class="communities">
+        {% for instance in instances.active %}
+        <li>
+            <h4>
+                <a href="{% url instances_instance instance.slug %}">{{instance}}</a>
+                <div class="dates">{% if not instance.end_date %}Started {% endif %}{{instance.start_date|date:"m/d/Y"}} {% if instance.end_date %}&#8211; {{instance.end_date|date:"m/d/Y"}}{% endif %}</div>
+            </h4>
+            {% if instance.player_count %}
+            <p>{{instance.player_count}} player{{instance.player_count|pluralize}} {{instance.player_count|pluralize:"has,have"}} signed up.</p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if instances.past.count %}
+<h3>Past Communities</h3>
+    <ul class="communities">
+        {% for instance in instances.past %}
+        <li>
+            <h4>
+                <a href="{% url instances_instance instance.slug %}">{{instance}}</a>
+                <div class="dates">{{instance.start_date|date:"m/d/Y"}} &#8211; {{instance.end_date|date:"m/d/Y"}}</div>
+            </h4>
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+</div>
+{% endblock aside %}
+
+{%block main%}
+<p>A game about your community.</p>
+<iframe class="bordered" src="http://player.vimeo.com/video/15813894?title=0&amp;byline=0&amp;portrait=0" width="320" height="180" frameborder="0"></iframe>
+<p>Voice opinions, earn coins, and spend them on your top community values!</p>
+<p>See which <a href="{% url instances %}">communities</a> are playing now, or learn more <a href="{% url about %}">about us</a>.</p>
+{% endblock main %}
+
+{% block rightsidebar %}
+{% if instances.active.count %}
+<h3>New Player? <a href="{% url accounts_register %}" class="button">Sign Up</a></h3>
+{% endif %}
+<h3>Have an account?</h3>
+<div class="inner-content">
+    <form method="POST" action="{% url accounts_login %}">
+        {%csrf_token%}
+        <input type="hidden" name="next" value="{% url accounts_dashboard %}" />
+        <label for="username">email address</label>
+        <input type="email" name="username">
+        <label for="password">password</label>
+        <input type="password" name="password">
+        <br>
+        <button class="button">Login</button> <a class="right" href="{% url accounts_forgot %}">Forgot password</a>
+    </form>
+</div>
+{%endblock%}

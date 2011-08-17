@@ -1,74 +1,87 @@
-{%extends "layouts/base.html"%}
-{%load gmap%}
+{% extends "layouts/base.html" %}
+{% load gmap %}
 
-{%block section%}instances{%endblock%}
-{%block title%}Neighborhood overview{%endblock%}
-{%block page_title%}{%endblock%}
+{% block section %}communities rightsidebar{% endblock %}
+{% block title %}Community overview{% endblock %}
+{% block page_title %}
+<h2 id="page_title">
+{% if community.is_active %}
+    {{community}}
+{% else %}
+    {% if community.is_expired %}
+    {{community}} has ended.
+    {% else %}
+    {{community}} has not started up yet.
+    {% endif %}
+{% endif %}
+</h2>
+{% endblock %}
 
-{%block main%}
-    <div class="wrapper neighborhood">
-        <div class="twothird">
-            {%if not current_instance.is_expired%}
-                <h2>{{current_instance.name}} Updates and Leaderboard</h2>
-            {%else%}
-                <h2>{{current_instance.name}} has ended. Updates and Leaderboard</h2>
-            {%endif%}
-            <p>{{current_instance.content|escape|safe}}</p>
-            {# {current_instance.location|show} #}
+{% block main %}
+{% if community.is_active %}
+    <h3>Updates and Leaderboard</h3>
+    <p>{{community.content|escape|safe}}</p>
 
-            <div class="leaderboard-wrapper" style="clear:both;">
-            {%if leaderboard|length%}
-                <table class="leaderboard">
-                    <th>Rank</th>
-                    <th>Name</th>
-                    <th>Points</th>
+    <div class="leaderboard-wrapper" style="clear:both;">
+    {% if leaderboard|length %}
+        <table class="leaderboard">
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Points</th>
 
-                    {%for user in leaderboard%}
-                        <tr>
-                            <td>{{forloop.counter}}</td>
-                            <td><a href="/player/{{user.id}}">{{user.get_profile.screen_name}}</a></td>
-                            <td>{{user.get_profile.points}}</td>
-                        </tr>
-                    {%endfor%}
-                </table>
-                <hr class="space">
-                <a href="/list/neighborhood/{{current_instance.slug}}" class="right">View all players &rarr;</a>
-            {%else%}
-                No players in this neighborhood.
-            {%endif%}
-            </div>
-        </div>
-        <div class="last third">
-            <h4>Neighborhood News</h4>
-            {%if log|length%}
-            <ul class="listless listview feed news">
-                {%for activity in log%}
-                <li class="listitem {{activity.type}}">
-                    {%if activity.user.get_profile.avatar%}
-                        <img class="avatar" src="{{MEDIA_URL}}/{{activity.user.get_profile.avatar}}">
-                    {%else%}               
-                        <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-                    {%endif%} 
-                    <a href="/player/{{activity.user.id}}">{{activity.user.get_profile.screen_name}}</a>
-                    {{activity.data}} 
-                    {%if activity.url%}
-                        <a href="{{activity.url}}">{{activity.action}}</a>
-                    {%else%}
-                        {{activity.action}}
-                    {%endif%}
-                    <div class="timestamp fine">{{activity.date|date:"F j, Y, g:i a"}}</div>
-                </li>
-                {%endfor%}
-            </ul>
-            {%else%}
-                No activities created.   
-            {%endif%}
-           
-        </div>
+            {% for user in leaderboard %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td><a href="{% url accounts_profile user.id %}">{{user.get_profile.screen_name}}</a></td>
+                    <td>{{user.get_profile.points}}</td>
+                </tr>
+            {% endfor %}
+        </table>
         <hr class="space">
+        <a href="{% url lists_instance community.slug %}" class="right">View all players &rarr;</a>
+    {% else %}
+        No players in this community.
+    {% endif %}
     </div>
-{%endblock%}
+{% else %}
+{% if not community.is_started %}
+<p>If you'd like to be notified via email when this community gets going, just leave us your email address. This is all we'll use it for, and we won't share it with anyone.</p>
+<form action="{% url instances_instance community.slug %}" method="POST">
+    {% csrf_token %}
+    {{notification_form}}
+    <div class="controls">
+        <input type="submit" value="Let me know"/>
+    </div>
+</form>
+{% endif %}
+{% endif %}
+{% endblock main %}
 
-{%block body%}
-    {%gmap_includes%}
-{%endblock%}
+{% block rightsidebar %}
+{% if community.is_active %}
+    <h4>Community News</h4>
+    {% if log|length %}
+    <ul class="listless listview feed news">
+        {% for activity in log %}
+        <li class="listitem {{activity.type}}">
+            {% if activity.user.get_profile.avatar %}
+                <img class="avatar" src="{{MEDIA_URL}}/{{activity.user.get_profile.avatar}}">
+            {% else %}               
+                <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+            {% endif %} 
+            <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
+            {{activity.data}} 
+            {% if activity.url %}
+                <a href="{{activity.url}}">{{activity.action}}</a>
+            {% else %}
+                {{activity.action}}
+            {% endif %}
+            <div class="timestamp fine">{{activity.date|date:"F j, Y, g:i a"}}</div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        No activities created.   
+    {% endif %}
+{% endif %}
+{% endblock rightsidebar %}

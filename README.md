@@ -1,33 +1,13 @@
 Community Planit Documentation
 ==============================
 
-__A game about your neighborhood.__
-
 # Instructions on how to deploy #
-Change either config/development.ini or config/production.ini:
-MEDIA_ROOT= /home/ben/git/Community-PlanIt/assets
 
-; email settings
-[email]
-EMAIL_HOST= dev.communityplanit.org
-EMAIL_PORT= 25
-EMAIL_HOST_USER=
-EMAIL_HOST_PASSWORD=
-EMAIL_USE_TLS= false
+The first step is creating an appropriate settings.py. Run:
 
-from web/settings.py
-change: config.read('../config/development.ini')
-to config.read('../config/production.ini') on production
+$ python config/make_settings.py web/settings.py
 
-make sure that there is a slash at the end:
-MEDIA_ROOT= /var/www/cpi/assets/
-
-make sure that each line in "Datbaase changes to a deployed system" are follows
-
-run ./manage.py syncdb and ./manage.py migrate 
-
-to get the db changes.  
-
+in the top of the project tree to configure a basic settings file.
 
 # Notes #
 Things marked with a TODO need to be done. This is also the section for messages to fix or are strange.
@@ -39,17 +19,12 @@ initial_data.xml, or initial_data.json. I did yaml because it seemed really easy
 apt-get install python-yaml). To test in a python shell just import yaml to make sure you have it installed correctly. -BMH
 
 # Database changes to a deployed system #
-the prompts_profileprompt.avatar column now allows nulls. ~BMH
 
-alter table accounts_userprofile add foreign key(income_id) references accounts_userprofileincomes(id);
-alter table accounts_userprofile add foreign key(education_id) references accounts_userprofileeducation(id);
-
-insert into accounts_userprofileincomes (income, pos) values ("$0 to $25,000", 1), ("$25,000 to $50,000", 2), ("$50,000 to $75,000", 3), ("$75,000 to $100,000", 4), ("$100,000 or more", 5);
-insert into accounts_userprofileeducation (eduLevel, pos) values ("High School or Less", 1), ("Some College", 2), ("Associate's Degree", 3), ("Bachelor's Degree", 4), ("Master's Degree", 5), ("Doctoral Degree", 6);
+Use the usual combination of 'manage.py syncdb; manage.py migrate'.
 
 # Overview #
 Community PlanIt is written using Python(Django) and JavaScript(jQuery).  It has evolved over the course of the half year development
-which has led to some naming inconsistencies which will be noticable immediately.  For example, instances are 1:1 to neighborhoods in
+which has led to some naming inconsistencies which will be noticable immediately.  For example, instances are 1:1 to communities in
 the UI.  Going through Pivotal to see older stories may help shed light on design and development decisions.  This application makes
 heavy use of Django model inheritance and nested app folders.
 
@@ -127,11 +102,6 @@ Community PlanIt source code is stored in `git` fetch the latest into a local di
     $ git clone git@github.com:bocoup/community-planit.git
 
 ## Environment configurations ##
-
-### development.ini ###
-You can find a sample development.ini in the /config directory.
-
-__MEDIA_ROOT__: Set this to your assets directory, absolute path not relative.
 
 ## nginx.conf ##
 You can find a sample nginx.conf in the /config directory.

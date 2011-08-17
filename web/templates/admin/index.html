@@ -10,9 +10,9 @@
 {% block breadcrumbs %}{% endblock %}
 
 {% block content %}
-<!-- Show neighborhoods -->
-<div class="module neighborhood">
-    <h1>Neighborhoods</h1>
+<!-- Show instances -->
+<div class="module community">
+    <h1>Communities</h1>
     <hr class="space">
     {%if request.user.is_superuser%}
         {%if not request.session.instances|length%}
@@ -32,7 +32,7 @@
     <a href="/admin/instances/pointsassignment/" class="changelink">Points Assignment</a>
     <hr class="space">
     <br>
-    <a href="/admin/instances/instance/add/" class="addlink">Add a new Neighborhood</a>
+    <a href="/admin/instances/instance/add/" class="addlink">Add a new Community</a>
     <br>
     <a href="/curator/csv/userprofile">Generate UserProfile Report</a>
     <br>

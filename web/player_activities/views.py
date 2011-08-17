@@ -1,21 +1,22 @@
+from django.conf import settings
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import Context, RequestContext, loader
-from django.contrib import auth
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.utils import simplejson
 
-from web.player_activities.models import *
-from web.answers.models import *
-from web.missions.models import Mission
-from web.instances.models import Instance
-from web.reports.actions import *
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
-from web.processors import instance_processor as ip
+from web.answers.models import *
+from web.instances.models import Instance
+from web.missions.models import Mission
 from web.player_activities.forms import *
-import settings
+from web.player_activities.models import *
+from web.processors import instance_processor as ip
+from web.reports.actions import *
 
 @login_required
 def overview(request, id):
@@ -142,10 +143,10 @@ def get_activity(request, id):
         #If the template is None then there wasn't an error so assign the points and redirect
         #Otherwise fall through. Only assign the points if the replay is false, but still redirect
         if replay == False:
-            PointsAssigner.assignAct(request.user, activity)
+            PointsAssigner().assignAct(request.user, activity)
 
         if tmpl == None:
-            return HttpResponseRedirect('/dashboard/')
+            return HttpResponseRedirect(reverse('missions_mission', args=[activity.mission.slug]))
     else:
         if (activity.type.type == "open_ended"):
             tmpl = loader.get_template('player_activities/open_response.html')
@@ -208,11 +209,11 @@ def index(request):
             'mission': []
         }, [ip])))
         
-    missions = Mission.objects.filter(instance=instance).current()
-    if (len(missions) == 0):
+    missions = instance.missions.active()
+    if missions.count() == 0:
         return HttpResponse(tmpl.render(RequestContext(request, {
             'instance': instance,
-            'mission': []
+            'mission': None
         }, [ip])))
         
     activities = PlayerActivity.objects.filter(mission=missions[0])

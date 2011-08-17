@@ -1,76 +1,82 @@
-{% load attachment_tags i18n %}
-<li class="comment" id="comment-{{comment.pk}}">
-    <div>
-        <span class="user"><a href="/player/{{comment.user.id}}/">{{comment.user.get_profile.screen_name}}</a></span>
-        <span class="meta">
-            <span>{{comment.posted_date|date:"F j, Y"}} {{comment.posted_date|date:"g:i a"}}</span>
-            {% if comment.likes.count %}
-            <span>{{comment.likes.count}} pe{{ comment.likes.count|pluralize:"rson,ople" }} liked this</span>
-            {% endif %}
-            {% if comment.comments.count %}
-            <span>{{comment.comments.count}} response{{ comment.comments.count|pluralize }}</span>
-            {% endif %}
-        </span>
-        {% if not comment.hidden %}
-        <span class="right">
-            <a href="/flag/comment/{{comment.id}}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
-        </span>
+{% load attachment_tags %}
+<li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
+    <div class="likes">
+        <div class="count">{{comment.likes.count}}</div>
+        <div>Like{{comment.likes.count|pluralize}}</div>
+        {% if comment.user != user %}
+        <a class="button" href="{% url comments_like comment.id %}" title="click to say you like this">Like</a>
         {% endif %}
     </div>
-    <div class="message">
-        {% if comment.hidden %}
-        <div class="notice">{% trans "This content has been flagged by the community and hidden by the administrator." %}</div>
-        {% else %}
-            {{comment.message|linebreaksbr}}
-        {% endif %}
-    </div>
-    {% if not comment.hidden %}
-    <div class="attachments">
-    {% for attachment in comment.attachment.all %}
-        {% if attachment.is_valid %}
-        <div>
-            {% if attachment.type == 'video' %}
-            {% youtube_video attachment.url %}
+    <div class="main">
+        <div class="meta">
+            {% if not comment.hidden %}
+            <div class="right">
+                <a href="{% url flags_add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
+            </div>
+            {% endif %}
+            On {{comment.posted_date|date:"F j, Y"}} at {{comment.posted_date|date:"g:i a"}},
+            <a href="{% url accounts_profile comment.user.id %}/">{{comment.user.get_profile.screen_name}}</a>
+            wrote:
+        </div>
+        <div class="message">
+            {% if comment.hidden %}
+                <div class="notice">This content has been flagged by the community and hidden by the administrator.</div>
             {% else %}
-            <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                {{comment.message|linebreaksbr}}
             {% endif %}
         </div>
-        {% else %}
-        <div class="notice">{% trans "This content is currently unavailable." %}</div>
+        {% if not comment.hidden %}
+        <div class="attachments">
+        {% for attachment in comment.attachment.all %}
+            {% if attachment.is_valid %}
+            <div>
+                {% if attachment.type == 'video' %}
+                {% youtube_video attachment.url %}
+                {% else %}
+                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="notice">This content is currently unavailable.</div>
+            {% endif %}
+        {% endfor %}
+        </div>
+        <div class="controls">
+            {% if comment.instance.is_active %}
+            <div class="actions">
+                    {% if comment.comments.count %}
+                    <a class="togglereplies" href="#replies-{{comment.pk}}">
+                        <img class="closed" src="{{MEDIA_URL}}img/icons/plus.png" alt=""/>
+                        <img class="open" src="{{MEDIA_URL}}img/icons/minus.png" alt=""/>
+                    </a>
+                    <span>{{comment.comments.count}} repl{{ comment.comments.count|pluralize:"y,ies" }}</span>
+                    {% endif %}
+                    <a class="small button reply" href="#reply-{{comment.id}}">reply</a>
+            </div>
+            <div class="reply-modal">
+                <form enctype="multipart/form-data" method="POST" action="{% url comments_reply comment.id %}">
+                    {%csrf_token%}
+                    <textarea name="message" class="comment_message" cols="40" rows="6" id="id-{{comment.id}}_message"></textarea>
+                    <button type="submit" class="button small submit">save reply</button>
+                    <button type="reset" class="button small cancel">cancel</button>
+                    {{comment_form.message.help_text|safe}}
+                </form>
+            </div>
+            {% endif %}
+        </div>
         {% endif %}
-    {% endfor %}
-    </div>
-    <div class="controls">
-        <div class="actions">
-            {% if comment.user != user %}
-            <a href="{% url comments_like comment.id %}" title="{% trans "click to say you like this" %}"><img src="{{MEDIA_URL}}img/icons/up-small.png" alt="like"/></a>
-            {% endif %}
-            {% if mission.instance.is_active %}
-                <a class="small button reply" href="#reply-{{comment.id}}">reply</a>
-            {% endif %}
-        </div>
-        <div class="reply-modal">
-            <form enctype="multipart/form-data" method="POST" action="/comment/reply/{{comment.id}}/">
-                {%csrf_token%}
-                <textarea name="message" class="comment_message" cols="40" rows="6" id="id-{{comment.id}}_message"></textarea>
-                <button type="submit" class="button small submit">{% trans "save reply" %}</button>
-                <button type="reset" class="button small cancel">{% trans "cancel" %}</button>
-                {{comment_form.message.help_text|safe}}
-            </form>
-        </div>
-    </div>
-    {% endif %}
 
-    {%if comment.comments.all%}
-    <div class="replies">
-        <ul class="nested">
-            {%for comment in comment.comments.all%}
-                {%with "comments/comment.html" as filename%}
-                  {%include filename%}
-                {%endwith%}
-            {%endfor%}
-        </ul>
-        <div style="clear:both"></div>
+        {%if comment.comments.all%}
+        <div id="replies-{{comment.pk}}" class="replies">
+            <ul class="nested">
+                {%for comment in comment.comments.all%}
+                    {%with "comments/comment.html" as filename%}
+                      {%include filename%}
+                    {%endwith%}
+                {%endfor%}
+            </ul>
+            <div style="clear:both"></div>
+        </div>
+        {%endif%}
     </div>
-    {%endif%}
 </li>

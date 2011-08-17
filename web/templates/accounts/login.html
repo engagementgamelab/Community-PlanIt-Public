@@ -3,11 +3,11 @@
 {%block section%}accounts{%endblock%}
 
 {%block title%}Player Login{%endblock%}
-{%block page_title%}Player Login{%endblock%}
+{%block page_title%}<h2 id="page_title">Player Login</h2>{%endblock%}
 
 {%block aside%}
     <h2>Forgot Password</h2>
-    <a href="/account/forgot">Reset password</a>
+    <a href="{% url accounts_forgot %}">Reset password</a>
 {%endblock%}
 
 {%block main%}
@@ -16,7 +16,7 @@
             {%if form.errors%}
                 <p class="error">Sorry, that's not a valid email address or password.</p>
 
-                <p>Not a member? <a href="/neighborhood/">Find your neighborhood and sign up now!</a></p>
+                <p>Not a member? <a href="{% url instances %}">Find your community and sign up now!</a></p>
             {%endif%}
             {%csrf_token%}
             <label for="email">Email address:</label>
@@ -27,7 +27,7 @@
 
             <br><br>
             <input type="submit" class="button submit" value="Login">
-            <input type="hidden" name="next" value="/account/dashboard" />
+            <input type="hidden" name="next" value="{% url accounts_dashboard %}" />
         </form>
     </div>
 {%endblock%}

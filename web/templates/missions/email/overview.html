@@ -1,7 +1,15 @@
 Dear {{user.first_name}}, 
-The {{past.topic}} mission just ended. {{first_place.first_name}} is now in first place with {{first_place.points}} points. 
 
-The {{current.topic}} mission is starting right now! The following activities have been unlocked: 
-{%for act activities%}
-    - <a href="http://planit.local/activity/{{act.id}}/">{{ act.name }}</a>
-{%endfor%}
+This is a Community PlanIT update from {{instance}}.
+
+{{first_place.screen_name}} is now in first place with {{first_place.totalPoints}} points. 
+
+{% if instance.missions.past.count %}The following missions have been completed:
+{% for mission in instance.missions.past %}
+- {{mission}}
+{% endfor %}{% endif %}{% if instance.missions.active.count %}
+The following missions are currently active:
+{% for mission in instance.missions.active %}
+- {{mission.name}}{% for activity in mission.activities %}
+  - <a href="{% url player_activities_activity activity.id %}/">{{ activity.name }}</a>
+{% endfor %}{% endfor %}{% endif %}

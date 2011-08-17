@@ -1,37 +1,57 @@
-{%extends "layouts/base.html"%}
-{%load gmap%}
+{% extends "layouts/base.html" %}
+{% load gmap %}
 
-{%block title%}All neighborhoods{%endblock%}
-{%block page_title%}{%endblock%}
+{% block section %}communities{% endblock %}
 
-{%block main%}
-<h2>All neighborhoods</h2>
-    <ul class="instances gridview listless">
-        {%if instance|length == 0%}
-            <li class="griditem">No active Neighborhoods</li>
-        {%endif%}
-        {%for instance in instances%}
-            <li class="griditem instance">
-                <p>
-                    {% if instance.end_date > now %}<span class="highlight fine">Currently Active</span>{% else %}<span class="highlight fine">No longer Active</span>{% endif %}
-                    <a href="/neighborhood/{{instance.slug}}">{{instance.name}}</a> - {{instance.player_count}} player{%if instance.player_count > 1%}s{%endif%} {%if instance.player_count > 1%}have{%else%}has{%endif%} signed up.
-                    <br>
-                {% if instance.end_date > now %}
-                    <span class="fine">This neighborhood runs <span class="highlight">{{instance.start_date}}</span> through <span class="highlight">{{instance.end_date}}</span></span>
-                {% else %}
-                    <span class="fine">This neighborhood ran from <span class="highlight">{{instance.start_date}}</span> through <span class="highlight">{{instance.end_date}}</span></span>
-                    {% endif %}
-                </p>
-                <div class="date">
-                    <span class="datenum">{{instance.start_date|date:"j"}}</span> {{instance.start_date|date:"M"}}
-                </div>
-            </li>
-        {%endfor%}
+{% block title %}Communities{% endblock %}
+{% block page_title %}
+<h2 id="page_title">Participating Communities</h2>
+{% endblock %}
+
+{% block main %}
+{% if instances.active.count %}
+<h3>Active</h3>
+    <ul class="communities">
+        {% for instance in instances.active %}
+        <li>
+            <h3>
+                <a href="{% url instances_instance instance.slug %}">{{instance}}</a>
+                <span class="dates">{% if not instance.end_date %}Started {% endif %}{{instance.start_date|date:"m/d/Y"}} {% if instance.end_date %}&#8211; {{instance.end_date|date:"m/d/Y"}}{% endif %}</span>
+            </h3>
+            {% if instance.player_count %}
+            <p>{{instance.player_count}} player{{instance.player_count|pluralize}} {{instance.player_count|pluralize:"has,have"}} signed up.</p>
+            {% endif %}
+        </li>
+        {% endfor %}
     </ul>
-    <div style="clear:both;"></div>
+{% endif %}
 
-{%endblock%}
+{% if instances.future.count %}
+<h3>Future</h3>
+    <ul class="communities">
+        {% for instance in instances.future %}
+        <li>
+            <h3>
+                <a href="{% url instances_instance instance.slug %}">{{instance}}</a>
+                <span class="dates">{% if not instance.end_date %}Starts {% endif %}{{instance.start_date|date:"m/d/Y"}} {% if instance.end_date %}&#8211; {{instance.end_date|date:"m/d/Y"}}{% endif %}</span>
+            </h3>
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
 
-{%block body%}
-    {%gmap_includes%}
-{%endblock%}
+{% if instances.past.count %}
+<h3>Past</h3>
+    <ul class="communities">
+        {% for instance in instances.past %}
+        <li>
+            <h3>
+                <a href="{% url instances_instance instance.slug %}">{{instance}}</a>
+                <span class="dates">{{instance.start_date|date:"m/d/Y"}} &#8211; {{instance.end_date|date:"m/d/Y"}}</span>
+            </h3>
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

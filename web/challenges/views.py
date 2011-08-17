@@ -1,64 +1,44 @@
-import re, datetime
-from web.challenges.models import *
-from web.challenges.forms import *
-from web.comments.models import Comment
-from web.comments.forms import CommentForm
-from web.responses.comment.forms import CommentAttachmentResponseForm
-from web.reports.actions import ActivityLogger, PointsAssigner
+import datetime
+import re
+
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404
 from django.template import Context, RequestContext, loader
+from django.core.urlresolvers import reverse
+
 from django.contrib.auth.decorators import login_required
+
+from web.challenges.forms import *
+from web.challenges.models import *
+from web.comments.forms import CommentForm
+from web.comments.models import Comment
 from web.processors import instance_processor as ip
+from web.reports.actions import ActivityLogger, PointsAssigner
+from web.responses.comment.forms import CommentAttachmentResponseForm
 
 @login_required
 def fetch(request, id):
-    try:
-        challenge = Challenge.objects.get(id=id)
-    except:
-        raise Http404
-    
-    playerchallenge = PlayerChallenge.objects.filter(player=request.user, challenge=challenge,accepted=True)
-    playerchallenge_completed = PlayerChallenge.objects.filter(player=request.user, challenge=challenge,completed=True)
-    playerchallenge_accepted = PlayerChallenge.objects.filter(player=request.user, challenge=challenge,accepted=True).exclude(completed=True)
-    playerchallenge_decline = PlayerChallenge.objects.filter(player=request.user, challenge=challenge,accepted=False, completed=True)
-    
-    completed = False
-    accepted = False
-    try:
-        pc = PlayerChallenge.objects.filter(player=request.user, challenge=challenge, completed=True)
-        if len(pc) > 0:
-            accepted = pc[0].accepted
-            completed = True
-    except:
-        pass
+    challenge = get_object_or_404(Challenge, id=id)
+    local_player_challenges = challenge.player_challenges.filter(player=request.user)
 
-    if playerchallenge_accepted:
-        pc = PlayerChallenge.objects.get(player=request.user, challenge=challenge, accepted=True)
+    if local_player_challenges.accepted().count():
+        pc = local_player_challenges.accepted()[0]
         carf = CommentAttachmentResponseForm(instance=pc.response)
     else:
         carf = None
 
-    pc_all = PlayerChallenge.objects.filter(challenge=challenge, completed=True)
-
     tmpl = loader.get_template('challenges/base.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'challenge': challenge,
-        'comments': challenge,
-        'accepted': accepted,
-        'playerchallenge': playerchallenge,
-        'playerchallenge_completed': playerchallenge_completed,
-        'playerchallenge_accepted': playerchallenge_accepted,
-        'playerchallenge_decline': playerchallenge_decline,
-        'playerchallenge_all': pc_all,
+        'local_player_challenges': local_player_challenges,
         'comment_form': CommentForm(),
-        'completed': completed,
         'response_form': carf,
     },[ip])))
 
 @login_required
 def complete(request, id):
     challenge = Challenge.objects.get(id=id)
-    pc = PlayerChallenge.objects.get(player=request.user, challenge=challenge)
+    pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
 
     a = None
     b = None
@@ -88,8 +68,8 @@ def complete(request, id):
 
                 b.save()
 
-            ActivityLogger.log(request.user, request, 'a challenge', 'completed', '/challenge/'+ id, 'challenge')
-            PointsAssigner.assign(request.user, 'challenge_completed')
+            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges_challenge', args=[id]), 'challenge')
+            PointsAssigner().assign(request.user, 'challenge_completed')
 
             if a:
                 pc.attachments.add(a)
@@ -104,42 +84,41 @@ def complete(request, id):
             
             pc.completed = True
             pc.save()
+            return HttpResponseRedirect(reverse('challenges'))
 
-    return HttpResponseRedirect('/challenge/'+ id)
+    return HttpResponseRedirect(reverse('challenges_challenge', args=[id]))
 
 @login_required
 def accept(request, id):
     challenge = Challenge.objects.get(id=id)
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-    ActivityLogger.log(request.user, request, 'a challenge', 'accepted', '/challenge/'+ id, 'challenge')
+    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'accepted', reverse('challenges_challenge', args=[id]), 'challenge')
 
     pc.completed = False
     pc.accepted = True
     pc.save()
 
-    return HttpResponseRedirect('/challenge/'+ id)
+    return HttpResponseRedirect(reverse('challenges_challenge', args=[id]))
 
 @login_required
 def decline(request, id):
-    try:
-        pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge__id=id)
-        ActivityLogger.log(request.user, request, 'challenge', 'declined', '/challenge/'+ id, 'challenge')
-    except:
-        challenge = Challenge.objects.get(id=id)
-        pc = PlayerChallenge(player=request.user, challenge=challenge)
+    challenge = get_object_or_404(Challenge, id=id)
+
+    pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
+    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'declined', reverse('challenges_challenge', args=[id]), 'challenge')
     
-    pc.completed = True
+    pc.declined = True
     pc.accepted = False
     pc.save()
         
-    return HttpResponseRedirect('/challenge')
+    return HttpResponseRedirect(reverse('challenges'))
 
 @login_required
 def add(request):
     instance = request.user.get_profile().instance
 
     if request.method == 'POST':
-        form = AddChallenge(request.POST)
+        form = AddChallenge(instance, request.POST)
         if form.is_valid():
             map = None
             if (request.POST.get('map', None) == None or request.POST.get('map', None) == "None"):
@@ -159,12 +138,12 @@ def add(request):
             )
             challenge.save()
 
-            PointsAssigner.assign(request.user, 'challenge_created')
-            ActivityLogger.log(request.user, request, 'a challenge', 'created', '/challenge/'+ str(challenge.id), 'challenge')
+            PointsAssigner().assign(request.user, 'challenge_created')
+            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'created', '/challenge/'+ str(challenge.id), 'challenge')
 
-            return HttpResponseRedirect('/challenge')
+            return HttpResponseRedirect(reverse('challenges'))
     else:
-        form = AddChallenge()
+        form = AddChallenge(instance)
 
     location = instance.location
     
@@ -184,7 +163,7 @@ def delete(request, id):
         challenge = Challenge.objects.get(id=id)
         challenge.delete()
 
-        ActivityLogger.log(request.user, request, 'challenge', 'deleted', 'challenge')
+        ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'deleted', 'challenge')
     except:
         pass
 
@@ -243,43 +222,28 @@ def comment(request, id):
             challenge.comments.add(c)
             challenge.save()
 
-            PointsAssigner.assign(request.user, 'comment_created')
-            ActivityLogger.log(request.user, request, 'to challenge', 'added comment', '/challenge/'+ id, 'challenge')
+            PointsAssigner().assign(request.user, 'comment_created')
+            ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name, 'added comment', reverse('challenges_challenge', args=[id]), 'challenge')
         else:
-            return HttpResponseRedirect('/challenge/'+ id +'?error=true')
+            return HttpResponseRedirect(reverse('challenges_challenge', args=[id]) +'?error=true')
 
-    return HttpResponseRedirect('/challenge/'+ id)
+    return HttpResponseRedirect(reverse('challenges_challenge', args=[id]))
 
 @login_required
 def all(request):
-    instance = request.user.get_profile().instance
+    instance = None
 
-    player_challenges = PlayerChallenge.objects.filter(player=request.user).filter(challenge__start_date__lt=datetime.datetime.now()).filter(challenge__end_date__gt=datetime.datetime.now()).order_by('challenge__end_date')
-    challenges = Challenge.objects.filter(instance=instance).order_by('end_date')
-    past_challenges = Challenge.objects.filter(instance=instance).filter(end_date__lt=datetime.datetime.now()).order_by('start_date')
-    new_challenges = Challenge.objects.filter(instance=instance).filter(end_date__gt=datetime.datetime.now()).order_by('start_date')
-    completed_challenges = []
-    current_challenges = []
-    
-    for player_challenge in player_challenges:
-        challenges = challenges.exclude(id=player_challenge.challenge.id)
-        new_challenges = new_challenges.exclude(id=player_challenge.challenge.id)
-        
-        if player_challenge.completed:
-            completed_challenges.append(player_challenge)
+    profile = request.user.get_profile()
+    if profile.instance:
+        instance = profile.instance
+    elif request.user.is_staff or request.user.is_superuser:
+        instance = Instance.objects.active().latest()
 
-        if player_challenge.accepted:
-            if not player_challenge.completed:
-                current_challenges.append(player_challenge)
+    new_challenges = instance.challenges.available(request.user)
 
     tmpl = loader.get_template('challenges/all.html')
 
     return HttpResponse(tmpl.render(RequestContext(request, {
         'instance': instance,
-        'past_challenges': past_challenges,
-        'player_challenges': player_challenges,
-        'challenges': challenges,
         'new_challenges': new_challenges,
-        'completed_challenges': completed_challenges,
-        'current_challenges': current_challenges,
     }, [ip])))

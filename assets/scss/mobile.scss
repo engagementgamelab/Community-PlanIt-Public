@@ -6,8 +6,8 @@ $cityblue: #02AFF1;
 $darkblue: #0A4F9C;
 
 body {
-    background-color: #DFE7F4;
     width: 100%;
+    padding: 0;
 }
 
 div.map.ui-resizable {
@@ -65,41 +65,6 @@ body.missions {
             padding: 0;
         }
     }
-
-    #header {
-        height: 90px;
-
-        .right.admin { display: none; }
-        .right.logout {
-            z-index: 15;
-            top: 60px;
-            right: 24px;
-            position: absolute;
-        }
-        div.wrapper {
-            text-align: center;
-
-            a {
-                display: inline-block;
-                width: auto;
-                padding: 0;
-
-                img {
-                    height: auto;
-                }
-            }
-
-            nav {
-                top: -5px;
-                height: 43px;
-                text-align: center;
-
-                a {
-                    padding-left: 15px;
-                }
-            }
-        }
-    }
 }
 
 #sidebar { display: none !important; }
@@ -143,48 +108,6 @@ body.missions {
     #header {
         width: 100%;
         min-width: 0;
-        .wrapper {
-            display: auto;
-            position: static;
-
-            .page-title {
-                font-size: 90%;
-                position: static;
-            }
-            a {
-                img {
-                    height: 55px;
-                }
-            }
-            nav {
-                margin: 0 auto;
-                top: -15px;
-                width: 100%;
-                height: 75px;
-
-                a {
-                    background-size: 16px 16px;
-                    font-size: 10px;
-                }
-
-                .home, .missions, .issues, .challenges, .neighborhoods, .about, .contact {
-                    padding-left: 5px;
-                    margin-left: 0px;
-                    padding-bottom: 0;
-                    padding-top: 0;
-                    position: relative;
-                    top: 8px;
-                }
-                .home, .missions, .issues, .challenges, .neighborhoods, .about, .contact {
-                    background: none;
-                }
-            }
-        }
-    }
-
-    #footer {
-        margin-top: 0;
-        height: 123px;
     }
 
     .instances {
@@ -255,11 +178,6 @@ body.missions {
                             padding-bottom: 10px;
                         }
                     }
-                    iframe {
-                        width: 100%;
-                        height: auto;
-                        display: none;
-                    }
                 }
 
                 #sidebar {
@@ -312,11 +230,6 @@ body.missions {
                 }
             }
         }
-    }
-    iframe {
-        width: 100%;
-        height: auto;
-        display: none;
     }
 }
 

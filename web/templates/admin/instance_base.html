@@ -10,14 +10,8 @@
         {%csrf_token%}
         <div class="fieldWrapper">
             {{ form.instances.errors }}
-            <label for="id_instances">Edit Instance:</label>
-            <select name="instances" id="id_instances" onchange="instanceChange()">
-                <option value="0">------</option>
-                {% for instance in instance_values %}
-                <option value="{{instance.id}}">{{instance.name}}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" name="email_btn" id="email_bnt" style="display:none">Send Email to all in Instance</button>
+            {{ form.instance }}
+            <button type="submit" name="email_btn" id="email_btn" style="display:none">Send Email to all in Instance</button>
         </div>
         
         <label>Or create a new instance</label>
@@ -36,20 +30,21 @@
 {%block body%}
     <script>
         function instanceChange() {
-            if (document.getElementById("id_instances").value != "0")
+            if (document.getElementById("id_instance").value != "0")
             {
-                document.getElementById("email_bnt").style.display = "";
+                document.getElementById("email_btn").style.display = "";
             }
-            if (document.getElementById("id_instances").value == "0")
+            if (document.getElementById("id_instance").value == "0")
             {
-                document.getElementById("email_bnt").style.display = "none";
+                document.getElementById("email_btn").style.display = "none";
             }
         }
         $(document).ready(function() {
-            if (document.getElementById("id_instances").value != "0")
+            if (document.getElementById("id_instance").value != "0")
             {
-                document.getElementById("email_bnt").style.display = "";
+                document.getElementById("email_btn").style.display = "";
             }
+            $('#id_instance').change(instanceChange);
         });
     </script>
 {%endblock%}

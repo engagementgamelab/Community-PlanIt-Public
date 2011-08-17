@@ -34,8 +34,9 @@ class MissionsTestCase(TestCase):
         instance = Instance(name="Boston", 
                             start_date=datetime.datetime.now(),
                             end_date=datetime.datetime.now() + datetime.timedelta(days=30),
-                            location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}',
-                            curator=self.user)
+                            location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}')
+        instance.save(commit=False)
+        instance.curators.add(self.user)
         instance.save()
         self.assertTrue(Instance.objects.all().count() == 1, "The instance was created.")
         self.instance = Instance.objects.all()[0]
@@ -65,8 +66,9 @@ class MissionsWebTestCase(TestCase):
         instance = Instance(name="Boston", 
                             start_date=datetime.datetime.now(),
                             end_date=datetime.datetime.now() + datetime.timedelta(days=30),
-                            location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}',
-                            curator=self.user)
+                            location='{"frozen": null, "zoom": 6, "markers": null, "coordinates": [42.355241376822725, -71.060101562500165], "size": [500, 400]}')
+        instance.save(commit=False)
+        instance.curators.add(self.user)
         instance.save()
         self.assertTrue(Instance.objects.all().count() == 1, "The instance was created.")
         self.instance = Instance.objects.all()[0]
