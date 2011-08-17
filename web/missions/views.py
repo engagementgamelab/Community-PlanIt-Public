@@ -10,7 +10,7 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from web.answers.models import Answer
+from web.answers.models import Answer, AnswerMultiChoice
 from web.comments.forms import CommentForm
 from web.comments.models import Comment
 from web.instances.models import Instance
@@ -22,13 +22,23 @@ from web.processors import instance_processor as ip
 def fetch(request, slug):
     mission = get_object_or_404(Mission, slug=slug, instance=request.user.get_profile().instance)
 
-    answers = request.user.answers.filter(activity__mission=mission)
-
+    pks = []
+    for pk in Answer.objects.filter(answerUser=request.user, activity__mission=mission):
+        pks.append(pk.activity.pk)
+    
+    for mc in AnswerMultiChoice.objects.filter(user=request.user, option__activity__mission=mission):
+        pk = mc.option.activity.pk
+        if pk not in pks:
+            pks.append(pk)
+    
+    answered_activities = PlayerActivity.objects.filter(Q(pk__in=pks))
+    unfinished_activities = PlayerActivity.objects.filter(Q(mission=mission) & ~Q(pk__in=pks))
+    
     tmpl = loader.get_template('missions/base.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'mission': mission,
-
-        'answers': answers,
+        'unfinished_activities': unfinished_activities,
+        'answered_activities': answered_activities,
         'comment_form': CommentForm(),
     }, [ip])))
 

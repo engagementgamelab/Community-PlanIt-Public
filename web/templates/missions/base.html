@@ -16,7 +16,7 @@
 {% endif %}
 <div class="left description">{{mission.description|linebreaksbr}}</div>
 
-<h3 class="clear">{% if mission.activities.count %}You've completed {{answers.count}}/{{mission.activities.count}} activities{% else %}Activities{% endif %}:</h3>
+<h3 class="clear">{% if mission.activities.count %}You've completed {{answered_activities|length}}/{{mission.activities.count}} activities{% else %}Activities{% endif %}:</h3>
 {% with mission.activities.all as activities %}
 {% include "player_activities/all_activities.html" %}
 {% endwith %}

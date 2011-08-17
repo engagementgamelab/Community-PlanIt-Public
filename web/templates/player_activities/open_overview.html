@@ -1,0 +1,21 @@
+{%extends "player_activities/base.html"%}
+
+{%block title%}Open Response Overview{%endblock%}
+
+{%block main%}
+    <h1>Open Response Overview</h1>
+    <h2>{{activity.question}}</h2>
+
+    <div id="comments">
+        <ul class="comments">
+            {%for answer in answers%}
+                <li class="comment">
+                    {{answer.answerUser.get_profile.screen_name}} said: {{answer.answerBox}} 
+                </li>
+            {% empty %}
+                <li class="comment">No comments found.</li>
+            {%endfor%}
+        </ul>
+        <div style="clear: both;"></div>
+    </div>
+{%endblock%}

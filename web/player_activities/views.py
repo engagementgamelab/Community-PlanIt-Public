@@ -20,6 +20,63 @@ from web.reports.actions import *
 
 @login_required
 def overview(request, id):
+    activity = PlayerActivity.objects.get(id=id)
+    
+    answerStr = ""
+    
+    if activity.type.type == "open_ended":
+        answers = AnswerOpenEnded.objects.filter(activity=activity)
+        tmpl = loader.get_template('player_activities/open_overview.html')
+        return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
+                                                                 "answers": answers}, [ip])))
+    elif activity.type.type == "single_response":
+        answers = AnswerSingleResponse.objects.filter(activity=activity)
+        answerDict = {}
+        choices = MultiChoiceActivity.objects.filter(activity=activity)
+        for choice in choices:
+            answerDict[choice.value] = 0
+
+        for answer in answers:
+            answerDict[choice.value] = answerDict[choice.value] + 1
+        
+        answerList = []
+        for x in answerDict:
+            answerList.append((x, answerDict[x]))
+            
+        tmpl = loader.get_template('player_activities/single_overview.html')
+        return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
+                                                                 "answers": answerList}, [ip])))
+    elif activity.type.type == "multi_response":
+        answers = AnswerMultiChoice.objects.filter(option__activity=activity)
+        answerDict = {}
+        choices = MultiChoiceActivity.objects.filter(activity=activity)
+        for choice in choices:
+            answerDict[choice.value] = 0
+
+        for answer in answers:
+            answerDict[answer.option.value] = answerDict[answer.option.value] + 1
+        
+        answerList = []
+        for x in answerDict:
+            answerList.append((x, answerDict[x]))
+            
+        tmpl = loader.get_template('player_activities/single_overview.html')
+        return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
+                                                                 "answers": answerList}, [ip])))
+                
+    elif activity.type.type == "map":
+        answers = AnswerMap.objects.filter(activity=activity)
+        tmpl = loader.get_template('player_activities/map_overview.html')
+    elif activity.type.type == "empathy":
+        answers = AnswerEmpathy.objects.filter(activity=activity)
+        tmpl = loader.get_template('player_activities/empathy_overview.html')
+    elif activity.type.type == "multi_response":
+        answers = AnswerMultiChoice.objects.filter(option__activity==activity)
+        tmpl = loader.get_template('player_activities/multi_overview.html')
+
+    return HttpResponse(answerStr)
+    
+    
     return HttpResponse("web page not created yet")
 
 @login_required
@@ -218,8 +275,16 @@ def index(request):
         
     activities = PlayerActivity.objects.filter(mission=missions[0])
     pks = []
-    for pk in Answer.objects.filter(answerUser=request.user):
-        pks.append(pk.id)
+    for pk in Answer.objects.filter(answerUser=request.user, activity__mission=missions[0]):
+        pks.append(pk.activity.pk)
+    
+    for mc in AnswerMultiChoice.objects.filter(user=request.user, option__activity__mission=missions[0]):
+        pk = mc.option.activity.pk
+        if pk not in pks:
+            pks.append(pk)
+    
+    answered_activities = PlayerActivity.objects.filter(Q(pk__in=pks))
+    
     #We want to get all activities that the user has for this mission
     #And the user has no answer for
     unfinished_activities = PlayerActivity.objects.filter(Q(mission=missions[0]) & ~Q(pk__in=pks))
