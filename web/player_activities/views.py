@@ -63,16 +63,12 @@ def overview(request, id):
         tmpl = loader.get_template('player_activities/single_overview.html')
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answerList}, [ip])))
-                
     elif activity.type.type == "map":
         answers = AnswerMap.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/map_overview.html')
     elif activity.type.type == "empathy":
         answers = AnswerEmpathy.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/empathy_overview.html')
-    elif activity.type.type == "multi_response":
-        answers = AnswerMultiChoice.objects.filter(option__activity==activity)
-        tmpl = loader.get_template('player_activities/multi_overview.html')
 
     return HttpResponse(answerStr)
     

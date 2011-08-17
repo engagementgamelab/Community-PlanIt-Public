@@ -704,6 +704,17 @@ def activity_save(request):
                     actCopy(tempAct, activity)
                     activity = tempAct
                     PlayerEmpathyActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                elif type.type == "map":
+                    tempAct = PlayerMapActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                elif type.type == "empathy":
+                    tempAct = PlayerEmpathyActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                    
  
         activity.name = form.cleaned_data["name"]
         activity.question = form.cleaned_data["question"]
