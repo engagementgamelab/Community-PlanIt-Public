@@ -9,13 +9,15 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 
 from gmapsfield.fields import GoogleMapsField
-from south.modelsinspector import add_introspection_rules
-
-add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
 from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
+
+from south.modelsinspector import add_introspection_rules
+
+add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
+
 
 class InstanceQueryMixin(object):
     def past(self):

@@ -2,6 +2,11 @@ import datetime
 from django.template.defaultfilters import slugify
 from django.db import models
 from django.contrib import admin
+
+from nani.admin import TranslatableAdmin
+from nani.models import TranslatableModel, TranslatedFields
+from nani.manager import TranslationManager, TranslationQueryset
+
 from web.instances.models import Instance
 
 class MissionQueryMixin(object):
@@ -15,21 +20,24 @@ class MissionQueryMixin(object):
         now = datetime.datetime.now()
         return self.filter(start_date__lte=now, end_date__gte=now).order_by('start_date')
 
-class MissionQuerySet(models.query.QuerySet, MissionQueryMixin):
+class MissionQuerySet(TranslationQueryset, MissionQueryMixin):
     pass
 
-class MissionManager(models.Manager, MissionQueryMixin):
+class MissionManager(TranslationManager, MissionQueryMixin):
     def get_query_set(self):
         return MissionQuerySet(self.model, using=self._db)
 
-class Mission(models.Model):
+class Mission(TranslatableModel):
     instance = models.ForeignKey(Instance, related_name='missions')
-    name = models.CharField(max_length=45)
     slug = models.SlugField(editable=False)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    description = models.TextField(blank=True)
     video = models.TextField(blank=True)
+
+    translations = TranslatedFields(
+        name = models.CharField(max_length=45),
+        description = models.TextField(blank=True),
+    )
     
     objects = MissionManager()
 
@@ -47,14 +55,15 @@ class Mission(models.Model):
         return datetime.datetime.now() >= self.start_date
     
     def save(self):
-        self.slug = slugify(self.name)
+        #TODO make this work with unicode
+        self.slug = slugify(self.pk)
         super(Mission, self).save()
 
     def __unicode__(self):
-        return self.name
+        return self.safe_translation_getter('name', 'Mission: %s' % self.pk)
 
-class MissionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'start_date', 'end_date', 'instance')
+class MissionAdmin(TranslatableAdmin):
+    list_display = ('start_date', 'end_date', 'instance') #could not be used with nani:, 'name', 
 
     def queryset(self, request):
         qs = super(MissionAdmin, self).queryset(request)
