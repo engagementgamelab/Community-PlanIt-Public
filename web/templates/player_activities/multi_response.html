@@ -19,6 +19,12 @@
             {% endfor %}
             </ul>
         </div>
+        
+        <div id="comments">
+            <h3>Why did you choose these points?</h3>
+            {% include "comments/duplicate.html" %}
+        </div>
+        
         <input type="submit" class="button submit" value="Submit" />
     </form>
 {%endblock%}

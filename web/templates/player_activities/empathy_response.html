@@ -17,15 +17,12 @@
         {% if activity.bio %}
             <h3>{{activity.bio}}</h3>
         {% endif %}
-
-        {% if activity.question %}
-            <h4>{{activity.question}}</h4>
-        {% endif %}
-        <div class="fieldWrapper">
-            {{ form.answerBox.errors }}
-            <label for="id_answerbox">Your Response:</label>
-            {{ form.answerBox }}
+        
+        <div id="comments">
+            <h3>Your Response:</h3>
+            {% include "comments/duplicate.html" %}
         </div>
+        
         <input type="submit" class="button submit" value="Submit" />
     </form>
 {%endblock%}

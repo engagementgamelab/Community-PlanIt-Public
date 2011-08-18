@@ -11,6 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 from web.answers.models import *
+from web.comments.models import *
+from web.comments.forms import *
 from web.instances.models import Instance
 from web.missions.models import Mission
 from web.player_activities.forms import *
@@ -25,10 +27,12 @@ def overview(request, id):
     answerStr = ""
     
     if activity.type.type == "open_ended":
-        answers = AnswerOpenEnded.objects.filter(activity=activity)
+        answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/open_overview.html')
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
-                                                                 "answers": answers}, [ip])))
+                                                                 "answers": answers,
+                                                                 "action": "",
+                                                                 "form_value": "open_ended"}, [ip])))
     elif activity.type.type == "single_response":
         answers = AnswerSingleResponse.objects.filter(activity=activity)
         answerDict = {}
@@ -81,118 +85,166 @@ def overview(request, id):
                                                                  "init_coords": init_coords,
                                                                  "map": map}, [ip])))
     elif activity.type.type == "empathy":
-        answers = AnswerEmpathy.objects.filter(activity=activity)
+        answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/empathy_overview.html')
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answers}, [ip])))
     return HttpResponse("web page not created yet")
+
+def comment_fun(comment, form, request):
+    comment.user = request.user
+    comment.instance = request.user.get_profile().instance
+    comment.message = form.cleaned_data["message"]
+    comment.save()
+    
+    if request.POST.has_key('yt-url'):
+        if request.POST.get('yt-url'):
+            comment.attachment.create(
+                    file=None,
+                    url=request.POST.get('yt-url'),
+                    type='video',
+                    user=request.user,
+                    instance=request.user.get_profile().instance)
+    
+    if request.FILES.has_key('picture'):
+        comment.attachment.create(
+            file=request.FILES.get('picture'),
+            user=request.user,
+            instance=request.user.get_profile().instance)
 
 @login_required
 def get_activity(request, id):
     activity = PlayerActivity.objects.get(id=id)
     tmpl = None
     form = None
+    comment_form = None
     map = None
     init_coords = []
     if request.method == "POST":
-        
         s = ""
         for x in request.POST.keys():
-            s = "%s%s: %s" % (s, x, request.POST[x])
+            s = "%s%s: %s<br>" % (s, x, request.POST[x])
+        s = "%s<br> FILES<br>" % s
+        for x in request.FILES.keys():
+            s = "%s%s: %s" % (s, x, request.FILES[x])
         #return HttpResponse(s)
         
         #If this game is a replay it should be set below. The reason to not check here
         # is because the type of the game might have changed. If that is the case, the Answer.objects.filteer
         # will exist but it will be the wrong one.  
-        replay = False 
-
+        replay = False
+        form_error = False 
+        comment_form = CommentForm(request.POST)
         if request.POST["form"] == "open_ended":
-            form = OpenForm(request.POST)
-            if form.is_valid():
-                answer = AnswerOpenEnded.objects.filter(activity=activity, answerUser=request.user)
+            if comment_form.is_valid():
+                answer = Answer.objects.filter(activity=activity, answerUser=request.user)
+                comment = None
                 if (len(answer) > 0):
                     answer = answer[0]
                     replay = True
+                    comment = answer.comment
                 else:
-                    answer = AnswerOpenEnded()
+                    answer = Answer()
                     answer.activity = activity
                     answer.answerUser = request.user
-                answer.answerBox = form.cleaned_data["answerBox"]
+                    comment = Comment()
+                comment_fun(comment, comment_form, request)
+                answer.comment = comment
                 answer.save()
             else:
                 tmpl = loader.get_template('player_activities/open_response.html')
+                form_error = True
         elif request.POST["form"] == "single_response":
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
             form = MakeSingleForm(choices)(request.POST)
-            if form.is_valid():
+            if form.is_valid() and comment_form.is_valid():
                 answer = AnswerSingleResponse.objects.filter(activity=activity, answerUser = request.user)
+                comment = None
                 if (len(answer) > 0):
                     answer = answer[0]
                     replay = True
+                    comment = answer.comment
                 else:
                     answer = AnswerSingleResponse()
                     answer.activity = activity
                     answer.answerUser = request.user
+                    comment = Comment()
+                comment_fun(comment, comment_form, request)
                 answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
+                answer.comment = comment
                 answer.save()
             else:
                 tmpl = loader.get_template('player_activities/single_response.html')
+                form_error = True
         elif request.POST["form"] == "map":
             form = MapForm(request.POST)
-            if form.is_valid():
+            if form.is_valid() and comment_form.is_valid():
                 map = form.cleaned_data["map"]
-                answerBox = form.cleaned_data["answerBox"]
                 answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+                comment = None
                 if (len(answer) > 0):
                     answer = answer[0]
                     replay = True
+                    comment = answer.comment
                 else:
                     answer = AnswerMap()
                     answer.activity = activity
                     answer.answerUser = request.user
-                answer.answerBox = answerBox
+                    comment = Comment()
+                comment_fun(comment, comment_form, request)
                 answer.map = map;
+                answer.comment = comment
                 answer.save()
                 answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
             else:
                 map = request.POST["map"]
                 activity = PlayerMapActivity.objects.get(pk=activity.id)
                 tmpl = loader.get_template('player_activities/map_response.html')
+                form_error = True
+                return HttpResponse("form errors: %s comment errors: %s" % (form.errors, comment_form.errors))
         elif request.POST["form"] == "empathy":
-            form = EmpathyForm(request.POST)
-            if form.is_valid():
-                answerBox = form.cleaned_data["answerBox"]
-                answer = AnswerEmpathy.objects.filter(activity=activity, answerUser=request.user)
+            if comment_form.is_valid():
+                answer = Answer.objects.filter(activity=activity, answerUser=request.user)
+                comment = None
                 if (len(answer) > 0):
                     answer = answer[0]
                     replay = True
+                    comment = answer.comment
                 else:
-                    answer = AnswerEmpathy()
+                    answer = Answer()
                     answer.activity = activity
                     answer.answerUser = request.user
-                answer.answerBox = answerBox
+                    comment = Comment()
+                comment_fun(comment, comment_form, request)
+                answer.comment = comment
                 answer.save()
             else:
                 tmpl = loader.get_template('player_activities/empathy_response.html')
+                form_error = True
         elif request.POST["form"] == "multi_response":
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
             form = MakeMultiForm(choices)(request.POST)
-            if form.is_valid():
+            if form.is_valid() and comment_form.is_valid():
                 #this gets very very messy....
                 choices = MultiChoiceActivity.objects.filter(activity=activity)
+                comment = None
                 if len(choices) > 0:
                     replay = True
                 ids = []
                 for choice in choices:
                     ids.append(choice.id)
                 #cleans out all of the choices that the user selected from the check boxes
+                for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)):
+                    Comment.objects.filter(pk=amc.comment.pk).delete()
                 AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)).delete()
+                comment = Comment()
+                comment_fun(comment, comment_form, request)
                 for key in request.POST.keys():
                     if key.find("response_") >= 0:
                         answer = AnswerMultiChoice()
@@ -201,21 +253,23 @@ def get_activity(request, id):
                         #So basically if the response exists it means that checkbox was checked and the
                         # value returned will be the ID and will always be an int
                         answer.option = MultiChoiceActivity.objects.get(id=int(request.POST[key]))
+                        answer.comment = comment
                         answer.save()
             else:
                 tmpl = loader.get_template('player_activities/multi_response.html')
+                form_error = True
         
         #If the template is None then there wasn't an error so assign the points and redirect
         #Otherwise fall through. Only assign the points if the replay is false, but still redirect
-        if replay == False:
+        if replay == False and form_error == False:
             PointsAssigner().assignAct(request.user, activity)
 
         if tmpl == None:
             return HttpResponseRedirect(reverse('missions_mission', args=[activity.mission.slug]))
     else:
+        comment_form = CommentForm()
         if (activity.type.type == "open_ended"):
             tmpl = loader.get_template('player_activities/open_response.html')
-            form = OpenForm()
         elif (activity.type.type == "single_response"):
             tmpl = loader.get_template('player_activities/single_response.html')
             mc = MultiChoiceActivity.objects.filter(activity=activity)
@@ -228,7 +282,7 @@ def get_activity(request, id):
             tmpl = loader.get_template('player_activities/map_response.html')
             answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
             if (len(answer) > 0):
-                form = MapForm(initial={"answerBox": answer[0].answerBox})
+                form = MapForm()
                 map = answer[0].map
                 markers = simplejson.loads("%s" % map)["markers"]
                 x = 0
@@ -239,11 +293,9 @@ def get_activity(request, id):
             else:
                 map = activity.mission.instance.location
                 form = MapForm()
-        
         elif (activity.type.type == "empathy"):
             activity = PlayerEmpathyActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/empathy_response.html')
-            form = EmpathyForm()
         elif (activity.type.type == "multi_response"):
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
@@ -256,6 +308,7 @@ def get_activity(request, id):
         
     return HttpResponse(tmpl.render(RequestContext(request, {
         "form": form, 
+        "comment_form": comment_form,
         "activity": activity,
         "map": map,
         "init_coords": init_coords,

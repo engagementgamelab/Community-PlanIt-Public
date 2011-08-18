@@ -29,11 +29,11 @@
             <div id="map" class="google-map" data-type="Point"></div>
         </div>
         
-        <div class="fieldWrapper">
-            {{form.answerBox.errors}}
-            <label for="id_answerBox">Your Response:</label>
-            {{ form.answerBox }}
+        <div id="comments">
+            <h3>Why did you choose these points?</h3>
+            {% include "comments/duplicate.html" %}
         </div>
+        
         <div class="markers">
             <button class="button submit">Submit response</button>
         </div>
