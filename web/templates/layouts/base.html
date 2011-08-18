@@ -39,18 +39,18 @@
 <body class="page {% block section %}default{% endblock %}{% if user.is_authenticated %} loggedin{% endif %} {% block extra_body_class %}{% endblock %}">
     <div class="wrapper">
         <div id="header">
-            <div class="logo"><a href="{% url home %}"><img src="{{MEDIA_URL}}img/logo-3.png" alt="Home"/></a></div>
+            <div class="logo"><a href="{# url home #}"><img src="{{MEDIA_URL}}img/logo-3.png" alt="Home"/></a></div>
             <nav>
                 <ul>
                 {% block nav %}
                     {% if user.is_authenticated and instance.is_started %}
-                    <li><div class="home"><a href="{% url accounts_dashboard %}"><span>Home</span></a></div></li>
+                    <li><div class="home"><a href="{% url accounts:accounts_dashboard %}"><span>Home</span></a></div></li>
                     <li><div class="missions"><a href="{% url missions:index %}"><span>Missions</span></a></div></li>
                     <li><div class="challenges"><a href="{% url challenges:index %}"><span>Challenges</span></a></div></li>
                     <li><div class="values"><a href="{% url values:index %}"><span>Token Depot</span></a></div></li>
                     {% else %}
-                    <li><div class="home"><a href="{% url home %}"><span>Home</span></a></div></li>
-                    <li><div class="communities"><a href="{% url instances:index %}"><span>Communities</span></a></div></li>
+                    <li><div class="home"><a href="{# url home #}"><span>Home</span></a></div></li>
+                    <li><div class="communities"><a href="{% url instances:instances %}"><span>Communities</span></a></div></li>
                     <li><div class="about"><a href="{% url about %}"><span>About</span></a></div></li>
                     <li><div class="contact"><a href="{% url contact %}"><span>Contact</span></a></div></li>
                     {% endif %}
@@ -67,7 +67,7 @@
                     <li><div class="admin"><a href="{% url admin-base %}"><span>Admin</span></a></div></li>
                     {% endif %}
                     {% if user.is_authenticated %}
-                    <li class="final"><div class="logout"><a href="{% url accounts_logout %}"><span>Logout</span></a></div></li>
+                    <li class="final"><div class="logout"><a href="{% url accounts:accounts_logout %}"><span>Logout</span></a></div></li>
                     {% endif %}
                 {% endblock %}
                 </ul>
@@ -83,14 +83,14 @@
                         <div class="profile">
                         {% if user.is_authenticated %}
                             <div class="pic">
-                                <a href="{% url accounts_profile_edit %}">
+                                <a href="{% url accounts:accounts_profile_edit %}">
                                     {% if user.get_profile.avatar %}
                                     <img class="avatar-large" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}" alt="">
                                     {% else %}
                                     <img class="avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg" alt="">
                                     {% endif %}
                                 </a>
-                                <a href="{% url accounts_profile_edit %}">
+                                <a href="{% url accounts:accounts_profile_edit %}">
                                     Full Profile
                                 </a>
                             </div>
@@ -106,7 +106,7 @@
                                 <span>{{ user.get_profile.points_to_coin }} pts to your next token!</span>
                                 <div class="fill" style="width:{{user.get_profile.points_to_coin_for_fill}}%;"></div>
                             </div>
-                            <a href="{% url values %}" class="coins{% if user.get_profile.coins %} has-coins{% endif %}">
+                            <a href="{% url values:index %}" class="coins{% if user.get_profile.coins %} has-coins{% endif %}">
                                 <span class="label">Tokens earned:</span> <span class="value">{{user.get_profile.currentCoins}}</span>
                                 <span class="visit">Visit your Token Depot</span>
                             </a>
@@ -114,7 +114,7 @@
                             {% endif %}
                         {% else %}
                         {% if instances.active.count %}
-                        <h3>New Player? <a href="{% url accounts_register %}" class="button">Sign Up</a></h3>
+                        <h3>New Player? <a href="{% url accounts:accounts_register %}" class="button">Sign Up</a></h3>
                         {% endif %}
                         {% endif %}
                         </div>

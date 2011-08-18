@@ -1,21 +1,21 @@
-{% load cpi_tags %}
+{% load i18n %}
 <table class="activities">
     <tbody>
     {% for activity in activities %}
     <tr class="{% cycle 'odd' 'even' %}">
     {% if activity.answers.count %}
-        <td class="{{activity.type.type}}_activity"><a href="{% url player_activities_overview activity.id %}">{{activity.name}}</a></td>
-        <td>{{ activity.getPoints }} pts</td> 
-        <td class="final"><a href="{% url player_activities_overview activity.id %}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a></td>
+        <td class="{{activity.type.type}}_activity"><a href="{% url activities:player_activities_overview activity.id %}">{{activity.name}}</a></td>
+        <td>{{ activity.getPoints }} {% trans "pts" %}</td> 
+        <td class="final"><a href="{% url activities:player_activities_overview activity.id %}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a></td>
     {% else %}
-        <td class="{{activity.type.type}}_activity"><a href="{% url player_activities_activity activity.id %}">{{activity.name}}</a></td>
+        <td class="{{activity.type.type}}_activity"><a href="{% url activities:player_activities_activity activity.id %}">{{activity.name}}</a></td>
         <td>{{ activity.getPoints }} pts</td> 
-        <td class="final"><a href="{% url player_activities_activity activity.id %}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a></td>
+        <td class="final"><a href="{% url activities:player_activities_activity activity.id %}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a></td>
     {% endif %}
     </tr>
     {% empty %}
     <tr>
-        <td colspan="2">No activities found.</td>
+        <td colspan="2">{% trans "No activities found" %}.</td>
     </tr>
     {% endfor %}
     </tbody>

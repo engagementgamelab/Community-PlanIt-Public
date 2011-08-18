@@ -13,14 +13,14 @@
 {% if instance.is_started %}
     <div class="section">
         {%if instance.missions.active.count%}
-            {%for mission in instance.missions.active%}
+            {% for mission in instance.missions.active %}
             <h2>Current Mission <span class="fine">{{mission.start_date|date:"n/j"}}&#8211;{{mission.end_date|date:"n/j"}}</span></h2>
             <div class="video">{{mission.video|safe}}</div>
             <h3>{{mission.name}}</h3>
             <p class="separate">{{mission.description}}</p>
             {% include "player_activities/all_activities_paginated.html" %}
             <div class="buttons">
-                <a class="button" href="{% url missions_mission mission.slug %}" title="{{mission.name}}">View Current Mission</a>
+                <a class="button" href="{% url missions:missions_mission mission.slug %}" title="{{mission.name}}">View Current Mission</a>
             </div>
             {%endfor%}
         {%else%}
@@ -50,7 +50,7 @@
                 <tbody>
                 {% for challenge in challenges %}
                     <tr class="{% cycle "odd" "even" %}">
-                        <td><a href="{% url challenges_challenge challenge.pk %}">{{challenge.name}}</a></td>
+                        <td><a href="{% url challenges:challenges_challenge challenge.pk %}">{{challenge.name}}</a></td>
                     </tr>
                 {% empty %}
                     <tr class="odd">
@@ -61,8 +61,8 @@
             </table>
         </div>
         <div class="buttons">
-            <a class="button left" href="{% url challenges_add %}">Create Challenge</a>
-            <a class="button right" href="{% url challenges %}">All Challenges</a>
+            <a class="button left" href="{% url challenges:challenges_add %}">Create Challenge</a>
+            <a class="button right" href="{% url challenges:index %}">All Challenges</a>
         </div>
     </div>
 {% endif %}
@@ -93,12 +93,7 @@
             {%if not instance.is_expired%}                    
                 <div class="welcome">
                     <p>We invite you to play Community PlanIt to help shape {{instance.city}}'s vision for the
-                    future. Complete <a class="red" href="{% url player_activities_all %}" title="activities">activities</a> to earn points, which
-                    you can trade in for <a class="red" href="{% url values %}">coins</a> to spend
-                    on promoting your top community values. Keep checking back from 
-                    {{instance.start_date|date:"F j"}} through
-                    {{instance.end_date|date:"F j"}} to stay on top of the
-                    lively discussion&#8212;and tell your friends!</p>
+                    future. Complete <a class="red" href="{% url player_activities:player_activities_all %}" title="activities">activities</a> to earn points, which you can trade in for <a class="red" href="{% url values:index %}">coins</a> to spend on promoting your top community values. Keep checking back from {{instance.start_date|date:"F j"}} through {{instance.end_date|date:"F j"}} to stay on top of the lively discussion&#8212;and tell your friends!</p>
                 </div>
                 
             {%else%}
@@ -147,7 +142,7 @@
                 </table>
                 
                 <p>
-                <a href="{% url instances_instance user.get_profile.instance.slug %}" class="right button">View more community news</a>
+                <a href="{% url instances:instances_instance user.get_profile.instance.slug %}" class="right button">View more community news</a>
                 </p>
             </div>
         {%endif%}
@@ -180,4 +175,3 @@
 </div>
 {% endif %}
 {% endblock %}
->>>>>>> master
