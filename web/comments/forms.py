@@ -4,7 +4,7 @@ class CommentForm(forms.Form):
     # sometimes we don't want to show the entire discussion
     # before the user has contributed
     just_one_form = False
-
+    allow_replies = True
     message = forms.CharField(
         max_length=1000,
         widget=forms.Textarea(

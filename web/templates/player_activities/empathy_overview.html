@@ -21,15 +21,7 @@
     {% endif %}
 
     <div id="comments">
-        <ul class="comments">
-            {%for answer in answers%}
-                <li class="comment">
-                    {{answer.answerUser.get_profile.screen_name}} said: {{answer.answerBox}} 
-                </li>
-            {% empty %}
-                <li class="comment">No comments found.</li>
-            {%endfor%}
-        </ul>
+        {%include "comments/post.html"%}
         <div style="clear: both;"></div>
     </div>
 {%endblock%}

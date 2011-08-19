@@ -19,11 +19,13 @@
     <h2>Comments</h2>
     {%endif%}
     {% if instance.is_active %}
-    <h3>Add a comment</h3>
-    <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
-        {% include "comments/duplicate.html" %}
-        <button type="submit" class="button right">Add Comment</button>
-    </form>
+        {%if comment_form.allow_replies %}
+            <h3>Add a comment</h3>
+            <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
+                {% include "comments/duplicate.html" %}
+                <button type="submit" class="button right">Add Comment</button>
+            </form>
+        {% endif %}
     {% else %}
     <p>This community is no longer active.</p>
     {% endif %}

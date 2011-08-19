@@ -5,7 +5,6 @@
 {%block main%}
     <h1>Open Response Overview</h1>
     <h2>{{activity.question}}</h2>
-
     <ul>
         {% for key, val in answers %}
             <li>{{key}}: {{val}}</li>
@@ -14,7 +13,11 @@
     <h3>Answer Selections</h3>
     <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
         margin-top: 25px; margin-bottom: 25px; "></div>
-        
+
+    <div id="comments">
+        {%include "comments/post.html"%}
+        <div style="clear: both;"></div>
+    </div>
 
 <script type="text/javascript">
     $(function () {

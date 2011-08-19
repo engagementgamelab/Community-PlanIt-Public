@@ -9,7 +9,7 @@
     </div>
     <div class="main">
         <div class="meta">
-            {% if not comment.hidden %}
+            {% if not comment.hidden and comment.user != user%}
             <div class="right">
                 <a href="{% url flags_add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
             </div>

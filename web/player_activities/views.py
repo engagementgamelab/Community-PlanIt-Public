@@ -23,23 +23,29 @@ from web.reports.actions import *
 @login_required
 def overview(request, id):
     activity = PlayerActivity.objects.get(id=id)
-    
-    answerStr = ""
-    
+        
     if activity.type.type == "open_ended":
         answers = Answer.objects.filter(activity=activity)
-        tmpl = loader.get_template('player_activities/open_overview.html')
         comment_pks = []
         for answer in answers:
             comment_pks.append(answer.comment.pk)
         comments = Comment.objects.filter(pk__in=comment_pks)
+        
+        tmpl = loader.get_template('player_activities/open_overview.html')
+        comment_form = CommentForm()
+        comment_form.allow_replies = False
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answers,
                                                                  "comments": comments,
-                                                                 "action": "",
-                                                                 "form_value": "open_ended"}, [ip])))
+                                                                 "comment_form": comment_form,
+                                                                 }, [ip])))
     elif activity.type.type == "single_response":
         answers = AnswerSingleResponse.objects.filter(activity=activity)
+        comment_pks = []
+        for answer in answers:
+            comment_pks.append(answer.comment.pk)
+        comments = Comment.objects.filter(pk__in=comment_pks)
+        
         answerDict = {}
         choices = MultiChoiceActivity.objects.filter(activity=activity)
         for choice in choices:
@@ -53,10 +59,21 @@ def overview(request, id):
             answerList.append((x, answerDict[x]))
             
         tmpl = loader.get_template('player_activities/single_overview.html')
+        comment_form = CommentForm()
+        comment_form.allow_replies = False
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
-                                                                 "answers": answerList}, [ip])))
+                                                                 "answers": answerList,
+                                                                 "comments": comments,
+                                                                 "comment_form": comment_form,
+                                                                 }, [ip])))
     elif activity.type.type == "multi_response":
         answers = AnswerMultiChoice.objects.filter(option__activity=activity)
+        comment_pks = []
+        for answer in answers:
+            if answer.comment.pk not in comment_pks:
+                comment_pks.append(answer.comment.pk)
+        comments = Comment.objects.filter(pk__in=comment_pks)
+        
         answerDict = {}
         choices = MultiChoiceActivity.objects.filter(activity=activity)
         for choice in choices:
@@ -70,11 +87,19 @@ def overview(request, id):
             answerList.append((x, answerDict[x]))
             
         tmpl = loader.get_template('player_activities/single_overview.html')
+        comment_form = CommentForm()
+        comment_form.allow_replies = False
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
+                                                                 "comments": comments,
+                                                                 "comment_form": comment_form,
                                                                  "answers": answerList}, [ip])))
     elif activity.type.type == "map":
         answers = AnswerMap.objects.filter(activity=activity)
-        tmpl = loader.get_template('player_activities/map_overview.html')
+        comment_pks = []
+        for answer in answers:
+            comment_pks.append(answer.comment.pk)
+        comments = Comment.objects.filter(pk__in=comment_pks)
+        
         init_coords = []
         x = 0
         for answer in answers:
@@ -85,14 +110,30 @@ def overview(request, id):
                 init_coords.append( [x, coor[0], coor[1]] )
                 x = x + 1
         map = activity.mission.instance.location
+
+        tmpl = loader.get_template('player_activities/map_overview.html')        
+        comment_form = CommentForm()
+        comment_form.allow_replies = False
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
+                                                                 "comments": comments,
+                                                                 "comment_form": comment_form,
                                                                  "answers": answers,
                                                                  "init_coords": init_coords,
                                                                  "map": map}, [ip])))
     elif activity.type.type == "empathy":
         answers = Answer.objects.filter(activity=activity)
+        comment_pks = []
+        for answer in answers:
+            comment_pks.append(answer.comment.pk)
+        comments = Comment.objects.filter(pk__in=comment_pks)
+        
         tmpl = loader.get_template('player_activities/empathy_overview.html')
+        comment_form = CommentForm()
+        comment_form.allow_replies = False
+        
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
+                                                                 "comments": comments,
+                                                                 "comment_form": comment_form,
                                                                  "answers": answers}, [ip])))
     return HttpResponse("web page not created yet")
 

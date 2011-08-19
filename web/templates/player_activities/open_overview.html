@@ -7,13 +7,7 @@
     <h2>{{activity.question}}</h2>
 
     <div id="comments">
-        <ul class="comments">
-        {%for answer in answers%}
         {%include "comments/post.html"%}
-        {% empty %}
-        <li class="comment">No comments found.</li>
-        {%endfor%}
-        </ul>
         <div style="clear: both;"></div>
     </div>
 {%endblock%}
