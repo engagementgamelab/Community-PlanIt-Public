@@ -19,7 +19,25 @@ from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
 
-class InstanceQueryMixin(object):
+#class InstanceQueryMixin(object):
+#    def past(self):
+#        return self.filter(end_date__lt=datetime.datetime.now()).order_by('start_date')
+#
+#    def future(self):
+#        return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
+#
+#    def active(self):
+#        now = datetime.datetime.now()
+#        return self.filter(start_date__lte=now).filter(Q(end_date__isnull=True)|Q(end_date__gte=now)).order_by('start_date')
+
+#class InstanceQuerySet(models.query.QuerySet, InstanceQueryMixin):
+#    pass
+
+#class InstanceManager(TranslationManager, InstanceQueryMixin):
+#    def get_query_set(self):
+#        return InstanceQuerySet(self.model, using=self._db)
+
+class InstanceManager(TranslationManager):
     def past(self):
         return self.filter(end_date__lt=datetime.datetime.now()).order_by('start_date')
 
@@ -30,12 +48,6 @@ class InstanceQueryMixin(object):
         now = datetime.datetime.now()
         return self.filter(start_date__lte=now).filter(Q(end_date__isnull=True)|Q(end_date__gte=now)).order_by('start_date')
 
-class InstanceQuerySet(models.query.QuerySet, InstanceQueryMixin):
-    pass
-
-class InstanceManager(TranslationManager, InstanceQueryMixin):
-    def get_query_set(self):
-        return InstanceQuerySet(self.model, using=self._db)
 
 class Instance(TranslatableModel):
     state = models.CharField(max_length=2)
@@ -51,6 +63,7 @@ class Instance(TranslatableModel):
         content = models.TextField(null=True, blank=True),
         process_name = models.CharField(max_length=255, null=True, blank=True),
         process_description = models.TextField(null=True, blank=True),
+        #meta = {'get_latest_by': 'start_date'}
     )
     objects = InstanceManager()
 

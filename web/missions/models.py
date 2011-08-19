@@ -5,11 +5,28 @@ from django.contrib import admin
 
 from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
-from nani.manager import TranslationManager, TranslationQueryset
+from nani.manager import TranslationManager
 
 from web.instances.models import Instance
 
-class MissionQueryMixin(object):
+#class MissionQueryMixin(object):
+#    def past(self):
+#        return self.filter(end_date__lt=datetime.datetime.now()).order_by('-end_date')
+#
+#    def future(self):
+#        return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
+#
+#    def active(self):
+#        now = datetime.datetime.now()
+#        return self.filter(start_date__lte=now, end_date__gte=now).order_by('start_date')
+
+#class MissionQuerySet(TranslationQueryset, MissionQueryMixin):
+#    pass
+
+class MissionManager(TranslationManager):
+    #def get_query_set(self):
+    #    return MissionQuerySet(self.model, using=self._db)
+
     def past(self):
         return self.filter(end_date__lt=datetime.datetime.now()).order_by('-end_date')
 
@@ -19,13 +36,6 @@ class MissionQueryMixin(object):
     def active(self):
         now = datetime.datetime.now()
         return self.filter(start_date__lte=now, end_date__gte=now).order_by('start_date')
-
-class MissionQuerySet(TranslationQueryset, MissionQueryMixin):
-    pass
-
-class MissionManager(TranslationManager, MissionQueryMixin):
-    def get_query_set(self):
-        return MissionQuerySet(self.model, using=self._db)
 
 class Mission(TranslatableModel):
     instance = models.ForeignKey(Instance, related_name='missions')
@@ -37,6 +47,7 @@ class Mission(TranslatableModel):
     translations = TranslatedFields(
         name = models.CharField(max_length=45),
         description = models.TextField(blank=True),
+        #meta = {'get_latest_by': 'start_date'}
     )
     
     objects = MissionManager()
@@ -64,23 +75,3 @@ class Mission(TranslatableModel):
 
 class MissionAdmin(TranslatableAdmin):
     list_display = ('start_date', 'end_date', 'instance') #could not be used with nani:, 'name', 
-
-    def queryset(self, request):
-        qs = super(MissionAdmin, self).queryset(request)
-        return qs.filter(instance=request.session.get('admin_instance'))
-
-    def save_model(self, request, obj, form, change):
-        #obj.instance = request.session.get('admin_instance')
-        obj.save()
-
-    obj = None
-    def get_form(self, request, obj=None, **kwargs):
-        self.obj = obj 
-        return super(MissionAdmin, self).get_form(request, obj, **kwargs)
-
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field.name == 'games' and getattr(self, 'obj', None):
-            kwargs['queryset'] = Mission.objects.get(id=self.obj.id).games.all()
-        elif db_field.name == 'games':
-            kwargs['queryset'] = Mission.objects.filter(id=-2)
-        return super(MissionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)

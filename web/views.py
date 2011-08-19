@@ -13,7 +13,7 @@ def index(request):
     # Show index page
     if not request.user.is_authenticated():
         data = {
-            'instances': Instance.objects.all(),
+            'instance_mgr': Instance.objects,
         }
         return render_to_response('index.html', data, context_instance=RequestContext(request))
 

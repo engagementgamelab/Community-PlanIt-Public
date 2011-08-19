@@ -10,13 +10,13 @@
 
 {% block aside %}
 <div>
-{% if instances.count %}
+{% if instance_mgr.all.count %}
 <p>{% trans "Interested in playing? Click on a community below to find out more." %}</p>
 {% endif %}
-{% if instances.future.count %}
+{% if instance_mgr.future.count %}
 <h3>{% trans "Upcoming Communities" %}</h3>
     <ul class="communities">
-        {% for instance in instances.future %}
+        {% for instance in instance_mgr.future %}
         <li>
             <h4>
                 <a href="{% url instances:instances_instance instance.slug %}">{{instance}}</a>
@@ -27,10 +27,10 @@
     </ul>
 {% endif %}
 
-{% if instances.active.count %}
+{% if instance_mgr.active.count %}
 <h3>{% trans "Active Communities" %}</h3>
     <ul class="communities">
-        {% for instance in instances.active %}
+        {% for instance in instance_mgr.active %}
         <li>
             <h4>
                 <a href="{% url instances:instances_instance instance.slug %}">{{instance}}</a>
@@ -44,10 +44,10 @@
     </ul>
 {% endif %}
 
-{% if instances.past.count %}
+{% if instance_mgr.past.count %}
 <h3>{% trans "Past Communities" %}</h3>
     <ul class="communities">
-        {% for instance in instances.past %}
+        {% for instance in instance_mgr.past %}
         <li>
             <h4>
                 <a href="{% url instances:instances_instance instance.slug %}">{{instance}}</a>
@@ -68,7 +68,7 @@
 {% endblock main %}
 
 {% block rightsidebar %}
-{% if instances.active.count %}
+{% if instance_mgr.active.count %}
 <h3>{% trans "New Player?" %} <a href="{% url accounts:accounts_register %}" class="button">{% trans "Sign Up" %}</a></h3>
 {% endif %}
 <h3>{% trans "Have an account?" %}</h3>

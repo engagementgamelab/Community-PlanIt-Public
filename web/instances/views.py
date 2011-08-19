@@ -64,21 +64,18 @@ def region(request, slug):
     return render_to_response('instances/base.html', data, context_instance=RequestContext(request))
 
 def all(request):
-    instances = Instance.objects.all()
+    mgr = Instance.objects
     now = datetime.datetime.now()
-    from django.utils import translation
 
-    #import ipdb;ipdb.set_trace()
-    print instances
-    
     # Get number of players in instance
-    for instance in instances:
-        instance.player_count = UserProfile.objects.filter(instance=instance).count()
+    #for instance in instances:
+    #    instance.player_count = UserProfile.objects.filter(instance=instance).count()
+    #    print instance.player_count
 
-    tmpl = loader.get_template('instances/all.html')
+    #tmpl = loader.get_template('instances/all.html')
 
     data = {
-        'instances': instances,
+        'mgr': mgr,
         'now': now,
     }
     return render_to_response('instances/all.html', data, context_instance=RequestContext(request))
