@@ -325,15 +325,28 @@ def dashboard(request):
 
     instance = None
 
+    def _fake_latest(model, qs):
+        if model and qs:
+            _get_latest_by = model._meta.get_latest_by
+            _latest_by = max(qs.values_list(_get_latest_by, flat=True))
+            return model.objects.get(**{_get_latest_by:_latest_by})
+
     profile = request.user.get_profile()
     if profile.instance:
         instance = profile.instance
     elif request.user.is_staff or request.user.is_superuser:
-        instance = Instance.objects.active().latest()
+        #looks like `latest` qs method is broken in django-nani
+        #applying a workaround for now.
+        #TODO fix
+        #instance = Instance.objects.active().latest()
+        instance = _fake_latest(Instance, Instance.objects.active())
 
     last_mission = None
     if instance and instance.missions.count():
-        last_mission = instance.missions.latest()
+        #looks like `latest` qs method is broken in django-nani
+        #applying a workaround for now.
+        #TODO fix
+        last_mission = _fake_latest(Mission, instance.missions)
 
     page = request.GET.get('page', 1)
     
