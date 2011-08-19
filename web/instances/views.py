@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
+from django.utils.translation import ugettext as _
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -37,7 +38,7 @@ def region(request, slug):
                 # good
                 notification_request.instance = community
                 notification_request.save()
-            messages.success(request, "We'll let you know when {0} is active. Thanks for your interest!".format(community))
+            messages.success(request, _("We'll let you know when {0} is active. Thanks for your interest!").format(community))
             return HttpResponseRedirect(reverse('instances'))
     else:
         notification_form = NotificationRequestForm(community)
@@ -65,6 +66,10 @@ def region(request, slug):
 def all(request):
     instances = Instance.objects.all()
     now = datetime.datetime.now()
+    from django.utils import translation
+
+    #import ipdb;ipdb.set_trace()
+    print instances
     
     # Get number of players in instance
     for instance in instances:
