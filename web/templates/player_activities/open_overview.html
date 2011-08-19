@@ -8,13 +8,11 @@
 
     <div id="comments">
         <ul class="comments">
-            {%for answer in answers%}
-                <li class="comment">
-                    {{answer.answerUser.get_profile.screen_name}} said: {{answer.answerBox}} 
-                </li>
-            {% empty %}
-                <li class="comment">No comments found.</li>
-            {%endfor%}
+        {%for answer in answers%}
+        {%include "comments/post.html"%}
+        {% empty %}
+        <li class="comment">No comments found.</li>
+        {%endfor%}
         </ul>
         <div style="clear: both;"></div>
     </div>

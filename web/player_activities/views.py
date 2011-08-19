@@ -29,8 +29,13 @@ def overview(request, id):
     if activity.type.type == "open_ended":
         answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/open_overview.html')
+        comment_pks = []
+        for answer in answers:
+            comment_pks.append(answer.comment.pk)
+        comments = Comment.objects.filter(pk__in=comment_pks)
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answers,
+                                                                 "comments": comments,
                                                                  "action": "",
                                                                  "form_value": "open_ended"}, [ip])))
     elif activity.type.type == "single_response":
