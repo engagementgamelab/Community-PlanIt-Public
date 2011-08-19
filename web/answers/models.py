@@ -42,4 +42,4 @@ class AnswerMap(Answer):
 class AnswerMultiChoice(models.Model):
     user = models.ForeignKey(User)
     option = models.ForeignKey(MultiChoiceActivity)
-    comment = models.ForeignKey(Comment, null=True, blank=True)
+    comments = generic.GenericRelation(Comment)

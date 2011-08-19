@@ -21,32 +21,34 @@ from web.player_activities.models import *
 from web.processors import instance_processor as ip
 from web.reports.actions import *
 
+def getComments(answers, ModelType):
+    comments = None
+    answer_type = ContentType.objects.get_for_model(ModelType)
+    for answer in answers:
+        if comments == None:
+            comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+        else:
+            comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+    return comments
+        
+
 @login_required
 def overview(request, id):
     activity = PlayerActivity.objects.get(id=id)
         
     if activity.type.type == "open_ended":
         answers = Answer.objects.filter(activity=activity)
-        comment_pks = []
-        for answer in answers:
-            comment_pks.append(answer.comment.pk)
-        comments = Comment.objects.filter(pk__in=comment_pks)
-        
         tmpl = loader.get_template('player_activities/open_overview.html')
         comment_form = CommentForm()
         comment_form.allow_replies = False
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answers,
-                                                                 "comments": comments,
+                                                                 "comments": getComments(answers, Answer),
                                                                  "comment_form": comment_form,
                                                                  }, [ip])))
     elif activity.type.type == "single_response":
         answers = AnswerSingleResponse.objects.filter(activity=activity)
-        comment_pks = []
-        for answer in answers:
-            comment_pks.append(answer.comment.pk)
-        comments = Comment.objects.filter(pk__in=comment_pks)
-        
+
         answerDict = {}
         choices = MultiChoiceActivity.objects.filter(activity=activity)
         for choice in choices:
@@ -64,16 +66,18 @@ def overview(request, id):
         comment_form.allow_replies = False
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answerList,
-                                                                 "comments": comments,
+                                                                 "comments": getComments(answers, AnswerSingleResponse),
                                                                  "comment_form": comment_form,
                                                                  }, [ip])))
     elif activity.type.type == "multi_response":
         answers = AnswerMultiChoice.objects.filter(option__activity=activity)
-        comment_pks = []
+        comments = None
+        answer_type = ContentType.objects.get_for_model(AnswerMultiChoice)
         for answer in answers:
-            if answer.comment.pk not in comment_pks:
-                comment_pks.append(answer.comment.pk)
-        comments = Comment.objects.filter(pk__in=comment_pks)
+            if comments == None:
+                comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+            else:
+                comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
         
         answerDict = {}
         choices = MultiChoiceActivity.objects.filter(activity=activity)
@@ -96,11 +100,6 @@ def overview(request, id):
                                                                  "answers": answerList}, [ip])))
     elif activity.type.type == "map":
         answers = AnswerMap.objects.filter(activity=activity)
-        comment_pks = []
-        for answer in answers:
-            comment_pks.append(answer.comment.pk)
-        comments = Comment.objects.filter(pk__in=comment_pks)
-        
         init_coords = []
         x = 0
         for answer in answers:
@@ -116,37 +115,30 @@ def overview(request, id):
         comment_form = CommentForm()
         comment_form.allow_replies = False
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
-                                                                 "comments": comments,
+                                                                 "comments": getComments(answers, AnswerMap),
                                                                  "comment_form": comment_form,
                                                                  "answers": answers,
                                                                  "init_coords": init_coords,
                                                                  "map": map}, [ip])))
     elif activity.type.type == "empathy":
         answers = Answer.objects.filter(activity=activity)
-        comment_pks = []
-        comments = None
-        answer_type = ContentType.objects.get_for_model(Answer)
-        for answer in answers:
-            if comments == None:
-                comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-            else:
-                comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-        
         tmpl = loader.get_template('player_activities/empathy_overview.html')
         comment_form = CommentForm()
         comment_form.allow_replies = False
         
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
-                                                                 "comments": comments,
+                                                                 "comments": getComments(answers, Answer),
                                                                  "comment_form": comment_form,
                                                                  "answers": answers}, [ip])))
     return HttpResponse("web page not created yet")
 
-def comment_fun(comment, form, request):
-    comment.user = request.user
-    comment.instance = request.user.get_profile().instance
-    comment.message = form.cleaned_data["message"]
-    comment.save()
+def comment_fun(answer, form, request):
+    comment = answer.comments.create(
+        content_object=answer,
+        message=form.cleaned_data['message'], 
+        user=request.user,
+        instance=request.user.get_profile().instance,
+    )
     
     if request.POST.has_key('yt-url'):
         if request.POST.get('yt-url'):
@@ -188,20 +180,11 @@ def get_activity(request, id):
         comment_form = CommentForm(request.POST)
         if request.POST["form"] == "open_ended":
             if comment_form.is_valid():
-                answer = Answer.objects.filter(activity=activity, answerUser=request.user)
-                comment = None
-                if (len(answer) > 0):
-                    answer = answer[0]
-                    replay = True
-                    comment = answer.comment
-                else:
-                    answer = Answer()
-                    answer.activity = activity
-                    answer.answerUser = request.user
-                    comment = Comment()
-                comment_fun(comment, comment_form, request)
-                answer.comment = comment
+                answer = Answer()
+                answer.activity = activity
+                answer.answerUser = request.user
                 answer.save()
+                comment_fun(answer, comment_form, request)
             else:
                 tmpl = loader.get_template('player_activities/open_response.html')
                 form_error = True
@@ -212,21 +195,12 @@ def get_activity(request, id):
                 choices.append((x.id, x.value))
             form = MakeSingleForm(choices)(request.POST)
             if form.is_valid() and comment_form.is_valid():
-                answer = AnswerSingleResponse.objects.filter(activity=activity, answerUser = request.user)
-                comment = None
-                if (len(answer) > 0):
-                    answer = answer[0]
-                    replay = True
-                    comment = answer.comment
-                else:
-                    answer = AnswerSingleResponse()
-                    answer.activity = activity
-                    answer.answerUser = request.user
-                    comment = Comment()
-                comment_fun(comment, comment_form, request)
+                answer = AnswerSingleResponse()
+                answer.activity = activity
+                answer.answerUser = request.user
                 answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
-                answer.comment = comment
                 answer.save()
+                comment_fun(answer, comment_form, request)
             else:
                 tmpl = loader.get_template('player_activities/single_response.html')
                 form_error = True
@@ -234,22 +208,13 @@ def get_activity(request, id):
             form = MapForm(request.POST)
             if form.is_valid() and comment_form.is_valid():
                 map = form.cleaned_data["map"]
-                answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
-                comment = None
-                if (len(answer) > 0):
-                    answer = answer[0]
-                    replay = True
-                    comment = answer.comment
-                else:
-                    answer = AnswerMap()
-                    answer.activity = activity
-                    answer.answerUser = request.user
-                    comment = Comment()
-                comment_fun(comment, comment_form, request)
+                
+                answer = AnswerMap()
+                answer.activity = activity
+                answer.answerUser = request.user
                 answer.map = map;
-                answer.comment = comment
                 answer.save()
-                answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
+                comment_fun(answer, comment_form, request)
             else:
                 map = request.POST["map"]
                 activity = PlayerMapActivity.objects.get(pk=activity.id)
@@ -258,27 +223,11 @@ def get_activity(request, id):
                 return HttpResponse("form errors: %s comment errors: %s" % (form.errors, comment_form.errors))
         elif request.POST["form"] == "empathy":
             if comment_form.is_valid():
-                answer = Answer.objects.filter(activity=activity, answerUser=request.user)
-                comment = None
-                if (len(answer) > 0):
-                    answer = answer[0]
-                    replay = True
-                    comment = answer.comment
-                else:
-                    answer = Answer()
-                    answer.activity = activity
-                    answer.answerUser = request.user
-                    answer.save()
-                    comment = answer.comments.create(
-                        content_object=answer,
-                        message=comment_form.cleaned_data['message'], 
-                        user=request.user,
-                        instance=request.user.get_profile().instance,
-                    )
-                    
-                #comment_fun(comment, comment_form, request)
-                #answer.comment = comment
-                #answer.save()
+                answer = Answer()
+                answer.activity = activity
+                answer.answerUser = request.user
+                answer.save()
+                comment_fun(answer, comment_form, request)
             else:
                 tmpl = loader.get_template('player_activities/empathy_response.html')
                 form_error = True
@@ -301,8 +250,7 @@ def get_activity(request, id):
                 for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)):
                     Comment.objects.filter(pk=amc.comment.pk).delete()
                 AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)).delete()
-                comment = Comment()
-                comment_fun(comment, comment_form, request)
+                first_found = False 
                 for key in request.POST.keys():
                     if key.find("response_") >= 0:
                         answer = AnswerMultiChoice()
@@ -311,8 +259,11 @@ def get_activity(request, id):
                         #So basically if the response exists it means that checkbox was checked and the
                         # value returned will be the ID and will always be an int
                         answer.option = MultiChoiceActivity.objects.get(id=int(request.POST[key]))
-                        answer.comment = comment
                         answer.save()
+                        #Yes it's a hack, only make a comment for the first response
+                        if not first_found:
+                            comment_fun(answer, comment_form, request)
+                            first_found = True
             else:
                 tmpl = loader.get_template('player_activities/multi_response.html')
                 form_error = True
