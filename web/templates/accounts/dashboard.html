@@ -1,10 +1,10 @@
 {%extends "layouts/base.html"%}
-{% load game_extras %}
+{% load game_extras i18n %}
 
 {%block section%}accounts{%endblock%}
 {% block extra_body_class %}rightsidebar{% endblock %}
 
-{%block title%}Dashboard{%endblock%}
+{%block title%}{% trans "Dashboard" %}{%endblock%}
 {%block page_title%}
 <h2 id="page_title">{{instance.name}}</h2>
 {%endblock%}
@@ -14,7 +14,7 @@
     <div class="section">
         {%if instance.missions.active.count%}
             {% for mission in instance.missions.active %}
-            <h2>Current Mission <span class="fine">{{mission.start_date|date:"n/j"}}&#8211;{{mission.end_date|date:"n/j"}}</span></h2>
+            <h2>{% trans "Current Mission" %} <span class="fine">{{mission.start_date|date:"n/j"}}&#8211;{{mission.end_date|date:"n/j"}}</span></h2>
             <div class="video">{{mission.video|safe}}</div>
             <h3>{{mission.name}}</h3>
             <p class="separate">{{mission.description}}</p>
@@ -26,25 +26,22 @@
         {%else%}
             {%if instance.missions.past.all|length%}
             <label>
-                Your missions have ended for now. Great work!
-                Your community is better because of your efforts.
-                You'll be notified when a new mission starts.
+            {% trans "Your missions have ended for now. Great work!  Your community is better because of your efforts.  You'll be notified when a new mission starts." %}
             </label>
             {%else%}
                 {%if instance.missions.future.all|length%}
                     <label>
-                        The mission has not yet started. You will
-                        be notified when the mission starts.
+                    {% trans " The mission has not yet started. You will be notified when the mission starts." %}
                     </label>
                 {%else%}
-                    No missions created.
+                {% trans "No missions created." %}
                 {%endif%}
             {%endif%}
         {%endif%}
     </div>
 
     <div class="section">
-        <h2 class="missions">Available Challenges</h2>
+        <h2 class="missions">{$ trans "Available Challenges" %}</h2>
         <div class="challenges">
             <table>
                 <tbody>
@@ -54,15 +51,15 @@
                     </tr>
                 {% empty %}
                     <tr class="odd">
-                        <td>No active challenges found.</td>
+                        <td>{% trans "No active challenges found." %}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
         <div class="buttons">
-            <a class="button left" href="{% url challenges:challenges_add %}">Create Challenge</a>
-            <a class="button right" href="{% url challenges:index %}">All Challenges</a>
+            <a class="button left" href="{% url challenges:challenges_add %}">{% trans "Create Challenge" %}</a>
+            <a class="button right" href="{% url challenges:index %}">{% trans "All Challenges" %}</a>
         </div>
     </div>
 {% endif %}
@@ -73,13 +70,11 @@
     {%if instance.is_started%}
         {%if not user.is_active%}
             <form method="POST" action="">
-                <h4>One last step: Please verify that you have read our Terms of Use and Privacy Policy. 
-                It is our commitment to provide a safe, friendly environment
-                for community members to discuss important values.</h4>
+                <h4>{% trans "One last step: Please verify that you have read our Terms of Use and Privacy Policy.  It is our commitment to provide a safe, friendly environment for community members to discuss important values." %}</h4>
                 {%csrf_token%}
                 <div class="fieldWrapper">
                     {{ activation_form.accepted_term.errors }}
-                    <label for="id_accepted_term">I have have read the <a href="{% url terms %}" target="_blank">Terms of Use.</a></label>
+                    <label for="id_accepted_term">{% trans "I have have read the " %}<a href="{% url terms %}" target="_blank">{% trans "Terms of Use." %}</a></label>
                     {{ activation_form.accepted_term }}
                 </div>
                 <div class="fieldWrapper">
@@ -87,7 +82,7 @@
                     <label for="id_accepted_research">I have read the <a href="{% url privacy %}" target="_blank">Privacy Policy.</a></label>
                     {{ activation_form.accepted_research }}
                 </div>
-                <button class="button">Activate my account!</button>
+                <button class="button">{% trans "Activate my account!</button>
             </form>
         {%else%}
             {%if not instance.is_expired%}                    
@@ -114,12 +109,12 @@
                 are now unlocked so you can view the results—and don't forget to see how the community spent its 
                 <a class="red" href="{% url values %}">coins</a>!
                 </p>
-                <p>Thanks for playing!</p>
+                <p>{% trans "Thanks for playing!" %}</p>
                 </div>
             {%endif%}
             
             <div class="feed">
-                <h3>Latest Events</h3>
+                <h3>{% trans "Latest Events" %}</h3>
                 <table>
                     <tbody>
                         {%for activity in log%}

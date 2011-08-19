@@ -10,15 +10,9 @@
     <h2>
         {%if request.user and not player == request.user and not request.user.username = ''%}
             {%if player not in request.user.get_profile.following.all%}
-<<<<<<< HEAD
-                <a class="button" href="/player/follow/{{player.id}}">{% trans "Follow" %}</a>
-            {%else%}
-                <a class="button" href="/player/unfollow/{{player.id}}">{% trans "Unfollow" %}</a>
-=======
             <a class="button" href="{% url player_follow player.id %}">Follow</a>
             {%else%}
             <a class="button" href="{% url player_unfollow player.id %}">Unfollow</a>
->>>>>>> master
             {%endif%}
         {%endif%}
 
@@ -72,11 +66,7 @@
     
     <div class="third last">        
         <div class="modules">
-<<<<<<< HEAD
-            <h3><a class="highlight" href="/list/following/{{player.id}}">{% trans "Following" %} <span class="fine">({{player.get_profile.following.all|length}})</span></a></h3>
-=======
             <h3><a class="highlight" href="{% url lists_following player.id %}">Following <span class="fine">({{player.get_profile.following.all|length}})</span></a></h3>
->>>>>>> master
             <div class="dashboardmodule">
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
@@ -100,11 +90,7 @@
             
             <hr class="space">
 
-<<<<<<< HEAD
-            <h3><a class="highlight" href="/list/followers/{{player.id}}">{% trans "Followers" %} <span class="fine">({{followingme|length}})</span></a></h3>
-=======
             <h3><a class="highlight" href="{% url lists_followers player.id %}">Followers <span class="fine">({{followingme|length}})</span></a></h3>
->>>>>>> master
             <div class="dashboardmodule">
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
@@ -134,12 +120,7 @@
     
     <div style="clear: both; padding: 1em 0;"></div>
     <div id="comments">
-<<<<<<< HEAD
-        <div class="sleeper"></div>
-        <h4>{% trans "Comments for" %} {{player.get_profile.screen_name}}</h4>
-=======
         <h4>Comments for {{player.get_profile.screen_name}}</h4>
->>>>>>> master
         <ul class="listless comments">
             {% with player.get_profile as comments %}
             {% include "comments/post.html" %}
