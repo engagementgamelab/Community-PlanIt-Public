@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db.models import Q
@@ -123,9 +124,13 @@ def overview(request, id):
     elif activity.type.type == "empathy":
         answers = Answer.objects.filter(activity=activity)
         comment_pks = []
+        comments = None
+        answer_type = ContentType.objects.get_for_model(Answer)
         for answer in answers:
-            comment_pks.append(answer.comment.pk)
-        comments = Comment.objects.filter(pk__in=comment_pks)
+            if comments == None:
+                comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+            else:
+                comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
         
         tmpl = loader.get_template('player_activities/empathy_overview.html')
         comment_form = CommentForm()
@@ -263,10 +268,17 @@ def get_activity(request, id):
                     answer = Answer()
                     answer.activity = activity
                     answer.answerUser = request.user
-                    comment = Comment()
-                comment_fun(comment, comment_form, request)
-                answer.comment = comment
-                answer.save()
+                    answer.save()
+                    comment = answer.comments.create(
+                        content_object=answer,
+                        message=comment_form.cleaned_data['message'], 
+                        user=request.user,
+                        instance=request.user.get_profile().instance,
+                    )
+                    
+                #comment_fun(comment, comment_form, request)
+                #answer.comment = comment
+                #answer.save()
             else:
                 tmpl = loader.get_template('player_activities/empathy_response.html')
                 form_error = True

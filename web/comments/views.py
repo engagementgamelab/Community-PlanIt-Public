@@ -24,7 +24,6 @@ def like(request, id):
             c.content_object
         )
         c.user.notifications.create(content_object=c, message=message)
-
     return HttpResponseRedirect(c.get_absolute_url())
 
 @login_required
