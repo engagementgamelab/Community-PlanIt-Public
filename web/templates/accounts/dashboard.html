@@ -20,7 +20,7 @@
             <p class="separate">{{mission.description}}</p>
             {% include "player_activities/all_activities_paginated.html" %}
             <div class="buttons">
-                <a class="button" href="{% url missions:missions_mission mission.slug %}" title="{{mission.name}}">View Current Mission</a>
+                <a class="button" href="{% url missions:missions_mission mission.slug %}" title="{{mission.name}}">{% trans "View Current Mission" %}</a>
             </div>
             {%endfor%}
         {%else%}
@@ -41,7 +41,7 @@
     </div>
 
     <div class="section">
-        <h2 class="missions">{$ trans "Available Challenges" %}</h2>
+        <h2 class="missions">{% trans "Available Challenges" %}</h2>
         <div class="challenges">
             <table>
                 <tbody>
@@ -82,18 +82,17 @@
                     <label for="id_accepted_research">I have read the <a href="{% url privacy %}" target="_blank">Privacy Policy.</a></label>
                     {{ activation_form.accepted_research }}
                 </div>
-                <button class="button">{% trans "Activate my account!</button>
+                <button class="button">{% trans "Activate my account!" %}</button>
             </form>
         {%else%}
             {%if not instance.is_expired%}                    
                 <div class="welcome">
-                    <p>We invite you to play Community PlanIt to help shape {{instance.city}}'s vision for the
-                    future. Complete <a class="red" href="{% url player_activities:player_activities_all %}" title="activities">activities</a> to earn points, which you can trade in for <a class="red" href="{% url values:index %}">coins</a> to spend on promoting your top community values. Keep checking back from {{instance.start_date|date:"F j"}} through {{instance.end_date|date:"F j"}} to stay on top of the lively discussion&#8212;and tell your friends!</p>
+                    <p>We invite you to play Community PlanIt to help shape {{instance.city}}'s vision for the future. Complete <a class="red" href="{% url player_activities:player_activities_all %}" title="activities">activities</a> to earn points, which you can trade in for <a class="red" href="{% url values:index %}">coins</a> to spend on promoting your top community values. Keep checking back from {{instance.start_date|date:"F j"}} through {{instance.end_date|date:"F j"}} to stay on top of the lively discussion&#8212;and tell your friends!</p>
                 </div>
                 
             {%else%}
                 <div class="welcome">
-                    <p>{{instance}} ended on {{instance.end_date|date:"F j, Y"}}, with:</p>
+                    <p>{{instance}}{% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
                 <ul>
                     <li><strong>{{instance.user_profiles.count}}</strong> participant{{instance.user_profiles.count|pluralize}}
                     <li><strong>{{instance.coin_count}}</strong> coin{{instance.coin_count|pluralize}} spent on issues
