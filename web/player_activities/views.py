@@ -248,7 +248,7 @@ def get_activity(request, id):
                     ids.append(choice.id)
                 #cleans out all of the choices that the user selected from the check boxes
                 for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)):
-                    Comment.objects.filter(pk=amc.comment.pk).delete()
+                    amc.comments.clear()
                 AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)).delete()
                 first_found = False 
                 for key in request.POST.keys():
