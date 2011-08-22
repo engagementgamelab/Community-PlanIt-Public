@@ -1,5 +1,5 @@
 {%extends "player_activities/base.html"%}
-
+{% load gmap attachment_tags %}
 {%block title%}Open Response Overview{%endblock%}
 
 {%block main%}
@@ -17,21 +17,18 @@
     {% endif %}
     
     <div class="attachments">
-        {% for attachment in activity.attachments.all %}
-            <label>attachment files: {{attachment.file}}</label>
-        
-        
+        {% for attachment in activity.attachment.all %}
             {% if attachment.is_valid %}
-            <div>
-                {% if attachment.type == 'video' %}
-                {% youtube_video attachment.url %}
+                <div>
+                    {% if attachment.type == 'video' %}
+                        {% youtube_video attachment.url %}
+                    {% else %}
+                    <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                    {% endif %}
+                </div>
                 {% else %}
-                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                <div class="notice">This content is currently unavailable.</div>
                 {% endif %}
-            </div>
-            {% else %}
-            <div class="notice">This content is currently unavailable.</div>
-            {% endif %}
         {% endfor %}
     </div>
     
