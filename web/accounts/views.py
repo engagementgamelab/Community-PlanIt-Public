@@ -415,7 +415,7 @@ def dashboard(request):
     if (missions.count() > 0):
         mission = missions[0]
         activities = PlayerActivity.objects.distinct().filter(mission=mission)
-        activities = activities.filter(Q(answers__isnull=True)|Q(answers__answerUser=request.user))
+        #activities = activities.filter(Q(answers__isnull=True)|Q(answers__answerUser=request.user))
 
     completed_challenges = PlayerChallenge.objects.completed().filter(player=request.user)
     challenges = instance and instance.challenges.active().exclude(player_challenges__in=completed_challenges) or Challenge.objects.none()

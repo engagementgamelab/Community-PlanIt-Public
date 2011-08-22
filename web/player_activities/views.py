@@ -121,6 +121,7 @@ def overview(request, id):
                                                                  "init_coords": init_coords,
                                                                  "map": map}, [ip])))
     elif activity.type.type == "empathy":
+        activity = PlayerEmpathyActivity.objects.get(id=activity.id)
         answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/empathy_overview.html')
         comment_form = CommentForm()

@@ -90,6 +90,8 @@
                 {{ editForm.attachment.errors }}
                 <label id="attachment_label" for="id_attachment">Attachment:</label>
                 {{ editForm.attachment }}
+                <button type="button" onclick="clearAttachment()">Clear</button>
+                <input type="hidden" id="clear_attachment" name="clear_attachment" value="">
             </div>
     
             <div id="responses_edit" style="display:none">
@@ -111,8 +113,10 @@
             <div id="empathy_edit" style="display:none">
                 <div class="fieldWrapper">
                     {{ editForm.avatar.errors }}
-                    <label for="id_avatar">Avatar:</label>
+                    <label id="avatar_label" for="id_avatar">Avatar:</label>
                     {{ editForm.avatar }}
+                    <button type="button" onclick="clearAvatar()">Clear</button>
+                    <input type="hidden" id="clear_avatar" name="clear_avatar" value="">
                 </div>
                 <div class="fieldWrapper">
                     {{ editForm.bio.errors }}
@@ -219,6 +223,32 @@
             this.location = loc;
         }
         
+        function clearAttachment() {
+            attachment_label = document.getElementById("attachment_label")
+            retVal = document.getElementById("clear_attachment")
+            attachment_textbox = document.getElementById("id_attachment")
+            if (activity.attachment != null)
+            {
+                attachmentElem.style.display = "";
+                attachmentElem.innerHTML = "Attachment (currently: " + activity.attachment + "):";
+            }
+            else 
+            {
+                attachmentElem.innerHTML = "Attachment:";
+            }
+            retVal.value = "true"
+            attachment_textbox.value = ""
+        }
+        
+        function clearAvatar() {
+            avatarElem = document.getElementById("avatar_label");
+            avatarElem.innerHTML = "Avatar:"
+            retVal = document.getElementById("clear_avatar")
+            retVal.value = "true"
+            avatar_textbox = document.getElementById("id_avatar")
+            avatar_textbox.value = ""
+        }
+        
         function getActivities() {
             acts = document.getElementById("actDiv");
             mission_select = document.getElementById("id_missions");
@@ -282,6 +312,7 @@
             addInstructionsElem = document.getElementById("id_addInstructions");
             pointsElem = document.getElementById("id_points");
             attachmentElem = document.getElementById("attachment_label"); 
+            avatarElem = document.getElementById("avatar_label");
 
             nameElem.value = activity.name;
             questionElem.value = activity.question;
@@ -301,7 +332,6 @@
                 attachmentElem.innerHTML = "Attachment:";
             }
             
-            
             document.getElementById("responses_edit").style.display = "None";
             document.getElementById("map_edit").style.display = "None";
             document.getElementById("empathy_edit").style.display = "None";
@@ -312,10 +342,17 @@
             }
             if (typeList[activity.type].type == "empathy") {
                 document.getElementById("empathy_edit").style.display = "";
-                document.getElementById("id_avatar").value = activity.avatar;
+                if (activity.avatar != null)
+                {
+                    avatarElem.style.display = "";
+                    avatarElem.innerHTML = "Avatar (currently: " + activity.avatar + "):";
+                }
+                else 
+                {
+                    avatarElem.innerHTML = "Avatar:";
+                }
                 document.getElementById("id_bio").value = activity.bio
             }
-            
             if (typeList[activity.type].type == "single_response" || typeList[activity.type].type == "multi_response") {
                 activity_id = parseInt(document.getElementById("activity_id").value);
                 responses = null;
@@ -439,6 +476,14 @@
                     missionList[{{value.id}}].activities[{{activity.id}}] = new Activity({{activity.id}}, "{{activity.name}}", "{{activity.question}}", {{value.id}}, {{activity.type.id}}, "{{activity.instructions}}", "{{activity.addInstructions}}", {{activity.getPoints}}, "{{attachment}}");
                     {% if activity.type.type == "map" %}
                         missionList[{{value.id}}].activities[{{activity.id}}].maxNumMarkers = {{activity.maxNumMarkers}};
+                    {% endif %}
+                    {% if activity.type.type == "empathy" %}
+                        {% if activity.bio != "" %}
+                            missionList[{{value.id}}].activities[{{activity.id}}].bio = "{{activity.bio}}"
+                        {% endif %}
+                        {% if activity.avatar != "" %}
+                            missionList[{{value.id}}].activities[{{activity.id}}].avatar = "{{activity.avatar}}"
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             {% endfor %}

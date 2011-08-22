@@ -726,11 +726,18 @@ def activity_save(request):
         activity.points = form.cleaned_data["points"] if form.cleaned_data.has_key("points") and form.cleaned_data["points"] != "" else None
         if activity.type.type == "empathy":
             activity.bio  = form.cleaned_data["bio"]
-            activity.avatar = request.FILES["avatar"]
+            if request.POST.has_key("clear_avatar") and request.POST.has_key("clear_avatar") == True:
+                activity.avatar = None
+            if request.FILES.has_key("avatar"):
+                activity.avatar = request.FILES["avatar"]
+                 
         if activity.type.type == "map":
             activity.maxNumMarkers = form.cleaned_data["maxNumMarkers"]
         activity.save()
         
+        
+        if request.POST.has_key("clear_attachment") and request.POST.has_key("clear_attachment") == True:
+            activity.attachment.clear()
         if request.FILES.has_key("attachment"):
             activity.attachment.clear()
             activity.attachment.create(file=request.FILES.get("attachment"),

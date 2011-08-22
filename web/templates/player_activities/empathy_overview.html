@@ -16,10 +16,25 @@
         <h3>{{activity.bio}}</h3>
     {% endif %}
     
-    {% if activity.question %}
-        <h4>{{activity.question}}</h4>
-    {% endif %}
-
+    <div class="attachments">
+        {% for attachment in activity.attachments.all %}
+            <label>attachment files: {{attachment.file}}</label>
+        
+        
+            {% if attachment.is_valid %}
+            <div>
+                {% if attachment.type == 'video' %}
+                {% youtube_video attachment.url %}
+                {% else %}
+                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="notice">This content is currently unavailable.</div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    
     <div id="comments">
         {%include "comments/post.html"%}
         <div style="clear: both;"></div>
