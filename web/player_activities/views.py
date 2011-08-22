@@ -241,14 +241,14 @@ def get_activity(request, id):
                 #this gets very very messy....
                 choices = MultiChoiceActivity.objects.filter(activity=activity)
                 comment = None
-                if len(choices) > 0:
-                    replay = True
+                   
                 ids = []
                 for choice in choices:
                     ids.append(choice.id)
                 #cleans out all of the choices that the user selected from the check boxes
                 for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)):
                     amc.comments.clear()
+                    replay = True
                 AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)).delete()
                 first_found = False 
                 for key in request.POST.keys():

@@ -29,16 +29,16 @@ class PointsAssigner:
             up.coinPoints += settings.DEFAULT_POINTS or 10
             up.currentCoins += settings.DEFAULT_COINS or 0
             if up.coinPoints >= 100:
-                up.currentCoins += 1
-                up.coinPoints = up.coinPoints - 100
+                up.currentCoins += up.coinPoints / 100
+                up.coinPoints = up.coinPoints % 100
             up.save()
         else:
             up = user.get_profile()
             up.totalPoints += points
             up.coinPoints += points
             if up.coinPoints >= 100:
-                up.currentCoins += 1
-                up.coinPoints = up.coinPoints - 100
+                up.currentCoins += up.coinPoints / 100
+                up.coinPoints = up.coinPoints % 100
             up.save()
     
     def assign(self, user, action):
