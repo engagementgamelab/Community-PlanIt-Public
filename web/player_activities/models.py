@@ -3,7 +3,7 @@ import datetime
 from django.db import models
 from django.template.defaultfilters import slugify
 
-from django.contrib import admin
+from nani.admin import TranslatableAdmin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
@@ -21,14 +21,20 @@ class PlayerActivityType(models.Model):
     def __unicode__(self):
         return self.type
     
-class PlayerActivity(TranslatableModel):
+class PlayerActivityBase(TranslatableModel):
+
     slug = models.SlugField(editable=False)
     creationUser = models.ForeignKey(User)
-    mission = models.ForeignKey(Mission, related_name='activities')
+    mission = models.ForeignKey(Mission, related_name='%(app_label)s_%(class)s_related')
     type = models.ForeignKey(PlayerActivityType)
     createDate = models.DateTimeField(editable=False)
     points = models.IntegerField(blank=True, null=True, default=None)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
+
+    class Meta:
+    	abstract = True
+
+class PlayerActivity(TranslatableModel):
 
     translations = TranslatedFields(
         name = models.CharField(max_length=255),
@@ -59,11 +65,20 @@ class PlayerActivity(TranslatableModel):
         else:
             return self.points
 
-class PlayerMapActivity(PlayerActivity):
+class PlayerMapActivity(PlayerActivityBase):
     maxNumMarkers = models.IntegerField(default=5)
     #django-nani complains that no translated fields exist on a sublclass of TraslatableModel
     translations = TranslatedFields(
         tbd = models.CharField(max_length=10),
+    )
+
+    translations = TranslatedFields(
+        name = models.CharField(max_length=255),
+        question = models.CharField(max_length=1000),
+        instructions = models.CharField(max_length=255, null=True, blank=True),
+        addInstructions = models.CharField(max_length=255, null=True, blank=True),
+        meta = {'ordering': ['name',],
+        },
     )
     
     def save(self):
@@ -72,7 +87,7 @@ class PlayerMapActivity(PlayerActivity):
         self.type = PlayerActivityType.objects.get(type="map")
         super(PlayerMapActivity, self).save()
 
-class PlayerEmpathyActivity(PlayerActivity):
+class PlayerEmpathyActivity(PlayerActivityBase):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     translations = TranslatedFields(
         bio = models.CharField(max_length=1000),
@@ -91,9 +106,14 @@ class MultiChoiceActivity(TranslatableModel):
         value = models.CharField(max_length=255),
     )
 
-class PlayerActivityTypeAdmin(admin.ModelAdmin):
+class PlayerActivityTypeAdmin(TranslatableAdmin):
     list_display = ('type', 'defaultPoints',)
 
-class PlayerActivityAdmin(admin.ModelAdmin):
-    list_display = ('creationUser', 'mission', 'type', 'createDate', 'points') #excluding translated fields 'name', 'question', 
+class PlayerActivityAdmin(TranslatableAdmin):
+    list_display = ('pk',) #excluding translated fields 'name', 'question', 
+    #'creationUser', 
+    #'mission', 'type', 'createDate', 'points'
+
+class PlayerEmpathyActivityAdmin(TranslatableAdmin):
+    list_display = ('pk',) #excluding translated fields 'name', 'question', 
     

@@ -39,7 +39,7 @@ class Migration(SchemaMigration):
             ('map', self.gf('gmapsfield.fields.GoogleMapsField')()),
             ('type', self.gf('django.db.models.fields.CharField')(default='Point', max_length=260)),
             ('message', self.gf('django.db.models.fields.CharField')(default=' ', max_length=1000)),
-            ('game', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='mapresponse_game', null=True, to=orm['games.Game'])),
+            #('game', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='mapresponse_game', null=True, to=orm['games.Game'])),
         ))
         db.send_create_signal('responses', ['MapResponse'])
 
