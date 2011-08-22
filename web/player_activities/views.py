@@ -274,7 +274,7 @@ def get_activity(request, id):
             PointsAssigner().assignAct(request.user, activity)
 
         if tmpl == None:
-            return HttpResponseRedirect(reverse('missions_mission', args=[activity.mission.slug]))
+            return HttpResponseRedirect(reverse("player_activities_overview", args=[activity.id]))
     else:
         comment_form = CommentForm()
         if (activity.type.type == "open_ended"):
