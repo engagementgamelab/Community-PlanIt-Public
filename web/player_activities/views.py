@@ -21,6 +21,8 @@ from web.player_activities.models import *
 from web.processors import instance_processor as ip
 from web.reports.actions import *
 
+from PIL import Image
+
 def getComments(answers, ModelType):
     comments = None
     answer_type = ContentType.objects.get_for_model(ModelType)
@@ -151,6 +153,10 @@ def comment_fun(answer, form, request):
                     instance=request.user.get_profile().instance)
     
     if request.FILES.has_key('picture'):
+        file = request.FILES.get('picture')
+        picture = Image.open(file)
+        if (file.name.rfind(".") -1):
+            file.name = "%s.%s" % (file.name, picture.format.lower())
         comment.attachment.create(
             file=request.FILES.get('picture'),
             user=request.user,

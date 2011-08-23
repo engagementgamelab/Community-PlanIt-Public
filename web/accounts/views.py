@@ -29,6 +29,7 @@ from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
 from web.values.models import *
 
+from PIL import Image
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
@@ -292,7 +293,10 @@ def profile(request, id):
                         user=request.user,
                         instance=instance
                     )
-
+            file = request.FILES.get('picture')
+            picture = Image.open(file)
+            if (file.name.rfind(".") -1):
+                file.name = "%s.%s" % (file.name, picture.format.lower())
             if request.FILES.has_key('picture'):
                 comment.attachment.create(
                     file=request.FILES.get('picture'),

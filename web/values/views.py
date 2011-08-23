@@ -18,6 +18,8 @@ from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.values.models import *
 
+from PIL import Image
+
 @login_required
 def all(request):
     values = Value.objects.filter(instance=request.user.get_profile().instance)
@@ -70,7 +72,10 @@ def detail(request, id):
                         user=request.user,
                         instance=value.instance
                     )
-            
+            file = request.FILES.get('picture')
+            picture = Image.open(file)
+            if (file.name.rfind(".") -1):
+                file.name = "%s.%s" % (file.name, picture.format.lower())
             if request.FILES.has_key('picture'):
                 comment.attachment.create(
                     file=request.FILES.get('picture'),

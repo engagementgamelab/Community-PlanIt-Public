@@ -16,6 +16,8 @@ from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.responses.comment.forms import CommentAttachmentResponseForm
 
+from PIL import Image
+
 @login_required
 def fetch(request, id):
     challenge = get_object_or_404(Challenge, id=id)
@@ -48,7 +50,10 @@ def fetch(request, id):
                             user=request.user,
                             instance=request.user.get_profile().instance
                         )
-                
+                file = request.FILES.get('picture')
+                picture = Image.open(file)
+                if (file.name.rfind(".") -1):
+                    file.name = "%s.%s" % (file.name, picture.format.lower())
                 if request.FILES.has_key('picture'):
                     pc.attachments.create(
                         file=request.FILES.get('picture'),
@@ -180,7 +185,10 @@ def comment(request, id):
                     instance=request.user.get_profile().instance,
                 )
                 a.save()
-        
+        file = request.FILES.get('picture')
+        picture = Image.open(file)
+        if (file.name.rfind(".") -1):
+            file.name = "%s.%s" % (file.name, picture.format.lower())
         if request.FILES.has_key('picture'):
             b = Attachment(
                 file=request.FILES.get('picture'),

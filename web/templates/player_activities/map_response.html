@@ -31,7 +31,7 @@
     </div>
     
     
-    <form action="" method="post" class="narrow">
+    <form enctype="multipart/form-data" action="" method="post" class="narrow">
         {% csrf_token %}
         <input type="hidden" name="form" value="map">
         <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
