@@ -21,7 +21,7 @@
     {% endfor %}
     </div>
 
-
+    <input type="hidden" id="dragable" name="dragable" value="false">
     {% for x, lat, lon in init_coords %}
         <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
     {% endfor %}

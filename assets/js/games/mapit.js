@@ -118,11 +118,12 @@
                     if (input != null && input.value != "")
                         if (parseInt(input.value) != NaN)
                             maxPoints = parseInt(input.value);
+                    
                     if (maxPoints > 0 && markers.length < maxPoints)
                     {
                         marker = new google.maps.Marker({
                             position: map.getCenter(),
-                            draggable: true,
+                            draggable: draggable,
                             map: map
                         });
                         markers.push(marker);
@@ -204,6 +205,12 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             });
             
+            draggable = true;
+            drag_elem = document.getElementById("dragable");
+            if (drag_elem != null && drag_elem.value != "")
+                if (drag_elem.value.toLowerCase() == "false")
+                    draggable = false;
+            
             var x = 0;
             var elem_str = "init_coords".concat(x);
             while (document.getElementById(elem_str) != null)
@@ -214,7 +221,7 @@
                 marker = new google.maps.Marker({
                     //position: map.getCenter(),
                     position: new google.maps.LatLng(lat,lon),
-                    draggable: true,
+                    draggable: draggable,
                     map: map
                 });
                 google.maps.event.addListener(marker, "dragend", function() {
