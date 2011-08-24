@@ -1,18 +1,14 @@
 import datetime
 
+from nani.admin import TranslatableAdmin
+from nani.models import TranslatableModel, TranslatedFields
+
 from django.db import models
 from django.template.defaultfilters import slugify
-
-from nani.admin import TranslatableAdmin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
-<<<<<<< HEAD
-from nani.models import TranslatableModel, TranslatedFields
-
 from web.accounts.models import determine_path
-=======
->>>>>>> master
 from web.attachments.models import Attachment
 from web.missions.models import Mission
 
