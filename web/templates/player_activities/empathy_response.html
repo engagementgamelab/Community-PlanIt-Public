@@ -18,21 +18,7 @@
             <h3>{{activity.bio}}</h3>
         {% endif %}
         
-        <div class="attachments">
-        {% for attachment in activity.attachment.all %}
-            {% if attachment.is_valid %}
-                <div>
-                    {% if attachment.type == 'video' %}
-                        {% youtube_video attachment.url %}
-                    {% else %}
-                    <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                    {% endif %}
-                </div>
-                {% else %}
-                <div class="notice">This content is currently unavailable.</div>
-                {% endif %}
-        {% endfor %}
-        </div>
+        {% include "player_activities/attachments.html" %}
         
         <div id="comments">
             <h3>Your Response:</h3>

@@ -7,21 +7,7 @@
         <input type="hidden" name="form" value="single_response">
         {% csrf_token %}
         <h2>{{activity.question|urlize}}</h2>
-        <div class="attachments">
-        {% for attachment in activity.attachment.all %}
-            {% if attachment.is_valid %}
-                <div>
-                    {% if attachment.type == 'video' %}
-                        {% youtube_video attachment.url %}
-                    {% else %}
-                    <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                    {% endif %}
-                </div>
-                {% else %}
-                <div class="notice">This content is currently unavailable.</div>
-                {% endif %}
-        {% endfor %}
-        </div>
+        {% include "player_activities/attachments.html" %}
         
         <div class="fieldWrapper">
             <!-- div style="list-style-type: none;" -->

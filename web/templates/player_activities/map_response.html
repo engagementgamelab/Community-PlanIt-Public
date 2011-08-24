@@ -6,21 +6,7 @@
 
 {%block activity%}
     <h2>{{activity.question|urlize}}</h2>
-    <div class="attachments">
-    {% for attachment in activity.attachment.all %}
-        {% if attachment.is_valid %}
-            <div>
-                {% if attachment.type == 'video' %}
-                    {% youtube_video attachment.url %}
-                {% else %}
-                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                {% endif %}
-            </div>
-            {% else %}
-            <div class="notice">This content is currently unavailable.</div>
-            {% endif %}
-    {% endfor %}
-    </div>
+    {% include "player_activities/attachments.html" %}
             
     <button class="button add">Add Point</button>
     <button class="button rm">Clear All Points</button>
