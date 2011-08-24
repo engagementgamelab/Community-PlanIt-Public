@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 
 #
 # Standard Django settings
@@ -24,6 +25,8 @@ CACHES = {
 EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 INSTALLED_APPS = (
+    # localeurl should be first
+    'localeurl',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.auth',
@@ -54,6 +57,8 @@ INSTALLED_APPS = (
     'django_mailer',
     'gmapsfield',
     'gmapsfield.templatetags',
+    'nani',
+    'rosetta',
     'south',
 )
 
@@ -65,6 +70,7 @@ MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
 MEDIA_URL = '/assets/'
 
 MIDDLEWARE_CLASSES = (
+    'localeurl.middleware.LocaleURLMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -100,6 +106,31 @@ TEMPLATE_DEBUG = True
 TIME_ZONE = 'America/New_York'
 USE_I18N = True
 USE_L10N = True
+
+# Localization
+LANGUAGE_CODE = 'en-us'
+LOCALE_PATHS = (
+        os.path.join(ROOTDIR, '../locale'),
+)
+
+ugettext = lambda s: s
+LANGUAGES = (
+  ('ru', ugettext('Russian')),
+  ('en', ugettext('English')),
+  ('de', ugettext(u'Deutsch')),
+  ('fr', ugettext(u'Français')),
+)
+#django-localeurl
+LOCALE_INDEPENDENT_PATHS = (
+    #re.compile('^/$'),
+    re.compile('^/ajax/'),
+    re.compile('^/assets/'),
+    re.compile('^/admin-media/'),
+    re.compile('^/favicon.ico$'),
+)
+LOCALE_INDEPENDENT_MEDIA_URL = True
+PREFIX_DEFAULT_LOCALE = True
+
 
 #
 # Community PlanIT settings
