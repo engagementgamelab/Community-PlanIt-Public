@@ -1,34 +1,7 @@
-{%extends "player_activities/base.html"%}
-{% load gmap attachment_tags %}
-{%block title%}Open Response{%endblock%}
-
-{%block main%}
-    <!--<form action="" method="post"> -->
-    <h2>{{activity.question|urlize}}</h2>
-    <div class="attachments">
-    {% for attachment in activity.attachment.all %}
-        {% if attachment.is_valid %}
-            <div>
-                {% if attachment.type == 'video' %}
-                    {% youtube_video attachment.url %}
-                {% else %}
-                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                {% endif %}
-            </div>
-            {% else %}
-            <div class="notice">This content is currently unavailable.</div>
-            {% endif %}
-    {% endfor %}
-    </div>
-    
-    <form enctype="multipart/form-data" action="" method="POST">
-        <input type="hidden" name="form" value="open_ended">
-        <div id="comments">
-            <h3>Your Response:</h3>
-            {% include "comments/duplicate.html" %}
-        </div>
-        <input type="submit" class="button submit" value="Submit" />
-    </form>
-
-    
-{%endblock%}
+{%extends "player_activities/open_base.html"%}
+{%block comment %}
+<div id="comments">
+    <h3>Your Response:</h3>
+    {% include "comments/duplicate.html" %}
+</div>
+{% endblock %}

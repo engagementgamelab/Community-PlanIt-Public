@@ -43,10 +43,16 @@ def overview(request, id):
         tmpl = loader.get_template('player_activities/open_overview.html')
         comment_form = CommentForm()
         comment_form.allow_replies = False
+        myAnswer = Answer.objects.filter(activity=activity, answerUser=request.user)
+        myComment = None
+        if len(myAnswer) > 0:
+            myAnswer = myAnswer[0]
+            myComment = myAnswer.comments.all()[0]
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answers,
                                                                  "comments": getComments(answers, Answer),
                                                                  "comment_form": comment_form,
+                                                                 "myComment": myComment,
                                                                  }, [ip])))
     elif activity.type.type == "single_response":
         answers = AnswerSingleResponse.objects.filter(activity=activity)
@@ -57,8 +63,8 @@ def overview(request, id):
             answerDict[choice.value] = 0
 
         for answer in answers:
-            answerDict[choice.value] = answerDict[choice.value] + 1
-        
+            answerDict[answer.selected.value] = answerDict[answer.selected.value] + 1
+    
         answerList = []
         for x in answerDict:
             answerList.append((x, answerDict[x]))
@@ -66,20 +72,33 @@ def overview(request, id):
         tmpl = loader.get_template('player_activities/single_overview.html')
         comment_form = CommentForm()
         comment_form.allow_replies = False
+        myAnswer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
+        myComment = None
+        if len(myAnswer) > 0:
+            myAnswer = myAnswer[0]
+            myComment = myAnswer.comments.all()[0]
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answerList,
                                                                  "comments": getComments(answers, AnswerSingleResponse),
                                                                  "comment_form": comment_form,
+                                                                 "myComment": myComment,
                                                                  }, [ip])))
     elif activity.type.type == "multi_response":
         answers = AnswerMultiChoice.objects.filter(option__activity=activity)
         comments = None
         answer_type = ContentType.objects.get_for_model(AnswerMultiChoice)
+        
         for answer in answers:
             if comments == None:
                 comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
             else:
                 comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+        
+        myComment = comments.filter(user=request.user)
+        if len(myComment) > 0:
+            myComment = myComment[0]
+        else:
+            myComment = None
         
         answerDict = {}
         choices = MultiChoiceActivity.objects.filter(activity=activity)
@@ -99,7 +118,8 @@ def overview(request, id):
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "comments": comments,
                                                                  "comment_form": comment_form,
-                                                                 "answers": answerList}, [ip])))
+                                                                 "answers": answerList,
+                                                                 "myComment": myComment}, [ip])))
     elif activity.type.type == "map":
         answers = AnswerMap.objects.filter(activity=activity)
         init_coords = []
@@ -116,23 +136,36 @@ def overview(request, id):
         tmpl = loader.get_template('player_activities/map_overview.html')        
         comment_form = CommentForm()
         comment_form.allow_replies = False
+        myAnswer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+        myComment = None
+        if len(myAnswer) > 0:
+            myAnswer = myAnswer[0]
+            myComment = myAnswer.comments.all()[0]
+
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "comments": getComments(answers, AnswerMap),
                                                                  "comment_form": comment_form,
                                                                  "answers": answers,
                                                                  "init_coords": init_coords,
-                                                                 "map": map}, [ip])))
+                                                                 "map": map,
+                                                                 "myComment": myComment}, [ip])))
     elif activity.type.type == "empathy":
         activity = PlayerEmpathyActivity.objects.get(id=activity.id)
         answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/empathy_overview.html')
         comment_form = CommentForm()
         comment_form.allow_replies = False
+        myAnswer = Answer.objects.filter(activity=activity, answerUser=request.user)
+        myComment = None
+        if len(myAnswer) > 0:
+            myAnswer = myAnswer[0]
+            myComment = myAnswer.comments.all()[0]
         
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "comments": getComments(answers, Answer),
                                                                  "comment_form": comment_form,
-                                                                 "answers": answers}, [ip])))
+                                                                 "answers": answers,
+                                                                 "myComment": myComment}, [ip])))
     return HttpResponse("web page not created yet")
 
 def comment_fun(answer, form, request):
@@ -165,13 +198,19 @@ def comment_fun(answer, form, request):
 @login_required
 def get_activity(request, id):
     activity = PlayerActivity.objects.get(id=id)
+    
+    answers = Answer.objects.filter(activity=activity, answerUser=request.user)
+    if len(answers) > 0:
+        return HttpResponseRedirect(reverse("player_activities_replay", args=[activity.id]))
+    answers = AnswerMultiChoice.objects.filter(option__activity=activity, user=request.user)
+    if len(answers) > 0:
+        return HttpResponseRedirect(reverse("player_activities_replay", args=[activity.id]))
+    
     tmpl = None
     form = None
     comment_form = None
     map = None
     init_coords = []
-    answer = None
-    comment = None
     if request.method == "POST":
         s = ""
         for x in request.POST.keys():
@@ -184,7 +223,6 @@ def get_activity(request, id):
         #If this game is a replay it should be set below. The reason to not check here
         # is because the type of the game might have changed. If that is the case, the Answer.objects.filteer
         # will exist but it will be the wrong one.  
-        replay = False
         form_error = False 
         comment_form = CommentForm(request.POST)
         if request.POST["form"] == "open_ended":
@@ -229,7 +267,6 @@ def get_activity(request, id):
                 activity = PlayerMapActivity.objects.get(pk=activity.id)
                 tmpl = loader.get_template('player_activities/map_response.html')
                 form_error = True
-                return HttpResponse("form errors: %s comment errors: %s" % (form.errors, comment_form.errors))
         elif request.POST["form"] == "empathy":
             if comment_form.is_valid():
                 answer = Answer()
@@ -257,7 +294,6 @@ def get_activity(request, id):
                 #cleans out all of the choices that the user selected from the check boxes
                 for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)):
                     amc.comments.clear()
-                    replay = True
                 AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)).delete()
                 first_found = False 
                 for key in request.POST.keys():
@@ -279,7 +315,7 @@ def get_activity(request, id):
         
         #If the template is None then there wasn't an error so assign the points and redirect
         #Otherwise fall through. Only assign the points if the replay is false, but still redirect
-        if replay == False and form_error == False:
+        if form_error == False:
             PointsAssigner().assignAct(request.user, activity)
 
         if tmpl == None:
@@ -292,10 +328,6 @@ def get_activity(request, id):
         comment_form = CommentForm()
         if (activity.type.type == "open_ended"):
             tmpl = loader.get_template('player_activities/open_response.html')
-            answer = Answer.objects.filter(activity=activity, answerUser=request.user)
-            if len(answer) > 0:
-                answer = answer[0]
-                comment = answer.comments.all()[0]
         elif (activity.type.type == "single_response"):
             tmpl = loader.get_template('player_activities/single_response.html')
             mc = MultiChoiceActivity.objects.filter(activity=activity)
@@ -303,10 +335,6 @@ def get_activity(request, id):
             for x in mc:
                 choices.append((x.id, x.value))
             form = MakeSingleForm(choices)
-            answer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
-            if len(answer) > 0:
-                answer = answer[0]
-                comment = answer.comments.all()[0] 
         elif (activity.type.type == "map"):
             activity = PlayerMapActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/map_response.html')
@@ -324,16 +352,9 @@ def get_activity(request, id):
                 map = activity.mission.instance.location
                 form = MapForm()
             answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
-            if len(answer) > 0:
-                answer = answer[0] 
-                comment = answer.comments.all()[0]
         elif (activity.type.type == "empathy"):
             activity = PlayerEmpathyActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/empathy_response.html')
-            answer = Answer.objects.filter(activity=activity, answerUser=request.user)
-            if len(answer) > 0:
-                answer = answer[0] 
-                comment = answer.comments.all()[0]
         elif (activity.type.type == "multi_response"):
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
@@ -341,10 +362,6 @@ def get_activity(request, id):
                 choices.append((x.id, x.value))
             tmpl = loader.get_template('player_activities/multi_response.html')
             form = MakeMultiForm(choices)
-            answer = AnswerMultiChoice.objects.filter(option__activity=activity)
-            for a in answer:
-                if len(a.comment.all()) != 0:
-                    comment = a.comment.all()[0]
         else:
             raise Http404
         
@@ -354,10 +371,140 @@ def get_activity(request, id):
         "activity": activity,
         "map": map,
         "init_coords": init_coords,
-        "answer": answer,
-        "comment": comment,
         }, [ip])))
-    return HttpResponse("web page not created yet")
+
+@login_required
+def replay(request, id):
+    activity = PlayerActivity.objects.get(id=id)
+    tmpl = None
+    form = None
+    comment_form = None
+    map = None
+    init_coords = []
+    if request.method == "POST":
+        s = ""
+        for x in request.POST.keys():
+            s = "%s%s: %s<br>" % (s, x, request.POST[x])
+        s = "%s<br> FILES<br>" % s
+        for x in request.FILES.keys():
+            s = "%s%s: %s" % (s, x, request.FILES[x])
+        #return HttpResponse(s)
+        
+        form_error = False 
+        if request.POST["form"] == "single_response":
+            mc = MultiChoiceActivity.objects.filter(activity=activity)
+            choices = []
+            for x in mc:
+                choices.append((x.id, x.value))
+            form = MakeSingleForm(choices)(request.POST)
+            if form.is_valid():
+                answer = AnswerSingleResponse.objects.get(activity=activity, answerUser=request.user)
+                answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
+                answer.save()
+            else:
+                tmpl = loader.get_template('player_activities/single_replay.html')
+                form_error = True
+        elif request.POST["form"] == "map":
+            form = MapForm(request.POST)
+            if form.is_valid():
+                map = form.cleaned_data["map"]
+                answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
+                answer.map = map;
+                answer.save()
+            else:
+                map = request.POST["map"]
+                activity = PlayerMapActivity.objects.get(pk=activity.id)
+                tmpl = loader.get_template('player_activities/map_replay.html')
+                form_error = True
+        elif request.POST["form"] == "multi_response":
+            mc = MultiChoiceActivity.objects.filter(activity=activity)
+            choices = []
+            for x in mc:
+                choices.append((x.id, x.value))
+            form = MakeMultiForm(choices)(request.POST)
+            if form.is_valid():
+                #this gets very very messy....
+                choices = MultiChoiceActivity.objects.filter(activity=activity)
+                                
+                ids = []
+                for choice in choices:
+                    ids.append(choice.id)
+                
+                comment = None
+                delete_answers = []
+                for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)):
+                    if len(amc.comments.all()) > 0:
+                        comment = amc.comments.all()[0]
+                    delete_answers.append(amc.pk)
+
+                first_found = False 
+                for key in request.POST.keys():
+                    if key.find("response_") >= 0:
+                        answer = AnswerMultiChoice()
+                        answer.user = request.user
+                        #This is tricky, the reponse: value returned object is response_$(id): id
+                        #So basically if the response exists it means that checkbox was checked and the
+                        # value returned will be the ID and will always be an int
+                        answer.option = MultiChoiceActivity.objects.get(id=int(request.POST[key]))
+                        answer.save()
+                        #Yes it's a hack, only make a comment for the first response
+                        if not first_found:
+                            comment.content_object = answer
+                            comment.save()
+                            first_found = True
+                AnswerMultiChoice.objects.filter(pk__in=delete_answers).delete()
+            else:
+                tmpl = loader.get_template('player_activities/multi_replay.html')
+                form_error = True
+        
+        #If the template is None then there wasn't an error so assign the points and redirect
+        #Otherwise fall through. Only assign the points if the replay is false, but still redirect
+        if tmpl == None:
+            ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", reverse("player_activities_activity", args=[activity.id]), "activity")
+            return HttpResponseRedirect(reverse("player_activities_overview", args=[activity.id]))
+    else:
+        if (activity.type.type == "single_response"):
+            tmpl = loader.get_template('player_activities/single_replay.html')
+            mc = MultiChoiceActivity.objects.filter(activity=activity)
+            choices = []
+            for x in mc:
+                choices.append((x.id, x.value))
+            form = MakeSingleForm(choices)
+        elif (activity.type.type == "map"):
+            activity = PlayerMapActivity.objects.get(pk=activity.id)
+            tmpl = loader.get_template('player_activities/map_replay.html')
+            answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+            if (len(answer) > 0):
+                form = MapForm()
+                map = answer[0].map
+                markers = simplejson.loads("%s" % map)["markers"]
+                x = 0
+                for coor in markers if markers != None else []:
+                    coor = coor["coordinates"]
+                    init_coords.append( [x, coor[0], coor[1]] )
+                    x = x + 1
+            else:
+                map = activity.mission.instance.location
+                form = MapForm()
+            answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+        elif (activity.type.type == "multi_response"):
+            mc = MultiChoiceActivity.objects.filter(activity=activity)
+            choices = []
+            for x in mc:
+                choices.append((x.id, x.value))
+            tmpl = loader.get_template('player_activities/multi_replay.html')
+            form = MakeMultiForm(choices)
+        else:
+            raise Http404
+    
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "form": form, 
+        "activity": activity,
+        "map": map,
+        "init_coords": init_coords,
+        }, [ip])))
+    
+    
 
 @login_required
 def index(request):

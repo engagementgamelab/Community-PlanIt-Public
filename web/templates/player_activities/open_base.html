@@ -1,0 +1,16 @@
+{%extends "player_activities/base.html"%}
+{%block title%}Open Response{%endblock%}
+
+{%block main%}
+    <!--<form action="" method="post"> -->
+    <h2>{{activity.question|urlize}}</h2>
+    {% include "player_activities/attachments.html" %}
+    
+    <form enctype="multipart/form-data" action="" method="POST">
+        <input type="hidden" name="form" value="open_ended">
+        {% block comment %}{% endblock %}
+        <input type="submit" class="button submit" value="Submit" />
+    </form>
+
+    
+{%endblock%}

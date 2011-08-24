@@ -6,6 +6,10 @@
     <h1>Empathy Response Overview</h1>
     <h2>{{activity.question}}</h2>
     
+    <div>
+        <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
+    </div>
+    
     {%if activity.avatar%}
         <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
     {%else%}               
@@ -16,21 +20,7 @@
         <h3>{{activity.bio}}</h3>
     {% endif %}
     
-    <div class="attachments">
-        {% for attachment in activity.attachment.all %}
-            {% if attachment.is_valid %}
-                <div>
-                    {% if attachment.type == 'video' %}
-                        {% youtube_video attachment.url %}
-                    {% else %}
-                    <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                    {% endif %}
-                </div>
-                {% else %}
-                <div class="notice">This content is currently unavailable.</div>
-                {% endif %}
-        {% endfor %}
-    </div>
+    {% include "player_activities/attachments.html" %}
     
     <div id="comments">
         {%include "comments/post.html"%}
