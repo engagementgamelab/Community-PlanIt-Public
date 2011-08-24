@@ -63,8 +63,9 @@ def overview(request, id):
             answerDict[choice.value] = 0
 
         for answer in answers:
-            answerDict[choice.value] = answerDict[choice.value] + 1
-        
+            answerDict[answer.selected.value] = answerDict[answer.selected.value] + 1
+        return HttpResponse("%s" % answerDict)
+    
         answerList = []
         for x in answerDict:
             answerList.append((x, answerDict[x]))
@@ -367,7 +368,60 @@ def get_activity(request, id):
         "map": map,
         "init_coords": init_coords,
         }, [ip])))
-    return HttpResponse("web page not created yet")
+
+@login_required
+def replay(request, id):
+    comment_form = CommentForm()
+    activity = PlayerActivity.objects.get(id=id)
+    tmpl = None
+    form = None
+    comment_form = None
+    map = None
+    init_coords = []
+    
+    if (activity.type.type == "single_response"):
+        tmpl = loader.get_template('player_activities/single_replay.html')
+        mc = MultiChoiceActivity.objects.filter(activity=activity)
+        choices = []
+        for x in mc:
+            choices.append((x.id, x.value))
+        form = MakeSingleForm(choices)
+    elif (activity.type.type == "map"):
+        activity = PlayerMapActivity.objects.get(pk=activity.id)
+        tmpl = loader.get_template('player_activities/map_replay.html')
+        answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+        if (len(answer) > 0):
+            form = MapForm()
+            map = answer[0].map
+            markers = simplejson.loads("%s" % map)["markers"]
+            x = 0
+            for coor in markers if markers != None else []:
+                coor = coor["coordinates"]
+                init_coords.append( [x, coor[0], coor[1]] )
+                x = x + 1
+        else:
+            map = activity.mission.instance.location
+            form = MapForm()
+        answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+    elif (activity.type.type == "multi_response"):
+        mc = MultiChoiceActivity.objects.filter(activity=activity)
+        choices = []
+        for x in mc:
+            choices.append((x.id, x.value))
+        tmpl = loader.get_template('player_activities/multi_replay.html')
+        form = MakeMultiForm(choices)
+    else:
+        raise Http404
+    
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "form": form, 
+        "comment_form": comment_form,
+        "activity": activity,
+        "map": map,
+        "init_coords": init_coords,
+        }, [ip])))
+    
+    
 
 @login_required
 def index(request):
