@@ -1,12 +1,28 @@
 {%extends "player_activities/base.html"%}
-
+{% load gmap attachment_tags %}
 {%block title%}Single Response{%endblock%}
 
 {%block main%}
-    <form action="" method="post">
+    <form enctype="multipart/form-data" action="" method="post">
         <input type="hidden" name="form" value="single_response">
         {% csrf_token %}
         <h2>{{activity.question|urlize}}</h2>
+        <div class="attachments">
+        {% for attachment in activity.attachment.all %}
+            {% if attachment.is_valid %}
+                <div>
+                    {% if attachment.type == 'video' %}
+                        {% youtube_video attachment.url %}
+                    {% else %}
+                    <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="notice">This content is currently unavailable.</div>
+                {% endif %}
+        {% endfor %}
+        </div>
+        
         <div class="fieldWrapper">
             <!-- div style="list-style-type: none;" -->
             {{ form.response.errors }}
@@ -17,6 +33,12 @@
             {% endfor %}
             </ul>
         </div>
+        
+        <div id="comments">
+            <label>Why did you choose this reponse?</label>
+            {% include "comments/duplicate.html" %}
+        </div>
+
         <input type="submit" class="button submit" value="Submit" />
     </form>
     

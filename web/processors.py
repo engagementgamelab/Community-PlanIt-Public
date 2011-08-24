@@ -18,7 +18,9 @@ def instance_processor(request):
     instance = request.user.get_profile().instance
     if not instance:
         if request.user.is_staff or request.user.is_superuser:
-            instance = Instance.objects.active().latest()
+            instances = Instance.objects.all()
+            if instances.count():
+                instance = instances.latest()
 
     if not instance:
         return {}

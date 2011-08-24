@@ -1,0 +1,83 @@
+{%extends "player_activities/base.html"%}
+{% load gmap attachment_tags %}
+{%block title%}Open Response Overview{%endblock%}
+
+{%block main%}
+    <h1>Open Response Overview</h1>
+    <h2>{{activity.question}}</h2>
+    <div class="attachments">
+    {% for attachment in activity.attachment.all %}
+        {% if attachment.is_valid %}
+            <div>
+                {% if attachment.type == 'video' %}
+                    {% youtube_video attachment.url %}
+                {% else %}
+                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="notice">This content is currently unavailable.</div>
+            {% endif %}
+    {% endfor %}
+    </div>
+    
+    <ul>
+        {% for key, val in answers %}
+            <li>{{key}}: {{val}}</li>
+        {% endfor %}
+    </ul>
+    <h3>Answer Selections</h3>
+    <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
+        margin-top: 25px; margin-bottom: 25px; "></div>
+
+    <div id="comments">
+        {%include "comments/post.html"%}
+        <div style="clear: both;"></div>
+    </div>
+
+<script type="text/javascript">
+    $(function () {
+        try {
+        
+        var answerData = new Array(0);
+        var i = 0;
+        {% for key, val in answers %}
+            answerData[i] = {label: "{{key}}", data: {{val}} };
+            i++;
+        {% endfor %}
+        
+        $.plot($("#choicePie"), answerData, {
+            series: { 
+                pie: { 
+                    show: true,
+                    radius: 1,
+                    stroke: {
+                        color: '#FFECD8',
+                        width: 2
+                    },
+                    label: {
+                        show: true,
+                        radius: 1/2,
+                        formatter: function(label, series) {
+                            var output = '<div style="font-size:.8em;text-align:center;color:black;">' + label;
+                            {% if player_spent > 0 %}
+                            output += '<br/>'+Math.round(series.percent)+'%</div>';
+                            {% endif %}
+                            return output;
+                        },
+                        threshold: 0.1
+                    }
+                }
+            },
+            legend: { 
+                show: false
+            }
+        });
+        
+        } catch (err) {
+            alert(err);
+        }
+    });
+    
+</script>    
+{%endblock%}

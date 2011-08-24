@@ -6,8 +6,9 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
@@ -17,7 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 
 from web.accounts.forms import *
-from web.accounts.models import UserProfile
+from web.accounts.models import Notification, UserProfile
 from web.answers.models import Answer
 from web.challenges.models import Challenge, PlayerChallenge
 from web.comments.forms import CommentForm
@@ -28,6 +29,7 @@ from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
 from web.values.models import *
 
+from PIL import Image
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
@@ -51,6 +53,34 @@ def validate_and_generate(base_form, request, callback):
                 lastName = form.cleaned_data['lastName']
             return callback(firstName, lastName, email, password, form)
     return form
+
+@login_required
+def notifications(request):
+    notifications = Notification.objects.filter(user=request.user)
+    paginator = Paginator(notifications, 5)
+
+    page = request.GET.get('page', 1)
+    notifications_page = paginator.page(page)
+
+    data = {
+        'paginator': paginator,
+        'notifications_page': notifications_page,
+    }
+
+    if request.user.get_profile().instance:
+        data['instance'] = request.user.get_profile().instance
+
+    for notification in notifications_page.object_list:
+        if notification.read == False:
+            notification.unread = True
+        notification.read = True
+        notification.save()
+
+    return render_to_response(
+        'accounts/notifications.html',
+        data,
+        context_instance=RequestContext(request)
+    )
 
 def register(request):
     def valid(firstName, lastName, email, password, form):
@@ -231,19 +261,27 @@ def edit(request):
 
 @login_required
 def profile(request, id):
-    player = User.objects.get(id=id)
+    player = get_object_or_404(User, id=id)
+    profile = player.get_profile()
     
-    instance = player.get_profile().instance
+    instance = profile.instance
     log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]
 
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
-            comment = player.get_profile().comments.create(
+            comment = profile.comments.create(
+                content_object=profile,
                 message=comment_form.cleaned_data['message'], 
                 user=request.user,
                 instance=instance,
             )
+
+            if request.user != player:
+                message = "%s commented on your profile" % (
+                    request.user.get_profile().screen_name
+                )
+                player.notifications.create(content_object=profile, message=message)
 
             if request.POST.has_key('yt-url'):
                 url = request.POST.get('yt-url')
@@ -253,17 +291,22 @@ def profile(request, id):
                         url=url,
                         type='video',
                         user=request.user,
-                        instance=request.user.get_profile().instance,
+                        instance=instance
                     )
-
+            file = request.FILES.get('picture')
+            picture = Image.open(file)
+            if (file.name.rfind(".") -1):
+                file.name = "%s.%s" % (file.name, picture.format.lower())
             if request.FILES.has_key('picture'):
                 comment.attachment.create(
                     file=request.FILES.get('picture'),
                     user=request.user,
-                    instance=request.user.get_profile().instance,
+                    instance=instance
                 )
 
             return HttpResponseRedirect(reverse('accounts_profile', args=[id]))
+    else:
+        comment_form = CommentForm()
 
     followingme = []
 
@@ -273,36 +316,33 @@ def profile(request, id):
                 followingme.append(p)
         except:
             pass
-
     
+    values = Value.objects.filter(instance=request.user.get_profile().instance)
+    community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
     
     value_wrapper = []
-    playervalues = PlayerValue.objects.filter(user=player)
+    player_values = PlayerValue.objects.filter(user=request.user)
     
-    values = Value.objects.filter(instance=instance)
-    total_coins = 0
+    player_spent = player_values.aggregate(Sum('coins'))['coins__sum'] or 0
+
     for value in values:
-        total_coins += value.coins
-    
-    total_playerCoins = 0
-    for value in values:
-        player_value = playervalues.filter(value=value)
-        coins = value.coins
+        player_value = player_values.filter(value=value)
+        coins = float(value.coins)
         if len(player_value) > 0:
-            total_playerCoins += player_value[0].coins
-            # +0.0 coerces to a float for percentages
             value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
-                                  'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })
+                                  'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })
         else:
             value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': 0,
-                                   'percent': 0 if total_coins == 0 else ((coins+0.0)/total_coins)*100 })    
+                                   'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
     
     tmpl = loader.get_template('accounts/profile.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'player': player,
+        'comment_form': comment_form,
+        'instance': instance,
         'followingme': followingme,
         'log': log,
-        'total_playerCoins': total_playerCoins,
+        'player_spent': player_spent,
         'value_wrapper': value_wrapper,
     })))
 
@@ -310,10 +350,11 @@ def profile(request, id):
 def follow(request, id):
     u = User.objects.get(id=id)
     request.user.get_profile().following.add( u )
-    ActivityLogger().log(request.user, request, u.get_profile().first_name, 'started following', '/player/'+ id, 'profile')
+    ActivityLogger().log(request.user, request, u.get_profile().screen_name, 'started following', '/player/'+ id, 'profile')
 
     return HttpResponseRedirect('/player/'+ str(id))
 
+@login_required
 def unfollow(request, id):
     request.user.get_profile().following.remove( User.objects.get(id=id) )
 
@@ -389,7 +430,7 @@ def dashboard(request):
     if (missions.count() > 0):
         mission = missions[0]
         activities = PlayerActivity.objects.distinct().filter(mission=mission)
-        activities = activities.filter(Q(answers__isnull=True)|Q(answers__answerUser=request.user))
+        #activities = activities.filter(Q(answers__isnull=True)|Q(answers__answerUser=request.user))
 
     completed_challenges = PlayerChallenge.objects.completed().filter(player=request.user)
     challenges = instance and instance.challenges.active().exclude(player_challenges__in=completed_challenges) or Challenge.objects.none()

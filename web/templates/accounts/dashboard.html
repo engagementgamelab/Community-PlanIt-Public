@@ -1,13 +1,13 @@
 {%extends "layouts/base.html"%}
 {% load game_extras i18n %}
 
-{%block section%}accounts{%endblock%}
+{% block section %}accounts{% endblock %}
 {% block extra_body_class %}rightsidebar{% endblock %}
 
 {%block title%}{% trans "Dashboard" %}{%endblock%}
 {%block page_title%}
 <h2 id="page_title">{{instance.name}}</h2>
-{%endblock%}
+{% endblock %}
 
 {% block rightsidebar %}
 {% if instance.is_started %}
@@ -22,14 +22,14 @@
             <div class="buttons">
                 <a class="button" href="{% url missions:missions_mission mission.slug %}" title="{{mission.name}}">{% trans "View Current Mission" %}</a>
             </div>
-            {%endfor%}
-        {%else%}
-            {%if instance.missions.past.all|length%}
+            {% endfor %}
+        {% else %}
+            {% if instance.missions.past.all|length %}
             <label>
             {% trans "Your missions have ended for now. Great work!  Your community is better because of your efforts.  You'll be notified when a new mission starts." %}
             </label>
-            {%else%}
-                {%if instance.missions.future.all|length%}
+            {% else %}
+                {% if instance.missions.future.all|length %}
                     <label>
                     {% trans " The mission has not yet started. You will be notified when the mission starts." %}
                     </label>
@@ -65,10 +65,10 @@
 {% endif %}
 {% endblock rightsidebar %}
 
-{%block main%}
+{% block main %}
 {% if instance %}
-    {%if instance.is_started%}
-        {%if not user.is_active%}
+    {% if instance.is_started %}
+        {% if not user.is_active %}
             <form method="POST" action="">
                 <h4>{% trans "One last step: Please verify that you have read our Terms of Use and Privacy Policy.  It is our commitment to provide a safe, friendly environment for community members to discuss important values." %}</h4>
                 {%csrf_token%}
@@ -84,54 +84,54 @@
                 </div>
                 <button class="button">{% trans "Activate my account!" %}</button>
             </form>
-        {%else%}
-            {%if not instance.is_expired%}                    
+        {% else %}
+            {% if not instance.is_expired %}                    
                 <div class="welcome">
                     <p>We invite you to play Community PlanIt to help shape {{instance.city}}'s vision for the future. Complete <a class="red" href="{% url player_activities:player_activities_all %}" title="activities">activities</a> to earn points, which you can trade in for <a class="red" href="{% url values:index %}">coins</a> to spend on promoting your top community values. Keep checking back from {{instance.start_date|date:"F j"}} through {{instance.end_date|date:"F j"}} to stay on top of the lively discussion&#8212;and tell your friends!</p>
                 </div>
                 
-            {%else%}
+            {% else %}
                 <div class="welcome">
                     <p>{{instance}}{% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
                 <ul>
                     <li><strong>{{instance.user_profiles.count}}</strong> participant{{instance.user_profiles.count|pluralize}}
-                    <li><strong>{{instance.coin_count}}</strong> coin{{instance.coin_count|pluralize}} spent on issues
+                    <li><strong>{{instance.coin_count}}</strong> token{{instance.coin_count|pluralize}} spent on issues
                     <li><strong>{{instance.comments.count}}</strong> comments
                 </ul>
 
-                <p>All of the 
+                <p>Check out the results of the
                 {% if last_mission %}
                     <a class="red" href="{% url missions_mission last_mission.slug %}" title="{{last_mission.name}}">activities</a>
                 {% else %}
                 <a class="red" href="{% url missions %}" title="mission">activities</a>
                 {% endif %}
-                are now unlocked so you can view the results—and don't forget to see how the community spent its 
-                <a class="red" href="{% url values %}">coins</a>!
+                results &#8212; and don't forget to see how the community spent its 
+                <a class="red" href="{% url values %}">tokens</a>!
                 </p>
                 <p>{% trans "Thanks for playing!" %}</p>
                 </div>
-            {%endif%}
+            {% endif %}
             
             <div class="feed">
                 <h3>{% trans "Latest Events" %}</h3>
                 <table>
                     <tbody>
-                        {%for activity in log%}
+                        {% for activity in log %}
                         <tr class="{% cycle "odd" "even" %}">
                             <td>{{activity.date|date:"m/d/Y"}}</td>
                             <td>
                                 <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
                                 {{activity.data}} 
-                                {%if activity.url%}
+                                {% if activity.url %}
                                     <a href="{{activity.url}}">{{activity.action}}</a>
-                                {%else%}
+                                {% else %}
                                     {{activity.action}}
-                                {%endif%}
+                                {% endif %}
                             </td>
                         </tr>
                         {% empty %}
                         <tr><td class="odd">No news found.</td></tr>
-                        {%endfor%}
+                        {% endfor %}
                     </tbody>
                 </table>
                 
@@ -139,31 +139,31 @@
                 <a href="{% url instances:instances_instance user.get_profile.instance.slug %}" class="right button">View more community news</a>
                 </p>
             </div>
-        {%endif%}
-    {%else%}
+        {% endif %}
+    {% else %}
         <div>The community has not started yet. We will notify you once it has begun.  </div>
         <br>
         <a href="{% url logout %}">Logout</a>
-    {%endif%}
+    {% endif %}
 {% endif %}
 
     <div style="clear:both;"></div>
-{%endblock%}
+{% endblock %}
 
 {% block aside %}
-{%if leaderboard.count %}
+{% if leaderboard.count %}
 <div class="leaderboard">
     <table>
         <thead>
             <tr><th>Leader</th><th>Board</th></tr>
         </thead>
         <tbody>
-        {%for profile in leaderboard%}
+        {% for profile in leaderboard %}
             <tr>
                 <td><a href="{% url accounts_profile profile.user.id %}">{{profile.screen_name}}</a></td>
                 <td>{{profile.totalPoints}}</td>
             </tr>
-        {%endfor%}
+        {% endfor %}
         </tbody>
     </table>
 </div>

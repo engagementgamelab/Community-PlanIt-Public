@@ -38,6 +38,14 @@ hr.space {
     clear: both;
 }
 
+@mixin disable_selection {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
 @mixin clearfix {
   &:after {
     content: ".";
@@ -207,7 +215,8 @@ p.separate {
         line-height: 2;
     }
     
-    .button, input[type=submit] {
+    .button, button, input[type=submit] {
+        font-family: UbuntuRegular, Verdana, Helvetica, Arial, sans-serif;
         cursor: pointer;
         text-decoration: none;
         font-size: .75em;
@@ -217,10 +226,14 @@ p.separate {
         display: inline-block;
         padding: 4px 8px;
         margin: 4px 0;
-
         background-color: $darkgreen;
-        
         border: 0;
+        @include disable_selection;
+    }
+
+    .button.disabled {
+        opacity: .5;
+        cursor: default;
     }
 
    .button.green {
@@ -613,6 +626,7 @@ p.separate {
 
             a {
                 color: $white;
+                text-decoration: none;
             }
 
             div {
@@ -739,6 +753,7 @@ p.separate {
                         display:block;
                         height: 100%;
                         background-color: $lightgreen;
+                        padding: 0;
                     }
                     span {
                         position: absolute;
@@ -746,7 +761,7 @@ p.separate {
                         left: 5px;
                     }
                 }
-                .coins {
+                .tokens {
                     display: block;
                     background: url('../img/tokencount.png') 100% 80% no-repeat;
                     padding-bottom: 4px;
@@ -779,6 +794,32 @@ p.separate {
                         background-image: -moz-radial-gradient(50% 50%, circle, $green, $lightgreen);
                         background-image: -webkit-gradient(radial, 50% 50%, 1, 50% 50%, 100, from($green), to($lightgreen));
                     }
+                }
+            }
+
+            .notifications {
+                background-color: #052441;
+                font-weight: normal;
+                padding: 4px 0;
+                text-align: center;
+
+                a {
+                    display: block;
+                }
+
+                a:hover {
+                    text-decoration: none;
+                }
+
+                .count {
+                    display: inline-block;
+                    font-family: UbuntuBold;
+                    margin: 4px;
+                    padding: 0 8px;
+                    background-color: $orange;
+                    -moz-border-radius: 100px;
+                    -webkit-border-radius: 100px;
+                    border-radius: 100px;
                 }
             }
 
@@ -942,10 +983,6 @@ p.separate {
                                 a {
                                     color: $vibrantblue;
                                 }
-                            }
-
-                            .button {
-                                padding: 2px 4px 2px 4px;
                             }
 
                             .actions {
@@ -1405,6 +1442,18 @@ table.activities {
     th.final, td.final {
         padding-right: 4px;
     }
+}
+
+table.notifications {
+    width: auto;
+
+    td {
+        padding-right: 1em;
+    }
+}
+
+ul#messages {
+    margin: 2em 1em 1em 1em;
 }
 
 .page_navigator {

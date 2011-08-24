@@ -1,0 +1,28 @@
+{%extends "player_activities/base.html"%}
+{% load gmap attachment_tags %}
+{%block title%}Open Response Overview{%endblock%}
+
+{%block main%}
+    <h1>Open Response Overview</h1>
+    <h2>{{activity.question}}</h2>
+    <div class="attachments">
+    {% for attachment in activity.attachment.all %}
+        {% if attachment.is_valid %}
+            <div>
+                {% if attachment.type == 'video' %}
+                    {% youtube_video attachment.url %}
+                {% else %}
+                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="notice">This content is currently unavailable.</div>
+            {% endif %}
+    {% endfor %}
+    </div>
+    
+    <div id="comments">
+        {%include "comments/post.html"%}
+        <div style="clear: both;"></div>
+    </div>
+{%endblock%}

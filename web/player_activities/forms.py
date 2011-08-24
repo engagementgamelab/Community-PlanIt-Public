@@ -10,12 +10,6 @@ from web.answers.models import *
 
 from gmapsfield.fields import *
 
-class OpenForm(forms.Form):
-    answerBox = forms.CharField(required=True, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
-    
-    class Meta:
-        model = AnswerOpenEnded
-
 def MakeSingleForm(choices):
     class SingleForm(forms.Form):
         response = forms.ChoiceField(widget=RadioSelect, choices=choices)
@@ -30,9 +24,8 @@ def MakeMultiForm(choices):
             model = AnswerMultiChoice
     return MultiForm
 
-class MapForm(forms.ModelForm):
-    map = GoogleMapsField()
-    answerBox = forms.CharField(required=True, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
+class MapForm(forms.Form):
+    map = GoogleMapsField().formfield()
 
     def clean_map(self):
         map = self.cleaned_data.get('map')
@@ -43,12 +36,3 @@ class MapForm(forms.ModelForm):
             raise forms.ValidationError("Please select a point on the map")
         return map
 
-    class Meta:
-        model = AnswerMap
-        fields = ('map', 'answerBox')
-                
-class EmpathyForm(forms.Form):
-    answerBox = forms.CharField(required=True, widget=forms.Textarea(attrs={"rows": 4, "cols": 60}))
-    class Meta:
-        model = AnswerEmpathy
-        

@@ -1,11 +1,17 @@
+import datetime
 from uuid import uuid4 as uuid
 
 from django import forms
+from django.core.urlresolvers import reverse
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User, Group, Permission
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 
 from web.accounts.models import *
 from web.challenges.models import *
@@ -70,9 +76,9 @@ class UserProfile(models.Model):
     accepted_term = models.BooleanField(default=False)
     accepted_research = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=12, blank=True, help_text = '<p class="fine">Please use the following phone number format: <em>xxx-xxx-xxx</em>.</p>')
-    #Coins is the current number of coins that the player has
+    # the current number of coins that the player has
     currentCoins = models.IntegerField(default=0)
-    #Points is the total points that the player has accrewed
+    # the total points that the player has accrued
     totalPoints = models.IntegerField(default=0)
     # points to the next coin
     coinPoints = models.IntegerField(default=0)
@@ -89,16 +95,14 @@ class UserProfile(models.Model):
     following = models.ManyToManyField(User, related_name='following_user_set', blank=True, null=True)
 
     # comments on the profile from others
-    comments = models.ManyToManyField(Comment, blank=True, null=True, related_name='user_profiles')
+    comments = generic.GenericRelation(Comment)
 
-    def earned_tokens(self):
-        return self.totalPoints // 100
+    class Meta:
+        verbose_name = "User Profile"
+        verbose_name_plural = "User Profiles"
 
-    def points_to_coin(self):
-        return 100 - self.coinPoints
-    
-    def points_to_coin_for_fill(self):
-        return self.coinPoints
+    def __unicode__(self):
+        return self.screen_name +"'s profile"
 
     def affiliations_csv(self):
         if self.affiliations:
@@ -106,16 +110,23 @@ class UserProfile(models.Model):
 
         return ""
     
+    def earned_tokens(self):
+        return self.totalPoints // 100
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('accounts_profile', [str(self.user.id)])
+
     def points_progress(self):
         return self.coinPoints
 
-    class Meta:
-        verbose_name = "User Profile"
-        verbose_name_plural = "User Profiles"
+    def points_to_coin(self):
+        return 100 - self.coinPoints
+    
+    def points_to_coin_for_fill(self):
+        return self.coinPoints
 
-    def __unicode__(self):
-        return self.user.email +"'s Profile"
-
+    @property
     def screen_name(self):
         #First name and last name are required
         first = self.user.first_name or ''
@@ -208,3 +219,47 @@ def user_post_save(instance, created, **kwargs):
 
 models.signals.pre_save.connect(user_pre_save, sender=User)
 models.signals.post_save.connect(user_post_save, sender=User)
+
+class NotificationQueryMixin(object):
+    def unread(self):
+        return self.filter(read=False)
+
+class NotificationQuerySet(models.query.QuerySet, NotificationQueryMixin):
+    pass
+
+class NotificationManager(models.Manager, NotificationQueryMixin):
+    def get_query_set(self):
+        return NotificationQuerySet(self.model, using=self._db)
+
+class Notification(models.Model):
+    """
+    These notifications are messages for a particular user, sent by the system
+    when another user likes or replies to a comment, or completes a challenge.
+    """
+    timestamp = models.DateTimeField(default=datetime.datetime.now)
+    user = models.ForeignKey(User, related_name='notifications')
+    message = models.TextField()
+    read = models.BooleanField(default=False)
+
+    # notifications can be sent for any model
+    content_type  = models.ForeignKey(ContentType,
+                                      blank=True, null=True,
+                                      verbose_name=_('content type'),
+                                      related_name="content_type_set_for_%(class)s"
+                                     )
+    object_id      = models.TextField(_('object ID'), blank=True)
+    content_object = generic.GenericForeignKey()
+
+    objects = NotificationManager()
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def get_content_object_url(self):
+        """
+        Return the URL of the object associated with the notification.
+        """
+        return reverse(
+            'generic_redirect',
+            args=(self.content_type_id, self.object_id)
+        )

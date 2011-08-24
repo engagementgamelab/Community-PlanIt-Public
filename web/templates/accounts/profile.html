@@ -1,36 +1,41 @@
 {%extends "layouts/base.html"%}
 {% load i18n %}
 
-{%block section%}accounts{%endblock%}
+{% block section %}accounts{% endblock %}
 
 {%block title%}{% trans "Dashboard" %}{%endblock%}
 {%block page_title%} {{player.get_profile.screen_name}} {%endblock%}
 
-{%block main%}
-    <h2>
-        {%if request.user and not player == request.user and not request.user.username = ''%}
-            {%if player not in request.user.get_profile.following.all%}
+{% block main %}
+    {% if request.user == player %}
+    <div class="right">
+        <a class="button" href="{% url accounts_profile_edit %}">Edit Profile</a>
+    </div>
+    {% endif %}
+    <div>
+        {% if request.user and not player == request.user and not request.user.username = '' %}
+            {% if player not in request.user.get_profile.following.all %}
             <a class="button" href="{% url player_follow player.id %}">Follow</a>
-            {%else%}
+            {% else %}
             <a class="button" href="{% url player_unfollow player.id %}">Unfollow</a>
-            {%endif%}
-        {%endif%}
-
-    </h2>
+            {% endif %}
+        {% endif %}
+    </div>
     <p class="highlighted">
-        {%if player.get_profile.avatar%}
+        {% if player.get_profile.avatar %}
             <img class="left avatar-large" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}">
-        {%else%}
+        {% else %}
             <img class="left avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-        {%endif%} 
+        {% endif %} 
         <!--Lives in East Boston, works in Fort Point and Plays in Fort Point.-->
         <span style="font-size: 1em">{% trans "Points" %}: {{player.get_profile.points}}</span><br>
         <span style="font-size: 1em">{% trans "Community Stake" %}: {{player.get_profile.stake}}</span><br>
         <span style="font-size: 1em">{% trans "Affiliated With" %}:
             {%for a in player.get_profile.affiliations_csv %} 
             <a href="{% url affiliations_affiliation a %}" class="highlight">{{a}}</a>
-            {%endfor%}
+            {% endfor %}
         </span>
+        {% endif %}
     </p>    
     <hr class="clear">
     <div class="twothird">
@@ -39,25 +44,25 @@
             margin-top: 25px; margin-bottom: 25px; "></div>
             
         <h3>{{player.get_profile.screen_name}}'s Activity Log</h3>
-        {%if log|length%}
+        {% if log|length %}
         <ul class="listless listview feed">
-            {%for activity in log%}
+            {% for activity in log %}
             <li class="listitem {{activity.type}}">
-                {%if activity.user.get_profile.avatar%}
+                {% if activity.user.get_profile.avatar %}
                     <img class="avatar" src="{{MEDIA_URL}}/{{activity.user.get_profile.avatar}}">
-                {%else%}               
+                {% else %}               
                     <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-                {%endif%} 
+                {% endif %} 
                 <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
                 {{activity.data}} 
-                {%if activity.url%}
+                {% if activity.url %}
                     <a href="{{activity.url}}">{{activity.action}}</a>
-                {%else%}
+                {% else %}
                     {{activity.action}}
-                {%endif%}
+                {% endif %}
                 <div class="timestamp fine">{{activity.date|date:"F j, Y, g:i a"}}</div>
             </li>
-            {%endfor%}
+            {% endfor %}
         </ul>
         {%else%}
             {% trans "No activities created." %}   
@@ -71,17 +76,17 @@
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
                         <hr class="space">
-                        {%if player.get_profile.following.all %}
+                        {% if player.get_profile.following.all %}
                           {% for player in player.get_profile.following.all %}
-                              {%if player.get_profile.avatar %}
+                              {% if player.get_profile.avatar %}
                               <a href="{% url accounts_profile player.id %}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
-                              {%else%}               
+                              {% else %}               
                               <a href="{% url accounts_profile player.id %}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
-                              {%endif%} 
-                          {%endfor%}
-                        {%else%}
-                           {{player.get_profile.first_name}} is not following anyone.
-                        {%endif%} 
+                              {% endif %} 
+                          {% endfor %}
+                        {% else %}
+                           {{player.get_profile.screen_name}} is not following anyone.
+                        {% endif %} 
                     </div>
     
                     <div style="clear:both;"></div>
@@ -95,17 +100,17 @@
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
                         <hr class="space">
-                        {%if followingme %}
+                        {% if followingme %}
                           {% for player in followingme %}
-                              {%if player.get_profile.avatar %}
+                              {% if player.get_profile.avatar %}
                               <a href="{% url accounts_profile player.id %}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
-                              {%else%}               
+                              {% else %}               
                               <a href="{% url accounts_profile player.id %}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
-                              {%endif%} 
-                          {%endfor%}
-                        {%else%}
-                           {{player.get_profile.first_name}} is not following anyone.
-                        {%endif%} 
+                              {% endif %} 
+                          {% endfor %}
+                        {% else %}
+                           {{player.get_profile.screen_name}} has no followers.
+                        {% endif %} 
                     </div>
     
                     <div style="clear:both;"></div>
@@ -136,34 +141,47 @@
         
         var userData = [];
         i = 0;
-        {%if total_playerCoins == 0 %}
-            {%for wrapper in value_wrapper%}
-                userData[i] = { label: "{{ wrapper.value.message }}", data: 1 }
-                i++;
-            {%endfor%}
-        {%else%}
-            {%for wrapper in value_wrapper%}
+        {% if player_spent == 0 %}
+        userData[i] = { label: "No tokens spent yet.", data: 1 }
+        i++;
+        {% else %}
+            {% for wrapper in value_wrapper %}
                 userData[i] = { label: "{{ wrapper.value.message }}", data: {{ wrapper.player_coins }} }
                 i++;
-            {%endfor%}
-        {%endif%}
+            {% endfor %}
+        {% endif %}
          
         $.plot($("#userPie"), userData, {
             series: { 
                 pie: { 
                     show: true,
                     radius: 1,
+                    stroke: {
+                        color: '#FFECD8',
+                        width: 2
+                    },
                     label: {
                         show: true,
-                        radius: 2/3,
+                        radius: 1/2,
                         formatter: function(label, series) {
-                            //return '<div style="font-size:small;text-align:left;padding:2px;color:black;">'+label+'</div>';
-                            return '<div style="font-size:small;text-align:center;padding:2px;color:black;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+                            var output = '<div style="font-size:.8em;text-align:center;color:black;">' + label;
+                            {% if player_spent > 0 %}
+                            output += '<br/>'+Math.round(series.percent)+'%</div>';
+                            {% endif %}
+                            return output;
                         },
                         threshold: 0.1
                     }
                 }
             },
+            colors: [
+                '#3D76A0',
+                '#669933',
+                '#8DDEDB',
+                '#FB9C8F',
+                '#D89BE5',
+                '#F0CB48'
+            ],
             legend: { 
                 show: false
             }
@@ -171,4 +189,4 @@
     });
     
 </script>    
-{%endblock%}
+{% endblock %}

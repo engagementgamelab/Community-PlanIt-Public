@@ -18,6 +18,8 @@ from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.values.models import *
 
+from PIL import Image
+
 @login_required
 def all(request):
     values = Value.objects.filter(instance=request.user.get_profile().instance)
@@ -54,9 +56,10 @@ def detail(request, id):
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = value.comments.create(
+                content_object=value,
                 message=form.cleaned_data['message'], 
                 user=request.user,
-                instance=request.user.get_profile().instance,
+                instance=value.instance
             )
 
             if request.POST.has_key('yt-url'):
@@ -67,14 +70,17 @@ def detail(request, id):
                         url=url,
                         type='video',
                         user=request.user,
-                        instance=request.user.get_profile().instance,
+                        instance=value.instance
                     )
-            
+            file = request.FILES.get('picture')
+            picture = Image.open(file)
+            if (file.name.rfind(".") -1):
+                file.name = "%s.%s" % (file.name, picture.format.lower())
             if request.FILES.has_key('picture'):
                 comment.attachment.create(
                     file=request.FILES.get('picture'),
                     user=request.user,
-                    instance=request.user.get_profile().instance,
+                    instance=value.instance
                 )
 
             PointsAssigner().assign(request.user, 'comment_created')
@@ -82,7 +88,7 @@ def detail(request, id):
             ActivityLogger().log(request.user, request, 'to value: ' + value.message, 'added comment', log_url, 'value')
             return HttpResponseRedirect(reverse('values_detail', args=[id]))
 
-    values = Value.objects.filter(instance=request.user.get_profile().instance)
+    values = Value.objects.filter(instance=value.instance)
     total_coins = values.aggregate(Sum('coins'))['coins__sum'] or 0
 
     tmpl = loader.get_template('values/base.html')
@@ -112,7 +118,7 @@ def spend(request, id):
         log_url = reverse('values_detail', args=[id])
         ActivityLogger().log(request.user, request, 'on value: ' + value.message, 'spent token', log_url, 'value')
     else:
-        messages.info(request, 'No coins available to spend')
+        messages.error(request, 'No tokens available to spend')
     
     return HttpResponseRedirect(reverse('values'))
 

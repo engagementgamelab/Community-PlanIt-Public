@@ -22,13 +22,11 @@
 
 {{challenge.map|show}}
 
-{% if challenge.is_active and not local_player_challenges.completed %}
+{% if challenge.is_active and not player_challenge.completed %}
     <p>Provide evidence to complete this challenge:</p>
 
-    <form class="response" enctype="multipart/form-data" action="{% url challenges_complete challenge.pk %}" method="POST">
-        {% if request.REQUEST.error %}
-            <span class="error">Please enter a valid comment.</span>
-        {% endif %}
+    <form class="response" enctype="multipart/form-data" action="{% url challenges_challenge challenge.pk %}" method="POST">
+        {{response_form.errors}}
 
         {% csrf_token %}
         <div class="attachments">
@@ -52,8 +50,8 @@
             </div>
             <div class="notification"></div>
         </div>
-        <textarea name="message" class="comment_message" cols="80" rows="6"></textarea>
-        {{comment_form.message.help_text|safe}}
+        {{response_form.message}}
+        <div class="fine counter">(<span class="count">1000</span> characters left)</div>
         <button type="submit" class="button submit right">Submit response</button>
         <div style="clear: both;"></div>
     </form>

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
 
 from web.instances.models import Instance
 from web.comments.models import Comment
@@ -14,13 +15,17 @@ class Value(models.Model):
     coins = models.IntegerField(default=0)
 
     instance = models.ForeignKey(Instance)
-    comments = models.ManyToManyField(Comment, blank=True, null=True)
+    comments = generic.GenericRelation(Comment)
 
     class Meta:
         ordering = ['message']
 
     def __unicode__(self):
         return self.message[:25]
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('values_detail', [str(self.id)])
 
 class PlayerValue(models.Model):
     user = models.ForeignKey(User)

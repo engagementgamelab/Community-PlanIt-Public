@@ -1,20 +1,37 @@
 {%extends "player_activities/base.html"%}
+{% load gmap attachment_tags %}
 {%load gmap%}
 
 {%block title%}Map Response{%endblock%}
 
 {%block activity%}
     <h2>{{activity.question|urlize}}</h2>
-        
+    <div class="attachments">
+    {% for attachment in activity.attachment.all %}
+        {% if attachment.is_valid %}
+            <div>
+                {% if attachment.type == 'video' %}
+                    {% youtube_video attachment.url %}
+                {% else %}
+                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="notice">This content is currently unavailable.</div>
+            {% endif %}
+    {% endfor %}
+    </div>
+            
     <button class="button add">Add Point</button>
     <button class="button rm">Clear All Points</button>
+    <label>Maximum number of points: {{activity.maxNumMarkers}}</label>
     <div>
         <label>Search for a copmany or address:</label>
         <input type="text" name="google_search" id="google_search" />
     </div>
     
     
-    <form action="" method="post" class="narrow">
+    <form enctype="multipart/form-data" action="" method="post" class="narrow">
         {% csrf_token %}
         <input type="hidden" name="form" value="map">
         <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
@@ -25,14 +42,14 @@
                         name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
             {% endfor %}
             {{form.map.errors}}
-            <div id="map" class="google-map" data-type="Point"/>
+            <div id="map" class="google-map" data-type="Point"></div>
         </div>
         
-        <div class="fieldWrapper">
-            {{form.answerBox.errors}}
-            <label for="id_answerBox">Your Response:</label>
-            {{ form.answerBox }}
+        <div id="comments">
+            <h3>Why did you choose these points?</h3>
+            {% include "comments/duplicate.html" %}
         </div>
+        
         <div class="markers">
             <button class="button submit">Submit response</button>
         </div>

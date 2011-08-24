@@ -8,7 +8,6 @@ urlpatterns = patterns('',
     url(r'^(?P<id>.*)/decline/$', 'challenges.views.decline', name='challenges_decline'),
     # Comment
     url(r'^(?P<id>.*)/comment/$', 'challenges.views.comment', name='challenges_comment'),
-    url(r'^(?P<id>.*)/complete/$', 'challenges.views.complete', name='challenges_complete'),
 
     # Add
     url(r'^add/$', 'challenges.views.add', name='challenges_add'),

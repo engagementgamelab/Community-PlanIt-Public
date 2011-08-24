@@ -9,6 +9,7 @@ from django.core.mail import send_mail, send_mass_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
 from django.template import Context, RequestContext, loader
+from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from web.accounts.models import UserProfile
@@ -511,7 +512,28 @@ def mission_save(request):
                 delete_id = int(matchDict["delete_id"])
                 if delete_id != 0:
                     mission = Mission.objects.get(id=delete_id).delete()
-
+        
+        #slug testing
+        slugs = {}
+        for x in toAdd.keys():
+            mission, name = toAdd[x]
+            if (slugify(name) in slugs):
+                tmpl = loader.get_template("admin/mission_edit.html")
+                form = MissionSaveForm(request.POST)
+                missions = Mission.objects.filter(instance=instance).order_by("start_date")
+                index_missions = []
+                x = 0
+                for mission in missions:
+                    index_missions.append([x, mission])
+                    x = x + 1
+                return HttpResponse(tmpl.render(RequestContext(request, {
+                    "form": form,                                                    
+                    "instance_value": instance,
+                    "values": index_missions,
+                    "slug_error": "Mission name: %s conflicts with mission name: %s" % (name, slugs[slugify(name)])
+                    }, [ip])))
+            else:
+                slugs[slugify(name)] = name
         x = 0
         lastMission = None
         for x in toAdd.keys():
@@ -563,17 +585,23 @@ def activity_base(request):
                 acts = PlayerActivity.objects.filter(mission=mission).order_by("createDate")
                 activities = []
                 for act in acts:
+                    attachment = act.attachment.all().count()
+                    if attachment > 0:
+                        attachment = act.attachment.all()[0].file
+                    else:
+                        attachment = None
+                    
                     if act.type.type == "map": 
-                        activities.append(PlayerMapActivity.objects.get(pk=act.pk))
+                        activities.append((PlayerMapActivity.objects.get(pk=act.pk), attachment))
                     elif act.type.type == "empathy":
-                        activities.append(PlayerEmpathyActivity.objects.get(pk=act.pk))
+                        activities.append((PlayerEmpathyActivity.objects.get(pk=act.pk), attachment))
                     elif act.type.type == "single_response" or act.type.type == "multi_response":
-                        activities.append(act)
+                        activities.append((act, attachment))
                         choices = MultiChoiceActivity.objects.filter(activity=act)
                         for choice in choices:
                             responses.append([choice.pk, mission.pk, act.pk, choice.value])
                     else:
-                        activities.append(act)
+                        activities.append((act, attachment))
                
                 index_missions.append([mission, activities])
             
@@ -605,7 +633,6 @@ def actCopy(copyTo, copyFrom):
     copyTo.instructions = copyFrom.instructions
     copyTo.addInstructions = copyFrom.addInstructions
     copyTo.points = copyFrom.points
-    copyTo.attachment = copyFrom.attachment
 
 @login_required
 def activity_save(request):
@@ -622,6 +649,9 @@ def activity_save(request):
     s = "%s Post variables <br>"
     for x in request.POST.keys():
         s = "%s%s: %s<br>" % (s, x, request.POST[x])
+    s = "%s FILES: <br> " % s
+    for x in request.FILES.keys():
+        s = "%s%s: %s<br>" % (s, x, request.FILES[x])
     #return HttpResponse(s)
     
     form = ActivityEditForm(request.POST)
@@ -643,25 +673,49 @@ def activity_save(request):
         else:
             activity = PlayerActivity.objects.get(id=int(request.POST["activity_id"]))
             
-            if type.type == "map":
-                if activity.type.type != "map":
-                    tempAct = PlayerMapActivity()
-                    actCopy(tempAct, activity)
-                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
-                    activity = tempAct
-                else:
-                    activity = PlayerMapActivity.objects.get(id=int(request.POST["activity_id"]))
-            elif type.type == "empathy":
-                if activity.type.type != "empathy":
+            #if the current type is single or multi and it's not going to single or multi, delete all of the response choices
+            if activity.type.type == "single_response" or activity.type.type == "multi_response":
+                if type.type != "single_response" and type.type != "multi_response":
+                    MultiChoiceActivity.objects.filter(activity=activity).delete()
+            
+            #Get the activity as a map or empathy or deal with the change in type
+            if activity.type.type == "map" and type.type == "map":
+                activity = PlayerMapActivity(pk=activity.pk)
+            elif activity.type.type == "empathy" and type.type == "empathy":
+                activity = PlayerEmpathyActivity(pk=activity.pk)
+            elif activity.type.type != type.type:
+                if activity.type.type == "map" and type.type == "empathy":
                     tempAct = PlayerEmpathyActivity()
                     actCopy(tempAct, activity)
-                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
                     activity = tempAct
-                else:
-                    activity = PlayerEmpathyActivity.objects.get(id=int(request.POST["activity_id"]))
-            else: 
-                activity = PlayerActivity.objects.get(id=int(request.POST["activity_id"]))                
-        
+                    PlayerMapActivity.objects.filter(id=int(request.POST["activity_id"])).delete()    
+                elif activity.type.type == "map" and type.type != "empathy":
+                    tempAct = PlayerActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerMapActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                elif activity.type.type == "empathy" and type.type == "map":
+                    tempAct = PlayerMapActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerEmpathyActivity.objects.filter(id=int(request.POST["activity_id"])).delete()    
+                elif activity.type.type == "empathy" and type.type != "map":
+                    tempAct = PlayerActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerEmpathyActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                elif type.type == "map":
+                    tempAct = PlayerMapActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                elif type.type == "empathy":
+                    tempAct = PlayerEmpathyActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                    
+ 
         activity.name = form.cleaned_data["name"]
         activity.question = form.cleaned_data["question"]
         activity.creationUser = request.user
@@ -670,8 +724,26 @@ def activity_save(request):
         activity.instructions = form.cleaned_data["instructions"] if form.cleaned_data.has_key("instructions") and form.cleaned_data["instructions"] != "" else None 
         activity.addInstructions = form.cleaned_data["addInstructions"] if form.cleaned_data.has_key("addInstructions") and form.cleaned_data["addInstructions"] != "" else None  
         activity.points = form.cleaned_data["points"] if form.cleaned_data.has_key("points") and form.cleaned_data["points"] != "" else None
+        if activity.type.type == "empathy":
+            activity.bio  = form.cleaned_data["bio"]
+            if request.POST.has_key("clear_avatar") and request.POST.has_key("clear_avatar") == True:
+                activity.avatar = None
+            if request.FILES.has_key("avatar"):
+                activity.avatar = request.FILES["avatar"]
+                 
+        if activity.type.type == "map":
+            activity.maxNumMarkers = form.cleaned_data["maxNumMarkers"]
         activity.save()
         
+        
+        if request.POST.has_key("clear_attachment") and request.POST.has_key("clear_attachment") == True:
+            activity.attachment.clear()
+        if request.FILES.has_key("attachment"):
+            activity.attachment.clear()
+            activity.attachment.create(file=request.FILES.get("attachment"),
+                                       user=request.user,
+                                       instance=request.user.get_profile().instance)
+
         #to see what is going on here, look at the mission save
         toAdd = {};
         addPat = re.compile("index_(?P<index_id>\d+)_id_(?P<response_id>\d+)")
@@ -682,7 +754,7 @@ def activity_save(request):
                 response_id = int(matchDict["response_id"])
                 response = None
                 if response_id != 0:
-                    response = MultiChoiceActivity.objects.get(id=response_id)
+                    response = MultiChoiceActivity.objects.get(pk=response_id)
                 else:
                     response = MultiChoiceActivity()
                     

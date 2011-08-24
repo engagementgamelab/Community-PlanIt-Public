@@ -4,7 +4,7 @@ class CommentForm(forms.Form):
     # sometimes we don't want to show the entire discussion
     # before the user has contributed
     just_one_form = False
-
+    allow_replies = True
     message = forms.CharField(
         max_length=1000,
         widget=forms.Textarea(
@@ -13,11 +13,7 @@ class CommentForm(forms.Form):
                 'cols': 80,
             }
         ),
-        label='Comment',
-        help_text=(
-            '<div class="fine counter">(<span class="count">1000</span>'
-            ' characters left)</div>'
-        )
+        label='Comment'
     )
 
     def __init__(self, *args, **kwargs):

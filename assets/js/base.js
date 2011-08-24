@@ -62,7 +62,7 @@ CPI.sort_comments_by_timestamp = function(evt) {
 jQuery(function($) {
 
     // Ensure "buttons" work 
-    $(".button").live("click", function(evt) {
+    $("a.button").live("click", function(evt) {
         var button = $(this);
         if(button.is(".submit") || button.is("button[type=submit]")) {
             button.closest("form").submit();
@@ -149,6 +149,15 @@ jQuery(function($) {
 
         form.slideUp(200);
     });
+
+    if (window.location.hash.search(/^#comment-/) != -1) {
+        $(window.location.hash).parents('.replies').show();
+        $(window.location.hash).parents('.comment').find('.closed').hide();
+        $(window.location.hash).parents('.comment').find('.open').show();
+        $('.replies', window.location.hash).hide();
+        $('.open', window.location.hash).hide();
+        $('.closed', window.location.hash).show();
+    }
 
     // Game Points earned modal
     $('.gamemodal').dialog({

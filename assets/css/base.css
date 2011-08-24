@@ -457,7 +457,8 @@ p.separate {
     color: #4c4d4f;
     vertical-align: top;
     line-height: 2; }
-  .wrapper .button, .wrapper input[type=submit] {
+  .wrapper .button, .wrapper button, .wrapper input[type=submit] {
+    font-family: UbuntuRegular, Verdana, Helvetica, Arial, sans-serif;
     cursor: pointer;
     text-decoration: none;
     font-size: .75em;
@@ -469,7 +470,15 @@ p.separate {
     padding: 4px 8px;
     margin: 4px 0;
     background-color: #617c00;
-    border: 0; }
+    border: 0;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none; }
+  .wrapper .button.disabled {
+    opacity: .5;
+    cursor: default; }
   .wrapper .button.green {
     background-image: -moz-linear-gradient(top, #01d232, #007b25);
     background-image: -o-linear-gradient(#01d232, #007b25);
@@ -748,7 +757,8 @@ p.separate {
       left: 80%;
       color: white; }
       .wrapper #main aside a {
-        color: white; }
+        color: white;
+        text-decoration: none; }
       .wrapper #main aside div {
         padding: 5px 10px 0 10px; }
       .wrapper #main aside h2 {
@@ -836,29 +846,30 @@ p.separate {
           .wrapper #main aside .profile .score .fill {
             display: block;
             height: 100%;
-            background-color: #869f00; }
+            background-color: #869f00;
+            padding: 0; }
           .wrapper #main aside .profile .score span {
             position: absolute;
             top: 35%;
             left: 5px; }
-        .wrapper #main aside .profile .coins {
+        .wrapper #main aside .profile .tokens {
           display: block;
           background: url("../img/tokencount.png") 100% 80% no-repeat;
           padding-bottom: 4px;
           color: white;
           position: relative; }
-          .wrapper #main aside .profile .coins span {
+          .wrapper #main aside .profile .tokens span {
             display: block;
             margin-top: 15px;
             float: left; }
-          .wrapper #main aside .profile .coins span.value {
+          .wrapper #main aside .profile .tokens span.value {
             float: right;
             min-width: 60px;
             margin: 10px 30px 0 10px;
             text-align: center;
             font-weight: bold;
             font-size: 2.25em; }
-          .wrapper #main aside .profile .coins span.visit {
+          .wrapper #main aside .profile .tokens span.visit {
             float: none;
             clear: both;
             padding: 4px;
@@ -868,6 +879,24 @@ p.separate {
             background: #869f00;
             background-image: -moz-radial-gradient(50% 50%, circle, #b9d32c, #869f00);
             background-image: -webkit-gradient(radial, 50% 50%, 1, 50% 50%, 100, from(#b9d32c), to(#869f00)); }
+      .wrapper #main aside .notifications {
+        background-color: #052441;
+        font-weight: normal;
+        padding: 4px 0;
+        text-align: center; }
+        .wrapper #main aside .notifications a {
+          display: block; }
+        .wrapper #main aside .notifications a:hover {
+          text-decoration: none; }
+        .wrapper #main aside .notifications .count {
+          display: inline-block;
+          font-family: UbuntuBold;
+          margin: 4px;
+          padding: 0 8px;
+          background-color: #ff7812;
+          -moz-border-radius: 100px;
+          -webkit-border-radius: 100px;
+          border-radius: 100px; }
       .wrapper #main aside .details {
         font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif; }
         .wrapper #main aside .details h2 {
@@ -974,8 +1003,6 @@ p.separate {
                 white-space: nowrap; }
                 .wrapper #main .content #comments .comments .comment .main .meta a {
                   color: #00aeef; }
-              .wrapper #main .content #comments .comments .comment .main .button {
-                padding: 2px 4px 2px 4px; }
               .wrapper #main .content #comments .comments .comment .main .actions {
                 background: #4c4d4f;
                 color: white;
@@ -1283,6 +1310,14 @@ table.activities {
     padding-left: 20px; }
   table.activities th.final, table.activities td.final {
     padding-right: 4px; }
+
+table.notifications {
+  width: auto; }
+  table.notifications td {
+    padding-right: 1em; }
+
+ul#messages {
+  margin: 2em 1em 1em 1em; }
 
 .page_navigator {
   margin: 4px 0;

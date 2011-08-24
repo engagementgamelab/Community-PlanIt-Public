@@ -1,10 +1,14 @@
-from django.contrib import admin
+import datetime
+
 from django.db import models
+
+from django.contrib import admin
+
 from web.responses.models import Response
 
 class CommentResponse(Response):
     message = models.CharField(default=' ', max_length=1000)
-    posted_date = models.DateTimeField(auto_now_add=True, blank='')
+    posted_date = models.DateTimeField(default=datetime.datetime.now, blank='')
 
     def save(self):
         self.response_type = 'comment'

@@ -7,11 +7,17 @@ from nani.admin import TranslatableAdmin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
+<<<<<<< HEAD
 from nani.models import TranslatableModel, TranslatedFields
 
 from web.accounts.models import determine_path
+=======
+>>>>>>> master
 from web.attachments.models import Attachment
 from web.missions.models import Mission
+
+def determine_path(instance, filename):
+    return 'uploads/'+ str(instance.creationUser.id) +'/'+ filename
 
 class PlayerActivityType(models.Model):
     type = models.CharField(max_length=255)

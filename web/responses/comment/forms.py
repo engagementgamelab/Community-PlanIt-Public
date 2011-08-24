@@ -7,11 +7,11 @@ class CommentResponseForm(forms.ModelForm):
 
     class Meta:
         model = CommentResponse
-        exclude = ('flagged','comments','attachment')
+        exclude = ('flagged', 'comments', 'attachment')
 
 class CommentAttachmentResponseForm(forms.ModelForm):
-    message = forms.CharField(max_length=1000,widget=forms.Textarea)
+    message = forms.CharField(max_length=1000, widget=forms.Textarea(attrs={'class': 'comment_message'}))
 
     class Meta:
         model = CommentResponse
-        exclude = ('flagged','comments')
+        exclude = ('flagged', 'comments', 'posted_date')

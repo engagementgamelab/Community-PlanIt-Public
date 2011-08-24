@@ -4,6 +4,7 @@ PyYAML
 gunicorn
 python-magic
 python-memcached
+psycopg2
 south
 supervisor
 

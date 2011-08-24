@@ -7,6 +7,8 @@ from web.instances.models import Instance
 from django.contrib import admin
 from django.db import models
 
+from PIL import Image
+
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
 
