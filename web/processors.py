@@ -15,12 +15,19 @@ def instance_processor(request):
     if request.user.is_anonymous():
         return {}
 
+    def _fake_latest(model, qs):
+        if model and qs:
+            _get_latest_by = model._meta.get_latest_by
+            _latest_by = max(qs.values_list(_get_latest_by, flat=True))
+            return model.objects.get(**{_get_latest_by:_latest_by})
+
     instance = request.user.get_profile().instance
     if not instance:
         if request.user.is_staff or request.user.is_superuser:
             instances = Instance.objects.all()
             if instances.count():
-                instance = instances.latest()
+                #instance = instances.latest()
+                instance = _fake_latest(Instance, Instance.objects.active())
 
     if not instance:
         return {}
