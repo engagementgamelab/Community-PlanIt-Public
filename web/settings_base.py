@@ -3,6 +3,8 @@ import os
 import sys
 import re
 
+ROOTDIR = os.path.dirname(os.path.realpath(__file__))
+
 #
 # Standard Django settings
 #
