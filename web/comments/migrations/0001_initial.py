@@ -4,21 +4,33 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+
 class Migration(SchemaMigration):
-    depends_on = (
-        ("web.attachments", "0001_initial"),
-    )
+
     def forwards(self, orm):
         
+        # Adding model 'CommentTranslation'
+        db.create_table('comments_commenttranslation', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('message', self.gf('django.db.models.fields.CharField')(max_length=1000, null=True, blank=True)),
+            ('language_code', self.gf('django.db.models.fields.CharField')(max_length=15, db_index=True)),
+            ('master', self.gf('django.db.models.fields.related.ForeignKey')(related_name='translations', null=True, to=orm['comments.Comment'])),
+        ))
+        db.send_create_signal('comments', ['CommentTranslation'])
+
+        # Adding unique constraint on 'CommentTranslation', fields ['language_code', 'master']
+        db.create_unique('comments_commenttranslation', ['language_code', 'master_id'])
+
         # Adding model 'Comment'
         db.create_table('comments_comment', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('message', self.gf('django.db.models.fields.CharField')(max_length=1000)),
-            ('posted_date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('posted_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
             ('flagged', self.gf('django.db.models.fields.IntegerField')(default=0)),
             ('hidden', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('instance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['instances.Instance'])),
+            ('instance', self.gf('django.db.models.fields.related.ForeignKey')(related_name='comments', to=orm['instances.Instance'])),
+            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='content_type_set_for_comment', null=True, to=orm['contenttypes.ContentType'])),
+            ('object_id', self.gf('django.db.models.fields.TextField')(blank=True)),
         ))
         db.send_create_signal('comments', ['Comment'])
 
@@ -30,14 +42,6 @@ class Migration(SchemaMigration):
         ))
         db.create_unique('comments_comment_attachment', ['comment_id', 'attachment_id'])
 
-        # Adding M2M table for field comments on 'Comment'
-        db.create_table('comments_comment_comments', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('from_comment', models.ForeignKey(orm['comments.comment'], null=False)),
-            ('to_comment', models.ForeignKey(orm['comments.comment'], null=False))
-        ))
-        db.create_unique('comments_comment_comments', ['from_comment_id', 'to_comment_id'])
-
         # Adding M2M table for field likes on 'Comment'
         db.create_table('comments_comment_likes', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
@@ -46,21 +50,22 @@ class Migration(SchemaMigration):
         ))
         db.create_unique('comments_comment_likes', ['comment_id', 'user_id'])
 
-
     def backwards(self, orm):
         
+        # Removing unique constraint on 'CommentTranslation', fields ['language_code', 'master']
+        db.delete_unique('comments_commenttranslation', ['language_code', 'master_id'])
+
+        # Deleting model 'CommentTranslation'
+        db.delete_table('comments_commenttranslation')
+
         # Deleting model 'Comment'
         db.delete_table('comments_comment')
 
         # Removing M2M table for field attachment on 'Comment'
         db.delete_table('comments_comment_attachment')
 
-        # Removing M2M table for field comments on 'Comment'
-        db.delete_table('comments_comment_comments')
-
         # Removing M2M table for field likes on 'Comment'
         db.delete_table('comments_comment_likes')
-
 
     models = {
         'attachments.attachment': {
@@ -107,15 +112,22 @@ class Migration(SchemaMigration):
         'comments.comment': {
             'Meta': {'object_name': 'Comment'},
             'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
-            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['comments.Comment']", 'symmetrical': 'False', 'blank': 'True'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'content_type_set_for_comment'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
             'flagged': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'hidden': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
+            'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'comments'", 'to': "orm['instances.Instance']"}),
             'likes': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'liked_comments'", 'blank': 'True', 'to': "orm['auth.User']"}),
-            'message': ('django.db.models.fields.CharField', [], {'max_length': '1000'}),
-            'posted_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'object_id': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'posted_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+        },
+        'comments.commenttranslation': {
+            'Meta': {'unique_together': "[('language_code', 'master')]", 'object_name': 'CommentTranslation'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'language_code': ('django.db.models.fields.CharField', [], {'max_length': '15', 'db_index': 'True'}),
+            'master': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'translations'", 'null': 'True', 'to': "orm['comments.Comment']"}),
+            'message': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'})
         },
         'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
@@ -126,14 +138,13 @@ class Migration(SchemaMigration):
         },
         'instances.instance': {
             'Meta': {'object_name': 'Instance'},
-            'content': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'curator': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'end_date': ('django.db.models.fields.DateTimeField', [], {}),
+            'curators': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'}),
+            'end_date': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location': ('gmapsfield.fields.GoogleMapsField', [], {}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
-            'start_date': ('django.db.models.fields.DateTimeField', [], {})
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
+            'start_date': ('django.db.models.fields.DateTimeField', [], {}),
+            'state': ('django.db.models.fields.CharField', [], {'max_length': '2'})
         }
     }
 

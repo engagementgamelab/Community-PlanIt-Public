@@ -6,9 +6,6 @@ from django.db import models
 
 
 class Migration(SchemaMigration):
-    depends_on = (
-        ("missions", "0001_initial"),
-    )
 
     def forwards(self, orm):
         
@@ -39,8 +36,22 @@ class Migration(SchemaMigration):
         # Adding model 'PlayerActivity'
         db.create_table('player_activities_playeractivity', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50)),
+            ('creationUser', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('mission', self.gf('django.db.models.fields.related.ForeignKey')(related_name='player_activities_playeractivity_related', to=orm['missions.Mission'])),
+            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['player_activities.PlayerActivityType'])),
+            ('createDate', self.gf('django.db.models.fields.DateTimeField')()),
+            ('points', self.gf('django.db.models.fields.IntegerField')(default=None, null=True, blank=True)),
         ))
         db.send_create_signal('player_activities', ['PlayerActivity'])
+
+        # Adding M2M table for field attachment on 'PlayerActivity'
+        db.create_table('player_activities_playeractivity_attachment', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('playeractivity', models.ForeignKey(orm['player_activities.playeractivity'], null=False)),
+            ('attachment', models.ForeignKey(orm['attachments.attachment'], null=False))
+        ))
+        db.create_unique('player_activities_playeractivity_attachment', ['playeractivity_id', 'attachment_id'])
 
         # Adding model 'PlayerMapActivityTranslation'
         db.create_table('player_activities_playermapactivitytranslation', (
@@ -153,6 +164,9 @@ class Migration(SchemaMigration):
         # Deleting model 'PlayerActivity'
         db.delete_table('player_activities_playeractivity')
 
+        # Removing M2M table for field attachment on 'PlayerActivity'
+        db.delete_table('player_activities_playeractivity_attachment')
+
         # Deleting model 'PlayerMapActivityTranslation'
         db.delete_table('player_activities_playermapactivitytranslation')
 
@@ -259,7 +273,14 @@ class Migration(SchemaMigration):
         },
         'player_activities.playeractivity': {
             'Meta': {'object_name': 'PlayerActivity'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
+            'createDate': ('django.db.models.fields.DateTimeField', [], {}),
+            'creationUser': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'mission': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'player_activities_playeractivity_related'", 'to': "orm['missions.Mission']"}),
+            'points': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50'}),
+            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['player_activities.PlayerActivityType']"})
         },
         'player_activities.playeractivitytranslation': {
             'Meta': {'ordering': "['name']", 'unique_together': "[('language_code', 'master')]", 'object_name': 'PlayerActivityTranslation'},

@@ -4,11 +4,8 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+
 class Migration(SchemaMigration):
-    depends_on = (
-        ("instances", "0001_initial"),
-        ("comments", "0001_initial"),
-    )
 
     def forwards(self, orm):
         
@@ -64,7 +61,7 @@ class Migration(SchemaMigration):
         db.create_table('accounts_userprofile', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], unique=True)),
-            ('instance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['instances.Instance'], null=True, blank=True)),
+            ('instance', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='user_profiles', null=True, to=orm['instances.Instance'])),
             ('gender', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileGender'], null=True, blank=True)),
             ('race', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileRace'], null=True, blank=True)),
             ('stake', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileStake'], null=True, blank=True)),
@@ -81,6 +78,7 @@ class Migration(SchemaMigration):
             ('avatar', self.gf('django.db.models.fields.files.ImageField')(max_length=100, null=True, blank=True)),
             ('affiliations', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('editedProfile', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('receive_email', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('birth_year', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
         ))
         db.send_create_signal('accounts', ['UserProfile'])
@@ -93,14 +91,17 @@ class Migration(SchemaMigration):
         ))
         db.create_unique('accounts_userprofile_following', ['userprofile_id', 'user_id'])
 
-        # Adding M2M table for field comments on 'UserProfile'
-        db.create_table('accounts_userprofile_comments', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofile', models.ForeignKey(orm['accounts.userprofile'], null=False)),
-            ('comment', models.ForeignKey(orm['comments.comment'], null=False))
+        # Adding model 'Notification'
+        db.create_table('accounts_notification', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('timestamp', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='notifications', to=orm['auth.User'])),
+            ('message', self.gf('django.db.models.fields.TextField')()),
+            ('read', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='content_type_set_for_notification', null=True, to=orm['contenttypes.ContentType'])),
+            ('object_id', self.gf('django.db.models.fields.TextField')(blank=True)),
         ))
-        db.create_unique('accounts_userprofile_comments', ['userprofile_id', 'comment_id'])
-
+        db.send_create_signal('accounts', ['Notification'])
 
     def backwards(self, orm):
         
@@ -128,11 +129,20 @@ class Migration(SchemaMigration):
         # Removing M2M table for field following on 'UserProfile'
         db.delete_table('accounts_userprofile_following')
 
-        # Removing M2M table for field comments on 'UserProfile'
-        db.delete_table('accounts_userprofile_comments')
-
+        # Deleting model 'Notification'
+        db.delete_table('accounts_notification')
 
     models = {
+        'accounts.notification': {
+            'Meta': {'ordering': "['-timestamp']", 'object_name': 'Notification'},
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'content_type_set_for_notification'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'message': ('django.db.models.fields.TextField', [], {}),
+            'object_id': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'read': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'timestamp': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'notifications'", 'to': "orm['auth.User']"})
+        },
         'accounts.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
             'accepted_research': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -141,7 +151,6 @@ class Migration(SchemaMigration):
             'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'birth_year': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'coinPoints': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['comments.Comment']", 'null': 'True', 'blank': 'True'}),
             'currentCoins': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'editedProfile': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'education': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileEducation']", 'null': 'True', 'blank': 'True'}),
@@ -150,10 +159,11 @@ class Migration(SchemaMigration):
             'gender': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileGender']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'income': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileIncomes']", 'null': 'True', 'blank': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']", 'null': 'True', 'blank': 'True'}),
+            'instance': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'user_profiles'", 'null': 'True', 'to': "orm['instances.Instance']"}),
             'living': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileLiving']", 'null': 'True', 'blank': 'True'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '12', 'blank': 'True'}),
             'race': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileRace']", 'null': 'True', 'blank': 'True'}),
+            'receive_email': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'stake': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileStake']", 'null': 'True', 'blank': 'True'}),
             'totalPoints': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'unique': 'True'})
@@ -238,14 +248,14 @@ class Migration(SchemaMigration):
         'comments.comment': {
             'Meta': {'object_name': 'Comment'},
             'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
-            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['comments.Comment']", 'symmetrical': 'False', 'blank': 'True'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'content_type_set_for_comment'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
             'flagged': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'hidden': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
+            'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'comments'", 'to': "orm['instances.Instance']"}),
             'likes': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'liked_comments'", 'blank': 'True', 'to': "orm['auth.User']"}),
-            'message': ('django.db.models.fields.CharField', [], {'max_length': '1000'}),
-            'posted_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'object_id': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'posted_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'contenttypes.contenttype': {
@@ -257,14 +267,13 @@ class Migration(SchemaMigration):
         },
         'instances.instance': {
             'Meta': {'object_name': 'Instance'},
-            'content': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'curator': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'end_date': ('django.db.models.fields.DateTimeField', [], {}),
+            'curators': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'}),
+            'end_date': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location': ('gmapsfield.fields.GoogleMapsField', [], {}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
-            'start_date': ('django.db.models.fields.DateTimeField', [], {})
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
+            'start_date': ('django.db.models.fields.DateTimeField', [], {}),
+            'state': ('django.db.models.fields.CharField', [], {'max_length': '2'})
         }
     }
 

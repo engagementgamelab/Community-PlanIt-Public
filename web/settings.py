@@ -110,7 +110,7 @@ MEDIA_URL = '/assets/'
 ADMIN_MEDIA_PREFIX = '/admin-media/'
 
 # Internal
-TEMPLATE_DIRS = ( 'templates' )
+TEMPLATE_DIRS = ( os.path.join(ROOTDIR, 'templates'), )
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',

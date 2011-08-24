@@ -36,7 +36,7 @@ class PlayerActivityBase(TranslatableModel):
     class Meta:
     	abstract = True
 
-class PlayerActivity(TranslatableModel):
+class PlayerActivity(PlayerActivityBase):
 
     translations = TranslatedFields(
         name = models.CharField(max_length=255),

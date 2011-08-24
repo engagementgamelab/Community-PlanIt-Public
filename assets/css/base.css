@@ -356,104 +356,6 @@ p.separate {
     display: block;
     font-weight: bold;
     font-size: 14px;
-<<<<<<< HEAD
-    text-shadow: 0px -1px 0px #4c4d4f;
-    height: 40px;
-    top: -7px;
-    -webkit-border-top-left-radius: 12px;
-    -webkit-border-top-right-radius: 12px;
-    -moz-border-radius-topleft: 12px;
-    -moz-border-radius-topright: 12px;
-    -o-border-top-right-radius: 12px;
-    -o-border-top-right-radius: 12px;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    -moz-box-shadow: 0px 0px 30px #4c4d4f;
-    -webkit-box-shadow: 0px 0px 30px #4c4d4f;
-    box-shadow: 0px 0px 30px #4c4d4f; }
-    .page #header nav .home, .page #header nav .missions, .page #header nav .issues, .page #header nav .challenges, .page #header nav .neighborhoods, .page #header nav .about, .page #header nav .contact {
-      padding-left: 40px;
-      margin-left: 20px;
-      padding-bottom: 9px;
-      padding-top: 10px;
-      position: relative;
-      top: 10px;
-      font-size: 18px; }
-    .page #header nav .home {
-      background: url("/assets/img/icons/house-medium.png") center left no-repeat; }
-    .page #header nav .missions {
-      background: url("/assets/img/icons/suitecase-medium.png") center left no-repeat; }
-    .page #header nav .issues {
-      background: url("/assets/img/icons/piggybank-medium.png") center left no-repeat; }
-    .page #header nav .challenges {
-      background: url("/assets/img/icons/puzzle-medium.png") center left no-repeat; }
-    .page #header nav .neighborhoods {
-      background: url("/assets/img/icons/location-medium.png") center left no-repeat; }
-    .page #header nav .about {
-      background: url("/assets/img/icons/info-small.png") center left no-repeat; }
-    .page #header nav .contact {
-      background: url("/assets/img/icons/postage-medium.png") center left no-repeat; }
-    .page #header nav .flag { width: 16px; }
-.page .date {
-  float: right;
-  padding: 0 0 10px 10px;
-  width: 45px;
-  text-align: center; }
-.page .datenum {
-  color: #b9d32c;
-  font-size: 24px;
-  font-weight: bold;
-  clear: both;
-  display: block; }
-.page .datenum.gray {
-  color: #4c4d4f; }
-.page .feed li, .page .game-wrapper ul li {
-  background: none;
-  padding-left: 0px;
-  border-bottom: 1px solid #CCC; }
-.page .issue .timestamp {
-  background: url("/assets/img/icons/16/piggybank-small.png") 42px 3px no-repeat;
-  padding: 2px 0 0 63px;
-  height: 20px; }
-.page .game .timestamp {
-  background: url("/assets/img/icons/16/trophy.png") 42px 3px no-repeat;
-  padding: 2px 0 0 63px;
-  height: 20px; }
-.page .profile .timestamp {
-  background: url("/assets/img/icons/16/player.png") 42px 3px no-repeat;
-  padding: 2px 0 0 63px;
-  height: 20px; }
-.page .mapit .timestamp {
-  background: url("/assets/img/icons/16/mapmarker.png") 42px 3px no-repeat;
-  padding: 2px 0 0 63px;
-  height: 20px; }
-.page .thinkfast .timestamp {
-  background: url("/assets/img/icons/16/lightbulb.png") 42px 3px no-repeat;
-  padding: 2px 0 0 63px;
-  height: 20px; }
-.page .challenge .timestamp {
-  background: url("/assets/img/icons/16/puzzle.png") 42px 3px no-repeat;
-  padding: 2px 0 0 63px;
-  height: 20px; }
-.page .listitem {
-  position: relative;
-  color: #4c4d4f;
-  padding: 10px;
-  min-height: 25px;
-  margin: 0 0px 0px 0; }
-  .page .listitem .state {
-    position: absolute;
-    top: 10px;
-    right: -10px;
-    background-repeat: no-repeat;
-    height: 50px;
-    width: 50px;
-    background-image: url("/assets/img/icons/new.png"); }
-  .page .listitem a {
-    color: #275491;
-    font-weight: bold; }
-  .page .listitem p {
-=======
     color: #4c4d4f;
     vertical-align: top;
     line-height: 2; }
@@ -465,7 +367,6 @@ p.separate {
     font-weight: normal;
     text-transform: uppercase;
     color: white !important;
->>>>>>> master
     display: inline-block;
     padding: 4px 8px;
     margin: 4px 0;
