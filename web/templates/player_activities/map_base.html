@@ -1,23 +1,46 @@
 {%extends "player_activities/base.html"%}
-{% load gmap %}
-{%block title%}Map Response Overview{%endblock%}
+{% load gmap attachment_tags %}
+{%load gmap%}
 
-{%block main%}
-    <h1>Open Response Overview</h1>
+{%block title%}Map Response{%endblock%}
+
+{%block activity%}
     <h2>{{activity.question|urlize}}</h2>
-    
-    <a style="float: right" id="my_comment" href="#">Your Comment</a>
-
     {% include "player_activities/attachments.html" %}
-
-    <input type="hidden" id="dragable" name="dragable" value="false">
-    {% for x, lat, lon in init_coords %}
-        <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
-    {% endfor %}
-    <div id="map" class="google-map" data-type="Point"></div>
+            
+    <button class="button add">Add Point</button>
+    <button class="button rm">Clear All Points</button>
+    <label>Maximum number of points: {{activity.maxNumMarkers}}</label>
+    <div>
+        <label>Search for a copmany or address:</label>
+        <input type="text" name="google_search" id="google_search" />
+    </div>
     
-    {% block comment %}{% endblock %}
-
+    
+    <form enctype="multipart/form-data" action="" method="post" class="narrow">
+        {% csrf_token %}
+        <input type="hidden" name="form" value="map">
+        <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
+        
+        <div class="fieldWrapper">
+            {% for x, lat, lon in init_coords %}
+                    <input type="hidden" id="init_coords{{x}}" 
+                        name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
+            {% endfor %}
+            {{form.map.errors}}
+            <div id="map" class="google-map" data-type="Point"></div>
+        </div>
+        
+        {% block comment %}{% endblock %}
+        
+        <div class="markers">
+            <button class="button submit">Submit response</button>
+        </div>
+    </form>
+    
+    
+    
+    
 {%endblock%}
 
 
@@ -30,18 +53,5 @@
             $(".google-map").mapit({{map|safe|escape}});
             $(".remove-map").remove();
         });
-    </script>
-    
-    <script>
-    $(document).ready(function() {
-        try {
-            aElem = document.getElementById("my_comment");
-            {% if myComment %}
-                aElem.href = "#comment-{{myComment.id}}"
-            {% endif %}
-        } catch(err) {
-            alert(err);
-        }
-    });
     </script>
 {%endblock%}
