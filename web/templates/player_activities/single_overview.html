@@ -3,8 +3,11 @@
 {%block title%}Open Response Overview{%endblock%}
 
 {%block main%}
-    <h1>Open Response Overview</h1>
+    <h1>Response Overview</h1>
     <h2>{{activity.question}}</h2>
+    
+    <a style="float: right" id="my_comment" href="#">Your Comment</a>
+    
     <div class="attachments">
     {% for attachment in activity.attachment.all %}
         {% if attachment.is_valid %}
@@ -81,3 +84,18 @@
     
 </script>    
 {%endblock%}
+{%block body%}
+    <script>
+    $(document).ready(function() {
+        try {
+            aElem = document.getElementById("my_comment");
+            {% if myComment %}
+                aElem.href = "#comment-{{myComment.id}}"
+            {% endif %}
+        } catch(err) {
+            alert(err);
+        }
+    });
+    </script>
+{% endblock %}
+

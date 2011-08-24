@@ -6,6 +6,8 @@
     <h1>Empathy Response Overview</h1>
     <h2>{{activity.question}}</h2>
     
+    <a style="float: right" id="my_comment" href="#">Your Comment</a>
+    
     {%if activity.avatar%}
         <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
     {%else%}               
@@ -37,3 +39,19 @@
         <div style="clear: both;"></div>
     </div>
 {%endblock%}
+{%block body%}
+    <script>
+    $(document).ready(function() {
+        try {
+            aElem = document.getElementById("my_comment");
+            {% if myComment %}
+                aElem.href = "#comment-{{myComment.id}}"
+            {% endif %}
+        } catch(err) {
+            alert(err);
+        }
+    });
+    </script>
+{% endblock %}
+
+

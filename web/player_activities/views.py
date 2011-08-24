@@ -43,10 +43,16 @@ def overview(request, id):
         tmpl = loader.get_template('player_activities/open_overview.html')
         comment_form = CommentForm()
         comment_form.allow_replies = False
+        myAnswer = Answer.objects.filter(activity=activity, answerUser=request.user)
+        myComment = None
+        if len(myAnswer) > 0:
+            myAnswer = myAnswer[0]
+            myComment = myAnswer.comments.all()[0]
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answers,
                                                                  "comments": getComments(answers, Answer),
                                                                  "comment_form": comment_form,
+                                                                 "myComment": myComment,
                                                                  }, [ip])))
     elif activity.type.type == "single_response":
         answers = AnswerSingleResponse.objects.filter(activity=activity)
@@ -66,20 +72,33 @@ def overview(request, id):
         tmpl = loader.get_template('player_activities/single_overview.html')
         comment_form = CommentForm()
         comment_form.allow_replies = False
+        myAnswer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
+        myComment = None
+        if len(myAnswer) > 0:
+            myAnswer = myAnswer[0]
+            myComment = myAnswer.comments.all()[0]
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answerList,
                                                                  "comments": getComments(answers, AnswerSingleResponse),
                                                                  "comment_form": comment_form,
+                                                                 "myComment": myComment,
                                                                  }, [ip])))
     elif activity.type.type == "multi_response":
         answers = AnswerMultiChoice.objects.filter(option__activity=activity)
         comments = None
         answer_type = ContentType.objects.get_for_model(AnswerMultiChoice)
+        
         for answer in answers:
             if comments == None:
                 comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
             else:
                 comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+        
+        myComment = comments.filter(user=request.user)
+        if len(myComment) > 0:
+            myComment = myComment[0]
+        else:
+            myComment = None
         
         answerDict = {}
         choices = MultiChoiceActivity.objects.filter(activity=activity)
@@ -99,7 +118,8 @@ def overview(request, id):
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "comments": comments,
                                                                  "comment_form": comment_form,
-                                                                 "answers": answerList}, [ip])))
+                                                                 "answers": answerList,
+                                                                 "myComment": myComment}, [ip])))
     elif activity.type.type == "map":
         answers = AnswerMap.objects.filter(activity=activity)
         init_coords = []
@@ -116,23 +136,36 @@ def overview(request, id):
         tmpl = loader.get_template('player_activities/map_overview.html')        
         comment_form = CommentForm()
         comment_form.allow_replies = False
+        myAnswer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+        myComment = None
+        if len(myAnswer) > 0:
+            myAnswer = myAnswer[0]
+            myComment = myAnswer.comments.all()[0]
+
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "comments": getComments(answers, AnswerMap),
                                                                  "comment_form": comment_form,
                                                                  "answers": answers,
                                                                  "init_coords": init_coords,
-                                                                 "map": map}, [ip])))
+                                                                 "map": map,
+                                                                 "myComment": myComment}, [ip])))
     elif activity.type.type == "empathy":
         activity = PlayerEmpathyActivity.objects.get(id=activity.id)
         answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/empathy_overview.html')
         comment_form = CommentForm()
         comment_form.allow_replies = False
+        myAnswer = Answer.objects.filter(activity=activity, answerUser=request.user)
+        myComment = None
+        if len(myAnswer) > 0:
+            myAnswer = myAnswer[0]
+            myComment = myAnswer.comments.all()[0]
         
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "comments": getComments(answers, Answer),
                                                                  "comment_form": comment_form,
-                                                                 "answers": answers}, [ip])))
+                                                                 "answers": answers,
+                                                                 "myComment": myComment}, [ip])))
     return HttpResponse("web page not created yet")
 
 def comment_fun(answer, form, request):
@@ -170,8 +203,6 @@ def get_activity(request, id):
     comment_form = None
     map = None
     init_coords = []
-    answer = None
-    comment = None
     if request.method == "POST":
         s = ""
         for x in request.POST.keys():
@@ -292,10 +323,6 @@ def get_activity(request, id):
         comment_form = CommentForm()
         if (activity.type.type == "open_ended"):
             tmpl = loader.get_template('player_activities/open_response.html')
-            answer = Answer.objects.filter(activity=activity, answerUser=request.user)
-            if len(answer) > 0:
-                answer = answer[0]
-                comment = answer.comments.all()[0]
         elif (activity.type.type == "single_response"):
             tmpl = loader.get_template('player_activities/single_response.html')
             mc = MultiChoiceActivity.objects.filter(activity=activity)
@@ -303,10 +330,6 @@ def get_activity(request, id):
             for x in mc:
                 choices.append((x.id, x.value))
             form = MakeSingleForm(choices)
-            answer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
-            if len(answer) > 0:
-                answer = answer[0]
-                comment = answer.comments.all()[0] 
         elif (activity.type.type == "map"):
             activity = PlayerMapActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/map_response.html')
@@ -324,16 +347,9 @@ def get_activity(request, id):
                 map = activity.mission.instance.location
                 form = MapForm()
             answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
-            if len(answer) > 0:
-                answer = answer[0] 
-                comment = answer.comments.all()[0]
         elif (activity.type.type == "empathy"):
             activity = PlayerEmpathyActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/empathy_response.html')
-            answer = Answer.objects.filter(activity=activity, answerUser=request.user)
-            if len(answer) > 0:
-                answer = answer[0] 
-                comment = answer.comments.all()[0]
         elif (activity.type.type == "multi_response"):
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
@@ -341,10 +357,6 @@ def get_activity(request, id):
                 choices.append((x.id, x.value))
             tmpl = loader.get_template('player_activities/multi_response.html')
             form = MakeMultiForm(choices)
-            answer = AnswerMultiChoice.objects.filter(option__activity=activity)
-            for a in answer:
-                if len(a.comment.all()) != 0:
-                    comment = a.comment.all()[0]
         else:
             raise Http404
         
@@ -354,8 +366,6 @@ def get_activity(request, id):
         "activity": activity,
         "map": map,
         "init_coords": init_coords,
-        "answer": answer,
-        "comment": comment,
         }, [ip])))
     return HttpResponse("web page not created yet")
 
