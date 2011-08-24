@@ -1,7 +1,7 @@
 {%extends "player_activities/single_base.html"%}
 {%block comment %}
 <div id="comments">
-    {%include "comments/post.html"%}
-    <div style="clear: both;"></div>
+    <h3>Your Response:</h3>
+    {% include "comments/duplicate.html" %}
 </div>
 {% endblock %}
