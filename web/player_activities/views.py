@@ -170,6 +170,8 @@ def get_activity(request, id):
     comment_form = None
     map = None
     init_coords = []
+    answer = None
+    comment = None
     if request.method == "POST":
         s = ""
         for x in request.POST.keys():
@@ -281,11 +283,19 @@ def get_activity(request, id):
             PointsAssigner().assignAct(request.user, activity)
 
         if tmpl == None:
+            if replay == False:
+                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "completed", reverse("player_activities_activity", args=[activity.id]), "activity")
+            else:
+                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", reverse("player_activities_activity", args=[activity.id]), "activity")
             return HttpResponseRedirect(reverse("player_activities_overview", args=[activity.id]))
     else:
         comment_form = CommentForm()
         if (activity.type.type == "open_ended"):
             tmpl = loader.get_template('player_activities/open_response.html')
+            answer = Answer.objects.filter(activity=activity, answerUser=request.user)
+            if len(answer) > 0:
+                answer = answer[0]
+                comment = answer.comments.all()[0]
         elif (activity.type.type == "single_response"):
             tmpl = loader.get_template('player_activities/single_response.html')
             mc = MultiChoiceActivity.objects.filter(activity=activity)
@@ -293,6 +303,10 @@ def get_activity(request, id):
             for x in mc:
                 choices.append((x.id, x.value))
             form = MakeSingleForm(choices)
+            answer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
+            if len(answer) > 0:
+                answer = answer[0]
+                comment = answer.comments.all()[0] 
         elif (activity.type.type == "map"):
             activity = PlayerMapActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/map_response.html')
@@ -309,9 +323,17 @@ def get_activity(request, id):
             else:
                 map = activity.mission.instance.location
                 form = MapForm()
+            answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+            if len(answer) > 0:
+                answer = answer[0] 
+                comment = answer.comments.all()[0]
         elif (activity.type.type == "empathy"):
             activity = PlayerEmpathyActivity.objects.get(pk=activity.id)
             tmpl = loader.get_template('player_activities/empathy_response.html')
+            answer = Answer.objects.filter(activity=activity, answerUser=request.user)
+            if len(answer) > 0:
+                answer = answer[0] 
+                comment = answer.comments.all()[0]
         elif (activity.type.type == "multi_response"):
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
@@ -319,6 +341,10 @@ def get_activity(request, id):
                 choices.append((x.id, x.value))
             tmpl = loader.get_template('player_activities/multi_response.html')
             form = MakeMultiForm(choices)
+            answer = AnswerMultiChoice.objects.filter(option__activity=activity)
+            for a in answer:
+                if len(a.comment.all()) != 0:
+                    comment = a.comment.all()[0]
         else:
             raise Http404
         
@@ -328,6 +354,8 @@ def get_activity(request, id):
         "activity": activity,
         "map": map,
         "init_coords": init_coords,
+        "answer": answer,
+        "comment": comment,
         }, [ip])))
     return HttpResponse("web page not created yet")
 

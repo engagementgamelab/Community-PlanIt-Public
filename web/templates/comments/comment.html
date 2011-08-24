@@ -9,11 +9,15 @@
     </div>
     <div class="main">
         <div class="meta">
-            {% if not comment.hidden and comment.user != user%}
+            
             <div class="right">
-                <a href="{% url flags_add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
+                {% if not comment.hidden and comment.user != user%}
+                    <a href="{% url flags_add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
+                {% else %}
+                    <a href="{% url comments_edit comment.id %}" title="click to edit this comment">edit</a>
+                {% endif %}
             </div>
-            {% endif %}
+            
             On {{comment.posted_date|date:"F j, Y"}} at {{comment.posted_date|date:"g:i a"}},
             <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a>
             wrote:

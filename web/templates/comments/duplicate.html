@@ -4,7 +4,7 @@
         Include <a id="add-comment-video" href="#add-comment-video" class="add-video button small">Youtube Video</a> or <a id="add-comment-picture" href="#add-comment-picture" class="add-picture button small">Picture</a>
     </div>
     <div class="add-comment-video form">
-        <label for="yt-url">Paste the link to your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID.</label>
+        <label id="yt-url_label" for="yt-url">Paste the link to your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID.</label>
         <textarea name="yt-url" type="text" maxlength="255"></textarea>
         <div class="controls">
             <button class="button small add">add</button>
@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="add-comment-picture form">
-        <label for="picture">Picture (max size 5MB):</label> <input name="picture" type="file">
+        <label id="picture_label" for="picture">Picture (max size 5MB):</label> <input name="picture" type="file">
         <div class="controls">
             <button class="button small add">add</button>
             <button type="reset" class="button small reset">remove</button>
@@ -21,5 +21,5 @@
     <div class="notification"></div>
 </div>
 {{comment_form.message.errors}}
-<textarea name="message" class="comment_message" cols="80" rows="6"></textarea>
+<textarea id="message_area" name="message" class="comment_message" cols="80" rows="6"></textarea>
 <div class="fine counter">(<span class="count">1000</span> characters left)</div>

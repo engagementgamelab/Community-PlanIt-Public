@@ -1,0 +1,41 @@
+{%extends "layouts/base.html"%}
+{% load attachment_tags %}
+{%block main%}
+<div id="comments">
+    <h1>Edit Comment</h1>
+    {% if not_permitted %}
+        <h2>You do not have proper permissions to edit this post.</h2>
+    {% else %}
+        <form enctype="multipart/form-data" action="{%url comments_edit comment.id %}" method="POST">
+            {% include "comments/duplicate.html" %}
+            <button type="submit" class="button right">Change Comment</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}
+
+{%block body%}
+    <script>
+        $(document).ready(function() {
+            try {
+                {% if comment %}
+                    comment_box = document.getElementById("message_area");
+                    comment_box.innerHTML = "{{ comment.message }}";
+                    
+                    {% for attachment in comment.attachment.all %}
+                        {% if attachment.url|length %}
+                            yt = document.getElementById("yt-url_label");
+                            yt.innerHTML = "Paste the link to your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID. (Current:{{attachment.url}})"
+                        {% endif %}
+                        {% if attachment.file|length %}
+                            picture = document.getElementById("picture_label");
+                            picture.innerHTML = "Picture (max size 5MB, Currently: {{attachment.file}}";
+                        {% endif %}
+                    {% endfor %} 
+                {% endif %}
+            } catch (err) {
+                alert(err);
+            }
+        });
+    </script>
+{% endblock %}
