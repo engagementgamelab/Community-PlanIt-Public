@@ -7,7 +7,7 @@
     <h2>{{activity.question}}</h2>
     
     <div>
-        <a class="button" id="my_comment" href="#">Your Comment</a>
+        <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
     </div>
     
     {%if activity.avatar%}
@@ -27,19 +27,3 @@
         <div style="clear: both;"></div>
     </div>
 {%endblock%}
-{%block body%}
-    <script>
-    $(document).ready(function() {
-        try {
-            aElem = document.getElementById("my_comment");
-            {% if myComment %}
-                aElem.href = "#comment-{{myComment.id}}"
-            {% endif %}
-        } catch(err) {
-            alert(err);
-        }
-    });
-    </script>
-{% endblock %}
-
-

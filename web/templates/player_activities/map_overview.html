@@ -7,10 +7,10 @@
     <h2>{{activity.question|urlize}}</h2>
     
     <div>
-        <a class="button" style="float: right" id="my_comment" href="#">Your Comment</a>
-        <a class="button" href="{% url player_activities_replay activity.id %}">Replay</a>
+        <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
+        <input class="button" type="button" value="Replay" onClick="window.location='{% url player_activities_replay activity.id %}' ">
     </div>
-
+    
     {% include "player_activities/attachments.html" %}
 
     <input type="hidden" id="dragable" name="dragable" value="false">
@@ -39,15 +39,4 @@
     </script>
     
     <script>
-    $(document).ready(function() {
-        try {
-            aElem = document.getElementById("my_comment");
-            {% if myComment %}
-                aElem.href = "#comment-{{myComment.id}}"
-            {% endif %}
-        } catch(err) {
-            alert(err);
-        }
-    });
-    </script>
 {%endblock%}
