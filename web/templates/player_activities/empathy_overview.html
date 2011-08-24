@@ -6,7 +6,9 @@
     <h1>Empathy Response Overview</h1>
     <h2>{{activity.question}}</h2>
     
-    <a style="float: right" id="my_comment" href="#">Your Comment</a>
+    <div>
+        <a class="button" id="my_comment" href="#">Your Comment</a>
+    </div>
     
     {%if activity.avatar%}
         <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">

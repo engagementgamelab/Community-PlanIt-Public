@@ -6,7 +6,10 @@
     <h1>Open Response Overview</h1>
     <h2>{{activity.question|urlize}}</h2>
     
-    <a style="float: right" id="my_comment" href="#">Your Comment</a>
+    <div>
+        <a class="button" style="float: right" id="my_comment" href="#">Your Comment</a>
+        <a class="button" href="{% url player_activities_replay activity.id %}">Replay</a>
+    </div>
 
     {% include "player_activities/attachments.html" %}
 
