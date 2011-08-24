@@ -1,20 +1,7 @@
-{%extends "player_activities/base.html"%}
-{% load gmap attachment_tags %}
-{%block title%}Open Response{%endblock%}
-
-{%block main%}
-    <!--<form action="" method="post"> -->
-    <h2>{{activity.question|urlize}}</h2>
-    {% include "player_activities/attachments.html" %}
-    
-    <form enctype="multipart/form-data" action="" method="POST">
-        <input type="hidden" name="form" value="open_ended">
-        <div id="comments">
-            <h3>Your Response:</h3>
-            {% include "comments/duplicate.html" %}
-        </div>
-        <input type="submit" class="button submit" value="Submit" />
-    </form>
-
-    
-{%endblock%}
+{%extends "player_activities/open_base.html"%}
+{%block comment %}
+<div id="comments">
+    {%include "comments/post.html"%}
+    <div style="clear: both;"></div>
+</div>
+{% endblock %}

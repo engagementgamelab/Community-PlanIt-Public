@@ -1,0 +1,28 @@
+{%extends "player_activities/base.html"%}
+{% load gmap attachment_tags %}
+{%block title%}Single Response{%endblock%}
+
+{%block main%}
+    <form enctype="multipart/form-data" action="" method="post">
+        <input type="hidden" name="form" value="single_response">
+        {% csrf_token %}
+        <h2>{{activity.question|urlize}}</h2>
+        {% include "player_activities/attachments.html" %}
+        
+        <div class="fieldWrapper">
+            <!-- div style="list-style-type: none;" -->
+            {{ form.response.errors }}
+            <label for="id_answerbox">Your Choices:</label>
+            <ul style="list-style-type: none">
+            {% for choice in form.response.field.choices %}
+              <li><label for="id_response_{{choice.0}}"><input type="radio" name="response" value="{{choice.0}}">{{choice.1}}</label></li>
+            {% endfor %}
+            </ul>
+        </div>
+        
+        {% block comment %}{% endblock %}
+
+        <input type="submit" class="button submit" value="Submit" />
+    </form>
+    
+{%endblock%}
