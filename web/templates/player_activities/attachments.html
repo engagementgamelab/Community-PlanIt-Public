@@ -1,3 +1,5 @@
+{% load gmap attachment_tags %}
+
 <div class="attachments">
 {% for attachment in activity.attachment.all %}
     {% if attachment.is_valid %}
