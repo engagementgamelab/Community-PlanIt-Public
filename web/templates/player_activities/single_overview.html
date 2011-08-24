@@ -3,23 +3,15 @@
 {%block title%}Open Response Overview{%endblock%}
 
 {%block main%}
-    <h1>Open Response Overview</h1>
+    <h1>Response Overview</h1>
     <h2>{{activity.question}}</h2>
-    <div class="attachments">
-    {% for attachment in activity.attachment.all %}
-        {% if attachment.is_valid %}
-            <div>
-                {% if attachment.type == 'video' %}
-                    {% youtube_video attachment.url %}
-                {% else %}
-                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                {% endif %}
-            </div>
-            {% else %}
-            <div class="notice">This content is currently unavailable.</div>
-            {% endif %}
-    {% endfor %}
+    
+    <div>
+        <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
+        <input class="button" type="button" value="Replay" onClick="window.location='{% url player_activities_replay activity.id %}' ">
     </div>
+    
+    {% include "player_activities/attachments.html" %}
     
     <ul>
         {% for key, val in answers %}
@@ -81,3 +73,4 @@
     
 </script>    
 {%endblock%}
+

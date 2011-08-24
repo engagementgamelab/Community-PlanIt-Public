@@ -1,44 +1,7 @@
-{%extends "player_activities/base.html"%}
-{% load gmap attachment_tags %}
-{%block title%}Empathy Response{%endblock%}
-
-{%block activity%}
-    <form enctype="multipart/form-data" action="" method="post">
-        <input type="hidden" name="form" value="empathy">
-        {% csrf_token %}
-        <h2>{{activity.question|urlize}}</h2>
-        
-        {%if activity.avatar%}
-            <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
-        {%else%}               
-            <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-        {%endif%}
-         
-        {% if activity.bio %}
-            <h3>{{activity.bio}}</h3>
-        {% endif %}
-        
-        <div class="attachments">
-        {% for attachment in activity.attachment.all %}
-            {% if attachment.is_valid %}
-                <div>
-                    {% if attachment.type == 'video' %}
-                        {% youtube_video attachment.url %}
-                    {% else %}
-                    <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                    {% endif %}
-                </div>
-                {% else %}
-                <div class="notice">This content is currently unavailable.</div>
-                {% endif %}
-        {% endfor %}
-        </div>
-        
-        <div id="comments">
-            <h3>Your Response:</h3>
-            {% include "comments/duplicate.html" %}
-        </div>
-        
-        <input type="submit" class="button submit" value="Submit" />
-    </form>
-{%endblock%}
+{%extends "player_activities/empathy_base.html"%}
+{% block comment %}
+<div id="comments">
+    <h3>Your Response:</h3>
+    {% include "comments/duplicate.html" %}
+</div>
+{% endblock %}
