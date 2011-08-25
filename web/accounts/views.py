@@ -2,10 +2,11 @@ import datetime
 import math
 import re
 
+from localeurl.models import reverse
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
-from django.core.urlresolvers import reverse
 from django.db.models import Q, Sum
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render_to_response
@@ -112,7 +113,7 @@ def register(request):
         send_mail(_('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
         messages.success(request, _("Thanks for signing up!"))
         
-        return HttpResponseRedirect(reverse('accounts_dashboard'))
+        return HttpResponseRedirect(reverse('accounts:accounts_dashboard'))
 
     # If not valid, show normal form
     form = validate_and_generate(RegisterForm, request, valid)
@@ -134,7 +135,7 @@ def forgot(request):
         send_mail(_('Password Changed'), _('Your temporary password is: %(password)s') % { 'password': password }, settings.NOREPLY_EMAIL, [email])
         messages.success(request, _('A temporary password has been sent to your email address.'))
 
-        return HttpResponseRedirect(reverse('accounts_login'))
+        return HttpResponseRedirect(reverse('accounts:accounts_login'))
         
     # If not valid, show normal form
     form = validate_and_generate(ForgotForm, request, valid)
@@ -304,7 +305,7 @@ def profile(request, id):
                     instance=instance
                 )
 
-            return HttpResponseRedirect(reverse('accounts_profile', args=[id]))
+            return HttpResponseRedirect(reverse('accounts:accounts_profile', args=[id]))
     else:
         comment_form = CommentForm()
 
@@ -414,7 +415,7 @@ def dashboard(request):
             ActivityLogger().log(request.user, request, 'account', 'created', '/player/'+ str(user.id), 'profile')
             PointsAssigner().assign(request.user, 'account_created')
 
-            return HttpResponseRedirect(reverse('accounts_dashboard'))
+            return HttpResponseRedirect(reverse('accounts:accounts_dashboard'))
     
     # List all users following for filtering the activity feed later on.
     feed = []
