@@ -127,6 +127,7 @@ def instance_initial_save(request):
         instance.start_date = form.cleaned_data["start_date"]
         instance.end_date = None
         instance.location = form.cleaned_data["map"]
+        instance.days_for_mission = form.cleaned_data["days_for_mission"]
         instance.save()
         instance.curators.add(request.user)
         tmpl = loader.get_template("admin/value_initial_edit.html")
@@ -219,10 +220,9 @@ def instance_base(request):
             tmpl = loader.get_template("admin/instance_edit.html")
             if (form.cleaned_data.has_key("instance_name") and form.cleaned_data["instance_name"] != ""):
                 start_date = datetime.datetime.now()
-                end_date = start_date + datetime.timedelta(days=10)
                 formEdit = InstanceEditForm(initial={"name": form.cleaned_data["instance_name"],
                                                      "start_date": start_date,
-                                                     "end_date": end_date,
+                                                     "days_for_mission": 7,
                                                       })
                 return HttpResponse(tmpl.render(RequestContext(request, { 
                      "new": True,
@@ -236,7 +236,7 @@ def instance_base(request):
                 #location = "[42.36475475505694, -71.05134683227556]"
                 formEdit = InstanceEditForm(initial={"name": instance.name,
                                                      "start_date": instance.start_date,
-                                                     "end_date": instance.end_date,
+                                                     "days_for_mission": instance.days_for_mission,
                                                      })
                 markers = simplejson.loads("%s" % instance.location)["markers"]
                 x = 0
@@ -287,9 +287,24 @@ def instance_save(request):
             instance = Instance()
         instance.name = form.cleaned_data["name"]
         instance.start_date = form.cleaned_data["start_date"]
-        instance.end_date = form.cleaned_data["end_date"]
         instance.location = form.cleaned_data["map"]
         instance.curator = request.user
+        instance.days_for_mission = form.cleaned_data["days_for_mission"]
+        instance.save()
+        
+        missions = Mission.objects.filter(instance=instance)
+        x = 0
+        lastMission = None
+        for mission in missions:
+            if x == 0:
+                mission.start_date = instance.start_date
+            else:
+                mission.start_date = lastMission.end_date
+            mission.end_date = mission.start_date + datetime.timedelta(days=instance.days_for_mission)
+            mission.instance = instance
+            mission.save()
+            lastMission = mission
+        instance.end_date = lastMission.end_date
         instance.save()
         
         return HttpResponseRedirect(reverse("admin-base"))
@@ -543,7 +558,7 @@ def mission_save(request):
                 mission.start_date = instance.start_date
             else:
                 mission.start_date = lastMission.end_date
-            mission.end_date = mission.start_date + datetime.timedelta(days=form.cleaned_data["days"])
+            mission.end_date = mission.start_date + datetime.timedelta(days=instance.days_for_mission)
             mission.instance = instance
             mission.save()
             lastMission = mission
@@ -823,12 +838,424 @@ def activity_save(request):
             "responses": responses, 
             }, [ip]))) 
 
+@login_required
+def instance_edit(request, instance_id):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+    
+    if request.method == "POST": 
+        form = InstanceEditForm(request.POST)
+        if form.is_valid():
+            #for x in form.cleaned_data.keys():
+            #    s = "%s%s: %s (key)<br>" % (s, x, form.cleaned_data[x])
+            #return HttpResponse(s)
+        
+            instance = None
+            if request.POST.has_key("instance_id"):
+                instance = Instance.objects.get(id=int(request.POST["instance_id"]))
+            else:
+                instance = Instance()
+            instance.name = form.cleaned_data["name"]
+            instance.start_date = form.cleaned_data["start_date"]
+            instance.location = form.cleaned_data["map"]
+            instance.curator = request.user
+            instance.days_for_mission = form.cleaned_data["days_for_mission"]
+            instance.save()
+            
+            missions = Mission.objects.filter(instance=instance)
+            x = 0
+            lastMission = None
+            for mission in missions:
+                if x == 0:
+                    mission.start_date = instance.start_date
+                else:
+                    mission.start_date = lastMission.end_date
+                mission.end_date = mission.start_date + datetime.timedelta(days=instance.days_for_mission)
+                mission.instance = instance
+                mission.save()
+                lastMission = mission
+            instance.end_date = lastMission.end_date
+            instance.save()
+            
+            return HttpResponseRedirect(reverse("admin-base"))
+    
+    instance = Instance.objects.get(id=instance_id)
+    formEdit = InstanceEditForm(initial={"name": instance.name,
+                                         "start_date": instance.start_date,
+                                         "days_for_mission": instance.days_for_mission,
+                                         })
+    markers = simplejson.loads("%s" % instance.location)["markers"]
+    x = 0
+    init_coords = []
+    for coor in markers if markers != None else []:
+        coor = coor["coordinates"]
+        init_coords.append( [x, coor[0], coor[1]] )
+        x = x + 1
+    tmpl = loader.get_template("admin/instance_edit_new.html")
+    return HttpResponse(tmpl.render(RequestContext(request, { 
+         "new": False, 
+         "form": formEdit, 
+         "instance": instance,
+         "location": instance.location,
+         "init_coords": init_coords,
+         }, [ip])))
+
+@login_required
+def values_edit(request, instance_id):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    if request.method == "POST": 
+        instance_id = request.POST["instance_id"]
+        if (instance_id == ""): 
+            return HttpResponseServerError("instance_id not set by POST")
+        
+        instance = Instance.objects.get(id=int(instance_id))
+        Value.objects.filter(instance=instance).delete()
+        
+        x = 0
+        value_ex = re.compile("value_(?P<index_id>\d+)")
+        for key in request.POST.keys():
+            if value_ex.match(key) != None and request.POST[key] != "":
+                value = Value()
+                value.instance = instance
+                value.message = request.POST[key]
+                value.save()
+        return HttpResponseRedirect(reverse("admin-base"))
+
+    instance = Instance.objects.get(id=instance_id)
+    values = Value.objects.filter(instance=instance)
+    index_values = []
+    x = 0
+    for value in values:
+        index_values.append([x, value])
+        x = x + 1
+    tmpl = loader.get_template("admin/value_edit_new.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "instance_value": instance, #can't name it that, that would be bad because it conflicts with ip.instance. call it something like value or soemthing
+        "values": index_values, 
+        }, [ip])))
+
+@login_required
+def mission_order(request, instance_id):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+    
+    if request.method == "POST":
+        instance = Instance.objects.get(id=int(request.POST["instance_id"]))
+        #s = ""
+        #for x in form.cleaned_data.keys():
+        #    s = "%s%s: %s<br>" % (s, x, form.cleaned_data[x])
+        
+        #s = "%s Post variables <br>" % s
+        #for x in request.POST.keys():
+        #    s = "%s%s: %s<br>" % (s, x, request.POST[x])
+        #return HttpResponse(s)
+        #so the ones to keep are index_X_id_Y where if Y is 0, it's a new one
+        # if it's anything else, the mission existed in the db and should be edited
+        # index is the index that this mission should be in
+        toAdd = {};
+        addPat = re.compile("index_(?P<index_id>\d+)_id_(?P<mission_id>\d+)")
+        delPat = re.compile("delete_id_(?P<delete_id>\d+)")
+        for key in request.POST.keys():
+            if addPat.match(key) != None and request.POST[key] != "":
+                matchDict = addPat.match(key).groupdict()
+                mission_id = int(matchDict["mission_id"])
+                mission = None
+                if mission_id != 0:
+                    mission = Mission.objects.get(id=mission_id)
+                else:
+                    mission = Mission()
+                index_id = int(matchDict["index_id"])
+                toAdd[index_id] = (mission, request.POST[key])
+            elif delPat.match(key) != None:
+                matchDict = delPat.match(key).groupdict()
+                delete_id = int(matchDict["delete_id"])
+                if delete_id != 0:
+                    mission = Mission.objects.get(id=delete_id).delete()
+        
+        #slug testing
+        slugs = {}
+        for x in toAdd.keys():
+            mission, name = toAdd[x]
+            if (slugify(name) in slugs):
+                tmpl = loader.get_template("admin/mission_edit.html")
+                form = MissionSaveForm(request.POST)
+                missions = Mission.objects.filter(instance=instance).order_by("start_date")
+                index_missions = []
+                x = 0
+                for mission in missions:
+                    index_missions.append([x, mission])
+                    x = x + 1
+                return HttpResponse(tmpl.render(RequestContext(request, {
+                    "form": form,                                                    
+                    "instance_value": instance,
+                    "values": index_missions,
+                    "slug_error": "Mission name: %s conflicts with mission name: %s" % (name, slugs[slugify(name)])
+                    }, [ip])))
+            else:
+                slugs[slugify(name)] = name
+        x = 0
+        lastMission = None
+        for x in toAdd.keys():
+            mission, name = toAdd[x]
+            mission.name = name
+            if x == 0:
+                mission.start_date = instance.start_date
+            else:
+                mission.start_date = lastMission.end_date
+            mission.end_date = mission.start_date + datetime.timedelta(days=instance.days_for_mission)
+            mission.instance = instance
+            mission.save()
+            lastMission = mission
+        instance.end_date = lastMission.end_date
+        instance.save()
+        return HttpResponseRedirect(reverse("admin-base"))
+    instance = Instance.objects.get(id=instance_id)
+    missions = Mission.objects.filter(instance=instance).order_by("start_date")
+    index_missions = []
+    x = 0
+    for mission in missions:
+        index_missions.append([x, mission])
+        x = x + 1
+    tmpl = loader.get_template("admin/mission_edit.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "instance_value": instance,
+        "values": index_missions, 
+        }, [ip])))
 
 
+@login_required
+def manage_game(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    #TODO: Make the instances only be drawn from instances that the user supervises
+    instance_list = []
+    mission_list = []
+    activity_list = []
+    value_list = []
+    instance_missions = []
+    mission_activities = []
+    
+    if request.user.is_superuser:
+        instances = Instance.objects.all().order_by("start_date")
+    else:
+        instances = Instance.objects.filter(curators=request.user).order_by("start_date")
+    
+    for instance in instances:
+        instance_list.append(instance)
+        missions = Mission.objects.filter(instance=instance).order_by("start_date")
+        for mission in missions:
+            mission_list.append(mission)
+            instance_missions.append((instance, mission))
+            activities = PlayerActivity.objects.filter(mission=mission).order_by("name")
+            for activity in activities:
+                activity_list.append(activity)
+                mission_activities.append((mission, activity))
+        values = Value.objects.filter(instance=instance)
+        for value in values:
+            value_list.append(value)
+    
+    tmpl = loader.get_template("admin/manage_game.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+            "instance_list": instance_list,
+            "mission_list": mission_list,
+            "activity_list": activity_list,
+            "value_list": value_list,
+            "instance_missions": instance_missions,
+            "mission_activities": mission_activities 
+            }, [ip])))
+
+def CreateOrUpdateActivity(request):
+    form = ActivityEditForm(request.POST)
+    tmpl = loader.get_template("admin/activity_edit.html")
+    
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+    
+    if form.is_valid():
+        activity = None
+        type = PlayerActivityType.objects.get(id=int(request.POST["types"]));
+        if (request.POST["activity_id"] == "0"):
+            if type.type == "map":
+                activity = PlayerMapActivity()
+            elif type.type == "empathy":
+                activity = PlayerEmpathyActivity()
+            else: 
+                activity = PlayerActivity()
+        else:
+            activity = PlayerActivity.objects.get(id=int(request.POST["activity_id"]))
+            
+            #if the current type is single or multi and it's not going to single or multi, delete all of the response choices
+            if activity.type.type == "single_response" or activity.type.type == "multi_response":
+                if type.type != "single_response" and type.type != "multi_response":
+                    MultiChoiceActivity.objects.filter(activity=activity).delete()
+            
+            #Get the activity as a map or empathy or deal with the change in type
+            if activity.type.type == "map" and type.type == "map":
+                activity = PlayerMapActivity(pk=activity.pk)
+            elif activity.type.type == "empathy" and type.type == "empathy":
+                activity = PlayerEmpathyActivity(pk=activity.pk)
+            elif activity.type.type != type.type:
+                if activity.type.type == "map" and type.type == "empathy":
+                    tempAct = PlayerEmpathyActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerMapActivity.objects.filter(id=int(request.POST["activity_id"])).delete()    
+                elif activity.type.type == "map" and type.type != "empathy":
+                    tempAct = PlayerActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerMapActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                elif activity.type.type == "empathy" and type.type == "map":
+                    tempAct = PlayerMapActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerEmpathyActivity.objects.filter(id=int(request.POST["activity_id"])).delete()    
+                elif activity.type.type == "empathy" and type.type != "map":
+                    tempAct = PlayerActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerEmpathyActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                elif type.type == "map":
+                    tempAct = PlayerMapActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                elif type.type == "empathy":
+                    tempAct = PlayerEmpathyActivity()
+                    actCopy(tempAct, activity)
+                    activity = tempAct
+                    PlayerActivity.objects.filter(id=int(request.POST["activity_id"])).delete()
+                    
+ 
+        activity.name = form.cleaned_data["name"]
+        activity.question = form.cleaned_data["question"]
+        activity.creationUser = request.user
+        activity.type = type
+        activity.mission = Mission.objects.get(id=int(request.POST["mission_id"]))
+        activity.instructions = form.cleaned_data["instructions"] if form.cleaned_data.has_key("instructions") and form.cleaned_data["instructions"] != "" else None 
+        activity.addInstructions = form.cleaned_data["addInstructions"] if form.cleaned_data.has_key("addInstructions") and form.cleaned_data["addInstructions"] != "" else None  
+        activity.points = form.cleaned_data["points"] if form.cleaned_data.has_key("points") and form.cleaned_data["points"] != "" else None
+        if activity.type.type == "empathy":
+            activity.bio  = form.cleaned_data["bio"]
+            if request.POST.has_key("clear_avatar") and request.POST.has_key("clear_avatar") == True:
+                activity.avatar = None
+            if request.FILES.has_key("avatar"):
+                activity.avatar = request.FILES["avatar"]
+                 
+        if activity.type.type == "map":
+            activity.maxNumMarkers = form.cleaned_data["maxNumMarkers"]
+        activity.save()
+        
+        
+        if request.POST.has_key("clear_attachment") and request.POST.has_key("clear_attachment") == True:
+            activity.attachment.clear()
+        if request.FILES.has_key("attachment"):
+            activity.attachment.clear()
+            activity.attachment.create(file=request.FILES.get("attachment"),
+                                       user=request.user,
+                                       instance=request.user.get_profile().instance)
+
+        #to see what is going on here, look at the mission save
+        toAdd = {};
+        addPat = re.compile("index_(?P<index_id>\d+)_id_(?P<response_id>\d+)")
+        delPat = re.compile("delete_id_(?P<delete_id>\d+)")
+        for key in request.POST.keys():
+            if addPat.match(key) != None and request.POST[key] != "":
+                matchDict = addPat.match(key).groupdict()
+                response_id = int(matchDict["response_id"])
+                response = None
+                if response_id != 0:
+                    response = MultiChoiceActivity.objects.get(pk=response_id)
+                else:
+                    response = MultiChoiceActivity()
+                    
+                index_id = int(matchDict["index_id"])
+                toAdd[index_id] = (response, request.POST[key])
+            elif delPat.match(key) != None:
+                matchDict = delPat.match(key).groupdict()
+                delete_id = int(matchDict["delete_id"])
+                if delete_id != 0:
+                    MultiChoiceActivity.objects.get(id=delete_id).delete()
+        #if any form of implementing ordering is required, do it here
+        for x in toAdd:
+            toAdd[x][0].value = toAdd[x][1]
+            toAdd[x][0].activity = activity
+            toAdd[x][0].save()
+        return HttpResponseRedirect(reverse("admin-base"))     
+    else:
+        s = ""
+        for x in form.errors:
+            s = "%s%s: %s<br>" % (s, x, form.errors[x])
+        return HttpResponse(s)
 
 
+@login_required
+def activity_new(request, mission_id):
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+    
+    if request.method == "POST":
+        return CreateOrUpdateActivity(request)
+    
+    mission = Mission.objects.get(id=mission_id)
+    types = PlayerActivityType.objects.all()
+    editForm = ActivityEditForm()
+    tmpl = loader.get_template("admin/activity_edit.html")
 
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "activity": PlayerActivity(),
+        "responses": [], 
+        "types": types,
+        "attachment": None,
+        "mission": mission,
+        "editForm": editForm,
+        }, [ip])))
+    
+@login_required
+def activity_edit(request, mission_id, activity_id):
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+    
+    if request.method == "POST":
+        return CreateOrUpdateActivity(request)
 
+    activity = PlayerActivity.objects.get(id=activity_id)
+    mission = Mission.objects.get(id=mission_id)
+    if activity.type.type == "map":
+        activity = PlayerMapActivity.objects.get(id=activity.id)
+    elif activity.type.type == "empathy":
+        activity = PlayerEmpathyActivity.objects.get(id=activity.id)
+    
+    responses = MultiChoiceActivity.objects.filter(activity=activity)
+    types = PlayerActivityType.objects.all()
+    
+    attachment = activity.attachment.all().count()
+    if attachment > 0:
+        attachment = activity.attachment.all()[0].file
+    else:
+        attachment = None
+    
+    editForm = ActivityEditForm()
+    tmpl = loader.get_template("admin/activity_edit.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "activity": activity,
+        "mission": mission,
+        "responses": responses, 
+        "types": types,
+        "attachment": attachment,
+        "editForm": editForm,
+        }, [ip])))
 
 
 

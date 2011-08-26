@@ -9,7 +9,7 @@
     {% else %}
         <h2>Edit Instance</h2>
     {% endif %}
-    <form action="{% url instance-save %}" method="post">
+    <form action="" method="post">
         {%csrf_token%}
 
         {% if not new %}

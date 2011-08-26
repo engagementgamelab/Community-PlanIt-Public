@@ -51,11 +51,12 @@ class InstanceManager(TranslationManager):
 
 class Instance(TranslatableModel):
     state = models.CharField(max_length=2)
-    slug = models.SlugField(unique=True, editable=False)
+    slug = models.SlugField(editable=False) #unique can not be enforced here, editing throws a unique constraint error
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
     curators = models.ManyToManyField(User)
+    days_for_mission = models.IntegerField(default=7)
 
     translations = TranslatedFields(
         name = models.CharField(max_length=45),

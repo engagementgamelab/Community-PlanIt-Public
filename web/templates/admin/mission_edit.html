@@ -7,16 +7,9 @@
 
 {%block main%}
     <h2>Missions for Instance: {{instance_value.name}}</h2>
-    <h3>instance id: {{instance_value.id}}</h3>
-    <form action="{% url mission-save %}" method="post">
+    <form action="" method="post">
         {%csrf_token%}
         <input type="hidden" name="instance_id" id="instance_id" value="{{instance_value.id}}"/>
-        
-        <div class="fieldWrapper">
-            {{ form.days.errors }}
-            <label for="id_days">Days per mission, start time is the start of the instance</label>
-            {{ form.days }}
-        </div>
         
         {% if slug_error|length %}
         <ul class="errorlist"><li>{{slug_error}}</li></ul>
