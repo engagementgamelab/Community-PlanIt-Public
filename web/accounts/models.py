@@ -72,6 +72,7 @@ class UserProfile(models.Model):
     education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
     income = models.ForeignKey(UserProfileIncomes, blank=True, null=True, default=None)
     living = models.ForeignKey(UserProfileLiving, blank=True, null=True, default=None)
+    preferred_language = models.CharField(max_length=5, default='en')
     
     accepted_term = models.BooleanField(default=False)
     accepted_research = models.BooleanField(default=False)
