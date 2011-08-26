@@ -108,9 +108,6 @@ class MissionBaseForm(forms.Form):
             for instance in instances:
                 self.fields["instances"].choices.append((instance.id, instance.name))
 
-class MissionSaveForm(forms.Form):
-    days = forms.IntegerField()
-    
 class ActivityBaseForm(forms.Form):
     instances = forms.ChoiceField()
     

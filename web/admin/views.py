@@ -292,6 +292,21 @@ def instance_save(request):
         instance.days_for_mission = form.cleaned_data["days_for_mission"]
         instance.save()
         
+        missions = Mission.objects.filter(instance=instance)
+        x = 0
+        lastMission = None
+        for mission in missions:
+            if x == 0:
+                mission.start_date = instance.start_date
+            else:
+                mission.start_date = lastMission.end_date
+            mission.end_date = mission.start_date + datetime.timedelta(days=instance.days_for_mission)
+            mission.instance = instance
+            mission.save()
+            lastMission = mission
+        instance.end_date = lastMission.end_date
+        instance.save()
+        
         return HttpResponseRedirect(reverse("admin-base"))
     else:
         location = None
@@ -543,7 +558,7 @@ def mission_save(request):
                 mission.start_date = instance.start_date
             else:
                 mission.start_date = lastMission.end_date
-            mission.end_date = mission.start_date + datetime.timedelta(days=form.cleaned_data["days"])
+            mission.end_date = mission.start_date + datetime.timedelta(days=instance.days_for_mission)
             mission.instance = instance
             mission.save()
             lastMission = mission
@@ -828,10 +843,50 @@ def instance_edit(request, instance_id):
     ok = verify(request)
     if ok != None:
         return ok
+    
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+    
+    if request.method == "POST": 
+        form = InstanceEditForm(request.POST)
+        if form.is_valid():
+            #for x in form.cleaned_data.keys():
+            #    s = "%s%s: %s (key)<br>" % (s, x, form.cleaned_data[x])
+            #return HttpResponse(s)
+        
+            instance = None
+            if request.POST.has_key("instance_id"):
+                instance = Instance.objects.get(id=int(request.POST["instance_id"]))
+            else:
+                instance = Instance()
+            instance.name = form.cleaned_data["name"]
+            instance.start_date = form.cleaned_data["start_date"]
+            instance.location = form.cleaned_data["map"]
+            instance.curator = request.user
+            instance.days_for_mission = form.cleaned_data["days_for_mission"]
+            instance.save()
+            
+            missions = Mission.objects.filter(instance=instance)
+            x = 0
+            lastMission = None
+            for mission in missions:
+                if x == 0:
+                    mission.start_date = instance.start_date
+                else:
+                    mission.start_date = lastMission.end_date
+                mission.end_date = mission.start_date + datetime.timedelta(days=instance.days_for_mission)
+                mission.instance = instance
+                mission.save()
+                lastMission = mission
+            instance.end_date = lastMission.end_date
+            instance.save()
+            
+            return HttpResponseRedirect(reverse("admin-base"))
+    
     instance = Instance.objects.get(id=instance_id)
     formEdit = InstanceEditForm(initial={"name": instance.name,
                                          "start_date": instance.start_date,
-                                         "end_date": instance.end_date,
+                                         "days_for_mission": instance.days_for_mission,
                                          })
     markers = simplejson.loads("%s" % instance.location)["markers"]
     x = 0
@@ -840,7 +895,7 @@ def instance_edit(request, instance_id):
         coor = coor["coordinates"]
         init_coords.append( [x, coor[0], coor[1]] )
         x = x + 1
-    tmpl = loader.get_template("admin/instance_edit.html")
+    tmpl = loader.get_template("admin/instance_edit_new.html")
     return HttpResponse(tmpl.render(RequestContext(request, { 
          "new": False, 
          "form": formEdit, 
@@ -850,11 +905,133 @@ def instance_edit(request, instance_id):
          }, [ip])))
 
 @login_required
+def values_edit(request, instance_id):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    if request.method == "POST": 
+        instance_id = request.POST["instance_id"]
+        if (instance_id == ""): 
+            return HttpResponseServerError("instance_id not set by POST")
+        
+        instance = Instance.objects.get(id=int(instance_id))
+        Value.objects.filter(instance=instance).delete()
+        
+        x = 0
+        value_ex = re.compile("value_(?P<index_id>\d+)")
+        for key in request.POST.keys():
+            if value_ex.match(key) != None and request.POST[key] != "":
+                value = Value()
+                value.instance = instance
+                value.message = request.POST[key]
+                value.save()
+        return HttpResponseRedirect(reverse("admin-base"))
+
+    instance = Instance.objects.get(id=instance_id)
+    values = Value.objects.filter(instance=instance)
+    index_values = []
+    x = 0
+    for value in values:
+        index_values.append([x, value])
+        x = x + 1
+    tmpl = loader.get_template("admin/value_edit_new.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "instance_value": instance, #can't name it that, that would be bad because it conflicts with ip.instance. call it something like value or soemthing
+        "values": index_values, 
+        }, [ip])))
+
+@login_required
 def mission_order(request, instance_id):
     ok = verify(request)
     if ok != None:
         return ok
-    return HttpResponse("Here")
+    
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+    
+    if request.method == "POST":
+        instance = Instance.objects.get(id=int(request.POST["instance_id"]))
+        #s = ""
+        #for x in form.cleaned_data.keys():
+        #    s = "%s%s: %s<br>" % (s, x, form.cleaned_data[x])
+        
+        #s = "%s Post variables <br>" % s
+        #for x in request.POST.keys():
+        #    s = "%s%s: %s<br>" % (s, x, request.POST[x])
+        #return HttpResponse(s)
+        #so the ones to keep are index_X_id_Y where if Y is 0, it's a new one
+        # if it's anything else, the mission existed in the db and should be edited
+        # index is the index that this mission should be in
+        toAdd = {};
+        addPat = re.compile("index_(?P<index_id>\d+)_id_(?P<mission_id>\d+)")
+        delPat = re.compile("delete_id_(?P<delete_id>\d+)")
+        for key in request.POST.keys():
+            if addPat.match(key) != None and request.POST[key] != "":
+                matchDict = addPat.match(key).groupdict()
+                mission_id = int(matchDict["mission_id"])
+                mission = None
+                if mission_id != 0:
+                    mission = Mission.objects.get(id=mission_id)
+                else:
+                    mission = Mission()
+                index_id = int(matchDict["index_id"])
+                toAdd[index_id] = (mission, request.POST[key])
+            elif delPat.match(key) != None:
+                matchDict = delPat.match(key).groupdict()
+                delete_id = int(matchDict["delete_id"])
+                if delete_id != 0:
+                    mission = Mission.objects.get(id=delete_id).delete()
+        
+        #slug testing
+        slugs = {}
+        for x in toAdd.keys():
+            mission, name = toAdd[x]
+            if (slugify(name) in slugs):
+                tmpl = loader.get_template("admin/mission_edit.html")
+                form = MissionSaveForm(request.POST)
+                missions = Mission.objects.filter(instance=instance).order_by("start_date")
+                index_missions = []
+                x = 0
+                for mission in missions:
+                    index_missions.append([x, mission])
+                    x = x + 1
+                return HttpResponse(tmpl.render(RequestContext(request, {
+                    "form": form,                                                    
+                    "instance_value": instance,
+                    "values": index_missions,
+                    "slug_error": "Mission name: %s conflicts with mission name: %s" % (name, slugs[slugify(name)])
+                    }, [ip])))
+            else:
+                slugs[slugify(name)] = name
+        x = 0
+        lastMission = None
+        for x in toAdd.keys():
+            mission, name = toAdd[x]
+            mission.name = name
+            if x == 0:
+                mission.start_date = instance.start_date
+            else:
+                mission.start_date = lastMission.end_date
+            mission.end_date = mission.start_date + datetime.timedelta(days=instance.days_for_mission)
+            mission.instance = instance
+            mission.save()
+            lastMission = mission
+        instance.end_date = lastMission.end_date
+        instance.save()
+        return HttpResponseRedirect(reverse("admin-base"))
+    instance = Instance.objects.get(id=instance_id)
+    missions = Mission.objects.filter(instance=instance).order_by("start_date")
+    index_missions = []
+    x = 0
+    for mission in missions:
+        index_missions.append([x, mission])
+        x = x + 1
+    tmpl = loader.get_template("admin/mission_edit.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+        "instance_value": instance,
+        "values": index_missions, 
+        }, [ip])))
+
 
 @login_required
 def manage_game(request):
@@ -865,6 +1042,7 @@ def manage_game(request):
     instance_list = []
     mission_list = []
     activity_list = []
+    value_list = []
     instance_missions = []
     mission_activities = []
     
@@ -883,20 +1061,19 @@ def manage_game(request):
             for activity in activities:
                 activity_list.append(activity)
                 mission_activities.append((mission, activity))
+        values = Value.objects.filter(instance=instance)
+        for value in values:
+            value_list.append(value)
     
     tmpl = loader.get_template("admin/manage_game.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
             "instance_list": instance_list,
             "mission_list": mission_list,
             "activity_list": activity_list,
+            "value_list": value_list,
             "instance_missions": instance_missions,
             "mission_activities": mission_activities 
             }, [ip])))
-
-@login_required
-def mission_edit(request, id):    
-    return HttpResponse("mission edit")
-
 
 def CreateOrUpdateActivity(request):
     form = ActivityEditForm(request.POST)
@@ -1015,7 +1192,7 @@ def CreateOrUpdateActivity(request):
             toAdd[x][0].value = toAdd[x][1]
             toAdd[x][0].activity = activity
             toAdd[x][0].save()
-        return HttpResponseRedirect(reverse("manage-game"))     
+        return HttpResponseRedirect(reverse("admin-base"))     
     else:
         s = ""
         for x in form.errors:
@@ -1025,6 +1202,9 @@ def CreateOrUpdateActivity(request):
 
 @login_required
 def activity_new(request, mission_id):
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+    
     if request.method == "POST":
         return CreateOrUpdateActivity(request)
     
@@ -1044,6 +1224,9 @@ def activity_new(request, mission_id):
     
 @login_required
 def activity_edit(request, mission_id, activity_id):
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+    
     if request.method == "POST":
         return CreateOrUpdateActivity(request)
 
