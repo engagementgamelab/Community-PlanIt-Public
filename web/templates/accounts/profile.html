@@ -9,7 +9,7 @@
 {% block main %}
     {% if request.user == player %}
     <div class="right">
-        <a class="button" href="{% url accounts_profile_edit %}">Edit Profile</a>
+        <a class="button" href="{% url accounts:accounts_profile_edit %}">Edit Profile</a>
     </div>
     {% endif %}
     <div>
@@ -30,9 +30,10 @@
         <!--Lives in East Boston, works in Fort Point and Plays in Fort Point.-->
         <span style="font-size: 1em">{% trans "Points" %}: {{player.get_profile.points}}</span><br>
         <span style="font-size: 1em">{% trans "Community Stake" %}: {{player.get_profile.stake}}</span><br>
+        {% if player.get_profile.affiliations %}
         <span style="font-size: 1em">{% trans "Affiliated With" %}:
             {%for a in player.get_profile.affiliations_csv %} 
-            <a href="{% url affiliations_affiliation a %}" class="highlight">{{a}}</a>
+            <a href="{% url affiliations:affiliations_affiliation a %}" class="highlight">{{a}}</a>
             {% endfor %}
         </span>
         {% endif %}
@@ -71,7 +72,7 @@
     
     <div class="third last">        
         <div class="modules">
-            <h3><a class="highlight" href="{% url lists_following player.id %}">Following <span class="fine">({{player.get_profile.following.all|length}})</span></a></h3>
+            <h3><a class="highlight" href="{% url lists:lists_following player.id %}">Following <span class="fine">({{player.get_profile.following.all|length}})</span></a></h3>
             <div class="dashboardmodule">
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">
@@ -95,7 +96,7 @@
             
             <hr class="space">
 
-            <h3><a class="highlight" href="{% url lists_followers player.id %}">Followers <span class="fine">({{followingme|length}})</span></a></h3>
+            <h3><a class="highlight" href="{% url lists:lists_followers player.id %}">Followers <span class="fine">({{followingme|length}})</span></a></h3>
             <div class="dashboardmodule">
                 <div class="dashboardmoduleinner profile">
                     <div class="profile-content">

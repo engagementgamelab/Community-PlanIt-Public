@@ -17,7 +17,7 @@
 
 {% block main %}
 <ul class="listless">
-{% for mission in missions.active %}
+{% for mission in missions_mgr.active %}
     <li>
         <h3>
             <a href="{% url missions_mission mission.slug %}">{{mission.name}}</a>

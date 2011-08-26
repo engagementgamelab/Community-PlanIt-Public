@@ -8,7 +8,7 @@
 
 {%block aside%}
     <h2>Forgot Password</h2>
-    <a href="{% url accounts:accounts_forgot %}">{% trans "Reset password" %}</a>
+    <a href="{% url accounts:forgot %}">{% trans "Reset password" %}</a>
 {%endblock%}
 
 {%block main%}
@@ -28,7 +28,7 @@
 
             <br><br>
             <input type="submit" class="button submit" value="Login">
-            <input type="hidden" name="next" value="{% url accounts:accounts_dashboard %}" />
+            <input type="hidden" name="next" value="{% url accounts:dashboard %}" />
         </form>
     </div>
 {%endblock%}

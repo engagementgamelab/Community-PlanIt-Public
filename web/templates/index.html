@@ -69,19 +69,19 @@
 
 {% block rightsidebar %}
 {% if instance_mgr.active.count %}
-<h3>{% trans "New Player?" %} <a href="{% url accounts:accounts_register %}" class="button">{% trans "Sign Up" %}</a></h3>
+<h3>{% trans "New Player?" %} <a href="{% url accounts:register %}" class="button">{% trans "Sign Up" %}</a></h3>
 {% endif %}
 <h3>{% trans "Have an account?" %}</h3>
 <div class="inner-content">
-    <form method="POST" action="{% url accounts:accounts_login %}">
+    <form method="POST" action="{% url accounts:login %}">
         {%csrf_token%}
-        <input type="hidden" name="next" value="{% url accounts:accounts_dashboard %}" />
+        <input type="hidden" name="next" value="{% url accounts:dashboard %}" />
         <label for="username">email address</label>
         <input type="email" name="username">
         <label for="password">password</label>
         <input type="password" name="password">
         <br>
-        <button class="button">{% trans "Login" %}</button> <a class="right" href="{% url accounts:accounts_forgot %}">{% trans "Forgot password" %}</a>
+        <button class="button">{% trans "Login" %}</button> <a class="right" href="{% url accounts:forgot %}">{% trans "Forgot password" %}</a>
     </form>
 </div>
 {%endblock%}

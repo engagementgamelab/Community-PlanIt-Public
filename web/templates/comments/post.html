@@ -1,3 +1,6 @@
+{% load i18n %}
+
+
 <div id="comments">
     {% if not comment_form.just_one_form %}
     <h2>
@@ -14,11 +17,48 @@
         {% empty %}
         <li class="comment">No comments found.</li>
         {%endfor%}
-        </ul>
-    {% else%}
-        {% trans "No comments found" %}.
+    </ul>
+    {% else %}
+    <h2>Comments</h2>
     {%endif%}
-{%endif%}
+    {% if instance.is_active %}
+        {%if comment_form.allow_replies %}
+            <h3>Add a comment</h3>
+            <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
+                {% include "comments/duplicate.html" %}
+                <button type="submit" class="button right">Add Comment</button>
+            </form>
+        {% endif %}
+    {% else %}
+    <p>This community is no longer active.</p>
+    {% endif %}
+</div>
+
+{% comment %}
+<div id="comments">
+    {% if not comment_form.just_one_form %}
+    <h2>
+        Comments
+        {% if comments.count %}
+        <div class="controls right">
+            Sort by: <a class="button comment_sort_time" href="#comments">timestamp</a> <a class="button comment_sort_activity" href="#comments">popularity</a>
+        </div>
+        {% endif %}
+    </h2>
+    <ul class="comments">
+        {%for comment in comments.all reversed%}
+            {%include "comments/comment.html"%}
+        {% empty %}
+        <li class="comment"> {% trans "No comments found" %}.</li>
+        {%endfor%}
+        </ul>
+    {% else%} 
+        <h2>Comments</h2>
+
+    {%endif%}
+{% endif %}
+
+
 <h2>{% trans "Add a comment" %}</h2>
 <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
     {%if request.REQUEST.error%}
@@ -39,3 +79,4 @@
     <p>This community is no longer active.</p>
     {% endif %}
 </div>
+{% endcomment %}

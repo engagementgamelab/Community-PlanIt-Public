@@ -44,7 +44,7 @@
                 <ul>
                 {% block nav %}
                     {% if user.is_authenticated and instance.is_started %}
-                    <li><div class="home"><a href="{% url accounts:accounts_dashboard %}"><span>{% trans "Home" %}</span></a></div></li>
+                    <li><div class="home"><a href="{% url accounts:dashboard %}"><span>{% trans "Home" %}</span></a></div></li>
                     <li><div class="missions"><a href="{% url missions:index %}"><span>{% trans "Missions" %}</span></a></div></li>
                     <li><div class="challenges"><a href="{% url challenges:index %}"><span>{% trans "Challenges" %}</span></a></div></li>
                     <li><div class="values"><a href="{% url values:index %}"><span>{% trans "Token Depot" %}</span></a></div></li>
@@ -67,7 +67,7 @@
                     <li><div class="admin"><a href="{% url admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
                     {% endif %}
                     {% if user.is_authenticated %}
-                    <li class="final"><div class="logout"><a href="{% url accounts:accounts_logout %}"><span>{% trans "Logout" %}</span></a></div></li>
+                    <li class="final"><div class="logout"><a href="{% url accounts:logout %}"><span>{% trans "Logout" %}</span></a></div></li>
                     {% endif %}
                 {% endblock %}
                 </ul>
@@ -114,14 +114,14 @@
                             {% endif %}
                         {% else %}
                         {% if instance_mgr.active.count %}
-                        <h3>New Player? <a href="{% url accounts:accounts_register %}" class="button">Sign Up</a></h3>
+                        <h3>New Player? <a href="{% url accounts:register %}" class="button">Sign Up</a></h3>
                         {% endif %}
                         {% endif %}
                         </div>
 
                         {% if user.is_authenticated %}
                         <div class="notifications">
-                            <a href="{% url accounts:accounts_notifications %}">
+                            <a href="{% url accounts:notifications %}">
                                 <span class="count">{{user.notifications.unread.count|default:"no"}}</span>
                                 new notification{{user.notifications.unread.count|pluralize}}
                             </a>

@@ -12,7 +12,7 @@
 {% block rightsidebar %}
 {% if not instance.is_expired %}
     <div class="sectionbutton">
-        <a href="{% url challenges:challenges_add %}" class="button">{% trans "Create a Challenge" %}</a>
+        <a href="{% url challenges:add %}" class="button">{% trans "Create a Challenge" %}</a>
     </div>
 
     <div class="section">
@@ -23,7 +23,7 @@
                 {% for challenge in request.user.player_challenges.completed %}
                     <tr class="{% cycle "odd" "even" %}">
                         <td>
-                            <a href="{% url challenges:challenges_challenge challenge.challenge.pk %}">{{challenge.challenge.name}}</a>
+                            <a href="{% url challenges:challenge challenge.challenge.pk %}">{{challenge.challenge.name}}</a>
                         </td>
                     </tr>
                 {% empty %}
@@ -44,7 +44,7 @@
                 {% for challenge in instance.challenges.past %}
                     <tr class="{% cycle "odd" "even" %}">
                         <td>
-                            <a href="{% url challenges:challenges_challenge challenge.pk %}">{{challenge.name}}</a>
+                            <a href="{% url challenges:challenge challenge.pk %}">{{challenge.name}}</a>
                         </td>
                     </tr>
                 {% empty %}
@@ -64,15 +64,15 @@
     <ul class="challenge_list">
     {% for challenge in new_challenges %}
     <li class="challenge">
-        <a href="{% url challenges:challenges_challenge challenge.pk %}">
-            {{challenge.name}}<span>{% get_points for completed challenge %} {% trans "points" %{</span>
+        <a href="{% url challenges:challenge challenge.pk %}">
+            {{challenge.name}}<span>{% get_points for completed challenge %} {% trans "points" %}</span>
             <br/>
             <span class="dates">{{challenge.start_date|date:"m/d/Y"}} &#8211; {{challenge.end_date|date:"m/d/Y"}}</span>
         </a>
     </li>
     {% empty %}
     <li>
-    {% trans "There are no active challenges" %}. <a href="{% url challenges:challenges_add %}" class="button">{% trans "Create one!" %}</a>
+    {% trans "There are no active challenges" %}. <a href="{% url challenges:add %}" class="button">{% trans "Create one!" %}</a>
     </li>
     {% endfor %}
     </ul>
