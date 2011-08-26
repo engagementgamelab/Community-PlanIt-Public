@@ -47,7 +47,7 @@
                 <tbody>
                 {% for challenge in challenges %}
                     <tr class="{% cycle "odd" "even" %}">
-                        <td><a href="{% url challenges:challenges_challenge challenge.pk %}">{{challenge.name}}</a></td>
+                        <td><a href="{% url challenges:challenge challenge.pk %}">{{challenge.name}}</a></td>
                     </tr>
                 {% empty %}
                     <tr class="odd">
@@ -58,7 +58,7 @@
             </table>
         </div>
         <div class="buttons">
-            <a class="button left" href="{% url challenges:challenges_add %}">{% trans "Create Challenge" %}</a>
+            <a class="button left" href="{% url challenges:add %}">{% trans "Create Challenge" %}</a>
             <a class="button right" href="{% url challenges:index %}">{% trans "All Challenges" %}</a>
         </div>
     </div>

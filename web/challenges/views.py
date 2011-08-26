@@ -31,7 +31,7 @@ def fetch(request, id):
                 pc.completed = True
                 pc.save()
 
-                ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges_challenge', args=[id]), 'challenge')
+                ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges:challenges_challenge', args=[id]), 'challenge')
                 PointsAssigner().assign(request.user, 'challenge_completed')
 
                 if pc.player != challenge.user:
@@ -61,7 +61,7 @@ def fetch(request, id):
                         instance=request.user.get_profile().instance
                     )
 
-                return HttpResponseRedirect(reverse('challenges_challenge', args=[id]))
+                    return HttpResponseRedirect(reverse('challenges:challenges_challenge', args=[id]))
     else:
         if pc.completed:
             carf = None
@@ -86,26 +86,26 @@ def fetch(request, id):
 def accept(request, id):
     challenge = Challenge.objects.get(id=id)
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'accepted', reverse('challenges_challenge', args=[id]), 'challenge')
+    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'accepted', reverse('challenges:challenge', args=[id]), 'challenge')
 
     pc.completed = False
     pc.accepted = True
     pc.save()
 
-    return HttpResponseRedirect(reverse('challenges_challenge', args=[id]))
+    return HttpResponseRedirect(reverse('challenges:challenge', args=[id]))
 
 @login_required
 def decline(request, id):
     challenge = get_object_or_404(Challenge, id=id)
 
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'declined', reverse('challenges_challenge', args=[id]), 'challenge')
+    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'declined', reverse('challenges:challenge', args=[id]), 'challenge')
     
     pc.declined = True
     pc.accepted = False
     pc.save()
         
-    return HttpResponseRedirect(reverse('challenges'))
+    return HttpResponseRedirect(reverse('challenges:challenge'))
 
 @login_required
 def add(request):
@@ -135,7 +135,7 @@ def add(request):
             PointsAssigner().assign(request.user, 'challenge_created')
             ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'created', '/challenge/'+ str(challenge.id), 'challenge')
 
-            return HttpResponseRedirect(reverse('challenges'))
+            return HttpResponseRedirect(reverse('challenges:index'))
     else:
         form = AddChallenge(instance)
 
@@ -220,7 +220,7 @@ def comment(request, id):
             challenge.save()
 
             PointsAssigner().assign(request.user, 'comment_created')
-            ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name, 'added comment', reverse('challenges_challenge', args=[id]), 'challenge')
+            ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name, 'added comment', reverse('challenges:challenge', args=[id]), 'challenge')
 
             if request.user != challenge.user:
                 message = "%s commented on %s" % (
@@ -229,9 +229,9 @@ def comment(request, id):
                 )
                 challenge.user.notifications.create(content_object=challenge, message=message)
         else:
-            return HttpResponseRedirect(reverse('challenges_challenge', args=[id]) +'?error=true')
+            return HttpResponseRedirect(reverse('challenges:challenge', args=[id]) +'?error=true')
 
-    return HttpResponseRedirect(reverse('challenges_challenge', args=[id]))
+    return HttpResponseRedirect(reverse('challenges:challenge', args=[id]))
 
 @login_required
 def all(request):
