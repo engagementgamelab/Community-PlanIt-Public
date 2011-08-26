@@ -35,7 +35,7 @@ class Instance(models.Model):
     name = models.CharField(max_length=45)
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=2)
-    slug = models.SlugField(unique=True, editable=False)
+    slug = models.SlugField(editable=False) #unique can not be enforced here, editing throws a unique constraint error
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
@@ -43,6 +43,7 @@ class Instance(models.Model):
     process_name = models.CharField(max_length=255, null=True, blank=True)
     process_description = models.TextField(null=True, blank=True)
     curators = models.ManyToManyField(User)
+    days_for_mission = models.IntegerField(default=7)
 
     objects = InstanceManager()
 

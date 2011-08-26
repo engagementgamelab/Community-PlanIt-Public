@@ -59,10 +59,9 @@ class InstanceEditForm(forms.Form):
     city = forms.CharField(required=False, max_length=255)
     state = forms.CharField(required=False, max_length=2)
     start_date = forms.DateTimeField(required=True)
-    end_date = forms.DateTimeField(required=False)
     #This has to be named map, there can be only one and I am guessing it's a huge JS hack to make this work
     map = GoogleMapsField().formfield()
-    
+    days_for_mission = forms.IntegerField(required=True)
     
     def clean_map(self):
         map = self.cleaned_data.get('map')

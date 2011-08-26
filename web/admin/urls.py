@@ -1,6 +1,13 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns("",
+                       url(r"^managegame/", "admin.views.manage_game", name="manage-game"),
+                       url(r"^mission/edit/(?P<id>.*)/", "admin.views.mission_edit", name="mission-edit"),
+                       url(r"^activity/edit/(?P<mission_id>.*)/(?P<activity_id>.*)/", "admin.views.activity_edit", name="activity-edit"),
+                       url(r"^activity/new/(?P<mission_id>.*)/", "admin.views.activity_new", name="activity-new"),
+                       url(r"^instance/edit/(?P<instance_id>.*)/", "admin.views.instance_edit", name="instance-edit"),
+                       url(r"^missionorder/(?P<instance_id>.*)/", "admin.views.mission_order", name="mission-order"),
+                       
                        url(r"^instance/initial/", "admin.views.instance_initial_index", name="instance-initial-index"),
                        url(r"^instance/initialsave/", "admin.views.instance_initial_save", name="instance-initial-save"),
                        url(r"^instance/sendemail/", "admin.views.sendemail", name="admin-sendemail"),
