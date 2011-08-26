@@ -7,14 +7,26 @@
 
 {%block main%}
     <h1>Manage Game</h1>
+    {% if is_staff %}
+        <input type="button" value="New Instance" onClick="window.location='{% url instance-new %}' "/>
+    {% endif %}
     
     {% for instance in instance_list %}
     
     <div>
         {% if instance.end_date %}
-            <h2>Instance Options for Instance: {{instance.name}} ({{instance.start_date}} to {{instance.end_date}})</h2> <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.id}})" />
+            <h2>Instance Options for Instance: {{instance.name}} ({{instance.start_date}} to {{instance.end_date}})</h2> 
+            <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.id}})" />
+            {% if is_staff %}
+                <input type="button" value="Email Users" onClick="window.location='{% url instance-email %}' "/>
+            {% endif %}
+            
         {% else %}
-            <h2>Instance Options for Instance: {{instance.name}} (Starts {{instance.start_date}})</h2> <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.id}})" />
+            <h2>Instance Options for Instance: {{instance.name}} (Starts {{instance.start_date}})</h2> 
+            <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.id}})" />
+            {% if is_staff %}
+                <input type="button" value="Email Users" onClick="window.location='{% url instance-email %}' "/>
+            {% endif %}
         {% endif %}
         <form id="instanceForm_{{instance.id}}" style="display: None"> 
             <p>Name: {{instance.name}}</p>

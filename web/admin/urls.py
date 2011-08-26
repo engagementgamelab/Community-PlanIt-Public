@@ -5,6 +5,8 @@ urlpatterns = patterns("",
                        url(r"^activity/edit/(?P<mission_id>.*)/(?P<activity_id>.*)/", "admin.views.activity_edit", name="activity-edit"),
                        url(r"^activity/new/(?P<mission_id>.*)/", "admin.views.activity_new", name="activity-new"),
                        url(r"^instance/edit/(?P<instance_id>.*)/", "admin.views.instance_edit", name="instance-edit"),
+                       url(r"^instance/new/", "admin.views.instance_new", name="instance-new"),
+                       url(r"^instance/email/(?P<instance_id>.*)/", "admin.views.instance_email", name="instance-email"),
                        url(r"^missionorder/(?P<instance_id>.*)/", "admin.views.mission_order", name="mission-order"),
                        url(r"^valuesedit/(?P<instance_id>.*)/", "admin.views.values_edit", name="values-edit"),
                        
