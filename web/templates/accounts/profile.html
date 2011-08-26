@@ -9,7 +9,7 @@
 {% block main %}
     {% if request.user == player %}
     <div class="right">
-        <a class="button" href="{% url accounts:accounts_profile_edit %}">Edit Profile</a>
+        <a class="button" href="{% url accounts:profile_edit %}">Edit Profile</a>
     </div>
     {% endif %}
     <div>

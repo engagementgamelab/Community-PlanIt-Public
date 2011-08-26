@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import *
-from django.contrib.auth.views import login, logout
+from django.contrib.auth.views import logout
+from accounts.views import login
 
 urlpatterns = patterns('',
     url(r'^dashboard/', 'web.views.index', name='dashboard'),

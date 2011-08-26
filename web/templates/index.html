@@ -76,6 +76,7 @@
     <form method="POST" action="{% url accounts:login %}">
         {%csrf_token%}
         <input type="hidden" name="next" value="{% url accounts:dashboard %}" />
+        <input type="hidden" name="locale" value="es" />
         <label for="username">email address</label>
         <input type="email" name="username">
         <label for="password">password</label>

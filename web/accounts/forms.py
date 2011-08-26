@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate
@@ -12,12 +13,14 @@ from web.accounts.models import UserProfileRace
 from web.accounts.models import UserProfileStake
 
 class RegisterForm(forms.Form):
+
     firstName = forms.CharField(required=True, max_length=30, label=_("First Name"))
     lastName = forms.CharField(required=True, max_length=30, label=_("Last Name"))
     email = forms.EmailField(required=True, label=_("Email:"))
     password = forms.CharField(required=True, label=_("Password"), widget=forms.PasswordInput(render_value=False))
     passwordAgain = forms.CharField(required=True, label=_("Password Again"), widget=forms.PasswordInput(render_value=False))
     instance = forms.ModelChoiceField(queryset=Instance.objects.active(), label=_('Community'))
+    preferred_language = forms.ChoiceField(choices=settings.LANGUAGES)
 
     # Ensure that a user has not already registered an account with that email address.
     def clean_email(self):

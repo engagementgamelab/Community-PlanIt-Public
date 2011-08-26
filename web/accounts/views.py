@@ -1,8 +1,10 @@
+import urlparse
 import datetime
 import math
 import re
 
 from localeurl.models import reverse
+from localeurl.views import change_locale
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -13,10 +15,16 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+
 
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
+from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.sites.models import get_current_site
 
 from web.accounts.forms import *
 from web.accounts.models import Notification, UserProfile
@@ -31,6 +39,70 @@ from web.reports.models import Activity
 from web.values.models import *
 
 from PIL import Image
+
+@csrf_protect
+@never_cache
+def login(request, template_name='registration/login.html',
+          redirect_field_name=REDIRECT_FIELD_NAME,
+          authentication_form=AuthenticationForm,
+          current_app=None, extra_context=None):
+    """
+    Displays the login form and handles the login action.
+    """
+    redirect_to = request.REQUEST.get(redirect_field_name, '')
+
+    if request.method == "POST":
+        form = authentication_form(data=request.POST)
+        if form.is_valid():
+            netloc = urlparse.urlparse(redirect_to)[1]
+
+            # Use default setting if redirect_to is empty
+            if not redirect_to:
+                redirect_to = settings.LOGIN_REDIRECT_URL
+
+            # Security check -- don't allow redirection to a different
+            # host.
+            elif netloc and netloc != request.get_host():
+                redirect_to = settings.LOGIN_REDIRECT_URL
+
+            # Okay, security checks complete. Log the user in.
+            auth_login(request, form.get_user())
+
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
+
+            user = form.get_user()
+            up = user.get_profile()
+            lang = up.preferred_language
+
+            def check_lang(lang):
+                for l in settings.LANGUAGES:
+                    if l[0] == lang:
+                        return True
+
+            if check_lang(lang):
+                #import ipdb;ipdb.set_trace()
+                return change_locale(request)
+
+            return HttpResponseRedirect(redirect_to)
+    else:
+        form = authentication_form(request)
+
+    request.session.set_test_cookie()
+
+    current_site = get_current_site(request)
+
+    context = {
+        'form': form,
+        redirect_field_name: redirect_to,
+        'site': current_site,
+        'site_name': current_site.name,
+    }
+    context.update(extra_context or {})
+    return render_to_response(template_name, context,
+                              context_instance=RequestContext(request, current_app=current_app))
+
+
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate
@@ -85,17 +157,15 @@ def notifications(request):
 
 def register(request):
     def valid(firstName, lastName, email, password, form):
-        player = User.objects.create(email=email)
-        player.first_name = firstName
-        player.last_name = lastName
+        player = User.objects.create(email=email,first_name=firstName, last_name=lastName, is_active=True)
         player.set_password(password)
-        player.is_active = True
         player.save()
         player = auth.authenticate(username=email, password=password)
         auth.login(request, player)
         player.save()
         uinfo = player.get_profile()
         uinfo.instance = form.cleaned_data['instance']
+        uinfo.preferred_language = form.cleaned_data['preferred_language']
         uinfo.coins = 0
         uinfo.points = 0
         uinfo.points_multiplier = 0
@@ -127,7 +197,7 @@ def register(request):
 
 # Forgot your password
 def forgot(request):
-    def valid(firstName, lasstName, email, password, form):
+    def valid(firstName, lastName, email, password, form):
         # Send a new password and update account
         user = User.objects.get(email=email)
         user.set_password(password)
