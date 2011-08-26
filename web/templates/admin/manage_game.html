@@ -18,14 +18,13 @@
             <h2>Instance Options for Instance: {{instance.name}} ({{instance.start_date}} to {{instance.end_date}})</h2> 
             <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.id}})" />
             {% if is_staff %}
-                <input type="button" value="Email Users" onClick="window.location='{% url instance-email %}' "/>
+                <input type="button" value="Email Users" onClick="window.location='{% url instance-email instance.id %}' "/>
             {% endif %}
-            
         {% else %}
             <h2>Instance Options for Instance: {{instance.name}} (Starts {{instance.start_date}})</h2> 
             <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.id}})" />
             {% if is_staff %}
-                <input type="button" value="Email Users" onClick="window.location='{% url instance-email %}' "/>
+                <input type="button" value="Email Users" onClick="window.location='{% url instance-email instance.id %}' "/>
             {% endif %}
         {% endif %}
         <form id="instanceForm_{{instance.id}}" style="display: None"> 

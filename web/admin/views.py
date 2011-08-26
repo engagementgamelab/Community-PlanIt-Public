@@ -279,7 +279,6 @@ def instance_save(request):
         #for x in form.cleaned_data.keys():
         #    s = "%s%s: %s (key)<br>" % (s, x, form.cleaned_data[x])
         #return HttpResponse(s)
-    
         instance = None
         if request.POST.has_key("instance_id"):
             instance = Instance.objects.get(id=int(request.POST["instance_id"]))
@@ -304,7 +303,8 @@ def instance_save(request):
             mission.instance = instance
             mission.save()
             lastMission = mission
-        instance.end_date = lastMission.end_date
+        if lastMission != None:
+            instance.end_date = lastMission.end_date
         instance.save()
         
         return HttpResponseRedirect(reverse("admin-base"))
@@ -562,7 +562,8 @@ def mission_save(request):
             mission.instance = instance
             mission.save()
             lastMission = mission
-        instance.end_date = lastMission.end_date
+        if lastMission != None:
+            instance.end_date = lastMission.end_date
         instance.save()
         return HttpResponseRedirect(reverse("admin-base"))
     
@@ -839,7 +840,7 @@ def activity_save(request):
             }, [ip]))) 
 
 @login_required
-def instance_new(request, instance_id):
+def instance_new(request):
     ok = verify(request)
     if ok != None:
         return ok
@@ -924,7 +925,8 @@ def instance_edit(request, instance_id):
                 mission.instance = instance
                 mission.save()
                 lastMission = mission
-            instance.end_date = lastMission.end_date
+            if lastMission != None:
+                instance.end_date = lastMission.end_date
             instance.save()
             
             return HttpResponseRedirect(reverse("admin-base"))
@@ -1075,7 +1077,8 @@ def mission_order(request, instance_id):
             mission.instance = instance
             mission.save()
             lastMission = mission
-        instance.end_date = lastMission.end_date
+        if lastMission != None:
+            instance.end_date = lastMission.end_date
         instance.save()
         return HttpResponseRedirect(reverse("admin-base"))
     instance = Instance.objects.get(id=instance_id)
