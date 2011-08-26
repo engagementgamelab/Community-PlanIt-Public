@@ -31,11 +31,10 @@
         </div>
         
         <div class="fieldWrapper">
-            {{ form.end_date.errors }}
-            <label for="id_end_date">End Date:</label>
-            {{ form.end_date }}
+            {{ form.days_for_mission.errors }}
+            <label for="id_start_date">Days For Each Mission:</label>
+            {{ form.days_for_mission }}
         </div>
-        
         
         <div>
             <button class="button add">Add Point</button>
@@ -49,9 +48,6 @@
                 {% endfor %}
                 
                 <div id="map" class="google-map" data-type="Point"></div>
-                
-                
-
             </div>
         </div>
         

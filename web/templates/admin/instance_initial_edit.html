@@ -42,6 +42,15 @@
                     </div>
                 </li>
                 <li>
+                    A game is made up of missions. The first mission starts when the instance starts. How many days will
+                    each mission run?
+                    <div class="fieldWrapper">
+                        {{ form.days_for_mission.errors }}
+                        <label for="id_days_for_mission">Days For Each Mission:</label>
+                        {{ form.days_for_mission }}
+                    </div>
+                </li>
+                <li>
                     <div class="fieldWrapper">
                         Place a marker on your community or the intended planning area below. 
                         Select an area that users will recognize for navigation purposes. You should zoom 
