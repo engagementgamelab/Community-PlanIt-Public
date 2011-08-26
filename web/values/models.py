@@ -6,22 +6,30 @@ from django.contrib.contenttypes import generic
 from web.instances.models import Instance
 from web.comments.models import Comment
 
+from nani.admin import TranslatableAdmin
+from nani.models import TranslatableModel, TranslatedFields
+from nani.manager import TranslationManager
+
 #TODO: change coins to something like coinsSpentOnIntance or something
 #more descriptive
 #Make the comments into a foreign key field. There is no reason why
 # a comment should belong to more than 1 value
-class Value(models.Model):
-    message = models.CharField(max_length=260, verbose_name='Value')
+class Value(TranslatableModel):
     coins = models.IntegerField(default=0)
 
     instance = models.ForeignKey(Instance)
     comments = generic.GenericRelation(Comment)
 
-    class Meta:
-        ordering = ['message']
+    translations = TranslatedFields(
+        message = models.CharField(max_length=260, verbose_name='Value'),
+        meta = {'ordering': ('message', )}
+    )
+
+    #class Meta:
+    #    ordering = ['message']
 
     def __unicode__(self):
-        return self.message[:25]
+        return self.safe_translation_getter('message', 'Value: %s' % self.pk)
 
     @models.permalink
     def get_absolute_url(self):
@@ -33,12 +41,12 @@ class PlayerValue(models.Model):
     coins = models.IntegerField(default=0)
 
 class ValueAdmin(admin.ModelAdmin):
-    list_display = ('message', 'coins')
-    exclude = ('instance',)
+    list_display = ('coins', ) #doesnt work with nani 'message', 
+    #exclude = ('instance',)
 
-    def save_model(self, request, obj, form, change):
-        obj.instance = request.session.get('admin_instance')
-        obj.save()
+    #def save_model(self, request, obj, form, change):
+    #    obj.instance = request.session.get('admin_instance')
+    #    obj.save()
 
     def queryset(self, request):
         qs = super(ValueAdmin, self).queryset(request)

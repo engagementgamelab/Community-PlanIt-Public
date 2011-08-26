@@ -38,6 +38,7 @@ add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 #        return InstanceQuerySet(self.model, using=self._db)
 
 class InstanceManager(TranslationManager):
+
     def past(self):
         return self.filter(end_date__lt=datetime.datetime.now()).order_by('start_date')
 
@@ -92,7 +93,18 @@ class Instance(TranslatableModel):
         
     def save(self, *args, **kwargs):
         #TODO make this work with unicode
-        self.slug = slugify(self.pk)
+        if not self.slug:
+            import random
+            import string
+            from django.conf import settings
+            dictionary = getattr(settings, 'DICTIONARY', "/usr/share/dict/words")
+            d = open(dictionary, "r").readlines()
+
+            _random_words = \
+                    lambda n: " ".join([random.choice(d).lower().rstrip() \
+                    for i in range(n)])
+
+            self.slug = slugify(_random_words(1))
         super(Instance,self).save()
         
     def __unicode__(self):

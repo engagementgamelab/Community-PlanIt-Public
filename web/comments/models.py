@@ -91,7 +91,7 @@ class CommentAdmin(TranslatableAdmin):
     def hide_selected(self, request, queryset):
         queryset.update(hidden=True)
         count = queryset.count()
-        self.message_user(request, _("Hid %d comment%s.") % (count, (count == 1 and '' or 's')))
+        self.message_user(request, "Hid %d comment%s." % (count, (count == 1 and '' or 's')))
 
     def queryset(self, request):
         qs = super(CommentAdmin, self).queryset(request)
@@ -105,5 +105,5 @@ class CommentAdmin(TranslatableAdmin):
     def reveal_selected(self, request, queryset):
         queryset.update(hidden=False)
         count = queryset.count()
-        self.message_user(request, _("Revealed %d comment%s.") % (count, (count == 1 and '' or 's')))
+        self.message_user(request, "Revealed %d comment%s." % (count, (count == 1 and '' or 's')))
 

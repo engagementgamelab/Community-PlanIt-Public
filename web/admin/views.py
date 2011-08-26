@@ -439,10 +439,7 @@ def values_save(request):
     
     x = 0
     while request.POST.get("value_%s" % x, None) != None and request.POST.get("value_%s" % x) != "":
-        value = Value()
-        value.instance = instance
-        value.message = request.POST["value_%s" % x]
-        value.save()
+        value = Value.objects.create(instance=instance, message=request.POST["value_%s" % x])
         x = x + 1
     return HttpResponseRedirect(reverse("admin-base"))
 
