@@ -4,7 +4,7 @@ import math
 import re
 
 from localeurl.models import reverse
-from localeurl.views import change_locale
+from localeurl.utils import strip_path, locale_path
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -75,14 +75,9 @@ def login(request, template_name='registration/login.html',
             up = user.get_profile()
             lang = up.preferred_language
 
-            def check_lang(lang):
-                for l in settings.LANGUAGES:
-                    if l[0] == lang:
-                        return True
-
-            if check_lang(lang):
-                #import ipdb;ipdb.set_trace()
-                return change_locale(request)
+            if lang in dict(settings.LANGUAGES).keys():
+            	spath = strip_path(redirect_to)[1]
+                return HttpResponseRedirect(locale_path(spath, lang))
 
             return HttpResponseRedirect(redirect_to)
     else:
@@ -238,6 +233,7 @@ def edit(request):
                                             'last_name': profile.user.last_name if profile.user.last_name != None else "",
                                             'email': profile.user.email if profile.user.email != None else "",
                                             'birth_year': profile.birth_year if profile.birth_year != None else "",
+                                            'preferred_language': profile.preferred_language,
                                             
                                             })
     if request.method == 'POST':
@@ -273,7 +269,7 @@ def edit(request):
                         profile.instance = ins[0]
                     else:
                         profile.instance = None
-                
+
                 #changing birth year (needed because of the int)
                 #This fails with the birth_year being blank and python can not convert
                 #a '' to an int
@@ -281,23 +277,23 @@ def edit(request):
                     profile.birth_year = None
                 else:
                     profile.birth_year = int(profile_form.cleaned_data['birth_year'])
-                
+
                 #updating email address
                 if (request.POST.get('email', None) == None or request.POST.get('email', None) == ''):
                     profile.user.email = None
                 else:
                     profile.user.email = profile_form.cleaned_data['email']
-                
+
                 if (request.POST.get('first_name', None) == None or request.POST.get('first_name', None) == ''):
                     profile.user.first_name = None
                 else:
                     profile.user.first_name = profile_form.cleaned_data['first_name']
-                    
+
                 if (request.POST.get('last_name', None) == None or request.POST.get('last_name', None) == ''):
                     profile.user.last_name = None
                 else:
                     profile.user.last_name = profile_form.cleaned_data['last_name']
-                
+
                 profile.user.save()
 
                 if request.FILES.get('avatar', None) != None:
