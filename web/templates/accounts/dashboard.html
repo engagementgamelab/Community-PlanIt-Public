@@ -20,7 +20,7 @@
             <p class="separate">{{mission.description}}</p>
             {% include "player_activities/all_activities_paginated.html" %}
             <div class="buttons">
-                <a class="button" href="{% url missions:missions_mission mission.slug %}" title="{{mission.name}}">{% trans "View Current Mission" %}</a>
+                <a class="button" href="{% url missions:mission mission.slug %}" title="{{mission.name}}">{% trans "View Current Mission" %}</a>
             </div>
             {% endfor %}
         {% else %}
@@ -101,12 +101,12 @@
 
                 <p>Check out the results of the
                 {% if last_mission %}
-                    <a class="red" href="{% url missions_mission last_mission.slug %}" title="{{last_mission.name}}">activities</a>
+                    <a class="red" href="{% url missions:mission last_mission.slug %}" title="{{last_mission.name}}">activities</a>
                 {% else %}
-                <a class="red" href="{% url missions %}" title="mission">activities</a>
+                <a class="red" href="{% url missions:index %}" title="mission">activities</a>
                 {% endif %}
                 results &#8212; and don't forget to see how the community spent its 
-                <a class="red" href="{% url values %}">tokens</a>!
+                <a class="red" href="{% url values:index %}">tokens</a>!
                 </p>
                 <p>{% trans "Thanks for playing!" %}</p>
                 </div>
