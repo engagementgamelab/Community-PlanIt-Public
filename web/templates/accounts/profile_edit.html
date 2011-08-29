@@ -69,6 +69,11 @@
                     {{ profile_form.last_name }}
                 </div>
                 <div class="fieldWrapper">
+                    {{ profile_form.preferred_language.errors }}
+                    <label for="id_preferred_language">{% trans "Preferred Language" %}:*</label>
+                    {{ profile_form.preferred_language }}
+                </div>
+                <div class="fieldWrapper">
                     {{ profile_form.stake.errors }}
                     <label for="id_stake">{% trans "stake" %}</label>
                     {{ profile_form.stake }}

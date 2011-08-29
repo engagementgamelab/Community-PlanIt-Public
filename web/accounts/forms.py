@@ -101,6 +101,7 @@ class UserProfileForm(forms.ModelForm):
     first_name = forms.CharField(max_length=30, required=True,)
     last_name = forms.CharField(max_length=30, required=True,)
     email = forms.CharField(max_length=255, required=True, help_text="(Private)",)
+    preferred_language = forms.ChoiceField(choices=settings.LANGUAGES)
 
     # Non-required fields
     gen = []
@@ -191,5 +192,5 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         #Adding to Meta.fields will display default settings in the browser and link it to the correct model object. 
-        fields = ( 'email', 'first_name', 'last_name', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'myInstance', 'affiliations',
+        fields = ( 'email', 'first_name', 'last_name', 'preferred_language', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'myInstance', 'affiliations',
                    'education', 'income', 'living' )
