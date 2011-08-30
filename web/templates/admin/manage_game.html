@@ -7,41 +7,69 @@
 
 {%block main%}
     <h1>Manage Game</h1>
-    
+
+
+    {% for game in games.values %}
+        {% for game_trans in game %}
+        <div>
+            <h2>
+                Game "{{ game_trans.name }}" ({{ game_trans.language_code }}):  ({{game_trans.master.start_date}} {% if game_trans.master.end_date %}to {{game_trans.master.end_date}}{% endif %})
+            </h2> 
+            <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{game_trans.pk}})" />
+            <form id="instanceForm_{{game_trans.id}}" style="display: None"> 
+                <p>Name: {{game_trans.name}}</p>
+                <p>Location: {{game_trans.city}}, {{game_trans.master.state}}</p>
+                <p>Start Date: {{game_trans.master.start_date}}</p>
+                {% if game_trans.master.end_date %}
+                <p>End Date: {{game_trans.master.end_date}}</p>
+                {% endif %}
+                <p>Language: {{ game_trans.language_code }}</p>
+                <br>
+            </form>
+        </div>
+        {% endfor %}
+
+
+
+    {% comment %}
     {% for instance in instance_list %}
-    
     <div>
-        {% if instance.end_date %}
-            <h2>Instance Options for Instance: {{instance.name}} ({{instance.start_date}} to {{instance.end_date}})</h2> <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.id}})" />
-        {% else %}
-            <h2>Instance Options for Instance: {{instance.name}} (Starts {{instance.start_date}})</h2> <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.id}})" />
-        {% endif %}
+        <h2>
+            Instance Options for Instance #: {{ instance.pk }} ({{instance.start_date}} {% if instance.end_date %}to {{instance.end_date}}{% endif %})
+        </h2> 
+        <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.pk}})" />
+
         <form id="instanceForm_{{instance.id}}" style="display: None"> 
             <p>Name: {{instance.name}}</p>
             <p>Location: {{instance.city}}, {{instance.state}}</p>
             <p>Start Date: {{instance.start_date}}</p>
+            <ul>Available Languages: 
+            {% for lang in instance.get_available_languages %}
+                <li> {{ lang }} <li>
+            {% endfor %}
+            </ul>
             <br>
         </form>
-        
+
         <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url values-edit instance.id %}' "/>
         <ul>
             {% for value in value_list %}
                 {%if value.instance = instance %}
                     <li>{{value.message}}</li>
                 {% endif %}
-            {% endfor %}    
+            {% endfor %}
         </ul>
     </div>
-    
+
     <input type="button" value="Edit Instance" onClick="window.location='{% url instance-edit instance.id %}' "/>
     <input type="button" value="Edit Instance Missions" onClick="window.location='{% url mission-order instance.id %}' "/>
-        
+
     <hr>
     <h2>Missions for {{instance.name}}</h2>
     {% for mission in mission_list %}
         {% if mission.instance = instance %}
             <h3>{{mission.name}} ({{mission.start_date}}-{{mission.end_date}})</h3>
-            
+
             {% for activity in activity_list %}
                 {% if activity.mission = mission %}
                     <ul>
@@ -53,6 +81,7 @@
         {% endif %}
     {% endfor %}
     <hr>
+        {% endcomment %}
     
     {% endfor %} <!-- instance for -->
 {%endblock%}

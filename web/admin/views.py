@@ -1036,6 +1036,7 @@ def manage_game(request):
     if ok != None:
         return ok
     #TODO: Make the instances only be drawn from instances that the user supervises
+    """
     instance_list = []
     mission_list = []
     activity_list = []
@@ -1061,15 +1062,32 @@ def manage_game(request):
         values = Value.objects.filter(instance=instance)
         for value in values:
             value_list.append(value)
+    """
+    #languages = dict(settings.LANGUAGES).keys()
+    from nani.utils import get_translation
+
+    games = {}
+
+
+    if request.user.is_superuser:
+        instances = Instance.objects.untranslated().all().order_by("start_date")
+    else:
+        instances = Instance.objects.untranslated().filter(curators=request.user).order_by("start_date")
+
+    for game in instances:
+        games[game.pk] = [get_translation(game, lang) for lang in game.get_available_languages()]
     
     tmpl = loader.get_template("admin/manage_game.html")
+    #import ipdb;ipdb.set_trace()
+    print games
     return HttpResponse(tmpl.render(RequestContext(request, {
-            "instance_list": instance_list,
-            "mission_list": mission_list,
-            "activity_list": activity_list,
-            "value_list": value_list,
-            "instance_missions": instance_missions,
-            "mission_activities": mission_activities 
+            'games' : games,
+            #"instance_list": instance_list,
+            #"mission_list": mission_list,
+            #"activity_list": activity_list,
+            #"value_list": value_list,
+            #"instance_missions": instance_missions,
+            #"mission_activities": mission_activities 
             }, [ip])))
 
 def CreateOrUpdateActivity(request):
