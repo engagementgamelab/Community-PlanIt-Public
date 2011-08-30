@@ -9,21 +9,27 @@
     <h1>Manage Game</h1>
 
 
-    {% for game in games.values %}
-        {% for game_trans in game %}
+    {% for game, translations in games.items %}
+        <div>
+            <h2>game #{{ game.pk }}</h2>
+            <p>Available Languages: <stron>{{ game.languages.all|join:", " }}</strong>
+            </p>
+                <p>Start Date: {{game.start_date}}</p>
+                {% if game.end_date %} <p>End Date: {{game.end_date}}</p> {% endif %}
+        </div>
+        {% for game_trans in translations %}
         <div>
             <h2>
-                Game "{{ game_trans.name }}" ({{ game_trans.language_code }}):  ({{game_trans.master.start_date}} {% if game_trans.master.end_date %}to {{game_trans.master.end_date}}{% endif %})
+                "{{ game_trans.name }}" ({{ game_trans.language_code }})
             </h2> 
             <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{game_trans.pk}})" />
             <form id="instanceForm_{{game_trans.id}}" style="display: None"> 
+                <p>Language: {{ game_trans.language_code }}</p>
                 <p>Name: {{game_trans.name}}</p>
                 <p>Location: {{game_trans.city}}, {{game_trans.master.state}}</p>
-                <p>Start Date: {{game_trans.master.start_date}}</p>
-                {% if game_trans.master.end_date %}
-                <p>End Date: {{game_trans.master.end_date}}</p>
-                {% endif %}
-                <p>Language: {{ game_trans.language_code }}</p>
+                <p>Content: {{game_trans.content}}</p>
+                <p>Process Name: {{game_trans.process_name}}</p>
+                <p>Process Descr: {{game_trans.process_description}}</p>
                 <br>
             </form>
 

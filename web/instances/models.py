@@ -19,6 +19,14 @@ from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
 
+class Language(models.Model):
+    code = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return "%s <%s>" %(self.name, self.code)
+
+
 #class InstanceQueryMixin(object):
 #    def past(self):
 #        return self.filter(end_date__lt=datetime.datetime.now()).order_by('start_date')
@@ -57,6 +65,7 @@ class Instance(TranslatableModel):
     end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
     curators = models.ManyToManyField(User)
+    languages = models.ManyToManyField(Language)
     days_for_mission = models.IntegerField(default=7)
 
     translations = TranslatedFields(
