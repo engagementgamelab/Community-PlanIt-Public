@@ -1066,20 +1066,17 @@ def manage_game(request):
     #languages = dict(settings.LANGUAGES).keys()
     from nani.utils import get_translation
 
-    games = {}
-
-
     if request.user.is_superuser:
         instances = Instance.objects.untranslated().all().order_by("start_date")
     else:
         instances = Instance.objects.untranslated().filter(curators=request.user).order_by("start_date")
 
+    games = {}
     for game in instances:
         games[game.pk] = [get_translation(game, lang) for lang in game.get_available_languages()]
     
     tmpl = loader.get_template("admin/manage_game.html")
     #import ipdb;ipdb.set_trace()
-    print games
     return HttpResponse(tmpl.render(RequestContext(request, {
             'games' : games,
             #"instance_list": instance_list,

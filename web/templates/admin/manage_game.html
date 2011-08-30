@@ -26,6 +26,15 @@
                 <p>Language: {{ game_trans.language_code }}</p>
                 <br>
             </form>
+
+            <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url values-edit game_trans.master.id %}' "/>
+            <ul>
+                {% for value in game_trans.master.value_set.all %}
+                    {#if value.instance = game_trans.master #}
+                        <li>{{value.message}}</li>
+                    {# endif #}
+                {% endfor %}
+            </ul>
         </div>
         {% endfor %}
 
