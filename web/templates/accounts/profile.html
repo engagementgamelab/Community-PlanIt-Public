@@ -128,7 +128,7 @@
     <div id="comments">
         <h4>Comments for {{player.get_profile.screen_name}}</h4>
         <ul class="listless comments">
-            {% with player.get_profile as comments %}
+            {% with player.get_profile.comments.all as comments %}
             {% include "comments/post.html" %}
             {% endwith %}
         </ul>

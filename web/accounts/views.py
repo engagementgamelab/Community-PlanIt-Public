@@ -332,11 +332,11 @@ def profile(request, id):
     profile = player.get_profile()
     
     instance = profile.instance
-    log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]
+    log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
+    comment_form = CommentForm(data=request.POST or None)
 
-    if request.method == 'POST':
-        comment_form = CommentForm(request.POST)
-        if comment_form.is_valid():
+    if request.method == 'POST':        
+        if comment_form.is_valid():           
             comment = profile.comments.create(
                 content_object=profile,
                 message=comment_form.cleaned_data['message'], 
@@ -359,21 +359,19 @@ def profile(request, id):
                         type='video',
                         user=request.user,
                         instance=instance
-                    )
-            file = request.FILES.get('picture')
-            picture = Image.open(file)
-            if (file.name.rfind(".") -1):
-                file.name = "%s.%s" % (file.name, picture.format.lower())
+                    )            
             if request.FILES.has_key('picture'):
+                file = request.FILES.get('picture')
+                picture = Image.open(file)
+                if (file.name.rfind(".") -1):
+                    file.name = "%s.%s" % (file.name, picture.format.lower())
                 comment.attachment.create(
                     file=request.FILES.get('picture'),
                     user=request.user,
                     instance=instance
-                )
-
-            return HttpResponseRedirect(reverse('accounts:profile', args=[id]))
-    else:
-        comment_form = CommentForm()
+                )           
+            return HttpResponseRedirect(reverse('accounts_profile', args=[id]))    
+        
 
     followingme = []
 
@@ -403,6 +401,7 @@ def profile(request, id):
                                    'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
     
     tmpl = loader.get_template('accounts/profile.html')
+    
     return HttpResponse(tmpl.render(RequestContext(request, {
         'player': player,
         'comment_form': comment_form,

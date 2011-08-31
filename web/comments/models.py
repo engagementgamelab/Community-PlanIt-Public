@@ -13,7 +13,7 @@ from django.contrib.contenttypes.models import ContentType
 from web.attachments.models import Attachment
 from web.instances.models import Instance
 
-class Comment(models.Model):
+class Comment(TranslatableModel):
     posted_date = models.DateTimeField(default=datetime.datetime.now)
     flagged = models.IntegerField(default=0)
     hidden = models.BooleanField(default=False)
