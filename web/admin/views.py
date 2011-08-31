@@ -1135,7 +1135,7 @@ def manage_game(request):
 
     games = {}
     for game in instances:
-        games[game.pk] = [get_translation(game, lang) for lang in game.get_available_languages()]
+        games[game] = [get_translation(game, lang) for lang in game.get_available_languages()]
     
     tmpl = loader.get_template("admin/manage_game.html")
     #import ipdb;ipdb.set_trace()
