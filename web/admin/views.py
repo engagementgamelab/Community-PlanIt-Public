@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail, send_mass_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
+from django.shortcuts import render_to_response
 from django.template import Context, RequestContext, loader
 from django.template.defaultfilters import slugify
 from django.utils import simplejson
@@ -71,7 +72,7 @@ def index(request):
                 send_mail(_('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [player.email], fail_silently=True)
                 messages.success(request, _('New admin successfully registered.'))
                 
-                return HttpResponseRedirect(reverse("admin-base"))
+                return HttpResponseRedirect(reverse("admin:admin-base"))
             else:
                 tmpl = loader.get_template("admin/backend_staff_index.html")
                 return HttpResponse(tmpl.render(RequestContext(request, {
@@ -182,7 +183,7 @@ def sendemail(request):
         ups = UserProfile.objects.filter(instance=instance, receive_email=True)
         for up in ups:
             send_mail(subject, body, settings.NOREPLY_EMAIL, [up.user.email], fail_silently=False)
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
         
     tmpl = loader.get_template("admin/instance_email.html")
     return HttpResponse(tmpl.render(RequestContext(request, { 
@@ -199,7 +200,7 @@ def instance_base(request):
         #return HttpResponse(s)
         
         if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
-            return HttpResponseRedirect(reverse("admin-base"))
+            return HttpResponseRedirect(reverse("admin:admin-base"))
 
         form = InstanceBaseForm(request.POST)
 
@@ -307,7 +308,7 @@ def instance_save(request):
         instance.end_date = lastMission.end_date
         instance.save()
         
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
     else:
         location = None
         init_coords = []
@@ -392,7 +393,7 @@ def values_base(request):
         #return HttpResponse(s)
         
         if (request.POST["submit_btn"] == "Cancel"):
-            return HttpResponseRedirect(reverse("admin-base"))
+            return HttpResponseRedirect(reverse("admin:admin-base"))
         
         form = ValueBaseForm(request.POST, initial={"instances": instances})
         if form.is_valid():
@@ -441,7 +442,7 @@ def values_save(request):
     while request.POST.get("value_%s" % x, None) != None and request.POST.get("value_%s" % x) != "":
         value = Value.objects.create(instance=instance, message=request.POST["value_%s" % x])
         x = x + 1
-    return HttpResponseRedirect(reverse("admin-base"))
+    return HttpResponseRedirect(reverse("admin:admin-base"))
 
 @login_required
 def mission_base(request):
@@ -451,7 +452,7 @@ def mission_base(request):
     instances = Instance.objects.all().order_by("name")
     if request.method == 'POST':
         if (request.POST["submit_btn"] == "Cancel"):
-            return HttpResponseRedirect(reverse("admin-base"))
+            return HttpResponseRedirect(reverse("admin:admin-base"))
             
         form = MissionBaseForm(request.POST, initial={"instances": instances})
         if form.is_valid():
@@ -488,7 +489,7 @@ def mission_save(request):
         return HttpResponseServerError("The request method was not POST")
     
     if (request.POST["submit_btn"] == "Cancel"):
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
     
     
     instance = Instance.objects.get(id=int(request.POST["instance_id"]))
@@ -561,7 +562,7 @@ def mission_save(request):
             lastMission = mission
         instance.end_date = lastMission.end_date
         instance.save()
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
     
     tmpl = loader.get_template("admin/mission_edit.html")
     form = MissionSaveForm(request.POST)
@@ -585,7 +586,7 @@ def activity_base(request):
     instances = Instance.objects.all().order_by("name")
     if request.method == 'POST':
         if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
-            return HttpResponseRedirect(reverse("admin-base"))
+            return HttpResponseRedirect(reverse("admin:admin-base"))
         form = ActivityBaseForm(request.POST, initial={"instances": instances})
         if form.is_valid():
             instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
@@ -670,7 +671,7 @@ def activity_save(request):
     tmpl = loader.get_template("admin/activity_edit.html")
     
     if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
     
     if form.is_valid():
         activity = None
@@ -782,7 +783,7 @@ def activity_save(request):
             toAdd[x][0].value = toAdd[x][1]
             toAdd[x][0].activity = activity
             toAdd[x][0].save()
-        return HttpResponseRedirect(reverse("admin-base"))     
+        return HttpResponseRedirect(reverse("admin:admin-base"))     
     else:
         s = ""
         for x in form.errors:
@@ -836,7 +837,36 @@ def activity_save(request):
             }, [ip]))) 
 
 @login_required
-def instance_edit(request, instance_id):
+def instance_edit(request, instance_id, template="admin/trans_instance_edit.html"):
+    try:
+	    inst = Instance.objects.untranslated().get(pk=instance_id)
+    except Instance.DoesNotExist:
+    	raise Http404 ("instance with id %s does not exist" % instance_id)
+
+    if request.method == "POST":
+        instance_form = InstanceForm(request.POST, instance=inst)
+        if instance_form.is_valid():
+            instance = instance_form.save()
+            return HttpResponseRedirect(reverse("admin:admin-base"))
+        else:
+        	print "got errors", instance_form.errors
+
+    instance_form = InstanceForm(instance=inst)
+
+    #import ipdb;ipdb.set_trace()
+    context = {
+            'instance_form': instance_form,
+            'instance_pk': inst.pk,
+            'trans_forms': instance_form.trans_forms,
+            'new': False,
+    }
+
+    return render_to_response(template, RequestContext(request, context))
+
+
+
+@login_required
+def instance_edit_org(request, instance_id):
     ok = verify(request)
     if ok != None:
         return ok
@@ -878,7 +908,7 @@ def instance_edit(request, instance_id):
             instance.end_date = lastMission.end_date
             instance.save()
             
-            return HttpResponseRedirect(reverse("admin-base"))
+            return HttpResponseRedirect(reverse("admin:admin-base"))
     
     instance = Instance.objects.get(id=instance_id)
     formEdit = InstanceEditForm(initial={"name": instance.name,
@@ -922,7 +952,7 @@ def values_edit(request, instance_id):
                 value.instance = instance
                 value.message = request.POST[key]
                 value.save()
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
 
     instance = Instance.objects.get(id=instance_id)
     values = Value.objects.filter(instance=instance)
@@ -944,7 +974,7 @@ def mission_order(request, instance_id):
         return ok
     
     if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
     
     if request.method == "POST":
         instance = Instance.objects.get(id=int(request.POST["instance_id"]))
@@ -1015,7 +1045,7 @@ def mission_order(request, instance_id):
             lastMission = mission
         instance.end_date = lastMission.end_date
         instance.save()
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
     instance = Instance.objects.get(id=instance_id)
     missions = Mission.objects.filter(instance=instance).order_by("start_date")
     index_missions = []
@@ -1092,7 +1122,7 @@ def CreateOrUpdateActivity(request):
     tmpl = loader.get_template("admin/activity_edit.html")
     
     if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
     
     if form.is_valid():
         activity = None
@@ -1204,7 +1234,7 @@ def CreateOrUpdateActivity(request):
             toAdd[x][0].value = toAdd[x][1]
             toAdd[x][0].activity = activity
             toAdd[x][0].save()
-        return HttpResponseRedirect(reverse("admin-base"))     
+        return HttpResponseRedirect(reverse("admin:admin-base"))     
     else:
         s = ""
         for x in form.errors:
@@ -1215,7 +1245,7 @@ def CreateOrUpdateActivity(request):
 @login_required
 def activity_new(request, mission_id):
     if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
     
     if request.method == "POST":
         return CreateOrUpdateActivity(request)
@@ -1237,7 +1267,7 @@ def activity_new(request, mission_id):
 @login_required
 def activity_edit(request, mission_id, activity_id):
     if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
-        return HttpResponseRedirect(reverse("admin-base"))
+        return HttpResponseRedirect(reverse("admin:admin-base"))
     
     if request.method == "POST":
         return CreateOrUpdateActivity(request)

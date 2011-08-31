@@ -54,7 +54,7 @@ class InstanceBaseForm(forms.Form):
     instance = forms.ModelChoiceField(required=False, queryset=Instance.objects.all())
     instance_name = forms.CharField(required=False, max_length=45)
    
-class InstanceEditForm(forms.Form):
+class InstanceEditForm_org(forms.Form):
     name = forms.CharField(required=True, max_length=45)
     city = forms.CharField(required=False, max_length=255)
     state = forms.CharField(required=False, max_length=2)
@@ -71,6 +71,52 @@ class InstanceEditForm(forms.Form):
         if len(mapDict["markers"]) == 0:
             raise forms.ValidationError("Please select a point on the map")
         return map
+
+from nani.forms import TranslatableModelForm
+class InstanceForm(TranslatableModelForm):
+
+    class Meta:
+        model = Instance
+        exclude = (
+                    'language_code', 'name', 'city', 'process_name', 
+                    'process_description', 'content'
+        )
+
+    def __init__(self, *args, **kwargs):
+        super(InstanceForm, self).__init__(*args, **kwargs)
+
+        def _make_instance_trans_form(instance):
+            fields = dict(
+                name = forms.CharField(max_length=45, initial=instance.name),
+                city = forms.CharField(max_length=255, initial=instance.city),
+                process_name = forms.CharField(max_length=255, initial=instance.process_name),
+                process_description = forms.CharField(max_length=1000, initial=instance.process_description),
+                content = forms.CharField(max_length=1000, initial=instance.content),
+                language_code =forms.CharField(widget=forms.HiddenInput(), initial=instance.language_code, label='')
+            )
+
+            return type('_InstanceTransForm', (forms.BaseForm,),
+                    dict(
+                         instance=instance,
+                         prefix=instance.language_code,
+                         base_fields = fields,
+                    )
+            )
+
+        self.trans_forms = {}
+        #import ipdb;ipdb.set_trace()
+        self.instance =  kwargs.get('instance')
+        if self.instance:
+            for trans in self.instance.translations.all():
+                self.trans_forms[trans.language_code] = _make_instance_trans_form(instance=trans)()
+
+    def save(self, *args, **kwargs):
+        data = self.cleaned_data
+        inventory_form = super(InstanceForm, self).save(*args, **kwargs)
+
+        #import ipdb;ipdb.set_trace()
+
+        return inventory_form
 
 class InstanceProcessForm(forms.Form):
     process_name = forms.CharField(max_length=255)
