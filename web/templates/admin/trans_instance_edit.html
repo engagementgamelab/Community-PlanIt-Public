@@ -9,7 +9,9 @@
     {% else %}
         <h2>Edit Instance</h2>
     {% endif %}
-    <div id="content"></div>
+    <div id="content">
+        {% if errors %} {{ errors|join:"," }} {% endif %}
+    </div>
 
     <form id="id_instance-form" action="." method="post"> {%csrf_token%}
         {% if not new %}
@@ -115,10 +117,8 @@
 
             $(".btn-submit").live("click", function(){
                 var instance_qs = $('#id_instance-form').serialize();
-                debug.log('submitted.');
-                debug.log(instance_qs);
 
-                data = instance_qs + '&' + {% for lang in instance_form.trans_forms.keys %} $('id_trans-{{ lang }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
+                data = instance_qs + '&' + {% for lang in instance_form.trans_forms.keys %} $('#id_trans-{{ lang }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
 
                 debug.log(data);
 
