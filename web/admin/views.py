@@ -279,7 +279,6 @@ def instance_save(request):
         #for x in form.cleaned_data.keys():
         #    s = "%s%s: %s (key)<br>" % (s, x, form.cleaned_data[x])
         #return HttpResponse(s)
-    
         instance = None
         if request.POST.has_key("instance_id"):
             instance = Instance.objects.get(id=int(request.POST["instance_id"]))
@@ -304,7 +303,8 @@ def instance_save(request):
             mission.instance = instance
             mission.save()
             lastMission = mission
-        instance.end_date = lastMission.end_date
+        if lastMission != None:
+            instance.end_date = lastMission.end_date
         instance.save()
         
         return HttpResponseRedirect(reverse("admin-base"))
@@ -559,7 +559,8 @@ def mission_save(request):
             mission.instance = instance
             mission.save()
             lastMission = mission
-        instance.end_date = lastMission.end_date
+        if lastMission != None:
+            instance.end_date = lastMission.end_date
         instance.save()
         return HttpResponseRedirect(reverse("admin-base"))
     
@@ -836,6 +837,52 @@ def activity_save(request):
             }, [ip]))) 
 
 @login_required
+def instance_new(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    
+    if request.method == 'POST':
+        if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+            return HttpResponseRedirect(reverse("admin-base"))
+        form = InstanceBaseForm(request.POST)
+        tmpl = loader.get_template("admin/instance_edit.html")
+        
+        instance = form.cleaned_data["instance"]
+        #location = "[42.36475475505694, -71.05134683227556]"
+        formEdit = InstanceEditForm(initial={"name": instance.name,
+                                             "start_date": instance.start_date,
+                                             "days_for_mission": instance.days_for_mission,
+                                             })
+        markers = simplejson.loads("%s" % instance.location)["markers"]
+        x = 0
+        init_coords = []
+        for coor in markers if markers != None else []:
+            coor = coor["coordinates"]
+            init_coords.append( [x, coor[0], coor[1]] )
+            x = x + 1
+        return HttpResponse(tmpl.render(RequestContext(request, { 
+             "new": False, 
+             "form": formEdit, 
+             "instance": instance,
+             "location": instance.location,
+             "init_coords": init_coords,
+             }, [ip])))
+
+    tmpl = loader.get_template("admin/instance_edit.html")
+    start_date = datetime.datetime.now()
+    formEdit = InstanceEditForm(initial={"name": "",
+                                         "start_date": start_date,
+                                         "days_for_mission": 7,
+                                          })
+    return HttpResponse(tmpl.render(RequestContext(request, { 
+         "new": True,
+         "form": formEdit,
+         "location": '{"frozen": null, "zoom": 13, "markers": null, "coordinates": [42.36475475505694, -71.05134683227556], "size": [500, 400]}',
+         "init_coords": [],
+         }, [ip])))    
+
+@login_required
 def instance_edit(request, instance_id):
     ok = verify(request)
     if ok != None:
@@ -875,7 +922,8 @@ def instance_edit(request, instance_id):
                 mission.instance = instance
                 mission.save()
                 lastMission = mission
-            instance.end_date = lastMission.end_date
+            if lastMission != None:
+                instance.end_date = lastMission.end_date
             instance.save()
             
             return HttpResponseRedirect(reverse("admin-base"))
@@ -900,6 +948,19 @@ def instance_edit(request, instance_id):
          "location": instance.location,
          "init_coords": init_coords,
          }, [ip])))
+
+@login_required
+def instance_email(request, instance_id):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    instance = Instance.objects.get(id=instance_id)
+    email_form = InstanceEmailForm()
+    tmpl = loader.get_template("admin/instance_email.html")
+    return HttpResponse(tmpl.render(RequestContext(request, { 
+             "form": email_form,
+             "instance_value": instance,  
+             }, [ip])))
 
 @login_required
 def values_edit(request, instance_id):
@@ -1013,7 +1074,8 @@ def mission_order(request, instance_id):
             mission.instance = instance
             mission.save()
             lastMission = mission
-        instance.end_date = lastMission.end_date
+        if lastMission != None:
+            instance.end_date = lastMission.end_date
         instance.save()
         return HttpResponseRedirect(reverse("admin-base"))
     instance = Instance.objects.get(id=instance_id)
@@ -1026,7 +1088,7 @@ def mission_order(request, instance_id):
     tmpl = loader.get_template("admin/mission_edit.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
         "instance_value": instance,
-        "values": index_missions, 
+        "values": index_missions,
         }, [ip])))
 
 

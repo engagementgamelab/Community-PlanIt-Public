@@ -8,7 +8,6 @@
 {%block main%}
     <h1>Manage Game</h1>
 
-
     {% for game in games.values %}
         {% for game_trans in game %}
         <div>
@@ -41,8 +40,10 @@
 
 
     {% comment %}
-    {% for instance in instance_list %}
-    <div>
+    {% if is_staff %}
+        <input type="button" value="New Instance" onClick="window.location='{% url instance-new %}' "/>
+    {% endif %}
+    
         <h2>
             Instance Options for Instance #: {{ instance.pk }} ({{instance.start_date}} {% if instance.end_date %}to {{instance.end_date}}{% endif %})
         </h2> 
