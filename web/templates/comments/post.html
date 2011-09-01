@@ -2,6 +2,7 @@
 
 
 <div id="comments">
+	
     {% if not comment_form.just_one_form %}
     <h2>
         Comments
@@ -11,13 +12,35 @@
         </div>
         {% endif %}
     </h2>
-    <ul class="comments">
-        {%for comment in comments.all reversed%}
-            {%include "comments/comment.html"%}
-        {% empty %}
-        <li class="comment">No comments found.</li>
-        {%endfor%}
-    </ul>
+    <h4 id="id_preferred">Preferred language</h4>
+    <div id="id_preferred_comments" class="accordion">
+        <ul class="comments">        
+	        {% for comment in preferred_comments.all reversed %}
+	            {% include "comments/comment.html" %}
+	        {% empty %}
+	        <li class="comment">No comments found.</li>
+	        {%endfor%}
+    	</ul>
+    </div>
+    <h4 id="id_english">English</h4>
+    <div id="id_english_comments" class="accordion">
+       <ul class="comments">        
+	        {% for comment in english_comments.all reversed %}
+	            {% include "comments/comment.html" %}
+	        {% empty %}
+	        <li class="comment">No comments found.</li>
+	        {%endfor%}
+    	</ul>
+    </div>
+    <h4 id="id_rest">The Rest</h4>
+    <div id="id_rest_comments" class="accordion">
+           {% for comment in rest_comments.all reversed %}
+	            {% include "comments/comment.html" %}
+	        {% empty %}
+	        <li class="comment">No comments found.</li>
+	        {%endfor%}
+    </div>
+   
     {% else %}
     <h2>Comments</h2>
     {%endif%}

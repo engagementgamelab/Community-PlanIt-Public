@@ -98,9 +98,12 @@ class CommentAdmin(TranslatableAdmin):
         return qs.filter(instance=request.session.get('admin_instance'))
 
     def save_model(self, request, obj, form, change):
-        obj.instance = request.session.get('admin_instance')
+        #obj.instance = request.session.get('admin_instance')
+        super(CommentAdmin, self).save_model(request, obj, form, change)
         obj.user = request.user
         obj.save()
+        request.user.get_profile().comments.add(obj)
+        request.user.get_profile().save()        
 
     def reveal_selected(self, request, queryset):
         queryset.update(hidden=False)

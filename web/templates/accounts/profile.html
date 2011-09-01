@@ -6,6 +6,25 @@
 {%block title%}{% trans "Dashboard" %}{%endblock%}
 {%block page_title%} {{player.get_profile.screen_name}} {%endblock%}
 
+ {% block head %}
+<script type="text/javascript"> 
+	$(document).ready(function() {
+	    $("#id_english_comments").hide();
+	    $("#id_rest_comments").hide();
+ 
+	    $("#id_preferred").click(function(){
+		    $("#id_preferred_comments").slideToggle("slow");		
+	    });	    
+	    $("#id_english").click(function(){
+		    $("#id_english_comments").slideToggle("slow");		
+	    });	    
+	    $("#id_rest").click(function(){
+		    $("#id_rest_comments").slideToggle("slow");		
+	    });	    
+	});
+</script>
+{% endblock %}
+
 {% block main %}
     {% if request.user == player %}
     <div class="right">
@@ -128,9 +147,14 @@
     <div id="comments">
         <h4>Comments for {{player.get_profile.screen_name}}</h4>
         <ul class="listless comments">
-            {% with player.get_profile.comments.all as comments %}
-            {% include "comments/post.html" %}
+            {% with player.get_profile.get_preferred_comments as preferred_comments %}
+            {% with player.get_profile.get_english_comments as english_comments %}            
+            {% with player.get_profile.get_rest_comments as rest_comments %}
+                {% include "comments/post.html" %}
+            {% endwith %}    
             {% endwith %}
+            {% endwith %}
+            
         </ul>
         <div style="clear: both;"></div>
     </div>
