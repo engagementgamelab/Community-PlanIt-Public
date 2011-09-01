@@ -93,7 +93,7 @@ class Instance(TranslatableModel):
     # rewrite this using the last mission end date as the end date
     def is_active(self):
         now = datetime.datetime.now()
-        if now >= self.start_date and (self.end_date is None or now <= self.end_date):
+        if now >= self.start_date: #and (self.end_date is None or now <= self.end_date):
             return True;
         else:
             return False;
