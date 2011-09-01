@@ -136,6 +136,15 @@ class UserProfile(models.Model):
     
     def points_to_coin_for_fill(self):
         return self.coinPoints
+    
+    def get_preferred_comments(self):
+        return self.comments.language(self.preferred_language)
+    
+    def get_english_comments(self):
+        return self.comments.filter(language_code='en')
+    
+    def get_rest_comments(self):
+        return self.comments.exclude(language_code='en').exclude(language_code=self.preferred_language)
 
     @property
     def screen_name(self):

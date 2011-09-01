@@ -15,6 +15,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
+from django.utils.translation import get_language
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 
@@ -334,15 +335,18 @@ def profile(request, id):
     instance = profile.instance
     log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
     comment_form = CommentForm(data=request.POST or None)
-
+    
     if request.method == 'POST':        
         if comment_form.is_valid():           
             comment = profile.comments.create(
-                content_object=profile,
-                message=comment_form.cleaned_data['message'], 
+                content_object=profile,                 
                 user=request.user,
                 instance=instance,
-            )
+            )              
+            # TODO: translate me!
+            #comment.translate(get_language())
+            comment.message = u'%s' % comment_form.cleaned_data['message']
+            comment.save()
 
             if request.user != player:
                 message = "%s commented on your profile" % (
