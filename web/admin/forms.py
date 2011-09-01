@@ -3,16 +3,19 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.utils import simplejson
 from django.contrib.auth import authenticate
+from django.conf import settings
 from web.instances.models import Instance
 from web.values.models import Value
 from accounts.models import CPIUser
 
 from gmapsfield.fields import GoogleMapsField
 
+from nani.models import create_translations_model
 from nani.forms import TranslatableModelForm
 from nani.utils import get_cached_translation, get_translation
 
 import logging
+
 log = logging.getLogger(__name__)
 
 class StaffBaseForm(forms.Form):
@@ -89,34 +92,48 @@ class InstanceForm(TranslatableModelForm):
     def __init__(self, *args, **kwargs):
         super(InstanceForm, self).__init__(*args, **kwargs)
         
-        def _make_instance_trans_form(instance):
-            lang = instance.language_code
+        def _make_instance_trans_form(instance, lang):  
+            instance.language_code = lang          
             fields = {
                 'name_'+lang : forms.CharField(max_length=45, initial=instance.name, label='Name'),
                 'description_'+lang : forms.CharField(max_length=1000, initial=instance.description, label='Description'),
-                'language_code_'+lang : forms.CharField(widget=forms.HiddenInput(), initial=instance.language_code, label='')
+                'language_code_'+lang : forms.CharField(widget=forms.HiddenInput(), initial=lang, label='')
             }
             return type('InstanceTransForm', (forms.BaseForm,),
                     dict(
                          instance=instance,
-                         prefix="instance_trans_"+instance.language_code+"_form",
+                         prefix="instance_trans_" + lang +"_form",
                          base_fields = fields,
                     )
             )
+        
+        def get_class( kls ):
+            parts = kls.split('.')
+            module = ".".join(parts[:-1])
+            m = __import__( module )
+            for comp in parts[1:]:
+                m = getattr(m, comp)            
+            return m
 
         self.inner_trans_forms = []
-        self.instance =  kwargs.get('instance')
-        if self.instance:            
-            for trans in self.instance.translations.all():
-                #self.trans_forms[trans.language_code] = _make_instance_trans_form(instance=trans)()
-                # Remove 'instance' from kwargs to pass the rest kwargs to trans_form
-                if kwargs.has_key('instance'):
-                    kwargs.pop('instance')
-                trans_form = _make_instance_trans_form(instance=trans)(*args, **kwargs)
-                trans_form_name = "instance_trans_" + trans.language_code + "_form"
-                setattr(self, trans_form_name, trans_form)
-                self.inner_trans_forms.append(trans_form)
-                log.debug('created form:', trans_form_name)
+        self.instance =  kwargs.pop('instance')       
+        for language_code, _lang_name in settings.LANGUAGES:                                 
+            trans_model = self._meta.model._meta.translations_model              
+            if self.instance:
+                trans = get_cached_translation(self.instance)
+                if not trans:
+                    try:
+                        trans = get_translation(self.instance, language_code)
+                    except:
+                        trans = trans_model()
+            else:
+                trans = trans_model()
+            
+            trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwargs)
+            trans_form_name = "instance_trans_" + language_code + "_form"
+            setattr(self, trans_form_name, trans_form)
+            self.inner_trans_forms.append(trans_form)
+            log.debug('created form:', trans_form_name)       
 
         # go through the proxy model
         # because of custom instance formatting
@@ -153,6 +170,7 @@ class InstanceForm(TranslatableModelForm):
         instance = super(InstanceForm, self).save(*args, **kwargs)
 
         for form in self.inner_trans_forms:
+            
             new = form.instance.pk is None
             data = form.cleaned_data            
             trans_model = form.instance.__class__
@@ -171,8 +189,8 @@ class InstanceForm(TranslatableModelForm):
             trans.name = data['name_%s' % language_code]
             trans.description = data['description_%s' % language_code]
             trans.language_code = language_code
-            trans.master = instance
-            trans.save()
+            trans.master = instance           
+            trans.save()            
             
         return instance
 
