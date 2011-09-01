@@ -13,6 +13,7 @@ from gmapsfield.fields import GoogleMapsField
 from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
+from nani.utils import get_translation_aware_manager
 
 from south.modelsinspector import add_introspection_rules
 
@@ -48,21 +49,26 @@ class Language(models.Model):
 class InstanceManager(TranslationManager):
 
     def past(self):
-        return self.filter(end_date__lt=datetime.datetime.now()).order_by('start_date')
+        # TODO deal with instance end dates
+        #return self.filter(end_date__lt=datetime.datetime.now()).order_by('start_date')
+        return self.filter()
 
     def future(self):
         return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
 
     def active(self):
-        now = datetime.datetime.now()
-        return self.filter(start_date__lte=now).filter(Q(end_date__isnull=True)|Q(end_date__gte=now)).order_by('start_date')
+        # TODO deal with instance end dates
+        #now = datetime.datetime.now()
+        #return self.filter(start_date__lte=now).filter(Q(end_date__isnull=True)|Q(end_date__gte=now)).order_by('start_date')
+        return self.filter()
 
 
 class Instance(TranslatableModel):
-    state = models.CharField(max_length=2)
     slug = models.SlugField(editable=False) #unique can not be enforced here, editing throws a unique constraint error
+    title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=2)
     start_date = models.DateTimeField()
-    end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
     curators = models.ManyToManyField(User)
     languages = models.ManyToManyField(Language)
@@ -70,10 +76,7 @@ class Instance(TranslatableModel):
 
     translations = TranslatedFields(
         name = models.CharField(max_length=45),
-        city = models.CharField(max_length=255),
-        content = models.TextField(null=True, blank=True),
-        process_name = models.CharField(max_length=255, null=True, blank=True),
-        process_description = models.TextField(null=True, blank=True),
+        description = models.TextField(),
         #meta = {'get_latest_by': 'start_date'}
     )
     objects = InstanceManager()
@@ -81,6 +84,13 @@ class Instance(TranslatableModel):
     class Meta:
         get_latest_by = 'start_date'
         
+
+    #def end_date(self):
+    #    mgr = get_translation_aware_manager(Mission)
+    #    mgr.filter()
+    
+    #TODO 
+    # rewrite this using the last mission end date as the end date
     def is_active(self):
         now = datetime.datetime.now()
         if now >= self.start_date and (self.end_date is None or now <= self.end_date):
@@ -101,19 +111,7 @@ class Instance(TranslatableModel):
             return False
         
     def save(self, *args, **kwargs):
-        #TODO make this work with unicode
-        if not self.slug:
-            import random
-            import string
-            from django.conf import settings
-            dictionary = getattr(settings, 'DICTIONARY', "/usr/share/dict/words")
-            d = open(dictionary, "r").readlines()
-
-            _random_words = \
-                    lambda n: " ".join([random.choice(d).lower().rstrip() \
-                    for i in range(n)])
-
-            self.slug = slugify(_random_words(1))
+        self.slug = slugify(self.title)
         super(Instance,self).save()
         
     def __unicode__(self):
@@ -131,7 +129,7 @@ class PointsAssignment(models.Model):
     instance = models.ForeignKey(Instance, editable=False)
 
 class InstanceAdmin(TranslatableAdmin):
-    list_display = ('start_date', 'end_date',) #could not be used with nani:, 'name', 
+    list_display = ('start_date',) #could not be used with nani:, 'name', 
 
 class NotificationRequest(models.Model):
     instance = models.ForeignKey(Instance, related_name='notification_requests')

@@ -61,7 +61,17 @@ class UserProfileStake(models.Model):
 
     def __unicode__(self):
         return self.stake
-    
+
+class CPIUser(User):
+    class Meta:
+        proxy = True
+
+    def __unicode__(self):
+        if self.first_name and self.last_name:
+            return "%s %s" % (self.first_name, self.last_name)
+        return self.username
+
+
 class UserProfile(models.Model):
     #Foreign key fields
     user = models.ForeignKey(User, unique=True)

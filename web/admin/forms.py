@@ -5,7 +5,14 @@ from django.utils import simplejson
 from django.contrib.auth import authenticate
 from web.instances.models import Instance
 from web.values.models import Value
+from accounts.models import CPIUser
+
 from gmapsfield.fields import GoogleMapsField
+
+from nani.forms import TranslatableModelForm
+
+import logging
+log = logging.getLogger(__name__)
 
 class StaffBaseForm(forms.Form):
     admin_first_name = forms.CharField(required=True, max_length=45)
@@ -54,7 +61,7 @@ class InstanceBaseForm(forms.Form):
     instance = forms.ModelChoiceField(required=False, queryset=Instance.objects.all())
     instance_name = forms.CharField(required=False, max_length=45)
    
-class InstanceEditForm(forms.Form):
+class InstanceEditForm_org(forms.Form):
     name = forms.CharField(required=True, max_length=45)
     city = forms.CharField(required=False, max_length=255)
     state = forms.CharField(required=False, max_length=2)
@@ -72,9 +79,82 @@ class InstanceEditForm(forms.Form):
             raise forms.ValidationError("Please select a point on the map")
         return map
 
-class InstanceProcessForm(forms.Form):
-    process_name = forms.CharField(max_length=255)
-    process_description = forms.CharField(widget=forms.Textarea(attrs={"rows": 15, "cols": 160}))
+class InstanceForm(TranslatableModelForm):
+
+    class Meta:
+        model = Instance
+        exclude = ('language_code', 'location', 'name', 'description',)
+
+    def __init__(self, *args, **kwargs):
+        super(InstanceForm, self).__init__(*args, **kwargs)
+
+        def _make_instance_trans_form(instance):
+            lang = instance.language_code
+            fields = {
+                'name_'+lang : forms.CharField(max_length=45, initial=instance.name, label='Name'),
+                'description_'+lang : forms.CharField(max_length=1000, initial=instance.description, label='Description'),
+                'language_code_'+lang : forms.CharField(widget=forms.HiddenInput(), initial=instance.language_code, label='')
+            }
+            return type('InstanceTransForm', (forms.BaseForm,),
+                    dict(
+                         instance=instance,
+                         prefix="instance_trans_"+instance.language_code+"_form",
+                         base_fields = fields,
+                    )
+            )
+
+        self.inner_trans_forms = []
+        self.instance =  kwargs.get('instance')
+        if self.instance:
+            for trans in self.instance.translations.all():
+                #self.trans_forms[trans.language_code] = _make_instance_trans_form(instance=trans)()
+                if kwargs.has_key('instance'):
+                    inst = kwargs.pop('instance')
+                trans_form = _make_instance_trans_form(instance=trans)(*args, **kwargs)
+                trans_form_name = "instance_trans_"+self.instance.language_code+"_form"
+                setattr(self, trans_form_name, trans_form)
+                self.inner_trans_forms.append(trans_form)
+                log.debug('created form:', trans_form_name)
+
+        # go through the proxy model
+        # because of custom instance formatting
+        self.fields['curators'].queryset = CPIUser.objects.all()
+        #self.fields['map'] = GoogleMapsField().formfield()
+
+    def clean_map(self):
+        map = self.cleaned_data.get('map')
+        if not map:
+            raise forms.ValidationError("The map doesn't exist")
+        mapDict = simplejson.loads(map)
+        if len(mapDict["markers"]) == 0:
+            raise forms.ValidationError("Please select a point on the map")
+        return map
+
+    def is_valid(self):
+        is_valid = super(InstanceForm, self).is_valid()
+        if not is_valid:
+            log.error("Error with form %s" % self.__class__.__name__)
+            log.error(self.errors)
+        is_valid_trans_forms = True
+
+        for form in self.inner_trans_forms:
+            if not form.is_valid():
+                log.error("Error with form %s" % form.__class__.__name__)
+                log.error(form.errors)
+                is_valid_trans_forms = False
+
+        log.debug((is_valid, is_valid_trans_forms))
+
+        return is_valid and is_valid_trans_forms
+
+    def save(self, *args, **kwargs):
+        data = self.cleaned_data
+        instance = super(InstanceForm, self).save(*args, **kwargs)
+        return instance
+
+#class InstanceProcessForm(forms.Form):
+#    process_name = forms.CharField(max_length=255)
+#    process_description = forms.CharField(widget=forms.Textarea(attrs={"rows": 15, "cols": 160}))
 
 class InstanceEmailForm(forms.Form):
     subject = forms.CharField()

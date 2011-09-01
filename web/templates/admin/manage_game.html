@@ -10,11 +10,17 @@
 
     {% for game, translations in games.items %}
         <div>
-            <h2>game #{{ game.pk }}</h2>
+            <p>
+                <h2>Instance #{{ game.pk }}</h2>
+                <input type="button" value="Edit Instance" onClick="window.location='{% url admin:instance-edit game.pk %}' "/>
+            </p>
             <p>Available Languages: <stron>{{ game.languages.all|join:", " }}</strong>
             </p>
                 <p>Start Date: {{game.start_date}}</p>
+                {% comment %}
+                # TODO deal with instance end dates
                 {% if game.end_date %} <p>End Date: {{game.end_date}}</p> {% endif %}
+                {% endcomment %}
         </div>
         {% for game_trans in translations %}
         <div>
@@ -31,15 +37,17 @@
                 <p>Process Descr: {{game_trans.process_description}}</p>
                 <br>
             </form>
+            {% comment %}
 
-            <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url values-edit game_trans.master.id %}' "/>
+            <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url admin:values-edit game_trans.master.id %}' "/>
             <ul>
-                {% for value in game_trans.master.value_set.all %}
+                {% for value in game.value_set.all %}
                     {#if value.instance = game_trans.master #}
-                        <li>{{value.message}}</li>
+                        <li>{{value.coins}}</li>
                     {# endif #}
                 {% endfor %}
             </ul>
+            {% endcomment %}
         </div>
         {% endfor %}
 
@@ -67,7 +75,7 @@
             <br>
         </form>
 
-        <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url values-edit instance.id %}' "/>
+        <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url admin:values-edit instance.id %}' "/>
         <ul>
             {% for value in value_list %}
                 {%if value.instance = instance %}
@@ -77,7 +85,7 @@
         </ul>
     </div>
 
-    <input type="button" value="Edit Instance" onClick="window.location='{% url instance-edit instance.id %}' "/>
+    <input type="button" value="Edit Instance" onClick="window.location='{% url admin:instance-edit instance.id %}' "/>
     <input type="button" value="Edit Instance Missions" onClick="window.location='{% url mission-order instance.id %}' "/>
 
     <hr>
@@ -89,7 +97,8 @@
             {% for activity in activity_list %}
                 {% if activity.mission = mission %}
                     <ul>
-                        <li style="font-style:italic;">{{activity.name}} <input type="button" value="Edit Activity" onClick="window.location='{% url activity-edit mission.id activity.id %}' "/></li>
+                        <li style="font-style:italic;">{{activity.name}}
+                        <input type="button" value="Edit Activity" onClick="window.location='{% url admin:activity-edit mission.id activity.id %}' "/></li>
                     </ul>
                 {% endif %}
             {% endfor %}
@@ -104,9 +113,9 @@
 
 {%block body%}
     <script>
-        var instanceList = new Array(0);
-        var missionList = new Array(0);
-        var activityList = new Array(0);
+        //var instanceList = new Array(0);
+        //var missionList = new Array(0);
+        //var activityList = new Array(0);
         
         function showInstanceForm(instance_id) {
             instanceForm = document.getElementById("instanceForm_" + instance_id);

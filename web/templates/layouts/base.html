@@ -22,6 +22,7 @@
     <script src="{{MEDIA_URL}}3pty/js/jquery-1.4.4.min.js"></script>
     <script src="{{MEDIA_URL}}3pty/js/jquery.flot.js"></script>
     <script src="{{MEDIA_URL}}3pty/js/jquery.flot.pie.js"></script>
+    <script src="{{MEDIA_URL}}js/ba-debug.min.js"></script>
     
     <!--[if lte IE 8]>
         <script language="javascript" type="text/javascript" src="../excanvas.min.js"></script>
@@ -64,7 +65,7 @@
                     {% endfor %}
 
                     {% if user.is_superuser or user.is_staff %}
-                    <li><div class="admin"><a href="{% url admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
+                    <li><div class="admin"><a href="{% url admin:admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
                     {% endif %}
                     {% if user.is_authenticated %}
                     <li class="final"><div class="logout"><a href="{% url accounts:logout %}"><span>{% trans "Logout" %}</span></a></div></li>
