@@ -12,7 +12,7 @@ from gmapsfield.fields import GoogleMapsField
 
 from nani.models import create_translations_model
 from nani.forms import TranslatableModelForm
-from nani.utils import get_cached_translation, get_translation
+from nani.utils import get_translation
 
 import logging
 
@@ -103,8 +103,6 @@ class InstanceForm(TranslatableModelForm):
         for language_code, _lang_name in settings.LANGUAGES:
             trans_model = self._meta.model._meta.translations_model
             if self.instance:
-                #trans = get_cached_translation(self.instance)
-                #if not trans:
                 try:
                     trans = get_translation(self.instance, language_code)
                 except:
@@ -164,12 +162,10 @@ class InstanceForm(TranslatableModelForm):
             language_code = form.instance.language_code
 
             if not new:
-                trans = get_cached_translation(instance)
-                if not trans:
-                    try:
-                        trans = get_translation(instance, language_code)
-                    except trans_model.DoesNotExist:
-                        trans = trans_model()
+                try:
+                    trans = get_translation(instance, language_code)
+                except trans_model.DoesNotExist:
+                    trans = trans_model()
             else:
                 trans = trans_model()
 
@@ -178,7 +174,6 @@ class InstanceForm(TranslatableModelForm):
             trans.language_code = language_code
             trans.master = instance
             trans.save()
-
 
         return instance
 

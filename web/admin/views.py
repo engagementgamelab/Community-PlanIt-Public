@@ -1,5 +1,6 @@
 import datetime
 import re
+from django.db import transaction
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -841,6 +842,7 @@ def activity_save(request):
             }, [ip]))) 
 
 @login_required
+#@transaction.commit_manually
 def instance(request, instance_id=None, template="admin/trans_instance_edit.html"):
     is_new = False
     ok = verify(request)
@@ -862,14 +864,30 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
     	inst = Instance(start_date=datetime.datetime.now())
     	is_new = True
 
+    init_coords = []
+    if inst.location:
+        markers = simplejson.loads("%s" % inst.location)["markers"]
+        x = 0
+        for coor in markers if markers != None else []:
+            coor = coor["coordinates"]
+            init_coords.append( [x, coor[0], coor[1]] )
+            x = x + 1
+
     errors = {}
     if request.method == "POST":
         instance_form = InstanceForm(request.POST, instance=inst)
 
         if instance_form.is_valid():
-            instance = instance_form.save()
-            log.debug('hurray!')
-            return HttpResponseRedirect(reverse("admin:admin-base"))
+
+            try:
+                instance = instance_form.save()
+            except Exception, err:
+            	#transaction.rollback()
+                log.error("error while saving instance: %s" % str(err))
+                errors.update({"Updating instance": "Server error took place. Please contact the admin."})
+            else:
+            	#transaction.commit()
+                return HttpResponseRedirect(reverse("admin:admin-base"))
         else:
             for f in instance_form.inner_trans_forms:
                 if f.errors:
@@ -879,15 +897,6 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
     else:
         instance_form = InstanceForm(instance=inst)
 
-
-    init_coords = []
-    if inst.location:
-        markers = simplejson.loads("%s" % inst.location)["markers"]
-        x = 0
-        for coor in markers if markers != None else []:
-            coor = coor["coordinates"]
-            init_coords.append( [x, coor[0], coor[1]] )
-            x = x + 1
 
     context = {
             'instance_form': instance_form,
