@@ -18,7 +18,10 @@
             <p>Available Languages: <stron>{{ game.languages.all|join:", " }}</strong>
             </p>
                 <p>Start Date: {{game.start_date}}</p>
+                {% comment %}
+                # TODO deal with instance end dates
                 {% if game.end_date %} <p>End Date: {{game.end_date}}</p> {% endif %}
+                {% endcomment %}
         </div>
         {% for game_trans in translations %}
         <div>
@@ -109,9 +112,9 @@
 
 {%block body%}
     <script>
-        var instanceList = new Array(0);
-        var missionList = new Array(0);
-        var activityList = new Array(0);
+        //var instanceList = new Array(0);
+        //var missionList = new Array(0);
+        //var activityList = new Array(0);
         
         function showInstanceForm(instance_id) {
             instanceForm = document.getElementById("instanceForm_" + instance_id);

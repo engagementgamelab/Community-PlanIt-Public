@@ -2,6 +2,7 @@
 import os
 import sys
 import re
+import logging
 
 ROOTDIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -154,6 +155,41 @@ SOUTH_TESTS_MIGRATE = False
 #
 GMAP_DEFAULT = [42.355241376822725,-71.06010156250015] # Boston
 GMAP_JQUERY = '/assets/3pty/js/jquery-1.4.4.min.js'
+
+#Configure logging
+LOGFILE = "cpi.log"
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                    datefmt='%a, %d %b %Y %H:%M:%S',
+                    filename=os.path.join(ROOTDIR, LOGFILE),
+                    filemode='w')
+
+logging.getLogger(__name__).setLevel(logging.INFO)
+logging.info("roa started")
+
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
+
 
 # settings can be overridden for testing; by default we use the in-memory
 # sqlite database instead of PostgreSQL

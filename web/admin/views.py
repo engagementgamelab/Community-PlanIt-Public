@@ -843,22 +843,34 @@ def instance_edit(request, instance_id, template="admin/trans_instance_edit.html
     except Instance.DoesNotExist:
     	raise Http404 ("instance with id %s does not exist" % instance_id)
 
+    errors = []
     if request.method == "POST":
         instance_form = InstanceForm(request.POST, instance=inst)
+
         if instance_form.is_valid():
             instance = instance_form.save()
+            log.debug('hurray!')
             return HttpResponseRedirect(reverse("admin:admin-base"))
         else:
-        	print "got errors", instance_form.errors
+            #for f in instance_form.trans_forms.values():
+            #    log.error f.errors
+            errors.append("got errors")
 
     instance_form = InstanceForm(instance=inst)
 
-    #import ipdb;ipdb.set_trace()
+    markers = simplejson.loads("%s" % inst.location)["markers"]
+    x = 0
+    init_coords = []
+    for coor in markers if markers != None else []:
+        coor = coor["coordinates"]
+        init_coords.append( [x, coor[0], coor[1]] )
+        x = x + 1
+
     context = {
             'instance_form': instance_form,
-            'instance_pk': inst.pk,
-            'trans_forms': instance_form.trans_forms,
+            "init_coords": init_coords,
             'new': False,
+            'errors': errors,
     }
 
     return render_to_response(template, RequestContext(request, context))
@@ -1106,7 +1118,6 @@ def manage_game(request):
         games[game] = [get_translation(game, lang) for lang in game.get_available_languages()]
     
     tmpl = loader.get_template("admin/manage_game.html")
-    #import ipdb;ipdb.set_trace()
     return HttpResponse(tmpl.render(RequestContext(request, {
             'games' : games,
             #"instance_list": instance_list,

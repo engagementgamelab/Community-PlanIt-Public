@@ -9,22 +9,55 @@
     {% else %}
         <h2>Edit Instance</h2>
     {% endif %}
-    <div id="content">
-        {% if errors %} {{ errors|join:"," }} {% endif %}
-    </div>
+    <div id="content"> {% if errors %} {{ errors|join:"," }} {% endif %} </div>
 
+    <div>
     <form id="id_instance-form" action="." method="post"> {%csrf_token%}
         {% if not new %}
-            <input type="hidden" name="instance_id" value="{{instance.id}}">
+            <input type="hidden" name="instance_id" value="{{ instance_form.instance.pk }}">
         {% endif %}
-    {{ instance_form.as_p }}
-    </form>
+        <input type="hidden" id="max_points_input" name="max_points_input" value="1">
 
-    {% for lang, trans_form in instance_form.trans_forms.items %}
-        <form id="id_trans-{{ lang }}-form" action="." method="post"> {%csrf_token%}
-        <h2> {{ lang }} translations </h2>
-            {{ trans_form.as_p }}
+        {# instance_form.as_p #}
+
+        {% for field in instance_form %}
+            {% if field.name != 'map' %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+
+        <div>
+            <button class="button add">Add Point</button>
+            <button class="button rm">Clear All Points</button>
+            <div class="fieldWrapper">
+                {{ instance_form.map.errors}}
+                <!-- this links up with the map object in the form. -->
+                {% for x, lat, lon in init_coords %}
+                    <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
+                {% endfor %}
+                
+                <div id="map" class="google-map" data-type="Point"></div>
+            </div>
+        </div>
+
+    </form>
+    </div>
+
+    {% for form in instance_form.inner_trans_forms %}
+    <div>
+    {% with form.instance.language_code as lang %}
+        <h2> {{ lang }} translations </h2> 
+        <input type="button" value="(click to view/hide translations)" onClick="show_translations('{{ lang }}')" />
+        <form id="id_trans-{{ lang }}-form" action="." method="post" style="display: None"> {%csrf_token%}
+            {{ form.as_p }}
+
         </form>
+    {% endwith %}
+    </div>
     {% endfor %}
 
         {% comment %}
@@ -64,13 +97,15 @@
         </div>
         {% endcomment %}
 
-        
-        {% if new %}
-            <input type="submit" class="btn-submit" name="submit_btn" value="Create" />
-        {% else %}
-            <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
-        {% endif %}
-        <input type="submit" class="btn-submit" name="submit_btn" value="Cancel" />
+        <div>
+            {% if new %}
+                <input type="submit" class="btn-submit" name="submit_btn" value="Create" />
+            {% else %}
+                <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
+            {% endif %}
+            <input type="submit" class="btn-submit" name="submit_btn" value="Cancel" />
+
+        </div>
 
 
     
@@ -97,34 +132,34 @@
     <script src="{{MEDIA_URL}}3pty/js/date.js" type="text/javascript" charset="utf-8"></script>
     <script>
         jQuery(function($) {
-            $(".google-map").mapit({{location|safe|escape}});
+            $(".google-map").mapit({{ instance_form.instance.location|safe|escape }});
             $(".remove-map").remove();
     
-            $("#id_end_date").datetimepicker({
-                    hourGrid: 6,
-                    minuteGrid: 10,
-                    ampm: false
-                });
+            //$("#id_end_date").datetimepicker({
+            //       hourGrid: 6,
+            //      minuteGrid: 10,
+            //     ampm: false
+            //});
             
             $("#id_start_date").datetimepicker({
                 hourGrid: 6,
                 minuteGrid: 10,
                 ampm: false,
-                onClose: function() {
-                    $("#id_end_date").datetimepicker( 'setDate', Date.parse( $("#id_start_date").val() ).add(1).hours());
-                }
+                //onClose: function() {
+                //    $("#id_end_date").datetimepicker( 'setDate', Date.parse( $("#id_start_date").val() ).add(1).hours());
+                //}
             });
 
             $(".btn-submit").live("click", function(){
                 var instance_qs = $('#id_instance-form').serialize();
 
-                data = instance_qs + '&' + {% for lang in instance_form.trans_forms.keys %} $('#id_trans-{{ lang }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
+                data = instance_qs + '&' + {% for form in instance_form.inner_trans_forms %} $('#id_trans-{{ form.instance.language_code }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
 
                 debug.log(data);
 
                 $.ajax({
                         type: "POST",
-                        url: "{% url admin:instance-edit instance_pk %}",
+                        url: "{% url admin:instance-edit instance_form.instance.pk %}",
                         data: data,
                         success: function(data, textStatus) {
                             var $data = $(data);
@@ -144,5 +179,15 @@
             });
 
         });
+
+        function show_translations(lang) {
+            instanceForm = document.getElementById('id_trans-'+lang+'-form');
+            if (instanceForm.style.display == '') {
+                instanceForm.style.display = 'none';
+            }
+            else {
+                instanceForm.style.display = '';
+            }
+        }
     </script>
 {%endblock%}

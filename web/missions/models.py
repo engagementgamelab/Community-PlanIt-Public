@@ -64,7 +64,13 @@ class Mission(TranslatableModel):
     
     def is_started(self):
         return datetime.datetime.now() >= self.start_date
-    
+
+    @classmethod 
+    def latest_by_instance(self, instance):
+        missions_for_instance = self.objects.filter(instance=instance)
+        latest_by =  max(missions_for_instance.values_list('end_date'))
+        return self.objects.get(**{'end_date': latest_by})
+
     def save(self):
         #TODO make this work with unicode
         self.slug = slugify(self.pk)
