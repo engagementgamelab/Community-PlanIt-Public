@@ -27,7 +27,7 @@ def instance_processor(request):
             instances = Instance.objects.all()
             if instances.count():
                 #instance = instances.latest()
-                instance = _fake_latest(Instance, Instance.objects.active())
+                instance = _fake_latest(Instance, Instance.objects.untranslated())
 
     if not instance:
         return {}

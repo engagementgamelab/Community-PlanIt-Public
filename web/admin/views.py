@@ -850,13 +850,16 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
     if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
         return HttpResponseRedirect(reverse("admin-base"))
 
-    if instance_id:
+    #FIXME
+    # what is with this instance_id? 
+    # why is it 'None' coming from  `new instance` form?
+    if instance_id is not None and instance_id != 'None':
         try:
             inst = Instance.objects.untranslated().get(pk=instance_id)
         except Instance.DoesNotExist:
             raise Http404 ("instance with id %s does not exist" % instance_id)
     else:
-    	inst = Instance.objects.create(commit=False)
+    	inst = Instance(start_date=datetime.datetime.now())
     	is_new = True
 
     errors = {}
