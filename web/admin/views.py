@@ -840,15 +840,15 @@ def activity_save(request):
 @login_required
 def instance_edit(request, instance_id, template="admin/trans_instance_edit.html"):
     try:
-	    inst = Instance.objects.untranslated().get(pk=instance_id)
+        inst = Instance.objects.untranslated().get(pk=instance_id)
     except Instance.DoesNotExist:
-    	raise Http404 ("instance with id %s does not exist" % instance_id)
-
+        raise Http404 ("instance with id %s does not exist" % instance_id)
+        
     errors = []
     if request.method == "POST":
         instance_form = InstanceForm(request.POST, instance=inst)
 
-        if instance_form.is_valid():
+        if instance_form.is_valid():            
             instance = instance_form.save()
             log.debug('hurray!')
             return HttpResponseRedirect(reverse("admin:admin-base"))
@@ -875,7 +875,6 @@ def instance_edit(request, instance_id, template="admin/trans_instance_edit.html
     }
 
     return render_to_response(template, RequestContext(request, context))
-
 
 
 @login_required

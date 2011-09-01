@@ -10,6 +10,7 @@ from accounts.models import CPIUser
 from gmapsfield.fields import GoogleMapsField
 
 from nani.forms import TranslatableModelForm
+from nani.utils import get_cached_translation, get_translation
 
 import logging
 log = logging.getLogger(__name__)
@@ -87,7 +88,7 @@ class InstanceForm(TranslatableModelForm):
 
     def __init__(self, *args, **kwargs):
         super(InstanceForm, self).__init__(*args, **kwargs)
-
+        
         def _make_instance_trans_form(instance):
             lang = instance.language_code
             fields = {
@@ -105,13 +106,14 @@ class InstanceForm(TranslatableModelForm):
 
         self.inner_trans_forms = []
         self.instance =  kwargs.get('instance')
-        if self.instance:
+        if self.instance:            
             for trans in self.instance.translations.all():
                 #self.trans_forms[trans.language_code] = _make_instance_trans_form(instance=trans)()
+                # Remove 'instance' from kwargs to pass the rest kwargs to trans_form
                 if kwargs.has_key('instance'):
-                    inst = kwargs.pop('instance')
+                    kwargs.pop('instance')
                 trans_form = _make_instance_trans_form(instance=trans)(*args, **kwargs)
-                trans_form_name = "instance_trans_"+self.instance.language_code+"_form"
+                trans_form_name = "instance_trans_" + trans.language_code + "_form"
                 setattr(self, trans_form_name, trans_form)
                 self.inner_trans_forms.append(trans_form)
                 log.debug('created form:', trans_form_name)
@@ -148,8 +150,30 @@ class InstanceForm(TranslatableModelForm):
         return is_valid and is_valid_trans_forms
 
     def save(self, *args, **kwargs):
-        data = self.cleaned_data
         instance = super(InstanceForm, self).save(*args, **kwargs)
+
+        for form in self.inner_trans_forms:
+            new = form.instance.pk is None
+            data = form.cleaned_data            
+            trans_model = form.instance.__class__
+            language_code = form.instance.language_code
+            
+            if not new:
+                trans = get_cached_translation(instance)
+                if not trans:
+                    try:
+                        trans = get_translation(instance, language_code)
+                    except trans_model.DoesNotExist:
+                        trans = trans_model()
+            else:
+                trans = trans_model()
+                
+            trans.name = data['name_%s' % language_code]
+            trans.description = data['description_%s' % language_code]
+            trans.language_code = language_code
+            trans.master = instance
+            trans.save()
+            
         return instance
 
 #class InstanceProcessForm(forms.Form):
