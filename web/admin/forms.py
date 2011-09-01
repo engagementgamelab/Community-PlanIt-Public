@@ -120,6 +120,7 @@ class InstanceForm(TranslatableModelForm):
         for f in self.inner_trans_forms:
             log.debug('rendering form: %s' % vars(f))
 
+
         # go through the proxy model
         # because of custom instance formatting
         self.fields['curators'].queryset = CPIUser.objects.all()

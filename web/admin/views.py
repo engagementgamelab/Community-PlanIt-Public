@@ -871,6 +871,8 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
             for f in instance_form.inner_trans_forms:
                 if f.errors:
                     errors.update(f.errors)
+            if instance_form.errors:
+                errors.update(instance_form.errors)
     else:
         instance_form = InstanceForm(instance=inst)
 

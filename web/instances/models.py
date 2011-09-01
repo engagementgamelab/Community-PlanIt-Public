@@ -68,7 +68,7 @@ class Instance(TranslatableModel):
     title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=2)
-    start_date = models.DateTimeField(auto_now_add=True)
+    start_date = models.DateTimeField()
     location = GoogleMapsField()
     curators = models.ManyToManyField(User)
     languages = models.ManyToManyField(Language)
