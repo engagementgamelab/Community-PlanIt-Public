@@ -64,24 +64,7 @@ class StaffBaseForm(forms.Form):
 class InstanceBaseForm(forms.Form):
     instance = forms.ModelChoiceField(required=False, queryset=Instance.objects.all())
     instance_name = forms.CharField(required=False, max_length=45)
-   
-class InstanceEditForm_org(forms.Form):
-    name = forms.CharField(required=True, max_length=45)
-    city = forms.CharField(required=False, max_length=255)
-    state = forms.CharField(required=False, max_length=2)
-    start_date = forms.DateTimeField(required=True)
-    #This has to be named map, there can be only one and I am guessing it's a huge JS hack to make this work
-    map = GoogleMapsField().formfield()
-    days_for_mission = forms.IntegerField(required=True)
-    
-    def clean_map(self):
-        map = self.cleaned_data.get('map')
-        if not map:
-            raise forms.ValidationError("The map doesn't exist")
-        mapDict = simplejson.loads(map)
-        if len(mapDict["markers"]) == 0:
-            raise forms.ValidationError("Please select a point on the map")
-        return map
+
 
 class InstanceForm(TranslatableModelForm):
 
@@ -91,9 +74,9 @@ class InstanceForm(TranslatableModelForm):
 
     def __init__(self, *args, **kwargs):
         super(InstanceForm, self).__init__(*args, **kwargs)
-        
-        def _make_instance_trans_form(instance, lang):  
-            instance.language_code = lang          
+
+        def _make_instance_trans_form(instance, lang):
+            instance.language_code = lang
             fields = {
                 'name_'+lang : forms.CharField(max_length=45, initial=instance.name, label='Name'),
                 'description_'+lang : forms.CharField(max_length=1000, initial=instance.description, label='Description'),
@@ -106,34 +89,36 @@ class InstanceForm(TranslatableModelForm):
                          base_fields = fields,
                     )
             )
-        
+
         def get_class( kls ):
             parts = kls.split('.')
             module = ".".join(parts[:-1])
             m = __import__( module )
             for comp in parts[1:]:
-                m = getattr(m, comp)            
+                m = getattr(m, comp)
             return m
 
         self.inner_trans_forms = []
-        self.instance =  kwargs.pop('instance')       
-        for language_code, _lang_name in settings.LANGUAGES:                                 
-            trans_model = self._meta.model._meta.translations_model              
+        self.instance =  kwargs.pop('instance')
+        for language_code, _lang_name in settings.LANGUAGES:
+            trans_model = self._meta.model._meta.translations_model
             if self.instance:
-                trans = get_cached_translation(self.instance)
-                if not trans:
-                    try:
-                        trans = get_translation(self.instance, language_code)
-                    except:
-                        trans = trans_model()
+                #trans = get_cached_translation(self.instance)
+                #if not trans:
+                try:
+                    trans = get_translation(self.instance, language_code)
+                except:
+                    trans = trans_model()
             else:
                 trans = trans_model()
-            
+
             trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwargs)
             trans_form_name = "instance_trans_" + language_code + "_form"
             setattr(self, trans_form_name, trans_form)
             self.inner_trans_forms.append(trans_form)
-            log.debug('created form:', trans_form_name)       
+            log.debug('created form: %s' % trans_form_name)
+        for f in self.inner_trans_forms:
+            log.debug('rendering form: %s' % vars(f))
 
         # go through the proxy model
         # because of custom instance formatting
@@ -170,12 +155,13 @@ class InstanceForm(TranslatableModelForm):
         instance = super(InstanceForm, self).save(*args, **kwargs)
 
         for form in self.inner_trans_forms:
-            
+
             new = form.instance.pk is None
-            data = form.cleaned_data            
+            data = form.cleaned_data
+            log.debug('saving form: %s' % data)
             trans_model = form.instance.__class__
             language_code = form.instance.language_code
-            
+
             if not new:
                 trans = get_cached_translation(instance)
                 if not trans:
@@ -185,18 +171,19 @@ class InstanceForm(TranslatableModelForm):
                         trans = trans_model()
             else:
                 trans = trans_model()
-                
+
             trans.name = data['name_%s' % language_code]
             trans.description = data['description_%s' % language_code]
             trans.language_code = language_code
-            trans.master = instance           
-            trans.save()            
-            
+            trans.master = instance
+            trans.save()
+
+
         return instance
 
-#class InstanceProcessForm(forms.Form):
-#    process_name = forms.CharField(max_length=255)
-#    process_description = forms.CharField(widget=forms.Textarea(attrs={"rows": 15, "cols": 160}))
+class InstanceProcessForm(forms.Form):
+    process_name = forms.CharField(max_length=255)
+    process_description = forms.CharField(widget=forms.Textarea(attrs={"rows": 15, "cols": 160}))
 
 class InstanceEmailForm(forms.Form):
     subject = forms.CharField()

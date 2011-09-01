@@ -23,7 +23,7 @@
         <h2>Instance Options</h2>
         <button type="button" onclick="displayDetails()">(click to expand/reduce)</button>
         <div id="instance_details">
-            <form action="{% url instance-save %}" method="post">
+            <form action="{% url admin:instance-save %}" method="post">
                 {%csrf_token%}
                 
                 <input type="hidden" id="max_points_input" name="max_points_input" value="1">

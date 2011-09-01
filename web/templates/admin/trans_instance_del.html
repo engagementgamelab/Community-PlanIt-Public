@@ -1,0 +1,22 @@
+{%extends "layouts/base.html"%}
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+<h1>Delete Instance "{{ inst.title }}"?</h1>
+
+    <div>
+    <form id="id_instance-form" action="." method="post"> {%csrf_token%}
+
+        <input type="hidden" name="instance_id" value="{{ instance_form.instance.pk }}">
+
+        <div>
+            <input type="submit" class="btn-submit" name="submit_btn" value="Confirm Delete?" />
+            <input type="submit" class="btn-submit" name="submit_btn" value="Cancel" />
+        </div>
+    </form>
+    </div>
+
+{%endblock%}
+

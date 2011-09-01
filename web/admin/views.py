@@ -335,6 +335,7 @@ def instance_save(request):
             "init_coords": init_coords,
             }, [ip])))
 
+"""
 @login_required
 def instance_manage_base(request):
     temp_instances = Instance.objects.filter(curators=request.user)
@@ -382,6 +383,8 @@ def instance_manage_base(request):
             "responses": responses,
             "types": types,
             }, [ip])))
+"""
+
     
 @login_required
 def values_base(request):
@@ -838,47 +841,93 @@ def activity_save(request):
             }, [ip]))) 
 
 @login_required
-def instance_edit(request, instance_id, template="admin/trans_instance_edit.html"):
-    try:
-        inst = Instance.objects.untranslated().get(pk=instance_id)
-    except Instance.DoesNotExist:
-        raise Http404 ("instance with id %s does not exist" % instance_id)
-        
-    errors = []
+def instance(request, instance_id=None, template="admin/trans_instance_edit.html"):
+    is_new = False
+    ok = verify(request)
+    if ok != None:
+        return ok
+
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+
+    if instance_id:
+        try:
+            inst = Instance.objects.untranslated().get(pk=instance_id)
+        except Instance.DoesNotExist:
+            raise Http404 ("instance with id %s does not exist" % instance_id)
+    else:
+    	inst = Instance.objects.create(commit=False)
+    	is_new = True
+
+    errors = {}
     if request.method == "POST":
         instance_form = InstanceForm(request.POST, instance=inst)
 
-        if instance_form.is_valid():            
+        if instance_form.is_valid():
             instance = instance_form.save()
             log.debug('hurray!')
             return HttpResponseRedirect(reverse("admin:admin-base"))
         else:
-            #for f in instance_form.trans_forms.values():
-            #    log.error f.errors
-            errors.append("got errors")
+            for f in instance_form.inner_trans_forms:
+                if f.errors:
+                    errors.update(f.errors)
+    else:
+        instance_form = InstanceForm(instance=inst)
 
-    instance_form = InstanceForm(instance=inst)
 
-    markers = simplejson.loads("%s" % inst.location)["markers"]
-    x = 0
     init_coords = []
-    for coor in markers if markers != None else []:
-        coor = coor["coordinates"]
-        init_coords.append( [x, coor[0], coor[1]] )
-        x = x + 1
+    if inst.location:
+        markers = simplejson.loads("%s" % inst.location)["markers"]
+        x = 0
+        for coor in markers if markers != None else []:
+            coor = coor["coordinates"]
+            init_coords.append( [x, coor[0], coor[1]] )
+            x = x + 1
 
     context = {
             'instance_form': instance_form,
             "init_coords": init_coords,
-            'new': False,
+            'new': is_new,
             'errors': errors,
     }
 
     return render_to_response(template, RequestContext(request, context))
 
+@login_required
+def instance_new(request, template="admin/trans_instance_edit.html"):
+	return instance(request)
 
 @login_required
-def instance_edit_org(request, instance_id):
+def instance_delete(request, instance_id, template="admin/trans_instance_del.html"):
+    log.debug('deleting instance %s' % instance_id)
+    is_new = False
+    ok = verify(request)
+    if ok != None:
+        return ok
+
+    if request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel":
+        return HttpResponseRedirect(reverse("admin-base"))
+
+    try:
+        inst = Instance.objects.untranslated().get(pk=instance_id)
+    except Instance.DoesNotExist:
+        raise Http404 ("instance with id %s does not exist" % instance_id)
+
+    if request.method == "POST" and request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Confirm Delete?":
+        inst.delete()
+        return HttpResponseRedirect(reverse("admin:admin-base"))
+
+    context = {
+            'inst': inst,
+    }
+
+    log.debug('rendering %s' % template )
+
+    return render_to_response(template, RequestContext(request, context))
+
+"""
+@login_required
+def instance_edit(request, instance_id):
     ok = verify(request)
     if ok != None:
         return ok
@@ -943,6 +992,7 @@ def instance_edit_org(request, instance_id):
          "location": instance.location,
          "init_coords": init_coords,
          }, [ip])))
+"""
 
 @login_required
 def instance_email(request, instance_id):

@@ -4,12 +4,16 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    {% if new %}
-        <h2>Create a New Instance</h2>
-    {% else %}
-        <h2>Edit Instance</h2>
-    {% endif %}
-    <div id="content"> {% if errors %} {{ errors|join:"," }} {% endif %} </div>
+
+    <h2>{% if new %}Add{% else %}Edit{% endif %} Instance</h2>
+
+    <div id="content" style="text-color: red;"> 
+        {% if errors %} 
+            {% for k,v in errors.items %}
+            {{ k }}: {{ v }} 
+            {% endfor %}
+        {% endif %}
+    </div>
 
     <div>
     <form id="id_instance-form" action="." method="post"> {%csrf_token%}
@@ -48,16 +52,19 @@
     </div>
 
     {% for form in instance_form.inner_trans_forms %}
-    <div>
-    {% with form.instance.language_code as lang %}
-        <h2> {{ lang }} translations </h2> 
-        <input type="button" value="(click to view/hide translations)" onClick="show_translations('{{ lang }}')" />
-        <form id="id_trans-{{ lang }}-form" action="." method="post" style="display: None"> {%csrf_token%}
-            {{ form.as_p }}
-
-        </form>
-    {% endwith %}
-    </div>
+        <div>
+            {% with form.instance.language_code as lang %}
+            <h2> {{ lang }} <input type="button" value="(click to view/hide translations)" onClick="show_translations('{{ lang }}')" /> </h2> 
+            <form id="id_trans-{{ lang }}-form" action="." method="post" style="display: None"> {%csrf_token%}
+                {% for field in form %}
+                <div class="fieldWrapper">
+                    {{ field.errors }}
+                    {{ field.label_tag }} {{ field }}
+                </div>
+                {% endfor %}
+            </form>
+            {% endwith %}
+        </div>
     {% endfor %}
 
         {% comment %}
