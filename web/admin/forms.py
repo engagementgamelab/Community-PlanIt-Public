@@ -7,7 +7,6 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.utils import simplejson
-from django.contrib.auth import authenticate
 from django.conf import settings
 
 from instances.models import Instance
@@ -180,6 +179,8 @@ class ValueForm(TranslatableModelForm):
     def __init__(self, value_instance, *args, **kwargs):
         super(ValueForm, self).__init__(*args, **kwargs)
         self.value_instance = value_instance
+
+        log.debug("value form. using instance: %s <%s>" % (self.value_instance.pk, self.value_instance))
         
         def _make_instance_trans_form(instance, lang):
             instance.language_code = lang
@@ -235,7 +236,7 @@ class ValueForm(TranslatableModelForm):
         return is_valid and is_valid_trans_forms
 
     def save(self, commit=True):
-        # nani form is set commit to True
+
         value = super(ValueForm, self).save(commit=False)
         value.instance = self.value_instance
         value.save()
@@ -243,23 +244,16 @@ class ValueForm(TranslatableModelForm):
         for form in self.inner_trans_forms:
             new = form.instance.pk is None
             data = form.cleaned_data
-            log.debug('saving form: %s' % data)
             trans_model = form.instance.__class__
             language_code = form.instance.language_code
-
-            if not new:
-                try:
-                    trans = get_translation(value, language_code)
-                except trans_model.DoesNotExist:
-                    trans = trans_model()
-            else:
+            try:
+                trans = get_translation(value, language_code)
+            except trans_model.DoesNotExist:
                 trans = trans_model()
 
             trans.message = data['message_%s' % language_code]
             trans.language_code = language_code
             trans.master = value
-            #import ipdb;ipdb.set_trace()
-            log.debug(vars(trans))
             trans.save()
 
         return value
@@ -330,7 +324,6 @@ class ActivityForm(TranslatableModelForm):
         return is_valid and is_valid_trans_forms
 
     def save(self, commit=True):
-        # nani form is set commit to True
         activity = super(ActivityForm, self).save(commit=False)
         activity.instance = self.activity_instance
         activity.save()
@@ -338,23 +331,17 @@ class ActivityForm(TranslatableModelForm):
         for form in self.inner_trans_forms:
             new = form.instance.pk is None
             data = form.cleaned_data
-            log.debug('saving form: %s' % data)
             trans_model = form.instance.__class__
             language_code = form.instance.language_code
 
-            if not new:
-                try:
-                    trans = get_translation(activity, language_code)
-                except trans_model.DoesNotExist:
-                    trans = trans_model()
-            else:
+            try:
+                trans = get_translation(activity, language_code)
+            except trans_model.DoesNotExist:
                 trans = trans_model()
 
             trans.message = data['message_%s' % language_code]
             trans.language_code = language_code
             trans.master = activity
-            #import ipdb;ipdb.set_trace()
-            log.debug(vars(trans))
             trans.save()
 
         return activity
@@ -434,24 +421,18 @@ class MissionForm(TranslatableModelForm):
         for form in self.inner_trans_forms:
             new = form.instance.pk is None
             data = form.cleaned_data
-            log.debug('saving form: %s' % data)
             trans_model = form.instance.__class__
             language_code = form.instance.language_code
 
-            if not new:
-                try:
-                    trans = get_translation(mission, language_code)
-                except trans_model.DoesNotExist:
-                    trans = trans_model()
-            else:
+            try:
+                trans = get_translation(mission, language_code)
+            except trans_model.DoesNotExist:
                 trans = trans_model()
 
             trans.name = data['name_%s' % language_code]
             trans.description = data['description_%s' % language_code]
             trans.language_code = language_code
-            trans.master =mission
-            #import ipdb;ipdb.set_trace()
-            log.debug(vars(trans))
+            trans.master = mission
             trans.save()
 
         return mission
