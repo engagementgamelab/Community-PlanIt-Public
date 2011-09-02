@@ -25,6 +25,13 @@ def create_instance():
             inst.languages.add(Language.objects.get(code=l))
         except Language.DoesNotExist:
             pass
+
+    for l in inst.languages.values_list('code', flat=True):
+        inst.translate(l)
+        inst.name = random_words(l).decode('iso-8859-1').encode('utf-8')[:45]
+        inst.description = random_words(l, paragraph=True).decode('iso-8859-1').encode('utf-8')[:250]
+        inst.save()
+
     inst.save()
     return inst
 

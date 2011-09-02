@@ -117,7 +117,7 @@ class Instance(TranslatableModel):
             return False
         
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
+        self.slug = slugify(self.title)[:50]
         super(Instance,self).save()
         
     def __unicode__(self):
