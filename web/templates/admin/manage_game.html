@@ -1,5 +1,5 @@
 {%extends "layouts/base.html"%}
-{% load game_extras %}
+{% load admin_tags %}
 
 {%block section%}misisons{%endblock%}
 {%block title%}Administration{%endblock%}
@@ -28,20 +28,22 @@
         </div>
         <div id="instance_{{ instance.pk }}" style="display: None">
             <div>
-                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong>
-                </p>
+                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong></p>
                     <p>Start Date: {{instance.start_date}}</p>
                     {% comment %}
                     # TODO deal with instance end dates
                     {% if instance.end_date %} <p>End Date: {{instance.end_date}}</p> {% endif %}
                     {% endcomment %}
             </div>
-            {% for instance_translations in translations.instance_translations %}
+            {% for t in translations.instance_translations %}
             <div>
-                <h2> {{ instance_translations.language_code }} <input type="button" value="show/hide translations" onClick="showInstanceForm({{ instance_translations.pk}})" /> </h2> <form id="instanceForm_{{instance_translations.id}}" style="display: None"> 
-                    <p>Language: {{ istance_trans.language_code }}</p>
-                    <p>Name: {{ instance_translations.name}}</p>
-                    <p>Description: {{ instance_translations.description}}</p>
+                <h2> {{ t.language_code|lang }} 
+                    <input type="button" value="more" onClick="show_form({{ t.pk}})" /> 
+                </h2> 
+
+                <form id="id_instance-form-{{t.id}}" style="display: None"> 
+                    <p>Name: {{ t.name}}</p>
+                    <p>Description: {{ t.description}}</p>
                     <br>
                 </form>
             </div>
@@ -92,13 +94,13 @@
             }
         }
         
-        function showInstanceForm(instance_id) {
-            instanceForm = document.getElementById("instanceForm_" + instance_id);
-            if (instanceForm.style.display == "") {
-                instanceForm.style.display = "none";
+        function show_form(instance_id) {
+            elem = document.getElementById("id_instance-form-" + instance_id);
+            if (elem.style.display == "") {
+                elem.style.display = "none";
             }
             else {
-                instanceForm.style.display = "";
+                elem.style.display = "";
             }
         }
     </script>
