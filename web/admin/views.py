@@ -8,12 +8,16 @@ from django.contrib.auth.models import User, Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail, send_mass_mail
 from django.core.urlresolvers import reverse
+from django.forms.models import modelformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext, loader
 from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
+
+from nani.utils import get_translation
+
 from web.accounts.models import UserProfile
 from web.admin.forms import *
 from web.instances.models import Instance
@@ -21,6 +25,7 @@ from web.missions.models import Mission
 from web.player_activities.models import *
 from web.processors import instance_processor as ip
 from web.values.models import Value
+from admin.forms import ValueForm
 
 def verify(request):
     user = request.user
@@ -55,8 +60,7 @@ def manage_game(request):
         values = Value.objects.filter(instance=instance)
         for value in values:
             value_list.append(value)
-    """
-    from nani.utils import get_translation
+    """ 
 
     if request.user.is_superuser:
         instances_all = Instance.objects.untranslated().all().order_by("start_date")
@@ -152,7 +156,7 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
 
 @login_required
 def instance_new(request, template="admin/trans_instance_edit.html"):
-	return instance(request)
+    return instance(request)
 
 @login_required
 def instance_delete(request, instance_id, template="admin/trans_instance_del.html"):
@@ -537,6 +541,104 @@ def instance_manage_base(request):
             "types": types,
             }, [ip])))
 """
+
+@login_required
+def manage_values(request, instance_id):
+    ok = verify(request)
+    if ok != None:
+        return ok    
+    try:
+        instance = Instance.objects.untranslated().get(pk=instance_id)
+    except Instance.DoesNotExist:
+        raise Http404 ("instance with id %s does not exist" % instance_id)
+    values = Value.objects.untranslated().filter(instance=instance)
+    
+    values_data = {}
+    for value in values:
+        trans_list = []
+        for lang in instance.languages.all():
+            try:
+                trans = get_translation(value, lang)
+            except:
+                trans = value._meta.translations_model()
+            trans_list.append(trans)
+        values_data[value] = {
+            'value_translations': trans_list,                
+        }
+    
+    tmpl = loader.get_template("admin/manage_values.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+            'values_data' : values_data,
+            'instance' : instance
+            }, [ip])))
+
+@login_required
+def value(request, instance_id, value_id=None, template="admin/trans_value_edit_new.html"):
+    is_new = False
+    ok = verify(request)
+    if ok != None:
+        return ok  
+    
+    try:
+        instance = Instance.objects.untranslated().get(pk=int(instance_id))
+    except Instance.DoesNotExist:
+        raise Http404 ("Instance with id %s does not exist" % instance_id)  
+    
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))
+   
+    if value_id is not None and value_id != 'None':
+        try:
+            value = Value.objects.untranslated().get(pk=int(value_id))
+        except Value.DoesNotExist:
+            raise Http404 ("value with id %s does not exist" % value_id)
+    else:
+        value = None
+        is_new = True
+    
+    errors = {}    
+    value_form = ValueForm(value_instance=instance, instance=value, data=request.POST or None)
+    
+    if request.method == "POST":                  
+        if value_form.is_valid():
+            try:                                
+                value = value_form.save(commit=False)                
+            except Exception, err:
+                #transaction.rollback()
+                print "error while saving value: %s" % str(err)                
+                log.error("error while saving value: %s" % str(err))
+                errors.update({"Updating value": "Server error took place. Please contact the admin."})
+            else:
+                #transaction.commit()
+                return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))
+        else:
+            for f in value_form.inner_trans_forms:
+                if f.errors:
+                    errors.update(f.errors)
+            if value_form.errors:
+                errors.update(value_form.errors)
+                
+    context = {
+            'value': value,
+            'instance': instance,
+            'value_form': value_form,            
+            'new': is_new,
+            'errors': errors,
+    }
+
+    return render_to_response(template, RequestContext(request, context))
+
+
+@login_required
+def value_new(request, instance_id):
+    return value(request, instance_id)
+
+
+@login_required
+def value_delete(request, value_id):
+    pass
+
+
 @login_required
 def values_base(request):
     instances = Instance.objects.untranslated()
@@ -1075,39 +1177,45 @@ def instance_email(request, instance_id):
              }, [ip])))
 
 @login_required
-def values_edit(request, instance_id):
+def values_edit(request, instance_id):    
     ok = verify(request)
     if ok != None:
         return ok
-    if request.method == "POST":
-        instance_id = request.POST["instance_id"]
-        if (instance_id == ""):
-            return HttpResponseServerError("instance_id not set by POST")
-
-        instance = Instance.objects.untranslated().get(id=int(instance_id))
-        Value.objects.untranslated().filter(instance=instance).delete()
-
-        x = 0
-        value_ex = re.compile("value_(?P<index_id>\d+)")
-        for key in request.POST.keys():
-            if value_ex.match(key) != None and request.POST[key] != "":
-                value = Value()
-                value.instance = instance
-                #value.message = request.POST[key]
-                value.save()
-        return HttpResponseRedirect(reverse("admin:admin-base"))
-
+    
     instance = Instance.objects.untranslated().get(id=instance_id)
-    values = Value.objects.untranslated().filter(instance=instance)
+    values = Value.objects.untranslated().filter(instance=instance)    
+    
+    ValueFormSet = modelformset_factory(Value, form=ValueForm, extra=1)   
+    import ipdb
+    ipdb.set_trace()
+    formset = ValueFormSet(queryset=values, data=request.POST or None)    
+   
+    if request.method == "POST" and formset.is_valid():  
+           
+        values = formset.save()
+        
+#        Value.objects.untranslated().filter(instance=instance).delete()
+#
+#        x = 0
+#        value_ex = re.compile("value_(?P<index_id>\d+)")
+#        for key in request.POST.keys():
+#            if value_ex.match(key) != None and request.POST[key] != "":
+#                value = Value()
+#                value.instance = instance
+#                #value.message = request.POST[key]
+#                value.save()
+        return HttpResponseRedirect(reverse("admin:admin-base"))
+        
     index_values = []
     x = 0
     for value in values:
         index_values.append([x, value])
         x = x + 1
-    tmpl = loader.get_template("admin/value_edit_new.html")
+    tmpl = loader.get_template("admin/trans_value_edit_new.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
         "instance_value": instance, #can't name it that, that would be bad because it conflicts with ip.instance. call it something like value or soemthing
         "values": index_values, 
+        "formset": formset
         }, [ip])))
 
 @login_required

@@ -21,6 +21,7 @@
                 <input type="button" value="edit" onClick="window.location='{% url admin:instance-edit instance.pk %}' "/>
                 <input type="button" value="delete" onClick="window.location='{% url admin:instance-delete instance.pk %}' "/>
                 <!--button type="submit" name="email_btn" id="email_btn" style="display:none">Send Email to all in Instance</button-->
+                <input type="button" value="manage values" onClick="window.location='{% url admin:manage-values instance.pk %}' "/>
                 <input type="button" value="show/hide details" onClick="show_hide('instance_{{ instance.pk }}')"/>
             </p>
         </div>
