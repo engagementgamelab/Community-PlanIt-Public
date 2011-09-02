@@ -21,7 +21,10 @@
                 <input type="button" value="edit" onClick="window.location='{% url admin:instance-edit instance.pk %}' "/>
                 <input type="button" value="delete" onClick="window.location='{% url admin:instance-delete instance.pk %}' "/>
                 <!--button type="submit" name="email_btn" id="email_btn" style="display:none">Send Email to all in Instance</button-->
+                <input type="button" value="manage missions" onClick="window.location='{% url admin:manage-missions instance.pk %}' "/>
                 <input type="button" value="manage values" onClick="window.location='{% url admin:manage-values instance.pk %}' "/>
+                <input type="button" value="manage activities" onClick="window.location='{% url admin:manage-activities instance.pk %}' "/>
+                <br/> <br/>
                 <input type="button" value="show/hide details" onClick="show_hide('instance_{{ instance.pk }}')"/>
             </p>
         </div>
@@ -43,17 +46,6 @@
                     <p>Description: {{ instance_translations.description}}</p>
                     <br>
                 </form>
-                {% comment %}
-
-                <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url admin:values-edit instance_trans.master.id %}' "/>
-                <ul>
-                    {% for value in instance.value_set.all %}
-                        {#if value.instance = instance_trans.master #}
-                            <li>{{value.coins}}</li>
-                        {# endif #}
-                    {% endfor %}
-                </ul>
-                {% endcomment %}
             </div>
             {% endfor %}
         </div>

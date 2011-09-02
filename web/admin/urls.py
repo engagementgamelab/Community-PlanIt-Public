@@ -17,6 +17,17 @@ urlpatterns = patterns("",
         url(r"^value/(?P<instance_id>\d+)/(?P<value_id>\d+)/edit/$", "admin.views.value.value", name="value-edit"),
         url(r"^value/(?P<value_id>\d+)/delete/$", "admin.views.value.delete", name="value-delete"),
 
+        url(r"^activity/(?P<instance_id>\d+)/$", "admin.views.activity.manage", name="manage-activities"),
+        url(r"^activity/(?P<instance_id>\d+)/new/$", "admin.views.activity.new", name="activity-new"),
+        url(r"^activity/(?P<instance_id>\d+)/(?P<value_id>\d+)/edit/$", "admin.views.activity.activity", name="activity-edit"),
+        url(r"^activity/(?P<activity_id>\d+)/delete/$", "admin.views.activity.delete", name="activity-delete"),
+
+
+        url(r"^mission/(?P<instance_id>\d+)/$", "admin.views.mission.manage", name="manage-missions"),
+        url(r"^mission/(?P<instance_id>\d+)/new/$", "admin.views.mission.new", name="mission-new"),
+        url(r"^mission/(?P<instance_id>\d+)/(?P<mission_id>\d+)/edit/$", "admin.views.mission.mission", name="mission-edit"),
+        url(r"^mission/(?P<mission_id>\d+)/delete/$", "admin.views.mission.delete", name="mission-delete"),
+
         #url(r"^missionorder/(?P<instance_id>.*)/", "admin.views.mission_order", name="mission-order"),
         #url(r"^mission/save/", "admin.views.mission_save", name="mission-save"),
         #url(r"^mission/", "admin.views.mission_base", name="mission-base"),

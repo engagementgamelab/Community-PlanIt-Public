@@ -1,20 +1,22 @@
+from nani.forms import TranslatableModelForm
+from nani.utils import get_translation
+
+from gmapsfield.fields import GoogleMapsField
+
 from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.utils import simplejson
 from django.contrib.auth import authenticate
 from django.conf import settings
+
 from instances.models import Instance
 from values.models import Value
+from player_activities.models import PlayerActivity
+from missions.models import Mission
 from accounts.models import CPIUser
 
-from gmapsfield.fields import GoogleMapsField
-
-from nani.forms import TranslatableModelForm
-from nani.utils import get_translation
-
 import logging
-
 log = logging.getLogger(__name__)
 
 class StaffBaseForm(forms.Form):
@@ -263,6 +265,199 @@ class ValueForm(TranslatableModelForm):
         return value
     
 
+class ActivityForm(TranslatableModelForm):
+    #TODO: refactoring - base form for ValueForm, InstanceForm, ActivityForm with the inner translation forms
+
+    class Meta:
+        model = PlayerActivity
+        exclude = ('language_code', 'message', 'instance', 'comments')        
+
+    def __init__(self, activity_instance, *args, **kwargs):
+        super(ActivityForm, self).__init__(*args, **kwargs)
+        self.activity_instance = activity_instance
+        
+        def _make_instance_trans_form(instance, lang):
+            instance.language_code = lang
+            fields = {
+                'message_'+lang : forms.CharField(max_length=45, initial=instance.message, label='Message'),
+                'language_code_'+lang : forms.CharField(widget=forms.HiddenInput(), initial=lang, label='')
+            }
+            return type('ActivityTransForm', (forms.BaseForm,),
+                    dict(
+                         instance=instance,
+                         prefix="activity_trans_" + lang +"_form",
+                         base_fields = fields,
+                    )
+            )     
+
+        self.inner_trans_forms = []
+        if 'instance' in kwargs:
+            kwargs.pop('instance')
+        for language in self.activity_instance.languages.all():
+            language_code = language.code
+            trans_model = self._meta.model._meta.translations_model
+            if self.instance:
+                try:
+                    trans = get_translation(self.instance, language_code)
+                except:
+                    trans = trans_model()
+            else:
+                trans = trans_model()
+
+            trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwargs)
+            trans_form_name = "activity_trans_" + language_code + "_form"
+            setattr(self, trans_form_name, trans_form)
+            self.inner_trans_forms.append(trans_form)
+            log.debug('created form: %s' % trans_form_name)
+        for f in self.inner_trans_forms:
+            log.debug('rendering form: %s' % vars(f)) 
+
+    def is_valid(self):
+        is_valid = super(ActivityForm, self).is_valid()
+        if not is_valid:
+            log.error("Error with form %s" % self.__class__.__name__)
+            log.error(self.errors)
+        is_valid_trans_forms = True
+
+        for form in self.inner_trans_forms:
+            if not form.is_valid():
+                log.error("Error with form %s" % form.__class__.__name__)
+                log.error(form.errors)
+                is_valid_trans_forms = False
+
+        log.debug((is_valid, is_valid_trans_forms))
+
+        return is_valid and is_valid_trans_forms
+
+    def save(self, commit=True):
+        # nani form is set commit to True
+        activity = super(ActivityForm, self).save(commit=False)
+        activity.instance = self.activity_instance
+        activity.save()
+        
+        for form in self.inner_trans_forms:
+            new = form.instance.pk is None
+            data = form.cleaned_data
+            log.debug('saving form: %s' % data)
+            trans_model = form.instance.__class__
+            language_code = form.instance.language_code
+
+            if not new:
+                try:
+                    trans = get_translation(activity, language_code)
+                except trans_model.DoesNotExist:
+                    trans = trans_model()
+            else:
+                trans = trans_model()
+
+            trans.message = data['message_%s' % language_code]
+            trans.language_code = language_code
+            trans.master = activity
+            #import ipdb;ipdb.set_trace()
+            log.debug(vars(trans))
+            trans.save()
+
+        return activity
+
+
+class MissionForm(TranslatableModelForm):
+    #TODO: refactoring - base form for ValueForm, InstanceForm, ActivityForm, MissionForm with the inner translation forms
+
+    class Meta:
+        model = Mission
+        exclude = ('language_code', 'name', 'description', 'instance', 'comments')        
+
+    def __init__(self, mission_instance, *args, **kwargs):
+        super(MissionForm, self).__init__(*args, **kwargs)
+        self.mission_instance = mission_instance
+        
+        def _make_instance_trans_form(instance, lang):
+            instance.language_code = lang
+            fields = {
+                'name_'+lang : forms.CharField(max_length=45, initial=instance.name, label='Name'),
+                'description_'+lang : forms.CharField(max_length=45, initial=instance.description, label='Description'),
+                'language_code_'+lang : forms.CharField(widget=forms.HiddenInput(), initial=lang, label='')
+            }
+            return type('MissionTransForm', (forms.BaseForm,),
+                    dict(
+                         instance=instance,
+                         prefix="mission_trans_" + lang +"_form",
+                         base_fields = fields,
+                    )
+            )     
+
+        self.inner_trans_forms = []
+        if 'instance' in kwargs:
+            kwargs.pop('instance')
+        for language in self.mission_instance.languages.all():
+            language_code = language.code
+            trans_model = self._meta.model._meta.translations_model
+            if self.instance:
+                try:
+                    trans = get_translation(self.instance, language_code)
+                except:
+                    trans = trans_model()
+            else:
+                trans = trans_model()
+
+            trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwargs)
+            trans_form_name = "mission_trans_" + language_code + "_form"
+            setattr(self, trans_form_name, trans_form)
+            self.inner_trans_forms.append(trans_form)
+            log.debug('created form: %s' % trans_form_name)
+        for f in self.inner_trans_forms:
+            log.debug('rendering form: %s' % vars(f)) 
+
+    def is_valid(self):
+        is_valid = super(MissionForm, self).is_valid()
+        if not is_valid:
+            log.error("Error with form %s" % self.__class__.__name__)
+            log.error(self.errors)
+        is_valid_trans_forms = True
+
+        for form in self.inner_trans_forms:
+            if not form.is_valid():
+                log.error("Error with form %s" % form.__class__.__name__)
+                log.error(form.errors)
+                is_valid_trans_forms = False
+
+        log.debug((is_valid, is_valid_trans_forms))
+
+        return is_valid and is_valid_trans_forms
+
+    def save(self, commit=True):
+        # nani form is set commit to True
+        mission = super(MissionForm, self).save(commit=False)
+        mission.instance = self.mission_instance
+        mission.save()
+        
+        for form in self.inner_trans_forms:
+            new = form.instance.pk is None
+            data = form.cleaned_data
+            log.debug('saving form: %s' % data)
+            trans_model = form.instance.__class__
+            language_code = form.instance.language_code
+
+            if not new:
+                try:
+                    trans = get_translation(mission, language_code)
+                except trans_model.DoesNotExist:
+                    trans = trans_model()
+            else:
+                trans = trans_model()
+
+            trans.name = data['name_%s' % language_code]
+            trans.description = data['description_%s' % language_code]
+            trans.language_code = language_code
+            trans.master =mission
+            #import ipdb;ipdb.set_trace()
+            log.debug(vars(trans))
+            trans.save()
+
+        return mission
+
+#####
+# everything below is deprecated
 class InstanceProcessForm(forms.Form):
     process_name = forms.CharField(max_length=255)
     process_description = forms.CharField(widget=forms.Textarea(attrs={"rows": 15, "cols": 160}))
