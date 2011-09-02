@@ -121,7 +121,7 @@ class Instance(TranslatableModel):
         super(Instance,self).save()
         
     def __unicode__(self):
-        return self.safe_translation_getter('name', 'Instance: %s' % self.pk)
+        return self.title
 
     def coin_count(self):
         return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
