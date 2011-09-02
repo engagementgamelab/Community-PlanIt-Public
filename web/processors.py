@@ -1,6 +1,7 @@
 from web.challenges.models import Challenge, PlayerChallenge
 from web.instances.models import Instance
 from web.player_activities.models import PlayerActivity
+#from web.core.utils import _fake_latest
 
 # Provides "globals" within the templates to populate things such as the sidebar
 # and other content that was previously only generated in the dashboard.
@@ -15,19 +16,13 @@ def instance_processor(request):
     if request.user.is_anonymous():
         return {}
 
-    def _fake_latest(model, qs):
-        if model and qs:
-            _get_latest_by = model._meta.get_latest_by
-            _latest_by = max(qs.values_list(_get_latest_by, flat=True))
-            return model.objects.get(**{_get_latest_by:_latest_by})
-
     instance = request.user.get_profile().instance
     if not instance:
         if request.user.is_staff or request.user.is_superuser:
-            instances = Instance.objects.all()
+            instances = Instance.objects.untranslated()
             if instances.count():
-                #instance = instances.latest()
-                instance = _fake_latest(Instance, Instance.objects.untranslated())
+                instance = instances.latest()
+                #instance = _fake_latest(Instance, Instance.objects.untranslated())
 
     if not instance:
         return {}

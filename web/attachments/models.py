@@ -2,7 +2,7 @@ import datetime
 import magic
 
 from django.contrib.auth.models import User
-from web.instances.models import Instance
+from instances.models import Instance
 
 from django.contrib import admin
 from django.db import models

@@ -13,42 +13,41 @@
     </div>
     {# endif #}
 
-    {% for game, translations in games.items %}
+    {% for instance, translations in instances_data.items %}
 
         <div>
             <p>
-                <h2>{{ game.title }}</h2>
-                <input type="button" value="edit" onClick="window.location='{% url admin:instance-edit game.pk %}' "/>
-                <input type="button" value="delete" onClick="window.location='{% url admin:instance-delete game.pk %}' "/>
+            <h2>{{ instance.title }} ({{ instance.pk }})</h2>
+                <input type="button" value="edit" onClick="window.location='{% url admin:instance-edit instance.pk %}' "/>
+                <input type="button" value="delete" onClick="window.location='{% url admin:instance-delete instance.pk %}' "/>
                 <!--button type="submit" name="email_btn" id="email_btn" style="display:none">Send Email to all in Instance</button-->
-                <input type="button" value="show/hide details" onClick="show_hide('instance_{{ game.pk }}')"/>
+                <input type="button" value="show/hide details" onClick="show_hide('instance_{{ instance.pk }}')"/>
             </p>
         </div>
-        <div id="instance_{{ game.pk }}" style="display: None">
+        <div id="instance_{{ instance.pk }}" style="display: None">
             <div>
-                <p>Available Languages: <strong>{{ game.languages.all|join:", " }}</strong>
+                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong>
                 </p>
-                    <p>Start Date: {{game.start_date}}</p>
+                    <p>Start Date: {{instance.start_date}}</p>
                     {% comment %}
                     # TODO deal with instance end dates
-                    {% if game.end_date %} <p>End Date: {{game.end_date}}</p> {% endif %}
+                    {% if instance.end_date %} <p>End Date: {{instance.end_date}}</p> {% endif %}
                     {% endcomment %}
             </div>
-            {% for game_trans in translations %}
+            {% for instance_translations in translations.instance_translations %}
             <div>
-                <h2> {{ game_trans.language_code }} <input type="button" value="show/hide translations" onClick="showInstanceForm({{game_trans.pk}})" /> </h2> 
-                <form id="instanceForm_{{game_trans.id}}" style="display: None"> 
-                    <p>Language: {{ game_trans.language_code }}</p>
-                    <p>Name: {{game_trans.name}}</p>
-                    <p>Description: {{game_trans.description}}</p>
+                <h2> {{ instance_translations.language_code }} <input type="button" value="show/hide translations" onClick="showInstanceForm({{ instance_translations.pk}})" /> </h2> <form id="instanceForm_{{instance_translations.id}}" style="display: None"> 
+                    <p>Language: {{ istance_trans.language_code }}</p>
+                    <p>Name: {{ instance_translations.name}}</p>
+                    <p>Description: {{ instance_translations.description}}</p>
                     <br>
                 </form>
                 {% comment %}
 
-                <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url admin:values-edit game_trans.master.id %}' "/>
+                <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url admin:values-edit instance_trans.master.id %}' "/>
                 <ul>
-                    {% for value in game.value_set.all %}
-                        {#if value.instance = game_trans.master #}
+                    {% for value in instance.value_set.all %}
+                        {#if value.instance = instance_trans.master #}
                             <li>{{value.coins}}</li>
                         {# endif #}
                     {% endfor %}

@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 
 from gmapsfield.fields import GoogleMapsField
 
-from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
 from nani.utils import get_translation_aware_manager
@@ -18,6 +17,10 @@ from nani.utils import get_translation_aware_manager
 from south.modelsinspector import add_introspection_rules
 
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
+
+__all__ = (
+    'Language', 'Instance', 'PointsAssignment', 'NotificationRequest',
+)
 
 
 class Language(models.Model):
@@ -97,12 +100,15 @@ class Instance(TranslatableModel):
             return True;
         else:
             return False;
-        
+
+    #TODO 
+    # rewrite this using the last mission end date as the end date
     def is_expired(self):
-        if self.end_date and datetime.datetime.now() >= self.end_date:
-            return True
-        else:
-            return False
+        #if self.end_date and datetime.datetime.now() >= self.end_date:
+        #    return True
+        #else:
+        #    return False
+        return False
     
     def is_started(self):
         if datetime.datetime.now() >= self.start_date:
@@ -127,9 +133,6 @@ class PointsAssignment(models.Model):
     coins = models.IntegerField(default=0)
 
     instance = models.ForeignKey(Instance, editable=False)
-
-class InstanceAdmin(TranslatableAdmin):
-    list_display = ('start_date',) #could not be used with nani:, 'name', 
 
 class NotificationRequest(models.Model):
     instance = models.ForeignKey(Instance, related_name='notification_requests')

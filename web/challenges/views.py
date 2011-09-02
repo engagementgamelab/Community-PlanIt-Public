@@ -15,6 +15,7 @@ from web.comments.models import Comment
 from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.responses.comment.forms import CommentAttachmentResponseForm
+from web.core.utils import _fake_latest
 
 from PIL import Image
 
@@ -241,7 +242,9 @@ def all(request):
     if profile.instance:
         instance = profile.instance
     elif request.user.is_staff or request.user.is_superuser:
-        instance = Instance.objects.active().latest()
+
+        #instance = Instance.objects.active().latest()
+        instance = Instance.objects.untranslated().latest()
 
     new_challenges = instance.challenges.available(request.user)
 

@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'web.attachments',
     'web.challenges',
     'web.comments',
+    'web.core',
     'web.curator',
     'web.flags',
     'web.instances',
@@ -63,6 +64,7 @@ INSTALLED_APPS = (
     'gmapsfield',
     'gmapsfield.templatetags',
     'nani',
+    'dilla',
     'rosetta',
     'south',
 )

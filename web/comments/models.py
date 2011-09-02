@@ -10,8 +10,8 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
-from web.attachments.models import Attachment
-from web.instances.models import Instance
+from attachments.models import Attachment
+from instances.models import Instance
 
 class Comment(TranslatableModel):
     posted_date = models.DateTimeField(default=datetime.datetime.now)

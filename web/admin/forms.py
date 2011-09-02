@@ -197,7 +197,7 @@ class ValueBaseForm(forms.Form):
         self.fields["instances"].choices = []
         if instances:
             for instance in instances:
-                self.fields["instances"].choices.append((instance.id, instance.name))
+                self.fields["instances"].choices.append((instance.id, instance.title))
 
 class MissionBaseForm(forms.Form):
     instances = forms.ChoiceField()

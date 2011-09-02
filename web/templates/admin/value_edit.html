@@ -6,8 +6,8 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h2>Values for Instance: {{instance_value.name}}</h2>
-    <form action="{% url value-save %}" method="post">
+    <h2>Values for Instance e: {{instance_value.name}}</h2>
+    <form action="{% url admin:value-save %}" method="post">
         {%csrf_token%}
         <input type="hidden" name="instance_id" id="instance_id" value="{{instance_value.id}}"/>
         <div id="values"></div>

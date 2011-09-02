@@ -38,6 +38,7 @@ from web.player_activities.models import PlayerActivity
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
 from web.values.models import *
+from web.core.utils import _fake_latest
 
 from PIL import Image
 
@@ -436,21 +437,15 @@ def dashboard(request):
 
     instance = None
 
-    def _fake_latest(model, qs):
-        if model and qs:
-            _get_latest_by = model._meta.get_latest_by
-            _latest_by = max(qs.values_list(_get_latest_by, flat=True))
-            return model.objects.get(**{_get_latest_by:_latest_by})
-
-    profile = request.user.get_profile()
-    if profile.instance:
-        instance = profile.instance
+    prof = request.user.get_profile()
+    if prof.instance:
+        instance = prof.instance
     elif request.user.is_staff or request.user.is_superuser:
         #looks like `latest` qs method is broken in django-nani
         #applying a workaround for now.
         #TODO fix
-        #instance = Instance.objects.active().latest()
-        instance = _fake_latest(Instance, Instance.objects.active())
+        instance = Instance.objects.untranslated().latest()
+        #instance = _fake_latest(Instance, Instance.objects.all())#.active())
 
     last_mission = None
     if instance and instance.missions.count():
@@ -470,12 +465,12 @@ def dashboard(request):
         activation_form = ActivationForm(request.POST)
 
         if activation_form.is_valid():
-            profile = request.user.get_profile()
-            profile.accepted_term = activation_form.cleaned_data['accepted_term']
-            profile.accepted_research = activation_form.cleaned_data['accepted_research']
+            prof = request.user.get_profile()
+            prof.accepted_term = activation_form.cleaned_data['accepted_term']
+            prof.accepted_research = activation_form.cleaned_data['accepted_research']
             #TODO: is_of_age is now deprecated!
-            profile.is_of_age = True;
-            profile.save()
+            prof.is_of_age = True;
+            prof.save()
 
             user = request.user
             user.is_active = True
@@ -488,7 +483,7 @@ def dashboard(request):
     
     # List all users following for filtering the activity feed later on.
     feed = []
-    for user in profile.following.all():
+    for user in prof.following.all():
         feed.append(user)
     feed.append(request.user)
 

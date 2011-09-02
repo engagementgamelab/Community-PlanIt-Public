@@ -7,7 +7,7 @@ from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
 
-from web.instances.models import Instance
+from instances.models import Instance
 
 #class MissionQueryMixin(object):
 #    def past(self):

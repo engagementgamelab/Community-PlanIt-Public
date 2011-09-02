@@ -3,8 +3,8 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from web.instances.models import Instance
-from web.comments.models import Comment
+from instances.models import Instance
+from comments.models import Comment
 
 from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields

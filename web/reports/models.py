@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 from gmapsfield.fields import GoogleMapsField
 
-from web.instances.models import Instance
+from instances.models import Instance
 
 class Activity(models.Model):
     action = models.CharField(max_length=48)

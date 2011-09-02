@@ -31,6 +31,158 @@ def verify(request):
         return HttpResponse(tmpl.render(RequestContext(request, { }, [ip])))
 
 @login_required
+def manage_game(request):
+    ok = verify(request)
+    if ok != None:
+        return ok
+    #TODO: Make the instances only be drawn from instances that the user supervises
+    """
+    if request.user.is_superuser:
+        instances = Instance.objects.all().order_by("start_date")
+    else:
+        instances = Instance.objects.filter(curators=request.user).order_by("start_date")
+    
+    for instance in instances:
+        instance_list.append(instance)
+        missions = Mission.objects.filter(instance=instance).order_by("start_date")
+        for mission in missions:
+            mission_list.append(mission)
+            instance_missions.append((instance, mission))
+            activities = PlayerActivity.objects.filter(mission=mission).order_by("name")
+            for activity in activities:
+                activity_list.append(activity)
+                mission_activities.append((mission, activity))
+        values = Value.objects.filter(instance=instance)
+        for value in values:
+            value_list.append(value)
+    """
+    from nani.utils import get_translation
+
+    if request.user.is_superuser:
+        instances_all = Instance.objects.untranslated().all().order_by("start_date")
+    else:
+        instances_all = Instance.objects.untranslated().filter(curators=request.user).order_by("start_date")
+
+    instances_data = {}
+    for instance in instances_all:
+        #Value.objects.untranslated().filter(instance=instance)
+        instances_data[instance] = {
+                'instance_translations': [get_translation(instance, lang) for lang in instance.get_available_languages()],
+                'value_translations': [
+                    #get_translation(game, lang) for lang in game.get_available_languages()
+                ],
+        }
+    
+    tmpl = loader.get_template("admin/manage_game.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+            'instances_data' : instances_data,
+            #"instance_list": instance_list,
+            #"mission_list": mission_list,
+            #"activity_list": activity_list,
+            #"value_list": value_list,
+            #"instance_missions": instance_missions,
+            #"mission_activities": mission_activities 
+            }, [ip])))
+
+@login_required
+#@transaction.commit_manually
+def instance(request, instance_id=None, template="admin/trans_instance_edit.html"):
+    is_new = False
+    ok = verify(request)
+    if ok != None:
+        return ok
+
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin-base"))
+
+    #FIXME
+    # what is with this instance_id? 
+    # why is it 'None' coming from  `new instance` form?
+    if instance_id is not None and instance_id != 'None':
+        try:
+            inst = Instance.objects.untranslated().get(pk=instance_id)
+        except Instance.DoesNotExist:
+            raise Http404 ("instance with id %s does not exist" % instance_id)
+    else:
+    	inst = Instance(start_date=datetime.datetime.now())
+    	is_new = True
+
+    init_coords = []
+    if inst.location:
+        markers = simplejson.loads("%s" % inst.location)["markers"]
+        x = 0
+        for coor in markers if markers != None else []:
+            coor = coor["coordinates"]
+            init_coords.append( [x, coor[0], coor[1]] )
+            x = x + 1
+
+    errors = {}
+    if request.method == "POST":
+        instance_form = InstanceForm(request.POST, instance=inst)
+
+        if instance_form.is_valid():
+
+            try:
+                instance = instance_form.save()
+            except Exception, err:
+            	#transaction.rollback()
+                log.error("error while saving instance: %s" % str(err))
+                errors.update({"Updating instance": "Server error took place. Please contact the admin."})
+            else:
+            	#transaction.commit()
+                return HttpResponseRedirect(reverse("admin:admin-base"))
+        else:
+            for f in instance_form.inner_trans_forms:
+                if f.errors:
+                    errors.update(f.errors)
+            if instance_form.errors:
+                errors.update(instance_form.errors)
+    else:
+        instance_form = InstanceForm(instance=inst)
+
+
+    context = {
+            'instance_form': instance_form,
+            "init_coords": init_coords,
+            'new': is_new,
+            'errors': errors,
+    }
+
+    return render_to_response(template, RequestContext(request, context))
+
+@login_required
+def instance_new(request, template="admin/trans_instance_edit.html"):
+	return instance(request)
+
+@login_required
+def instance_delete(request, instance_id, template="admin/trans_instance_del.html"):
+    log.debug('deleting instance %s' % instance_id)
+    is_new = False
+    ok = verify(request)
+    if ok != None:
+        return ok
+
+    if request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel":
+        return HttpResponseRedirect(reverse("admin:admin-base"))
+
+    try:
+        inst = Instance.objects.untranslated().get(pk=instance_id)
+    except Instance.DoesNotExist:
+        raise Http404 ("instance with id %s does not exist" % instance_id)
+
+    if request.method == "POST" and request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Confirm Delete?":
+        inst.delete()
+        return HttpResponseRedirect(reverse("admin:admin-base"))
+
+    context = {
+            'inst': inst,
+    }
+
+    log.debug('rendering %s' % template )
+
+    return render_to_response(template, RequestContext(request, context))
+
+@login_required
 def index(request):
     ok = verify(request)
     if ok != None:
@@ -385,11 +537,9 @@ def instance_manage_base(request):
             "types": types,
             }, [ip])))
 """
-
-    
 @login_required
 def values_base(request):
-    instances = Instance.objects.all().order_by("name")
+    instances = Instance.objects.untranslated()
     if request.method == 'POST':
         #s = ""
         #for x in request.POST:
@@ -405,8 +555,8 @@ def values_base(request):
             #for x in form.cleaned_data.keys():
             #    s = "%s%s: %s" % (s, x, form.cleaned_data[x])
             #return HttpResponse("%s" % form.cleaned_data["instances"])
-            instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
-            values = Value.objects.filter(instance=instance)
+            instance = Instance.objects.untranslated().get(id=int(form.cleaned_data["instances"]))
+            values = Value.objects.untranslated().filter(instance=instance)
             index_values = []
             x = 0
             for value in values:
@@ -439,8 +589,8 @@ def values_save(request):
     if (instance_id == ""): 
         return HttpResponseServerError("instance_id not set by POST")
     
-    instance = Instance.objects.get(id=int(instance_id))
-    Value.objects.filter(instance=instance).delete()
+    instance = Instance.objects.untranslated().get(id=int(instance_id))
+    Value.objects.untranslated().filter(instance=instance).delete()
     
     x = 0
     while request.POST.get("value_%s" % x, None) != None and request.POST.get("value_%s" % x) != "":
@@ -453,7 +603,7 @@ def mission_base(request):
     ok = verify(request)
     if ok != None:
         return ok
-    instances = Instance.objects.all().order_by("name")
+    instances = Instance.objects.untranslated().all().order_by("name")
     if request.method == 'POST':
         if (request.POST["submit_btn"] == "Cancel"):
             return HttpResponseRedirect(reverse("admin:admin-base"))
@@ -464,8 +614,8 @@ def mission_base(request):
             #for x in form.cleaned_data.keys():
             #    s = "%s%s: %s" % (s, x, form.cleaned_data[x])
             #return HttpResponse("%s" % form.cleaned_data["instances"])
-            instance = Instance.objects.get(id=int(form.cleaned_data["instances"]))
-            missions = Mission.objects.filter(instance=instance).order_by("start_date")
+            instance = Instance.objects.untranslated().get(id=int(form.cleaned_data["instances"]))
+            missions = Mission.objects.untranslated().filter(instance=instance).order_by("start_date")
             index_missions = []
             x = 0
             for mission in missions:
@@ -496,7 +646,7 @@ def mission_save(request):
         return HttpResponseRedirect(reverse("admin:admin-base"))
     
     
-    instance = Instance.objects.get(id=int(request.POST["instance_id"]))
+    instance = Instance.objects.untranslated().get(id=int(request.POST["instance_id"]))
     form = MissionSaveForm(request.POST)
     if form.is_valid():
         #s = ""
@@ -519,7 +669,7 @@ def mission_save(request):
                 mission_id = int(matchDict["mission_id"])
                 mission = None
                 if mission_id != 0:
-                    mission = Mission.objects.get(id=mission_id)
+                    mission = Mission.objects.untranslated().get(id=mission_id)
                 else:
                     mission = Mission()
                 index_id = int(matchDict["index_id"])
@@ -528,7 +678,7 @@ def mission_save(request):
                 matchDict = delPat.match(key).groupdict()
                 delete_id = int(matchDict["delete_id"])
                 if delete_id != 0:
-                    mission = Mission.objects.get(id=delete_id).delete()
+                    mission = Mission.objects.untranslated().get(id=delete_id).delete()
         
         #slug testing
         slugs = {}
@@ -537,7 +687,7 @@ def mission_save(request):
             if (slugify(name) in slugs):
                 tmpl = loader.get_template("admin/mission_edit.html")
                 form = MissionSaveForm(request.POST)
-                missions = Mission.objects.filter(instance=instance).order_by("start_date")
+                missions = Mission.objects.untranslated().filter(instance=instance).order_by("start_date")
                 index_missions = []
                 x = 0
                 for mission in missions:
@@ -841,103 +991,6 @@ def activity_save(request):
             "responses": responses, 
             }, [ip]))) 
 
-@login_required
-#@transaction.commit_manually
-def instance(request, instance_id=None, template="admin/trans_instance_edit.html"):
-    is_new = False
-    ok = verify(request)
-    if ok != None:
-        return ok
-
-    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
-        return HttpResponseRedirect(reverse("admin-base"))
-
-    #FIXME
-    # what is with this instance_id? 
-    # why is it 'None' coming from  `new instance` form?
-    if instance_id is not None and instance_id != 'None':
-        try:
-            inst = Instance.objects.untranslated().get(pk=instance_id)
-        except Instance.DoesNotExist:
-            raise Http404 ("instance with id %s does not exist" % instance_id)
-    else:
-    	inst = Instance(start_date=datetime.datetime.now())
-    	is_new = True
-
-    init_coords = []
-    if inst.location:
-        markers = simplejson.loads("%s" % inst.location)["markers"]
-        x = 0
-        for coor in markers if markers != None else []:
-            coor = coor["coordinates"]
-            init_coords.append( [x, coor[0], coor[1]] )
-            x = x + 1
-
-    errors = {}
-    if request.method == "POST":
-        instance_form = InstanceForm(request.POST, instance=inst)
-
-        if instance_form.is_valid():
-
-            try:
-                instance = instance_form.save()
-            except Exception, err:
-            	#transaction.rollback()
-                log.error("error while saving instance: %s" % str(err))
-                errors.update({"Updating instance": "Server error took place. Please contact the admin."})
-            else:
-            	#transaction.commit()
-                return HttpResponseRedirect(reverse("admin:admin-base"))
-        else:
-            for f in instance_form.inner_trans_forms:
-                if f.errors:
-                    errors.update(f.errors)
-            if instance_form.errors:
-                errors.update(instance_form.errors)
-    else:
-        instance_form = InstanceForm(instance=inst)
-
-
-    context = {
-            'instance_form': instance_form,
-            "init_coords": init_coords,
-            'new': is_new,
-            'errors': errors,
-    }
-
-    return render_to_response(template, RequestContext(request, context))
-
-@login_required
-def instance_new(request, template="admin/trans_instance_edit.html"):
-	return instance(request)
-
-@login_required
-def instance_delete(request, instance_id, template="admin/trans_instance_del.html"):
-    log.debug('deleting instance %s' % instance_id)
-    is_new = False
-    ok = verify(request)
-    if ok != None:
-        return ok
-
-    if request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel":
-        return HttpResponseRedirect(reverse("admin-base"))
-
-    try:
-        inst = Instance.objects.untranslated().get(pk=instance_id)
-    except Instance.DoesNotExist:
-        raise Http404 ("instance with id %s does not exist" % instance_id)
-
-    if request.method == "POST" and request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Confirm Delete?":
-        inst.delete()
-        return HttpResponseRedirect(reverse("admin:admin-base"))
-
-    context = {
-            'inst': inst,
-    }
-
-    log.debug('rendering %s' % template )
-
-    return render_to_response(template, RequestContext(request, context))
 
 """
 @login_required
@@ -1018,7 +1071,7 @@ def instance_email(request, instance_id):
     tmpl = loader.get_template("admin/instance_email.html")
     return HttpResponse(tmpl.render(RequestContext(request, { 
              "form": email_form,
-             "instance_value": instance,  
+             "instance_value": instance,
              }, [ip])))
 
 @login_required
@@ -1026,26 +1079,26 @@ def values_edit(request, instance_id):
     ok = verify(request)
     if ok != None:
         return ok
-    if request.method == "POST": 
+    if request.method == "POST":
         instance_id = request.POST["instance_id"]
-        if (instance_id == ""): 
+        if (instance_id == ""):
             return HttpResponseServerError("instance_id not set by POST")
-        
-        instance = Instance.objects.get(id=int(instance_id))
-        Value.objects.filter(instance=instance).delete()
-        
+
+        instance = Instance.objects.untranslated().get(id=int(instance_id))
+        Value.objects.untranslated().filter(instance=instance).delete()
+
         x = 0
         value_ex = re.compile("value_(?P<index_id>\d+)")
         for key in request.POST.keys():
             if value_ex.match(key) != None and request.POST[key] != "":
                 value = Value()
                 value.instance = instance
-                value.message = request.POST[key]
+                #value.message = request.POST[key]
                 value.save()
         return HttpResponseRedirect(reverse("admin:admin-base"))
 
-    instance = Instance.objects.get(id=instance_id)
-    values = Value.objects.filter(instance=instance)
+    instance = Instance.objects.untranslated().get(id=instance_id)
+    values = Value.objects.untranslated().filter(instance=instance)
     index_values = []
     x = 0
     for value in values:
@@ -1151,61 +1204,6 @@ def mission_order(request, instance_id):
         }, [ip])))
 
 
-@login_required
-def manage_game(request):
-    ok = verify(request)
-    if ok != None:
-        return ok
-    #TODO: Make the instances only be drawn from instances that the user supervises
-    """
-    instance_list = []
-    mission_list = []
-    activity_list = []
-    value_list = []
-    instance_missions = []
-    mission_activities = []
-    
-    if request.user.is_superuser:
-        instances = Instance.objects.all().order_by("start_date")
-    else:
-        instances = Instance.objects.filter(curators=request.user).order_by("start_date")
-    
-    for instance in instances:
-        instance_list.append(instance)
-        missions = Mission.objects.filter(instance=instance).order_by("start_date")
-        for mission in missions:
-            mission_list.append(mission)
-            instance_missions.append((instance, mission))
-            activities = PlayerActivity.objects.filter(mission=mission).order_by("name")
-            for activity in activities:
-                activity_list.append(activity)
-                mission_activities.append((mission, activity))
-        values = Value.objects.filter(instance=instance)
-        for value in values:
-            value_list.append(value)
-    """
-    #languages = dict(settings.LANGUAGES).keys()
-    from nani.utils import get_translation
-
-    if request.user.is_superuser:
-        instances = Instance.objects.untranslated().all().order_by("start_date")
-    else:
-        instances = Instance.objects.untranslated().filter(curators=request.user).order_by("start_date")
-
-    games = {}
-    for game in instances:
-        games[game] = [get_translation(game, lang) for lang in game.get_available_languages()]
-    
-    tmpl = loader.get_template("admin/manage_game.html")
-    return HttpResponse(tmpl.render(RequestContext(request, {
-            'games' : games,
-            #"instance_list": instance_list,
-            #"mission_list": mission_list,
-            #"activity_list": activity_list,
-            #"value_list": value_list,
-            #"instance_missions": instance_missions,
-            #"mission_activities": mission_activities 
-            }, [ip])))
 
 def CreateOrUpdateActivity(request):
     form = ActivityEditForm(request.POST)
