@@ -193,8 +193,12 @@ class ValueForm(TranslatableModelForm):
                     )
             )     
 
-        self.inner_trans_forms = []
-        self.instance =  kwargs.pop('instance')            
+        self.inner_trans_forms = []      
+        if not self.instance:  
+            self.instance =  kwargs.get('instance')
+        kwwargs = kwargs.copy()
+        if 'instance' in kwwargs:            
+            kwwargs.pop('instance')
         for language_code, _lang_name in settings.LANGUAGES:            
             trans_model = self._meta.model._meta.translations_model
             if self.instance:
@@ -205,7 +209,7 @@ class ValueForm(TranslatableModelForm):
             else:
                 trans = trans_model()
 
-            trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwargs)
+            trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwwargs)
             trans_form_name = "value_trans_" + language_code + "_form"
             setattr(self, trans_form_name, trans_form)
             self.inner_trans_forms.append(trans_form)

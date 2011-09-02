@@ -1086,7 +1086,9 @@ def values_edit(request, instance_id):
     instance = Instance.objects.untranslated().get(id=instance_id)
     values = Value.objects.untranslated().filter(instance=instance)    
     
-    ValueFormSet = modelformset_factory(Value, form=ValueForm, extra=0)   
+    ValueFormSet = modelformset_factory(Value, form=ValueForm, extra=1)   
+    import ipdb
+    ipdb.set_trace()
     formset = ValueFormSet(queryset=values, data=request.POST or None)    
    
     if request.method == "POST" and formset.is_valid():  
