@@ -6,74 +6,97 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h2>Values for Instance {{instance_value.name}}:</h2>
-    <form action="." method="post">{%csrf_token%}        
-        {{ formset.management_form }}
-	    {% for form in formset %}
-	        <div class="table">
-	        {% for field in form %}
-                
-                    {{ field.errors }}
-	                {{ field.label_tag }} {{ field }}
-	          
+    <h2>{% if new %}Add{% else %}Edit{% endif %} Value for Instance: {{ instance.title }}</h2>
+    
+    <div id="content" style="text-color: red;"> 
+        {% if errors %} 
+            {% for k,v in errors.items %}
+            {{ k }}: {{ v }} 
             {% endfor %}
-	        
-	        {% for inner_form in form.inner_trans_forms %}
-	        <div>
-	            {% with inner_form.instance.language_code as lang %}	            
-	            <h2> {{ lang }} <input type="button" value="(click to view/hide translations)" onClick="show_translations('{{ lang }}', '{{ forloop.parentloop.counter }}')" /> </h2> 
-	            <div id="id_trans-{{ lang }}-form-{{ forloop.parentloop.counter }}" style="display: None"> 
-	                {% for field in inner_form %}
-	                <div class="fieldWrapper">
-	                    {{ field.errors }}
-	                    {{ field.label_tag }} {{ field }}
-	                </div>
-	                {% endfor %}
-	            </div>
-	            {% endwith %}
-	        </div>
-	        {% endfor %}
-	        </div>
-	    {% endfor %}   
-	    <input type="button" value="Add More" id="add_more"><br/>
-        <input type="submit" name="submit_btn" class="btn-submit" value="Submit" />
-        <input type="submit" name="submit_btn" value="Cancel" />
-    </form>
+        {% endif %}
+    </div>
+     
+    <form id="id_value-form" action="." method="post">{%csrf_token%}
+        {% if not new %}
+            <input type="hidden" name="value_id" value="{{ value_form.instance.pk }}">
+        {% endif %}   
+        
+        {% for field in value_form %}            
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>            
+        {% endfor %}  
+    </form>   
+    
+    {% for form in value_form.inner_trans_forms %}
+        <div>
+            {% with form.instance.language_code as lang %}
+            <h2> {{ lang }} <input type="button" value="(click to view/hide translations)" onClick="show_translations('{{ lang }}')" /> </h2> 
+            <form id="id_trans-{{ lang }}-form" action="." method="post" style="display: None"> {%csrf_token%}
+                {% for field in form %}
+                <div class="fieldWrapper">
+                    {{ field.errors }}
+                    {{ field.label_tag }} {{ field }}
+                </div>
+                {% endfor %}
+            </form>
+            {% endwith %}
+        </div>
+    {% endfor %}
+        
+	<div>
+            {% if new %}
+                <input type="submit" class="btn-submit" name="submit_btn" value="Create" />
+            {% else %}
+                <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
+            {% endif %}
+            <input type="submit" class="btn-submit" name="submit_btn" value="Cancel" />
+
+    </div>
 {%endblock%}
 
-{%block body%}
-   
+{%block body%}    
     <script>
         jQuery(function($) {
             $(".btn-submit").live("click", function(){
-               
+                var instance_qs = $('#id_value-form').serialize();
+
+                data = instance_qs + '&' + {% for form in value_form.inner_trans_forms %} $('#id_trans-{{ form.instance.language_code }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
+
+                debug.log(data);
+
+                $.ajax({
+                        type: "POST",
+                        url: "{% url admin:value-edit instance.pk value_form.instance.pk %}",
+                        data: data,
+                        success: function(data, textStatus) {
+                            var $data = $(data);
+                            var has_errors = $(data).find(".errorlist");
+
+                            if (has_errors.length > 0){
+                                $('#content').html($data.find('#content'));
+                            }
+                            else {
+                                window.location='{% url admin:manage-values instance.pk %}';
+                            }
+                        },
+                        error: function(data){                                        
+                            $('#content').html(data.responseText);
+                        }
+                });
             });
-            
-            $('#add_more').click(function() {
-        	    cloneMore('div.table:last', 'service');
-    	    });
+
         });
-        
-        function show_translations(lang, count) {            
-            $('#id_trans-'+lang+'-form-'+count).toggle();                        
+
+        function show_translations(lang) {
+            instanceForm = document.getElementById('id_trans-'+lang+'-form');
+            if (instanceForm.style.display == '') {
+                instanceForm.style.display = 'none';
+            }
+            else {
+                instanceForm.style.display = '';
+            }
         }
-        
-        function cloneMore(selector, type) {
-		    var newElement = $(selector).clone(true);
-		    var total = $('#id_' + type + '-TOTAL_FORMS').val();
-		    newElement.find(':input').each(function() {
-		        var name = $(this).attr('name').replace('-' + (total-1) + '-','-' + total + '-');
-		        var id = 'id_' + name;
-		        $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
-		    });
-		    newElement.find('label').each(function() {
-		        var newFor = $(this).attr('for').replace('-' + (total-1) + '-','-' + total + '-');
-		        $(this).attr('for', newFor);
-		    });
-		    
-		    total++;
-		    $('#id_' + type + '-TOTAL_FORMS').val(total);
-		    $(selector).after(newElement);
-		}
     </script>
 {%endblock%}

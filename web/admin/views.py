@@ -16,6 +16,8 @@ from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
+from nani.utils import get_translation
+
 from web.accounts.models import UserProfile
 from web.admin.forms import *
 from web.instances.models import Instance
@@ -58,8 +60,7 @@ def manage_game(request):
         values = Value.objects.filter(instance=instance)
         for value in values:
             value_list.append(value)
-    """
-    from nani.utils import get_translation
+    """ 
 
     if request.user.is_superuser:
         instances_all = Instance.objects.untranslated().all().order_by("start_date")
@@ -540,6 +541,104 @@ def instance_manage_base(request):
             "types": types,
             }, [ip])))
 """
+
+@login_required
+def manage_values(request, instance_id):
+    ok = verify(request)
+    if ok != None:
+        return ok    
+    try:
+        instance = Instance.objects.untranslated().get(pk=instance_id)
+    except Instance.DoesNotExist:
+        raise Http404 ("instance with id %s does not exist" % instance_id)
+    values = Value.objects.untranslated().filter(instance=instance)
+    
+    values_data = {}
+    for value in values:
+        trans_list = []
+        for lang in instance.languages.all():
+            try:
+                trans = get_translation(value, lang)
+            except:
+                trans = value._meta.translations_model()
+            trans_list.append(trans)
+        values_data[value] = {
+            'value_translations': trans_list,                
+        }
+    
+    tmpl = loader.get_template("admin/manage_values.html")
+    return HttpResponse(tmpl.render(RequestContext(request, {
+            'values_data' : values_data,
+            'instance' : instance
+            }, [ip])))
+
+@login_required
+def value(request, instance_id, value_id=None, template="admin/trans_value_edit_new.html"):
+    is_new = False
+    ok = verify(request)
+    if ok != None:
+        return ok  
+    
+    try:
+        instance = Instance.objects.untranslated().get(pk=int(instance_id))
+    except Instance.DoesNotExist:
+        raise Http404 ("Instance with id %s does not exist" % instance_id)  
+    
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))
+   
+    if value_id is not None and value_id != 'None':
+        try:
+            value = Value.objects.untranslated().get(pk=int(value_id))
+        except Value.DoesNotExist:
+            raise Http404 ("value with id %s does not exist" % value_id)
+    else:
+        value = None
+        is_new = True
+    
+    errors = {}    
+    value_form = ValueForm(value_instance=instance, instance=value, data=request.POST or None)
+    
+    if request.method == "POST":                  
+        if value_form.is_valid():
+            try:                                
+                value = value_form.save(commit=False)                
+            except Exception, err:
+                #transaction.rollback()
+                print "error while saving value: %s" % str(err)                
+                log.error("error while saving value: %s" % str(err))
+                errors.update({"Updating value": "Server error took place. Please contact the admin."})
+            else:
+                #transaction.commit()
+                return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))
+        else:
+            for f in value_form.inner_trans_forms:
+                if f.errors:
+                    errors.update(f.errors)
+            if value_form.errors:
+                errors.update(value_form.errors)
+                
+    context = {
+            'value': value,
+            'instance': instance,
+            'value_form': value_form,            
+            'new': is_new,
+            'errors': errors,
+    }
+
+    return render_to_response(template, RequestContext(request, context))
+
+
+@login_required
+def value_new(request, instance_id):
+    return value(request, instance_id)
+
+
+@login_required
+def value_delete(request, value_id):
+    pass
+
+
 @login_required
 def values_base(request):
     instances = Instance.objects.untranslated()
