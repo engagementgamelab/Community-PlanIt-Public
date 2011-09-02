@@ -8,12 +8,14 @@ from django.contrib.auth.models import User, Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail, send_mass_mail
 from django.core.urlresolvers import reverse
+from django.forms.models import modelformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
 from django.shortcuts import render_to_response
 from django.template import Context, RequestContext, loader
 from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
+
 from web.accounts.models import UserProfile
 from web.admin.forms import *
 from web.instances.models import Instance
@@ -21,6 +23,7 @@ from web.missions.models import Mission
 from web.player_activities.models import *
 from web.processors import instance_processor as ip
 from web.values.models import Value
+from admin.forms import ValueForm
 
 def verify(request):
     user = request.user
@@ -152,7 +155,7 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
 
 @login_required
 def instance_new(request, template="admin/trans_instance_edit.html"):
-	return instance(request)
+    return instance(request)
 
 @login_required
 def instance_delete(request, instance_id, template="admin/trans_instance_del.html"):
@@ -1075,39 +1078,43 @@ def instance_email(request, instance_id):
              }, [ip])))
 
 @login_required
-def values_edit(request, instance_id):
+def values_edit(request, instance_id):    
     ok = verify(request)
     if ok != None:
         return ok
-    if request.method == "POST":
-        instance_id = request.POST["instance_id"]
-        if (instance_id == ""):
-            return HttpResponseServerError("instance_id not set by POST")
-
-        instance = Instance.objects.untranslated().get(id=int(instance_id))
-        Value.objects.untranslated().filter(instance=instance).delete()
-
-        x = 0
-        value_ex = re.compile("value_(?P<index_id>\d+)")
-        for key in request.POST.keys():
-            if value_ex.match(key) != None and request.POST[key] != "":
-                value = Value()
-                value.instance = instance
-                #value.message = request.POST[key]
-                value.save()
-        return HttpResponseRedirect(reverse("admin:admin-base"))
-
+    
     instance = Instance.objects.untranslated().get(id=instance_id)
-    values = Value.objects.untranslated().filter(instance=instance)
+    values = Value.objects.untranslated().filter(instance=instance)    
+    
+    ValueFormSet = modelformset_factory(Value, form=ValueForm, extra=0)   
+    formset = ValueFormSet(queryset=values, data=request.POST or None)    
+   
+    if request.method == "POST" and formset.is_valid():  
+           
+        values = formset.save()
+        
+#        Value.objects.untranslated().filter(instance=instance).delete()
+#
+#        x = 0
+#        value_ex = re.compile("value_(?P<index_id>\d+)")
+#        for key in request.POST.keys():
+#            if value_ex.match(key) != None and request.POST[key] != "":
+#                value = Value()
+#                value.instance = instance
+#                #value.message = request.POST[key]
+#                value.save()
+        return HttpResponseRedirect(reverse("admin:admin-base"))
+        
     index_values = []
     x = 0
     for value in values:
         index_values.append([x, value])
         x = x + 1
-    tmpl = loader.get_template("admin/value_edit_new.html")
+    tmpl = loader.get_template("admin/trans_value_edit_new.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
         "instance_value": instance, #can't name it that, that would be bad because it conflicts with ip.instance. call it something like value or soemthing
         "values": index_values, 
+        "formset": formset
         }, [ip])))
 
 @login_required

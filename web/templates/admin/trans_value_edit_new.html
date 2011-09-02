@@ -1,0 +1,79 @@
+{%extends "layouts/base.html"%}
+{% load game_extras %}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>Values for Instance {{instance_value.name}}:</h2>
+    <form action="." method="post">{%csrf_token%}        
+        {{ formset.management_form }}
+	    {% for form in formset %}
+	        <div class="table">
+	        {% for field in form %}
+                
+                    {{ field.errors }}
+	                {{ field.label_tag }} {{ field }}
+	          
+            {% endfor %}
+	        
+	        {% for inner_form in form.inner_trans_forms %}
+	        <div>
+	            {% with inner_form.instance.language_code as lang %}	            
+	            <h2> {{ lang }} <input type="button" value="(click to view/hide translations)" onClick="show_translations('{{ lang }}', '{{ forloop.parentloop.counter }}')" /> </h2> 
+	            <div id="id_trans-{{ lang }}-form-{{ forloop.parentloop.counter }}" style="display: None"> 
+	                {% for field in inner_form %}
+	                <div class="fieldWrapper">
+	                    {{ field.errors }}
+	                    {{ field.label_tag }} {{ field }}
+	                </div>
+	                {% endfor %}
+	            </div>
+	            {% endwith %}
+	        </div>
+	        {% endfor %}
+	        </div>
+	    {% endfor %}   
+	    <input type="button" value="Add More" id="add_more"><br/>
+        <input type="submit" name="submit_btn" class="btn-submit" value="Submit" />
+        <input type="submit" name="submit_btn" value="Cancel" />
+    </form>
+{%endblock%}
+
+{%block body%}
+   
+    <script>
+        jQuery(function($) {
+            $(".btn-submit").live("click", function(){
+               
+            });
+            
+            $('#add_more').click(function() {
+        	    cloneMore('div.table:last', 'service');
+    	    });
+        });
+        
+        function show_translations(lang, count) {            
+            $('#id_trans-'+lang+'-form-'+count).toggle();                        
+        }
+        
+        function cloneMore(selector, type) {
+		    var newElement = $(selector).clone(true);
+		    var total = $('#id_' + type + '-TOTAL_FORMS').val();
+		    newElement.find(':input').each(function() {
+		        var name = $(this).attr('name').replace('-' + (total-1) + '-','-' + total + '-');
+		        var id = 'id_' + name;
+		        $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+		    });
+		    newElement.find('label').each(function() {
+		        var newFor = $(this).attr('for').replace('-' + (total-1) + '-','-' + total + '-');
+		        $(this).attr('for', newFor);
+		    });
+		    
+		    total++;
+		    $('#id_' + type + '-TOTAL_FORMS').val(total);
+		    $(selector).after(newElement);
+		}
+    </script>
+{%endblock%}
