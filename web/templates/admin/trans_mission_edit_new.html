@@ -64,11 +64,15 @@
 
                 data = instance_qs + '&' + {% for form in mission_form.inner_trans_forms %} $('#id_trans-{{ form.instance.language_code }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
 
-                debug.log(data);
+                {% if new %}
+                    var url = "{% url admin:mission-new instance.pk %}";
+                {% else %}
+                    var url = "{% url admin:mission-edit instance.pk mission_form.mission_instance.pk %}";
+                {% endif %}
 
                 $.ajax({
                         type: "POST",
-                        url: "{% url admin:mission-edit instance.pk mission_form.instance.pk %}",
+                        url: url,
                         data: data,
                         success: function(data, textStatus) {
                             var $data = $(data);

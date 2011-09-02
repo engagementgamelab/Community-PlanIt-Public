@@ -46,11 +46,11 @@
     {% endfor %}
         
 	<div>
-            {% if new %}
-                <input type="submit" class="btn-submit" name="submit_btn" value="Create" />
-            {% else %}
-                <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
-            {% endif %}
+        {% if new %}
+            <input type="submit" class="btn-submit" name="submit_btn" value="Create" />
+        {% else %}
+            <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
+        {% endif %}
             <input type="submit" class="btn-submit" name="submit_btn" value="Cancel" />
 
     </div>
@@ -61,14 +61,16 @@
         jQuery(function($) {
             $(".btn-submit").live("click", function(){
                 var instance_qs = $('#id_value-form').serialize();
-
                 data = instance_qs + '&' + {% for form in value_form.inner_trans_forms %} $('#id_trans-{{ form.instance.language_code }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
-
-                debug.log(data);
+                {% if new %}
+                    var url = "{% url admin:value-new instance.pk %}";
+                {% else %}
+                    var url = "{% url admin:value-edit instance.pk value_form.value_instance.pk %}";
+                {% endif %}
 
                 $.ajax({
                         type: "POST",
-                        url: "{% url admin:value-edit instance.pk value_form.instance.pk %}",
+                        url: url,
                         data: data,
                         success: function(data, textStatus) {
                             var $data = $(data);
