@@ -6,24 +6,22 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h1>Manage Instances</h1>
-    {# if is_staff #}
-    <div>
-        <input type="button" value="New Instance" onClick="window.location='{% url admin:instance-new %}' "/>
-    </div>
-    {# endif #}
+    <h1>Manage Instances
+            <input type="button" value="Create New Instance" onClick="window.location='{% url admin:instance-new %}' "/>
+    </h1>
 
     {% for instance, translations in instances_data.items %}
 
         <div>
             <p>
-            <h2>{{ instance.title }} ({{ instance.pk }})</h2>
+            <h2>{{ instance.title }} <{{ instance.pk }}></h2>
                 <input type="button" value="edit" onClick="window.location='{% url admin:instance-edit instance.pk %}' "/>
                 <input type="button" value="delete" onClick="window.location='{% url admin:instance-delete instance.pk %}' "/>
+                <br/> <br/>
                 <!--button type="submit" name="email_btn" id="email_btn" style="display:none">Send Email to all in Instance</button-->
-                <input type="button" value="manage missions" onClick="window.location='{% url admin:manage-missions instance.pk %}' "/>
-                <input type="button" value="manage values" onClick="window.location='{% url admin:manage-values instance.pk %}' "/>
-                <input type="button" value="manage activities" onClick="window.location='{% url admin:manage-activities instance.pk %}' "/>
+                <input type="button" value="missions" onClick="window.location='{% url admin:manage-missions instance.pk %}' "/>
+                <input type="button" value="values" onClick="window.location='{% url admin:manage-values instance.pk %}' "/>
+                <input type="button" value="activities" onClick="window.location='{% url admin:manage-activities instance.pk %}' "/>
                 <br/> <br/>
                 <input type="button" value="show/hide details" onClick="show_hide('instance_{{ instance.pk }}')"/>
             </p>

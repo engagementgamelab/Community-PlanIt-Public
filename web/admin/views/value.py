@@ -1,9 +1,10 @@
 from nani.utils import get_translation
 
+from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 
 from instances.models import Instance
@@ -29,6 +30,9 @@ def manage(request, instance_id, template="admin/manage_values.html"):
     except Instance.DoesNotExist:
         raise Http404 ("Instance with id %s does not exist" % instance_id)
 
+    if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
+        return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))
+
     data = {}
     for value in Value.objects.untranslated().filter(instance=instance):
         #Value.objects.untranslated().filter(instance=instance)
@@ -49,6 +53,8 @@ def value(request, instance_id, value_id=None, template="admin/trans_value_edit_
     ok = verify(request)
     if ok != None:
         return ok
+
+    log.debug("value_id: %s" % value_id)
 
     try:
         instance = Instance.objects.untranslated().get(pk=int(instance_id))
@@ -100,13 +106,7 @@ def value(request, instance_id, value_id=None, template="admin/trans_value_edit_
     return render_to_response(template, RequestContext(request, context))
 
 
-@login_required
-def new(request, instance_id):
-    return value(request, instance_id)
-
-@login_required
-def delete(request, value_id):
-    pass
-
-
+#@login_required
+#def delete(request, instance_id, value_id, model, template="admin/trans_instance_del.html"):
+#	return delete_obj(request)
 

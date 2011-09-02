@@ -1,5 +1,5 @@
 {%extends "layouts/base.html"%}
-{% load game_extras %}
+{% load admin_tags %}
 
 {%block section%}misisons{%endblock%}
 {%block title%}Administration{%endblock%}
@@ -18,21 +18,23 @@
         <div>
             <p>
             <h2>{{ value }}</h2>
+            <div>
+                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong></p>                   
+            </div>
                 <input type="button" value="edit" onClick="window.location='{% url admin:value-edit instance.pk value.pk %}' "/>
                 <input type="button" value="delete" onClick="window.location='{% url admin:value-delete value.pk %}' "/>                
-                <input type="button" value="show/hide details" onClick="show_hide('value_{{ value.pk }}')"/>
+                <br/> <br/>
+                <input type="button" value="show translations" onClick="show_hide('trans_details_{{ value.pk }}')"/>
             </p>
         </div>
-        <div id="value_{{ value.pk }}" style="display: None">
+        <div id="trans_details_{{ value.pk }}" style="display: None">
+            {% for t in translations.value_translations %}
             <div>
-                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong>
-                </p>                   
-            </div>
-            {% for value_trans in translations.value_translations %}
-            <div>
-                <h2> {{ value_trans.language_code }} <input type="button" value="show/hide translations" onClick="showInstanceForm('{{ value_trans.pk}}')" /> </h2> <form id="valueForm_{{value_trans.pk}}" style="display: None"> 
-                    <p>Language: {{ value_trans.language_code }}</p>
-                    <p>Message: {{ value_trans.message}}</p>                    
+                <h2> {{ t.language_code|lang }}
+                    <input type="button" value="show" onClick="show_form('{{ t.pk }}')" />
+                </h2> 
+                <form id="id_trans-form-{{ t.pk}}" style="display: None"> 
+                    <p>Message: {{ t.message}}</p>                    
                     <br>
                 </form>
                
@@ -56,8 +58,8 @@
             }
         }
         
-        function showInstanceForm(instance_id) {
-            $("#valueForm_" + instance_id).toggle();            
+        function show_form(instance_id) {
+            $("#id_trans-form-" + instance_id).toggle();            
         }
     </script>
 {% endblock %}

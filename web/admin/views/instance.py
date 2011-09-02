@@ -1,5 +1,7 @@
 from nani.utils import get_translation
 
+import datetime
+
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
@@ -119,9 +121,6 @@ def delete(request, instance_id, template="admin/trans_instance_del.html"):
     ok = verify(request)
     if ok != None:
         return ok
-
-    if request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel":
-        return HttpResponseRedirect(reverse("admin:admin-base"))
 
     try:
         inst = Instance.objects.untranslated().get(pk=instance_id)

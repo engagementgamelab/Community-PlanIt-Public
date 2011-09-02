@@ -17,9 +17,6 @@
     </div>
      
     <form id="id_value-form" action="." method="post">{%csrf_token%}
-        {% if not new %}
-            <input type="hidden" name="value_id" value="{{ value_form.instance.pk }}">
-        {% endif %}   
         
         {% for field in value_form %}            
             <div class="fieldWrapper">
@@ -51,7 +48,8 @@
         {% else %}
             <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
         {% endif %}
-            <input type="submit" class="btn-submit" name="submit_btn" value="Cancel" />
+        <input type="submit" class="btn-submit" name="submit_btn" value="Cancel"  
+                    onClick="window.location='{% url admin:manage-values instance.pk %}'"/>
 
     </div>
 {%endblock%}
@@ -65,7 +63,7 @@
                 {% if new %}
                     var url = "{% url admin:value-new instance.pk %}";
                 {% else %}
-                    var url = "{% url admin:value-edit instance.pk value_form.value_instance.pk %}";
+                    var url = "{% url admin:value-edit instance.pk value.pk %}";
                 {% endif %}
 
                 $.ajax({

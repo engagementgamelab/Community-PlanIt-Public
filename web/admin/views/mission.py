@@ -3,7 +3,7 @@ from nani.utils import get_translation
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 
 from instances.models import Instance

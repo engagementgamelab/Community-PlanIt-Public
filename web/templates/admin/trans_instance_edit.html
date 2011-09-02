@@ -110,7 +110,8 @@
             {% else %}
                 <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
             {% endif %}
-            <input type="submit" class="btn-submit" name="submit_btn" value="Cancel" />
+            <input type="submit" class="btn-submit" name="submit_btn" value="Cancel" 
+                    onClick="window.location='{% url admin:admin-base %}'"/>
 
         </div>
 
