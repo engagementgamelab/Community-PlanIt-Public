@@ -18,7 +18,7 @@ from web.instances.models import Instance
 from web.missions.models import Mission
 from web.player_activities.forms import *
 from web.player_activities.models import *
-from web.processors import instance_processor as ip
+#from web.processors import instance_processor as ip
 from web.reports.actions import *
 
 from PIL import Image
@@ -53,7 +53,9 @@ def overview(request, id):
                                                                  "comments": getComments(answers, Answer),
                                                                  "comment_form": comment_form,
                                                                  "myComment": myComment,
-                                                                 }, [ip])))
+                                                                 }, 
+                                                                 #[ip]
+                                                                 )))
     elif activity.type.type == "single_response":
         answers = AnswerSingleResponse.objects.filter(activity=activity)
 
@@ -82,7 +84,9 @@ def overview(request, id):
                                                                  "comments": getComments(answers, AnswerSingleResponse),
                                                                  "comment_form": comment_form,
                                                                  "myComment": myComment,
-                                                                 }, [ip])))
+                                                                 }, 
+                                                                 #[ip]
+                                                                 )))
     elif activity.type.type == "multi_response":
         answers = AnswerMultiChoice.objects.filter(option__activity=activity)
         comments = None
@@ -119,7 +123,9 @@ def overview(request, id):
                                                                  "comments": comments,
                                                                  "comment_form": comment_form,
                                                                  "answers": answerList,
-                                                                 "myComment": myComment}, [ip])))
+                                                                 "myComment": myComment}, 
+                                                                 #[ip]
+                                                                 )))
     elif activity.type.type == "map":
         answers = AnswerMap.objects.filter(activity=activity)
         init_coords = []
@@ -148,7 +154,9 @@ def overview(request, id):
                                                                  "answers": answers,
                                                                  "init_coords": init_coords,
                                                                  "map": map,
-                                                                 "myComment": myComment}, [ip])))
+                                                                 "myComment": myComment}, 
+                                                                #[ip]
+                                                                )))
     elif activity.type.type == "empathy":
         activity = PlayerEmpathyActivity.objects.get(id=activity.id)
         answers = Answer.objects.filter(activity=activity)
@@ -165,7 +173,9 @@ def overview(request, id):
                                                                  "comments": getComments(answers, Answer),
                                                                  "comment_form": comment_form,
                                                                  "answers": answers,
-                                                                 "myComment": myComment}, [ip])))
+                                                                 "myComment": myComment}, 
+                                                                 #[ip]
+                                                                 )))
     return HttpResponse("web page not created yet")
 
 def comment_fun(answer, form, request):
@@ -371,7 +381,9 @@ def get_activity(request, id):
         "activity": activity,
         "map": map,
         "init_coords": init_coords,
-        }, [ip])))
+        },
+        #[ip]
+        )))
 
 @login_required
 def replay(request, id):
@@ -502,7 +514,9 @@ def replay(request, id):
         "activity": activity,
         "map": map,
         "init_coords": init_coords,
-        }, [ip])))
+        }, 
+        #[ip]
+        )))
     
     
 
@@ -516,14 +530,18 @@ def index(request):
         return HttpResponse(tmpl.render(RequestContext(request, {
             'instance': instance,
             'mission': []
-        }, [ip])))
+        }, 
+        #[ip]
+        )))
         
     missions = instance.missions.active()
     if missions.count() == 0:
         return HttpResponse(tmpl.render(RequestContext(request, {
             'instance': instance,
             'mission': None
-        }, [ip])))
+        }, 
+        #[ip]
+        )))
         
     activities = PlayerActivity.objects.filter(mission=missions[0])
     pks = []
@@ -545,4 +563,6 @@ def index(request):
             'mission': missions[0],
             'activities': activities,
             'unfinished_activities': unfinished_activities,
-        }, [ip])))
+        }, 
+        #[ip]
+        )))

@@ -11,7 +11,7 @@ from web.missions.models import *
 from web.challenges.models import *
 from web.accounts.forms import *
 from web.reports.actions import ActivityLogger
-from web.processors import instance_processor as ip
+#from web.processors import instance_processor as ip
 
 @login_required
 def affiliation(request, affiliation):
@@ -39,9 +39,13 @@ def affiliation(request, affiliation):
         'players': players,
         'affiliation_leaderboard': affiliation_leaderboard,
         'affiliation_points': affiliation_points,
-    }, [ip])))
+    }, 
+    #[ip]
+    )))
 
 @login_required
 def all(request):
     tmpl = loader.get_template('affiliations/all.html')
-    return HttpResponse(tmpl.render(RequestContext(request, {}, [ip])))
+    return HttpResponse(tmpl.render(RequestContext(request, {}, 
+                            #[ip]
+                    )))

@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 from django.utils import simplejson
 from django.contrib.auth import authenticate
 from django.conf import settings
-from web.instances.models import Instance
+from instances.models import Instance
 from values.models import Value
 from accounts.models import CPIUser
 
@@ -172,17 +172,17 @@ class ValueForm(TranslatableModelForm):
     #TODO: refactoring - base form for ValueForm, InstanceForm with the inner translation forms
 
     class Meta:
-        model = Value        
+        model = Value
         exclude = ('language_code', 'message', 'instance', 'comments')        
 
     def __init__(self, value_instance, *args, **kwargs):
         super(ValueForm, self).__init__(*args, **kwargs)
         self.value_instance = value_instance
         
-        def _make_instance_trans_form(instance, lang):             
+        def _make_instance_trans_form(instance, lang):
             instance.language_code = lang
             fields = {
-                'message_'+lang : forms.CharField(max_length=45, initial=instance.message, label='Message'),                
+                'message_'+lang : forms.CharField(max_length=45, initial=instance.message, label='Message'),
                 'language_code_'+lang : forms.CharField(widget=forms.HiddenInput(), initial=lang, label='')
             }
             return type('ValueTransForm', (forms.BaseForm,),
@@ -193,13 +193,13 @@ class ValueForm(TranslatableModelForm):
                     )
             )     
 
-        self.inner_trans_forms = []      
-        if 'instance' in kwargs:            
-            kwargs.pop('instance')       
+        self.inner_trans_forms = []
+        if 'instance' in kwargs:
+            kwargs.pop('instance')
         for language in self.value_instance.languages.all():
-            language_code = language.code            
+            language_code = language.code
             trans_model = self._meta.model._meta.translations_model
-            if self.instance:                
+            if self.instance:
                 try:
                     trans = get_translation(self.instance, language_code)
                 except:
@@ -232,11 +232,11 @@ class ValueForm(TranslatableModelForm):
 
         return is_valid and is_valid_trans_forms
 
-    def save(self, commit=True):        
+    def save(self, commit=True):
         # nani form is set commit to True
         value = super(ValueForm, self).save(commit=False)
         value.instance = self.value_instance
-        value.save()       
+        value.save()
         
         for form in self.inner_trans_forms:
             new = form.instance.pk is None
@@ -253,9 +253,11 @@ class ValueForm(TranslatableModelForm):
             else:
                 trans = trans_model()
 
-            trans.message = data['message_%s' % language_code]            
+            trans.message = data['message_%s' % language_code]
             trans.language_code = language_code
             trans.master = value
+            #import ipdb;ipdb.set_trace()
+            log.debug(vars(trans))
             trans.save()
 
         return value

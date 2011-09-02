@@ -42,7 +42,6 @@ INSTALLED_APPS = (
 
     'web',
     'web.accounts',
-    'web.admin',
     'web.answers',
     'web.attachments',
     'web.challenges',

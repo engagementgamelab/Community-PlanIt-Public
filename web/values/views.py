@@ -14,7 +14,7 @@ from web.accounts.models import UserProfile
 from web.attachments.models import Attachment
 from web.comments.forms import CommentForm
 from web.comments.models import Comment
-from web.processors import instance_processor as ip
+#from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.values.models import *
 
@@ -46,7 +46,9 @@ def all(request):
         'value_wrapper': value_wrapper,
         'community_spent' : community_spent,
         'player_spent' : player_spent,
-    }, [ip])))
+    }, 
+        #[ip]
+        )))
 
 @login_required
 def detail(request, id):
@@ -97,7 +99,9 @@ def detail(request, id):
         'total_coins': total_coins,
         'comments': value,
         'comment_form': CommentForm(),
-    }, [ip])))
+    }, 
+    #[ip]
+    )))
 
 @login_required
 def spend(request, id):

@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 
 from web.accounts.models import UserProfile
 from web.instances.models import Instance
-from web.processors import instance_processor as ip
+#from web.processors import instance_processor as ip
 from web.values.models import *
 
 def display_list(request, players, title):
@@ -28,7 +28,8 @@ def display_list(request, players, title):
     return HttpResponse(tmpl.render(RequestContext(request, {
         'page': title,
         'players': players,
-    }, [ip])))
+    }, #[ip]
+    )))
 
 @login_required
 def instance(request, slug):

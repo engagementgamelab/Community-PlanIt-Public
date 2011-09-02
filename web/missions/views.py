@@ -16,7 +16,7 @@ from web.comments.models import Comment
 from web.instances.models import Instance
 from web.missions.models import *
 from web.player_activities.models import PlayerActivity
-from web.processors import instance_processor as ip
+#from web.processors import instance_processor as ip
 
 @login_required
 def fetch(request, slug):
@@ -40,7 +40,9 @@ def fetch(request, slug):
         'unfinished_activities': unfinished_activities,
         'answered_activities': answered_activities,
         'comment_form': CommentForm(),
-    }, [ip])))
+    }, 
+    #[ip]
+    )))
 
 @login_required
 def all(request):
@@ -49,4 +51,6 @@ def all(request):
     tmpl = loader.get_template('missions/all.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'played': finished_activities,
-    }, [ip])))
+    }, 
+    #[ip]
+    )))
