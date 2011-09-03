@@ -39,7 +39,7 @@ def random_words(language_code='en', paragraph=False, num=5):
                 ".\n\n".join([_random_paragraph() for i in range(n)])
         return _random_paragraphs(num)
 
-    return _random_words(num)
+    return _random_words(num).decode('iso-8859-1').encode('utf-8')
 
 def _random_language_code():
     lc =  random.choice([x[0] for x in settings.LANGUAGES])

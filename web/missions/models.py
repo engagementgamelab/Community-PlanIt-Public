@@ -38,6 +38,8 @@ class MissionManager(TranslationManager):
         return self.filter(start_date__lte=now, end_date__gte=now).order_by('start_date')
 
 class Mission(TranslatableModel):
+
+    title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
     instance = models.ForeignKey(Instance, related_name='missions')
     slug = models.SlugField(editable=False)
     start_date = models.DateTimeField()
@@ -73,11 +75,11 @@ class Mission(TranslatableModel):
 
     def save(self):
         #TODO make this work with unicode
-        self.slug = slugify(self.pk)
+        self.slug = slugify(self.title)
         super(Mission, self).save()
 
     def __unicode__(self):
-        return self.safe_translation_getter('name', 'Mission: %s' % self.pk)
+        return self.title
 
 class MissionAdmin(TranslatableAdmin):
     list_display = ('start_date', 'end_date', 'instance') #could not be used with nani:, 'name', 
