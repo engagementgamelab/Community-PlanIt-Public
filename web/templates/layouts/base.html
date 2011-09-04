@@ -37,6 +37,9 @@
     {% block head %}{% endblock %}
 </head>
 
+{% with request.user as user %}
+{% with request.user.get_profile.instance as current_instance %}
+
 <body class="page {% block section %}default{% endblock %}{% if user.is_authenticated %} loggedin{% endif %} {% block extra_body_class %}{% endblock %}">
     <div class="wrapper">
         <div id="header">
@@ -44,7 +47,7 @@
             <nav>
                 <ul>
                 {% block nav %}
-                    {% if user.is_authenticated and instance.is_started %}
+                    {% if user.is_authenticated and current_instance.is_started %}
                     <li><div class="home"><a href="{% url accounts:dashboard %}"><span>{% trans "Home" %}</span></a></div></li>
                     <li><div class="missions"><a href="{% url missions:index %}"><span>{% trans "Missions" %}</span></a></div></li>
                     <li><div class="challenges"><a href="{% url challenges:index %}"><span>{% trans "Challenges" %}</span></a></div></li>
@@ -101,7 +104,7 @@
                             </div>
                             <hr class="space"/>
 
-                            {% if instance.is_started %}
+                            {% if current_instance.is_started %}
                             {% block aside_progress %}
                             <div class="score">
                                 <span>{{ user.get_profile.points_to_coin }} pts to your next token!</span>
@@ -193,4 +196,6 @@
     {% endblock %}
     {% block body %}{% endblock %}
 </body>
+{% endwith %}
+{% endwith %}
 </html>
