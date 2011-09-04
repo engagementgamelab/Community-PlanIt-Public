@@ -21,15 +21,15 @@ DICT_LOOKUP = {
 }
 
 def random_words(language_code='en', paragraph=False, num=5):
-	ignore_trans = True
+    ignore_trans = True
 
-	if ignore_trans
+    if ignore_trans:
+        dictionary = settings.DICTIONARY
+    else:
         if language_code not in ['en-us', 'en']:
             dictionary = os.path.join('/usr/share/dict/', DICT_LOOKUP[language_code])
         else:
             dictionary = settings.DICTIONARY
-    else:
-        dictionary = settings.DICTIONARY
 
     try:
         d = open(dictionary, "r").readlines()
