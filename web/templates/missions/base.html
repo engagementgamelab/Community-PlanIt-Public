@@ -1,23 +1,29 @@
 {% extends "layouts/base.html" %}
-{% load gmap %}
+{% load gmap i18n %}
 {% load game_extras %}
 {% block section %}missions{% endblock %}
 
-{% block title %}{{mission.name}} Mission{% endblock %}
+{% block title %}{{mission.name}} {% trans "Mission" %}{% endblock %}
 {% block page_title %}{% endblock %}
 
 {% block main %}
 <h2>{{mission.name}}</h2>
 {% if not mission.is_active %}
-<p class="notice">This mission is not currently active. You can click on the activities to see overviews, but you cannot complete them.</p>
+<p class="notice">{% trans "This mission is not currently active. You can click on the activities to see overviews, but you cannot complete them" %}.</p>
 {% endif %}
 {% if mission.video %}
 <div class="left video">{{mission.video|safe}}</div>
 {% endif %}
 <div class="left description">{{mission.description|linebreaksbr}}</div>
 
-<h3 class="clear">{% if mission.activities.count %}You've completed {{answered_activities|length}}/{{mission.activities.count}} activities{% else %}Activities{% endif %}:</h3>
-{% with mission.activities.all as activities %}
-{% include "player_activities/all_activities.html" %}
+{% with mission.player_activities_playeractivity_related.all as activities %}
+<h3 class="clear">
+    {% if activities.count %}
+    {% trans "You've completed" %} {{ answered_activities|length }}/{{ activities.count }} {% trans "activities" %}
+    {% else %}
+        Activities
+    {% endif %}:</h3>
+    {% include "player_activities/all_activities.html" %}
 {% endwith %}
+
 {% endblock %}
