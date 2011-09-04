@@ -194,7 +194,7 @@
                 {% for wrapper in value_wrapper %}
                     <tr>
                         <td class="alignleft">
-                            <a href="{% url values_detail wrapper.value.id %}" class="value-message">{{wrapper.value.message}}</a>
+                            <a href="{% url values:values_detail wrapper.value.id %}" class="value-message">{{wrapper.value.message}}</a>
                             <span class="fine">({{wrapper.value.comments.all|length}} comments)</span>
                         </td>
                         <td>
@@ -207,13 +207,13 @@
                             {% if not instance.is_expired %}
 
                             {% if user.get_profile.currentCoins > 0 %}
-                            <a href="{% url values_spend wrapper.value.id %}" class="button">Spend</a>
+                            <a href="{% url values:values_spend wrapper.value.id %}" class="button">Spend</a>
                             {% else %}
                             <div class="button disabled">Spend</div>
                             {% endif %}
 
                             {% if wrapper.player_coins %}
-                            <a href="{% url values_take wrapper.value.id %}" class="button">Take back</a>
+                            <a href="{% url values:values_take wrapper.value.id %}" class="button">Take back</a>
                             {% else %}
                             <div class="button disabled">Take back</div>
                             {% endif %}
