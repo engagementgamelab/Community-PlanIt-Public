@@ -70,7 +70,7 @@ class InstanceForm(TranslatableModelForm):
 
     class Meta:
         model = Instance
-        exclude = ('language_code', 'location', 'name', 'description',)
+        exclude = ('language_code', 'location', 'description',)
 
     def __init__(self, *args, **kwargs):
         super(InstanceForm, self).__init__(*args, **kwargs)
@@ -78,7 +78,6 @@ class InstanceForm(TranslatableModelForm):
         def _make_instance_trans_form(instance, lang):
             instance.language_code = lang
             fields = {
-                'name_'+lang : forms.CharField(max_length=45, initial=instance.name, label='Name'),
                 'description_'+lang : forms.CharField(max_length=1000, initial=instance.description, label='Description'),
                 'language_code_'+lang : forms.CharField(widget=forms.HiddenInput(), initial=lang, label='')
             }
@@ -160,7 +159,6 @@ class InstanceForm(TranslatableModelForm):
             else:
                 trans = trans_model()
 
-            trans.name = data['name_%s' % language_code]
             trans.description = data['description_%s' % language_code]
             trans.language_code = language_code
             trans.master = instance

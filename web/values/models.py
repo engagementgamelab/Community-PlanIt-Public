@@ -21,12 +21,8 @@ class Value(TranslatableModel):
     comments = generic.GenericRelation(Comment)
 
     translations = TranslatedFields(
-        message = models.CharField(max_length=260, verbose_name='Value'),
-        meta = {'ordering': ('message', )}
+        message = models.CharField(max_length=60, verbose_name='Name'),
     )
-
-    #class Meta:
-    #    ordering = ['message']
 
     def __unicode__(self):
         return self.safe_translation_getter('message', 'Value: %s' % self.pk)
@@ -36,34 +32,12 @@ class Value(TranslatableModel):
         return ('values_detail', [str(self.id)])
 
 class PlayerValue(models.Model):
+
     user = models.ForeignKey(User)
     value = models.ForeignKey(Value)
     coins = models.IntegerField(default=0)
 
-class ValueAdmin(admin.ModelAdmin):
-    list_display = ('coins', ) #doesnt work with nani 'message', 
-    #exclude = ('instance',)
+    def __unicode__(self):
+        return "%s for user <%s>" % (self.value.message, self.user)
 
-    #def save_model(self, request, obj, form, change):
-    #    obj.instance = request.session.get('admin_instance')
-    #    obj.save()
 
-    def queryset(self, request):
-        qs = super(ValueAdmin, self).queryset(request)
-
-        return qs.filter(instance=request.session.get('admin_instance'))
-
-    obj = None
-
-    def get_form(self, request, obj=None, **kwargs):
-        self.obj = obj 
-
-        return super(ValueAdmin, self).get_form(request, obj, **kwargs)
-
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field.name == 'comments' and getattr(self, 'obj', None):
-            kwargs['queryset'] = Value.objects.get(id=self.obj.id).comments.all()
-        elif db_field.name == 'comments':
-            kwargs['queryset'] = Value.objects.filter(id=-2)
-
-        return super(ValueAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)

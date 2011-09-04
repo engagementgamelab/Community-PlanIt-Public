@@ -78,7 +78,6 @@ class Instance(TranslatableModel):
     days_for_mission = models.IntegerField(default=7)
 
     translations = TranslatedFields(
-        name = models.CharField(max_length=45),
         description = models.TextField(),
         #meta = {'get_latest_by': 'start_date'}
     )

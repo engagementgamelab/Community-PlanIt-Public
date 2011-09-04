@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from gmapsfield.fields import GoogleMapsField
 
-import datetime
+from datetime import datetime
 
 class Answer(models.Model):
     #TODO: This might benefit from a 1:1 relationship
@@ -16,27 +16,27 @@ class Answer(models.Model):
     answerUser = models.ForeignKey(User, related_name='answers')
     comments = generic.GenericRelation(Comment)
     createDate = models.DateTimeField()
-    
-    def save(self):
-        self.createDate = datetime.datetime.now()
-        super(Answer, self).save()
-    
+
+    def save(self, *args, **kwargs):
+        self.createDate = datetime.now()
+        super(Answer, self).save(*args, **kwargs)
+
     @models.permalink
     def get_absolute_url(self):
         return ("player_activities_overview", [self.activity.id])
-        
+
 #class AnswerOpenEnded(Answer):
 #    comment = models.ForeignKey(Comment)
-    
+
 class AnswerSingleResponse(Answer):
     selected = models.ForeignKey(MultiChoiceActivity)
 
 class AnswerMap(Answer):
     map = GoogleMapsField()
-    
+
 #class AnswerEmpathy(Answer):
 #    answerBox = models.CharField(max_length=1000)
-        
+
 #This is nasty but it's the simple way to get many checked values
 #for the user stored
 class AnswerMultiChoice(models.Model):

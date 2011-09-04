@@ -1,16 +1,17 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
 {% load game_extras %}
 
 {% block section %}missions rightsidebar{% endblock %}
 
-{% block title %}Missions{% endblock %}
+{% block title %}{% trans "Missions" %}{% endblock %}
 {% block page_title %}
 <h2 id="page_title">
 {% if instance.is_expired %}
-    {{instance}} is not active at this time.
+    {{instance}} {% trans "is not active at this time" %}.
 {% else %}
-    Current Mission{{missions.active.count|pluralize}}
+    {% trans "Current Mission" %}{{missions.active.count|pluralize}}
 {% endif %}
 </h2>
 {% endblock %}
@@ -28,11 +29,11 @@
         <div class="description">{{mission.description|linebreaksbr}}</div>
     </li>
 {% empty %}
-    <li>There are no active missions at this time.</li>
+    <li>{% trans "There are no active missions at this time" %}.</li>
 {% endfor %}
 </ul>
 
-<h2>Upcoming Missions</h2>
+<h2>{% trans "Upcoming Missions" %}</h2>
 <ul class="listless">
 {% for mission in missions.future %}
     <li>
@@ -44,7 +45,7 @@
         </h3>
     </li>
 {% empty %}
-    <li>There are no upcoming missions at this time.</li>
+    <li>{% trans "There are no upcoming missions at this time." %}</li>
 {% endfor %}
 </ul>
 {% endblock %}

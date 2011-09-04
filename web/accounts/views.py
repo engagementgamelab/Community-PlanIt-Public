@@ -452,7 +452,8 @@ def dashboard(request):
         #looks like `latest` qs method is broken in django-nani
         #applying a workaround for now.
         #TODO fix
-        last_mission = _fake_latest(Mission, instance.missions)
+        #last_mission = _fake_latest(Mission, instance.missions)
+        last_mission = Mission.objects.untranslated().order_by('pk')[0]
 
     page = request.GET.get('page', 1)
     

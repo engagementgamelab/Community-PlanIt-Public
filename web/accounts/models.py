@@ -232,10 +232,10 @@ def user_post_save(instance, created, **kwargs):
         # Create a user profile for the player and add them to the
         # `Player` group.  Default the player to inactive.
         player_group, created = Group.objects.get_or_create(name='Player')
-
-        UserProfile.objects.create(user=instance)
-        instance.is_active = False
-        instance.groups.add(player_group)
+        user_profile = UserProfile.objects.get_or_create(user=instance)
+        #instance.is_active = False
+        #instance.groups.add(player_group)
+        instance.save()
 
 models.signals.pre_save.connect(user_pre_save, sender=User)
 models.signals.post_save.connect(user_post_save, sender=User)
