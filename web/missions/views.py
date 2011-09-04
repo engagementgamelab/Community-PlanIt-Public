@@ -50,13 +50,10 @@ def all(request, template="missions/all.html"):
 
     my_profile = request.user.get_profile()
     my_instance = my_profile.instance
-
-    missions = my_instance.missions.active()
-
-    print missions
-
     context = dict(
-            missions = missions,
+            active_missions = my_instance.missions.active(),
+            future_missions = my_instance.missions.future(),
+            past_missions = my_instance.missions.past(),
             played = finished_activities,
     )
     return render_to_response(template, RequestContext(request, context))
