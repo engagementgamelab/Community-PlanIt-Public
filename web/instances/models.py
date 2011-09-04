@@ -114,6 +114,20 @@ class Instance(TranslatableModel):
             return True
         else:
             return False
+
+    def dump_users(self):
+        from accounts.models import UserProfile
+        profiles = UserProfile.objects.filter(instance=self)
+        out = ["Instance: %s" % self.title,]
+        for prof in profiles:
+            u = prof.user
+            prefix = u""
+            if u in self.curators.all():
+                prefix = u"CURATOR: "
+            out.append(u"%s %s %s <%s>, username: %s" %(prefix, u.first_name.capitalize(), u.last_name.capitalize(), 
+                                                u.email, u.username)
+            )
+        return out
         
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]

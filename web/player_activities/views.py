@@ -211,10 +211,10 @@ def get_activity(request, id):
     
     answers = Answer.objects.filter(activity=activity, answerUser=request.user)
     if len(answers) > 0:
-        return HttpResponseRedirect(reverse("player_activities_replay", args=[activity.id]))
+        return HttpResponseRedirect(reverse("activities:replay", args=[activity.id]))
     answers = AnswerMultiChoice.objects.filter(option__activity=activity, user=request.user)
     if len(answers) > 0:
-        return HttpResponseRedirect(reverse("player_activities_replay", args=[activity.id]))
+        return HttpResponseRedirect(reverse("activities:replay", args=[activity.id]))
     
     tmpl = None
     form = None
@@ -330,10 +330,10 @@ def get_activity(request, id):
 
         if tmpl == None:
             if replay == False:
-                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "completed", reverse("player_activities_activity", args=[activity.id]), "activity")
+                ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
             else:
-                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", reverse("player_activities_activity", args=[activity.id]), "activity")
-            return HttpResponseRedirect(reverse("player_activities_overview", args=[activity.id]))
+                ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
+            return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
     else:
         comment_form = CommentForm()
         if (activity.type.type == "open_ended"):
@@ -472,8 +472,8 @@ def replay(request, id):
         #If the template is None then there wasn't an error so assign the points and redirect
         #Otherwise fall through. Only assign the points if the replay is false, but still redirect
         if tmpl == None:
-            ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", reverse("player_activities_activity", args=[activity.id]), "activity")
-            return HttpResponseRedirect(reverse("player_activities_overview", args=[activity.id]))
+            ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
+            return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
     else:
         if (activity.type.type == "single_response"):
             tmpl = loader.get_template('player_activities/single_replay.html')

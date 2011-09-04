@@ -3,7 +3,7 @@ import datetime
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 
 from django.contrib import auth
@@ -45,12 +45,18 @@ def fetch(request, slug):
     )))
 
 @login_required
-def all(request):
+def all(request, template="missions/all.html"):
     finished_activities = PlayerActivity.objects.filter(answers__answerUser=request.user)
 
-    tmpl = loader.get_template('missions/all.html')
-    return HttpResponse(tmpl.render(RequestContext(request, {
-        'played': finished_activities,
-    }, 
-    #[ip]
-    )))
+    my_profile = request.user.get_profile()
+    my_instance = my_profile.instance
+
+    missions = my_instance.missions.active()
+
+    print missions
+
+    context = dict(
+            missions = missions,
+            played = finished_activities,
+    )
+    return render_to_response(template, RequestContext(request, context))

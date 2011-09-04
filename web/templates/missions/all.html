@@ -5,6 +5,11 @@
 
 {% block section %}missions rightsidebar{% endblock %}
 
+
+{% comment %}
+    #TODO  Add past missions
+{% endcomment %}
+
 {% block title %}{% trans "Missions" %}{% endblock %}
 {% block page_title %}
 <h2 id="page_title">
@@ -18,15 +23,15 @@
 
 {% block main %}
 <ul class="listless">
-{% for mission in missions_mgr.active %}
+{% for mission in missions.active %}
     <li>
         <h3>
             <a href="{% url missions:mission mission.slug %}">{{mission.name}}</a>
             <span class="dates">
-                {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
+                {{ mission.start_date|date:"m/d/Y" }} &#8211; {{ mission.end_date|date:"m/d/Y" }}
             </span>
         </h3>
-        <div class="description">{{mission.description|linebreaksbr}}</div>
+        <div class="description">{{ mission.description|linebreaksbr }}</div>
     </li>
 {% empty %}
     <li>{% trans "There are no active missions at this time" %}.</li>

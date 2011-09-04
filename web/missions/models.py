@@ -41,11 +41,12 @@ class MissionManager(TranslationManager):
 
         #start_date = TODAY+relativedelta(days=+random.randint(1,90))
         #end_date = start_date+relativedelta(days=+random.randint(1,90))
-        if instance:
-            self.filter(instance=instance).count()
-            instance.start_date = TODAY+relativedelta(days=+random.randint(1,90))
-        else:
-            return self.filter()
+        #if instance:
+        #    self.filter(instance=instance).count()
+        #    instance.start_date = TODAY+relativedelta(days=+random.randint(1,90))
+        #else:
+        #    return self.filter()
+        return self.all()
 
 class Mission(TranslatableModel):
 
