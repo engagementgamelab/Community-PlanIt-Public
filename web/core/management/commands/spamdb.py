@@ -250,9 +250,10 @@ class Command(BaseCommand):
                 #else:
                 #    instance = Instance.objects.untranslated()[0]
 
-                for i in range(3):
+                for i in range(1):
                     instance = create_instance()
-                    create_admin(instance)
+                    if options['reset']:
+                        create_admin(instance)
                     for j in range(10):
                         create_user(instance)
 
