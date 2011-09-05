@@ -5,9 +5,7 @@
 {% block extra_body_class %}rightsidebar{% endblock %}
 
 {%block title%}{% trans "Dashboard" %}{%endblock%}
-{%block page_title%}
-<h2 id="page_title">{{instance.name}}</h2>
-{% endblock %}
+{%block page_title%}<h2 id="page_title">{{ instance.title }}</h2>{% endblock %}
 
 {% block rightsidebar %}
 {% if instance.is_started %}
@@ -87,12 +85,12 @@
         {% else %}
             {% if not instance.is_expired %}                    
                 <div class="welcome">
-                    <p>We invite you to play Community PlanIt to help shape {{instance.city}}'s vision for the future. Complete <a class="red" href="{% url activities:all %}" title="activities">activities</a> to earn points, which you can trade in for <a class="red" href="{% url values:index %}">coins</a> to spend on promoting your top community values. Keep checking back from {{instance.start_date|date:"F j"}} through {{instance.end_date|date:"F j"}} to stay on top of the lively discussion&#8212;and tell your friends!</p>
+                    <p>{{ instance.description }} </p>
                 </div>
                 
             {% else %}
                 <div class="welcome">
-                    <p>{{instance}}{% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
+                    <p>{{ instance }}{% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
                 <ul>
                     <li><strong>{{instance.user_profiles.count}}</strong> participant{{instance.user_profiles.count|pluralize}}
                     <li><strong>{{instance.coin_count}}</strong> token{{instance.coin_count|pluralize}} spent on issues
