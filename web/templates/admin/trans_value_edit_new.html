@@ -59,6 +59,10 @@
 {%block body%}    
     <script>
         jQuery(function($) {
+        
+            $("#id_instance").hide();
+            $("label[for='id_instance']").hide();
+            
             $(".btn-submit").live("click", function(){
                 var instance_qs = $('#id_value-form').serialize();
 
@@ -68,7 +72,7 @@
 
                 $.ajax({
                         type: "POST",
-                        url: "{% url admin:value-edit instance.pk value_form.instance.pk %}",
+                        url: "{% url admin:value-edit instance.pk value.pk %}",
                         data: data,
                         success: function(data, textStatus) {
                             var $data = $(data);

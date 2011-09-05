@@ -4,6 +4,7 @@ from django.conf import settings
 from instances.models import Instance
 from values.models import Value
 from admin.fixtures import create_fixtures
+from admin.forms import ValueForm
 
 
 class InstanceTestCase(TestCase):
@@ -78,7 +79,8 @@ class ValuesTest(TestCase):
         self.assertTrue(self.client.login(username="admin", password="admin"))    
         
     def _get_value_context(self, test_instance):
-        context = {'coins': 10}
+        context = {'coins': 10,
+                   'instance': test_instance.pk}
         for lang in test_instance.languages.all():
             lang_code = lang.code
             context['language_code_%s' % lang_code] = lang_code
@@ -106,5 +108,37 @@ class ValuesTest(TestCase):
                          response.get('location', ''))
         
         test_value = Value.objects.untranslated().get(pk=1)      
-        self.assertEqual(10, test_value.coins)  
+        self.assertEqual(10, test_value.coins)
+        
+    def test_edit_value_is_not_pollute(self):
+        """
+        Ensure that new value instance is not created
+        """  
+        test_instance = Instance.objects.untranslated().get(pk=1)
+        test_value = Value.objects.untranslated().get(pk=1)      
+        self.assertEqual(1, Value.objects.untranslated().all().count())
+        
+        response = self.client.post('/en/admin/value/%s/edit/%s/' % (test_instance.pk, test_value.pk), 
+                                    self._get_value_context(test_instance))        
+        self.assertEqual(302, response.status_code)
+        self.assertEqual("http://testserver/en/admin/value/%s/" % test_instance.pk, 
+                         response.get('location', ''))
+        
+        self.assertEqual(1, Value.objects.untranslated().all().count())
+        
+        
+class ValueFormTest(TestCase):
+    """
+    Value Form tests.
+    """
+    def setUp(self):
+        create_fixtures()
+        
+    def test_form_inner_forms_count(self):        
+        test_instance = Instance.objects.untranslated().get(pk=1)        
+        form = ValueForm(value_instance=test_instance)
+        
+        self.assertEqual(1, test_instance.languages.all().count())
+        self.assertEqual(1, len(form.inner_trans_forms))
+        
         

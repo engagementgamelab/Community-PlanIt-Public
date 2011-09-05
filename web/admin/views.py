@@ -585,9 +585,9 @@ def value(request, instance_id, value_id=None, template="admin/trans_value_edit_
         raise Http404 ("Instance with id %s does not exist" % instance_id)  
     
     if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
-        return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))
+        return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))   
    
-    if value_id is not None and value_id != 'None':
+    if value_id is not None and value_id != 'None' and value_id !='':
         try:
             value = Value.objects.untranslated().get(pk=int(value_id))
         except Value.DoesNotExist:

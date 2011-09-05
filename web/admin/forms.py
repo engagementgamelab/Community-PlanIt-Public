@@ -14,7 +14,6 @@ from nani.forms import TranslatableModelForm
 from nani.utils import get_translation
 
 import logging
-
 log = logging.getLogger(__name__)
 
 class StaffBaseForm(forms.Form):
@@ -173,11 +172,12 @@ class ValueForm(TranslatableModelForm):
 
     class Meta:
         model = Value        
-        exclude = ('language_code', 'message', 'instance', 'comments')        
+        exclude = ('language_code', 'message', 'comments')        
 
     def __init__(self, value_instance, *args, **kwargs):
-        super(ValueForm, self).__init__(*args, **kwargs)
+        super(ValueForm, self).__init__(*args, **kwargs)        
         self.value_instance = value_instance
+        self.fields['instance'].initial = value_instance         
         
         def _make_instance_trans_form(instance, lang):             
             instance.language_code = lang
@@ -199,14 +199,11 @@ class ValueForm(TranslatableModelForm):
         for language in self.value_instance.languages.all():
             language_code = language.code            
             trans_model = self._meta.model._meta.translations_model
-            if self.instance:                
-                try:
-                    trans = get_translation(self.instance, language_code)
-                except:
-                    trans = trans_model()
-            else:
+            try:
+                trans = get_translation(self.instance, language_code)
+            except:
                 trans = trans_model()
-
+            
             trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwargs)
             trans_form_name = "value_trans_" + language_code + "_form"
             setattr(self, trans_form_name, trans_form)
@@ -233,26 +230,17 @@ class ValueForm(TranslatableModelForm):
         return is_valid and is_valid_trans_forms
 
     def save(self, commit=True):        
-        # nani form is set commit to True
-        value = super(ValueForm, self).save(commit=False)
-        value.instance = self.value_instance
-        value.save()       
-        
-        for form in self.inner_trans_forms:
-            new = form.instance.pk is None
+        value = super(ValueForm, self).save()       
+        for form in self.inner_trans_forms:            
             data = form.cleaned_data
             log.debug('saving form: %s' % data)
             trans_model = form.instance.__class__
-            language_code = form.instance.language_code
-
-            if not new:
-                try:
-                    trans = get_translation(value, language_code)
-                except trans_model.DoesNotExist:
-                    trans = trans_model()
-            else:
+            language_code = form.instance.language_code            
+            try:
+                trans = get_translation(value, language_code)
+            except trans_model.DoesNotExist:
                 trans = trans_model()
-
+            
             trans.message = data['message_%s' % language_code]            
             trans.language_code = language_code
             trans.master = value

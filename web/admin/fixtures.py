@@ -17,7 +17,7 @@ def create_fixtures():
     su.set_password('admin')
     su.save()
     
-    Language.objects.create(code='en', name='English')
+    language = Language.objects.create(code='en', name='English')
     
     en_instance = Instance.objects.language('en').create(
             slug='test',
@@ -28,7 +28,9 @@ def create_fixtures():
             location='{"coordinates":[0,0],"zoom":16,"markers":[{"coordinates":[0,0]}],"type":"Point"}',
             name='English',
             description='EnglishDesc'
-    )       
+    )     
+    en_instance.languages = (language,)
+    en_instance.save()  
     
     es_instance = en_instance.translate('es')
     es_instance.name = "Es test"
