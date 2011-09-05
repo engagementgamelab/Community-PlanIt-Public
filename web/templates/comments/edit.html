@@ -6,7 +6,7 @@
     {% if not_permitted %}
         <h2>You do not have proper permissions to edit this post.</h2>
     {% else %}
-        <form enctype="multipart/form-data" action="{%url comments_edit comment.id %}" method="POST">
+        <form enctype="multipart/form-data" action="{%url comments:comments_edit comment.id %}" method="POST">
             {% include "comments/duplicate.html" %}
             <button type="submit" class="button right">Change Comment</button>
         </form>
