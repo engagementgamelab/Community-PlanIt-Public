@@ -22,6 +22,12 @@ DATABASES = {
 MANAGERS = ADMINS
 
 SECRET_KEY = '%(secret_key)s'
+
+if 'test' in sys.argv:    
+    try:
+	from settings_test import *        
+    except ImportError:        
+	pass
 """
 
 if len(sys.argv) != 2:
