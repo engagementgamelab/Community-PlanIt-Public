@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-{% load extras %}
-{% load extras localeurl_tags i18n %}
+{% load localeurl_tags extras i18n cpi_tags %}
 <html lang="en" class="no-js">
 <head>
     <meta charset="utf-8">
@@ -59,16 +58,14 @@
                     <li><div class="contact"><a href="{% url contact %}"><span>{% trans "Contact" %}</span></a></div></li>
                     {% endif %}
 
-                    {% for lang in LANGUAGES %}
-                        {% ifequal lang.0 LANGUAGE_CODE %}
-                            <a class="flag" href="#"><img src="{{MEDIA_URL}}img/flags/{{lang.0}}.png" border="0" title="{{ lang.1 }}"/></a>
-                        {% else %}
-                            <a class="flag" href="{{ request.path|chlocale:lang.0 }}"><img src="{{MEDIA_URL}}img/flags/{{lang.0}}.png" border="0" title="{{lang.1}}"/></a>
-                        {% endifequal %}
+                    {% for lang in instance.languages.all %}
+                    <a class="flag" href="{{ request.path|chlocale:lang.code }}">
+                        <img src="{{MEDIA_URL}}img/flags/{{lang.code}}.png" border="0" title="{{ lang.name }}"/>
+                    </a>
                     {% endfor %}
 
                     {% if user.is_superuser or user.is_staff %}
-                    <li><div class="admin"><a href="{% url admin:admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
+                    <li><div class="admin"><a href="{% url admin2:admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
                     {% endif %}
                     {% if user.is_authenticated %}
                     <li class="final"><div class="logout"><a href="{% url accounts:logout %}"><span>{% trans "Logout" %}</span></a></div></li>
@@ -94,9 +91,7 @@
                                     <img class="avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg" alt="">
                                     {% endif %}
                                 </a>
-                                <a href="{% url accounts_profile request.user.id %}">
-                                    Full Profile
-                                </a>
+                                <a href="{% url accounts_profile request.user.id %}">Full Profile</a>
                             </div>
                             <div class="details">
                                 <h2 class="profile-name">{{user.get_profile.screen_name}}</h2>
@@ -117,9 +112,9 @@
                             {% endblock %}
                             {% endif %}
                         {% else %}
-                        {% if instance_mgr.active.count %}
-                        <h3>New Player? <a href="{% url accounts:register %}" class="button">Sign Up</a></h3>
-                        {% endif %}
+                            {% if active_instances.count %}
+                                <h3>New Player? <a href="{% url accounts:register %}" class="button">Sign Up</a></h3>
+                            {% endif %}
                         {% endif %}
                         </div>
 
@@ -132,8 +127,7 @@
                         </div>
                         {% endif %}
 
-                        {% block aside %}
-                        {% endblock %}
+                        {% block aside %}{% endblock %}
                     </aside>
                     {% endblock %}
                     <div class="content">
@@ -145,15 +139,10 @@
                         </ul>
                         {% endif %}
                         
-                        {% block page_title %}
-                            <h2 id="page_title">Community PlanIT</h2>
-                        {% endblock %}
-                        <div class="maincontent">
-                        {% block main %}{% endblock %}
-                        </div>
-                        <div class="rightsidebar">
-                            {% block rightsidebar %}{% endblock %}
-                        </div>
+                        {% block page_title %}<h2 id="page_title">Community PlanIT</h2>{% endblock %}
+
+                        <div class="maincontent">{% block main %}{% endblock %}</div>
+                        <div class="rightsidebar">{% block rightsidebar %}{% endblock %}</div>
                     </div>
                 </div>
             </div>
