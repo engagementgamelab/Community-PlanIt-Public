@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.test.client import Client
 from django.conf import settings
 from instances.models import Instance
+from values.models import Value
 from admin.fixtures import create_fixtures
 
 
@@ -72,7 +73,38 @@ class ValuesTest(TestCase):
     Values Administration Tests
     """
     def setUp(self):
-        self.client = Client()
+        create_fixtures()
+        self.client = Client()                   
+        self.assertTrue(self.client.login(username="admin", password="admin"))    
+        
+    def _get_value_context(self, test_instance):
+        context = {'coins': 10}
+        for lang in test_instance.languages.all():
+            lang_code = lang.code
+            context['language_code_%s' % lang_code] = lang_code
+            context['message_%s' % lang_code] = 'test'            
+        return context    
         
     def test_new_value(self):
-        print "To be implemented..."
+        test_instance = Instance.objects.untranslated().get(pk=1)
+        
+        response = self.client.post('/en/admin/value/%s/new/' % test_instance.pk, 
+                                    self._get_value_context(test_instance))        
+        self.assertEqual(302, response.status_code)
+        self.assertEqual("http://testserver/en/admin/value/%s/" % test_instance.pk, 
+                         response.get('location', ''))
+        
+    def test_edit_value(self):
+        test_instance = Instance.objects.untranslated().get(pk=1)
+        test_value = Value.objects.untranslated().get(pk=1)      
+        self.assertEqual(0, test_value.coins)
+        
+        response = self.client.post('/en/admin/value/%s/edit/%s/' % (test_instance.pk, test_value.pk), 
+                                    self._get_value_context(test_instance))        
+        self.assertEqual(302, response.status_code)
+        self.assertEqual("http://testserver/en/admin/value/%s/" % test_instance.pk, 
+                         response.get('location', ''))
+        
+        test_value = Value.objects.untranslated().get(pk=1)      
+        self.assertEqual(10, test_value.coins)  
+        

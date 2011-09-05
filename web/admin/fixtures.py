@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from instances.models import Instance, Language
+from values.models import Value
 
 
 def create_fixtures():
@@ -38,4 +39,6 @@ def create_fixtures():
     ht_instance.name = "Ht test"
     ht_instance.description = "Ht test description"
     ht_instance.save()    
+    
+    Value.objects.create(instance=en_instance, message="test")
     

@@ -19,10 +19,16 @@ urlpatterns = patterns("",
         url(r"^mission/save/", "admin.views.mission_save", name="mission-save"),
         url(r"^mission/", "admin.views.mission_base", name="mission-base"),
 
-        url(r"^value/(?P<instance_id>.*)/", "admin.views.values_edit", name="values-edit"),
+        
+        url(r"^value/(?P<instance_id>\d+)/new/", "admin.views.value_new", name="value-new"),
+        url(r"^value/(?P<instance_id>\d+)/edit/(?P<value_id>.*)/", "admin.views.value", name="value-edit"),
+        url(r"^value/(?P<value_id>\d+)/delete", "admin.views.value_delete", name="value-delete"),
+        url(r"^value/(?P<instance_id>\d+)/", "admin.views.manage_values", name="manage-values"),
+        
+        #url(r"^value/(?P<instance_id>.*)/", "admin.views.values_edit", name="values-edit"),
         url(r"^value/initial/", "admin.views.values_initial", name="value-initial"),
         url(r"^value/save/", "admin.views.values_save", name="value-save"),
-        url(r"^value/", "admin.views.values_base", name="value-base"),
+        #url(r"^value/", "admin.views.values_base", name="value-base"),
 
         url(r"^activity/save/", "admin.views.activity_save", name="activity-save"),
         url(r"^activity/", "admin.views.activity_base", name="activity-base"),
