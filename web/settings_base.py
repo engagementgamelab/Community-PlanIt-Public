@@ -30,9 +30,7 @@ EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 INSTALLED_APPS = (
     # localeurl should be first
-    'localeurl',
-    'django.contrib.admin',
-    'django.contrib.admindocs',
+    'localeurl',   
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.humanize',
@@ -57,6 +55,11 @@ INSTALLED_APPS = (
     'web.reports',
     'web.responses',
     'web.values',
+    
+    # Need this after web.admin because of test runner: 
+    # it loads django admin tests by 'admin' app label first
+    'django.contrib.admin',
+    'django.contrib.admindocs',
 
     # 3rd party
     'django_mailer',
