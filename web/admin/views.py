@@ -635,8 +635,30 @@ def value_new(request, instance_id):
 
 
 @login_required
-def value_delete(request, value_id):
-    pass
+def value_delete(request, value_id, template="admin/trans_value_del.html"):    
+    log.debug('deleting value %s' % value_id)    
+    ok = verify(request)
+    if ok != None:
+        return ok
+    
+    try:
+        inst = Value.objects.untranslated().get(pk=value_id)
+        instance_id = inst.instance.id
+    except Instance.DoesNotExist:
+        raise Http404 ("value with id %s does not exist" % value_id)
+
+    if request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel":
+        return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))    
+
+    if request.method == "POST" and request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Confirm Delete?":
+        inst.delete()
+        return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))
+
+    context = {
+            'inst': inst,
+    }
+    log.debug('rendering %s' % template )
+    return render_to_response(template, RequestContext(request, context))
 
 
 @login_required
@@ -705,7 +727,7 @@ def mission_base(request):
     ok = verify(request)
     if ok != None:
         return ok
-    instances = Instance.objects.untranslated().all().order_by("name")
+    instances = Instance.objects.untranslated().all().order_by("title")
     if request.method == 'POST':
         if (request.POST["submit_btn"] == "Cancel"):
             return HttpResponseRedirect(reverse("admin:admin-base"))
@@ -724,7 +746,7 @@ def mission_base(request):
                 index_missions.append([x, mission])
                 x = x + 1
             tmpl = loader.get_template("admin/mission_edit.html")
-            form = MissionSaveForm()
+            form = MissionBaseForm()
             return HttpResponse(tmpl.render(RequestContext(request, {
                 "form": form,                                                    
                 "instance_value": instance,

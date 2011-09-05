@@ -22,7 +22,7 @@ urlpatterns = patterns("",
         
         url(r"^value/(?P<instance_id>\d+)/new/", "admin.views.value_new", name="value-new"),
         url(r"^value/(?P<instance_id>\d+)/edit/(?P<value_id>.*)/", "admin.views.value", name="value-edit"),
-        url(r"^value/(?P<value_id>\d+)/delete", "admin.views.value_delete", name="value-delete"),
+        url(r"^value/(?P<value_id>\d+)/delete/", "admin.views.value_delete", name="value-delete"),
         url(r"^value/(?P<instance_id>\d+)/", "admin.views.manage_values", name="manage-values"),
         
         #url(r"^value/(?P<instance_id>.*)/", "admin.views.values_edit", name="values-edit"),
