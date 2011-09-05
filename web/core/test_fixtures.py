@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from instances.models import Instance, Language
 from values.models import Value
+from accounts.models import UserProfile
 
 
 def create_fixtures():
@@ -17,8 +18,20 @@ def create_fixtures():
     su.set_password('admin')
     su.save()
     
+    _create_user_profile(su)
+    
     language = Language.objects.create(code='en', name='English')
     
+    instance = _create_instance(language)
+    
+    Value.objects.create(instance=instance, message="test")
+
+def _create_user_profile(user):
+    profile = UserProfile.objects.get_or_create(user=user)[0]
+    profile.preferred_language = 'ht'
+    profile.save()    
+
+def _create_instance(language):
     en_instance = Instance.objects.language('en').create(
             slug='test',
             title='Test Title',
@@ -40,7 +53,7 @@ def create_fixtures():
     ht_instance = en_instance.translate('ht')
     ht_instance.name = "Ht test"
     ht_instance.description = "Ht test description"
-    ht_instance.save()    
+    ht_instance.save()   
     
-    Value.objects.create(instance=en_instance, message="test")
+    return en_instance 
     

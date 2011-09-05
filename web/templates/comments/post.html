@@ -22,6 +22,7 @@
 	        {%endfor%}
     	</ul>
     </div>
+    {% if english_comments %}
     <h4 id="id_english">English</h4>
     <div id="id_english_comments" class="accordion">
        <ul class="comments">        
@@ -32,6 +33,7 @@
 	        {%endfor%}
     	</ul>
     </div>
+    {% endif %}
     <h4 id="id_rest">The Rest</h4>
     <div id="id_rest_comments" class="accordion">
            {% for comment in rest_comments.all reversed %}

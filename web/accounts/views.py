@@ -14,8 +14,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 from django.utils.datastructures import SortedDict
-from django.utils.translation import ugettext as _
-from django.utils.translation import get_language
+from django.utils.translation import ugettext as _, get_language
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 
@@ -343,9 +342,12 @@ def profile(request, id):
                 content_object=profile,                 
                 user=request.user,
                 instance=instance,
-            )              
-            # TODO: translate me!
-            #comment.translate(get_language())
+            ) 
+            try:
+                locale = request.META['PATH_INFO'].split('/')[1]
+            except:
+                locale = get_language()
+            comment.translate(locale)              
             comment.message = u'%s' % comment_form.cleaned_data['message']
             comment.save()
 
