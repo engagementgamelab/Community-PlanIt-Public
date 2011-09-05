@@ -65,7 +65,7 @@
                     {% endfor %}
 
                     {% if user.is_superuser or user.is_staff %}
-                    <li><div class="admin"><a href="{% url admin2:admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
+                    <li><div class="admin"><a href="{% url admin:admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
                     {% endif %}
                     {% if user.is_authenticated %}
                     <li class="final"><div class="logout"><a href="{% url accounts:logout %}"><span>{% trans "Logout" %}</span></a></div></li>
