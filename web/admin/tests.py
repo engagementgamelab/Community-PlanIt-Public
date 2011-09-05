@@ -3,7 +3,7 @@ from django.test.client import Client
 from django.conf import settings
 from instances.models import Instance
 from values.models import Value
-from admin.fixtures import create_fixtures
+from core.test_fixtures import create_fixtures
 from admin.forms import ValueForm
 
 
