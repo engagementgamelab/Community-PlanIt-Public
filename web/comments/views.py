@@ -39,7 +39,7 @@ def like(request, id):
 
 @login_required
 def reply(request, id):
-    p = Comment.objects.get(id=id)
+    p = Comment.objects.untranslated().get(id=id)
     instance = request.user.get_profile().instance
   
     c = p.comments.create(
