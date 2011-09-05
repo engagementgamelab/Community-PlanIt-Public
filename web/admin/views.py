@@ -558,13 +558,13 @@ def manage_values(request, instance_id):
         trans_list = []
         for lang in instance.languages.all():
             try:
-                trans = get_translation(value, lang)
+                trans = get_translation(value, lang.code)
             except:
                 trans = value._meta.translations_model()
             trans_list.append(trans)
         values_data[value] = {
             'value_translations': trans_list,                
-        }
+        }    
     
     tmpl = loader.get_template("admin/manage_values.html")
     return HttpResponse(tmpl.render(RequestContext(request, {
