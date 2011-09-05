@@ -3,17 +3,20 @@
 {% load game_extras %}
 {% block section %}missions{% endblock %}
 
-{% block title %}{{mission.name}} {% trans "Mission" %}{% endblock %}
+{% block title %}{{ mission.name }} {% trans "Mission" %}{% endblock %}
 {% block page_title %}{% endblock %}
 
 {% block main %}
-<h2>{{mission.name}}</h2>
+<h2>{{ mission.name }}</h2>
+
 {% if not mission.is_active %}
 <p class="notice">{% trans "This mission is not currently active. You can click on the activities to see overviews, but you cannot complete them" %}.</p>
 {% endif %}
+
 {% if mission.video %}
 <div class="left video">{{mission.video|safe}}</div>
 {% endif %}
+
 <div class="left description">{{mission.description|linebreaksbr}}</div>
 
 {% with mission.player_activities_playeractivity_related.all as activities %}
