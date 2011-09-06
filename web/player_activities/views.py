@@ -335,19 +335,10 @@ def get_activity(request, id):
 
         if tmpl == None:
             if replay == False:
-<<<<<<< HEAD
                 ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
             else:
                 ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
             return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
-=======
-                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "completed", 
-                                     reverse("activities:player_activities_activity", args=[activity.id]), "activity")
-            else:
-                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", 
-                                     reverse("activities:player_activities_activity", args=[activity.id]), "activity")
-            return HttpResponseRedirect(reverse("activities:player_activities_overview", args=[activity.id]))
->>>>>>> remotes/psychotechnik/multilingual
     else:
         comment_form = CommentForm()
         if (activity.type.type == "open_ended"):
