@@ -71,10 +71,10 @@ class Mission(TranslatableModel):
         latest_by =  max(missions_for_instance.values_list('end_date'))
         return self.objects.get(**{'end_date': latest_by})
 
-    def save(self):
+    def save(self, *args, **kwargs):
         #TODO make this work with unicode
         self.slug = slugify(self.pk)
-        super(Mission, self).save()
+        super(Mission, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.safe_translation_getter('name', 'Mission: %s' % self.pk)

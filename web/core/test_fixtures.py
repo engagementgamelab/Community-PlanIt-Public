@@ -1,7 +1,12 @@
+import datetime
+
 from django.contrib.auth.models import User
-from instances.models import Instance, Language
-from values.models import Value
+
 from accounts.models import UserProfile
+from instances.models import Instance, Language
+from missions.models import Mission
+from values.models import Value
+from player_activities.models import PlayerActivityType
 
 
 def create_fixtures():
@@ -24,12 +29,18 @@ def create_fixtures():
     
     instance = _create_instance(language)
     
+    _create_mission(instance)
+    
+    _create_player_activity_types()
+    
     Value.objects.create(instance=instance, message="test")
+
 
 def _create_user_profile(user):
     profile = UserProfile.objects.get_or_create(user=user)[0]
     profile.preferred_language = 'ht'
     profile.save()    
+
 
 def _create_instance(language):
     en_instance = Instance.objects.language('en').create(
@@ -56,4 +67,23 @@ def _create_instance(language):
     ht_instance.save()   
     
     return en_instance 
+
+
+def _create_mission(instance):
+    today = datetime.date.today()
+    tomorrow = today + datetime.timedelta(1)
+    yesterday = today - datetime.timedelta(1)
+    
+    en_mission = Mission.objects.language('en').create(instance=instance,
+                                                       start_date=yesterday,
+                                                       end_date=tomorrow,
+                                                       name="mission",
+                                                       description="test")
+    en_mission.translate('es')
+    en_mission.translate('ht')
+    return en_mission
+
+
+def _create_player_activity_types():
+    PlayerActivityType.objects.get_or_create(type="open_ended", displayType="Open Ended")
     

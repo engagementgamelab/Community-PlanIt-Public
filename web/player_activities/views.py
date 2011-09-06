@@ -36,8 +36,6 @@ def getComments(answers, ModelType):
 
 @login_required
 def overview(request, id):
-    import ipdb
-    ipdb.set_trace()
     try:
         activity = PlayerActivity.objects.untranslated().get(id=id)
     except PlayerActivity.DoesNotExist:
@@ -383,10 +381,8 @@ def get_activity(request, id):
         }, [ip])))
 
 @login_required
-def replay(request, id):
-    import ipdb
-    ipdb.set_trace()
-    activity = PlayerActivity.objects.get(id=id)
+def replay(request, id):    
+    activity = PlayerActivity.objects.untranslated().get(id=id)
     tmpl = None
     form = None
     comment_form = None
@@ -471,7 +467,7 @@ def replay(request, id):
         
         #If the template is None then there wasn't an error so assign the points and redirect
         #Otherwise fall through. Only assign the points if the replay is false, but still redirect
-        if tmpl == None:
+        if tmpl is None:            
             ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", 
                                  reverse("activities:player_activities_activity", args=[activity.id]), "activity")
             return HttpResponseRedirect(reverse("activities:player_activities_overview", args=[activity.id]))

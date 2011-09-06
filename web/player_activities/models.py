@@ -57,10 +57,10 @@ class PlayerActivity(PlayerActivityBase):
     def __unicode__(self):
         return self.safe_translation_getter('name', 'Activity: %s' % self.pk)
 
-    def save(self):
+    def save(self, *args, **kwargs):
         self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
-        super(PlayerActivity, self).save()
+        super(PlayerActivity, self).save(*args, **kwargs)
     
     def getPoints(self):
         if self.points == None:
