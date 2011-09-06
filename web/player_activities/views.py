@@ -40,7 +40,6 @@ def overview(request, id):
         activity = PlayerActivity.objects.untranslated().get(id=id)
     except PlayerActivity.DoesNotExist:
         raise Http404 ("PlayerActivity with id %s does not exist" % id)
-        
     if activity.type.type == "open_ended":
         answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/open_overview.html')
@@ -207,10 +206,10 @@ def get_activity(request, id):
     
     answers = Answer.objects.filter(activity=activity, answerUser=request.user)
     if len(answers) > 0:
-        return HttpResponseRedirect(reverse("player_activities_replay", args=[activity.id]))
+        return HttpResponseRedirect(reverse("activities:player_activities_replay", args=[activity.id]))
     answers = AnswerMultiChoice.objects.filter(option__activity=activity, user=request.user)
     if len(answers) > 0:
-        return HttpResponseRedirect(reverse("player_activities_replay", args=[activity.id]))
+        return HttpResponseRedirect(reverse("activities:player_activities_replay", args=[activity.id]))
     
     tmpl = None
     form = None
@@ -516,8 +515,6 @@ def replay(request, id):
 
 @login_required
 def index(request):  
-    import ipdb
-    ipdb.set_trace()  
     user = request.user
     profile = user.get_profile()
     instance = profile.instance
