@@ -7,7 +7,9 @@
 
 {%block main%}
     <h1>Manage Instances
+        {% if request.user.is_superuser %}
             <input type="button" value="Create New Instance" onClick="window.location='{% url admin:instance-new %}' "/>
+        {% endif %}
     </h1>
 
     {% for instance, translations in instances_data.items %}
