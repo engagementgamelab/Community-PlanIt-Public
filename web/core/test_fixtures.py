@@ -87,4 +87,5 @@ def _create_mission(instance):
 def _create_player_activity_types():
     PlayerActivityType.objects.get_or_create(type="open_ended", displayType="Open Ended")
     PlayerActivityType.objects.get_or_create(type="single_response", displayType="Single Response")
+    PlayerActivityType.objects.get_or_create(type="multi_response", displayType="Multiple Responses")
     
