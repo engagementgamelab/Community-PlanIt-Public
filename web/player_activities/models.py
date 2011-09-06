@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from web.accounts.models import determine_path
 from web.attachments.models import Attachment
 from web.missions.models import Mission
+from django.contrib.admin.options import ModelAdmin
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.creationUser.id) +'/'+ filename
@@ -108,7 +109,7 @@ class MultiChoiceActivity(TranslatableModel):
         value = models.CharField(max_length=255),
     )
 
-class PlayerActivityTypeAdmin(TranslatableAdmin):
+class PlayerActivityTypeAdmin(ModelAdmin):
     list_display = ('type', 'defaultPoints',)
 
 class PlayerActivityAdmin(TranslatableAdmin):
