@@ -36,7 +36,10 @@ def getComments(answers, ModelType):
 
 @login_required
 def overview(request, id):
-    activity = PlayerActivity.objects.get(id=id)
+    try:
+        activity = PlayerActivity.objects.untranslated().get(id=id)
+    except PlayerActivity.DoesNotExist:
+        raise Http404 ("PlayerActivity with id %s does not exist" % id)
         
     if activity.type.type == "open_ended":
         answers = Answer.objects.filter(activity=activity)
