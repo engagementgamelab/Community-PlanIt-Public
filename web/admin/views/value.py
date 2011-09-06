@@ -55,6 +55,7 @@ def value(request, instance_id, value_id=None, template="admin/trans_value_edit_
         return ok
 
     log.debug("value_id: %s" % value_id)
+    log.debug("instance_id: %s" % instance_id)
 
     try:
         instance = Instance.objects.untranslated().get(pk=int(instance_id))
@@ -64,22 +65,23 @@ def value(request, instance_id, value_id=None, template="admin/trans_value_edit_
     if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
         return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))
 
+    print "value_id: %s, %s" % (value_id, type(value_id))
     if value_id is not None and value_id != 'None':
         try:
             value = Value.objects.untranslated().get(pk=int(value_id))
         except Value.DoesNotExist:
             raise Http404 ("value with id %s does not exist" % value_id)
     else:
-        value = None
+        value = Value.objects.create(instance=instance, commit=False)
         is_new = True
 
     errors = {}
-    value_form = ValueForm(value_instance=instance, instance=value, data=request.POST or None)
+    value_form = ValueForm(instance=value, languages=instance.languages.all(), data=request.POST or None)
 
     if request.method == "POST":
         if value_form.is_valid():
-            try:
-                value = value_form.save(commit=False)
+            #try:
+            value = value_form.save(commit=True)
             except Exception, err:
                 #transaction.rollback()
                 print "error while saving value: %s" % str(err)
