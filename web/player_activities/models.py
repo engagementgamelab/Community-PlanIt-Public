@@ -84,11 +84,11 @@ class PlayerMapActivity(PlayerActivityBase):
         },
     )
     
-    def save(self):
+    def save(self, *args, **kwargs):
         self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
         self.type = PlayerActivityType.objects.get(type="map")
-        super(PlayerMapActivity, self).save()
+        super(PlayerMapActivity, self).save(*args, **kwargs)
 
 class PlayerEmpathyActivity(PlayerActivityBase):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)

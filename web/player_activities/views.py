@@ -387,7 +387,7 @@ def replay(request, id):
     form = None
     comment_form = None
     map = None
-    init_coords = []
+    init_coords = []  
     if request.method == "POST":
         s = ""
         for x in request.POST.keys():
@@ -416,13 +416,16 @@ def replay(request, id):
             else:
                 tmpl = loader.get_template('player_activities/single_replay.html')
                 form_error = True
-        elif request.POST["form"] == "map":
+        elif request.POST["form"] == "map":            
             form = MapForm(request.POST)
             if form.is_valid():
                 map = form.cleaned_data["map"]
-                answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
-                answer.map = map;
-                answer.save()
+                try:
+                    answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
+                    answer.map = map;
+                    answer.save()
+                except AnswerMap.DoesNotExist:
+                    answer = AnswerMap.objects.create(activity=activity, answerUser=request.user, map=map)
             else:
                 map = request.POST["map"]
                 activity = PlayerMapActivity.objects.get(pk=activity.id)
