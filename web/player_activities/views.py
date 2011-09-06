@@ -200,7 +200,10 @@ def comment_fun(answer, form, request):
 
 @login_required
 def get_activity(request, id):
-    activity = PlayerActivity.objects.get(id=id)
+    try:
+        activity = PlayerActivity.objects.untranslated().get(id=id)
+    except PlayerActivity.DoesNotExist:
+        raise Http404 ("PlayerActivity with id %s does not exist" % id)
     
     answers = Answer.objects.filter(activity=activity, answerUser=request.user)
     if len(answers) > 0:
@@ -510,7 +513,7 @@ def replay(request, id):
     
 
 @login_required
-def index(request):
+def index(request):    
     user = request.user
     profile = user.get_profile()
     instance = profile.instance
