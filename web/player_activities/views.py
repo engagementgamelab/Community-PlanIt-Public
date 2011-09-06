@@ -326,10 +326,12 @@ def get_activity(request, id):
 
         if tmpl == None:
             if replay == False:
-                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "completed", reverse("player_activities_activity", args=[activity.id]), "activity")
+                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "completed", 
+                                     reverse("activities:player_activities_activity", args=[activity.id]), "activity")
             else:
-                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", reverse("player_activities_activity", args=[activity.id]), "activity")
-            return HttpResponseRedirect(reverse("player_activities_overview", args=[activity.id]))
+                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", 
+                                     reverse("activities:player_activities_activity", args=[activity.id]), "activity")
+            return HttpResponseRedirect(reverse("activities:player_activities_overview", args=[activity.id]))
     else:
         comment_form = CommentForm()
         if (activity.type.type == "open_ended"):
@@ -513,7 +515,9 @@ def replay(request, id):
     
 
 @login_required
-def index(request):    
+def index(request):  
+    import ipdb
+    ipdb.set_trace()  
     user = request.user
     profile = user.get_profile()
     instance = profile.instance
@@ -523,7 +527,9 @@ def index(request):
             'instance': instance,
             'mission': []
         }, [ip])))
-        
+    
+    for mission in instance.missions.all():
+        print mission
     missions = instance.missions.active()
     if missions.count() == 0:
         return HttpResponse(tmpl.render(RequestContext(request, {
