@@ -8,6 +8,7 @@ from player_activities.models import PlayerActivity, PlayerActivityType,\
 from missions.models import Mission
 from django.core.urlresolvers import reverse
 
+#TODO: get_activity tests for all classes
 
 class OpenEndedActivityTest(TestCase):
     def setUp(self):
@@ -121,7 +122,7 @@ class MultiResponsesActivityTest(TestCase):
         #TODO: check that answers were created
 
 
-class MapResponsesActivityTest(TestCase):
+class MapActivityTest(TestCase):
     def setUp(self):
         create_fixtures()
         self.client = Client()                   
@@ -163,5 +164,40 @@ class MapResponsesActivityTest(TestCase):
         self.assertEqual('http://testserver/en/activities/%s/overview/' % self.map.pk,
                          response.get('location', ''))
         #TODO: check that answers were created
+        
+
+class EmpathyActivityTest(TestCase):
+    def setUp(self):
+        create_fixtures()
+        self.client = Client()                   
+        self.assertTrue(self.client.login(username="admin", password="admin"))
+        
+        user = User.objects.get(username="admin")
+        mission = Mission.objects.untranslated().get(pk=1)
+        activity_type=PlayerActivityType.objects.get(type="empathy")
+        self.empaty = PlayerActivity.objects.language('en').create(creationUser=user,
+                                                                mission=mission,
+                                                                type=activity_type)       
+        
+    def test_overview(self):
+        response = self.client.get(reverse("activities:player_activities_overview", 
+                                           args=[self.empaty.pk]))
+        self.assertEqual(200, response.status_code)
+        
+    #TODO: add comments, test overview with comments and answers
+        
+    def test_replay_is_not_allowed(self):        
+        response = self.client.get(reverse("activities:player_activities_replay", 
+                                           args=[self.empaty.pk]))
+        self.assertEqual(404, response.status_code)
+        
+    def test_post_replay(self):
+        context = {'form': 'empathy',}
+        response = self.client.post(reverse("activities:player_activities_replay", 
+                                           args=[self.empaty.pk]), context)
+        
+        self.assertEqual(302, response.status_code)
+        self.assertEqual('http://testserver/en/activities/%s/overview/' % self.empaty.pk,
+                         response.get('location', ''))        
     
         

@@ -89,4 +89,5 @@ def _create_player_activity_types():
     PlayerActivityType.objects.get_or_create(type="single_response", displayType="Single Response")
     PlayerActivityType.objects.get_or_create(type="multi_response", displayType="Multiple Responses")
     PlayerActivityType.objects.get_or_create(type="map", displayType="Map")
+    PlayerActivityType.objects.get_or_create(type="empathy", displayType="Empathy")
     
