@@ -17,9 +17,9 @@ class Answer(models.Model):
     comments = generic.GenericRelation(Comment)
     createDate = models.DateTimeField()
     
-    def save(self):
+    def save(self, *args, **kwargs):
         self.createDate = datetime.datetime.now()
-        super(Answer, self).save()
+        super(Answer, self).save(*args, **kwargs)
     
     @models.permalink
     def get_absolute_url(self):

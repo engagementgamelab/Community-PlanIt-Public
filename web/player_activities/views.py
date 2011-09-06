@@ -405,9 +405,14 @@ def replay(request, id):
                 choices.append((x.id, x.value))
             form = MakeSingleForm(choices)(request.POST)
             if form.is_valid():
-                answer = AnswerSingleResponse.objects.get(activity=activity, answerUser=request.user)
-                answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
-                answer.save()
+                try:
+                    answer = AnswerSingleResponse.objects.get(activity=activity, answerUser=request.user)
+                    answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
+                    answer.save()
+                except AnswerSingleResponse.DoesNotExist:
+                    answer = AnswerSingleResponse.objects.create(activity=activity, answerUser=request.user,
+                                selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"])))
+                
             else:
                 tmpl = loader.get_template('player_activities/single_replay.html')
                 form_error = True
