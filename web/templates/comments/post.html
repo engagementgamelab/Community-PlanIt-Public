@@ -1,5 +1,23 @@
 {% load i18n %}
 
+{% block head %}
+<script type="text/javascript"> 
+	$(document).ready(function() {
+	    $("#id_english_comments").hide();
+	    $("#id_rest_comments").hide();
+ 
+	    $("#id_preferred").click(function(){
+		    $("#id_preferred_comments").slideToggle("slow");		
+	    });	    
+	    $("#id_english").click(function(){
+		    $("#id_english_comments").slideToggle("slow");		
+	    });	    
+	    $("#id_rest").click(function(){
+		    $("#id_rest_comments").slideToggle("slow");		
+	    });	    
+	});
+</script>
+{% endblock %}
 
 <div id="comments">
 	
