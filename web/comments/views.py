@@ -3,6 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.template import Context, RequestContext, loader
+from django.conf import settings
+
+from nani.utils import get_translation
 
 from web.accounts.models import UserProfile
 from web.answers.models import Answer
@@ -12,6 +15,7 @@ from web.comments.models import Comment
 #from web.processors import instance_processor as ip
 
 from PIL import Image
+
 
 @login_required
 def flag(request, id):
@@ -35,7 +39,7 @@ def like(request, id):
 
 @login_required
 def reply(request, id):
-    p = Comment.objects.get(id=id)
+    p = Comment.objects.untranslated().get(id=id)
     instance = request.user.get_profile().instance
   
     c = p.comments.create(
@@ -72,9 +76,21 @@ def reply(request, id):
     return HttpResponseRedirect(c.get_absolute_url())
 
 @login_required
-def edit(request, id):
-    comment = Comment.objects.get(id=id)
-    instance = request.user.get_profile().instance
+def edit(request, id, lang_code=None):    
+    comment = Comment.objects.untranslated().get(id=id)    
+    #instance = request.user.get_profile().instance
+    trans = None
+    for language_code, _lang_name in settings.LANGUAGES:
+        try:
+            trans = get_translation(comment, language_code)
+            break
+        except:
+            pass
+    if trans is not None:
+        comment = Comment.objects.language(trans.language_code).get(id=id)    
+    
+    comment_form = CommentForm(data=request.POST or None)
+    comment_form.allow_replies = False
     
     if request.method == "POST":
         s = ""
@@ -85,7 +101,7 @@ def edit(request, id):
             s = "%s%s: %s" % (s, x, request.FILES[x])
         #return HttpResponse(s)
         
-        comment_form = CommentForm(request.POST)
+        
         if comment_form.is_valid(): 
             comment.message = comment_form.cleaned_data['message']
             comment.save()
@@ -114,13 +130,15 @@ def edit(request, id):
                     file=request.FILES.get('picture'),
                     user=request.user,
                     instance=request.user.get_profile().instance)
-            
-            activity_id = Answer.objects.get(id=comment.object_id).activity.id
-            return HttpResponseRedirect(reverse("player_activities_overview", args=[activity_id]))
-    else:
-        comment_form = CommentForm()
-    
-    comment_form.allow_replies = False
+            #TODO: what if answer does not exist?
+            try:            
+                activity_id = Answer.objects.get(id=comment.object_id).activity.id
+                return HttpResponseRedirect(reverse("player_activities_overview", args=[activity_id]))
+            except Answer.DoesNotExist:
+                return HttpResponseRedirect(reverse('accounts_profile', args=[request.user.pk]))
+                
+       
+   
     tmpl = loader.get_template('comments/edit.html')
     
     if comment.user != request.user:

@@ -33,6 +33,7 @@
         </div>
         <div id="trans_details_{{ value.pk }}" style="display: None">
             {% for t in translations.value_translations %}
+            <p>Coins: {{ value.coins }}</p>
             <div>
                 <h2> {{ t.language_code|lang }}
                     <input type="button" value="show" onClick="show_form('{{ t.pk }}')" />
@@ -41,7 +42,6 @@
                     <p>Message: {{ t.message}}</p>                    
                     <br>
                 </form>
-               
             </div>
             {% endfor %}
         </div>

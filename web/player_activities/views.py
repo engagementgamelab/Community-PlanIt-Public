@@ -36,8 +36,10 @@ def getComments(answers, ModelType):
 
 @login_required
 def overview(request, id):
-    activity = PlayerActivity.objects.get(id=id)
-        
+    try:
+        activity = PlayerActivity.objects.untranslated().get(id=id)
+    except PlayerActivity.DoesNotExist:
+        raise Http404 ("PlayerActivity with id %s does not exist" % id)
     if activity.type.type == "open_ended":
         answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/open_overview.html')
@@ -98,11 +100,11 @@ def overview(request, id):
             else:
                 comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
         
-        myComment = comments.filter(user=request.user)
-        if len(myComment) > 0:
-            myComment = myComment[0]
-        else:
-            myComment = None
+        myComment = None
+        if comments is not None:
+            myComment = comments.filter(user=request.user)
+        if myComment is not None and len(myComment) > 0:
+            myComment = myComment[0]            
         
         answerDict = {}
         choices = MultiChoiceActivity.objects.filter(activity=activity)
@@ -207,7 +209,10 @@ def comment_fun(answer, form, request):
 
 @login_required
 def get_activity(request, id):
-    activity = PlayerActivity.objects.get(id=id)
+    try:
+        activity = PlayerActivity.objects.untranslated().get(id=id)
+    except PlayerActivity.DoesNotExist:
+        raise Http404 ("PlayerActivity with id %s does not exist" % id)
     
     answers = Answer.objects.filter(activity=activity, answerUser=request.user)
     if len(answers) > 0:
@@ -330,10 +335,19 @@ def get_activity(request, id):
 
         if tmpl == None:
             if replay == False:
+<<<<<<< HEAD
                 ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
             else:
                 ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
             return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+=======
+                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "completed", 
+                                     reverse("activities:player_activities_activity", args=[activity.id]), "activity")
+            else:
+                ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", 
+                                     reverse("activities:player_activities_activity", args=[activity.id]), "activity")
+            return HttpResponseRedirect(reverse("activities:player_activities_overview", args=[activity.id]))
+>>>>>>> remotes/psychotechnik/multilingual
     else:
         comment_form = CommentForm()
         if (activity.type.type == "open_ended"):
@@ -386,13 +400,13 @@ def get_activity(request, id):
         )))
 
 @login_required
-def replay(request, id):
-    activity = PlayerActivity.objects.get(id=id)
+def replay(request, id):    
+    activity = PlayerActivity.objects.untranslated().get(id=id)
     tmpl = None
     form = None
     comment_form = None
     map = None
-    init_coords = []
+    init_coords = []  
     if request.method == "POST":
         s = ""
         for x in request.POST.keys():
@@ -410,19 +424,27 @@ def replay(request, id):
                 choices.append((x.id, x.value))
             form = MakeSingleForm(choices)(request.POST)
             if form.is_valid():
-                answer = AnswerSingleResponse.objects.get(activity=activity, answerUser=request.user)
-                answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
-                answer.save()
+                try:
+                    answer = AnswerSingleResponse.objects.get(activity=activity, answerUser=request.user)
+                    answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
+                    answer.save()
+                except AnswerSingleResponse.DoesNotExist:
+                    answer = AnswerSingleResponse.objects.create(activity=activity, answerUser=request.user,
+                                selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"])))
+                
             else:
                 tmpl = loader.get_template('player_activities/single_replay.html')
                 form_error = True
-        elif request.POST["form"] == "map":
+        elif request.POST["form"] == "map":            
             form = MapForm(request.POST)
             if form.is_valid():
                 map = form.cleaned_data["map"]
-                answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
-                answer.map = map;
-                answer.save()
+                try:
+                    answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
+                    answer.map = map;
+                    answer.save()
+                except AnswerMap.DoesNotExist:
+                    answer = AnswerMap.objects.create(activity=activity, answerUser=request.user, map=map)
             else:
                 map = request.POST["map"]
                 activity = PlayerMapActivity.objects.get(pk=activity.id)
@@ -461,8 +483,9 @@ def replay(request, id):
                         answer.save()
                         #Yes it's a hack, only make a comment for the first response
                         if not first_found:
-                            comment.content_object = answer
-                            comment.save()
+                            if comment is not None:
+                                comment.content_object = answer
+                                comment.save()
                             first_found = True
                 AnswerMultiChoice.objects.filter(pk__in=delete_answers).delete()
             else:
@@ -483,7 +506,7 @@ def replay(request, id):
                 choices.append((x.id, x.value))
             form = MakeSingleForm(choices)
         elif (activity.type.type == "map"):
-            activity = PlayerMapActivity.objects.get(pk=activity.id)
+            activity = PlayerMapActivity.objects.untranslated().get(pk=activity.id)
             tmpl = loader.get_template('player_activities/map_replay.html')
             answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
             if (len(answer) > 0):
@@ -521,7 +544,7 @@ def replay(request, id):
     
 
 @login_required
-def index(request):
+def index(request):  
     user = request.user
     profile = user.get_profile()
     instance = profile.instance
@@ -533,7 +556,10 @@ def index(request):
         }, 
         #[ip]
         )))
-        
+
+    for mission in instance.missions.all():
+        print mission
+
     missions = instance.missions.active()
     if missions.count() == 0:
         return HttpResponse(tmpl.render(RequestContext(request, {

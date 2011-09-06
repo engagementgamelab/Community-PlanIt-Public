@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from web.accounts.models import determine_path
 from web.attachments.models import Attachment
 from web.missions.models import Mission
+from django.contrib.admin.options import ModelAdmin
 
 __all__ = ( 'PlayerActivityType','PlayerActivity', 'PlayerMapActivity', 'PlayerEmpathyActivity', 'MultiChoiceActivity', )
 
@@ -93,12 +94,12 @@ class PlayerMapActivity(PlayerActivityBase):
 
 class PlayerEmpathyActivity(PlayerActivityBase):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
-    translations = TranslatedFields(
+    translations = TranslatedFields(        
         bio = models.CharField(max_length=1000),
     )
     
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
         self.type = PlayerActivityType.objects.get(type="empathy")
         super(PlayerEmpathyActivity, self).save(*args, **kwargs)
@@ -110,9 +111,7 @@ class MultiChoiceActivity(TranslatableModel):
         value = models.CharField(max_length=255),
     )
 
-#***************************************
-#admin
-class PlayerActivityTypeAdmin(TranslatableAdmin):
+class PlayerActivityTypeAdmin(ModelAdmin):
     list_display = ('type', 'defaultPoints',)
 
 class PlayerActivityAdmin(TranslatableAdmin):
@@ -123,3 +122,10 @@ class PlayerActivityAdmin(TranslatableAdmin):
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
     list_display = ('pk',) #excluding translated fields 'name', 'question', 
     
+
+class MultiChoiceActivityAdmin(TranslatableAdmin):
+    list_display = ('pk',) #excluding translated fields 'value'
+    
+    
+class PlayerMapActivityAdmin(TranslatableAdmin):
+    list_display = ('pk',) #excluding translated fields

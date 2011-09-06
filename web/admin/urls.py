@@ -45,6 +45,4 @@ urlpatterns = patterns("",
         #url(r"^activity/", "admin.views.activity_base", name="activity-base"),
         #url(r"^activity/edit/(?P<mission_id>.*)/(?P<activity_id>.*)/", "admin.views.activity_edit", name="activity-edit"),
         #url(r"^activity/new/(?P<mission_id>.*)/", "admin.views.activity_new", name="activity-new"),
-
-
 )

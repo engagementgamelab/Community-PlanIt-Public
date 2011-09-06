@@ -10,7 +10,9 @@ from django.contrib.auth.models import User, Group
 
 from PIL import Image, ImageDraw
 
-from web.accounts.models import UserProfile
+from accounts.models import UserProfile
+from core.test_fixtures import create_fixtures
+from instances.models import Instance
 
 # For testing Accounts
 # TODO: Testing the registration of users with an instance is tested under
@@ -221,3 +223,22 @@ class AccountsTestCase(TestCase):
                                                      "first_name": "new_test", "last_name": "new_test", "race": "2"})
         user = UserProfile.objects.filter(user__email="testUpload@localhost.com")[0]
         self.assertTrue(user.race.pos == 2, "The race is correct")
+
+class UserProfileModelTests(TestCase):
+    
+    def setUp(self):
+        create_fixtures()
+        self.test_instance = Instance.objects.untranslated().get(pk=1)
+        
+    def test_get_comments(self):
+        profile = UserProfile.objects.get(pk=1)
+        comment = profile.comments.create(instance=self.test_instance,
+                                          content_object=profile,
+                                          user=profile.user)
+        comment.translate('ht')
+        comment.message='Hi'
+        comment.save()
+        self.assertEqual(1, profile.get_preferred_comments().count())
+        self.assertEqual(0, profile.get_english_comments().count())
+        
+        

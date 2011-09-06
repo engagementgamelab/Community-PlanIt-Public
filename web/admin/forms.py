@@ -175,10 +175,11 @@ class ValueForm(TranslatableModelForm):
         exclude = ('language_code', 'message', 'instance', 'comments')        
 
     def __init__(self, value_instance, *args, **kwargs):
-        super(ValueForm, self).__init__(*args, **kwargs)
+        super(ValueForm, self).__init__(*args, **kwargs)        
         self.value_instance = value_instance
 
         log.debug("value form. using instance: %s <%s>" % (self.value_instance.pk, self.value_instance))
+        self.fields['instance'].initial = value_instance         
         
         def _make_instance_trans_form(instance, lang):
             instance.language_code = lang
@@ -205,8 +206,6 @@ class ValueForm(TranslatableModelForm):
                     trans = get_translation(self.instance, language_code)
                 except:
                     trans = trans_model()
-            else:
-                trans = trans_model()
 
             trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwargs)
             trans_form_name = "value_trans_" + language_code + "_form"
@@ -238,7 +237,7 @@ class ValueForm(TranslatableModelForm):
         value = super(ValueForm, self).save(commit=False)
         value.instance = self.value_instance
         value.save()
-        
+
         for form in self.inner_trans_forms:
             new = form.instance.pk is None
             data = form.cleaned_data
@@ -255,7 +254,7 @@ class ValueForm(TranslatableModelForm):
             trans.save()
 
         return value
-    
+
 
 class ActivityForm(TranslatableModelForm):
     #TODO: refactoring - base form for ValueForm, InstanceForm, ActivityForm with the inner translation forms
