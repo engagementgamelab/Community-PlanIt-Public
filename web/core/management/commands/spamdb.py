@@ -90,7 +90,6 @@ def create_instance():
 
     for l in inst.languages.values_list('code', flat=True):
         trans = inst.translate(l)
-        trans.name = random_words(l)[:45]
         trans.description = random_words(l, paragraph=True)[:250]
         trans.save()
 
