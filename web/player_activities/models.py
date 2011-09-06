@@ -120,3 +120,7 @@ class PlayerActivityAdmin(TranslatableAdmin):
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
     list_display = ('pk',) #excluding translated fields 'name', 'question', 
     
+
+class MultiChoiceActivityAdmin(TranslatableAdmin):
+    list_display = ('pk',) #excluding translated fields 'value'
+    
