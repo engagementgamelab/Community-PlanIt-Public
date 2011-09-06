@@ -35,6 +35,9 @@ class PlayerValue(models.Model):
     value = models.ForeignKey(Value)
     coins = models.IntegerField(default=0)
 
+    class Meta:
+        unique_together = (('user', 'value'),)
+
     def __unicode__(self):
         return "%s for user <%s>" % (self.value.message, self.user)
 
