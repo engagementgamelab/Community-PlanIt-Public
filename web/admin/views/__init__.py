@@ -10,10 +10,12 @@ log = logging.getLogger(__name__)
 
 def verify(request, template="admin/backend_not_superuser.html"):
     user = request.user
-    if user.is_superuser:
+    context={}
+
+    if user.is_superuser or (user in user.get_profile().instance.curators.all()):
         return None
-    else:
-        return render_to_response(template, RequestContext(request, context))
+
+    return render_to_response(template, RequestContext(request))
 
 @login_required
 def delete_obj(request, id, model, template="admin/trans_del.html"):
