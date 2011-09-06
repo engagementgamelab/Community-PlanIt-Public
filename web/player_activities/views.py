@@ -36,6 +36,8 @@ def getComments(answers, ModelType):
 
 @login_required
 def overview(request, id):
+    import ipdb
+    ipdb.set_trace()
     try:
         activity = PlayerActivity.objects.untranslated().get(id=id)
     except PlayerActivity.DoesNotExist:
@@ -96,11 +98,11 @@ def overview(request, id):
             else:
                 comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
         
-        myComment = comments.filter(user=request.user)
-        if len(myComment) > 0:
-            myComment = myComment[0]
-        else:
-            myComment = None
+        myComment = None
+        if comments is not None:
+            myComment = comments.filter(user=request.user)
+        if myComment is not None and len(myComment) > 0:
+            myComment = myComment[0]            
         
         answerDict = {}
         choices = MultiChoiceActivity.objects.filter(activity=activity)
@@ -382,6 +384,8 @@ def get_activity(request, id):
 
 @login_required
 def replay(request, id):
+    import ipdb
+    ipdb.set_trace()
     activity = PlayerActivity.objects.get(id=id)
     tmpl = None
     form = None
@@ -456,8 +460,9 @@ def replay(request, id):
                         answer.save()
                         #Yes it's a hack, only make a comment for the first response
                         if not first_found:
-                            comment.content_object = answer
-                            comment.save()
+                            if comment is not None:
+                                comment.content_object = answer
+                                comment.save()
                             first_found = True
                 AnswerMultiChoice.objects.filter(pk__in=delete_answers).delete()
             else:
@@ -467,8 +472,9 @@ def replay(request, id):
         #If the template is None then there wasn't an error so assign the points and redirect
         #Otherwise fall through. Only assign the points if the replay is false, but still redirect
         if tmpl == None:
-            ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", reverse("player_activities_activity", args=[activity.id]), "activity")
-            return HttpResponseRedirect(reverse("player_activities_overview", args=[activity.id]))
+            ActivityLogger().log(request.user, request, "the activity: " + activity.name, "replayed", 
+                                 reverse("activities:player_activities_activity", args=[activity.id]), "activity")
+            return HttpResponseRedirect(reverse("activities:player_activities_overview", args=[activity.id]))
     else:
         if (activity.type.type == "single_response"):
             tmpl = loader.get_template('player_activities/single_replay.html')
@@ -478,7 +484,7 @@ def replay(request, id):
                 choices.append((x.id, x.value))
             form = MakeSingleForm(choices)
         elif (activity.type.type == "map"):
-            activity = PlayerMapActivity.objects.get(pk=activity.id)
+            activity = PlayerMapActivity.objects.untranslated().get(pk=activity.id)
             tmpl = loader.get_template('player_activities/map_replay.html')
             answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
             if (len(answer) > 0):

@@ -92,12 +92,12 @@ class PlayerMapActivity(PlayerActivityBase):
 
 class PlayerEmpathyActivity(PlayerActivityBase):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
-    translations = TranslatedFields(
+    translations = TranslatedFields(        
         bio = models.CharField(max_length=1000),
     )
     
     def save(self):
-        self.slug = slugify(self.name)
+        self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
         self.type = PlayerActivityType.objects.get(type="empathy")
         super(PlayerEmpathyActivity, self).save()
@@ -124,3 +124,6 @@ class PlayerEmpathyActivityAdmin(TranslatableAdmin):
 class MultiChoiceActivityAdmin(TranslatableAdmin):
     list_display = ('pk',) #excluding translated fields 'value'
     
+    
+class PlayerMapActivityAdmin(TranslatableAdmin):
+    list_display = ('pk',) #excluding translated fields
