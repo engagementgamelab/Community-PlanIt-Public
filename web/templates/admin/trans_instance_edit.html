@@ -144,8 +144,8 @@
     <script src="{{MEDIA_URL}}js/games/mapit.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{MEDIA_URL}}3pty/js/date.js" type="text/javascript" charset="utf-8"></script>
     <script>
-        jQuery(function($) {
-            $(".google-map").mapit({{ instance_form.instance.location|safe|escape }});
+        jQuery(function($) {            
+            $(".google-map").mapit({{ location|safe|escape }});
             $(".remove-map").remove();
     
             //$("#id_end_date").datetimepicker({

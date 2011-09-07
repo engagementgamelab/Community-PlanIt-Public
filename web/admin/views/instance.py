@@ -87,6 +87,8 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
         if instance_form.is_valid():
             try:
                 instance = instance_form.save()
+                instance.location = instance_form.cleaned_data["map"]
+                instance.save()
             except Exception, err:
                 #transaction.rollback()
                 log.error("error while saving instance: %s" % str(err))
@@ -100,10 +102,13 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
                     errors.update(f.errors)
             if instance_form.errors:
                 errors.update(instance_form.errors)
-
-
+    location = '{"frozen": null, "zoom": 13, "markers": null, "coordinates": [42.36475475505694, -71.05134683227556], "size": [500, 400]}'
+    if inst.location:
+        location = inst.location
+        
     context = {
             'instance_form': instance_form,
+            "location": location,
             "init_coords": init_coords,
             'new': is_new,
             'errors': errors,

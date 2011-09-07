@@ -99,9 +99,9 @@ class InstanceForm(TranslatableAdminBaseForm):
     def __init__(self, *args, **kwargs):
         # go through the proxy model
         # because of custom instance formatting
-        #self.fields['curators'].queryset = CPIUser.objects.all()
-        #self.fields['map'] = GoogleMapsField().formfield()
+        #self.fields['curators'].queryset = CPIUser.objects.all()        
         super(InstanceForm, self).__init__(*args, **kwargs)
+        self.fields['map'] = GoogleMapsField().formfield()
 
     def clean_map(self):
         map = self.cleaned_data.get('map')
