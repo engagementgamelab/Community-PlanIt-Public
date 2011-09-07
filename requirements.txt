@@ -7,6 +7,10 @@ python-memcached
 psycopg2
 south
 supervisor
+django-rosetta
+django-nani
+django-extensions
+django-localeurl
 
 # django-mailer-2 provides asynchronous sending of email,
 # which improves user experience because responses don't have
