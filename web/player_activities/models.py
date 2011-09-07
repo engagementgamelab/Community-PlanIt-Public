@@ -13,6 +13,8 @@ from web.attachments.models import Attachment
 from web.missions.models import Mission
 from django.contrib.admin.options import ModelAdmin
 
+__all__ = ( 'PlayerActivityType','PlayerActivity', 'PlayerMapActivity', 'PlayerEmpathyActivity', 'MultiChoiceActivity', )
+
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.creationUser.id) +'/'+ filename
 
@@ -23,7 +25,7 @@ class PlayerActivityType(models.Model):
 
     def __unicode__(self):
         return self.type
-    
+
 class PlayerActivityBase(TranslatableModel):
 
     slug = models.SlugField(editable=False)
@@ -35,7 +37,7 @@ class PlayerActivityBase(TranslatableModel):
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
 
     class Meta:
-    	abstract = True
+        abstract = True
 
 class PlayerActivity(PlayerActivityBase):
 
@@ -53,15 +55,15 @@ class PlayerActivity(PlayerActivityBase):
         #removing contraint since name is now translated
         #and it seems you cannot mix translated fields
         #unique_together = ('mission', 'type')
-    
+
     def __unicode__(self):
-        return self.safe_translation_getter('name', 'Activity: %s' % self.pk)
+        return self.safe_translation_getter('name', '%s' % self.pk)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
         super(PlayerActivity, self).save(*args, **kwargs)
-    
+
     def getPoints(self):
         if self.points == None:
             return self.type.defaultPoints
@@ -96,11 +98,11 @@ class PlayerEmpathyActivity(PlayerActivityBase):
         bio = models.CharField(max_length=1000),
     )
     
-    def save(self):
+    def save(self, *args, **kwargs):
         self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
         self.type = PlayerActivityType.objects.get(type="empathy")
-        super(PlayerEmpathyActivity, self).save()
+        super(PlayerEmpathyActivity, self).save(*args, **kwargs)
 
 class MultiChoiceActivity(TranslatableModel):
     activity = models.ForeignKey(PlayerActivity)
@@ -108,6 +110,11 @@ class MultiChoiceActivity(TranslatableModel):
     translations = TranslatedFields(
         value = models.CharField(max_length=255),
     )
+    def __unicode__(self):
+        return self.safe_translation_getter('value', '%s' % self.pk)
+
+#*******************
+#### admin =========
 
 class PlayerActivityTypeAdmin(ModelAdmin):
     list_display = ('type', 'defaultPoints',)

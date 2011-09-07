@@ -2,6 +2,7 @@ import os
 import random
 import string
 from django.conf import settings
+from django.template.defaultfilters import slugify
 from dilla import spam
 from instances.models import Instance
 
@@ -19,11 +20,17 @@ DICT_LOOKUP = {
     'ru': "ukrainian",
 }
 
-def random_words(language_code='en', paragraph=False, num=5):
-    if language_code not in ['en-us', 'en']:
-        dictionary = os.path.join('/usr/share/dict/', DICT_LOOKUP[language_code])
-    else:
+def random_words(language_code='en-us', paragraph=False, num=5):
+    ignore_trans = True
+
+    if ignore_trans:
         dictionary = settings.DICTIONARY
+    else:
+        if language_code not in ['en-us', 'en']:
+            dictionary = os.path.join('/usr/share/dict/', DICT_LOOKUP[language_code])
+        else:
+            dictionary = settings.DICTIONARY
+
     try:
         d = open(dictionary, "r").readlines()
     except IOError:
@@ -39,13 +46,21 @@ def random_words(language_code='en', paragraph=False, num=5):
                 ".\n\n".join([_random_paragraph() for i in range(n)])
         return _random_paragraphs(num)
 
-    return _random_words(num)
+    return _random_words(num) #.decode('iso-8859-1').encode('utf-8')
 
 def _random_language_code():
     lc =  random.choice([x[0] for x in settings.LANGUAGES])
-    if lc == 'en':
-        return 'en-us'
+    #if lc == 'en':
+    #    return 'en-us'
     return lc
+
+def random_email():
+    return "%s@%s.%s" % ( \
+             slugify(random_words(num=1)),
+             slugify(random_words(num=1)),
+             random.choice(["com", "org", "net", "gov", "eu"])
+             )
+
 
 @spam.strict_handler('instances.InstanceTranslation.master')
 def instancetranslation_name(record, field):

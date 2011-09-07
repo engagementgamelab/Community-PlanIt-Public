@@ -82,7 +82,7 @@ class UserProfile(models.Model):
     education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
     income = models.ForeignKey(UserProfileIncomes, blank=True, null=True, default=None)
     living = models.ForeignKey(UserProfileLiving, blank=True, null=True, default=None)
-    preferred_language = models.CharField(max_length=5, default='en')
+    preferred_language = models.CharField(max_length=5, default='en-us')
     
     accepted_term = models.BooleanField(default=False)
     accepted_research = models.BooleanField(default=False)
@@ -232,10 +232,10 @@ def user_post_save(instance, created, **kwargs):
         # Create a user profile for the player and add them to the
         # `Player` group.  Default the player to inactive.
         player_group, created = Group.objects.get_or_create(name='Player')
-
-        UserProfile.objects.create(user=instance)
-        instance.is_active = False
-        instance.groups.add(player_group)
+        user_profile = UserProfile.objects.get_or_create(user=instance)
+        #instance.is_active = False
+        #instance.groups.add(player_group)
+        instance.save()
 
 models.signals.pre_save.connect(user_pre_save, sender=User)
 models.signals.post_save.connect(user_post_save, sender=User)

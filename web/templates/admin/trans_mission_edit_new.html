@@ -1,0 +1,106 @@
+{%extends "layouts/base.html"%}
+{% load game_extras %}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>{% if new %}Add{% else %}Edit{% endif %} Mission for Instance: {{ instance.title }}</h2>
+    
+    <div id="content" style="text-color: red;"> 
+        {% if errors %} 
+            {% for k,v in errors.items %}
+            {{ k }}: {{ v }} 
+            {% endfor %}
+        {% endif %}
+    </div>
+     
+    <form id="id_mission-form" action="." method="post">{%csrf_token%}
+        {% if not new %}
+            <input type="hidden" name="mission_id" value="{{ mission_form.instance.pk }}">
+        {% endif %}   
+        
+        {% for field in mission_form %}            
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>            
+        {% endfor %}  
+    </form>   
+    
+    {% for form in mission_form.inner_trans_forms %}
+        <div>
+            {% with form.instance.language_code as lang %}
+            <h2> {{ lang }} <input type="button" value="(click to view/hide translations)" onClick="show_translations('{{ lang }}')" /> </h2> 
+            <form id="id_trans-{{ lang }}-form" action="." method="post" style="display: None"> {%csrf_token%}
+                {% for field in form %}
+                <div class="fieldWrapper">
+                    {{ field.errors }}
+                    {{ field.label_tag }} {{ field }}
+                </div>
+                {% endfor %}
+            </form>
+            {% endwith %}
+        </div>
+    {% endfor %}
+        
+	<div>
+            {% if new %}
+                <input type="submit" class="btn-submit" name="submit_btn" value="Create" />
+            {% else %}
+                <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
+            {% endif %}
+            <input type="submit" class="btn-submit" name="submit_btn" value="Cancel" />
+
+    </div>
+{%endblock%}
+
+{%block body%}    
+    <script>
+        jQuery(function($) {
+            $(".btn-submit").live("click", function(){
+                var instance_qs = $('#id_mission-form').serialize();
+
+                data = instance_qs + '&' + {% for form in mission_form.inner_trans_forms %} $('#id_trans-{{ form.instance.language_code }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
+
+                {% if new %}
+                    var url = "{% url admin:mission-new instance.pk %}";
+                {% else %}
+                    var url = "{% url admin:mission-edit instance.pk mission_form.mission_instance.pk %}";
+                {% endif %}
+
+                $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        success: function(data, textStatus) {
+                            var $data = $(data);
+                            var has_errors = $(data).find(".errorlist");
+
+                            if (has_errors.length > 0){
+                                $('#content').html($data.find('#content'));
+                            }
+                            else {
+                                window.location='{% url admin:manage-missions instance.pk %}';
+                            }
+                        },
+                        error: function(data){                                        
+                            $('#content').html(data.responseText);
+                        }
+                });
+            });
+
+        });
+
+        function show_translations(lang) {
+            instanceForm = document.getElementById('id_trans-'+lang+'-form');
+            if (instanceForm.style.display == '') {
+                instanceForm.style.display = 'none';
+            }
+            else {
+                instanceForm.style.display = '';
+            }
+        }
+    </script>
+{%endblock%}

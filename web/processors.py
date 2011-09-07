@@ -12,7 +12,7 @@ from web.player_activities.models import PlayerActivity
 # problematic. There are also cases where users may not have profiles or be
 # associated with an instance (non-participatory admin users); they require
 # extra care here to avoid exceptions. JH
-def instance_processor(request):
+def instance_processor_depr(request):
     if request.user.is_anonymous():
         return {}
 

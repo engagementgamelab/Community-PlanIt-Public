@@ -1,4 +1,9 @@
-from web.player_activities.models import *
+from web.player_activities.models import (PlayerActivity, PlayerActivityType, 
+                PlayerActivityAdmin, PlayerActivityTypeAdmin, 
+                PlayerMapActivity, PlayerMapActivityAdmin,
+                MultiChoiceActivityAdmin, MultiChoiceActivity,
+                PlayerEmpathyActivity, PlayerEmpathyActivityAdmin,
+)
 from django.contrib import admin
 
 # Register to admin sites

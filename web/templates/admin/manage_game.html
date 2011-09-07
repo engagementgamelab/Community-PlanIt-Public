@@ -1,33 +1,36 @@
 {%extends "layouts/base.html"%}
-{% load game_extras %}
+{% load admin_tags %}
 
 {%block section%}misisons{%endblock%}
 {%block title%}Administration{%endblock%}
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h1>Manage Instances</h1>
-    {# if is_staff #}
-    <div>
-        <input type="button" value="New Instance" onClick="window.location='{% url admin:instance-new %}' "/>
-    </div>
-    {# endif #}
+    <h1>Manage Instances
+        {% if request.user.is_superuser %}
+            <input type="button" value="Create New Instance" onClick="window.location='{% url admin:instance-new %}' "/>
+        {% endif %}
+    </h1>
 
     {% for instance, translations in instances_data.items %}
 
         <div>
             <p>
-            <h2>{{ instance.title }} ({{ instance.pk }})</h2>
+            <h2>{{ instance.title }} <{{ instance.pk }}></h2>
                 <input type="button" value="edit" onClick="window.location='{% url admin:instance-edit instance.pk %}' "/>
                 <input type="button" value="delete" onClick="window.location='{% url admin:instance-delete instance.pk %}' "/>
+                <br/> <br/>
                 <!--button type="submit" name="email_btn" id="email_btn" style="display:none">Send Email to all in Instance</button-->
-                <input type="button" value="manage values" onClick="window.location='{% url admin:manage-values instance.pk %}' "/>
+                <input type="button" value="missions" onClick="window.location='{% url admin:manage-missions instance.pk %}' "/>
+                <input type="button" value="values" onClick="window.location='{% url admin:manage-values instance.pk %}' "/>
+                <br/> <br/>
                 <input type="button" value="show/hide details" onClick="show_hide('instance_{{ instance.pk }}')"/>
             </p>
         </div>
         <div id="instance_{{ instance.pk }}" style="display: None">
             <div>
-                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong>
+                <p>Available Languages: 
+                    <strong> {{ instance.languages.all|languages_formatted }} </strong>
                 </p>
                     <p>Start Date: {{instance.start_date}}</p>
                     {% comment %}
@@ -35,25 +38,16 @@
                     {% if instance.end_date %} <p>End Date: {{instance.end_date}}</p> {% endif %}
                     {% endcomment %}
             </div>
-            {% for instance_translations in translations.instance_translations %}
+            {% for t in translations.instance_translations %}
             <div>
-                <h2> {{ instance_translations.language_code }} <input type="button" value="show/hide translations" onClick="showInstanceForm({{ instance_translations.pk}})" /> </h2> <form id="instanceForm_{{instance_translations.id}}" style="display: None"> 
-                    <p>Language: {{ istance_trans.language_code }}</p>
-                    <p>Name: {{ instance_translations.name}}</p>
-                    <p>Description: {{ instance_translations.description}}</p>
+                <h2> {{ t.language_code|lang }} 
+                    <input type="button" value="more" onClick="show_form({{ t.pk}})" /> 
+                </h2> 
+
+                <form id="id_instance-form-{{t.id}}" style="display: None"> 
+                    <p>Description: {{ t.description}}</p>
                     <br>
                 </form>
-                {% comment %}
-
-                <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url admin:values-edit instance_trans.master.id %}' "/>
-                <ul>
-                    {% for value in instance.value_set.all %}
-                        {#if value.instance = instance_trans.master #}
-                            <li>{{value.coins}}</li>
-                        {# endif #}
-                    {% endfor %}
-                </ul>
-                {% endcomment %}
             </div>
             {% endfor %}
         </div>
@@ -102,13 +96,13 @@
             }
         }
         
-        function showInstanceForm(instance_id) {
-            instanceForm = document.getElementById("instanceForm_" + instance_id);
-            if (instanceForm.style.display == "") {
-                instanceForm.style.display = "none";
+        function show_form(instance_id) {
+            elem = document.getElementById("id_instance-form-" + instance_id);
+            if (elem.style.display == "") {
+                elem.style.display = "none";
             }
             else {
-                instanceForm.style.display = "";
+                elem.style.display = "";
             }
         }
     </script>

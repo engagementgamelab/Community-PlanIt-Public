@@ -6,7 +6,7 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h2>{% if new %}Add{% else %}Edit{% endif %} Value for Instance: {{ instance.title }}</h2>
+    <h2>{% if new %}Add{% else %}Edit{% endif %} Activity for Mission: {{ mission.title }}</h2>
     
     <div id="content" style="text-color: red;"> 
         {% if errors %} 
@@ -16,8 +16,8 @@
         {% endif %}
     </div>
      
-    <form id="id_value-form" action="." method="post">{%csrf_token%}
-        {% for field in value_form %}            
+    <form id="id_activity-form" action="." method="post">{%csrf_token%}
+        {% for field in activity_form %}            
             <div class="fieldWrapper">
                 {{ field.errors }}
                 {{ field.label_tag }} {{ field }}
@@ -25,13 +25,14 @@
         {% endfor %}  
     </form>   
     
-    {% for form in value_form.inner_trans_forms %}
+    {% for form in activity_form.inner_trans_forms %}
         <div>
             {% with form.instance.language_code as lang_code %}
             <h2> 
                 {{ lang_code|lang }} 
+                <input type="button" value="translations" onClick="show_translations('{{ lang_code }}')" /> 
             </h2> 
-            <form id="id_trans-{{ lang_code }}-form" action="." method="post"> {%csrf_token%}
+            <form id="id_trans-{{ lang_code }}-form" action="." method="post" style="display: None"> {%csrf_token%}
                 {% for field in form %}
                 <div class="fieldWrapper">
                     {{ field.errors }}
@@ -50,7 +51,7 @@
             <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
         {% endif %}
         <input type="submit" class="btn-submit" name="submit_btn" value="Cancel"  
-                    onClick="window.location='{% url admin:manage-values instance.pk %}'"/>
+                    onClick="window.location='{% url admin:manage-activities mission.pk %}'"/>
 
     </div>
 {%endblock%}
@@ -63,12 +64,12 @@
             $("label[for='id_instance']").hide();
             
             $(".btn-submit").live("click", function(){
-                var instance_qs = $('#id_value-form').serialize();
-                data = instance_qs + '&' + {% for form in value_form.inner_trans_forms %} $('#id_trans-{{ form.instance.language_code }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
+                var instance_qs = $('#id_activity-form').serialize();
+                data = instance_qs + '&' + {% for form in activity_form.inner_trans_forms %} $('#id_trans-{{ form.instance.language_code }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
                 {% if new %}
-                    var url = "{% url admin:value-new instance.pk %}";
+                    var url = "{% url admin:activity-new mission.pk %}";
                 {% else %}
-                    var url = "{% url admin:value-edit instance.pk value.pk %}";
+                    var url = "{% url admin:activity-edit mission.pk activity.pk %}";
                 {% endif %}
 
                 $.ajax({
@@ -83,7 +84,7 @@
                                 $('#content').html($data.find('#content'));
                             }
                             else {
-                                window.location='{% url admin:manage-values instance.pk %}';
+                                window.location='{% url admin:manage-activities mission.pk %}';
                             }
                         },
                         error: function(data){                                        
@@ -93,6 +94,15 @@
             });
 
         });
+        function show_translations(lang_code) {
+            instanceForm = document.getElementById('id_trans-'+lang_code+'-form');
+            if (instanceForm.style.display == '') {
+                instanceForm.style.display = 'none';
+            }
+            else {
+                instanceForm.style.display = '';
+            }
+        }
 
     </script>
 {%endblock%}

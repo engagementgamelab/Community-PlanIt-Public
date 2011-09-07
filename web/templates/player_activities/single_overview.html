@@ -8,7 +8,7 @@
     
     <div>
         <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
-        <input class="button" type="button" value="Replay" onClick="window.location='{% url activities:player_activities_replay activity.id %}' ">
+        <input class="button" type="button" value="Replay" onClick="window.location='{% url activities:replay activity.id %}' ">
     </div>
     
     {% include "player_activities/attachments.html" %}

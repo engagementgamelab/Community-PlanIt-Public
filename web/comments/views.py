@@ -12,7 +12,7 @@ from web.answers.models import Answer
 from web.challenges.models import Challenge
 from web.comments.forms import *
 from web.comments.models import Comment
-from web.processors import instance_processor as ip
+#from web.processors import instance_processor as ip
 
 from PIL import Image
 
@@ -142,10 +142,14 @@ def edit(request, id, lang_code=None):
     tmpl = loader.get_template('comments/edit.html')
     
     if comment.user != request.user:
-        return HttpResponse(tmpl.render(RequestContext(request, {"not_permitted": True }, [ip])))
+        return HttpResponse(tmpl.render(RequestContext(request, {"not_permitted": True }, 
+            #[ip]
+            )))
     else:
         return HttpResponse(tmpl.render(RequestContext(request, {"comment": comment,
-                                                                 "comment_form": comment_form }, [ip])))
+                                                                 "comment_form": comment_form }, 
+                                                                 #[ip]
+                                                                 )))
                                                                  
 
     

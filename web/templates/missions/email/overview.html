@@ -11,5 +11,5 @@ This is a Community PlanIT update from {{instance}}.
 The following missions are currently active:
 {% for mission in instance.missions.active %}
 - {{mission.name}}{% for activity in mission.activities %}
-  - <a href="{% url player_activities_activity activity.id %}/">{{ activity.name }}</a>
+  - <a href="{% url activities:activity activity.id %}/">{{ activity.name }}</a>
 {% endfor %}{% endfor %}{% endif %}

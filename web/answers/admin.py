@@ -15,3 +15,6 @@ from django.contrib import admin
 ## MapIt
 #from web.games.mapit.models import *
 #admin.site.register(Mapit, MapitAdmin)
+
+from answers.models import Answer
+admin.site.register(Answer)

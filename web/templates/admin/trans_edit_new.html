@@ -1,5 +1,5 @@
 {%extends "layouts/base.html"%}
-{% load admin_tags %}
+{% load game_extras %}
 
 {%block section%}instances{%endblock%}
 {%block title%}Administration{%endblock%}
@@ -17,6 +17,7 @@
     </div>
      
     <form id="id_value-form" action="." method="post">{%csrf_token%}
+        
         {% for field in value_form %}            
             <div class="fieldWrapper">
                 {{ field.errors }}
@@ -27,11 +28,9 @@
     
     {% for form in value_form.inner_trans_forms %}
         <div>
-            {% with form.instance.language_code as lang_code %}
-            <h2> 
-                {{ lang_code|lang }} 
-            </h2> 
-            <form id="id_trans-{{ lang_code }}-form" action="." method="post"> {%csrf_token%}
+            {% with form.instance.language_code as lang %}
+            <h2> {{ lang }} <input type="button" value="(click to view/hide translations)" onClick="show_translations('{{ lang }}')" /> </h2> 
+            <form id="id_trans-{{ lang }}-form" action="." method="post" style="display: None"> {%csrf_token%}
                 {% for field in form %}
                 <div class="fieldWrapper">
                     {{ field.errors }}
@@ -58,10 +57,6 @@
 {%block body%}    
     <script>
         jQuery(function($) {
-        
-            $("#id_instance").hide();
-            $("label[for='id_instance']").hide();
-            
             $(".btn-submit").live("click", function(){
                 var instance_qs = $('#id_value-form').serialize();
                 data = instance_qs + '&' + {% for form in value_form.inner_trans_forms %} $('#id_trans-{{ form.instance.language_code }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
@@ -94,5 +89,14 @@
 
         });
 
+        function show_translations(lang) {
+            instanceForm = document.getElementById('id_trans-'+lang+'-form');
+            if (instanceForm.style.display == '') {
+                instanceForm.style.display = 'none';
+            }
+            else {
+                instanceForm.style.display = '';
+            }
+        }
     </script>
 {%endblock%}

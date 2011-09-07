@@ -1,23 +1,58 @@
 {% extends "layouts/base.html" %}
-{% load gmap %}
-{% load game_extras %}
+{% load gmap i18n game_extras %}
 {% block section %}missions{% endblock %}
 
-{% block title %}{{mission.name}} Mission{% endblock %}
+{% block title %}{{ mission.name }} {% trans "Mission" %}{% endblock %}
 {% block page_title %}{% endblock %}
 
 {% block main %}
-<h2>{{mission.name}}</h2>
+<h2>{{ mission.name }}</h2>
+
 {% if not mission.is_active %}
-<p class="notice">This mission is not currently active. You can click on the activities to see overviews, but you cannot complete them.</p>
+<p class="notice">{% trans "This mission is not currently active. You can click on the activities to see overviews, but you cannot complete them" %}.</p>
 {% endif %}
+
 {% if mission.video %}
 <div class="left video">{{mission.video|safe}}</div>
 {% endif %}
+
 <div class="left description">{{mission.description|linebreaksbr}}</div>
 
-<h3 class="clear">{% if mission.activities.count %}You've completed {{answered_activities|length}}/{{mission.activities.count}} activities{% else %}Activities{% endif %}:</h3>
-{% with mission.activities.all as activities %}
-{% include "player_activities/all_activities.html" %}
+{% with mission.player_activities_playeractivity_related.all as activities %}
+<h3 class="clear">
+    {% if activities.count %}
+    {% trans "You've completed" %} {{ answered_activities|length }}/{{ activities.count }} {% trans "activities" %}
+    {% else %}
+        Activities
+    {% endif %}:</h3>
+    {# include "player_activities/all_activities.html" #}
+    <table class="activities">
+        <tbody>
+        {% for activity in activities %}
+            <tr class="{% cycle 'odd' 'even' %}">
+            {% if activity in answered_activities %}
+                <td class="{{activity.type.type}}_activity">
+                    <a href="{% url activities:overview activity.id %}">{{activity.name}}</a>
+                </td>
+                <td>{{ activity.getPoints }} {% trans "pts" %}</td> 
+                <td class="final">
+                    <a href="{% url activities:overview activity.id %}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a>
+                </td>
+            {% else %}
+                <td class="{{activity.type.type}}_activity"><a href="{% url activities:activity activity.id %}">{{activity.name}}</a></td>
+                <td>{{ activity.getPoints }} pts</td> 
+                <td class="final">
+                    <a href="{% url activities:activity activity.id %}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a>
+                </td>
+                {% endif %}
+            </tr>
+                {% empty %}
+            <tr>
+                <td colspan="2">{% trans "No activities found" %}.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endwith %}
+
 {% endblock %}

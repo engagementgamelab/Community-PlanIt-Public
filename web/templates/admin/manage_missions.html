@@ -1,0 +1,63 @@
+{%extends "layouts/base.html"%}
+{% load game_extras %}
+
+{%block section%}misisons{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h1>Manage Missions for Instance: {{ instance.title }}</h1>
+    {# if is_staff #}
+    <div>
+        <input type="button" value="New Mission" onClick="window.location='{% url admin:mission-new instance.pk %}' "/>
+    </div>
+    {# endif #}
+
+    {% for mission, translations in data.items %}
+
+        <div>
+            <p>
+            <h2>{{ mission }}</h2>
+                <input type="button" value="edit" onClick="window.location='{% url admin:mission-edit instance.pk mission.pk %}' "/>
+                <input type="button" value="delete" onClick="window.location='{% url admin:mission-delete mission.pk %}' "/>                   <input type="button" value="show/hide details" onClick="show_hide('mission_{{ mission.pk }}')"/>
+                <input type="button" value="activities" onClick="window.location='{% url admin:manage-activities mission.pk %}' "/>
+        </div>
+        <div id="mission_{{ mission.pk }}" style="display: None">
+            <div>
+                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong>
+                </p>                   
+            </div>
+            {% for trans in translations.value_translations %}
+            <div>
+                <h2> {{ trans.language_code }} <input type="button" value="show/hide translations" onClick="showInstanceForm('{{ trans.pk}}')" /> </h2> <form id="valueForm_{{trans.pk}}" style="display: None"> 
+                    <p>Language: {{ trans.language_code }}</p>
+                    <p>Name: {{ trans.name }}</p>                    
+                    <p>Description: {{ trans.description }}</p>                    
+                    <br>
+                </form>
+               
+            </div>
+            {% endfor %}
+        </div>
+
+    
+    {% endfor %} <!-- instance for -->
+{%endblock%}
+
+{%block body%}
+    <script>       
+        function show_hide(id) {
+            elem = document.getElementById(id);
+            if (elem.style.display == "") {
+                elem.style.display = "none";
+            }
+            else {
+                elem.style.display = "";
+            }
+        }
+        
+        function showInstanceForm(instance_id) {
+            $("#valueForm_" + instance_id).toggle();            
+        }
+    </script>
+{% endblock %}

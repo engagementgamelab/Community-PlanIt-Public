@@ -38,7 +38,7 @@
             {% endfor %}
         </table>
         <hr class="space">
-        <a href="{% url lists_instance community.slug %}" class="right">View all players &rarr;</a>
+        <a href="{% url lists:lists_instance community.slug %}" class="right">View all players &rarr;</a>
     {% else %}
         No players in this community.
     {% endif %}

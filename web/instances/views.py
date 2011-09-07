@@ -19,7 +19,7 @@ from web.challenges.models import *
 from web.instances.forms import NotificationRequestForm
 from web.instances.models import *
 from web.missions.models import *
-from web.processors import instance_processor as ip
+#from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger
 from web.reports.models import Activity 
 

@@ -20,7 +20,8 @@ class OpenEndedActivityTest(TestCase):
         self.user = User.objects.get(username="admin")
         mission = Mission.objects.untranslated().get(pk=1)
         activity_type=PlayerActivityType.objects.get(type="open_ended")
-        self.open_ended = PlayerActivity.objects.language('en').create(creationUser=self.user,
+
+        self.open_ended = PlayerActivity.objects.language('en-us').create(creationUser=self.user,
                                                                        mission=mission,
                                                                        type=activity_type)
         
@@ -82,7 +83,7 @@ class SingleResponseActivityTest(TestCase):
         user = User.objects.get(username="admin")
         mission = Mission.objects.untranslated().get(pk=1)
         activity_type=PlayerActivityType.objects.get(type="single_response")
-        self.single_response = PlayerActivity.objects.language('en').create(creationUser=user,
+        self.single_response = PlayerActivity.objects.language('en-us').create(creationUser=user,
                                                                             mission=mission,
                                                                             type=activity_type)
         
@@ -104,7 +105,7 @@ class SingleResponseActivityTest(TestCase):
         self.assertEqual(200, response.status_code)
         
     def test_post_replay(self):
-        choice = MultiChoiceActivity.objects.language('en').create(activity=self.single_response, 
+        choice = MultiChoiceActivity.objects.language('en-us').create(activity=self.single_response, 
                                                             value="test value")
         context = {'form': 'single_response',
                    'response': choice.pk}
@@ -126,7 +127,7 @@ class MultiResponsesActivityTest(TestCase):
         user = User.objects.get(username="admin")
         mission = Mission.objects.untranslated().get(pk=1)
         activity_type=PlayerActivityType.objects.get(type="multi_response")
-        self.multi_responses = PlayerActivity.objects.language('en').create(creationUser=user,
+        self.multi_responses = PlayerActivity.objects.language('en-us').create(creationUser=user,
                                                                             mission=mission,
                                                                             type=activity_type)
         
@@ -148,7 +149,7 @@ class MultiResponsesActivityTest(TestCase):
         self.assertEqual(200, response.status_code)
         
     def test_post_replay(self):
-        choice = MultiChoiceActivity.objects.language('en').create(activity=self.multi_responses, 
+        choice = MultiChoiceActivity.objects.language('en-us').create(activity=self.multi_responses, 
                                                             value="test value")
         context = {'form': 'multi_response',
                    'response_1': [choice.pk,]}
@@ -170,12 +171,12 @@ class MapActivityTest(TestCase):
         user = User.objects.get(username="admin")
         mission = Mission.objects.untranslated().get(pk=1)
         activity_type=PlayerActivityType.objects.get(type="map")
-        self.map = PlayerActivity.objects.language('en').create(creationUser=user,
+        self.map = PlayerActivity.objects.language('en-us').create(creationUser=user,
                                                                 mission=mission,
                                                                 type=activity_type)
         # Attention: to make the tests pass we need both PlayerActivity and PlayerMapActivity
         # Is this correct?
-        PlayerMapActivity.objects.language('en').create(creationUser=user,
+        PlayerMapActivity.objects.language('en-us').create(creationUser=user,
                                                         mission=mission,
                                                         type=activity_type)
         
@@ -219,7 +220,7 @@ class EmpathyActivityTest(TestCase):
         user = User.objects.get(username="admin")
         mission = Mission.objects.untranslated().get(pk=1)
         activity_type=PlayerActivityType.objects.get(type="empathy")
-        self.empaty = PlayerActivity.objects.language('en').create(creationUser=user,
+        self.empaty = PlayerActivity.objects.language('en-us').create(creationUser=user,
                                                                 mission=mission,
                                                                 type=activity_type)       
         
@@ -238,6 +239,6 @@ class EmpathyActivityTest(TestCase):
     def test_replay_is_not_allowed(self):        
         response = self.client.get(reverse("activities:player_activities_replay", 
                                            args=[self.empaty.pk]))
+
         self.assertEqual(404, response.status_code)        
   
-        

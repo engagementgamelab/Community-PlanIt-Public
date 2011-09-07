@@ -10,7 +10,16 @@ from web.instances.models import PointsAssignment
 
 class ActivityLogger:
     def log(self, user, request, action, data, url, type):
-        a = Activity(user=user, instance=user.get_profile().instance, action=action, data=data, location=None, url=url, type=type)
+    	kwargs = dict(
+                user=user, 
+                instance=user.get_profile().instance, 
+                action=action, 
+                data=data, 
+                location=None, 
+                url=url, 
+                type=type
+        )
+        a = Activity.objects.create(**kwargs)
         a.save()
 
         # Push to messages queue

@@ -12,7 +12,7 @@ from web.challenges.forms import *
 from web.challenges.models import *
 from web.comments.forms import CommentForm
 from web.comments.models import Comment
-from web.processors import instance_processor as ip
+#from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.responses.comment.forms import CommentAttachmentResponseForm
 from web.core.utils import _fake_latest
@@ -147,7 +147,9 @@ def add(request):
         'instance': instance,
         'form': form,
         'location': location.coordinates,
-    },[ip])))
+    },
+    #[ip]
+    )))
 
 @login_required
 def delete(request, id):
@@ -253,4 +255,6 @@ def all(request):
     return HttpResponse(tmpl.render(RequestContext(request, {
         'instance': instance,
         'new_challenges': new_challenges,
-    }, [ip])))
+    }, 
+    #[ip]
+    )))

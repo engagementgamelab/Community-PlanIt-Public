@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-{% load extras %}
-{% load extras localeurl_tags i18n %}
+{% load localeurl_tags extras i18n cpi_tags %}
 <html lang="en" class="no-js">
 <head>
     <meta charset="utf-8">
@@ -37,6 +36,9 @@
     {% block head %}{% endblock %}
 </head>
 
+{% with request.user as user %}
+{% with request.user.get_profile.instance as current_instance %}
+
 <body class="page {% block section %}default{% endblock %}{% if user.is_authenticated %} loggedin{% endif %} {% block extra_body_class %}{% endblock %}">
     <div class="wrapper">
         <div id="header">
@@ -44,7 +46,7 @@
             <nav>
                 <ul>
                 {% block nav %}
-                    {% if user.is_authenticated and instance.is_started %}
+                    {% if user.is_authenticated and current_instance.is_started %}
                     <li><div class="home"><a href="{% url accounts:dashboard %}"><span>{% trans "Home" %}</span></a></div></li>
                     <li><div class="missions"><a href="{% url missions:index %}"><span>{% trans "Missions" %}</span></a></div></li>
                     <li><div class="challenges"><a href="{% url challenges:index %}"><span>{% trans "Challenges" %}</span></a></div></li>
@@ -56,15 +58,20 @@
                     <li><div class="contact"><a href="{% url contact %}"><span>{% trans "Contact" %}</span></a></div></li>
                     {% endif %}
 
-                    {% for lang in LANGUAGES %}
-                        {% ifequal lang.0 LANGUAGE_CODE %}
-                            <a class="flag" href="#"><img src="{{MEDIA_URL}}img/flags/{{lang.0}}.png" border="0" title="{{ lang.1 }}"/></a>
-                        {% else %}
-                            <a class="flag" href="{{ request.path|chlocale:lang.0 }}"><img src="{{MEDIA_URL}}img/flags/{{lang.0}}.png" border="0" title="{{lang.1}}"/></a>
-                        {% endifequal %}
-                    {% endfor %}
+                    {% if user.is_authenticated %}
+                        {% for lang in current_instance.languages.all %}
+                        <a class="flag" href="{{ request.path|chlocale:lang.code }}">
+                            <img src="{{MEDIA_URL}}img/flags/{{lang.code}}.png" border="0" title="{{ lang.name }}"/>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        {% for lang in LANGUAGES %}
+                        <a class="flag" href="{{ request.path|chlocale:lang.0 }}"> <img src="{{MEDIA_URL}}img/flags/{{ lang.0 }}.png" border="0" title="{{ lang.1 }}"/>
+                        </a>
+                        {% endfor %}
+                    {% endif %}
 
-                    {% if user.is_superuser or user.is_staff %}
+                    {% if user.is_superuser or user.is_staff or user in current_instance.curators.all %}
                     <li><div class="admin"><a href="{% url admin:admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
                     {% endif %}
                     {% if user.is_authenticated %}
@@ -91,9 +98,7 @@
                                     <img class="avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg" alt="">
                                     {% endif %}
                                 </a>
-                                <a href="{% url accounts_profile request.user.id %}">
-                                    Full Profile
-                                </a>
+                                <a href="{% url accounts_profile request.user.id %}">Full Profile</a>
                             </div>
                             <div class="details">
                                 <h2 class="profile-name">{{user.get_profile.screen_name}}</h2>
@@ -101,7 +106,7 @@
                             </div>
                             <hr class="space"/>
 
-                            {% if instance.is_started %}
+                            {% if current_instance.is_started %}
                             {% block aside_progress %}
                             <div class="score">
                                 <span>{{ user.get_profile.points_to_coin }} pts to your next token!</span>
@@ -114,9 +119,9 @@
                             {% endblock %}
                             {% endif %}
                         {% else %}
-                        {% if instance_mgr.active.count %}
-                        <h3>New Player? <a href="{% url accounts:register %}" class="button">Sign Up</a></h3>
-                        {% endif %}
+                            {% if active_instances.count %}
+                                <h3>New Player? <a href="{% url accounts:register %}" class="button">Sign Up</a></h3>
+                            {% endif %}
                         {% endif %}
                         </div>
 
@@ -129,8 +134,7 @@
                         </div>
                         {% endif %}
 
-                        {% block aside %}
-                        {% endblock %}
+                        {% block aside %}{% endblock %}
                     </aside>
                     {% endblock %}
                     <div class="content">
@@ -142,15 +146,10 @@
                         </ul>
                         {% endif %}
                         
-                        {% block page_title %}
-                            <h2 id="page_title">Community PlanIT</h2>
-                        {% endblock %}
-                        <div class="maincontent">
-                        {% block main %}{% endblock %}
-                        </div>
-                        <div class="rightsidebar">
-                            {% block rightsidebar %}{% endblock %}
-                        </div>
+                        {% block page_title %}<h2 id="page_title">Community PlanIT</h2>{% endblock %}
+
+                        <div class="maincontent">{% block main %}{% endblock %}</div>
+                        <div class="rightsidebar">{% block rightsidebar %}{% endblock %}</div>
                     </div>
                 </div>
             </div>
@@ -193,4 +192,6 @@
     {% endblock %}
     {% block body %}{% endblock %}
 </body>
+{% endwith %}
+{% endwith %}
 </html>

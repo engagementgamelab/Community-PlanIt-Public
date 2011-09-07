@@ -136,14 +136,15 @@
 {% endblock head %}
 
 {% block main %}
+    {% with request.user as user%}
     <div class="full">
         <p style="font-size: 1.25em;">Once you've earned some tokens in the system, you can spend them below
            on community values. Watch the graphs shift as the community spends
            its tokens and voices its priorities.  Be sure to use the links below
            to discuss each community value.</p>
         <p style="font-size: 1.25em;">
-           You have <span style="font-weight: bold">{{user.get_profile.currentCoins|default:"no"|apnumber}}</span> 
-           token{{user.get_profile.currentCoins|pluralize}} to spend.
+           You have <span style="font-weight: bold">{{ user.get_profile.currentCoins|default:"no"|apnumber }}</span> 
+           token{{ user.get_profile.currentCoins|pluralize }} to spend.
        </p>
         
         <div>
@@ -153,9 +154,9 @@
                         <tbody>
                             <tr>
                                 <th>Your <div class="spent">tokens:</div></th>
-                                <td>{{player_spent}}</td>
+                                <td>{{ player_spent }}</td>
                                 <th>Your total <div class="spent">earned:</div></th>
-                                <td>{{user.get_profile.earned_tokens}}</td>
+                                <td>{{ user.get_profile.earned_tokens }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -170,7 +171,7 @@
                 <div class="banner">
                     <table>
                         <tbody>
-                            <tr><th>Community <div class="spent">spent:</div></th><td>{{community_spent}}</td></tr>
+                            <tr><th>Community <div class="spent">spent:</div></th><td>{{ community_spent }}</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -194,7 +195,7 @@
                 {% for wrapper in value_wrapper %}
                     <tr>
                         <td class="alignleft">
-                            <a href="{% url values_detail wrapper.value.id %}" class="value-message">{{wrapper.value.message}}</a>
+                            <a href="{% url values:detail wrapper.value.id %}" class="value-message">{{wrapper.value.message}}</a>
                             <span class="fine">({{wrapper.value.comments.all|length}} comments)</span>
                         </td>
                         <td>
@@ -207,13 +208,13 @@
                             {% if not instance.is_expired %}
 
                             {% if user.get_profile.currentCoins > 0 %}
-                            <a href="{% url values_spend wrapper.value.id %}" class="button">Spend</a>
+                            <a href="{% url values:spend wrapper.value.id %}" class="button">Spend</a>
                             {% else %}
                             <div class="button disabled">Spend</div>
                             {% endif %}
 
                             {% if wrapper.player_coins %}
-                            <a href="{% url values_take wrapper.value.id %}" class="button">Take back</a>
+                            <a href="{% url values:take wrapper.value.id %}" class="button">Take back</a>
                             {% else %}
                             <div class="button disabled">Take back</div>
                             {% endif %}
@@ -334,4 +335,5 @@
     
 </script>
 
+{% endwith %}
 {% endblock %}
