@@ -43,6 +43,7 @@ def create_admin(instance):
 	user = create_user(instance)
 	user.is_superuser = True
 	user.is_staff = True
+	user.username = "admin"
 	user.first_name = "Admin"
 	user.last_name = "Admin"
 	user.email = "admin@cpi.org"
@@ -89,10 +90,12 @@ def create_instance():
             pass
 
     for l in inst.languages.values_list('code', flat=True):
-        trans = inst.translate(l)
-        trans.description = random_words(l, paragraph=True)[:250]
-        trans.save()
+        inst.translate(l)
+        inst.description = random_words(l, paragraph=True)[:250]
+        inst.save()
 
+    print vars(inst)
+    for t in inst.translations.all(): print vars(t)
     inst.save()
     print "Instance: %s" % inst.title
     return inst
@@ -103,20 +106,21 @@ def create_value(instance):
     )
     value = Value.objects.create(**kwargs)
     for l in instance.languages.values_list('code', flat=True):
-        trans = value.translate(l)
-        trans.message = random_words(l, paragraph=True)[:60]
-        trans.save()
+        value.translate(l)
+        value.message = random_words(l, paragraph=True)[:10]
+        value.save()
+
     print "Value: %s" % value.pk
     return value
 
-def create_playervalue(value, user):
-    kwargs = dict(
-            value=value,
-            user=user,
-            coins=random.randint(1, 100),
-    )
-    player_value = PlayerValue.objects.create(**kwargs)
-    print "PlayerValue: %s" % player_value.pk
+#def create_playervalue(value, user):
+#    kwargs = dict(
+#            value=value,
+#            user=user,
+#            coins=random.randint(1, 100),
+#    )
+#    player_value = PlayerValue.objects.create(**kwargs)
+#    print "PlayerValue: %s" % player_value.pk
 
 def create_mission(instance):
 
@@ -132,28 +136,27 @@ def create_mission(instance):
     print "Mission: %s" % mission.title
 
     for l in instance.languages.values_list('code', flat=True):
-        trans = mission.translate(l)
-        trans.name = random_words(l)[:45]
-        trans.description = random_words(l, paragraph=True)[:45]
-        trans.save()
+        mission.translate(l)
+        mission.name = random_words(l)[:20]
+        mission.description = random_words(l, paragraph=True)[:45]
+        mission.save()
+
     return mission
 
 def create_single_response_activity(activity, instance):
-    multichoice_activity = MultiChoiceActivity.objects.create(
-            activity=activity,
-            )
+    multichoice_activity = MultiChoiceActivity.objects.create(activity=activity)
     print "MultiChoiceActivity: %s" % multichoice_activity.pk
 
     for l in instance.languages.values_list('code', flat=True):
         trans = multichoice_activity.translate(l)
         trans.value = random_words(l)[:255]
-        trans.save()
+        multichoice_activity.save()
 
-    answer_single = AnswerSingleResponse.objects.create(
-            activity = activity,
-            answerUser = random.choice(instance.user_profiles.all()).user,
-            selected = multichoice_activity,
-    )
+    #answer_single = AnswerSingleResponse.objects.create(
+    #        activity = activity,
+    #        answerUser = random.choice(instance.user_profiles.all()).user,
+    #        selected = multichoice_activity,
+    #)
     print "AnswerSingleResponse: %s" % answer_single.pk
 
 def create_multi_response_activity(activity, instance):
@@ -164,12 +167,12 @@ def create_multi_response_activity(activity, instance):
     for l in instance.languages.values_list('code', flat=True):
         trans = multichoice_activity.translate(l)
         trans.value = random_words(l)[:255]
-        trans.save()
+        multichoice_activity.save()
 
-    answer_multi = AnswerMultiChoice.objects.create(
-            user = random.choice(instance.user_profiles.all()).user,
-            option = multichoice_activity,
-    )
+    #answer_multi = AnswerMultiChoice.objects.create(
+    #        user = random.choice(instance.user_profiles.all()).user,
+    #        option = multichoice_activity,
+    #)
     print "AnswerMultiResponse: %s" % answer_multi.pk
 
 def create_activities(mission, instance):
@@ -187,24 +190,25 @@ def create_activities(mission, instance):
         activity = PlayerActivity.objects.create(**kwargs)
         for l in instance.languages.values_list('code', flat=True):
             trans = activity.translate(l)
-            trans.name = random_words(l)[:255]
-            trans.question = random_words(l, paragraph=True)[:1000]
+            trans.name = random_words(l)[:50]
+            trans.question = random_words(l, paragraph=True)[:50]
             trans.instructions = random_words(l)[:255]
             trans.addInstructions = random_words(l)[:255]
-            trans.save()
+            activity.save()
         return activity
 
+    multi_res_type = PlayerActivityType.objects.get(type='multi_response')
+    multi_res_activity = create_player_activity(type=multi_res_type)
     for x in range(10):
-        multi_res_type = PlayerActivityType.objects.get(type='multi_response')
-    	activity = create_player_activity(type=multi_res_type)
-        print "PlayerActivity: %s" % activity.pk
-        create_single_response_activity(activity, instance)
-        activity.save()
+        create_multi_response_activity(multi_res_activity, instance)
+        print "MultiResponse PlayerActivity: %s" % activity.pk
+        multi_res_activity.save()
 
-    for x in range(10):
-        single_res_type = PlayerActivityType.objects.get(type='single_response')
-    	activity = create_player_activity(type=single_res_type)
-        create_multi_response_activity(activity, instance)
+    single_res_type = PlayerActivityType.objects.get(type='single_response')
+    single_res_activity = create_player_activity(type=single_res_type)
+    print "Single Response PlayerActivity: %s" % activity.pk
+    for x in range(random.randomint(3,5)):
+        create_single_response_activity(multi_res_activity, instance)
         activity.save()
 
 class Command(BaseCommand):
@@ -230,7 +234,7 @@ class Command(BaseCommand):
                 help='create users and exit',
             ),
     )
-    @transaction.commit_manually
+    #@transaction.commit_manually
     def handle(self, *args, **options):
 
         try:
@@ -246,6 +250,7 @@ class Command(BaseCommand):
                             cpi_model.objects.untranslated().delete()
                         else:
                             cpi_model.objects.all().delete()
+                    #transaction.commit()
                 #else:
                 #    instance = Instance.objects.untranslated()[0]
 
@@ -261,18 +266,18 @@ class Command(BaseCommand):
 
                     for j in range(5):
                         mission = create_mission(instance)
-                        create_activities(mission, instance)
+                        #create_activities(mission, instance)
 
                         value = create_value(instance)
-                        for user in User.objects.filter(is_superuser=False):
-                            for k in range(5):
-                                create_playervalue(value, user)
+                        #for user in User.objects.filter(is_superuser=False):
+                        #    for k in range(5):
+                        #        create_playervalue(value, user)
                     print "****INSTANCE %s ****" % i
 
-                transaction.commit()
+                #transaction.commit()
         except Exception, e:
             log.critical("%s" % e)
-            transaction.rollback()
+            #transaction.rollback()
             raise
 
 

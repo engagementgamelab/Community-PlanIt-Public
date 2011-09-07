@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.utils import simplejson
 
-from instances.models import Instance
+from instances.models import Instance, Language
 from admin.views import verify
 from admin.forms import InstanceForm
 
@@ -64,9 +64,11 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
             inst = Instance.objects.untranslated().get(pk=instance_id)
         except Instance.DoesNotExist:
             raise Http404 ("instance with id %s does not exist" % instance_id)
+        languages = inst.languages.all()
     else:
-    	inst = Instance(start_date=datetime.datetime.now())
-    	is_new = True
+        inst = Instance.objects.create(start_date=datetime.datetime.now(), commit=False)
+        is_new = True
+        languages = Language.objects.all()
 
     init_coords = []
     if inst.location:
@@ -78,19 +80,19 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
             x = x + 1
 
     errors = {}
+    instance_form = InstanceForm(instance=inst, languages=languages, data=request.POST or None)
+
     if request.method == "POST":
-        instance_form = InstanceForm(request.POST, instance=inst)
 
         if instance_form.is_valid():
-
             try:
                 instance = instance_form.save()
             except Exception, err:
-            	#transaction.rollback()
+                #transaction.rollback()
                 log.error("error while saving instance: %s" % str(err))
                 errors.update({"Updating instance": "Server error took place. Please contact the admin."})
             else:
-            	#transaction.commit()
+                #transaction.commit()
                 return HttpResponseRedirect(reverse("admin:admin-base"))
         else:
             for f in instance_form.inner_trans_forms:
@@ -98,8 +100,6 @@ def instance(request, instance_id=None, template="admin/trans_instance_edit.html
                     errors.update(f.errors)
             if instance_form.errors:
                 errors.update(instance_form.errors)
-    else:
-        instance_form = InstanceForm(instance=inst)
 
 
     context = {

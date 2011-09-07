@@ -1,44 +1,56 @@
 {%extends "layouts/base.html"%}
-{% load game_extras %}
+{% load game_extras admin_tags %}
 
 {%block section%}misisons{%endblock%}
 {%block title%}Administration{%endblock%}
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h1>Manage Activities for Instance: {{ instance.title }}</h1>
-    {# if is_staff #}
+    <h1>Manage Activities for Mission: {{ mission.title }}</h1>
+    {% if request.user in instance.curators.all or request.user.is_superuser %}
     <div>
-        <input type="button" value="New Value" onClick="window.location='{% url admin:activity-new instance.pk %}' "/>
+        <input type="button" value="New Activity" onClick="window.location='{% url admin:activity-new mission.pk %}' "/>
     </div>
-    {# endif #}
+    {% endif %}
 
     {% for activity, translations in data.items %}
 
         <div>
             <p>
-            <h2>{{ activity }}</h2>
-                <input type="button" value="edit" onClick="window.location='{% url admin:activity-edit instance.pk activity.pk %}' "/>
-                <input type="button" value="delete" onClick="window.location='{% url admin:activity-delete activity.pk %}' "/>                
-                <input type="button" value="show/hide details" onClick="show_hide('activity_{{ activity.pk }}')"/>
-            </p>
-        </div>
-        <div id="activity_{{ activity.pk }}" style="display: None">
+            <h2>{{ activity}} for mission ( {{ mission }} ) </h2>
             <div>
-                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong>
+                <p>Available Languages:
+                    <strong> {{ instance.languages.all|languages_formatted }} </strong>
                 </p>                   
             </div>
-            {% for trans in translations.value_translations %}
+                <input type="button" value="edit"
+                onClick="window.location='{% url admin:activity-edit mission.pk activity.pk %}' "/>
+                <input type="button" value="delete"
+                onClick="window.location='{% url admin:activity-delete mission.pk activity.pk%}' "/>                
+                {% if translations.value_translations.all.count %}
+                <br/> <br/>
+                <input type="button" value="show translations" onClick="show_hide('trans_details_{{ activity.pk }}')"/>
+                {% else %}
+                <p> no translation exist. edit object to add. </p>
+                {% endif %}
+            </p>
+        </div>
+        <div id="trans_details_{{ activity.pk }}" style="display: None">
+            {% for t in translations.activity_translations %}
+            <p>Points: {{ activity.points }}</p>
+            <p>Type: {{ activity.type }}</p>
             <div>
-                <h2> {{ trans.language_code }} <input type="button" value="show/hide translations" onClick="showInstanceForm('{{ trans.pk}}')" /> </h2> <form id="valueForm_{{trans.pk}}" style="display: None"> 
-                    <p>Language: {{ trans.language_code }}</p>
-                    <p>Name: {{ trans.name }}</p>                    
-                    <p>Question: {{ trans.question }}</p>                    
-                    <p>Instructions: {{ trans.instructions }}</p>                    
-                    <p>Add Instrunctions: {{ trans.addInstructions }}</p>                    
+                <h2> {{ t.language_code|lang }}
+                    <input type="button" value="show" onClick="show_form('{{ t.pk }}')" />
+                </h2> 
+                <form id="id_trans-form-{{ t.pk}}" style="display: None"> 
+                    <p>Name: {{ t.name }}</p>                    
+                    <p>Question: {{ t.question }}</p>                    
+                    <p>Instructions: {{ t.instructions }}</p>                    
+                    <p>Add Instrunctions: {{ t.addInstructions }}</p>                    
+                    <br>
                     <br>
                 </form>
-               
             </div>
             {% endfor %}
         </div>
@@ -59,8 +71,8 @@
             }
         }
         
-        function showInstanceForm(instance_id) {
-            $("#valueForm_" + instance_id).toggle();            
+        function show_form(id) {
+            $("#id_trans-form-" + id).toggle();            
         }
     </script>
 {% endblock %}

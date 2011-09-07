@@ -3,6 +3,7 @@ import datetime
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.utils.translation import get_language
 
 from django.contrib.auth.decorators import login_required
 
@@ -28,6 +29,14 @@ def fetch(request, slug, template='missions/base.html'):
     
     answered_activities = PlayerActivity.objects.filter(Q(pk__in=pks))
     unfinished_activities = PlayerActivity.objects.filter(Q(mission=mission) & ~Q(pk__in=pks))
+
+    print answered_activities 
+    print unfinished_activities 
+
+    print (answered_activities.count(), unfinished_activities.count() )
+
+    print "my lang: %s" % get_language()
+    #import ipdb;ipdb.set_trace()
 
     context = dict(
         mission = mission,

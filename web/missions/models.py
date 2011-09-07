@@ -90,14 +90,14 @@ class Mission(TranslatableModel):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]
-
-        latest = Mission.objects.latest_by_instance(self.instance)
-        if latest:
-            self.start_date = latest.end_date
-            self.end_date = latest.end_date + relativedelta(days=+self.instance.days_for_mission)
-        else:
+        try:
+            latest = Mission.objects.latest_by_instance(self.instance)
+        except ValueError:
             self.start_date = datetime.now()
             self.end_date = self.start_date + relativedelta(days=+self.instance.days_for_mission)
+        else:
+            self.start_date = latest.end_date
+            self.end_date = latest.end_date + relativedelta(days=+self.instance.days_for_mission)
         super(Mission, self).save(*args, **kwargs)
 
     def __unicode__(self):

@@ -20,7 +20,7 @@ DICT_LOOKUP = {
     'ru': "ukrainian",
 }
 
-def random_words(language_code='en', paragraph=False, num=5):
+def random_words(language_code='en-us', paragraph=False, num=5):
     ignore_trans = True
 
     if ignore_trans:

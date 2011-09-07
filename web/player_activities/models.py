@@ -57,7 +57,7 @@ class PlayerActivity(PlayerActivityBase):
         #unique_together = ('mission', 'type')
 
     def __unicode__(self):
-        return self.safe_translation_getter('name', 'Activity: %s' % self.pk)
+        return self.safe_translation_getter('name', '%s' % self.pk)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.pk)
@@ -110,6 +110,11 @@ class MultiChoiceActivity(TranslatableModel):
     translations = TranslatedFields(
         value = models.CharField(max_length=255),
     )
+    def __unicode__(self):
+        return self.safe_translation_getter('value', '%s' % self.pk)
+
+#*******************
+#### admin =========
 
 class PlayerActivityTypeAdmin(ModelAdmin):
     list_display = ('type', 'defaultPoints',)

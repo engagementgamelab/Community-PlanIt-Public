@@ -4,10 +4,8 @@ from nani.utils import get_translation
 from gmapsfield.fields import GoogleMapsField
 
 from django import forms
-from django.contrib.auth.models import User
-from django.utils.translation import ugettext as _
-from django.utils import simplejson
 from django.conf import settings
+from django.utils import simplejson
 
 from instances.models import Instance
 from values.models import Value
@@ -18,62 +16,16 @@ from accounts.models import CPIUser
 import logging
 log = logging.getLogger(__name__)
 
-class StaffBaseForm(forms.Form):
-    admin_first_name = forms.CharField(required=True, max_length=45)
-    admin_last_name = forms.CharField(required=True, max_length=45)
-    admin_email = forms.CharField(required=True, max_length=45)
-    admin_temp_pass = forms.CharField(widget=forms.PasswordInput(), required=True)
-    admin_temp_pass_again = forms.CharField(widget=forms.PasswordInput(), required=True)
-    instances = forms.ChoiceField(required=False)
-    
-    def __init__(self, *args, **kwargs):
-        initial =  kwargs.get("initial", {})
-        instances = initial.get("instances", None)
-        if instances:
-            kwargs['initial']['instances'] = instances[0]
-        super(StaffBaseForm, self).__init__(*args, **kwargs)
-        self.fields["instances"].choices = [] 
-        self.fields["instances"].choices.append((0, "------"))
-        if instances:
-            for instance in instances:
-                self.fields["instances"].choices.append((instance.id, instance.name))
-    
-    def clean_admin_email(self):
-        user = User.objects.filter(email=self.cleaned_data["admin_email"])
-        if len(user) != 0:
-            raise forms.ValidationError("A user already exists with that email")
-        else:
-            return self.cleaned_data["admin_email"]
-    
-    def clean_admin_temp_pass_again(self):
-        admin_temp_pass = self.cleaned_data["admin_temp_pass"]
-        admin_temp_pass_again = self.cleaned_data["admin_temp_pass_again"]
-        if (admin_temp_pass != admin_temp_pass_again):
-            raise forms.ValidationError("The passwords do not match")
-        else:
-            return admin_temp_pass_again
-    
-    def clean_instances(self):
-        instance_id = int(self.cleaned_data["instances"])
-        if instance_id == 0:
-            return None
-        else:
-            instance = Instance.objects.get(id=instance_id)
-            return instance
 
-
-class InstanceBaseForm(forms.Form):
-    instance = forms.ModelChoiceField(required=False, queryset=Instance.objects.all())
-    instance_name = forms.CharField(required=False, max_length=45)
-
-
-#'message_'+lang : forms.CharField(max_length=45, initial=instance.message, label='Message'),
 class TranslatableAdminBaseForm(TranslatableModelForm):
 
     def __init__(self, *args, **kwargs):
         self.instance = kwargs.pop('instance')
-        languages = kwargs.pop('languages')
+        languages = []
+        if kwargs.has_key('languages'):
+            languages = kwargs.pop('languages')
         super(TranslatableAdminBaseForm, self).__init__(instance=self.instance, *args, **kwargs)
+
         self.inner_trans_forms = []
         for language in languages:
             trans_model = self._meta.model._meta.translations_model
@@ -86,7 +38,7 @@ class TranslatableAdminBaseForm(TranslatableModelForm):
             for field_name in self.instance._translated_field_names:
                 if field_name in ['id', 'master', 'language_code']:
                     continue
-                fields["".join([field_name, "_", language.code])] = forms.CharField(max_length=100, 
+                fields["".join([field_name, "_", language.code])] = forms.CharField(max_length=1000, 
                                                      initial=getattr(trans, field_name), 
                                                      label=field_name.capitalize()
                 )
@@ -139,54 +91,17 @@ class TranslatableAdminBaseForm(TranslatableModelForm):
         return obj
 
 
-class InstanceForm(TranslatableModelForm):
-
+class InstanceForm(TranslatableAdminBaseForm):
     class Meta:
         model = Instance
         exclude = ('language_code', 'location', 'description',)
 
     def __init__(self, *args, **kwargs):
-        super(InstanceForm, self).__init__(*args, **kwargs)
-
-        def _make_instance_trans_form(instance, lang):
-            instance.language_code = lang
-            fields = {
-                'description_'+lang : forms.CharField(max_length=1000, initial=instance.description, label='Description'),
-                'language_code_'+lang : forms.CharField(widget=forms.HiddenInput(), initial=lang, label='')
-            }
-            return type('InstanceTransForm', (forms.BaseForm,),
-                    dict(
-                         instance=instance,
-                         prefix="instance_trans_" + lang +"_form",
-                         base_fields = fields,
-                    )
-            )     
-
-        self.inner_trans_forms = []
-        kwargs.pop('instance')
-        for language_code, _lang_name in settings.LANGUAGES:
-            trans_model = self._meta.model._meta.translations_model
-            if self.instance:
-                try:
-                    trans = get_translation(self.instance, language_code)
-                except:
-                    trans = trans_model()
-            else:
-                trans = trans_model()
-
-            trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwargs)
-            trans_form_name = "instance_trans_" + language_code + "_form"
-            setattr(self, trans_form_name, trans_form)
-            self.inner_trans_forms.append(trans_form)
-            log.debug('created form: %s' % trans_form_name)
-        for f in self.inner_trans_forms:
-            log.debug('rendering form: %s' % vars(f))
-
-
         # go through the proxy model
         # because of custom instance formatting
-        self.fields['curators'].queryset = CPIUser.objects.all()
+        #self.fields['curators'].queryset = CPIUser.objects.all()
         #self.fields['map'] = GoogleMapsField().formfield()
+        super(InstanceForm, self).__init__(*args, **kwargs)
 
     def clean_map(self):
         map = self.cleaned_data.get('map')
@@ -197,48 +112,6 @@ class InstanceForm(TranslatableModelForm):
             raise forms.ValidationError("Please select a point on the map")
         return map
 
-    def is_valid(self):
-        is_valid = super(InstanceForm, self).is_valid()
-        if not is_valid:
-            log.error("Error with form %s" % self.__class__.__name__)
-            log.error(self.errors)
-        is_valid_trans_forms = True
-
-        for form in self.inner_trans_forms:
-            if not form.is_valid():
-                log.error("Error with form %s" % form.__class__.__name__)
-                log.error(form.errors)
-                is_valid_trans_forms = False
-
-        log.debug((is_valid, is_valid_trans_forms))
-
-        return is_valid and is_valid_trans_forms
-
-    def save(self, *args, **kwargs):
-        instance = super(InstanceForm, self).save(*args, **kwargs)
-
-        for form in self.inner_trans_forms:
-            new = form.instance.pk is None
-            data = form.cleaned_data
-            log.debug('saving form: %s' % data)
-            trans_model = form.instance.__class__
-            language_code = form.instance.language_code
-
-            if not new:
-                try:
-                    trans = get_translation(instance, language_code)
-                except trans_model.DoesNotExist:
-                    trans = trans_model()
-            else:
-                trans = trans_model()
-
-            trans.description = data['description_%s' % language_code]
-            trans.language_code = language_code
-            trans.master = instance
-            trans.save()
-
-        return instance
-    
 
 class ValueForm(TranslatableAdminBaseForm):
 
@@ -247,183 +120,20 @@ class ValueForm(TranslatableAdminBaseForm):
         exclude = ('language_code', 'message', 'instance', 'comments')
 
 
-class ActivityForm(TranslatableModelForm):
-    #TODO: refactoring - base form for ValueForm, InstanceForm, ActivityForm with the inner translation forms
+class ActivityForm(TranslatableAdminBaseForm):
 
     class Meta:
         model = PlayerActivity
-        exclude = ('language_code', 'message', 'instance', 'comments')        
-
-    def __init__(self, activity_instance, *args, **kwargs):
-        super(ActivityForm, self).__init__(*args, **kwargs)
-        self.activity_instance = activity_instance
-        
-        def _make_instance_trans_form(instance, lang):
-            instance.language_code = lang
-            fields = {
-                'message_'+lang : forms.CharField(max_length=45, initial=instance.message, label='Message'),
-                'language_code_'+lang : forms.CharField(widget=forms.HiddenInput(), initial=lang, label='')
-            }
-            return type('ActivityTransForm', (forms.BaseForm,),
-                    dict(
-                         instance=instance,
-                         prefix="activity_trans_" + lang +"_form",
-                         base_fields = fields,
-                    )
-            )     
-
-        self.inner_trans_forms = []
-        if 'instance' in kwargs:
-            kwargs.pop('instance')
-        for language in self.activity_instance.languages.all():
-            language_code = language.code
-            trans_model = self._meta.model._meta.translations_model
-            if self.instance:
-                try:
-                    trans = get_translation(self.instance, language_code)
-                except:
-                    trans = trans_model()
-            else:
-                trans = trans_model()
-
-            trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwargs)
-            trans_form_name = "activity_trans_" + language_code + "_form"
-            setattr(self, trans_form_name, trans_form)
-            self.inner_trans_forms.append(trans_form)
-            log.debug('created form: %s' % trans_form_name)
-        for f in self.inner_trans_forms:
-            log.debug('rendering form: %s' % vars(f)) 
-
-    def is_valid(self):
-        is_valid = super(ActivityForm, self).is_valid()
-        if not is_valid:
-            log.error("Error with form %s" % self.__class__.__name__)
-            log.error(self.errors)
-        is_valid_trans_forms = True
-
-        for form in self.inner_trans_forms:
-            if not form.is_valid():
-                log.error("Error with form %s" % form.__class__.__name__)
-                log.error(form.errors)
-                is_valid_trans_forms = False
-
-        log.debug((is_valid, is_valid_trans_forms))
-
-        return is_valid and is_valid_trans_forms
-
-    def save(self, commit=True):
-        activity = super(ActivityForm, self).save(commit=False)
-        activity.instance = self.activity_instance
-        activity.save()
-
-        for form in self.inner_trans_forms:
-            new = form.instance.pk is None
-            data = form.cleaned_data
-            trans_model = form.instance.__class__
-            language_code = form.instance.language_code
-
-            try:
-                trans = get_translation(activity, language_code)
-            except trans_model.DoesNotExist:
-                trans = trans_model()
-
-            trans.message = data['message_%s' % language_code]
-            trans.language_code = language_code
-            trans.master = activity
-            trans.save()
-
-        return activity
+        exclude = ('language_code', 'name', 'question', 'instructions', 'addInstructions', 
+                   'creationUser', 'mission', 'createDate', 'attachment')
 
 
-class MissionForm(TranslatableModelForm):
-    #TODO: refactoring - base form for ValueForm, InstanceForm, ActivityForm, MissionForm with the inner translation forms
+class MissionForm(TranslatableAdminBaseForm):
 
     class Meta:
         model = Mission
-        exclude = ('language_code', 'name', 'description', 'instance', 'comments')        
+        exclude = ('language_code', 'name', 'description', 'instance', 'comments')
 
-    def __init__(self, mission_instance, *args, **kwargs):
-        super(MissionForm, self).__init__(*args, **kwargs)
-        self.mission_instance = mission_instance
-        
-        def _make_instance_trans_form(instance, lang):
-            instance.language_code = lang
-            fields = {
-                'name_'+lang : forms.CharField(max_length=45, initial=instance.name, label='Name'),
-                'description_'+lang : forms.CharField(max_length=45, initial=instance.description, label='Description'),
-                'language_code_'+lang : forms.CharField(widget=forms.HiddenInput(), initial=lang, label='')
-            }
-            return type('MissionTransForm', (forms.BaseForm,),
-                    dict(
-                         instance=instance,
-                         prefix="mission_trans_" + lang +"_form",
-                         base_fields = fields,
-                    )
-            )     
-
-        self.inner_trans_forms = []
-        if 'instance' in kwargs:
-            kwargs.pop('instance')
-        for language in self.mission_instance.languages.all():
-            language_code = language.code
-            trans_model = self._meta.model._meta.translations_model
-            if self.instance:
-                try:
-                    trans = get_translation(self.instance, language_code)
-                except:
-                    trans = trans_model()
-            else:
-                trans = trans_model()
-
-            trans_form = _make_instance_trans_form(instance=trans, lang=language_code)(*args, **kwargs)
-            trans_form_name = "mission_trans_" + language_code + "_form"
-            setattr(self, trans_form_name, trans_form)
-            self.inner_trans_forms.append(trans_form)
-            log.debug('created form: %s' % trans_form_name)
-        for f in self.inner_trans_forms:
-            log.debug('rendering form: %s' % vars(f)) 
-
-    def is_valid(self):
-        is_valid = super(MissionForm, self).is_valid()
-        if not is_valid:
-            log.error("Error with form %s" % self.__class__.__name__)
-            log.error(self.errors)
-        is_valid_trans_forms = True
-
-        for form in self.inner_trans_forms:
-            if not form.is_valid():
-                log.error("Error with form %s" % form.__class__.__name__)
-                log.error(form.errors)
-                is_valid_trans_forms = False
-
-        log.debug((is_valid, is_valid_trans_forms))
-
-        return is_valid and is_valid_trans_forms
-
-    def save(self, commit=True):
-        # nani form is set commit to True
-        mission = super(MissionForm, self).save(commit=False)
-        mission.instance = self.mission_instance
-        mission.save()
-        
-        for form in self.inner_trans_forms:
-            new = form.instance.pk is None
-            data = form.cleaned_data
-            trans_model = form.instance.__class__
-            language_code = form.instance.language_code
-
-            try:
-                trans = get_translation(mission, language_code)
-            except trans_model.DoesNotExist:
-                trans = trans_model()
-
-            trans.name = data['name_%s' % language_code]
-            trans.description = data['description_%s' % language_code]
-            trans.language_code = language_code
-            trans.master = mission
-            trans.save()
-
-        return mission
 
 #####
 # everything below is deprecated

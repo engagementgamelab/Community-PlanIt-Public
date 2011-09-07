@@ -11,3 +11,9 @@ def lang(l):
         return dict(settings.LANGUAGES)[l]
     except:
         return "Unknown"
+
+@stringfilter
+@register.filter
+def languages_formatted(languages):
+    return ", ".join(list(languages.values_list('name', flat=True)))
+

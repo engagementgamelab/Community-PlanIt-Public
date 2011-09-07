@@ -1,0 +1,108 @@
+{%extends "layouts/base.html"%}
+{% load admin_tags %}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>{% if new %}Add{% else %}Edit{% endif %} Activity for Mission: {{ mission.title }}</h2>
+    
+    <div id="content" style="text-color: red;"> 
+        {% if errors %} 
+            {% for k,v in errors.items %}
+            {{ k }}: {{ v }} 
+            {% endfor %}
+        {% endif %}
+    </div>
+     
+    <form id="id_activity-form" action="." method="post">{%csrf_token%}
+        {% for field in activity_form %}            
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>            
+        {% endfor %}  
+    </form>   
+    
+    {% for form in activity_form.inner_trans_forms %}
+        <div>
+            {% with form.instance.language_code as lang_code %}
+            <h2> 
+                {{ lang_code|lang }} 
+                <input type="button" value="translations" onClick="show_translations('{{ lang_code }}')" /> 
+            </h2> 
+            <form id="id_trans-{{ lang_code }}-form" action="." method="post" style="display: None"> {%csrf_token%}
+                {% for field in form %}
+                <div class="fieldWrapper">
+                    {{ field.errors }}
+                    {{ field.label_tag }} {{ field }}
+                </div>
+                {% endfor %}
+            </form>
+            {% endwith %}
+        </div>
+    {% endfor %}
+        
+	<div>
+        {% if new %}
+            <input type="submit" class="btn-submit" name="submit_btn" value="Create" />
+        {% else %}
+            <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
+        {% endif %}
+        <input type="submit" class="btn-submit" name="submit_btn" value="Cancel"  
+                    onClick="window.location='{% url admin:manage-activities mission.pk %}'"/>
+
+    </div>
+{%endblock%}
+
+{%block body%}    
+    <script>
+        jQuery(function($) {
+        
+            $("#id_instance").hide();
+            $("label[for='id_instance']").hide();
+            
+            $(".btn-submit").live("click", function(){
+                var instance_qs = $('#id_activity-form').serialize();
+                data = instance_qs + '&' + {% for form in activity_form.inner_trans_forms %} $('#id_trans-{{ form.instance.language_code }}-form').serialize(){% if not forloop.last %}+'&'+{% endif %}{% endfor %}+'&_='+Math.floor(Math.random()*11);
+                {% if new %}
+                    var url = "{% url admin:activity-new mission.pk %}";
+                {% else %}
+                    var url = "{% url admin:activity-edit mission.pk activity.pk %}";
+                {% endif %}
+
+                $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        success: function(data, textStatus) {
+                            var $data = $(data);
+                            var has_errors = $(data).find(".errorlist");
+
+                            if (has_errors.length > 0){
+                                $('#content').html($data.find('#content'));
+                            }
+                            else {
+                                window.location='{% url admin:manage-activities mission.pk %}';
+                            }
+                        },
+                        error: function(data){                                        
+                            $('#content').html(data.responseText);
+                        }
+                });
+            });
+
+        });
+        function show_translations(lang_code) {
+            instanceForm = document.getElementById('id_trans-'+lang_code+'-form');
+            if (instanceForm.style.display == '') {
+                instanceForm.style.display = 'none';
+            }
+            else {
+                instanceForm.style.display = '';
+            }
+        }
+
+    </script>
+{%endblock%}

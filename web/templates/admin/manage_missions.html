@@ -19,8 +19,8 @@
             <p>
             <h2>{{ mission }}</h2>
                 <input type="button" value="edit" onClick="window.location='{% url admin:mission-edit instance.pk mission.pk %}' "/>
-                <input type="button" value="delete" onClick="window.location='{% url admin:mission-delete mission.pk %}' "/>                <input type="button" value="show/hide details" onClick="show_hide('mission_{{ mission.pk }}')"/>
-            </p>
+                <input type="button" value="delete" onClick="window.location='{% url admin:mission-delete mission.pk %}' "/>                   <input type="button" value="show/hide details" onClick="show_hide('mission_{{ mission.pk }}')"/>
+                <input type="button" value="activities" onClick="window.location='{% url admin:manage-activities mission.pk %}' "/>
         </div>
         <div id="mission_{{ mission.pk }}" style="display: None">
             <div>

@@ -17,9 +17,11 @@
 
         <div>
             <p>
-            <h2>{{ value }}</h2>
+            <h2>{{ value }} - ({{ value.coins }}) coins</h2>
             <div>
-                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong></p>                   
+                <p>Available Languages:
+                <strong> {{ instance.languages.all|languages_formatted }} </strong>
+                </p>                   
             </div>
                 <input type="button" value="edit" onClick="window.location='{% url admin:value-edit instance.pk value.pk %}' "/>
                 <input type="button" value="delete" onClick="window.location='{% url admin:value-delete value.pk %}' "/>                

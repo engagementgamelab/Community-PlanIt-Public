@@ -23,14 +23,15 @@
                 <!--button type="submit" name="email_btn" id="email_btn" style="display:none">Send Email to all in Instance</button-->
                 <input type="button" value="missions" onClick="window.location='{% url admin:manage-missions instance.pk %}' "/>
                 <input type="button" value="values" onClick="window.location='{% url admin:manage-values instance.pk %}' "/>
-                <input type="button" value="activities" onClick="window.location='{% url admin:manage-activities instance.pk %}' "/>
                 <br/> <br/>
                 <input type="button" value="show/hide details" onClick="show_hide('instance_{{ instance.pk }}')"/>
             </p>
         </div>
         <div id="instance_{{ instance.pk }}" style="display: None">
             <div>
-                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong></p>
+                <p>Available Languages: 
+                    <strong> {{ instance.languages.all|languages_formatted }} </strong>
+                </p>
                     <p>Start Date: {{instance.start_date}}</p>
                     {% comment %}
                     # TODO deal with instance end dates

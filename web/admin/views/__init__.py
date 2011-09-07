@@ -33,7 +33,7 @@ def delete_obj(request, id, model, template="admin/trans_del.html"):
         raise Http404 ("%s with id %s does not exist" % (model_klass.__name__, id))
 
     if model == "values.Value":
-        redir = reverse("admin:manage-values", args=(id,))
+        redir = reverse("admin:manage-values", args=(inst.instance.pk,))
     else:
         redir = reverse("admin:admin-base")
 
@@ -46,5 +46,4 @@ def delete_obj(request, id, model, template="admin/trans_del.html"):
             'inst_formatted': model_klass.__name__,
             'redir_cancel': redir,
     }
-    log.debug('rendering %s' % template )
     return render_to_response(template, RequestContext(request, context))

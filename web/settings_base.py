@@ -124,7 +124,7 @@ LOCALE_PATHS = (
 
 ugettext = lambda s: s
 LANGUAGES = (
-  ('en', ugettext('English')),
+  ('en-us', ugettext('English')),
   ('es', ugettext(u'Spanish')),
   ('ht', ugettext(u'Haitian Creole')),
 )

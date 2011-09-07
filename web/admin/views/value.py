@@ -23,7 +23,6 @@ def manage(request, instance_id, template="admin/manage_values.html"):
     ok = verify(request)
     if ok != None:
         return ok
-    #TODO: Make the instances only be drawn from instances that the user supervises
 
     try:
         instance = Instance.objects.untranslated().get(pk=int(instance_id))
@@ -76,31 +75,30 @@ def value(request, instance_id, value_id=None, template="admin/trans_value_edit_
         is_new = True
 
     errors = {}
-    value_form = ValueForm(instance=value, languages=instance.languages.all(), data=request.POST or None)
+    form = ValueForm(instance=value, languages=instance.languages.all(), data=request.POST or None)
 
     if request.method == "POST":
-        if value_form.is_valid():
-            #try:
-            value = value_form.save(commit=True)
+        if form.is_valid():
+            try:
+                value = form.save(commit=True)
             except Exception, err:
                 #transaction.rollback()
-                print "error while saving value: %s" % str(err)
                 log.error("error while saving value: %s" % str(err))
                 errors.update({"Updating value": "Server error took place. Please contact the admin."})
             else:
                 #transaction.commit()
                 return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))
         else:
-            for f in value_form.inner_trans_forms:
+            for f in form.inner_trans_forms:
                 if f.errors:
                     errors.update(f.errors)
-            if value_form.errors:
-                errors.update(value_form.errors)
+            if form.errors:
+                errors.update(form.errors)
 
     context = {
             'value': value,
             'instance': instance,
-            'value_form': value_form,
+            'value_form': form,
             'new': is_new,
             'errors': errors,
     }

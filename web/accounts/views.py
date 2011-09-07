@@ -95,8 +95,12 @@ def login(request, template_name='registration/login.html',
         'site_name': current_site.name,
     }
     context.update(extra_context or {})
-    return render_to_response(template_name, context,
-                              context_instance=RequestContext(request, current_app=current_app))
+    return render_to_response(template_name, 
+                              context,
+                              context_instance=RequestContext(
+                                    request, current_app=current_app
+                              )
+    )
 
 
 
@@ -507,6 +511,8 @@ def dashboard(request):
     activities_page = paginator.page(page)
 
     leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20]
+
+    #import ipdb;ipdb.set_trace()
 
     return HttpResponse(tmpl.render(RequestContext(request, {
         'activation_form': activation_form,

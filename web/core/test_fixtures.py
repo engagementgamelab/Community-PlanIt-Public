@@ -25,7 +25,7 @@ def create_fixtures():
     
     _create_user_profile(su)
     
-    language = Language.objects.create(code='en', name='English')
+    language = Language.objects.create(code='en-us', name='English')
     
     instance = _create_instance(language)
     
@@ -43,7 +43,7 @@ def _create_user_profile(user):
 
 
 def _create_instance(language):
-    en_instance = Instance.objects.language('en').create(
+    en_instance = Instance.objects.language('en-us').create(
             slug='test',
             title='Test Title',
             city='Los Angeles',
@@ -74,7 +74,7 @@ def _create_mission(instance):
     tomorrow = today + datetime.timedelta(1)
     yesterday = today - datetime.timedelta(1)
     
-    en_mission = Mission.objects.language('en').create(instance=instance,
+    en_mission = Mission.objects.language('en-us').create(instance=instance,
                                                        start_date=yesterday,
                                                        end_date=tomorrow,
                                                        name="mission",
