@@ -69,7 +69,6 @@ class TranslatableAdminBaseForm(TranslatableModelForm):
 
     def save(self, *args, **kwargs):
         obj = super(TranslatableAdminBaseForm, self).save(*args, **kwargs)
-
         for form in self.inner_trans_forms:
             new = form.instance.pk is None
             cd = form.cleaned_data
@@ -132,7 +131,7 @@ class MissionForm(TranslatableAdminBaseForm):
 
     class Meta:
         model = Mission
-        exclude = ('language_code', 'name', 'description', 'instance', 'comments')
+        exclude = ('language_code', 'start_date', 'end_date', 'description', 'instance', 'comments')
 
 
 #####

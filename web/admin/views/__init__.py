@@ -34,6 +34,8 @@ def delete_obj(request, id, model, template="admin/trans_del.html"):
 
     if model == "values.Value":
         redir = reverse("admin:manage-values", args=(inst.instance.pk,))
+    elif model == "missions.Mission":
+        redir = reverse("admin:manage-missions", args=(inst.instance.pk,))
     else:
         redir = reverse("admin:admin-base")
 

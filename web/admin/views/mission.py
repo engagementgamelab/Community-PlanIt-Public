@@ -32,6 +32,8 @@ def manage(request, instance_id, template="admin/manage_missions.html"):
         data[mission] = {
                 'mission_translations': mission.translations.all(),
         }
+
+    print data
     context = {
         'data' : data,
         'instance' : instance,
@@ -60,16 +62,16 @@ def mission(request, instance_id, mission_id=None, template="admin/trans_mission
         except Mission.DoesNotExist:
             raise Http404 ("Mission with id %s does not exist" % mission_id)
     else:
-        mission = None
+        mission = Mission.objects.create(instance=instance, commit=False)
         is_new = True
 
     errors = {}
-    form = MissionForm(mission_instance=instance, instance=mission, data=request.POST or None)
+    form = MissionForm(instance=mission, languages=instance.languages.all(), data=request.POST or None)
 
     if request.method == "POST":
         if form.is_valid():
             try:
-                mission = form.save(commit=False)
+                mission = form.save(commit=True)
             except Exception, err:
                 #transaction.rollback()
                 print "error while saving mission: %s" % str(err)
@@ -84,7 +86,6 @@ def mission(request, instance_id, mission_id=None, template="admin/trans_mission
                     errors.update(f.errors)
             if form.errors:
                 errors.update(form.errors)
-
     context = {
             'mission': mission,
             'instance': instance,

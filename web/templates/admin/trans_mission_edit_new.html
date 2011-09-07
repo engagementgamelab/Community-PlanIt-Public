@@ -1,5 +1,5 @@
 {%extends "layouts/base.html"%}
-{% load game_extras %}
+{% load game_extras admin_tags %}
 
 {%block section%}instances{%endblock%}
 {%block title%}Administration{%endblock%}
@@ -31,9 +31,9 @@
     
     {% for form in mission_form.inner_trans_forms %}
         <div>
-            {% with form.instance.language_code as lang %}
-            <h2> {{ lang }} <input type="button" value="(click to view/hide translations)" onClick="show_translations('{{ lang }}')" /> </h2> 
-            <form id="id_trans-{{ lang }}-form" action="." method="post" style="display: None"> {%csrf_token%}
+            {% with form.instance.language_code as lang_code %}
+            <h2> {{ lang_code|lang }} <input type="button" value="(click to view/hide translations)" onClick="show_translations('{{ lang_code }}')" /> </h2> 
+            <form id="id_trans-{{ lang_code }}-form" action="." method="post" style="display: None"> {%csrf_token%}
                 {% for field in form %}
                 <div class="fieldWrapper">
                     {{ field.errors }}
@@ -67,7 +67,7 @@
                 {% if new %}
                     var url = "{% url admin:mission-new instance.pk %}";
                 {% else %}
-                    var url = "{% url admin:mission-edit instance.pk mission_form.mission_instance.pk %}";
+                    var url = "{% url admin:mission-edit instance.pk mission.pk %}";
                 {% endif %}
 
                 $.ajax({

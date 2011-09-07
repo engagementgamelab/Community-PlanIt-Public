@@ -1,5 +1,5 @@
 {%extends "layouts/base.html"%}
-{% load game_extras %}
+{% load game_extras admin_tags %}
 
 {%block section%}misisons{%endblock%}
 {%block title%}Administration{%endblock%}
@@ -24,14 +24,14 @@
         </div>
         <div id="mission_{{ mission.pk }}" style="display: None">
             <div>
-                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong>
-                </p>                   
+                <p>Available Languages: 
+                    <strong> {{ instance.languages.all|languages_formatted }} </strong>
+                </p>
             </div>
             {% for trans in translations.value_translations %}
             <div>
                 <h2> {{ trans.language_code }} <input type="button" value="show/hide translations" onClick="showInstanceForm('{{ trans.pk}}')" /> </h2> <form id="valueForm_{{trans.pk}}" style="display: None"> 
                     <p>Language: {{ trans.language_code }}</p>
-                    <p>Name: {{ trans.name }}</p>                    
                     <p>Description: {{ trans.description }}</p>                    
                     <br>
                 </form>
