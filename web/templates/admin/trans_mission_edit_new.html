@@ -20,6 +20,9 @@
         {% if not new %}
             <input type="hidden" name="mission_id" value="{{ mission_form.instance.pk }}">
         {% endif %}   
+            <div class="fieldWrapper">
+            <h2>{{ mission.start_date|date:"D d M, Y"}} - {{ mission.end_date|date:"D d M, Y"}}</h2>
+            </div>            
         
         {% for field in mission_form %}            
             <div class="fieldWrapper">
