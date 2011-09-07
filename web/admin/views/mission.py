@@ -42,7 +42,7 @@ def manage(request, instance_id, template="admin/manage_missions.html"):
 
 
 @login_required
-def mission(request, instance_id, mission_id=None, template="admin/trans_mission_edit_new.html"):
+def mission(request, instance_id, mission_id=None, template="admin/trans_mission_edit_new.html"):   
     is_new = False
     ok = verify(request)
     if ok != None:
@@ -62,7 +62,7 @@ def mission(request, instance_id, mission_id=None, template="admin/trans_mission
         except Mission.DoesNotExist:
             raise Http404 ("Mission with id %s does not exist" % mission_id)
     else:
-        mission = Mission.objects.create(instance=instance, commit=False)
+        mission = Mission(instance=instance)
         is_new = True
 
     errors = {}
@@ -70,7 +70,7 @@ def mission(request, instance_id, mission_id=None, template="admin/trans_mission
 
     if request.method == "POST":
         if form.is_valid():
-            try:
+            try:               
                 mission = form.save(commit=True)
             except Exception, err:
                 #transaction.rollback()
