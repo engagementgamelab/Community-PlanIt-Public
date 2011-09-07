@@ -84,7 +84,7 @@ def activity(request, mission_id, activity_id=None, template="admin/trans_activi
                 errors.update({"Updating activity": "Server error took place. Please contact the admin."})
             else:
                 #transaction.commit()
-                return HttpResponseRedirect(reverse("admin:manage-activities", args=[instance_id]))
+                return HttpResponseRedirect(reverse("admin:manage-activities", args=[mission_id]))
         else:
             for f in form.inner_trans_forms:
                 if f.errors:

@@ -26,7 +26,7 @@
                 <input type="button" value="edit"
                 onClick="window.location='{% url admin:activity-edit mission.pk activity.pk %}' "/>
                 <input type="button" value="delete"
-                onClick="window.location='{% url admin:activity-delete mission.pk activity.pk%}' "/>                
+                onClick="window.location='{% url admin:activity-delete activity.pk%}' "/>                
                 {% if translations.value_translations.all.count %}
                 <br/> <br/>
                 <input type="button" value="show translations" onClick="show_hide('trans_details_{{ activity.pk }}')"/>
