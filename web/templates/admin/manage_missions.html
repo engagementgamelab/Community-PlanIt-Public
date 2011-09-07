@@ -9,7 +9,8 @@
     <h1>Manage Missions for Instance: {{ instance.title }}</h1>
     {# if is_staff #}
     <div>
-        <input type="button" value="New Mission" onClick="window.location='{% url admin:mission-new instance.pk %}' "/>
+        <input type="button" value="admin home" onClick="window.location='{% url admin:admin-base %}' "/>
+        <input type="button" value="new mission" onClick="window.location='{% url admin:mission-new instance.pk %}' "/>
     </div>
     {# endif #}
 
@@ -17,7 +18,7 @@
 
         <div>
             <p>
-            <h2>{{ mission }}</h2>
+            <h2>{{ mission }} ({{ mission.start_date|date:"D d M, Y"}} - {{ mission.end_date|date:"D d M, Y"}})</h2>
                 <input type="button" value="edit" onClick="window.location='{% url admin:mission-edit instance.pk mission.pk %}' "/>
                 <input type="button" value="delete" onClick="window.location='{% url admin:mission-delete mission.pk %}' "/>                   <input type="button" value="show/hide details" onClick="show_hide('mission_{{ mission.pk }}')"/>
                 <input type="button" value="activities" onClick="window.location='{% url admin:manage-activities mission.pk %}' "/>

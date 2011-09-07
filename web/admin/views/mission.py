@@ -28,12 +28,11 @@ def manage(request, instance_id, template="admin/manage_missions.html"):
         raise Http404 ("Instance with id %s does not exist" % instance_id)
 
     data = {}
-    for mission in Mission.objects.untranslated().filter(instance=instance):
+    for mission in Mission.objects.untranslated().filter(instance=instance).order_by('start_date'):
         data[mission] = {
                 'mission_translations': mission.translations.all(),
         }
 
-    print data
     context = {
         'data' : data,
         'instance' : instance,
@@ -100,10 +99,6 @@ def mission(request, instance_id, mission_id=None, template="admin/trans_mission
 @login_required
 def new(request, instance_id):
     return mission(request, instance_id)
-
-@login_required
-def delete(request, mission_id):
-    pass
 
 
 
