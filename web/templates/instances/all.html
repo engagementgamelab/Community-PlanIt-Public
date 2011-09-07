@@ -15,7 +15,7 @@
         {% for instance in mgr.active %}
         <li>
             <h3>
-                <a href="{% url instances:instances_instance instance.slug %}">{{instance}}</a>
+                <a href="{% url instances:instance instance.slug %}">{{instance}}</a>
                 <span class="dates">{% if not instance.end_date %}{% trans "Started"%} {% endif %}{{instance.start_date|date:"m/d/Y"}} {% if instance.end_date %}&#8211; {{instance.end_date|date:"m/d/Y"}}{% endif %}</span>
             </h3>
             {% if instance.player_count %}
@@ -32,7 +32,7 @@
         {% for instance in mgr.future %}
         <li>
             <h3>
-                <a href="{% url instances:instances_instance instance.slug %}">{{instance}}</a>
+                <a href="{% url instances:instance instance.slug %}">{{instance}}</a>
                 <span class="dates">{% if not instance.end_date %}{% trans "Starts" %} {% endif %}{{instance.start_date|date:"m/d/Y"}} {% if instance.end_date %}&#8211; {{instance.end_date|date:"m/d/Y"}}{% endif %}</span>
             </h3>
         </li>
@@ -46,7 +46,7 @@
         {% for instance in mgr.past %}
         <li>
             <h3>
-                <a href="{% url instances:instances_instance instance.slug %}">{{instance}}</a>
+                <a href="{% url instances:instance instance.slug %}">{{instance}}</a>
                 <span class="dates">{{instance.start_date|date:"m/d/Y"}} &#8211; {{instance.end_date|date:"m/d/Y"}}</span>
             </h3>
         </li>
