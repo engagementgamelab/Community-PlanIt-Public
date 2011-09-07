@@ -27,11 +27,9 @@ def manage(request, instance_id, template="admin/manage_missions.html"):
     except Instance.DoesNotExist:
         raise Http404 ("Instance with id %s does not exist" % instance_id)
 
-    data = {}
-    for mission in Mission.objects.untranslated().filter(instance=instance).order_by('-start_date'):
-        data[mission] = {
-                'mission_translations': mission.translations.all(),
-        }
+    data = []
+    for mission in Mission.objects.untranslated().filter(instance=instance).order_by('start_date'):
+        data.append((mission, mission.translations.all()))
 
     context = {
         'data' : data,
