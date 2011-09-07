@@ -23,12 +23,15 @@ class PlayerActivityType(models.Model):
     displayType = models.CharField(max_length=255)
     defaultPoints = models.IntegerField(default=10)
 
+    class Meta:
+        verbose_name_plural = 'Player Activity Types'
+
     def __unicode__(self):
         return self.type
 
 class PlayerActivityBase(TranslatableModel):
 
-    slug = models.SlugField(editable=False)
+    slug = models.SlugField()
     creationUser = models.ForeignKey(User)
     mission = models.ForeignKey(Mission, related_name='%(app_label)s_%(class)s_related')
     type = models.ForeignKey(PlayerActivityType)
@@ -39,6 +42,10 @@ class PlayerActivityBase(TranslatableModel):
     class Meta:
         abstract = True
 
+    def admin_name(self):
+        return self.__unicode__()
+    admin_name.short_description = 'Name'
+
 class PlayerActivity(PlayerActivityBase):
 
     translations = TranslatedFields(
@@ -46,15 +53,11 @@ class PlayerActivity(PlayerActivityBase):
         question = models.CharField(max_length=1000),
         instructions = models.CharField(max_length=255, null=True, blank=True),
         addInstructions = models.CharField(max_length=255, null=True, blank=True),
-        meta = {'ordering': ['name',],
-        },
+        meta = {'ordering': ['name']},
     )
 
     class Meta:
         verbose_name_plural = 'Player Activities'
-        #removing contraint since name is now translated
-        #and it seems you cannot mix translated fields
-        #unique_together = ('mission', 'type')
 
     def __unicode__(self):
         return self.safe_translation_getter('name', '%s' % self.pk)
@@ -82,10 +85,12 @@ class PlayerMapActivity(PlayerActivityBase):
         question = models.CharField(max_length=1000),
         instructions = models.CharField(max_length=255, null=True, blank=True),
         addInstructions = models.CharField(max_length=255, null=True, blank=True),
-        meta = {'ordering': ['name',],
-        },
+        meta = {'ordering': ['name']},
     )
     
+    class Meta:
+        verbose_name_plural = 'Player Map Activities'
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
@@ -98,6 +103,9 @@ class PlayerEmpathyActivity(PlayerActivityBase):
         bio = models.CharField(max_length=1000),
     )
     
+    class Meta:
+        verbose_name_plural = 'Player Empathy Activities'
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
@@ -110,8 +118,17 @@ class MultiChoiceActivity(TranslatableModel):
     translations = TranslatedFields(
         value = models.CharField(max_length=255),
     )
+
+    class Meta:
+        verbose_name = 'Multiple Choice Activity'
+        verbose_name_plural = 'Multiple Choice Activities'
+
     def __unicode__(self):
         return self.safe_translation_getter('value', '%s' % self.pk)
+
+    def admin_name(self):
+        return self.__unicode__()
+    admin_name.short_description = 'Name'
 
 #*******************
 #### admin =========
@@ -119,18 +136,15 @@ class MultiChoiceActivity(TranslatableModel):
 class PlayerActivityTypeAdmin(ModelAdmin):
     list_display = ('type', 'defaultPoints',)
 
+
 class PlayerActivityAdmin(TranslatableAdmin):
-    list_display = ('pk',) #excluding translated fields 'name', 'question', 
-    #'creationUser', 
-    #'mission', 'type', 'createDate', 'points'
+    list_display = ('admin_name', 'mission', 'type')
 
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
-    list_display = ('pk',) #excluding translated fields 'name', 'question', 
-    
+    list_display = ('admin_name', 'mission', 'type')
 
 class MultiChoiceActivityAdmin(TranslatableAdmin):
-    list_display = ('pk',) #excluding translated fields 'value'
-    
+    list_display = ('admin_name',)
     
 class PlayerMapActivityAdmin(TranslatableAdmin):
-    list_display = ('pk',) #excluding translated fields
+    list_display = ('admin_name', 'mission', 'type')

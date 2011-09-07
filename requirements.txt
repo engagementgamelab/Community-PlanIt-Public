@@ -1,23 +1,32 @@
 Django==1.3
 PIL
 PyYAML
+django-extensions
 gunicorn
+python-dateutil
 python-magic
 python-memcached
 psycopg2
 south
 supervisor
-django-rosetta
-django-nani
-django-extensions
-django-localeurl
 
 # django-mailer-2 provides asynchronous sending of email,
 # which improves user experience because responses don't have
 # to wait for a SMTP conversation to finish, and errors
 # don't cause exceptions
-git+https://github.com/SmileyChris/django-mailer-2.git
+#
+# forked only to provide a stable version
+git+https://github.com/fairview/django-mailer-2.git
 
 # this fork should be short-lived, if my South
 # introspection rules are accepted upstream
 git+https://github.com/fairview/django_gmapsfield.git
+
+# multilingual
+django-localeurl
+django-nani
+django-rosetta
+
+# database test data generation
+django-dilla
+git+https://github.com/aerosol/identicon.git

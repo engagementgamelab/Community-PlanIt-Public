@@ -69,14 +69,12 @@ def mission(request, instance_id, mission_id=None, template="admin/trans_mission
         if form.is_valid():
             try:               
                 mission = form.save(commit=True)
+                return HttpResponseRedirect(reverse("admin:manage-missions", args=[instance_id]))
             except Exception, err:
                 #transaction.rollback()
                 print "error while saving mission: %s" % str(err)
                 log.error("error while saving mission: %s" % str(err))
                 errors.update({"Updating mission": "Server error took place. Please contact the admin."})
-            else:
-                #transaction.commit()
-                return HttpResponseRedirect(reverse("admin:manage-missions", args=[instance_id]))
         else:
             for f in form.inner_trans_forms:
                 if f.errors:

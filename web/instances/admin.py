@@ -4,7 +4,7 @@ from web.instances.models import Instance, Language
 
 
 class InstanceAdmin(TranslatableAdmin):
-    list_display = ('start_date',) #could not be used with nani:, 'name', 
+    list_display = ('title', 'start_date',)
 
 
 # Register to admin sites

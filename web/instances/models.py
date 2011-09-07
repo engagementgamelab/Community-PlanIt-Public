@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from django.db import models
 from django.db.models import Q
@@ -31,24 +31,6 @@ class Language(models.Model):
         return "%s <%s>" %(self.name, self.code)
 
 
-#class InstanceQueryMixin(object):
-#    def past(self):
-#        return self.filter(end_date__lt=datetime.now()).order_by('start_date')
-#
-#    def future(self):
-#        return self.filter(start_date__gt=datetime.now()).order_by('start_date')
-#
-#    def active(self):
-#        now = datetime.now()
-#        return self.filter(start_date__lte=now).filter(Q(end_date__isnull=True)|Q(end_date__gte=now)).order_by('start_date')
-
-#class InstanceQuerySet(models.query.QuerySet, InstanceQueryMixin):
-#    pass
-
-#class InstanceManager(TranslationManager, InstanceQueryMixin):
-#    def get_query_set(self):
-#        return InstanceQuerySet(self.model, using=self._db)
-
 class InstanceManager(TranslationManager):
 
     def past(self):
@@ -57,7 +39,7 @@ class InstanceManager(TranslationManager):
         return self.filter()
 
     def future(self):
-        return self.filter(start_date__gt=datetime.now()).order_by('start_date')
+        return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
 
     def active(self):
         # TODO deal with instance end dates
@@ -94,7 +76,7 @@ class Instance(TranslatableModel):
     #TODO 
     # rewrite this using the last mission end date as the end date
     def is_active(self):
-        now = datetime.now()
+        now = datetime.datetime.now()
         if now >= self.start_date: #and (self.end_date is None or now <= self.end_date):
             return True;
         else:
@@ -110,7 +92,7 @@ class Instance(TranslatableModel):
         return False
     
     def is_started(self):
-        return datetime.now() >= self.start_date
+        return datetime.datetime.now() >= self.start_date
 
     def dump_users(self):
         from accounts.models import UserProfile

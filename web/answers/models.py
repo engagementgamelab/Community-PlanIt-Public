@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from gmapsfield.fields import GoogleMapsField
 
-from datetime import datetime
+import datetime
 
 class Answer(models.Model):
     #TODO: This might benefit from a 1:1 relationship
@@ -18,7 +18,7 @@ class Answer(models.Model):
     createDate = models.DateTimeField()
 
     def save(self, *args, **kwargs):
-        self.createDate = datetime.now()
+        self.createDate = datetime.datetime.now()
         super(Answer, self).save(*args, **kwargs)
 
     @models.permalink

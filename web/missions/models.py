@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from dateutil.relativedelta import relativedelta
 from django.template.defaultfilters import slugify
 from django.db import models
@@ -33,23 +33,26 @@ class MissionManager(TranslationManager):
 
     def latest_by_instance(self, instance):
         missions_for_instance = self.filter(instance=instance)
-        latest_by =  max(missions_for_instance.values_list('end_date', flat=True))
-        return self.get(**dict(end_date=latest_by))
+        if missions_for_instance:
+            latest_by =  max(missions_for_instance.values_list('end_date', flat=True))
+            return self.get(**dict(end_date=latest_by))
+
+        return self.none()
 
     def past(self, instance=None):
-        kwargs = dict(end_date__lt=datetime.now(),)
+        kwargs = dict(end_date__lt=datetime.datetime.now(),)
         if instance:
             kwargs.update(dict(instance=instance))
         return self.filter(**kwargs).order_by('-end_date')
 
     def future(self, instance=None):
-        kwargs = dict(start_date__gt=datetime.now(),)
+        kwargs = dict(start_date__gt=datetime.datetime.now(),)
         if instance:
             kwargs.update(dict(instance=instance))
         return self.filter(**kwargs).order_by('start_date')
 
     def active(self, instance=None):
-        now = datetime.now()
+        now = datetime.datetime.now()
         kwargs = dict(start_date__lte=now, end_date__gte=now,)
         if instance:
             kwargs.update(dict(instance=instance))
@@ -69,6 +72,7 @@ class Mission(TranslatableModel):
     translations = TranslatedFields(
         name = models.CharField(max_length=255, blank=True),
         description = models.TextField(blank=True),
+        #meta = {'get_latest_by': 'start_date'}
     )
 
     objects = MissionManager()
@@ -78,14 +82,14 @@ class Mission(TranslatableModel):
         #get_latest_by = 'start_date'
 
     def is_active(self):
-        now = datetime.now()
+        now = datetime.datetime.now()
         return self.start_date <= now and now <= self.end_date
         
     def is_expired(self):
-        return datetime.now() > self.end_date
+        return datetime.datetime.now() > self.end_date
     
     def is_started(self):
-        return datetime.now() >= self.start_date
+        return datetime.datetime.now() >= self.start_date
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]
@@ -104,6 +108,4 @@ class Mission(TranslatableModel):
         return self.title
 
 class MissionAdmin(TranslatableAdmin):
-    list_display = ('start_date', 'end_date', 'instance') #could not be used with nani:, 'name', 
-
-
+    list_display = ('title', 'instance', 'start_date', 'end_date')

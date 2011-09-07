@@ -21,10 +21,10 @@
 {% with mission.player_activities_playeractivity_related.all as activities %}
 <h3 class="clear">
     {% if activities.count %}
-    {% trans "You've completed" %} {{ answered_activities|length }}/{{ activities.count }} {% trans "activities" %}
+    {% trans "You've completed" %} {{ answered_activities|length }}/{{ activities.count }} {% trans "activities" %}:
     {% else %}
-        Activities
-    {% endif %}:</h3>
+        Activities:
+    {% endif %}</h3>
     {# include "player_activities/all_activities.html" #}
     <table class="activities">
         <tbody>
