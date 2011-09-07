@@ -65,7 +65,7 @@ def region(request, slug):
 
 def all(request):
     mgr = Instance.objects
-    now = datetime.datetime.now()
+    now = datetime.now()
 
     # Get number of players in instance
     #for instance in instances:
