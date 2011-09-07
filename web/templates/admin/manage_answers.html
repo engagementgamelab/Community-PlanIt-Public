@@ -1,0 +1,29 @@
+{%extends "layouts/base.html"%}
+{% load game_extras admin_tags %}
+
+{%block section%}misisons{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h1>Manage Answers for {{ activity.type.displayType }} Activity: {{ activity.pk }}</h1>
+    {# if is_staff #}
+    <div>
+        <input type="button" value="New Answer" onClick="window.location='{% url admin:answer-new activity.pk %}' "/>
+    </div>
+    {# endif #}
+
+    {% for answer in answers %}
+
+        <div>
+            <p>
+            <h2>{{ answer }}</h2>
+                <input type="button" value="edit" onClick="window.location='{% url admin:answer-edit activity.pk answer.pk %}' "/>
+                <input type="button" value="delete" onClick="window.location='{% url admin:answer-delete answer.pk %}' "/>
+                <!--input type="button" value="show/hide details" onClick="show_hide('mission_{{ mission.pk }}')"/-->
+                <!--input type="button" value="activities" onClick="window.location='{% url admin:manage-activities mission.pk %}' "/-->
+        </div>
+        
+    {% endfor %} 
+{%endblock%}
+

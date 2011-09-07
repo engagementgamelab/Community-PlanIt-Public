@@ -29,6 +29,11 @@ urlpatterns = patterns("",
         url(r"^mission/(?P<mission_id>\d+)/activity/new/$", "admin.views.activity.activity", name="activity-new"),
         url(r"^mission/(?P<mission_id>\d+)/activity/(?P<activity_id>\d+)/edit/$", "admin.views.activity.activity", name="activity-edit"),
         url(r"^mission/activity/(?P<id>\d+)/delete/$", delete_obj, dict(model='player_activity.PlayerActivity'), name="activity-delete"),
+        
+        url(r"^activity/(?P<activity_id>\d+)/answer/$", "admin.views.answer.manage", name="manage-answers"),
+        url(r"^activity/(?P<activity_id>\d+)/answer/new/$", "admin.views.answer.answer", name="answer-new"),
+        url(r"^activity/(?P<activity_id>\d+)/answer/(?P<answer_id>\d+)/edit/$", "admin.views.answer.answer", name="answer-edit"),
+        url(r"^activity/answer/(?P<answer_id>\d+)/delete/$", delete_obj, dict(model='answer.Answer'), name="answer-delete"),
 
         #url(r"^missionorder/(?P<instance_id>.*)/", "admin.views.mission_order", name="mission-order"),
 )
