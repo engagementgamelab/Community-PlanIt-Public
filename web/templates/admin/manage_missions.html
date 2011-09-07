@@ -31,7 +31,7 @@
             </div>
             {% for trans in translations.mission_translations %}
             <div>
-                <h2> {{ trans.language_code }} <input type="button" value="show/hide translations" onClick="show_form('{{ trans.pk}}')" /> </h2>
+                <h2> {{ trans.language_code|lang }} <input type="button" value="show/hide translations" onClick="show_form('{{ trans.pk}}')" /> </h2>
                 <form id="id_trans-form-{{trans.pk}}" style="display: None"> 
                     <p>Name: {{ trans.name }}</p>                    
                     <p>Description: {{ trans.description }}</p>                    
