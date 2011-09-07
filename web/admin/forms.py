@@ -131,7 +131,7 @@ class MissionForm(TranslatableAdminBaseForm):
 
     class Meta:
         model = Mission
-        exclude = ('language_code', 'start_date', 'end_date', 'description', 'instance', 'comments')
+        exclude = ('language_code', 'start_date', 'end_date', 'name', 'description', 'instance', 'comments')
 
 
 #####

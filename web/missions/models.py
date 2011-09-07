@@ -67,6 +67,7 @@ class Mission(TranslatableModel):
     date_created = models.DateTimeField(auto_now_add=True)
 
     translations = TranslatedFields(
+        name = models.CharField(max_length=255, blank=True),
         description = models.TextField(blank=True),
     )
 
@@ -103,3 +104,5 @@ class Mission(TranslatableModel):
 
 class MissionAdmin(TranslatableAdmin):
     list_display = ('start_date', 'end_date', 'instance') #could not be used with nani:, 'name', 
+
+
