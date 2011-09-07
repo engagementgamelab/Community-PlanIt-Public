@@ -7,6 +7,7 @@ from player_activities.models import PlayerActivity
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from answers.models import Answer
+from comments.forms import CommentForm
 
 
 @login_required
@@ -23,18 +24,21 @@ def manage(request, activity_id, template="admin/manage_answers.html"):
     if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
         return HttpResponseRedirect(reverse("admin:manage-answers", args=[activity_id]))
 
-    #data = {}
-    #for answer in :
-    #    data[answer] = {'answer_translations': answer.translations.all(),}
+    data = {}
+    for answer in Answer.objects.filter(activity=activity):        
+        data[answer] = {'comments': answer.comments,}       
+        
+    comment_form = CommentForm(data=request.POST or None)      
+    
 
     context = {
-        'answers' : Answer.objects.filter(activity=activity),
-        #'instance' : mission.instance,
-        'activity': activity
+        'data' : data,        
+        'activity': activity,
+        'comment_form': comment_form
     }
     return render_to_response(template, RequestContext(request, context))
 
 
 @login_required
-def answer(request):
+def answer(request, activity_id, answer_id=None, template="admin/trans_answer_edit_new.html"):   
     pass

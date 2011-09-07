@@ -133,7 +133,7 @@ def edit(request, id, lang_code=None):
             #TODO: what if answer does not exist?
             try:            
                 activity_id = Answer.objects.get(id=comment.object_id).activity.id
-                return HttpResponseRedirect(reverse("player_activities_overview", args=[activity_id]))
+                return HttpResponseRedirect(reverse("activities:overview", args=[activity_id]))
             except Answer.DoesNotExist:
                 return HttpResponseRedirect(reverse('accounts_profile', args=[request.user.pk]))
                 

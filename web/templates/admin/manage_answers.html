@@ -13,15 +13,16 @@
     </div>
     {# endif #}
 
-    {% for answer in answers %}
+    {% for answer, comments in data.items %}
 
-        <div>
-            <p>
-            <h2>{{ answer }}</h2>
-                <input type="button" value="edit" onClick="window.location='{% url admin:answer-edit activity.pk answer.pk %}' "/>
-                <input type="button" value="delete" onClick="window.location='{% url admin:answer-delete answer.pk %}' "/>
-                <!--input type="button" value="show/hide details" onClick="show_hide('mission_{{ mission.pk }}')"/-->
-                <!--input type="button" value="activities" onClick="window.location='{% url admin:manage-activities mission.pk %}' "/-->
+        <div>           
+            <h2>Answer {{ answer.pk }}</h2>                                
+        </div>
+        
+        <div>                    
+            {% with comments.comments as preferred_comments %}
+                 {% include "comments/post.html" %}
+            {% endwith %}            
         </div>
         
     {% endfor %} 
