@@ -1,5 +1,5 @@
 {%extends "layouts/base.html"%}
-{% load game_extras %}
+{% load game_extras admin_tags %}
 
 {%block section%}misisons{%endblock%}
 {%block title%}Administration{%endblock%}
@@ -24,8 +24,9 @@
         </div>
         <div id="mission_{{ mission.pk }}" style="display: None">
             <div>
-                <p>Available Languages: <strong>{{ instance.languages.all|join:", " }}</strong>
-                </p>                   
+                <p>Available Languages: 
+                    <strong> {{ instance.languages.all|languages_formatted }} </strong>
+                </p>
             </div>
             {% for trans in translations.value_translations %}
             <div>

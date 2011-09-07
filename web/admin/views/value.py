@@ -64,7 +64,6 @@ def value(request, instance_id, value_id=None, template="admin/trans_value_edit_
     if (request.POST.has_key("submit_btn") and request.POST["submit_btn"] == "Cancel"):
         return HttpResponseRedirect(reverse("admin:manage-values", args=[instance_id]))
 
-    print "value_id: %s, %s" % (value_id, type(value_id))
     if value_id is not None and value_id != 'None':
         try:
             value = Value.objects.untranslated().get(pk=int(value_id))

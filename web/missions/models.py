@@ -67,11 +67,9 @@ class Mission(TranslatableModel):
     date_created = models.DateTimeField(auto_now_add=True)
 
     translations = TranslatedFields(
-        name = models.CharField(max_length=45),
         description = models.TextField(blank=True),
-        #meta = {'get_latest_by': 'start_date'}
     )
-    
+
     objects = MissionManager()
 
     class Meta:
