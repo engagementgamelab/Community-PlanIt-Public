@@ -1,14 +1,15 @@
 from django.test import TestCase
 from django.test.client import Client
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 from core.test_fixtures import create_fixtures
 from player_activities.models import PlayerActivity, PlayerActivityType,\
     MultiChoiceActivity, PlayerMapActivity
 from missions.models import Mission
-from django.core.urlresolvers import reverse
+from web.comments.forms import CommentForm
+from answers.models import Answer
 
-#TODO: get_activity tests for all classes
 
 class OpenEndedActivityTest(TestCase):
     def setUp(self):
@@ -16,10 +17,10 @@ class OpenEndedActivityTest(TestCase):
         self.client = Client()                   
         self.assertTrue(self.client.login(username="admin", password="admin"))
         
-        user = User.objects.get(username="admin")
+        self.user = User.objects.get(username="admin")
         mission = Mission.objects.untranslated().get(pk=1)
         activity_type=PlayerActivityType.objects.get(type="open_ended")
-        self.open_ended = PlayerActivity.objects.language('en').create(creationUser=user,
+        self.open_ended = PlayerActivity.objects.language('en').create(creationUser=self.user,
                                                                        mission=mission,
                                                                        type=activity_type)
         
@@ -28,20 +29,48 @@ class OpenEndedActivityTest(TestCase):
                                            args=[self.open_ended.pk]))
         self.assertEqual(200, response.status_code)
         
+    def test_get_activity(self):
+        response = self.client.get(reverse("activities:player_activities_activity", 
+                                           args=[self.open_ended.pk]))
+        
+        self.assertFalse(response.context['form'])
+        comment_form = response.context['comment_form']
+        self.assertFalse(comment_form.just_one_form)
+        self.assertTrue(comment_form.allow_replies)
+        self.assertEqual(self.open_ended, response.context['activity'])
+        self.assertFalse(response.context['map'])
+        self.assertFalse(response.context['init_coords'])
+        
+        self.assertEqual(200, response.status_code)
+        
+    def test_get_activity_post(self):
+        answers = Answer.objects.filter(activity=self.open_ended, answerUser=self.user)
+        self.assertEqual(0, answers.count())
+        
+        context = {'form': 'open_ended',
+                   'message': 'Hi'}
+        response = self.client.post(reverse("activities:player_activities_activity", 
+                                           args=[self.open_ended.pk]),
+                                    context)
+        self.assertEqual(302, response.status_code)
+        
+        answers = Answer.objects.filter(activity=self.open_ended, answerUser=self.user)
+        self.assertEqual(1, answers.count())
+        self.assertEqual('Hi', answers[0].comments.language('en').message)
+        
+    def test_get_activity_with_answers(self):
+        Answer.objects.create(activity=self.open_ended, answerUser=self.user)
+        response = self.client.get(reverse("activities:player_activities_activity", 
+                                           args=[self.open_ended.pk]))
+        self.assertRedirects(response, reverse("activities:player_activities_replay", 
+                                           args=[self.open_ended.pk]),
+                             target_status_code=404)
     #TODO: add comments, test overview with comments and answers
     
     def test_replay_is_not_allowed(self):        
         response = self.client.get(reverse("activities:player_activities_replay", 
                                            args=[self.open_ended.pk]))
         self.assertEqual(404, response.status_code)        
-        
-    def test_post_replay(self):
-        context = {'form': 'open_ended'}
-        response = self.client.post(reverse("activities:player_activities_replay", 
-                                           args=[self.open_ended.pk]), context)
-        self.assertEqual(302, response.status_code)
-        self.assertEqual('http://testserver/en/activities/%s/overview/' % self.open_ended.pk,
-                         response.get('location', ''))
         
 
 class SingleResponseActivityTest(TestCase):
@@ -59,6 +88,11 @@ class SingleResponseActivityTest(TestCase):
         
     def test_overview(self):
         response = self.client.get(reverse("activities:player_activities_overview", 
+                                           args=[self.single_response.pk]))
+        self.assertEqual(200, response.status_code)
+        
+    def test_get_activity(self):
+        response = self.client.get(reverse("activities:player_activities_activity", 
                                            args=[self.single_response.pk]))
         self.assertEqual(200, response.status_code)
         
@@ -98,6 +132,11 @@ class MultiResponsesActivityTest(TestCase):
         
     def test_overview(self):
         response = self.client.get(reverse("activities:player_activities_overview", 
+                                           args=[self.multi_responses.pk]))
+        self.assertEqual(200, response.status_code)
+    
+    def test_get_activity(self):
+        response = self.client.get(reverse("activities:player_activities_activity", 
                                            args=[self.multi_responses.pk]))
         self.assertEqual(200, response.status_code)
         
@@ -145,6 +184,11 @@ class MapActivityTest(TestCase):
         response = self.client.get(reverse("activities:player_activities_overview", 
                                            args=[self.map.pk]))
         self.assertEqual(200, response.status_code)
+    
+    def test_get_activity(self):
+        response = self.client.get(reverse("activities:player_activities_activity", 
+                                           args=[self.map.pk]))
+        self.assertEqual(200, response.status_code)
         
     #TODO: add comments, test overview with comments and answers
         
@@ -184,20 +228,16 @@ class EmpathyActivityTest(TestCase):
                                            args=[self.empaty.pk]))
         self.assertEqual(200, response.status_code)
         
+    def test_get_activity(self):
+        response = self.client.get(reverse("activities:player_activities_activity", 
+                                           args=[self.empaty.pk]))
+        self.assertEqual(200, response.status_code)
+        
     #TODO: add comments, test overview with comments and answers
         
     def test_replay_is_not_allowed(self):        
         response = self.client.get(reverse("activities:player_activities_replay", 
                                            args=[self.empaty.pk]))
-        self.assertEqual(404, response.status_code)
-        
-    def test_post_replay(self):
-        context = {'form': 'empathy',}
-        response = self.client.post(reverse("activities:player_activities_replay", 
-                                           args=[self.empaty.pk]), context)
-        
-        self.assertEqual(302, response.status_code)
-        self.assertEqual('http://testserver/en/activities/%s/overview/' % self.empaty.pk,
-                         response.get('location', ''))        
-    
+        self.assertEqual(404, response.status_code)        
+  
         

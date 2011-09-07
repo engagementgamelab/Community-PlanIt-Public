@@ -21,13 +21,13 @@ def create_fixtures():
             username='admin',
     )[0]
     su.set_password('admin')
-    su.save()
-    
-    _create_user_profile(su)
+    su.save()   
     
     language = Language.objects.create(code='en', name='English')
     
     instance = _create_instance(language)
+    
+    _create_user_profile(su, instance)
     
     _create_mission(instance)
     
@@ -36,9 +36,10 @@ def create_fixtures():
     Value.objects.create(instance=instance, message="test")
 
 
-def _create_user_profile(user):
+def _create_user_profile(user, instance):
     profile = UserProfile.objects.get_or_create(user=user)[0]
     profile.preferred_language = 'ht'
+    profile.instance = instance
     profile.save()    
 
 
