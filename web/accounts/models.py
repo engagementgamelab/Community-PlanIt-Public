@@ -15,7 +15,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from accounts.models import *
 from challenges.models import *
-from instances.models import Instance
+from instances.models import Instance, Stake
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
@@ -55,13 +55,6 @@ class UserProfileRace(models.Model):
     def __unicode__(self):
         return self.race
 
-class UserProfileStake(models.Model):
-    stake = models.CharField(max_length=128)
-    pos = models.IntegerField(blank=False, null=False)
-
-    def __unicode__(self):
-        return self.stake
-
 class CPIUser(User):
     class Meta:
         proxy = True
@@ -78,7 +71,7 @@ class UserProfile(models.Model):
     instance = models.ForeignKey(Instance, blank=True, null=True, related_name='user_profiles')
     gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
     race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
-    stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
+    stake = models.ForeignKey(Stake, blank=True, null=True, default=None)
     education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
     income = models.ForeignKey(UserProfileIncomes, blank=True, null=True, default=None)
     living = models.ForeignKey(UserProfileLiving, blank=True, null=True, default=None)
