@@ -145,11 +145,14 @@ class AnswerForm(forms.ModelForm):
         
         
 class AdminCommentForm(CommentForm):    
-    def __init__(self, *args, **kwargs):
+    def __init__(self, instance=None, *args, **kwargs):
         super(AdminCommentForm, self).__init__(*args, **kwargs)
         self.fields['language'] = forms.ChoiceField(widget=RadioSelect, choices=settings.LANGUAGES)
         self.fields['user'] = forms.ModelChoiceField(queryset=User.objects.all())
-
+        self.instance = instance        
+        if instance is not None:
+            self.fields['user'].initial = instance.user
+            self.fields['language'].initial = instance.language_code
     
 
 #####

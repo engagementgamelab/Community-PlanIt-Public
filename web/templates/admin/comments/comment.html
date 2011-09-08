@@ -4,7 +4,7 @@
         <div class="meta">
             
             <div class="right">
-                <a href="{% url comments:comments_edit comment.id %}" title="click to edit this comment">edit</a>                
+                <a href="{% url admin:answer-comment-edit activity.pk answer.pk comment.pk %}" title="click to edit this comment">edit</a>                
             </div>
             
             On {{comment.posted_date|date:"F j, Y"}} at {{comment.posted_date|date:"g:i a"}},

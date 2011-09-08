@@ -58,8 +58,9 @@
         
         {%if comment_form.allow_replies %}
         <h3>Add a comment</h3>
-        <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
+        <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">            
             {% include "admin/comments/duplicate.html" %}
+            <input type="hidden" name="answer_pk" value="{{ answer.pk }}"></input>
             <button type="submit" class="button right">Add Comment</button>
         </form>
         {% endif %}
