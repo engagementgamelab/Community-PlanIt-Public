@@ -15,6 +15,9 @@ from accounts.models import CPIUser
 
 import logging
 from answers.models import Answer
+from comments.forms import CommentForm
+from django.forms.widgets import RadioSelect
+from django.contrib.auth.models import User
 log = logging.getLogger(__name__)
 
 
@@ -139,6 +142,15 @@ class AnswerForm(forms.ModelForm):
     class Meta:
         model = Answer
         exclude = ('activity',)
+        
+        
+class AdminCommentForm(CommentForm):    
+    def __init__(self, *args, **kwargs):
+        super(AdminCommentForm, self).__init__(*args, **kwargs)
+        self.fields['language'] = forms.ChoiceField(widget=RadioSelect, choices=settings.LANGUAGES)
+        self.fields['user'] = forms.ModelChoiceField(queryset=User.objects.all())
+
+    
 
 #####
 # everything below is deprecated

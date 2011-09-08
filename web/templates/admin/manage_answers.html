@@ -18,7 +18,8 @@
         <div>           
             <h2>Answer {{ answer.pk }}</h2> 
             
-           <input type="button" value="Edit" onClick="window.location='{% url admin:answer-edit activity.pk answer.pk %}' "/>
+           <input type="button" value="edit" onClick="window.location='{% url admin:answer-edit activity.pk answer.pk %}' "/>
+           <input type="button" value="delete" onClick="window.location='{% url admin:answer-delete answer.pk %}' "/>
                                        
         </div>
         
@@ -54,6 +55,14 @@
 	        {%endfor%}
     	    </ul>
         </div>
+        
+        {%if comment_form.allow_replies %}
+        <h3>Add a comment</h3>
+        <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
+            {% include "admin/comments/duplicate.html" %}
+            <button type="submit" class="button right">Add Comment</button>
+        </form>
+        {% endif %}
                     
     {% endfor %} 
 {%endblock%}
