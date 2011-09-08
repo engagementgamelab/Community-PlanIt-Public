@@ -14,6 +14,7 @@ from missions.models import Mission
 from accounts.models import CPIUser
 
 import logging
+from answers.models import Answer
 log = logging.getLogger(__name__)
 
 
@@ -133,6 +134,11 @@ class MissionForm(TranslatableAdminBaseForm):
         model = Mission
         exclude = ('language_code', 'start_date', 'end_date', 'name', 'description', 'instance', 'comments')
 
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        exclude = ('activity',)
 
 #####
 # everything below is deprecated
