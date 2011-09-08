@@ -40,7 +40,7 @@ class InstanceManager(TranslationManager):
 
     def active(self):
         now = datetime.datetime.now()
-        return self.filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date')
+        return self.filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
 
 class Instance(TranslatableModel):
     slug = models.SlugField()
