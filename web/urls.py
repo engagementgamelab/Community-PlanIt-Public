@@ -80,7 +80,8 @@ urlpatterns = patterns('',
     (r'^curator/', include('curator.urls')),
     (r'^admin/gmapsfield/admin/(?P<file>.*)$', 'gmapsfield.views.serve'),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    (r'^admin/', include(admin.site.urls)),
+    (r'^admin/', include("admin.urls", namespace='admin')),
+    (r'^djadmin/', include(admin.site.urls)),
 )
 if 'rosetta' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
