@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     'django_mailer',
     'gmapsfield',
     'gmapsfield.templatetags',
+    'django_extensions',
     'south',
 )
 
