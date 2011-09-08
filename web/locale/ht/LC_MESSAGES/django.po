@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-08 18:38-0400\n"
+"POT-Creation-Date: 2011-09-08 16:45-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -285,19 +285,19 @@ msgstr ""
 msgid "Activate my account!"
 msgstr ""
 
-#: templates/accounts/dashboard.html:93
+#: templates/accounts/dashboard.html:94
 msgid "ended on"
 msgstr ""
 
-#: templates/accounts/dashboard.html:93
+#: templates/accounts/dashboard.html:94
 msgid "with"
 msgstr ""
 
-#: templates/accounts/dashboard.html:109
+#: templates/accounts/dashboard.html:110
 msgid "Thanks for playing!"
 msgstr ""
 
-#: templates/accounts/dashboard.html:114
+#: templates/accounts/dashboard.html:115
 msgid "Latest Events"
 msgstr ""
 

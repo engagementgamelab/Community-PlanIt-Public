@@ -15,7 +15,7 @@ from nani.manager import TranslationManager
 class Value(TranslatableModel):
     coins = models.IntegerField(default=0)
 
-    instance = models.ForeignKey(Instance)
+    instance = models.ForeignKey(Instance, related_name='values')
     comments = generic.GenericRelation(Comment)
 
     translations = TranslatedFields(

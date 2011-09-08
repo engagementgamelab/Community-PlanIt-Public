@@ -114,6 +114,9 @@ class Stake(TranslatableModel):
         stake = models.CharField(max_length=128),
     )
 
+    class Meta:
+        ordering = ('instance', 'pos')
+
     def __unicode__(self):
         return self.stake
 
