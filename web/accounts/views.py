@@ -414,20 +414,20 @@ def unfollow(request, id):
     return HttpResponseRedirect('/player/'+ str(id))
 
 @login_required
-def dashboard(request):
-    tmpl = loader.get_template('accounts/dashboard.html')
+def dashboard(request, template_name='accounts/dashboard.html'):
 
     instance = None
 
     prof = request.user.get_profile()
     if prof.instance:
         instance = prof.instance
+
     elif request.user.is_staff or request.user.is_superuser:
         #looks like `latest` qs method is broken in django-nani
         #applying a workaround for now.
         #TODO fix
-        instance = Instance.objects.untranslated().latest()
-        #instance = _fake_latest(Instance, Instance.objects.all())#.active())
+        #instance = Instance.objects.latest()
+        instance = _fake_latest(Instance, Instance.objects.all())#.active())
 
     last_mission = None
     if instance and instance.missions.count():
@@ -435,7 +435,7 @@ def dashboard(request):
         #applying a workaround for now.
         #TODO fix
         #last_mission = _fake_latest(Mission, instance.missions)
-        last_mission = Mission.objects.untranslated().order_by('pk')[0]
+        last_mission = Mission.objects.order_by('end_date')
 
     page = request.GET.get('page', 1)
     
@@ -487,15 +487,14 @@ def dashboard(request):
 
     leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20]
 
-    #import ipdb;ipdb.set_trace()
-
-    return HttpResponse(tmpl.render(RequestContext(request, {
-        'activation_form': activation_form,
-        'log': log,
-        'last_mission': last_mission,
-        'paginator': paginator,
-        'activities_page': activities_page,
-        'challenges': challenges,
-        'leaderboard': leaderboard,
-        'instance': instance
-    })))
+    context = dict(
+        activation_form = activation_form,
+        log = log,
+        last_mission = last_mission,
+        paginator = paginator,
+        activities_page = activities_page,
+        challenges = challenges,
+        leaderboard = leaderboard,
+        instance = instance
+    )
+    return render_to_response(template_name, context, context_instance=RequestContext(request))
