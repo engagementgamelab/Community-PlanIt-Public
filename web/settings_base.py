@@ -24,6 +24,10 @@ CACHES = {
 EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 INSTALLED_APPS = (
+    'admin_tools',
+    'admin_tools.theming',
+    'admin_tools.menu',
+    'admin_tools.dashboard',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.auth',
@@ -64,6 +68,7 @@ MANAGERS = ADMINS
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
 MEDIA_URL = '/assets/'
+ADMIN_TOOLS_MEDIA_URL = '/static/'
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.transaction.TransactionMiddleware',
