@@ -56,7 +56,7 @@ class Challenge(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
-        return ('challenges_challenge', [str(self.id)])
+        return ('challenges:challenge', [str(self.id)])
     
     def is_active(self):
         now = datetime.datetime.now()
