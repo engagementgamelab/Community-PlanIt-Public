@@ -13,14 +13,10 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
-<<<<<<< HEAD
-from instances.models import Instance
 from comments.models import Comment
-=======
 from accounts.models import *
 from challenges.models import *
 from instances.models import Instance, Stake
->>>>>>> upstream/multilingual
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
