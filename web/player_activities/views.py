@@ -210,10 +210,10 @@ def comment_fun(answer, form, request):
 
 @login_required
 def get_activity(request, id, template=None):
-    try:
-        activity = PlayerActivity.objects.get(id=id)
-    except PlayerActivity.DoesNotExist:
-        raise Http404 ("PlayerActivity with id %s does not exist" % id)
+    #try:
+    activity = PlayerActivity.objects.get(id=id)
+    #except PlayerActivity.DoesNotExist:
+    #    raise Http404 ("PlayerActivity with id %s does not exist" % id)
     
     answers = Answer.objects.filter(activity=activity, answerUser=request.user)
     if len(answers) > 0:
