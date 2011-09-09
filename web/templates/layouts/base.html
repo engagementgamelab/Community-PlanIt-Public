@@ -70,10 +70,11 @@
                         </a>
                         {% endfor %}
                     {% endif %}
-
+                    {% comment %}
                     {% if user.is_superuser or user.is_staff or user in current_instance.curators.all %}
                     <li><div class="admin"><a href="{% url admin:admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
                     {% endif %}
+                    {% endcomment %}
                     {% if user.is_authenticated %}
                     <li class="final"><div class="logout"><a href="{% url accounts:logout %}"><span>{% trans "Logout" %}</span></a></div></li>
                     {% endif %}
