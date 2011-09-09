@@ -149,25 +149,3 @@
     fields:
         race: Other
         pos: 8
-
-# UserProfileStake
--   model: accounts.userprofilestake
-    pk: 1
-    fields:
-        stake: Live
-        pos: 1
--   model: accounts.userprofilestake
-    pk: 2
-    fields:
-        stake: Work
-        pos: 2
--   model: accounts.userprofilestake
-    pk: 3
-    fields:
-        stake: Play
-        pos: 3
--   model: accounts.userprofilestake
-    pk: 4
-    fields:
-        stake: Learn
-        pos: 4

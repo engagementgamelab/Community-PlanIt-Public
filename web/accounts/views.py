@@ -224,33 +224,25 @@ def edit(request):
         profile = request.user.get_profile()
     except:
         return Http404
-    
+
     change_password_form = ChangePasswordForm()
-    profile_form = UserProfileForm(instance=profile, 
-                                   initial={'myInstance': profile.instance.id if profile.instance != None else 0,
-                                            'education': profile.education.id if profile.education != None else 0,
-                                            'income': profile.income.id if profile.income != None else 0,
-                                            'living': profile.living.id if profile.living != None else 0,
-                                            'gender': profile.gender.id if profile.gender != None else 0,
-                                            'race': profile.race.id if profile.race != None else 0,
-                                            'stake': profile.stake.id if profile.stake != None else 0,
-                                            'first_name': profile.user.first_name if profile.user.first_name != None else "",
-                                            'last_name': profile.user.last_name if profile.user.last_name != None else "",
-                                            'email': profile.email if profile.email != None else "",
-                                            'birth_year': profile.birth_year if profile.birth_year != None else "",
-                                            'preferred_language': profile.preferred_language,
-                                            
-                                            })
+    profile_form = UserProfileForm(instance=profile,
+                                   initial={
+                                        'myInstance': profile.instance.id if profile.instance != None else 0,
+                                        'education': profile.education.id if profile.education != None else 0,
+                                        'income': profile.income.id if profile.income != None else 0,
+                                        'living': profile.living.id if profile.living != None else 0,
+                                        'gender': profile.gender.id if profile.gender != None else 0,
+                                        'race': profile.race.id if profile.race != None else 0,
+                                        'stake': profile.stake.id if profile.stake != None else 0,
+                                        'first_name': profile.user.first_name if profile.user.first_name != None else "",
+                                        'last_name': profile.user.last_name if profile.user.last_name != None else "",
+                                        'email': profile.email if profile.email != None else "",
+                                        'birth_year': profile.birth_year if profile.birth_year != None else "",
+                                        'preferred_language': profile.preferred_language,
+                                    }
+    )
     if request.method == 'POST':
-        
-        #files = ""
-        #post = ""
-        #for x in request.FILES:
-        #    files = "%s%s: %s\n" % (files, x, request.FILES[x])
-        #for x in request.POST: 
-        #    post = "%s%s: %s\n" % (post, x, request.POST[x])
-        #return HttpResponse("FILES: %s \nPOST: %s \n" % (files, post))
-        
         # Change password form moved to user profile
         if request.POST['form'] == 'change_password':
             change_password_form = ChangePasswordForm(request.POST)
@@ -265,16 +257,6 @@ def edit(request):
             # User profile form updated, not change password
             profile_form = UserProfileForm(data=request.POST, files=request.FILES, instance=profile)
             if profile_form.is_valid():
-                #Changing instances
-                if (request.POST.get('myInstance', None) == None or request.POST['myInstance'] == ''): #reset to the None object
-                    profile.instance = None
-                else:
-                    ins = Instance.objects.filter(id=request.POST.get('myInstance'))
-                    if (len(ins) > 0):
-                        profile.instance = ins[0]
-                    else:
-                        profile.instance = None
-
                 #changing birth year (needed because of the int)
                 #This fails with the birth_year being blank and python can not convert
                 #a '' to an int
@@ -318,11 +300,6 @@ def edit(request):
                         pass
 
                 return HttpResponseRedirect(reverse('accounts:dashboard'))
-            #else: #uncomment this
-            #    s = "error: "
-            #    for err in profile_form.errors:
-            #        s = "%s%s %s\n" % (s, err, profile_form.errors[err])
-            #    return HttpResponse(s)
 
     tmpl = loader.get_template('accounts/profile_edit.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
@@ -438,20 +415,20 @@ def unfollow(request, id):
     return HttpResponseRedirect('/player/'+ str(id))
 
 @login_required
-def dashboard(request):
-    tmpl = loader.get_template('accounts/dashboard.html')
+def dashboard(request, template_name='accounts/dashboard.html'):
 
     instance = None
 
     prof = request.user.get_profile()
     if prof.instance:
         instance = prof.instance
+
     elif request.user.is_staff or request.user.is_superuser:
         #looks like `latest` qs method is broken in django-nani
         #applying a workaround for now.
         #TODO fix
-        instance = Instance.objects.untranslated().latest()
-        #instance = _fake_latest(Instance, Instance.objects.all())#.active())
+        #instance = Instance.objects.latest()
+        instance = _fake_latest(Instance, Instance.objects.all())#.active())
 
     last_mission = None
     if instance and instance.missions.count():
@@ -459,7 +436,7 @@ def dashboard(request):
         #applying a workaround for now.
         #TODO fix
         #last_mission = _fake_latest(Mission, instance.missions)
-        last_mission = Mission.objects.untranslated().order_by('pk')[0]
+        last_mission = Mission.objects.order_by('end_date')
 
     page = request.GET.get('page', 1)
     
@@ -502,7 +479,6 @@ def dashboard(request):
     if (missions.count() > 0):
         mission = missions[0]
         activities = PlayerActivity.objects.distinct().filter(mission=mission)
-        #activities = activities.filter(Q(answers__isnull=True)|Q(answers__answerUser=request.user))
 
     completed_challenges = PlayerChallenge.objects.completed().filter(player=request.user)
     challenges = instance and instance.challenges.active().exclude(player_challenges__in=completed_challenges) or Challenge.objects.none()
@@ -512,15 +488,14 @@ def dashboard(request):
 
     leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20]
 
-    #import ipdb;ipdb.set_trace()
-
-    return HttpResponse(tmpl.render(RequestContext(request, {
-        'activation_form': activation_form,
-        'log': log,
-        'last_mission': last_mission,
-        'paginator': paginator,
-        'activities_page': activities_page,
-        'challenges': challenges,
-        'leaderboard': leaderboard,
-        'instance': instance
-    })))
+    context = dict(
+        activation_form = activation_form,
+        log = log,
+        last_mission = last_mission,
+        paginator = paginator,
+        activities_page = activities_page,
+        challenges = challenges,
+        leaderboard = leaderboard,
+        instance = instance
+    )
+    return render_to_response(template_name, context, context_instance=RequestContext(request))

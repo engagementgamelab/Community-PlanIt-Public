@@ -4,7 +4,7 @@
 {% block section %}accounts{% endblock %}
 
 {%block title%}{% trans "Dashboard" %}{%endblock%}
-{%block page_title%} {{player.get_profile.screen_name}} {%endblock%}
+{%block page_title%}<h2 id="page_title">{{player.get_profile.screen_name}}</h2>{%endblock%}
  
 {% block main %}
     {% if request.user == player %}
@@ -28,7 +28,7 @@
             <img class="left avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
         {% endif %} 
         <!--Lives in East Boston, works in Fort Point and Plays in Fort Point.-->
-        <span style="font-size: 1em">{% trans "Points" %}: {{player.get_profile.points}}</span><br>
+        <span style="font-size: 1em">{% trans "Points" %}: {{player.get_profile.totalPoints}}</span><br>
         <span style="font-size: 1em">{% trans "Community Stake" %}: {{player.get_profile.stake}}</span><br>
         {% if player.get_profile.affiliations %}
         <span style="font-size: 1em">{% trans "Affiliated With" %}:
@@ -40,11 +40,11 @@
     </p>    
     <hr class="clear">
     <div class="twothird">
-        <h3>{% trans "Your coin spending" %}</h3>
+        <h3>{% trans "Token spending" %}</h3>
         <div id="userPie" class="graph" style="width:350px;height:300px; margin-right:auto; 
             margin-top: 25px; margin-bottom: 25px; "></div>
             
-        <h3>{{player.get_profile.screen_name}}'s Activity Log</h3>
+        <h3>Activity Log</h3>
         {% if log|length %}
         <ul class="listless listview feed">
             {% for activity in log %}
@@ -66,84 +66,26 @@
             {% endfor %}
         </ul>
         {%else%}
-            {% trans "No activities created." %}   
+        {{player.get_profile.screen_name}} {% trans "has created no activities." %}   
         {%endif%}
     </div>
     
-    <div class="third last">        
-        <div class="modules">
-            <h3><a class="highlight" href="{% url lists:lists_following player.id %}">Following <span class="fine">({{player.get_profile.following.all|length}})</span></a></h3>
-            <div class="dashboardmodule">
-                <div class="dashboardmoduleinner profile">
-                    <div class="profile-content">
-                        <hr class="space">
-                        {% if player.get_profile.following.all %}
-                          {% for player in player.get_profile.following.all %}
-                              {% if player.get_profile.avatar %}
-                              <a href="{% url accounts_profile player.id %}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
-                              {% else %}               
-                              <a href="{% url accounts_profile player.id %}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
-                              {% endif %} 
-                          {% endfor %}
-                        {% else %}
-                           {{player.get_profile.screen_name}} is not following anyone.
-                        {% endif %} 
-                    </div>
-    
-                    <div style="clear:both;"></div>
-                </div>
-            </div>
-            
-            <hr class="space">
-
-            <h3><a class="highlight" href="{% url lists:lists_followers player.id %}">Followers <span class="fine">({{followingme|length}})</span></a></h3>
-            <div class="dashboardmodule">
-                <div class="dashboardmoduleinner profile">
-                    <div class="profile-content">
-                        <hr class="space">
-                        {% if followingme %}
-                          {% for player in followingme %}
-                              {% if player.get_profile.avatar %}
-                              <a href="{% url accounts_profile player.id %}"><img alt="{{player.get_profile.screen_name}}" class="avatar" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}"></a>
-                              {% else %}               
-                              <a href="{% url accounts_profile player.id %}"><img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"></a>
-                              {% endif %} 
-                          {% endfor %}
-                        {% else %}
-                           {{player.get_profile.screen_name}} has no followers.
-                        {% endif %} 
-                    </div>
-    
-                    <div style="clear:both;"></div>
-                </div>
-            </div>
-            
-            <hr class="space">
-
-        </div>
-    </div>
-    
-    
     <div style="clear: both; padding: 1em 0;"></div>
-    <div id="comments">
-        <h4>Comments for {{player.get_profile.screen_name}}</h4>
-        <ul class="listless comments">            
-            {% ifequal player.get_profile.preferred_language "en" %} 
-                {% with player.get_profile.get_preferred_comments as preferred_comments %}	                  
-	            {% with player.get_profile.get_rest_comments as rest_comments %}
-	                {% include "comments/post.html" %}	            
-	            {% endwith %}
-	            {% endwith %}                    
-            {% else %}
-	            {% with player.get_profile.get_preferred_comments as preferred_comments %}
-	            {% with player.get_profile.get_english_comments as english_comments %}            
-	            {% with player.get_profile.get_rest_comments as rest_comments %}
-	                {% include "comments/post.html" %}
-	            {% endwith %}    
-	            {% endwith %}
-	            {% endwith %}    
-            {% endifequal%}
-        </ul>
+        {% ifequal player.get_profile.preferred_language "en" %} 
+            {% with player.get_profile.get_preferred_comments as preferred_comments %}	                  
+            {% with player.get_profile.get_rest_comments as rest_comments %}
+                {% include "comments/post.html" %}	            
+            {% endwith %}
+            {% endwith %}                    
+        {% else %}
+            {% with player.get_profile.get_preferred_comments as preferred_comments %}
+            {% with player.get_profile.get_english_comments as english_comments %}            
+            {% with player.get_profile.get_rest_comments as rest_comments %}
+                {% include "comments/post.html" %}
+            {% endwith %}    
+            {% endwith %}
+            {% endwith %}    
+        {% endifequal%}
         <div style="clear: both;"></div>
     </div>
 

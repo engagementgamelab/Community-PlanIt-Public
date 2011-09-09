@@ -75,7 +75,7 @@
                 </div>
                 <div class="fieldWrapper">
                     {{ profile_form.stake.errors }}
-                    <label for="id_stake">{% trans "stake" %}</label>
+                    <label for="id_stake">{% trans "Stake" %}</label>
                     {{ profile_form.stake }}
                 </div>
                 <div class="fieldWrapper">
@@ -104,27 +104,11 @@
                     {{ profile_form.birth_year.errors }}
                     <label for="id_birth_year">Age:</label>
                     {{ profile_form.birth_year }}
-                    <p style="font-size: .75em; font-style:italic;">{{ profile_form.birth_year.help_text }}</p>
                 </div>
                 <div class="fieldWrapper">
                     {{ profile_form.race.errors }}
                     <label for="id_race">Race/Ethnicity:</label>
                     {{ profile_form.race }}
-                </div>
-                
-                <!--
-                {% if user.is_superuser == True or user.is_staff == True %}
-                    <div class="fieldWrapper">
-                        {{ profile_form.myInstance.errors }}
-                        <label for="id_myInstance">Community</label>
-                        {{ profile_form.myInstance }}
-                    </div>
-                {%endif%}
-                -->
-                <div class="fieldWrapper">
-                    {{ profile_form.myInstance.errors }}
-                    <label for="id_myInstance">Community</label>
-                    {{ profile_form.myInstance }}
                 </div>
                 
                 <div class="fieldWrapper">

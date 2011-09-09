@@ -66,7 +66,7 @@ INSTALLED_APPS = (
     'gmapsfield',
     'gmapsfield.templatetags',
     'nani',
-    'dilla',
+    #'dilla',
     'rosetta',
     'south',
 )
@@ -119,14 +119,14 @@ USE_L10N = True
 # Localization
 LANGUAGE_CODE = 'en-us'
 LOCALE_PATHS = (
-        os.path.join(ROOTDIR, '../locale'),
+        os.path.join(ROOTDIR, 'locale'),
 )
 
 ugettext = lambda s: s
 LANGUAGES = (
   ('en-us', ugettext('English')),
+  ('ht', ugettext(u'Kreyòl')),
   ('es', ugettext(u'Spanish')),
-  ('ht', ugettext(u'Haitian Creole')),
 )
 #django-localeurl
 LOCALE_INDEPENDENT_PATHS = (
@@ -169,7 +169,7 @@ logging.basicConfig(level=logging.DEBUG,
                     filemode='w')
 
 logging.getLogger(__name__).setLevel(logging.INFO)
-logging.info("roa started")
+logging.info("cpi started")
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

@@ -3,14 +3,13 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate
-from web.instances.models import Instance
+from web.instances.models import Instance, Stake
 from web.accounts.models import UserProfile
 from web.accounts.models import UserProfileEducation
 from web.accounts.models import UserProfileIncomes
 from web.accounts.models import UserProfileLiving
 from web.accounts.models import UserProfileGender
 from web.accounts.models import UserProfileRace
-from web.accounts.models import UserProfileStake
 
 class RegisterForm(forms.Form):
 
@@ -59,13 +58,6 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError(_('The passwords do not match.'))
         else:
             return passwordAgain
-    
-    #def clean_instance(self):
-    #    if (self.cleaned_data['instance'] == ""):
-    #        instance = None
-    #    else:
-    #        instance = Instance.objects.get(id = self.cleaned_data['instance'])
-    #    return instance
     
 class ActivationForm(forms.Form):
     accepted_term = forms.BooleanField(required=True, label=_("I have have read the <a href=\"/label/\">Terms of Use.</a>"))
@@ -116,81 +108,72 @@ class UserProfileForm(forms.ModelForm):
         ra.append((x.id, x.race))
     race = forms.ChoiceField(required=False, choices=ra)
     
-    st = []
-    st.append((0, '------'))
-    for x in UserProfileStake.objects.all().order_by("pos"):
-        st.append((x.id, x.stake))
-    stake = forms.ChoiceField(required=False, choices=st)
-    
-    birth_year = forms.CharField(max_length=30, label='Age', help_text='Private',required=False)
-    phone_number = forms.CharField(max_length=30, help_text='Private',required=False)
-    myInstance = forms.ModelChoiceField(queryset=Instance.objects.all(), required=False, label=_('Community'))
+    birth_year = forms.CharField(max_length=30, label='Age', help_text=_(u'Private'),required=False)
+    phone_number = forms.CharField(max_length=30, help_text=_(u'Private'),required=False)
     affiliations = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}), 
-                                   help_text = "Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club).")
-    edu = []
-    edu.append((0, '------'))
+                                   help_text = _("Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club)."))
+    edu = [(0, '------')]
     for x in UserProfileEducation.objects.all().order_by("pos"):
         edu.append((x.id, x.eduLevel))
     education = forms.ChoiceField(required=False, choices=edu)
     
-    inc = []
-    inc.append((0, '------'))
+    inc = [(0, '------')]
     for x in UserProfileIncomes.objects.all().order_by("pos"):
         inc.append((x.id, x.income))
     income = forms.ChoiceField(required=False, choices=inc)
     
-    liv = []
-    liv.append((0, '------'))
+    liv = [(0, '------')]
     for x in UserProfileLiving.objects.all().order_by("pos"):
         liv.append((x.id, x.livingSituation))
     living = forms.ChoiceField(required=False, choices=liv)
     
     avatar = forms.ImageField(required=False)
     
-    def clean_instance(self):
-        try:
-            return Instance.objects.get(id=self.cleaned_data['instance'])
-        except:
-            return None
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        stakes = [(0, '------')]
+        for x in self.instance.instance.stakes.all().order_by("pos"):
+            stakes.append((x.pk, x.stake))
+        self.fields['stake'] = forms.ChoiceField(label=_(u'Stake'), required=False, choices=stakes)
     
     def clean_gender(self):
         try:
             return UserProfileGender.objects.get(pos=self.cleaned_data['gender'])
-        except:
+        except UserProfileGender.DoesNotExist:
             return None
     
     def clean_race(self):
         try:
             return UserProfileRace.objects.get(pos=self.cleaned_data['race'])
-        except:
+        except UserProfileRace.DoesNotExist:
             return None
     
     def clean_stake(self):
         try:
-            return UserProfileStake.objects.get(pos=self.cleaned_data['stake'])
-        except:
+            return Stake.objects.get(pk=self.cleaned_data['stake'])
+        except Stake.DoesNotExist:
             return None
     
     def clean_education(self):
         try:
             return UserProfileEducation.objects.get(pos=self.cleaned_data['education'])
-        except:
+        except UserProfileEducation.DoesNotExist:
             return None
     
     def clean_income(self):
         try:
             return UserProfileIncomes.objects.get(pos=self.cleaned_data['income'])
-        except:
+        except UserProfileIncomes.DoesNotExist:
             return None
     
     def clean_living(self):
         try:
             return UserProfileLiving.objects.get(pos=self.cleaned_data['living'])
-        except:
+        except UserProfileLiving.DoesNotExist:
             return None
     
     class Meta:
         model = UserProfile
-        #Adding to Meta.fields will display default settings in the browser and link it to the correct model object. 
-        fields = ( 'email', 'first_name', 'last_name', 'preferred_language', 'stake', 'birth_year', 'gender', 'race', 'phone_number', 'myInstance', 'affiliations',
-                   'education', 'income', 'living' )
+        fields = ( 'email', 'first_name', 'last_name', 'preferred_language',
+                  'stake', 'birth_year', 'gender', 'race', 'phone_number',
+                  'affiliations', 'education', 'income', 'living' )

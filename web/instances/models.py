@@ -29,7 +29,6 @@ class Language(models.Model):
     def __unicode__(self):
         return "%s <%s>" %(self.name, self.code)
 
-
 class InstanceManager(TranslationManager):
 
     def past(self):
@@ -41,7 +40,7 @@ class InstanceManager(TranslationManager):
 
     def active(self):
         now = datetime.datetime.now()
-        return self.filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date')
+        return self.filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
 
 class Instance(TranslatableModel):
     slug = models.SlugField()
@@ -103,6 +102,24 @@ class Instance(TranslatableModel):
         self.slug = slugify(self.title)[:50]
         super(Instance,self).save()
         
+class Stake(TranslatableModel):
+    """
+    The stakes users hold in the community, e.g. Live, Work, Play, or Teacher,
+    Administrator, Student.
+    """
+    instance = models.ForeignKey(Instance, related_name='stakes')
+    pos = models.IntegerField(blank=False, null=False)
+
+    translations = TranslatedFields(
+        stake = models.CharField(max_length=128),
+    )
+
+    class Meta:
+        ordering = ('instance', 'pos')
+
+    def __unicode__(self):
+        return self.stake
+
 #TODO: Perhaps this should be in it's own project
 class PointsAssignment(models.Model):
     action = models.CharField(max_length=260)
