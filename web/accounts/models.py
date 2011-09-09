@@ -13,9 +13,14 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
+<<<<<<< HEAD
+from instances.models import Instance
+from comments.models import Comment
+=======
 from accounts.models import *
 from challenges.models import *
 from instances.models import Instance, Stake
+>>>>>>> upstream/multilingual
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
@@ -68,6 +73,7 @@ class CPIUser(User):
 class UserProfile(models.Model):
     #Foreign key fields
     user = models.ForeignKey(User, unique=True)
+    email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
     instance = models.ForeignKey(Instance, blank=True, null=True, related_name='user_profiles')
     gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
     race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
@@ -193,7 +199,7 @@ class UserProfileAdmin(UserAdmin):
             kwargs['queryset'] = UserProfile.objects.filter(id=-2)
 
         if db_field.rel.to == User:
-            field.label_from_instance = self.get_user_label
+            db_field.label_from_instance = self.get_user_label
 
         return super(UserProfileAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 

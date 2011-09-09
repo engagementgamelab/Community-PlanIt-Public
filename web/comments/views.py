@@ -63,7 +63,7 @@ def reply(request, id):
             request.user.get_profile().screen_name,
             topic
         )
-        recipient = topic.player
+        recipient = topic.user
     elif isinstance(topic, UserProfile):
         message = "%s replied to a comment on your profile" % (
             request.user.get_profile().screen_name

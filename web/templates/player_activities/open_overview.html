@@ -13,7 +13,9 @@
     {% include "player_activities/attachments.html" %}
     
     <div id="comments">
-        {%include "comments/post.html"%}
+        {% with comments as english_comments %}
+            {% include "comments/post.html" %}
+        {% endwith %}
         <div style="clear: both;"></div>
     </div>
 {%endblock%}

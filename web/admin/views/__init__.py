@@ -18,7 +18,7 @@ def verify(request, template="admin/backend_not_superuser.html"):
     return render_to_response(template, RequestContext(request))
 
 @login_required
-def delete_obj(request, id, model, template="admin/trans_del.html"):
+def delete_obj(request, id, model, is_translatable=True, template="admin/trans_del.html"):
     is_new = False
     ok = verify(request)
     if ok != None:
@@ -28,7 +28,10 @@ def delete_obj(request, id, model, template="admin/trans_del.html"):
     model_klass = get_model(app, klass)
 
     try:
-        inst = model_klass.objects.untranslated().get(pk=id)
+        if is_translatable:
+            inst = model_klass.objects.untranslated().get(pk=id)
+        else:
+            inst = model_klass.objects.get(pk=id)
     except model_klass.DoesNotExist:
         raise Http404 ("%s with id %s does not exist" % (model_klass.__name__, id))
 
@@ -36,6 +39,8 @@ def delete_obj(request, id, model, template="admin/trans_del.html"):
         redir = reverse("admin:manage-values", args=(inst.instance.pk,))
     elif model == "missions.Mission":
         redir = reverse("admin:manage-missions", args=(inst.instance.pk,))
+    elif model == "answers.Answer":
+        redir = reverse("admin:manage-answers", args=(inst.activity.pk,))
     else:
         redir = reverse("admin:admin-base")
 

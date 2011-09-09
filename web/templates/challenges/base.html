@@ -95,7 +95,7 @@
 {% endif %}
 
 {% url challenges:comment challenge.id as comment_post_url %}
-{% with challenge.comments as comments %}
+{% with challenge.comments as english_comments %}
 {% include "comments/post.html" %}
 {% endwith %}
 

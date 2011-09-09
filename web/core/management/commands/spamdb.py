@@ -68,6 +68,7 @@ def create_user(instance):
     else:
         user_prof.instance = random.choice(Instance.objects.untranslated())
     user_prof.preferred_language = random.choice(user_prof.instance.languages.all()).code
+    user_prof.email = "admin@cpi.org"
     user_prof.save()
     print "UserProfile: %s" % user_prof
     print "User: %s" % u

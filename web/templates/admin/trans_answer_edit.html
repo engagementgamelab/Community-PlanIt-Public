@@ -1,0 +1,80 @@
+{%extends "layouts/base.html"%}
+{% load game_extras admin_tags %}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>{% if new %}Add{% else %}Edit{% endif %} Answer for {{ activity.type.displayType }} Activity: {{ activity.pk }}</h2>
+    
+    <div id="content" style="text-color: red;"> 
+        {% if errors %} 
+            {% for k,v in errors.items %}
+            {{ k }}: {{ v }} 
+            {% endfor %}
+        {% endif %}
+    </div>
+     
+    <form id="id_answer-form" action="." method="post">{%csrf_token%}
+        {% if not new %}
+            <input type="hidden" name="answer_id" value="{{ answer_form.instance.pk }}">
+        {% endif %}   
+                    
+        {% for field in answer_form %}            
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>            
+        {% endfor %}  
+    </form>
+       
+        
+	<div>
+            {% if new %}
+                <input type="submit" class="btn-submit" name="submit_btn" value="Create" />
+            {% else %}
+                <input type="submit" class="btn-submit" name="submit_btn" value="Update" />
+            {% endif %}
+            <input type="submit" class="btn-submit" name="submit_btn" value="Cancel" />
+    </div>
+{%endblock%}
+
+{%block body%}    
+    <script>
+        jQuery(function($) {
+            $(".btn-submit").live("click", function(){
+                var instance_qs = $('#id_answer-form').serialize();
+
+                data = instance_qs +'&_='+Math.floor(Math.random()*11);
+
+                {% if new %}
+                    var url = "{% url admin:answer-new activity.pk %}";
+                {% else %}
+                    var url = "{% url admin:answer-edit activity.pk answer.pk %}";
+                {% endif %}
+
+                $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        success: function(data, textStatus) {
+                            var $data = $(data);
+                            var has_errors = $(data).find(".errorlist");
+
+                            if (has_errors.length > 0){
+                                $('#content').html($data.find('#content'));
+                            }
+                            else {
+                                window.location='{% url admin:manage-answers activity.pk %}';
+                            }
+                        },
+                        error: function(data){                                        
+                            $('#content').html(data.responseText);
+                        }
+                });
+            });
+
+        });        
+    </script>
+{%endblock%}
