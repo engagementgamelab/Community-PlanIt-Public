@@ -32,7 +32,7 @@ def fetch(request, id):
                 pc.completed = True
                 pc.save()
 
-                ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges:challenges_challenge', args=[id]), 'challenge')
+                ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges:challenge', args=[id]), 'challenge')
                 PointsAssigner().assign(request.user, 'challenge_completed')
 
                 if pc.player != challenge.user:
@@ -50,19 +50,19 @@ def fetch(request, id):
                             type='video',
                             user=request.user,
                             instance=request.user.get_profile().instance
-                        )
-                file = request.FILES.get('picture')
-                picture = Image.open(file)
-                if (file.name.rfind(".") -1):
-                    file.name = "%s.%s" % (file.name, picture.format.lower())
+                        )                
                 if request.FILES.has_key('picture'):
+                    file = request.FILES.get('picture')
+                    picture = Image.open(file)
+                    if (file.name.rfind(".") -1):
+                        file.name = "%s.%s" % (file.name, picture.format.lower())
                     pc.attachments.create(
                         file=request.FILES.get('picture'),
                         user=request.user,
                         instance=request.user.get_profile().instance
                     )
 
-                    return HttpResponseRedirect(reverse('challenges:challenges_challenge', args=[id]))
+                    return HttpResponseRedirect(reverse('challenges:challenge', args=[id]))
     else:
         if pc.completed:
             carf = None
@@ -188,11 +188,12 @@ def comment(request, id):
                     instance=request.user.get_profile().instance,
                 )
                 a.save()
-        file = request.FILES.get('picture')
-        picture = Image.open(file)
-        if (file.name.rfind(".") -1):
-            file.name = "%s.%s" % (file.name, picture.format.lower())
+        
         if request.FILES.has_key('picture'):
+            file = request.FILES.get('picture')
+            picture = Image.open(file)
+            if (file.name.rfind(".") -1):
+                file.name = "%s.%s" % (file.name, picture.format.lower())
             b = Attachment(
                 file=request.FILES.get('picture'),
                 user=request.user,

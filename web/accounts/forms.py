@@ -1,7 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, get_language
 from django.contrib.auth import authenticate
 from web.instances.models import Instance, Stake
 from web.accounts.models import UserProfile
@@ -18,7 +18,7 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(required=True, label=_("Email:"))
     password = forms.CharField(required=True, label=_("Password"), widget=forms.PasswordInput(render_value=False))
     passwordAgain = forms.CharField(required=True, label=_("Password Again"), widget=forms.PasswordInput(render_value=False))
-    instance = forms.ModelChoiceField(queryset=Instance.objects.active(), label=_('Community'))
+    instance = forms.ModelChoiceField(queryset=Instance.objects.active().language(get_language()), label=_('Community'))
     preferred_language = forms.ChoiceField(choices=settings.LANGUAGES)
 
     # Ensure that a user has not already registered an account with that email address.

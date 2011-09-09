@@ -26,20 +26,15 @@ def fetch(request, slug, template='missions/base.html'):
         pk = mc.option.activity.pk
         if pk not in pks:
             pks.append(pk)
-    
-    answered_activities = PlayerActivity.objects.filter(Q(pk__in=pks))
-    unfinished_activities = PlayerActivity.objects.filter(Q(mission=mission) & ~Q(pk__in=pks))
+    activities = PlayerActivity.objects.language(get_language()).filter(mission=mission)
+    answered_activities = PlayerActivity.objects.language(get_language()).filter(Q(pk__in=pks))
+    unfinished_activities = PlayerActivity.objects.language(get_language()).filter(Q(mission=mission) & ~Q(pk__in=pks))
 
-    print answered_activities 
-    print unfinished_activities 
-
-    print (answered_activities.count(), unfinished_activities.count() )
-
-    print "my lang: %s" % get_language()
     #import ipdb;ipdb.set_trace()
 
     context = dict(
         mission = mission,
+        activities = activities,
         unfinished_activities = unfinished_activities,
         answered_activities = answered_activities,
         comment_form = CommentForm(),

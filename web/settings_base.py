@@ -127,7 +127,6 @@ LANGUAGES = (
   ('en-us', ugettext('English')),
   ('ht', ugettext(u'Kreyòl')),
   ('es', ugettext(u'Spanish')),
-  ('rus', ugettext(u'Russian')),
 )
 #django-localeurl
 LOCALE_INDEPENDENT_PATHS = (

@@ -224,7 +224,24 @@ def edit(request):
         profile = request.user.get_profile()
     except:
         return Http404
-    
+
+    change_password_form = ChangePasswordForm()
+    profile_form = UserProfileForm(instance=profile,
+                                   initial={
+                                        'myInstance': profile.instance.id if profile.instance != None else 0,
+                                        'education': profile.education.id if profile.education != None else 0,
+                                        'income': profile.income.id if profile.income != None else 0,
+                                        'living': profile.living.id if profile.living != None else 0,
+                                        'gender': profile.gender.id if profile.gender != None else 0,
+                                        'race': profile.race.id if profile.race != None else 0,
+                                        'stake': profile.stake.id if profile.stake != None else 0,
+                                        'first_name': profile.user.first_name if profile.user.first_name != None else "",
+                                        'last_name': profile.user.last_name if profile.user.last_name != None else "",
+                                        'email': profile.email if profile.email != None else "",
+                                        'birth_year': profile.birth_year if profile.birth_year != None else "",
+                                        'preferred_language': profile.preferred_language,
+                                    }
+    )
     if request.method == 'POST':
         # Change password form moved to user profile
         if request.POST['form'] == 'change_password':
@@ -249,10 +266,10 @@ def edit(request):
                     profile.birth_year = int(profile_form.cleaned_data['birth_year'])
 
                 #updating email address
-                if (request.POST.get('email', None) == None or request.POST.get('email', None) == ''):
-                    profile.user.email = None
-                else:
-                    profile.user.email = profile_form.cleaned_data['email']
+                #if (request.POST.get('email', None) == None or request.POST.get('email', None) == ''):
+                #    profile.user.email = None
+                #else:
+                #    profile.user.email = profile_form.cleaned_data['email']
 
                 if (request.POST.get('first_name', None) == None or request.POST.get('first_name', None) == ''):
                     profile.user.first_name = None
@@ -283,22 +300,6 @@ def edit(request):
                         pass
 
                 return HttpResponseRedirect(reverse('accounts:dashboard'))
-    else:
-        change_password_form = ChangePasswordForm()
-        profile_form = UserProfileForm(instance=profile,
-                                       initial={'education': profile.education.id if profile.education != None else 0,
-                                                'income': profile.income.id if profile.income != None else 0,
-                                                'living': profile.living.id if profile.living != None else 0,
-                                                'gender': profile.gender.id if profile.gender != None else 0,
-                                                'race': profile.race.id if profile.race != None else 0,
-                                                'stake': profile.stake.id if profile.stake != None else 0,
-                                                'first_name': profile.user.first_name if profile.user.first_name != None else "",
-                                                'last_name': profile.user.last_name if profile.user.last_name != None else "",
-                                                'email': profile.user.email if profile.user.email != None else "",
-                                                'birth_year': profile.birth_year if profile.birth_year != None else "",
-                                                'preferred_language': profile.preferred_language,
-                                                }
-                                      )
 
     tmpl = loader.get_template('accounts/profile_edit.html')
     return HttpResponse(tmpl.render(RequestContext(request, {

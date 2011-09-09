@@ -14,6 +14,10 @@ from missions.models import Mission
 from accounts.models import CPIUser
 
 import logging
+from answers.models import Answer
+from comments.forms import CommentForm
+from django.forms.widgets import RadioSelect
+from django.contrib.auth.models import User
 log = logging.getLogger(__name__)
 
 
@@ -133,6 +137,23 @@ class MissionForm(TranslatableAdminBaseForm):
         model = Mission
         exclude = ('language_code', 'start_date', 'end_date', 'name', 'description', 'instance', 'comments')
 
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        exclude = ('activity',)
+        
+        
+class AdminCommentForm(CommentForm):    
+    def __init__(self, instance=None, *args, **kwargs):
+        super(AdminCommentForm, self).__init__(*args, **kwargs)
+        self.fields['language'] = forms.ChoiceField(widget=RadioSelect, choices=settings.LANGUAGES)
+        self.fields['user'] = forms.ModelChoiceField(queryset=User.objects.all())
+        self.instance = instance        
+        if instance is not None:
+            self.fields['user'].initial = instance.user
+            self.fields['language'].initial = instance.language_code
+    
 
 #####
 # everything below is deprecated

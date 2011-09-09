@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import Context, RequestContext, loader
 from django.utils import simplejson
 from django.shortcuts import render_to_response
+from django.utils.translation import get_language
 
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
@@ -29,9 +30,9 @@ def getComments(answers, ModelType):
     answer_type = ContentType.objects.get_for_model(ModelType)
     for answer in answers:
         if comments == None:
-            comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+            comments = Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
         else:
-            comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+            comments = comments | Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
     return comments
         
 
@@ -63,7 +64,7 @@ def overview(request, id):
         answers = AnswerSingleResponse.objects.filter(activity=activity)
 
         answerDict = {}
-        choices = MultiChoiceActivity.objects.filter(activity=activity)
+        choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
         for choice in choices:
             answerDict[choice.value] = 0
 
@@ -91,15 +92,15 @@ def overview(request, id):
                                                                  #[ip]
                                                                  )))
     elif activity.type.type == "multi_response":
-        answers = AnswerMultiChoice.objects.filter(option__activity=activity)
+        answers = AnswerMultiChoice.objects.language(get_language()).filter(option__activity=activity)
         comments = None
         answer_type = ContentType.objects.get_for_model(AnswerMultiChoice)
         
         for answer in answers:
             if comments == None:
-                comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+                comments = Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
             else:
-                comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+                comments = comments | Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
         
         myComment = None
         if comments is not None:
@@ -108,7 +109,7 @@ def overview(request, id):
             myComment = myComment[0]            
         
         answerDict = {}
-        choices = MultiChoiceActivity.objects.filter(activity=activity)
+        choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
         for choice in choices:
             answerDict[choice.value] = 0
 
@@ -161,7 +162,7 @@ def overview(request, id):
                                                                 #[ip]
                                                                 )))
     elif activity.type.type == "empathy":
-        activity = PlayerEmpathyActivity.objects.get(id=activity.id)
+        activity = PlayerEmpathyActivity.objects.language(get_language()).get(id=activity.id)
         answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/empathy_overview.html')
         comment_form = CommentForm()
@@ -210,10 +211,10 @@ def comment_fun(answer, form, request):
 
 @login_required
 def get_activity(request, id, template=None):
-    try:
-        activity = PlayerActivity.objects.get(id=id)
-    except PlayerActivity.DoesNotExist:
-        raise Http404 ("PlayerActivity with id %s does not exist" % id)
+    #try:
+    activity = PlayerActivity.objects.language(get_language()).get(id=id)
+    #except PlayerActivity.DoesNotExist:
+    #    raise Http404 ("PlayerActivity with id %s does not exist" % id)
     
     answers = Answer.objects.filter(activity=activity, answerUser=request.user)
     if len(answers) > 0:
@@ -251,7 +252,7 @@ def get_activity(request, id, template=None):
                 template =' player_activities/open_response.html'
                 form_error = True
         elif request.POST["form"] == "single_response":
-            mc = MultiChoiceActivity.objects.filter(activity=activity)
+            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
@@ -260,7 +261,7 @@ def get_activity(request, id, template=None):
                 answer = AnswerSingleResponse()
                 answer.activity = activity
                 answer.answerUser = request.user
-                answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
+                answer.selected = MultiChoiceActivity.objects.language(get_language()).get(id=int(form.cleaned_data["response"]))
                 answer.save()
                 comment_fun(answer, comment_form, request)
             else:
@@ -279,7 +280,7 @@ def get_activity(request, id, template=None):
                 comment_fun(answer, comment_form, request)
             else:
                 map = request.POST["map"]
-                activity = PlayerMapActivity.objects.get(pk=activity.id)
+                activity = PlayerMapActivity.objects.language(get_language()).get(pk=activity.id)
                 template = 'player_activities/map_response.html'
                 form_error = True
         elif request.POST["form"] == "empathy":
@@ -293,21 +294,21 @@ def get_activity(request, id, template=None):
                 template = 'player_activities/empathy_response.html'
                 form_error = True
         elif request.POST["form"] == "multi_response":
-            mc = MultiChoiceActivity.objects.filter(activity=activity)
+            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
             form = MakeMultiForm(choices)(request.POST)
             if form.is_valid() and comment_form.is_valid():
                 #this gets very very messy....
-                choices = MultiChoiceActivity.objects.filter(activity=activity)
+                choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
                 comment = None
                    
                 ids = []
                 for choice in choices:
                     ids.append(choice.id)
                 #cleans out all of the choices that the user selected from the check boxes
-                for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)):
+                for amc in AnswerMultiChoice.objects.language(get_language()).filter(Q(user=request.user) & Q(option__in=ids)):
                     amc.comments.clear()
                 AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)).delete()
                 first_found = False 
@@ -318,7 +319,7 @@ def get_activity(request, id, template=None):
                         #This is tricky, the reponse: value returned object is response_$(id): id
                         #So basically if the response exists it means that checkbox was checked and the
                         # value returned will be the ID and will always be an int
-                        answer.option = MultiChoiceActivity.objects.get(id=int(request.POST[key]))
+                        answer.option = MultiChoiceActivity.objects.language(get_language()).get(id=int(request.POST[key]))
                         answer.save()
                         #Yes it's a hack, only make a comment for the first response
                         if not first_found:
@@ -350,10 +351,10 @@ def get_activity(request, id, template=None):
             #for x in mc:
             #    choices.append()
             #choices = [(x.id, x.value) for x in MultiChoiceActivity.objects.filter(activity=activity)]
-            choices = MultiChoiceActivity.objects.values_list('pk', 'value')
+            choices = MultiChoiceActivity.objects.language(get_language()).values_list('pk', 'value')
             form = MakeSingleForm(choices)
         elif (activity.type.type == "map"):
-            activity = PlayerMapActivity.objects.get(pk=activity.id)
+            activity = PlayerMapActivity.objects.language(get_language()).get(pk=activity.id)
             template = 'player_activities/map_response.html'
             answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
             if (len(answer) > 0):
@@ -373,7 +374,7 @@ def get_activity(request, id, template=None):
             activity = PlayerEmpathyActivity.objects.get(pk=activity.id)
             template ='player_activities/empathy_response.html'
         elif (activity.type.type == "multi_response"):
-            mc = MultiChoiceActivity.objects.filter(activity=activity)
+            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
