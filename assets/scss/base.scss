@@ -531,7 +531,6 @@ p.separate {
     h2, h3, h3, h4, h5, h6 {
         position: relative;
         overflow: auto;
-        font-family: UbuntuBold;
         font-weight: normal;
     }
     h2, h3 {
@@ -813,7 +812,6 @@ p.separate {
 
                 .count {
                     display: inline-block;
-                    font-family: UbuntuBold;
                     margin: 4px;
                     padding: 0 8px;
                     background-color: $orange;
@@ -1561,13 +1559,11 @@ p {
 
 #page_title {
     padding-left: 10px;
-    font-family: UbuntuBold;
     color: $black;
     font-weight: normal;
     font-size: 2em;
 
     span {
-        font-family: UbuntuBold;
         color: $orange;
     }
 }
