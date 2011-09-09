@@ -236,7 +236,7 @@ def edit(request):
                                             'stake': profile.stake.id if profile.stake != None else 0,
                                             'first_name': profile.user.first_name if profile.user.first_name != None else "",
                                             'last_name': profile.user.last_name if profile.user.last_name != None else "",
-                                            'email': profile.user.email if profile.user.email != None else "",
+                                            'email': profile.email if profile.email != None else "",
                                             'birth_year': profile.birth_year if profile.birth_year != None else "",
                                             'preferred_language': profile.preferred_language,
                                             
@@ -284,10 +284,10 @@ def edit(request):
                     profile.birth_year = int(profile_form.cleaned_data['birth_year'])
 
                 #updating email address
-                if (request.POST.get('email', None) == None or request.POST.get('email', None) == ''):
-                    profile.user.email = None
-                else:
-                    profile.user.email = profile_form.cleaned_data['email']
+                #if (request.POST.get('email', None) == None or request.POST.get('email', None) == ''):
+                #    profile.user.email = None
+                #else:
+                #    profile.user.email = profile_form.cleaned_data['email']
 
                 if (request.POST.get('first_name', None) == None or request.POST.get('first_name', None) == ''):
                     profile.user.first_name = None

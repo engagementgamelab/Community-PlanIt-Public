@@ -79,7 +79,7 @@ class Instance(TranslatableModel):
             if u in self.curators.all():
                 prefix = u"CURATOR: "
             out.append(u"%s %s %s <%s>, username: %s" %(prefix, u.first_name.capitalize(), u.last_name.capitalize(), 
-                                                u.email, u.username)
+                                                prof.email, u.username)
             )
         return out
         
