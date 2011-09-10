@@ -4,6 +4,7 @@ from nani.admin import TranslatableAdmin, TranslatableStackedInline
 from nani.models import TranslatableModel, TranslatedFields
 
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -59,6 +60,21 @@ class PlayerActivity(PlayerActivityBase):
     class Meta:
         verbose_name_plural = 'Player Activities'
 
+    def getPoints(self):
+        if self.points == None:
+            return self.type.defaultPoints
+        else:
+            return self.points
+
+    def get_overview_url(self):
+        return reverse('activities:overview', args=(self.pk,))
+
+    def get_activity_url(self):
+        return reverse('activities:activity', args=(self.pk,))
+
+    def get_replay_url(self):
+        return reverse('activities:replay', args=(self.pk,))
+
     def __unicode__(self):
         return self.safe_translation_getter('name', '%s' % self.pk)
 
@@ -67,11 +83,6 @@ class PlayerActivity(PlayerActivityBase):
         self.createDate = datetime.datetime.now()
         super(PlayerActivity, self).save(*args, **kwargs)
 
-    def getPoints(self):
-        if self.points == None:
-            return self.type.defaultPoints
-        else:
-            return self.points
 
 class PlayerMapActivity(PlayerActivityBase):
     maxNumMarkers = models.IntegerField(default=5)
@@ -88,11 +99,27 @@ class PlayerMapActivity(PlayerActivityBase):
     class Meta:
         verbose_name_plural = 'Player Map Activities'
 
+    def getPoints(self):
+        if self.points == None:
+            return self.type.defaultPoints
+        else:
+            return self.points
+
+    def get_overview_url(self):
+        return reverse('activities:map-overview', args=(self.pk,))
+
+    def get_activity_url(self):
+        return reverse('activities:map-activity', args=(self.pk,))
+
+    def get_replay_url(self):
+        return reverse('activities:map-replay', args=(self.pk,))
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
         self.type = PlayerActivityType.objects.get(type="map")
         super(PlayerMapActivity, self).save(*args, **kwargs)
+
 
 class PlayerEmpathyActivity(PlayerActivityBase):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
@@ -106,6 +133,21 @@ class PlayerEmpathyActivity(PlayerActivityBase):
     
     class Meta:
         verbose_name_plural = 'Player Empathy Activities'
+
+    def get_overview_url(self):
+        return reverse('activities:empathy-overview', args=(self.pk,))
+
+    def get_activity_url(self):
+        return reverse('activities:empathy-activity', args=(self.pk,))
+
+    def get_replay_url(self):
+        return reverse('activities:empathy-replay', args=(self.pk,))
+
+    def getPoints(self):
+        if self.points == None:
+            return self.type.defaultPoints
+        else:
+            return self.points
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.pk)
@@ -133,6 +175,18 @@ class MultiChoiceActivity(TranslatableModel):
     def admin_name(self):
         return self.__unicode__()
     admin_name.short_description = 'Name'
+
+    @property
+    def activity_type(self):
+        return self.activity.type
+
+    @property
+    def activity_points(self):
+        return self.activity.points
+
+    @property
+    def mission_title(self):
+        return self.activity.mission.title
 
 #*******************
 #### admin =========
@@ -166,12 +220,13 @@ class PlayerActivityAdmin(TranslatableAdmin):
     #)
 
 
-
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
     list_display = ('admin_name', 'mission', 'type')
 
+
 class MultiChoiceActivityAdmin(TranslatableAdmin):
-    list_display = ('admin_name',)
-    
+	list_display = ('id', 'activity_type', 'activity_points', 'mission_title', 'all_translations')
+
+
 class PlayerMapActivityAdmin(TranslatableAdmin):
     list_display = ('admin_name', 'mission', 'type')

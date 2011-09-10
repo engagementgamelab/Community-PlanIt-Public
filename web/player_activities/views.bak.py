@@ -218,66 +218,6 @@ def comment_fun(answer, form, request):
             user=request.user,
             instance=request.user.get_profile().instance)
 
-@login_required
-def empathy_activity(request, id, template='player_activities/empathy_response.html'):
-
-    trans_model = PlayerEmpathyActivity.objects.translations_model()
-    try:
-        activity = PlayerEmpathyActivity.objects.get(pk=id)
-    except trans_model.DoesNotExist:
-        activity = PlayerEmpathyActivity.objects.language(settings.LANGUAGE_CODE).get(pk=id)
-
-    answers = Answer.objects.filter(activity=activity, answerUser=request.user)
-    if len(answers) > 0:
-        return HttpResponseRedirect(reverse("activities:replay", args=[activity.id]))
-
-    answers = AnswerMultiChoice.objects.filter(option__activity=activity, user=request.user)
-    if len(answers) > 0:
-        return HttpResponseRedirect(reverse("activities:replay", args=[activity.id]))
-
-    comment_form = CommentForm()
-    form = None
-    map = None
-    init_coords = []
-
-    if request.method == "POST":
-
-        #If this game is a replay it should be set below. The reason to not check here
-        # is because the type of the game might have changed. If that is the case, the Answer.objects.filteer
-        # will exist but it will be the wrong one.  
-        form_error = False 
-        comment_form = CommentForm(request.POST)
-
-        if comment_form.is_valid():
-            answer = Answer()
-            answer.activity = activity
-            answer.answerUser = request.user
-            answer.save()
-            comment_fun(answer, comment_form, request)
-        else:
-            form_error = True
-
-        #If the template is None then there wasn't an error so assign the points and redirect
-        #Otherwise fall through. Only assign the points if the replay is false, but still redirect
-        if form_error == False:
-            PointsAssigner().assignAct(request.user, activity)
-
-        if template == None:
-            if replay == False:
-                ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
-            else:
-                ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
-            return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
-
-    context = dict(
-        form = form, 
-        comment_form = comment_form,
-        activity =  activity,
-        map = map,
-        init_coords= init_coords,
-    )
-    return render_to_response(template, RequestContext(request, context))
-
 
 @login_required
 def activity(request, id, template=None):

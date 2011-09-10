@@ -3,17 +3,21 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from web.comments.models import Comment
 from web.missions.models import Mission
-from web.player_activities.models import PlayerActivity, MultiChoiceActivity
+from web.player_activities.models import (PlayerActivity, MultiChoiceActivity, 
+        PlayerEmpathyActivity, PlayerMapActivity)
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from gmapsfield.fields import GoogleMapsField
 
 import datetime
 
+__all__ = (
+        'Answer', 'AnswerSingleResponse', 'AnswerMap', 'AnswerEmpathy', 'AnswerMultiChoice'
+)
+
 class Answer(models.Model):
     #TODO: This might benefit from a 1:1 relationship
-    activity = models.ForeignKey(PlayerActivity, related_name='answers')
-    answerUser = models.ForeignKey(User, editable=False, related_name='answers')
+    answerUser = models.ForeignKey(User, related_name='answers')
     comments = generic.GenericRelation(Comment)
     createDate = models.DateTimeField(editable=False)
 
@@ -30,12 +34,7 @@ class Answer(models.Model):
 
 class AnswerSingleResponse(Answer):
     selected = models.ForeignKey(MultiChoiceActivity)
-
-class AnswerMap(Answer):
-    map = GoogleMapsField()
-
-#class AnswerEmpathy(Answer):
-#    answerBox = models.CharField(max_length=1000)
+    activity = models.ForeignKey(PlayerActivity, related_name='singleresponse_answers')
 
 #This is nasty but it's the simple way to get many checked values
 #for the user stored
@@ -44,5 +43,10 @@ class AnswerMultiChoice(models.Model):
     option = models.ForeignKey(MultiChoiceActivity)
     comments = generic.GenericRelation(Comment)
 
-    def __unicode__(self):
-        return "%s User: %s <%s>" % (self.option, self.user, self.user.email)
+class AnswerMap(Answer):
+    map = GoogleMapsField()
+    activity = models.ForeignKey(PlayerMapActivity, related_name='map_answers')
+
+class AnswerEmpathy(Answer):
+    activity = models.ForeignKey(PlayerEmpathyActivity, related_name='empathy_answers')
+
