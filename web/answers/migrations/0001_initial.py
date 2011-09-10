@@ -4,18 +4,13 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
-
 class Migration(SchemaMigration):
-    depends_on = (
-        ("player_activities", "0001_initial"),
-    )
 
     def forwards(self, orm):
         
         # Adding model 'Answer'
         db.create_table('answers_answer', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(related_name='answers', to=orm['player_activities.PlayerActivity'])),
             ('answerUser', self.gf('django.db.models.fields.related.ForeignKey')(related_name='answers', to=orm['auth.User'])),
             ('createDate', self.gf('django.db.models.fields.DateTimeField')()),
         ))
@@ -25,15 +20,9 @@ class Migration(SchemaMigration):
         db.create_table('answers_answersingleresponse', (
             ('answer_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['answers.Answer'], unique=True, primary_key=True)),
             ('selected', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['player_activities.MultiChoiceActivity'])),
+            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(related_name='singleresponse_answers', to=orm['player_activities.PlayerActivity'])),
         ))
         db.send_create_signal('answers', ['AnswerSingleResponse'])
-
-        # Adding model 'AnswerMap'
-        db.create_table('answers_answermap', (
-            ('answer_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['answers.Answer'], unique=True, primary_key=True)),
-            ('map', self.gf('gmapsfield.fields.GoogleMapsField')()),
-        ))
-        db.send_create_signal('answers', ['AnswerMap'])
 
         # Adding model 'AnswerMultiChoice'
         db.create_table('answers_answermultichoice', (
@@ -43,6 +32,22 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('answers', ['AnswerMultiChoice'])
 
+        # Adding model 'AnswerMap'
+        db.create_table('answers_answermap', (
+            ('answer_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['answers.Answer'], unique=True, primary_key=True)),
+            ('map', self.gf('gmapsfield.fields.GoogleMapsField')()),
+            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(related_name='map_answers', to=orm['player_activities.PlayerMapActivity'])),
+        ))
+        db.send_create_signal('answers', ['AnswerMap'])
+
+        # Adding model 'AnswerEmpathy'
+        db.create_table('answers_answerempathy', (
+            ('answer_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['answers.Answer'], unique=True, primary_key=True)),
+            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(related_name='empathy_answers', to=orm['player_activities.PlayerEmpathyActivity'])),
+        ))
+        db.send_create_signal('answers', ['AnswerEmpathy'])
+
+
     def backwards(self, orm):
         
         # Deleting model 'Answer'
@@ -51,22 +56,31 @@ class Migration(SchemaMigration):
         # Deleting model 'AnswerSingleResponse'
         db.delete_table('answers_answersingleresponse')
 
+        # Deleting model 'AnswerMultiChoice'
+        db.delete_table('answers_answermultichoice')
+
         # Deleting model 'AnswerMap'
         db.delete_table('answers_answermap')
 
-        # Deleting model 'AnswerMultiChoice'
-        db.delete_table('answers_answermultichoice')
+        # Deleting model 'AnswerEmpathy'
+        db.delete_table('answers_answerempathy')
+
 
     models = {
         'answers.answer': {
             'Meta': {'object_name': 'Answer'},
-            'activity': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'answers'", 'to': "orm['player_activities.PlayerActivity']"}),
             'answerUser': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'answers'", 'to': "orm['auth.User']"}),
             'createDate': ('django.db.models.fields.DateTimeField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
+        'answers.answerempathy': {
+            'Meta': {'object_name': 'AnswerEmpathy', '_ormbases': ['answers.Answer']},
+            'activity': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'empathy_answers'", 'to': "orm['player_activities.PlayerEmpathyActivity']"}),
+            'answer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['answers.Answer']", 'unique': 'True', 'primary_key': 'True'})
+        },
         'answers.answermap': {
             'Meta': {'object_name': 'AnswerMap', '_ormbases': ['answers.Answer']},
+            'activity': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'map_answers'", 'to': "orm['player_activities.PlayerMapActivity']"}),
             'answer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['answers.Answer']", 'unique': 'True', 'primary_key': 'True'}),
             'map': ('gmapsfield.fields.GoogleMapsField', [], {})
         },
@@ -78,6 +92,7 @@ class Migration(SchemaMigration):
         },
         'answers.answersingleresponse': {
             'Meta': {'object_name': 'AnswerSingleResponse', '_ormbases': ['answers.Answer']},
+            'activity': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'singleresponse_answers'", 'to': "orm['player_activities.PlayerActivity']"}),
             'answer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['answers.Answer']", 'unique': 'True', 'primary_key': 'True'}),
             'selected': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['player_activities.MultiChoiceActivity']"})
         },
@@ -131,6 +146,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'comments'", 'to': "orm['instances.Instance']"}),
             'likes': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'liked_comments'", 'blank': 'True', 'to': "orm['auth.User']"}),
+            'message': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
             'object_id': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'posted_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
@@ -144,21 +160,32 @@ class Migration(SchemaMigration):
         },
         'instances.instance': {
             'Meta': {'object_name': 'Instance'},
+            'city': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'curators': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'}),
-            'end_date': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
+            'days_for_mission': ('django.db.models.fields.IntegerField', [], {'default': '7'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'languages': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['instances.Language']", 'symmetrical': 'False'}),
             'location': ('gmapsfield.fields.GoogleMapsField', [], {}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
             'start_date': ('django.db.models.fields.DateTimeField', [], {}),
-            'state': ('django.db.models.fields.CharField', [], {'max_length': '2'})
+            'state': ('django.db.models.fields.CharField', [], {'max_length': '2'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
+        'instances.language': {
+            'Meta': {'object_name': 'Language'},
+            'code': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'missions.mission': {
             'Meta': {'object_name': 'Mission'},
+            'date_created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'end_date': ('django.db.models.fields.DateTimeField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'missions'", 'to': "orm['instances.Instance']"}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
             'start_date': ('django.db.models.fields.DateTimeField', [], {}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'video': ('django.db.models.fields.TextField', [], {'blank': 'True'})
         },
         'player_activities.multichoiceactivity': {
@@ -174,7 +201,6 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'mission': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'player_activities_playeractivity_related'", 'to': "orm['missions.Mission']"}),
             'points': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50'}),
             'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['player_activities.PlayerActivityType']"})
         },
         'player_activities.playeractivitytype': {
@@ -183,6 +209,28 @@ class Migration(SchemaMigration):
             'displayType': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
+        'player_activities.playerempathyactivity': {
+            'Meta': {'object_name': 'PlayerEmpathyActivity'},
+            'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
+            'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'createDate': ('django.db.models.fields.DateTimeField', [], {}),
+            'creationUser': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'mission': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'player_activities_playerempathyactivity_related'", 'to': "orm['missions.Mission']"}),
+            'points': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
+            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['player_activities.PlayerActivityType']"})
+        },
+        'player_activities.playermapactivity': {
+            'Meta': {'object_name': 'PlayerMapActivity'},
+            'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
+            'createDate': ('django.db.models.fields.DateTimeField', [], {}),
+            'creationUser': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'maxNumMarkers': ('django.db.models.fields.IntegerField', [], {'default': '5'}),
+            'mission': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'player_activities_playermapactivity_related'", 'to': "orm['missions.Mission']"}),
+            'points': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
+            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['player_activities.PlayerActivityType']"})
         }
     }
 
