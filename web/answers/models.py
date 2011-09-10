@@ -13,7 +13,7 @@ import datetime
 class Answer(models.Model):
     #TODO: This might benefit from a 1:1 relationship
     activity = models.ForeignKey(PlayerActivity, related_name='answers')
-    #answerUser = models.ForeignKey(User, related_name='answers')
+    answerUser = models.ForeignKey(User, editable=False, related_name='answers')
     comments = generic.GenericRelation(Comment)
     createDate = models.DateTimeField(editable=False)
 
@@ -43,3 +43,6 @@ class AnswerMultiChoice(models.Model):
     user = models.ForeignKey(User)
     option = models.ForeignKey(MultiChoiceActivity)
     comments = generic.GenericRelation(Comment)
+
+    def __unicode__(self):
+        return "%s User: %s <%s>" % (self.option, self.user, self.user.email)

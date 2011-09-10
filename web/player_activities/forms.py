@@ -10,14 +10,14 @@ from web.answers.models import *
 
 from gmapsfield.fields import *
 
-def MakeSingleForm(choices):
+def make_single_form(choices):
     class SingleForm(forms.Form):
         response = forms.ChoiceField(widget=RadioSelect, choices=choices)
         class Meta:
             model = AnswerSingleResponse
     return SingleForm
 
-def MakeMultiForm(choices):
+def make_multi_form(choices):
     class MultiForm(forms.Form):
         response = forms.ChoiceField(widget=CheckboxSelectMultiple, choices=choices, required=False)
         class Meta:
