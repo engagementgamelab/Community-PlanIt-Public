@@ -242,7 +242,7 @@ hr.space {
 
 .highlight, .highlight a {
   color: white;
-  background-color: #00aeef;
+  background-color: #ff7812;
   padding: 5px 10px 5px 10px; }
 
 .fine.highlight {
@@ -584,7 +584,6 @@ p.separate {
   .wrapper h2, .wrapper h3, .wrapper h3, .wrapper h4, .wrapper h5, .wrapper h6 {
     position: relative;
     overflow: auto;
-    font-family: UbuntuBold;
     font-weight: normal; }
   .wrapper h2, .wrapper h3 {
     font-size: 2em; }
@@ -791,7 +790,6 @@ p.separate {
           text-decoration: none; }
         .wrapper #main aside .notifications .count {
           display: inline-block;
-          font-family: UbuntuBold;
           margin: 4px;
           padding: 0 8px;
           background-color: #ff7812;
@@ -1303,12 +1301,10 @@ p {
 
 #page_title {
   padding-left: 10px;
-  font-family: UbuntuBold;
   color: black;
   font-weight: normal;
   font-size: 2em; }
   #page_title span {
-    font-family: UbuntuBold;
     color: #ff7812; }
 
 .video {

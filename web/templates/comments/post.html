@@ -1,83 +1,3 @@
-{% load i18n %}
-
-{% block head %}
-<script type="text/javascript"> 
-	$(document).ready(function() {
-	    $("#id_english_comments").hide();
-	    $("#id_rest_comments").hide();
- 
-	    $("#id_preferred").click(function(){
-		    $("#id_preferred_comments").slideToggle("slow");		
-	    });	    
-	    $("#id_english").click(function(){
-		    $("#id_english_comments").slideToggle("slow");		
-	    });	    
-	    $("#id_rest").click(function(){
-		    $("#id_rest_comments").slideToggle("slow");		
-	    });	    
-	});
-</script>
-{% endblock %}
-
-<div id="comments">
-	
-    {% if not comment_form.just_one_form %}
-    <h2>
-        Comments
-        {% if comments.count %}
-        <div class="controls right">
-            Sort by: <a class="button comment_sort_time" href="#comments">timestamp</a> <a class="button comment_sort_activity" href="#comments">popularity</a>
-        </div>
-        {% endif %}
-    </h2>
-    <h4 id="id_preferred">Preferred language</h4>
-    <div id="id_preferred_comments" class="accordion">
-        <ul class="comments">        
-	        {% for comment in preferred_comments.all reversed %}
-	            {% include "comments/comment.html" %}
-	        {% empty %}
-	        <li class="comment">No comments found.</li>
-	        {%endfor%}
-    	</ul>
-    </div>
-    {% if english_comments %}
-    <h4 id="id_english">English</h4>
-    <div id="id_english_comments" class="accordion">
-       <ul class="comments">        
-	        {% for comment in english_comments.all reversed %}
-	            {% include "comments/comment.html" %}
-	        {% empty %}
-	        <li class="comment">No comments found.</li>
-	        {%endfor%}
-    	</ul>
-    </div>
-    {% endif %}
-    <h4 id="id_rest">The Rest</h4>
-    <div id="id_rest_comments" class="accordion">
-           {% for comment in rest_comments.all reversed %}
-	            {% include "comments/comment.html" %}
-	        {% empty %}
-	        <li class="comment">No comments found.</li>
-	        {%endfor%}
-    </div>
-   
-    {% else %}
-    <h2>Comments</h2>
-    {%endif%}
-    {% if instance.is_active %}
-        {%if comment_form.allow_replies %}
-            <h3>Add a comment</h3>
-            <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
-                {% include "comments/duplicate.html" %}
-                <button type="submit" class="button right">Add Comment</button>
-            </form>
-        {% endif %}
-    {% else %}
-    <p>This community is no longer active.</p>
-    {% endif %}
-</div>
-
-{% comment %}
 <div id="comments">
     {% if not comment_form.just_one_form %}
     <h2>
@@ -89,37 +9,22 @@
         {% endif %}
     </h2>
     <ul class="comments">
-        {%for comment in comments.all reversed%}
-            {%include "comments/comment.html"%}
+        {% for comment in comments.all reversed %}
+            {% include "comments/comment.html" %}
         {% empty %}
-        <li class="comment"> {% trans "No comments found" %}.</li>
-        {%endfor%}
-        </ul>
-    {% else%} 
-        <h2>Comments</h2>
-
-    {%endif%}
-{% endif %}
-
-
-<h2>{% trans "Add a comment" %}</h2>
-<form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
-    {%if request.REQUEST.error%}
-        <span class="error">{% trans "Please enter a valid comment" %}.</span>
+        <li class="comment">No comments found.</li>
+        {% endfor %}
     </ul>
     {% else %}
     <h2>Comments</h2>
-    {%endif%}
+    {% endif %}
     {% if instance.is_active %}
-        {%if comment_form.allow_replies %}
-            <h3>Add a comment</h3>
-            <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
-                {% include "comments/duplicate.html" %}
-                <button type="submit" class="button right">Add Comment</button>
-            </form>
-        {% endif %}
+        <h3>Add a comment</h3>
+        <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
+            {% include "comments/duplicate.html" %}
+            <button type="submit" class="button right">Add Comment</button>
+        </form>
     {% else %}
     <p>This community is no longer active.</p>
     {% endif %}
 </div>
-{% endcomment %}

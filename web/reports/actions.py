@@ -51,11 +51,11 @@ class PointsAssigner:
             up.save()
     
     def assign(self, user, action):
-        p = PointsAssignment.objects.filter(action=action)
-        if len(p) > 0:
-            self.assignPoints(user, p[0].points)
-        else:
-            self.assignPoints(user, None)
+        try:
+            p = PointsAssignment.objects.get(instance=user.get_profile().instance, action__action=action)
+            self.assignPoints(user, p.points)
+        except PointsAssignment.DoesNotExist:
+            pass
     
     def assignAct(self, user, activity):
         self.assignPoints(user, activity.getPoints())

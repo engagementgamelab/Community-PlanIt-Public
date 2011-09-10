@@ -19,18 +19,27 @@ class AddChallenge(forms.Form):
     map = GoogleMapsField().formfield(label='Plot your challenge on the map', help_text="<p>Where will your challenge take place?</p>")
     name = forms.CharField(label="Challenge Name", help_text='<br>What is the name of your challenge?', max_length=255)
     description = forms.CharField(label="Challenge Description", help_text='<br>Describe what people have to do to complete the challenge', widget=forms.Textarea)
-    start_date = forms.DateTimeField(label="Challenge Start", help_text='<br>When will your challenge start?')
-    end_date = forms.DateTimeField(label="Challenge End", help_text='<br>When will your challenge end? (cannot be the same as start)')
+    start_date = forms.SplitDateTimeField(required=False,
+                                          input_time_formats=('%I:%M %p', '%H:%M'),
+                                          label="Challenge Start",
+                                          help_text='When will your challenge start?'
+                                         )
+    end_date = forms.SplitDateTimeField(required=False,
+                                        input_time_formats=('%I:%M %p', '%H:%M'),
+                                        label="Challenge End",
+                                        help_text='When will your challenge end? (cannot be the same as start)'
+                                       )
 
     def __init__(self, instance, *args, **kwargs):
         super(AddChallenge, self).__init__(*args, **kwargs)
-        self.fields['start_date'].initial = instance.start_date
-        self.fields['end_date'].initial = instance.end_date
 
     def clean_end_date(self):
-        # Ensure end date is in the present or the future
-        if self.cleaned_data.get('end_date') < datetime.datetime.now():
-            raise forms.ValidationError("Please enter an end date not in the past.")
-        if self.cleaned_data.get('end_date') < self.cleaned_data.get('start_date'):
-            raise forms.ValidationError("Please enter an end date after the start date.")
+        end_date = self.cleaned_data.get('end_date')
+        start_date = self.cleaned_data.get('start_date')
+        if end_date and start_date:
+            # Ensure end date is in the present or the future
+            if self.cleaned_data.get('end_date') < datetime.datetime.now():
+                raise forms.ValidationError("Please enter an end date not in the past.")
+            if self.cleaned_data.get('end_date') < self.cleaned_data.get('start_date'):
+                raise forms.ValidationError("Please enter an end date after the start date.")
         return self.cleaned_data.get('end_date')

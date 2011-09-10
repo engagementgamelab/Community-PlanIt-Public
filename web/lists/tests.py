@@ -45,49 +45,11 @@ class ListWebTestCase(TestCase):
         profile1 = self.user1.get_profile()
         profile2 = self.user2.get_profile()
         
-        profile1.following = [self.user2]
         profile1.save()
         
-        profile2.following = [self.user1]
         profile2.save()
         
     def test_instance(self):
         url = reverse('instance', args=[self.instance.slug])
         response = self.c.get(url)
         self.assertTrue(response.status_code == 200, "The instance link is valid")
-    
-    def test_following(self):
-        response = self.c.get("/list/following/%s/" % self.user1.id)
-        self.assertTrue(response.status_code == 200, "The following link is valid")
-    
-    def test_followers(self):
-        response = self.c.get("/list/followers/%s/" % self.user1.id)
-        self.assertTrue(response.status_code == 200, "The followers link is valid")
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        

@@ -16,8 +16,8 @@ __all__ = (
 )
 
 class Answer(models.Model):
-    #TODO: This might benefit from a 1:1 relationship
-    answerUser = models.ForeignKey(User, related_name='answers')
+    activity = models.ForeignKey(PlayerActivity, related_name='answers')
+    answerUser = models.ForeignKey(User, editable=False, related_name='answers')
     comments = generic.GenericRelation(Comment)
     createDate = models.DateTimeField(editable=False)
 
@@ -27,7 +27,7 @@ class Answer(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("player_activities_overview", [self.activity.id])
+        return ("player_activities:overview", [self.activity.id])
 
 #class AnswerOpenEnded(Answer):
 #    comment = models.ForeignKey(Comment)

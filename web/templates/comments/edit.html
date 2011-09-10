@@ -1,12 +1,12 @@
-{%extends "layouts/base.html"%}
+{% extends "layouts/base.html" %}
 {% load attachment_tags %}
-{%block main%}
+{% block main %}
 <div id="comments">
     <h1>Edit Comment</h1>
     {% if not_permitted %}
         <h2>You do not have proper permissions to edit this post.</h2>
     {% else %}
-        <form enctype="multipart/form-data" action="{%url comments:comments_edit comment.id %}" method="POST">
+        <form enctype="multipart/form-data" action="{% url comments:edit comment.id %}" method="POST">
             {% include "comments/duplicate.html" %}
             <button type="submit" class="button right">Change Comment</button>
         </form>
@@ -14,7 +14,7 @@
 </div>
 {% endblock %}
 
-{%block body%}
+{% block body %}
     <script>
         $(document).ready(function() {
             try {

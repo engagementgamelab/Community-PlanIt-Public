@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -7,13 +9,26 @@ from django.shortcuts import render_to_response
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
-from player_activities.views import _get_activity, getComments, comment_fun
+from player_activities.views import _get_activity, getComments, comment_fun, process_comment
 from player_activities.forms import *
 from player_activities.models import *
 from answers.models import *
 from comments.models import *
 from comments.forms import *
 from reports.actions import *
+from django.contrib.auth.models import User
+
+from PIL import Image
+
+def getComments(answers, ModelType):
+    comments = None
+    answer_type = ContentType.objects.get_for_model(ModelType)
+    for answer in answers:
+        if comments == None:
+            comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+        else:
+            comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+    return comments
 
 @login_required
 def overview(request, id):
@@ -22,6 +37,10 @@ def overview(request, id):
 
     if activities.count():
         activity = activities[0]
+    else:
+        raise Http404 ("PlayerActivity with id %s does not exist" % id)
+
+    comment_form = process_comment(request, activity)
 
     comment_form = CommentForm()
     comment_form.allow_replies = False
@@ -42,7 +61,7 @@ def overview(request, id):
 
         context.update(
             dict(
-                answers =  answers,
+                answers = answers,
                 comments = getComments(answers, Answer),
                 myComment = myComment
             )
@@ -62,20 +81,20 @@ def overview(request, id):
         answerList = []
         for x in answerDict:
             answerList.append((x, answerDict[x]))
-
+        answerList = sorted(answerList, key=itemgetter(1))
         myAnswer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
         myComment = None
         if myAnswer.count() > 0:
             myAnswer = myAnswer[0]
-            comments =  myAnswer.comments.all()
+            comments = myAnswer.comments.all()
             if comments.count():
                 myComment = comments[0]
 
         template = 'player_activities/single_overview.html'
         context.update(
             dict(
-                answers =  answers,
-                comments =  getComments(answers, AnswerSingleResponse),
+                answers = answerList,
+                comments = getComments(answers, AnswerSingleResponse),
                 myComment = myComment,
             )
         )
@@ -87,9 +106,9 @@ def overview(request, id):
 
         for answer in answers:
             if comments == None:
-                comments = Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
+                comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
             else:
-                comments = comments | Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
+                comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
 
         myComment = None
         if comments is not None:
@@ -112,9 +131,9 @@ def overview(request, id):
         template = 'player_activities/single_overview.html'
         context.update(
             dict(
-                comments =  comments,
-                answers =  answerList,
-                myComment =  myComment,
+                comments = comments,
+                answers = answerList,
+                myComment = myComment,
             )
         )
 
@@ -140,7 +159,7 @@ def overview(request, id):
         template = 'player_activities/map_overview.html'
         context.update(
             dict(
-                comments =  getComments(answers, AnswerMap),
+                comments = getComments(answers, AnswerMap),
                 answers = answers,
                 init_coords = init_coords,
                 map = map,
@@ -162,15 +181,14 @@ def overview(request, id):
         template = 'player_activities/empathy_overview.html'
         context.update(
             dict(
-                comments =  getComments(answers, Answer),
-                answers =  answers,
-                myComment =  myComment,
+                comments = getComments(answers, Answer),
+                answers = answers,
+                myComment = myComment,
             )
         )
     if context and template:
         return render_to_response(template, context, RequestContext(request))
     return HttpResponse("web page not created yet")
-
 
 @login_required
 def activity(request, id, template=None):
@@ -220,11 +238,11 @@ def activity(request, id, template=None):
                 answer.save()
                 comment_fun(answer, comment_form, request)
             else:
-                template =  'player_activities/open_response.html'
+                template = 'player_activities/open_response.html'
                 form_error = True
 
         elif request.POST["form"] == "single_response":
-            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
+            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
@@ -235,7 +253,7 @@ def activity(request, id, template=None):
                 answer.answerUser = request.user
                 mcactivities = MultiChoiceActivity.objects.filter(id=int(form.cleaned_data["response"]))
                 if mcactivities.count():
-                    answer.selected = activities[0]
+                    answer.selected = mcactivities[0]
                 answer.save()
                 comment_fun(answer, comment_form, request)
             else:
@@ -243,14 +261,14 @@ def activity(request, id, template=None):
                 form_error = True
 
         elif request.POST["form"] == "multi_response":
-            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
+            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
             form = make_multi_form(choices)(request.POST)
             if form.is_valid() and comment_form.is_valid():
                 #this gets very very messy....
-                choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
+                choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
                 comment = None
                    
                 ids = []
@@ -291,13 +309,11 @@ def activity(request, id, template=None):
             else:
                 ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
             return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
-
     context = dict(
         form = form, 
         comment_form = comment_form,
         activity =  activity,
     )
-
     return render_to_response(template, RequestContext(request, context))
 
 @login_required
@@ -306,8 +322,6 @@ def replay(request, id):
     tmpl = None
     form = None
     comment_form = None
-    map = None
-    init_coords = []  
 
     if (activity.type.type == "single_response"):
         template = 'player_activities/single_replay.html'
@@ -316,24 +330,6 @@ def replay(request, id):
         for x in mc:
             choices.append((x.id, x.value))
         form = make_single_form(choices)
-
-    elif (activity.type.type == "map"):
-        activity = PlayerMapActivity.objects.untranslated().get(pk=activity.id)
-        template = 'player_activities/map_replay.html'
-        answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
-        if (len(answer) > 0):
-            form = MapForm()
-            map = answer[0].map
-            markers = simplejson.loads("%s" % map)["markers"]
-            x = 0
-            for coor in markers if markers != None else []:
-                coor = coor["coordinates"]
-                init_coords.append( [x, coor[0], coor[1]] )
-                x = x + 1
-        else:
-            map = activity.mission.instance.location
-            form = MapForm()
-        answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
 
     elif (activity.type.type == "multi_response"):
         mc = MultiChoiceActivity.objects.filter(activity=activity)
@@ -373,22 +369,6 @@ def replay(request, id):
                                 selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"])))
             else:
                 template = 'player_activities/single_replay.html'
-                form_error = True
-
-        elif request.POST["form"] == "map":
-            form = MapForm(request.POST)
-            if form.is_valid():
-                map = form.cleaned_data["map"]
-                try:
-                    answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
-                    answer.map = map;
-                    answer.save()
-                except AnswerMap.DoesNotExist:
-                    answer = AnswerMap.objects.create(activity=activity, answerUser=request.user, map=map)
-            else:
-                map = request.POST["map"]
-                activity = PlayerMapActivity.objects.get(pk=activity.id)
-                template = 'player_activities/map_replay.html'
                 form_error = True
 
         elif request.POST["form"] == "multi_response":
@@ -440,8 +420,6 @@ def replay(request, id):
     context = dict(
         form = form, 
         activity = activity,
-        map = map,
-        init_coords = init_coords,
     )
     return render_to_response(template, context, RequestContext(request))
 

@@ -1,8 +1,8 @@
-{%extends "player_activities/base.html"%}
+{% extends "player_activities/base.html" %}
 {% load gmap attachment_tags %}
-{%block title%}Open Response Overview{%endblock%}
+{% block title %}Open Response Overview{% endblock %}
 
-{%block main%}
+{% block main %}
     <h1>Empathy Response Overview</h1>
     <h2>{{ activity.question }}</h2>
     
@@ -10,11 +10,11 @@
         <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
     </div>
     
-    {%if activity.avatar%}
+    {% if activity.avatar %}
         <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
-    {%else%}               
+    {% else %}               
         <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-    {%endif%}
+    {% endif %}
      
     {% if activity.bio %}
         <h3>{{activity.bio}}</h3>
@@ -23,9 +23,8 @@
     {% include "player_activities/attachments.html" %}
     
     <div id="comments">
-        {% with comments as english_comments %}
-            {% include "comments/post.html" %}
+        {% with activity.mission.instance as instance %}
+        {% include "comments/post.html" %}
         {% endwith %}
-        <div style="clear: both;"></div>
     </div>
-{%endblock%}
+{% endblock %}

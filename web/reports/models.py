@@ -27,12 +27,3 @@ class Activity(models.Model):
     def __unicode__(self):
         label = self.action +' - '+ self.data
         return label
-
-class ActivityAdmin(admin.ModelAdmin):
-    def save_model(self, request, obj, form, change):
-        obj.instance = request.session.get('admin_instance')
-        obj.save()
-
-    def queryset(self, request):
-        qs = super(ActivityAdmin, self).queryset(request)
-        return qs.filter(instance=request.session.get('admin_instance'))

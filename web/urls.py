@@ -55,8 +55,6 @@ urlpatterns = patterns('',
         name='terms'
     ),
 
-    url(r'^player/follow/(?P<id>\d+)/$', 'accounts.views.follow', name="player_follow"),
-    url(r'^player/unfollow/(?P<id>\d+)/$', 'accounts.views.unfollow', name="player_unfollow"),
     url(r'^player/(?P<id>\d+)/$', 'accounts.views.profile', name='accounts_profile'),
 
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),

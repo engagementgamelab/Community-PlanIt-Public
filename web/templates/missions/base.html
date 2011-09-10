@@ -18,7 +18,6 @@
 
 <div class="left description">{{mission.description|linebreaksbr}}</div>
 
-{# with mission.player_activities_playeractivity_related.all as activities #}
 <h3 class="clear">
 {% if activities %}
     {% trans "You've completed" %} {{ completed|length }}/{{ activities|length }} {% trans "activities" %}:
@@ -56,5 +55,4 @@
     </tbody>
 </table>
 {# endwith #}
-
 {% endblock %}

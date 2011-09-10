@@ -34,16 +34,20 @@
         jQuery(function($) {
             $(".add-map, .remove-map").remove();
 
-            $("#id_end_date").datetimepicker({
-                    hourGrid: 6,
-                    minuteGrid: 10,
-                	ampm: false
-                });
-            
-            $("#id_start_date").datetimepicker({
+            $("#id_end_date_0").datepicker();
+            $("#id_end_date_1").timepicker({
                 hourGrid: 6,
-                minuteGrid: 10,
-            	ampm: false
+                minuteGrid: 15,
+                ampm: true,
+                timeFormat: "hh:mm TT"
+            });
+
+            $("#id_start_date_0").datepicker();
+            $("#id_start_date_1").timepicker({
+                hourGrid: 6,
+                minuteGrid: 15,
+            	ampm: true,
+                timeFormat: "hh:mm TT"
             });
         });
     </script>

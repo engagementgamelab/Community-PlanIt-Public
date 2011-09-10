@@ -12,15 +12,6 @@
         <a class="button" href="{% url accounts:profile_edit %}">Edit Profile</a>
     </div>
     {% endif %}
-    <div>
-        {% if request.user and not player == request.user and not request.user.username = '' %}
-            {% if player not in request.user.get_profile.following.all %}
-            <a class="button" href="{% url player_follow player.id %}">Follow</a>
-            {% else %}
-            <a class="button" href="{% url player_unfollow player.id %}">Unfollow</a>
-            {% endif %}
-        {% endif %}
-    </div>
     <p class="highlighted">
         {% if player.get_profile.avatar %}
             <img class="left avatar-large" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}">
@@ -70,22 +61,10 @@
         {%endif%}
     </div>
     
-    <div style="clear: both; padding: 1em 0;"></div>
-        {% ifequal player.get_profile.preferred_language "en" %} 
-            {% with player.get_profile.get_preferred_comments as preferred_comments %}	                  
-            {% with player.get_profile.get_rest_comments as rest_comments %}
-                {% include "comments/post.html" %}	            
-            {% endwith %}
-            {% endwith %}                    
-        {% else %}
-            {% with player.get_profile.get_preferred_comments as preferred_comments %}
-            {% with player.get_profile.get_english_comments as english_comments %}            
-            {% with player.get_profile.get_rest_comments as rest_comments %}
-                {% include "comments/post.html" %}
-            {% endwith %}    
-            {% endwith %}
-            {% endwith %}    
-        {% endifequal%}
+    <div style="clear: both; padding: 1em 0;">
+        {% with player.get_profile.comments as comments %}
+            {% include "comments/post.html" %}	            
+        {% endwith %}
         <div style="clear: both;"></div>
     </div>
 

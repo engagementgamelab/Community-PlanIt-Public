@@ -5,9 +5,7 @@ from nani.models import TranslatableModel, TranslatedFields
 
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 
 from web.accounts.models import determine_path
 from web.attachments.models import Attachment
@@ -32,7 +30,6 @@ class PlayerActivityType(models.Model):
 
 class PlayerActivityBase(TranslatableModel):
 
-    slug = models.SlugField(editable=False)
     creationUser = models.ForeignKey(User, verbose_name="created by")
     mission = models.ForeignKey(Mission, related_name='%(app_label)s_%(class)s_related')
     type = models.ForeignKey(PlayerActivityType)
@@ -42,10 +39,6 @@ class PlayerActivityBase(TranslatableModel):
 
     class Meta:
         abstract = True
-
-    def admin_name(self):
-        return self.__unicode__()
-    admin_name.short_description = 'Name'
 
 class PlayerActivity(PlayerActivityBase):
 
@@ -79,7 +72,6 @@ class PlayerActivity(PlayerActivityBase):
         return self.safe_translation_getter('name', '%s' % self.pk)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
         super(PlayerActivity, self).save(*args, **kwargs)
 
@@ -114,8 +106,10 @@ class PlayerMapActivity(PlayerActivityBase):
     def get_replay_url(self):
         return reverse('activities:map-replay', args=(self.pk,))
 
+    def __unicode__(self):
+        return self.safe_translation_getter('name', '%s' % self.pk)
+
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
         self.type = PlayerActivityType.objects.get(type="map")
         super(PlayerMapActivity, self).save(*args, **kwargs)
@@ -150,7 +144,6 @@ class PlayerEmpathyActivity(PlayerActivityBase):
             return self.points
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.pk)
         self.createDate = datetime.datetime.now()
         self.type = PlayerActivityType.objects.get(type="empathy")
         super(PlayerEmpathyActivity, self).save(*args, **kwargs)
@@ -159,6 +152,10 @@ class PlayerEmpathyActivity(PlayerActivityBase):
         return self.safe_translation_getter('value', '%s' % self.bio[:10])
 
 class MultiChoiceActivity(TranslatableModel):
+    """
+    This seems to be misnamed. These are answers to activities with multiple
+    choices.
+    """
     activity = models.ForeignKey(PlayerActivity)
 
     translations = TranslatedFields(
@@ -200,7 +197,7 @@ class MultipleChoiceActivityInline(TranslatableStackedInline):
 
 
 class PlayerActivityAdmin(TranslatableAdmin):
-    list_display = ('admin_name', 'mission', 'type', 'all_translations')
+    list_display = ('__str__', 'mission', 'type', 'all_translations')
 
     inlines = [
             MultipleChoiceActivityInline,
@@ -221,12 +218,11 @@ class PlayerActivityAdmin(TranslatableAdmin):
 
 
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
-    list_display = ('admin_name', 'mission', 'type')
+    list_display = ('__str__', 'mission', 'type')
 
 
 class MultiChoiceActivityAdmin(TranslatableAdmin):
 	list_display = ('id', 'activity_type', 'activity_points', 'mission_title', 'all_translations')
 
-
 class PlayerMapActivityAdmin(TranslatableAdmin):
-    list_display = ('admin_name', 'mission', 'type')
+    list_display = ('__str__', 'mission', 'type')

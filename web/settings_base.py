@@ -13,6 +13,7 @@ ADMIN_MEDIA_PREFIX = '/admin-media/'
 ADMINS = ( ('Benedict Holland', 'sheepskin505@gmail.com'), )
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 AUTHENTICATION_BACKENDS = ( 'web.accounts.backends.EmailBackend', )
+DATE_FORMAT = '%m/%d/%Y'
 DEBUG = False
 DEFAULT_FROM_EMAIL = 'noreply@communityplanit.org'
 DIRNAME = os.path.dirname(__file__)
@@ -126,7 +127,7 @@ ugettext = lambda s: s
 LANGUAGES = (
   ('en-us', ugettext('English')),
   ('ht', ugettext(u'Kreyòl')),
-  ('es', ugettext(u'Spanish')),
+  ('es', ugettext(u'Español')),
 )
 #django-localeurl
 LOCALE_INDEPENDENT_PATHS = (
