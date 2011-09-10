@@ -95,7 +95,7 @@ class Mission(TranslatableModel):
         self.slug = slugify(self.title)[:50]
         if not self.start_date and not self.end_date:
             latest = Mission.objects.latest_by_instance(self.instance)
-            if latest.count():
+            if latest:
                 self.start_date = latest.end_date
                 self.end_date = latest.end_date + relativedelta(days=+self.instance.days_for_mission)
             else:
