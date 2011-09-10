@@ -94,7 +94,7 @@ def overview(request, id):
         template = 'player_activities/single_overview.html'
         context.update(
             dict(
-                answers =  answers,
+                answers =  answerList,
                 comments =  getComments(answers, AnswerSingleResponse),
                 myComment = myComment,
             )
