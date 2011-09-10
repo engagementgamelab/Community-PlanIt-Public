@@ -12,7 +12,7 @@ from web.comments.forms import CommentForm
 from web.comments.models import Comment
 from web.instances.models import Instance
 from web.missions.models import *
-from web.player_activities.models import PlayerActivity
+from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
 
 @login_required
 def fetch(request, slug, template='missions/base.html'):
@@ -26,11 +26,18 @@ def fetch(request, slug, template='missions/base.html'):
         pk = mc.option.activity.pk
         if pk not in pks:
             pks.append(pk)
-    activities = PlayerActivity.objects.language(get_language()).filter(mission=mission)
+
+    activities = []
+    for model_klass in [PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity]:
+        activities.extend(
+                list(model_klass.objects.language(get_language()).filter(mission=mission))
+        )
+    #activities = PlayerActivity.objects.language(get_language()).filter(mission=mission)
     answered_activities = PlayerActivity.objects.language(get_language()).filter(Q(pk__in=pks))
     unfinished_activities = PlayerActivity.objects.language(get_language()).filter(Q(mission=mission) & ~Q(pk__in=pks))
 
-    #import ipdb;ipdb.set_trace()
+    for a in  activities:
+        print a.pk
 
     context = dict(
         mission = mission,

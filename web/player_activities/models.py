@@ -1,6 +1,6 @@
 import datetime
 
-from nani.admin import TranslatableAdmin
+from nani.admin import TranslatableAdmin, TranslatableStackedInline
 from nani.models import TranslatableModel, TranslatedFields
 
 from django.db import models
@@ -32,7 +32,7 @@ class PlayerActivityType(models.Model):
 class PlayerActivityBase(TranslatableModel):
 
     slug = models.SlugField(editable=False)
-    creationUser = models.ForeignKey(User)
+    creationUser = models.ForeignKey(User, verbose_name="created by")
     mission = models.ForeignKey(Mission, related_name='%(app_label)s_%(class)s_related')
     type = models.ForeignKey(PlayerActivityType)
     createDate = models.DateTimeField(editable=False)
@@ -98,6 +98,10 @@ class PlayerEmpathyActivity(PlayerActivityBase):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     translations = TranslatedFields(        
         bio = models.TextField(max_length=1000),
+        name = models.CharField(max_length=255),
+        question = models.CharField(max_length=1000),
+        instructions = models.CharField(max_length=255, null=True, blank=True),
+        addInstructions = models.CharField(max_length=255, null=True, blank=True),
     )
     
     class Meta:
@@ -108,6 +112,9 @@ class PlayerEmpathyActivity(PlayerActivityBase):
         self.createDate = datetime.datetime.now()
         self.type = PlayerActivityType.objects.get(type="empathy")
         super(PlayerEmpathyActivity, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.safe_translation_getter('value', '%s' % self.bio[:10])
 
 class MultiChoiceActivity(TranslatableModel):
     activity = models.ForeignKey(PlayerActivity)
@@ -134,11 +141,31 @@ class PlayerActivityTypeAdmin(ModelAdmin):
     list_display = ('type', 'defaultPoints',)
 
 
+class MultipleChoiceActivityInline(TranslatableStackedInline):
+	model = MultiChoiceActivity
+
+
 class PlayerActivityAdmin(TranslatableAdmin):
-    list_display = ('admin_name', 'mission', 'type')
+    list_display = ('admin_name', 'mission', 'type', 'all_translations')
+
+    inlines = [
+            MultipleChoiceActivityInline,
+    ]
     #list_display = ('creationUser', 'mission', 'type', 'createDate', 'points')
     #'question', 
     #'name', 
+
+    #fieldsets = (
+    #    (None, {
+    #        'fields': ('name', 'question', 'instructions', 'addInstructions')
+    #    }),
+        #('Advanced options', {
+        #    'classes': ('collapse',),
+        #    'fields': ('enable_comments', 'registration_required', 'template_name')
+        #}),
+    #)
+
+
 
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
     list_display = ('admin_name', 'mission', 'type')
