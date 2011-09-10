@@ -16,7 +16,6 @@ __all__ = (
 )
 
 class Answer(models.Model):
-    activity = models.ForeignKey(PlayerActivity, related_name='answers')
     answerUser = models.ForeignKey(User, editable=False, related_name='answers')
     comments = generic.GenericRelation(Comment)
     createDate = models.DateTimeField(editable=False)
