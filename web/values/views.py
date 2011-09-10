@@ -74,15 +74,16 @@ def detail(request, id):
                         instance=value.instance
                     )
             file = request.FILES.get('picture')
-            picture = Image.open(file)
-            if (file.name.rfind(".") -1):
-                file.name = "%s.%s" % (file.name, picture.format.lower())
-            if request.FILES.has_key('picture'):
-                comment.attachment.create(
-                    file=request.FILES.get('picture'),
-                    user=request.user,
-                    instance=value.instance
-                )
+            if file:
+                picture = Image.open(file)
+                if (file.name.rfind(".") -1):
+                    file.name = "%s.%s" % (file.name, picture.format.lower())
+                if request.FILES.has_key('picture'):
+                    comment.attachment.create(
+                        file=request.FILES.get('picture'),
+                        user=request.user,
+                        instance=value.instance
+                    )
 
             PointsAssigner().assign(request.user, 'comment_created')
             log_url = reverse('values:detail', args=[id]) + '#comment-' + str(comment.pk)

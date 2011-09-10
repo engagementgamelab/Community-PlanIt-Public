@@ -1,8 +1,8 @@
-{%extends "player_activities/base.html"%}
+{% extends "player_activities/base.html" %}
 {% load gmap attachment_tags %}
-{%block title%}Single Response Overview{%endblock%}
+{% block title %}Single Response Overview{% endblock %}
 
-{%block main%}
+{% block main %}
     <h1>Response Overview</h1>
     <h2>{{activity.question}}</h2>
     
@@ -13,18 +13,20 @@
     
     {% include "player_activities/attachments.html" %}
     
+    {% if answers %}
     <ul>
         {% for key, val in answers %}
             <li>{{key}}: {{val}}</li>
         {% endfor %}
     </ul>
+    {% endif %}
     <h3>Answer Selections</h3>
     <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
         margin-top: 25px; margin-bottom: 25px; "></div>
 
     <div id="comments">
-        {% with comments as english_comments %}
-            {% include "comments/post.html" %}
+        {% with activity.mission.instance as instance %}
+        {% include "comments/post.html" %}
         {% endwith %}
         <div style="clear: both;"></div>
     </div>
@@ -74,5 +76,5 @@
     });
     
 </script>    
-{%endblock%}
+{% endblock %}
 

@@ -8,12 +8,11 @@
         {% include "player_activities/attachments.html" %}
         
         <div class="fieldWrapper">
-            <!-- div style="list-style-type: none;" -->
             {{ form.response.errors }}
             <label for="id_answerbox">Your Choices:</label>
             <ul style="list-style-type: none">
             {% for choice in form.response.field.choices %}
-              <li><label for="id_response_{{choice.0}}"><input type="radio" name="response" value="{{choice.0}}">{{choice.1}}</label></li>
+              <li><label for="response_{{choice.0}}"><input type="radio" name="response" value="{{choice.0}}">{{choice.1}}</label></li>
             {% endfor %}
             </ul>
         </div>

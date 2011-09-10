@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
 from django.template import Context, RequestContext, loader
 from django.conf import settings
 
@@ -12,7 +13,6 @@ from web.answers.models import Answer
 from web.challenges.models import Challenge
 from web.comments.forms import *
 from web.comments.models import Comment
-#from web.processors import instance_processor as ip
 
 from PIL import Image
 
@@ -39,7 +39,7 @@ def like(request, id):
 
 @login_required
 def reply(request, id):
-    p = Comment.objects.untranslated().get(id=id)
+    p = get_object_or_404(Comment, id=id)
     instance = request.user.get_profile().instance
   
     c = p.comments.create(
@@ -77,8 +77,7 @@ def reply(request, id):
 
 @login_required
 def edit(request, id, lang_code=None):    
-    comment = Comment.objects.untranslated().get(id=id)    
-    #instance = request.user.get_profile().instance
+    comment = get_object_or_404(Comment, id=id)    
     trans = None
     for language_code, _lang_name in settings.LANGUAGES:
         try:
@@ -130,14 +129,7 @@ def edit(request, id, lang_code=None):
                     file=request.FILES.get('picture'),
                     user=request.user,
                     instance=request.user.get_profile().instance)
-            #TODO: what if answer does not exist?
-            try:            
-                activity_id = Answer.objects.get(id=comment.object_id).activity.id
-                return HttpResponseRedirect(reverse("activities:overview", args=[activity_id]))
-            except Answer.DoesNotExist:
-                return HttpResponseRedirect(reverse('accounts_profile', args=[request.user.pk]))
-                
-       
+            return HttpResponseRedirect(comment.get_absolute_url())
    
     tmpl = loader.get_template('comments/edit.html')
     

@@ -4,8 +4,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from nani.admin import TranslatableAdmin
-from nani.models import TranslatableModel, TranslatedFields
+from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
@@ -13,7 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from attachments.models import Attachment
 from instances.models import Instance
 
-class Comment(TranslatableModel):
+class Comment(models.Model):
     posted_date = models.DateTimeField(default=datetime.datetime.now)
     flagged = models.IntegerField(default=0)
     hidden = models.BooleanField(default=False)
@@ -33,9 +32,7 @@ class Comment(TranslatableModel):
     object_id      = models.TextField(_('object ID'), blank=True)
     content_object = generic.GenericForeignKey()
 
-    translations = TranslatedFields(
-        message = models.CharField(max_length=1000, blank=True, null=True)
-    )
+    message = models.CharField(max_length=1000, blank=True, null=True)
 
     def __unicode__(self):
         if self.message:
@@ -43,7 +40,6 @@ class Comment(TranslatableModel):
                 msg = self.message[:25]
             except:
                 msg = self.message
-            return self.safe_translation_getter('message', msg)
         return u''
 
     #
@@ -77,7 +73,7 @@ class Comment(TranslatableModel):
             args=(comment.content_type_id, comment.object_id)
         )
 
-class CommentAdmin(TranslatableAdmin):
+class CommentAdmin(admin.ModelAdmin):
     list_filter = ('posted_date', 'flagged', 'hidden')
     list_display = ('posted_date', 'user', 'flagged', 'hidden') # could not be used with nani:, 'message')
 
@@ -93,12 +89,8 @@ class CommentAdmin(TranslatableAdmin):
         count = queryset.count()
         self.message_user(request, "Hid %d comment%s." % (count, (count == 1 and '' or 's')))
 
-    def queryset(self, request):
-        qs = super(CommentAdmin, self).queryset(request)
-        return qs.filter(instance=request.session.get('admin_instance'))
 
     def save_model(self, request, obj, form, change):
-        #obj.instance = request.session.get('admin_instance')
         super(CommentAdmin, self).save_model(request, obj, form, change)
         obj.user = request.user
         obj.save()

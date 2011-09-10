@@ -27,7 +27,7 @@ class Value(TranslatableModel):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('values_detail', [str(self.id)])
+        return ('values:detail', [str(self.id)])
 
 class PlayerValue(models.Model):
 

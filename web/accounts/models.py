@@ -97,9 +97,6 @@ class UserProfile(models.Model):
     # Additional profile fields
     birth_year = models.IntegerField(blank=True, null=True)
 
-    # Internal fields
-    following = models.ManyToManyField(User, related_name='following_user_set', blank=True, null=True)
-
     # comments on the profile from others
     comments = generic.GenericRelation(Comment)
 
@@ -132,15 +129,6 @@ class UserProfile(models.Model):
     def points_to_coin_for_fill(self):
         return self.coinPoints
     
-    def get_preferred_comments(self):
-        return self.comments.language(self.preferred_language)
-    
-    def get_english_comments(self):
-        return self.comments.filter(language_code='en')
-    
-    def get_rest_comments(self):
-        return self.comments.exclude(language_code='en').exclude(language_code=self.preferred_language)
-
     @property
     def screen_name(self):
         #First name and last name are required
@@ -187,11 +175,6 @@ class UserProfileAdmin(UserAdmin):
         if db_field.name == 'player_challenges' and getattr(self, 'obj', None):
             kwargs['queryset'] = UserProfile.objects.get(id=self.obj.id).player_challenges.all()
         elif db_field.name == 'player_challenges':
-            kwargs['queryset'] = UserProfile.objects.filter(id=-2)
-
-        if db_field.name == 'following' and getattr(self, 'obj', None):
-            kwargs['queryset'] = UserProfile.objects.get(id=self.obj.id).following.all()
-        elif db_field.name == 'following':
             kwargs['queryset'] = UserProfile.objects.filter(id=-2)
 
         if db_field.rel.to == User:

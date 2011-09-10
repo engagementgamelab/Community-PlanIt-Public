@@ -29,9 +29,9 @@ def getComments(answers, ModelType):
     answer_type = ContentType.objects.get_for_model(ModelType)
     for answer in answers:
         if comments == None:
-            comments = Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
+            comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
         else:
-            comments = comments | Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
+            comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
     return comments
         
 
@@ -62,7 +62,7 @@ def overview(request, id):
 
         context.update(
             dict(
-                answers =  answers,
+                answers = answers,
                 comments = getComments(answers, Answer),
                 myComment = myComment
             )
@@ -107,9 +107,9 @@ def overview(request, id):
 
         for answer in answers:
             if comments == None:
-                comments = Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
+                comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
             else:
-                comments = comments | Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
+                comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
 
         myComment = None
         if comments is not None:

@@ -11,7 +11,6 @@ from gmapsfield.fields import GoogleMapsField
 import datetime
 
 class Answer(models.Model):
-    #TODO: This might benefit from a 1:1 relationship
     activity = models.ForeignKey(PlayerActivity, related_name='answers')
     answerUser = models.ForeignKey(User, editable=False, related_name='answers')
     comments = generic.GenericRelation(Comment)
@@ -23,7 +22,7 @@ class Answer(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("player_activities_overview", [self.activity.id])
+        return ("player_activities:overview", [self.activity.id])
 
 #class AnswerOpenEnded(Answer):
 #    comment = models.ForeignKey(Comment)

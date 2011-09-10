@@ -361,15 +361,6 @@ def profile(request, id):
             return HttpResponseRedirect(reverse('accounts_profile', args=[id]))    
         
 
-    followingme = []
-
-    for p in User.objects.select_related():
-        try:
-            if player and player.get_profile() and player in p.get_profile().following.all():
-                followingme.append(p)
-        except:
-            pass
-    
     values = Value.objects.filter(instance=request.user.get_profile().instance)
     community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
     
@@ -394,25 +385,10 @@ def profile(request, id):
         'player': player,
         'comment_form': comment_form,
         'instance': instance,
-        'followingme': followingme,
         'log': log,
         'player_spent': player_spent,
         'value_wrapper': value_wrapper,
     })))
-
-@login_required
-def follow(request, id):
-    u = User.objects.get(id=id)
-    request.user.get_profile().following.add( u )
-    ActivityLogger().log(request.user, request, u.get_profile().screen_name, 'started following', '/player/'+ id, 'profile')
-
-    return HttpResponseRedirect('/player/'+ str(id))
-
-@login_required
-def unfollow(request, id):
-    request.user.get_profile().following.remove( User.objects.get(id=id) )
-
-    return HttpResponseRedirect('/player/'+ str(id))
 
 @login_required
 def dashboard(request, template_name='accounts/dashboard.html'):
@@ -465,12 +441,6 @@ def dashboard(request, template_name='accounts/dashboard.html'):
 
             return HttpResponseRedirect(reverse('accounts:dashboard'))
     
-    # List all users following for filtering the activity feed later on.
-    feed = []
-    for user in prof.following.all():
-        feed.append(user)
-    feed.append(request.user)
-
     # Fetch activity log feed for dashboard.
     log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
     missions = instance and instance.missions.active() or Mission.objects.none()

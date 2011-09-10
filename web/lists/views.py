@@ -37,24 +37,3 @@ def instance(request, slug):
     players = User.objects.filter(is_active=True)
 
     return display_list(request, players, instance.title +' Community')
-
-@login_required
-def following(request, id):
-    player = User.objects.get(id=id)
-    players = player.get_profile().following.all()
-
-    return display_list(request, players, player.first_name +' is following')
-
-def followers(request, id):
-
-    player = User.objects.get(id=id)
-    players = []
-
-    for p in User.objects.select_related():
-        try:
-            if player and player.get_profile() and player in p.get_profile().following.all():
-                players.append(p)
-        except:
-            pass
-
-    return display_list(request, players, player.first_name +' followers')
