@@ -38,10 +38,10 @@ def getComments(answers, ModelType):
 
 @login_required
 def overview(request, id):
-    try:
-        activity = PlayerActivity.objects.untranslated().get(id=id)
-    except PlayerActivity.DoesNotExist:
-        raise Http404 ("PlayerActivity with id %s does not exist" % id)
+    activities = PlayerActivity.objects.filter(id=id)
+    if activities.count():
+        activity = activities[0]
+
     if activity.type.type == "open_ended":
         answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/open_overview.html')
@@ -75,14 +75,16 @@ def overview(request, id):
         for x in answerDict:
             answerList.append((x, answerDict[x]))
             
-        tmpl = loader.get_template('player_activities/single_overview.html')
         comment_form = CommentForm()
         comment_form.allow_replies = False
         myAnswer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
         myComment = None
-        if len(myAnswer) > 0:
+        if myAnswer.count() > 0:
             myAnswer = myAnswer[0]
-            myComment = myAnswer.comments.all()[0]
+            comments =  myAnswer.comments.all()
+            if comments.count():
+                myComment = comments[0]
+        tmpl = loader.get_template('player_activities/single_overview.html')
         return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
                                                                  "answers": answerList,
                                                                  "comments": getComments(answers, AnswerSingleResponse),
@@ -143,7 +145,7 @@ def overview(request, id):
                 x = x + 1
         map = activity.mission.instance.location
 
-        tmpl = loader.get_template('player_activities/map_overview.html')        
+        tmpl = loader.get_template()        
         comment_form = CommentForm()
         comment_form.allow_replies = False
         myAnswer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
@@ -152,17 +154,22 @@ def overview(request, id):
             myAnswer = myAnswer[0]
             myComment = myAnswer.comments.all()[0]
 
-        return HttpResponse(tmpl.render(RequestContext(request, {"activity": activity,
-                                                                 "comments": getComments(answers, AnswerMap),
-                                                                 "comment_form": comment_form,
-                                                                 "answers": answers,
-                                                                 "init_coords": init_coords,
-                                                                 "map": map,
-                                                                 "myComment": myComment}, 
-                                                                #[ip]
-                                                                )))
+        context = dict(
+            activity =  activity,
+            comments =  getComments(answers, AnswerMap),
+            comment_form = comment_form,
+            answers = answers,
+            init_coords = init_coords,
+            map = map,
+            myComment = myComment,
+        )
+        template = 'player_activities/map_overview.html'
+        render_to_response(template, context, RequestContext(request))
+
     elif activity.type.type == "empathy":
-        activity = PlayerEmpathyActivity.objects.language(get_language()).get(id=activity.id)
+        peactivities = PlayerEmpathyActivity.objects.language(get_language()).filter(id=activity.id)
+        if peactivities.count():
+            activity = peactivities[0]
         answers = Answer.objects.filter(activity=activity)
         tmpl = loader.get_template('player_activities/empathy_overview.html')
         comment_form = CommentForm()
@@ -261,7 +268,9 @@ def get_activity(request, id, template=None):
                 answer = AnswerSingleResponse()
                 answer.activity = activity
                 answer.answerUser = request.user
-                answer.selected = MultiChoiceActivity.objects.language(get_language()).get(id=int(form.cleaned_data["response"]))
+                mcactivities = MultiChoiceActivity.objects.filter(id=int(form.cleaned_data["response"]))
+                if mcactivities.count():
+                    answer.selected = activities[0]
                 answer.save()
                 comment_fun(answer, comment_form, request)
             else:
@@ -354,7 +363,9 @@ def get_activity(request, id, template=None):
             choices = MultiChoiceActivity.objects.language(get_language()).values_list('pk', 'value')
             form = MakeSingleForm(choices)
         elif (activity.type.type == "map"):
-            activity = PlayerMapActivity.objects.language(get_language()).get(pk=activity.id)
+            activities = PlayerMapActivity.objects.filter(pk=activity.id)
+            if activities.count():
+                activity = activities[0]
             template = 'player_activities/map_response.html'
             answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
             if (len(answer) > 0):
@@ -371,7 +382,10 @@ def get_activity(request, id, template=None):
                 form = MapForm()
             answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
         elif (activity.type.type == "empathy"):
-            activity = PlayerEmpathyActivity.objects.get(pk=activity.id)
+            activities = PlayerEmpathyActivity.objects.filter(pk=activity.id)
+            if activities.count():
+                activity = activities[0]
+
             template ='player_activities/empathy_response.html'
         elif (activity.type.type == "multi_response"):
             mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
@@ -394,12 +408,49 @@ def get_activity(request, id, template=None):
 
 @login_required
 def replay(request, id):    
-    activity = PlayerActivity.objects.untranslated().get(id=id)
+    activity = PlayerActivity.objects.get(id=id)
     tmpl = None
     form = None
     comment_form = None
     map = None
     init_coords = []  
+
+
+    if (activity.type.type == "single_response"):
+        tmpl = loader.get_template('player_activities/single_replay.html')
+        mc = MultiChoiceActivity.objects.filter(activity=activity)
+        choices = []
+        for x in mc:
+            choices.append((x.id, x.value))
+        form = MakeSingleForm(choices)
+    elif (activity.type.type == "map"):
+        activity = PlayerMapActivity.objects.untranslated().get(pk=activity.id)
+        tmpl = loader.get_template('player_activities/map_replay.html')
+        answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+        if (len(answer) > 0):
+            form = MapForm()
+            map = answer[0].map
+            markers = simplejson.loads("%s" % map)["markers"]
+            x = 0
+            for coor in markers if markers != None else []:
+                coor = coor["coordinates"]
+                init_coords.append( [x, coor[0], coor[1]] )
+                x = x + 1
+        else:
+            map = activity.mission.instance.location
+            form = MapForm()
+        answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+    elif (activity.type.type == "multi_response"):
+        mc = MultiChoiceActivity.objects.filter(activity=activity)
+        choices = []
+        for x in mc:
+            choices.append((x.id, x.value))
+        tmpl = loader.get_template('player_activities/multi_replay.html')
+        form = MakeMultiForm(choices)
+    else:
+        raise Http404
+    
+
     if request.method == "POST":
         s = ""
         for x in request.POST.keys():
@@ -408,7 +459,7 @@ def replay(request, id):
         for x in request.FILES.keys():
             s = "%s%s: %s" % (s, x, request.FILES[x])
         #return HttpResponse(s)
-        
+
         form_error = False 
         if request.POST["form"] == "single_response":
             mc = MultiChoiceActivity.objects.filter(activity=activity)
@@ -424,11 +475,10 @@ def replay(request, id):
                 except AnswerSingleResponse.DoesNotExist:
                     answer = AnswerSingleResponse.objects.create(activity=activity, answerUser=request.user,
                                 selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"])))
-                
             else:
                 tmpl = loader.get_template('player_activities/single_replay.html')
                 form_error = True
-        elif request.POST["form"] == "map":            
+        elif request.POST["form"] == "map":
             form = MapForm(request.POST)
             if form.is_valid():
                 map = form.cleaned_data["map"]
@@ -452,11 +502,9 @@ def replay(request, id):
             if form.is_valid():
                 #this gets very very messy....
                 choices = MultiChoiceActivity.objects.filter(activity=activity)
-                                
                 ids = []
                 for choice in choices:
                     ids.append(choice.id)
-                
                 comment = None
                 delete_answers = []
                 for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)):
@@ -490,41 +538,7 @@ def replay(request, id):
         if tmpl == None:
             ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
             return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
-    else:
-        if (activity.type.type == "single_response"):
-            tmpl = loader.get_template('player_activities/single_replay.html')
-            mc = MultiChoiceActivity.objects.filter(activity=activity)
-            choices = []
-            for x in mc:
-                choices.append((x.id, x.value))
-            form = MakeSingleForm(choices)
-        elif (activity.type.type == "map"):
-            activity = PlayerMapActivity.objects.untranslated().get(pk=activity.id)
-            tmpl = loader.get_template('player_activities/map_replay.html')
-            answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
-            if (len(answer) > 0):
-                form = MapForm()
-                map = answer[0].map
-                markers = simplejson.loads("%s" % map)["markers"]
-                x = 0
-                for coor in markers if markers != None else []:
-                    coor = coor["coordinates"]
-                    init_coords.append( [x, coor[0], coor[1]] )
-                    x = x + 1
-            else:
-                map = activity.mission.instance.location
-                form = MapForm()
-            answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
-        elif (activity.type.type == "multi_response"):
-            mc = MultiChoiceActivity.objects.filter(activity=activity)
-            choices = []
-            for x in mc:
-                choices.append((x.id, x.value))
-            tmpl = loader.get_template('player_activities/multi_replay.html')
-            form = MakeMultiForm(choices)
-        else:
-            raise Http404
-    
+
     return HttpResponse(tmpl.render(RequestContext(request, {
         "form": form, 
         "activity": activity,

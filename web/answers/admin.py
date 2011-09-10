@@ -16,5 +16,7 @@ from django.contrib import admin
 #from web.games.mapit.models import *
 #admin.site.register(Mapit, MapitAdmin)
 
-from answers.models import Answer
+from answers.models import Answer, AnswerMap, AnswerMultiChoice
 admin.site.register(Answer)
+admin.site.register(AnswerMap)
+admin.site.register(AnswerMultiChoice)

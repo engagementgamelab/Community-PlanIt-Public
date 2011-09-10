@@ -13,9 +13,9 @@ import datetime
 class Answer(models.Model):
     #TODO: This might benefit from a 1:1 relationship
     activity = models.ForeignKey(PlayerActivity, related_name='answers')
-    answerUser = models.ForeignKey(User, related_name='answers')
+    #answerUser = models.ForeignKey(User, related_name='answers')
     comments = generic.GenericRelation(Comment)
-    createDate = models.DateTimeField()
+    createDate = models.DateTimeField(editable=False)
 
     def save(self, *args, **kwargs):
         self.createDate = datetime.datetime.now()

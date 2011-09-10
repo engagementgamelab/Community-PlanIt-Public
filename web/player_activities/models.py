@@ -31,7 +31,7 @@ class PlayerActivityType(models.Model):
 
 class PlayerActivityBase(TranslatableModel):
 
-    slug = models.SlugField()
+    slug = models.SlugField(editable=False)
     creationUser = models.ForeignKey(User)
     mission = models.ForeignKey(Mission, related_name='%(app_label)s_%(class)s_related')
     type = models.ForeignKey(PlayerActivityType)
@@ -76,9 +76,6 @@ class PlayerActivity(PlayerActivityBase):
 class PlayerMapActivity(PlayerActivityBase):
     maxNumMarkers = models.IntegerField(default=5)
     #django-nani complains that no translated fields exist on a sublclass of TraslatableModel
-    translations = TranslatedFields(
-        tbd = models.CharField(max_length=10),
-    )
 
     translations = TranslatedFields(
         name = models.CharField(max_length=255),
@@ -100,7 +97,7 @@ class PlayerMapActivity(PlayerActivityBase):
 class PlayerEmpathyActivity(PlayerActivityBase):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     translations = TranslatedFields(        
-        bio = models.CharField(max_length=1000),
+        bio = models.TextField(max_length=1000),
     )
     
     class Meta:
@@ -139,6 +136,9 @@ class PlayerActivityTypeAdmin(ModelAdmin):
 
 class PlayerActivityAdmin(TranslatableAdmin):
     list_display = ('admin_name', 'mission', 'type')
+    #list_display = ('creationUser', 'mission', 'type', 'createDate', 'points')
+    #'question', 
+    #'name', 
 
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
     list_display = ('admin_name', 'mission', 'type')
