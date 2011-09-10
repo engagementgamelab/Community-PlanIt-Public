@@ -1,6 +1,6 @@
 import datetime
 
-from nani.admin import TranslatableAdmin
+from nani.admin import TranslatableAdmin, TranslatableStackedInline
 from nani.models import TranslatableModel, TranslatedFields
 
 from django.db import models
@@ -141,8 +141,16 @@ class PlayerActivityTypeAdmin(ModelAdmin):
     list_display = ('type', 'defaultPoints',)
 
 
+class MultipleChoiceActivityInline(TranslatableStackedInline):
+	model = MultiChoiceActivity
+
+
 class PlayerActivityAdmin(TranslatableAdmin):
-    list_display = ('admin_name', 'mission', 'type')
+    list_display = ('admin_name', 'mission', 'type', 'all_translations')
+
+    inlines = [
+            MultipleChoiceActivityInline,
+    ]
     #list_display = ('creationUser', 'mission', 'type', 'createDate', 'points')
     #'question', 
     #'name', 
