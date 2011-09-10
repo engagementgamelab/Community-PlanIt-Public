@@ -219,11 +219,13 @@ def comment_fun(answer, form, request):
             instance=request.user.get_profile().instance)
 
 @login_required
-def empathy_activity(request, id, template=None):
-    #try:
-    activity = PlayerActivity.objects.language(get_language()).get(id=id)
-    #except PlayerActivity.DoesNotExist:
-    #    raise Http404 ("PlayerActivity with id %s does not exist" % id)
+def empathy_activity(request, id, template='player_activities/empathy_response.html'):
+
+    trans_model = PlayerEmpathyActivity.objects.translations_model()
+    try:
+        activity = PlayerEmpathyActivity.objects.get(pk=id)
+    except trans_model.DoesNotExist:
+        activity = PlayerEmpathyActivity.objects.language(settings.LANGUAGE_CODE).get(pk=id)
 
     answers = Answer.objects.filter(activity=activity, answerUser=request.user)
     if len(answers) > 0:
@@ -238,23 +240,7 @@ def empathy_activity(request, id, template=None):
     map = None
     init_coords = []
 
-    if (activity.type.type == "empathy"):
-        activities = PlayerEmpathyActivity.objects.filter(pk=activity.id)
-        if activities.count():
-            activity = activities[0]
-        template ='player_activities/empathy_response.html'
-
-    else:
-        return Http404("not empathy")
-    
     if request.method == "POST":
-        s = ""
-        for x in request.POST.keys():
-            s = "%s%s: %s<br>" % (s, x, request.POST[x])
-        s = "%s<br> FILES<br>" % s
-        for x in request.FILES.keys():
-            s = "%s%s: %s" % (s, x, request.FILES[x])
-        #return HttpResponse(s)
 
         #If this game is a replay it should be set below. The reason to not check here
         # is because the type of the game might have changed. If that is the case, the Answer.objects.filteer
@@ -262,16 +248,14 @@ def empathy_activity(request, id, template=None):
         form_error = False 
         comment_form = CommentForm(request.POST)
 
-        if request.POST["form"] == "empathy":
-            if comment_form.is_valid():
-                answer = Answer()
-                answer.activity = activity
-                answer.answerUser = request.user
-                answer.save()
-                comment_fun(answer, comment_form, request)
-            else:
-                template = 'player_activities/empathy_response.html'
-                form_error = True
+        if comment_form.is_valid():
+            answer = Answer()
+            answer.activity = activity
+            answer.answerUser = request.user
+            answer.save()
+            comment_fun(answer, comment_form, request)
+        else:
+            form_error = True
 
         #If the template is None then there wasn't an error so assign the points and redirect
         #Otherwise fall through. Only assign the points if the replay is false, but still redirect
