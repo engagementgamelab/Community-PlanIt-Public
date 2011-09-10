@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
@@ -82,20 +84,21 @@ def overview(request, id):
         answerList = []
         for x in answerDict:
             answerList.append((x, answerDict[x]))
+        answerList = sorted(answerList, key=itemgetter(1))
 
         myAnswer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
         myComment = None
         if myAnswer.count() > 0:
             myAnswer = myAnswer[0]
-            comments =  myAnswer.comments.all()
+            comments = myAnswer.comments.all()
             if comments.count():
                 myComment = comments[0]
 
         template = 'player_activities/single_overview.html'
         context.update(
             dict(
-                answers =  answerList,
-                comments =  getComments(answers, AnswerSingleResponse),
+                answers = answerList,
+                comments = getComments(answers, AnswerSingleResponse),
                 myComment = myComment,
             )
         )
@@ -132,9 +135,9 @@ def overview(request, id):
         template = 'player_activities/single_overview.html'
         context.update(
             dict(
-                comments =  comments,
-                answers =  answerList,
-                myComment =  myComment,
+                comments = comments,
+                answers = answerList,
+                myComment = myComment,
             )
         )
 
@@ -160,7 +163,7 @@ def overview(request, id):
         template = 'player_activities/map_overview.html'
         context.update(
             dict(
-                comments =  getComments(answers, AnswerMap),
+                comments = getComments(answers, AnswerMap),
                 answers = answers,
                 init_coords = init_coords,
                 map = map,
@@ -182,9 +185,9 @@ def overview(request, id):
         template = 'player_activities/empathy_overview.html'
         context.update(
             dict(
-                comments =  getComments(answers, Answer),
-                answers =  answers,
-                myComment =  myComment,
+                comments = getComments(answers, Answer),
+                answers = answers,
+                myComment = myComment,
             )
         )
     if context and template:
@@ -272,7 +275,7 @@ def empathy_activity(request, id, template='player_activities/empathy_response.h
     context = dict(
         form = form, 
         comment_form = comment_form,
-        activity =  activity,
+        activity = activity,
         map = map,
         init_coords= init_coords,
     )
@@ -364,7 +367,7 @@ def activity(request, id, template=None):
                 answer.save()
                 comment_fun(answer, comment_form, request)
             else:
-                template =  'player_activities/open_response.html'
+                template = 'player_activities/open_response.html'
                 form_error = True
 
         elif request.POST["form"] == "single_response":
@@ -465,7 +468,7 @@ def activity(request, id, template=None):
     context = dict(
         form = form, 
         comment_form = comment_form,
-        activity =  activity,
+        activity = activity,
         map = map,
         init_coords= init_coords,
     )
