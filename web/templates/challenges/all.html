@@ -66,8 +66,10 @@
     <li class="challenge">
         <a href="{% url challenges:challenge challenge.pk %}">
             {{challenge.name}}<span>{% get_points for completed challenge %} {% trans "points" %}</span>
+            {% if challenge.start_date or challenge.end_date %}
             <br/>
-            <span class="dates">{{challenge.start_date|date:"m/d/Y"}} &#8211; {{challenge.end_date|date:"m/d/Y"}}</span>
+            <span class="dates">{{challenge.start_date|date:"m/d/Y"}} through {{challenge.end_date|date:"m/d/Y"}}</span>
+            {% endif %}
         </a>
     </li>
     {% empty %}

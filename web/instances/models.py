@@ -120,13 +120,26 @@ class Stake(TranslatableModel):
     def __unicode__(self):
         return self.stake
 
-#TODO: Perhaps this should be in it's own project
-class PointsAssignment(models.Model):
+class PointsAssignmentAction(models.Model):
     action = models.CharField(max_length=260)
-    points = models.IntegerField(default=0)
-    coins = models.IntegerField(default=0)
 
-    instance = models.ForeignKey(Instance, editable=False)
+    class Meta:
+        ordering = ('action',)
+
+    def __unicode__(self):
+        return self.action[:50]
+
+class PointsAssignment(models.Model):
+    action = models.ForeignKey(PointsAssignmentAction, related_name='points_assignments')
+    points = models.IntegerField(default=0)
+
+    instance = models.ForeignKey(Instance, related_name='points_assignments')
+
+    class Meta:
+        ordering = ('action__action', 'instance', 'points')
+
+    def __unicode__(self):
+        return '%d: %s' % (self.points, self.action)
 
 class NotificationRequest(models.Model):
     instance = models.ForeignKey(Instance, related_name='notification_requests')

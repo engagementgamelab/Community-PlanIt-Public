@@ -22,11 +22,16 @@ from PIL import Image
 @login_required
 def fetch(request, id):
     challenge = get_object_or_404(Challenge, id=id)
-    pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
+
+    try:
+        pc = PlayerChallenge.objects.get(player=request.user, challenge=challenge)
+    except PlayerChallenge.DoesNotExist:
+        pc = None
 
     if request.method == 'POST':
+        pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
         if not pc.completed:
-            carf = CommentAttachmentResponseForm(request.POST)
+            carf = CommentAttachmentResponseForm(request.POST, instance=pc.response)
             if carf.is_valid():
                 pc.response = carf.save()
                 pc.completed = True
@@ -64,10 +69,7 @@ def fetch(request, id):
 
                     return HttpResponseRedirect(reverse('challenges:challenge', args=[id]))
     else:
-        if pc.completed:
-            carf = None
-        else:
-            carf = CommentAttachmentResponseForm(instance=pc.response)
+        carf = CommentAttachmentResponseForm()
 
     data = {
         'challenge': challenge,

@@ -36,10 +36,10 @@
         try {
         
         var answerData = new Array(0);
-        var i = 0;
         {% for key, val in answers %}
-            answerData[i] = {label: "{{key}}", data: {{val}} };
-            i++;
+            answerData.push({label: "{{key}}", data: {{val}} });
+        {% empty %}
+            answerData.push({label: "No answers yet.", data: 1});
         {% endfor %}
         
         $.plot($("#choicePie"), answerData, {

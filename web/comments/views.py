@@ -9,6 +9,7 @@ from django.conf import settings
 from nani.utils import get_translation
 
 from web.accounts.models import UserProfile
+from web.reports.actions import PointsAssigner
 from web.answers.models import Answer
 from web.challenges.models import Challenge
 from web.comments.forms import *
@@ -39,36 +40,38 @@ def like(request, id):
 
 @login_required
 def reply(request, id):
-    p = get_object_or_404(Comment, id=id)
-    instance = request.user.get_profile().instance
+    parent_comment = get_object_or_404(Comment, id=id)
+    instance = parent_comment.instance
   
-    c = p.comments.create(
-        content_object=p,
+    c = parent_comment.comments.create(
+        content_object=parent_comment,
         message=request.POST.get('message'), 
         user=request.user,
         instance=instance,
     )
+    PointsAssigner().assign(request.user, 'comment_created')
 
-    topic = p.topic
+    topic = parent_comment.topic
 
     recipient = None
-    if request.user != p.user:
-        message = "%s replied to your comment on %s" % (
-            request.user.get_profile().screen_name,
-            topic
-        )
-        recipient = p.user
-    elif isinstance(topic, Challenge):
-        message = "%s replied to a comment on %s" % (
-            request.user.get_profile().screen_name,
-            topic
-        )
-        recipient = topic.user
-    elif isinstance(topic, UserProfile):
-        message = "%s replied to a comment on your profile" % (
-            request.user.get_profile().screen_name
-        )
-        recipient = topic.user
+    if request.user != parent_comment.user:
+        if isinstance(topic, Challenge):
+            message = "%s replied to a comment on %s" % (
+                request.user.get_profile().screen_name,
+                topic
+            )
+            recipient = topic.user
+        elif isinstance(topic, UserProfile):
+            message = "%s replied to a comment on your profile" % (
+                request.user.get_profile().screen_name
+            )
+            recipient = topic.user
+        else:
+            message = "%s replied to your comment on %s" % (
+                request.user.get_profile().screen_name,
+                topic
+            )
+            recipient = parent_comment.user
 
     if recipient:
         recipient.notifications.create(content_object=c, message=message)

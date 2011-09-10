@@ -44,6 +44,10 @@ def overview(request, id):
 
     if activities.count():
         activity = activities[0]
+    else:
+        raise Http404 ("PlayerActivity with id %s does not exist" % id)
+
+    comment_form = process_comment(request, activity)
 
     comment_form = CommentForm()
     comment_form.allow_replies = False
@@ -85,7 +89,6 @@ def overview(request, id):
         for x in answerDict:
             answerList.append((x, answerDict[x]))
         answerList = sorted(answerList, key=itemgetter(1))
-
         myAnswer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
         myComment = None
         if myAnswer.count() > 0:
@@ -193,6 +196,47 @@ def overview(request, id):
     if context and template:
         return render_to_response(template, context, RequestContext(request))
     return HttpResponse("web page not created yet")
+
+def process_comment(request, activity):
+    """
+    Lovely side-effect programming, this. That monstrous overview method needs
+    refactoring in the worst way.
+    """
+
+    if request.method == 'POST':
+        print "POSTED COMMENT"
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            print "VALID FORM:", comment_form
+            comment = Comment.objects.create(
+                content_object=activity,
+                message=comment_form.cleaned_data['message'], 
+                user=request.user,
+                instance=activity.mission.instance,
+            )
+            print "COMMENT CREATED:", comment
+            if request.POST.has_key('yt-url'):
+                if request.POST.get('yt-url'):
+                    comment.attachment.create(
+                            file=None,
+                            url=request.POST.get('yt-url'),
+                            type='video',
+                            user=request.user,
+                            instance=activity.mission.instance)
+            
+            if request.FILES.has_key('picture'):
+                file = request.FILES.get('picture')
+                picture = Image.open(file)
+                if (file.name.rfind(".") -1):
+                    file.name = "%s.%s" % (file.name, picture.format.lower())
+                comment.attachment.create(
+                    file=request.FILES.get('picture'),
+                    user=request.user,
+                    instance=activity.mission.instance)
+    else:
+        comment_form = CommentForm()
+
+    return comment_form
 
 def comment_fun(answer, form, request):
     comment = answer.comments.create(
@@ -371,7 +415,7 @@ def activity(request, id, template=None):
                 form_error = True
 
         elif request.POST["form"] == "single_response":
-            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
+            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
@@ -382,7 +426,7 @@ def activity(request, id, template=None):
                 answer.answerUser = request.user
                 mcactivities = MultiChoiceActivity.objects.filter(id=int(form.cleaned_data["response"]))
                 if mcactivities.count():
-                    answer.selected = activities[0]
+                    answer.selected = mcactivities[0]
                 answer.save()
                 comment_fun(answer, comment_form, request)
             else:
@@ -416,14 +460,14 @@ def activity(request, id, template=None):
                 template = 'player_activities/empathy_response.html'
                 form_error = True
         elif request.POST["form"] == "multi_response":
-            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
+            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
             choices = []
             for x in mc:
                 choices.append((x.id, x.value))
             form = make_multi_form(choices)(request.POST)
             if form.is_valid() and comment_form.is_valid():
                 #this gets very very messy....
-                choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
+                choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
                 comment = None
                    
                 ids = []
@@ -464,7 +508,6 @@ def activity(request, id, template=None):
             else:
                 ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
             return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
-
     context = dict(
         form = form, 
         comment_form = comment_form,

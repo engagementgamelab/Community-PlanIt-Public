@@ -1,4 +1,5 @@
 import datetime
+from operator import itemgetter
 import re
 
 from django.core.urlresolvers import reverse
@@ -33,11 +34,12 @@ def all(request, template='values/all.html'):
         player_value = player_values.filter(value=value)
         coins = float(value.coins)
         if len(player_value) > 0:
-            value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
+            value_wrapper.append({ 'message': value.message, 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
                                   'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })
         else:
-            value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': 0,
+            value_wrapper.append({ 'message': value.message, 'value': value, 'coins': coins, 'player_coins': 0,
                                    'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
+    value_wrapper = sorted(value_wrapper, key=itemgetter('message'))
 
     context = dict(
         values = values,

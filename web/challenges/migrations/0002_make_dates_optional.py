@@ -8,94 +8,23 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Deleting model 'UserProfileStake'
-        db.delete_table('accounts_userprofilestake')
+        # Changing field 'Challenge.end_date'
+        db.alter_column('challenges_challenge', 'end_date', self.gf('django.db.models.fields.DateTimeField')(null=True))
 
-        # Changing field 'UserProfile.stake'
-        db.alter_column('accounts_userprofile', 'stake_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['instances.Stake'], null=True))
+        # Changing field 'Challenge.start_date'
+        db.alter_column('challenges_challenge', 'start_date', self.gf('django.db.models.fields.DateTimeField')(null=True))
 
 
     def backwards(self, orm):
         
-        # Adding model 'UserProfileStake'
-        db.create_table('accounts_userprofilestake', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('stake', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('pos', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal('accounts', ['UserProfileStake'])
+        # Changing field 'Challenge.end_date'
+        db.alter_column('challenges_challenge', 'end_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2011, 9, 11, 12, 3, 26, 915658)))
 
-        # Changing field 'UserProfile.stake'
-        db.alter_column('accounts_userprofile', 'stake_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.UserProfileStake'], null=True))
+        # Changing field 'Challenge.start_date'
+        db.alter_column('challenges_challenge', 'start_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2011, 9, 10, 12, 3, 31, 754049)))
 
 
     models = {
-        'accounts.notification': {
-            'Meta': {'ordering': "['-timestamp']", 'object_name': 'Notification'},
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'content_type_set_for_notification'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'message': ('django.db.models.fields.TextField', [], {}),
-            'object_id': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'read': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'timestamp': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'notifications'", 'to': "orm['auth.User']"})
-        },
-        'accounts.userprofile': {
-            'Meta': {'object_name': 'UserProfile'},
-            'accepted_research': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'accepted_term': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'affiliations': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'birth_year': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'coinPoints': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'currentCoins': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'editedProfile': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'education': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileEducation']", 'null': 'True', 'blank': 'True'}),
-            'flagged': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'following': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'following_user_set'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['auth.User']"}),
-            'gender': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileGender']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'income': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileIncomes']", 'null': 'True', 'blank': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'user_profiles'", 'null': 'True', 'to': "orm['instances.Instance']"}),
-            'living': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileLiving']", 'null': 'True', 'blank': 'True'}),
-            'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '12', 'blank': 'True'}),
-            'preferred_language': ('django.db.models.fields.CharField', [], {'default': "'en-us'", 'max_length': '5'}),
-            'race': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileRace']", 'null': 'True', 'blank': 'True'}),
-            'receive_email': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'stake': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['instances.Stake']", 'null': 'True', 'blank': 'True'}),
-            'totalPoints': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'unique': 'True'})
-        },
-        'accounts.userprofileeducation': {
-            'Meta': {'object_name': 'UserProfileEducation'},
-            'eduLevel': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'pos': ('django.db.models.fields.IntegerField', [], {})
-        },
-        'accounts.userprofilegender': {
-            'Meta': {'object_name': 'UserProfileGender'},
-            'gender': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'pos': ('django.db.models.fields.IntegerField', [], {})
-        },
-        'accounts.userprofileincomes': {
-            'Meta': {'object_name': 'UserProfileIncomes'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'income': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'pos': ('django.db.models.fields.IntegerField', [], {})
-        },
-        'accounts.userprofileliving': {
-            'Meta': {'object_name': 'UserProfileLiving'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'livingSituation': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'pos': ('django.db.models.fields.IntegerField', [], {})
-        },
-        'accounts.userprofilerace': {
-            'Meta': {'object_name': 'UserProfileRace'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'pos': ('django.db.models.fields.IntegerField', [], {}),
-            'race': ('django.db.models.fields.CharField', [], {'max_length': '128'})
-        },
         'attachments.attachment': {
             'Meta': {'object_name': 'Attachment'},
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
@@ -137,6 +66,32 @@ class Migration(SchemaMigration):
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
+        'challenges.challenge': {
+            'Meta': {'ordering': "['start_date']", 'object_name': 'Challenge'},
+            'attachments': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['attachments.Attachment']", 'symmetrical': 'False', 'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {}),
+            'end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'flagged': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'game_type': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'challenges'", 'to': "orm['instances.Instance']"}),
+            'map': ('gmapsfield.fields.GoogleMapsField', [], {}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'start_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+        },
+        'challenges.playerchallenge': {
+            'Meta': {'object_name': 'PlayerChallenge'},
+            'accepted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'attachments': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
+            'challenge': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'player_challenges'", 'to': "orm['challenges.Challenge']"}),
+            'completed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'declined': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'player': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'player_challenges'", 'to': "orm['auth.User']"}),
+            'response': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'player_challenge'", 'unique': 'True', 'null': 'True', 'to': "orm['responses.CommentResponse']"}),
+            'response_type': ('django.db.models.fields.CharField', [], {'max_length': '30', 'null': 'True', 'blank': 'True'})
+        },
         'comments.comment': {
             'Meta': {'object_name': 'Comment'},
             'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
@@ -146,6 +101,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'comments'", 'to': "orm['instances.Instance']"}),
             'likes': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'liked_comments'", 'blank': 'True', 'to': "orm['auth.User']"}),
+            'message': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
             'object_id': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'posted_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
@@ -176,13 +132,20 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'instances.stake': {
-            'Meta': {'object_name': 'Stake'},
+        'responses.commentresponse': {
+            'Meta': {'object_name': 'CommentResponse', '_ormbases': ['responses.Response']},
+            'message': ('django.db.models.fields.CharField', [], {'default': "' '", 'max_length': '1000'}),
+            'posted_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': "''"}),
+            'response_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['responses.Response']", 'unique': 'True', 'primary_key': 'True'})
+        },
+        'responses.response': {
+            'Meta': {'object_name': 'Response'},
+            'answer': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
+            'flagged': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'stakes'", 'to': "orm['instances.Instance']"}),
-            'pos': ('django.db.models.fields.IntegerField', [], {}),
-            'stake': ('django.db.models.fields.CharField', [], {'max_length': '128'})
+            'response_type': ('django.db.models.fields.CharField', [], {'max_length': '45'})
         }
     }
 
-    complete_apps = ['accounts']
+    complete_apps = ['challenges']
