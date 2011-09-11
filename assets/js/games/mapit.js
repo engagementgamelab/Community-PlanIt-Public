@@ -3,8 +3,7 @@
     $.fn.mapit = function(opts) {
         var markers = [], marker, line, coordinates, map, _map, polygons = [], data = {}, type, state, infowindow,
             colors = ['#FF0000', '#00FF00', '#0000FF', '#FF8C00', '#F0F8FF', '#8B008B', '#FF0000'];
-            
-        
+
         opts = $.extend({
             coordinates: [0,0],
             zoom: 16,
@@ -198,6 +197,9 @@
             type = that.attr("data-type");
             state = that.attr("data-state");
 
+            debug.log(state)
+            debug.log(type)
+
             map = new google.maps.Map(this, {
                 zoom: opts.zoom,
                 disableDefaultUI: true,
@@ -308,38 +310,44 @@
             // Displays an overview of all markers points lines etc from games that have been previously
             // played.
             else if(state === 'overview') {
+                debug.log('overview')
                 var lats = [], lngs = [], sw, ne;
                 if(type === "Point" && opts.markers && opts.markers.length) {
+                    debug.log(opts.markers)
                     $.each(opts.markers, function() {
                         var message = '', player = '';
-                        $.each(this, function() {
-                            lats.push(this.coordinates[0]);
-                            lngs.push(this.coordinates[1]);
+                        //$.each(this, function() {
+                        lats.push(this.coordinates[0]);
+                        lngs.push(this.coordinates[1]);
 
-                            var marker_coordinates = new google.maps.LatLng(this.coordinates[0], this.coordinates[1]);
-                            var marker = new google.maps.Marker({
-                                position: marker_coordinates,
-                                draggable: false,
-                                map: map
-                            });
-                            markers.push(marker);
+                        debug.log(this.coordinates[0]);
+                        debug.log(this.coordinates[1]);
 
-                            if(message = this.message) {
-                                player = this.player;
-
-                                google.maps.event.addListener(marker, 'click', function() {
-                                    if (infowindow){
-                                        infowindow.close()
-                                    }
-
-                                    infowindow = new google.maps.InfoWindow({
-                                        content:  message + ' - ' + player
-                                    });
-                                    
-                                    infowindow.open(map, marker);
-                                });
-                            }
+                        var marker_coordinates = new google.maps.LatLng(this.coordinates[0], this.coordinates[1]);
+                        var marker = new google.maps.Marker({
+                            position: marker_coordinates,
+                            draggable: false,
+                            map: map
                         });
+                        markers.push(marker);
+                        debug.log('pushed', marker)
+
+                        if(message = this.message) {
+                            player = this.player;
+
+                            google.maps.event.addListener(marker, 'click', function() {
+                                if (infowindow){
+                                    infowindow.close()
+                                }
+
+                                infowindow = new google.maps.InfoWindow({
+                                    content:  message + ' - ' + player
+                                });
+                                
+                                infowindow.open(map, marker);
+                            });
+                        }
+                        //});
                     });
 
                     // Set bounding area
@@ -351,7 +359,7 @@
 
                     var bounds = new google.maps.LatLngBounds(sw, ne);
                     map.panToBounds(bounds);
-                    map.fitBounds(bounds);
+                    //map.fitBounds(bounds);
                 }
                 else if(type === "Shape" && opts.markers && opts.markers.length) {
                     var lats = [], lngs = [], sw, ne, first_marker, shape;

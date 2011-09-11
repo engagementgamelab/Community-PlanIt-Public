@@ -26,6 +26,7 @@ def empathy_overview(request, id, template='player_activities/empathy_overview.h
     context = dict(
             activity = activity,
             comment_form = comment_form,
+            view_action = 'overview',
     )
     answers = AnswerEmpathy.objects.filter(activity=activity)
     myAnswer = AnswerEmpathy.objects.filter(activity=activity, answerUser=request.user)
@@ -102,5 +103,6 @@ def empathy_replay(request, id):
     context = dict(
         form = form, 
         activity = activity,
+        view_action = 'replay',
     )
     return render_to_response(template, context, RequestContext(request))

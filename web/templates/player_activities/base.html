@@ -44,7 +44,7 @@
                 event.preventDefault();
                 $.ajax({
                         type: "POST",
-                        url: "{{ activity.get_activity_url }}",
+                        url: "{% if view_action == 'replay' %} {{ activity.get_replay_url }} {% else %} {{ activity.get_activity_url }} {% endif %}",
                         data: $('#id_activity-form').serialize(),
                         success: function(data, textStatus) {
                             var $data = $(data);

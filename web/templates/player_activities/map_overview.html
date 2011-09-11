@@ -17,7 +17,7 @@
     {% for x, lat, lon in init_coords %}
         <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
     {% endfor %}
-    <div id="map" class="google-map" data-type="Point"></div>
+    <div id="map" class="google-map" data-type="Point" data-state="overview"></div>
 
     <div id="comments">
         {% with activity.mission.instance as instance %}

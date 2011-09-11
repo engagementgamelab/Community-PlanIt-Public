@@ -38,6 +38,7 @@ def overview(request, id):
     context = dict(
             activity = activity,
             comment_form = comment_form,
+            view_action = 'overview',
     )
 
     def _get_mc_choices():
@@ -185,7 +186,6 @@ def activity(request, id, template=None):
         #If this game is a replay it should be set below. The reason to not check here
         # is because the type of the game might have changed. If that is the case, the Answer.objects.filteer
         # will exist but it will be the wrong one.  
-        form_error = False 
         comment_form = CommentForm(request.POST)
 
         if request.POST["form"] == "open_ended":
@@ -197,7 +197,6 @@ def activity(request, id, template=None):
                 comment_fun(answer, comment_form, request)
             else:
                 template = 'player_activities/open_response.html'
-                form_error = True
 
         elif request.POST["form"] == "single_response":
             choices = _get_mc_choices()
@@ -223,7 +222,6 @@ def activity(request, id, template=None):
                     errors.update(form.errors)
 
                 template = 'player_activities/single_response.html'
-                form_error = True
 
         elif request.POST["form"] == "multi_response":
             choices = _get_mc_choices()
@@ -255,18 +253,14 @@ def activity(request, id, template=None):
                         if not first_found:
                             comment_fun(answer, comment_form, request)
                             first_found = True
+                PointsAssigner().assignAct(request.user, activity)
             else:
                 if comment_form.errors:
                     errors.update(comment_form.errors)
                 if form.errors:
                     errors.update(form.errors)
                 template = 'player_activities/multi_response.html'
-                form_error = True
         
-        #If the template is None then there wasn't an error so assign the points and redirect
-        #Otherwise fall through. Only assign the points if the replay is false, but still redirect
-        if form_error == False:
-            PointsAssigner().assignAct(request.user, activity)
 
         #if template == None:
         #    if replay == False:
@@ -318,7 +312,6 @@ def replay(request, id):
             s = "%s%s: %s" % (s, x, request.FILES[x])
         #return HttpResponse(s)
 
-        form_error = False 
         if request.POST["form"] == "single_response":
             mc = MultiChoiceActivity.objects.filter(activity=activity)
             choices = []
@@ -339,9 +332,6 @@ def replay(request, id):
                                                                 id=int(cd.get('response'))
                                                     )
                     )
-            else:
-                template = 'player_activities/single_replay.html'
-                form_error = True
 
         elif request.POST["form"] == "multi_response":
             mc = MultiChoiceActivity.objects.filter(activity=activity)
@@ -379,19 +369,17 @@ def replay(request, id):
                                 comment.save()
                             first_found = True
                 AnswerMultiChoice.objects.filter(pk__in=delete_answers).delete()
-            else:
-                template = 'player_activities/multi_replay.html'
-                form_error = True
-        
+
         #If the template is None then there wasn't an error so assign the points and redirect
         #Otherwise fall through. Only assign the points if the replay is false, but still redirect
-        if tmpl == None:
-            ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
-            return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+        #if tmpl == None:
+        #    ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
+        #    return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
 
     context = dict(
         form = form, 
         activity = activity,
+        view_action = 'replay',
     )
     return render_to_response(template, context, RequestContext(request))
 

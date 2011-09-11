@@ -58,6 +58,7 @@ def map_overview(request, id, template='player_activities/map_overview.html'):
         init_coords = init_coords,
         map = map,
         myComment = myComment,
+        view_action = 'overview',
     ))
     return render_to_response(template, context, RequestContext(request))
 
@@ -91,11 +92,13 @@ def map_activity(request, id, template='player_activities/map_response.html'):
         comment_form = CommentForm(request.POST)
         if form.is_valid() and comment_form.is_valid():
             map = form.cleaned_data["map"]
-            answer = AnswerMap()
-            answer.activity = activity
-            answer.answerUser = request.user
-            answer.map = map;
+            answer = AnswerMap.objects.create(
+                                activity = activity,
+                                answerUser = request.user,
+                                map = map,
+            )
             answer.save()
+            print "saved ", map
             comment_fun(answer, comment_form, request)
         else:
             if comment_form.errors:
@@ -120,8 +123,9 @@ def map_replay(request, id, template='player_activities/map_replay.html'):
     activity = _get_activity(id, PlayerMapActivity)
 
     form = None
-    comment_form = None
+    comment_form = CommentForm()
     init_coords = []
+    errors = {}
 
     answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
     if (len(answer) > 0):
@@ -136,12 +140,12 @@ def map_replay(request, id, template='player_activities/map_replay.html'):
     else:
         map = activity.mission.instance.location
         form = MapForm()
-    answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
 
     if request.method == "POST":
         form = MapForm(request.POST)
         if form.is_valid():
             map = form.cleaned_data["map"]
+            print 'got map ', map
             try:
                 answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
                 answer.map = map;
@@ -149,16 +153,18 @@ def map_replay(request, id, template='player_activities/map_replay.html'):
             except AnswerMap.DoesNotExist:
                 answer = AnswerMap.objects.create(activity=activity, answerUser=request.user, map=map)
         else:
-            map = request.POST["map"]
-            activity = PlayerMapActivity.objects.get(pk=activity.id)
-            template = 'player_activities/map_replay.html'
-            form_error = True
+            if comment_form.errors:
+                errors.update(comment_form.errors)
+            if form.errors:
+                errors.update(form.errors)
 
     context = dict(
         form = form, 
+        errors = errors,
         activity = activity,
         map = map,
         init_coords = init_coords,
+        view_action = 'replay',
     )
     return render_to_response(template, context, RequestContext(request))
 
