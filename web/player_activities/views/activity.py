@@ -146,6 +146,14 @@ def activity(request, id, template=None):
     activity = _get_activity(id, PlayerActivity)
     #import ipdb;ipdb.set_trace()
 
+    if (activity.type.type == "single_response"):
+        answers = AnswerSingleResponse.objects.filter(
+                    activity = activity,
+                    answerUser = request.user,
+        )
+        if answers.count() > 0:
+            return HttpResponseRedirect(reverse("activities:replay", args=[activity.id]))
+
     #answers = Answer.objects.filter(activity=activity, answerUser=request.user)
     #if len(answers) > 0:
     #    return HttpResponseRedirect(reverse("activities:replay", args=[activity.id]))
@@ -159,6 +167,7 @@ def activity(request, id, template=None):
 
     def _get_mc_choices():
         return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id').values_list('pk', 'value')
+
     def _get_mc_choice_ids():
         return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id').values_list('pk', flat=True)
 
@@ -168,13 +177,11 @@ def activity(request, id, template=None):
     elif (activity.type.type == "single_response"):
         template = 'player_activities/single_response.html'
         choices = _get_mc_choices()
-        print choices
         form = make_single_form(choices)
 
     elif (activity.type.type == "multi_response"):
         template = 'player_activities/multi_response.html'
         choices = _get_mc_choices()
-        print choices
         form = make_multi_form(choices)
 
     else:
@@ -182,7 +189,6 @@ def activity(request, id, template=None):
 
     errors = {}
     if request.method == "POST":
-    	print "submitted ", request.POST["form"]
         #If this game is a replay it should be set below. The reason to not check here
         # is because the type of the game might have changed. If that is the case, the Answer.objects.filteer
         # will exist but it will be the wrong one.  
@@ -201,9 +207,8 @@ def activity(request, id, template=None):
         elif request.POST["form"] == "single_response":
             choices = _get_mc_choices()
             form = make_single_form(choices)(request.POST)
-            print choices
             if form.is_valid() and comment_form.is_valid():
-            	cd = form.cleaned_data
+                cd = form.cleaned_data
                 mcactivities = MultiChoiceActivity.objects.filter(id=int(cd.get('response')))
                 if mcactivities.count():
                     selected = mcactivities[0]
@@ -213,7 +218,6 @@ def activity(request, id, template=None):
                             answerUser = request.user,
                             selected=selected,
                 )
-                print "saved answer %s" % answer
                 comment_fun(answer, comment_form, request)
             else:
                 if comment_form.errors:
@@ -226,7 +230,6 @@ def activity(request, id, template=None):
         elif request.POST["form"] == "multi_response":
             choices = _get_mc_choices()
             form = make_multi_form(choices)(request.POST)
-            print choices
             if form.is_valid() and comment_form.is_valid():
                 #this gets very very messy....
 
@@ -260,14 +263,10 @@ def activity(request, id, template=None):
                 if form.errors:
                     errors.update(form.errors)
                 template = 'player_activities/multi_response.html'
-        
 
-        #if template == None:
-        #    if replay == False:
-        #        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
-        #    else:
-        #        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
-        #    return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
+        return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+
     context = dict(
         form = form, 
         comment_form = comment_form,
@@ -279,9 +278,8 @@ def activity(request, id, template=None):
 @login_required
 def replay(request, id):    
     activity = PlayerActivity.objects.get(id=id)
-    tmpl = None
     form = None
-    comment_form = None
+    errors = {}
 
     if (activity.type.type == "single_response"):
         template = 'player_activities/single_replay.html'
@@ -304,13 +302,6 @@ def replay(request, id):
     
 
     if request.method == "POST":
-        s = ""
-        for x in request.POST.keys():
-            s = "%s%s: %s<br>" % (s, x, request.POST[x])
-        s = "%s<br> FILES<br>" % s
-        for x in request.FILES.keys():
-            s = "%s%s: %s" % (s, x, request.FILES[x])
-        #return HttpResponse(s)
 
         if request.POST["form"] == "single_response":
             mc = MultiChoiceActivity.objects.filter(activity=activity)
@@ -319,7 +310,7 @@ def replay(request, id):
                 choices.append((x.id, x.value))
             form = make_single_form(choices)(request.POST)
             if form.is_valid():
-            	cd = form.cleaned_data
+                cd = form.cleaned_data
                 try:
                     answer = AnswerSingleResponse.objects.get(activity=activity, answerUser=request.user)
                     answer.selected = MultiChoiceActivity.objects.get(id=int(cd.get('response')))
@@ -332,6 +323,8 @@ def replay(request, id):
                                                                 id=int(cd.get('response'))
                                                     )
                     )
+            else:
+                errors.update(form.errors)
 
         elif request.POST["form"] == "multi_response":
             mc = MultiChoiceActivity.objects.filter(activity=activity)
@@ -369,15 +362,15 @@ def replay(request, id):
                                 comment.save()
                             first_found = True
                 AnswerMultiChoice.objects.filter(pk__in=delete_answers).delete()
+            else:
+                errors.update(form.errors)
 
-        #If the template is None then there wasn't an error so assign the points and redirect
-        #Otherwise fall through. Only assign the points if the replay is false, but still redirect
-        #if tmpl == None:
-        #    ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
-        #    return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
+        return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
 
     context = dict(
-        form = form, 
+        form = form,
+        errors = errors,
         activity = activity,
         view_action = 'replay',
     )

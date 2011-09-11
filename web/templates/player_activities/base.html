@@ -20,6 +20,7 @@
     {% comment %}
     {%if other_responses|length%}
         <h3>{% trans "Last 5 Responses" %}</h3>
+        view_action = 'replay',
         <ul class="listless fine">
             {%for response in other_responses%}
             <li><a href="/mission/{{mission.slug}}/game/{{game.game_type}}/{{game.id}}/{{response.user.id}}/">{% trans "View" %} {{response.user.get_profile.first_name}}'s {% trans "response" %} &rarr;</a></li>

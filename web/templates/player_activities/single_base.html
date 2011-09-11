@@ -1,7 +1,8 @@
 {%extends "player_activities/base.html"%}
 {%block title%}Single Response{%endblock%}
 
-{%block main%}
+{%block activity%}
+    {{ block.super }}
     <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">{% csrf_token %}
         <input type="hidden" name="form" value="single_response">
         <h2>{{ activity.question|urlize }}</h2>
