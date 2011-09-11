@@ -2,13 +2,9 @@
 {%block title%}Empathy Response{%endblock%}
 
 {%block activity%}
-    <div id="content" style="text-color: red;"> 
-        {% if errors %} 
-            {% for k,v in errors.items %}
-            {{ k }}: {{ v }} 
-            {% endfor %}
-        {% endif %}
-    </div>
+
+    {% block.super %}
+
     <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">{% csrf_token %}
         <input type="hidden" name="form" value="empathy">
 
@@ -27,40 +23,7 @@
         {% include "player_activities/attachments.html" %}
         
         {% block comment %}{% endblock %}
-        
         <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
     </form>
 {%endblock%}
 
-{%block body%}    
-    <script>
-        jQuery(function($) {
-            
-            $("#id_activity-btn-submit").live("click", function(event){
-                event.preventDefault();
-
-                $.ajax({
-                        type: "POST",
-                        url: "{% url activities:empathy-activity activity.pk %}",
-                        data: $('#id_activity-form').serialize(),
-                        success: function(data, textStatus) {
-                            var $data = $(data);
-                            var has_errors = $(data).find(".errorlist");
-
-                            if (has_errors.length > 0){
-                                $('#content').html($data.find('#content'));
-                            }
-                            else {
-                                window.location='{% url activities:empathy-overview activity.pk %}';
-                            }
-                        },
-                        error: function(data){                                        
-                            $('#content').html(data.responseText);
-                        }
-                });
-            });
-
-        });
-
-    </script>
-{%endblock%}

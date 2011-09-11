@@ -3,9 +3,8 @@
 {%block title%}Multi Response{%endblock%}
 
 {%block main%}
-    <form action="" method="post">
+    <form id="id_activity-form" action="" method="post">{% csrf_token %}
         <input type="hidden" name="form" value="multi_response">
-        {% csrf_token %}
         <h2>{{activity.question|urlize}}</h2>
         <div class="fieldWrapper">
             {{ form.response.errors }}
@@ -18,7 +17,6 @@
         </div>
         
         {% block comment %}{% endblock %}
-        
-        <input type="submit" class="button submit" value="Submit" />
+        <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
     </form>
 {%endblock%}

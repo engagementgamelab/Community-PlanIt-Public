@@ -68,7 +68,7 @@ def empathy_activity(request, id, template='player_activities/empathy_response.h
             PointsAssigner().assignAct(request.user, activity)
         else:
             if comment_form.errors:
-                errors.update(form.errors)
+                errors.update(comment_form.errors)
 
         #if template == None:
         #    if replay == False:
@@ -78,8 +78,6 @@ def empathy_activity(request, id, template='player_activities/empathy_response.h
         #    return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
     else:
         comment_form = CommentForm(data=request.POST)
-
-    print errors
 
     context = dict(
         comment_form = comment_form,

@@ -2,6 +2,7 @@ from operator import itemgetter
 
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
@@ -9,26 +10,15 @@ from django.shortcuts import render_to_response
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
-from player_activities.views import _get_activity, getComments, comment_fun, process_comment
+from player_activities.views import (_get_activity, 
+                                    getComments, comment_fun, 
+                                    process_comment, _get_translatable_field)
 from player_activities.forms import *
 from player_activities.models import *
 from answers.models import *
 from comments.models import *
 from comments.forms import *
 from reports.actions import *
-from django.contrib.auth.models import User
-
-from PIL import Image
-
-def getComments(answers, ModelType):
-    comments = None
-    answer_type = ContentType.objects.get_for_model(ModelType)
-    for answer in answers:
-        if comments == None:
-            comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-        else:
-            comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-    return comments
 
 @login_required
 def overview(request, id):
@@ -50,6 +40,36 @@ def overview(request, id):
             comment_form = comment_form,
     )
 
+    def _get_mc_choices():
+        return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
+
+    def _get_all_answers(response_klass):
+        answerDict = {}
+
+        #ans_kwargs = {'activity':activity} if response_klass == MultiChoiceActivity else {'option__activity':activity}
+        ans_kwargs = {'activity': activity}
+
+
+        answers = response_klass.objects.filter(**ans_kwargs)
+        choices = _get_mc_choices() 
+        trans_model = MultiChoiceActivity.objects.translations_model()
+        for choice in choices:
+            choice_value = _get_translatable_field(choice, 'value')
+            answerDict[choice_value] = 0
+
+        for answer in answers:
+            if isinstance(answer, AnswerMultiChoice):
+                mc = answer.option
+            else:
+                mc = answer
+
+            ans_val = _get_translatable_field(mc, 'value')
+            if answerDict.has_key(ans_val):
+                answerDict[ans_val] = answerDict[ans_val] + 1
+
+        answerList  = [(x, answerDict[x]) for x in answerDict.keys()]
+        return (answers, sorted(answerList, key=itemgetter(1)))
+
     if activity.type.type == "open_ended":
         answers = Answer.objects.filter(activity=activity)
         myAnswer = Answer.objects.filter(activity=activity, answerUser=request.user)
@@ -58,7 +78,6 @@ def overview(request, id):
             myAnswer = myAnswer[0]
             myComment = myAnswer.comments.all()[0]
         template = 'player_activities/open_overview.html'
-
         context.update(
             dict(
                 answers = answers,
@@ -68,20 +87,8 @@ def overview(request, id):
         )
 
     elif activity.type.type == "single_response":
-        answers = AnswerSingleResponse.objects.filter(activity=activity)
 
-        answerDict = {}
-        choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
-        for choice in choices:
-            answerDict[choice.value] = 0
-
-        for answer in answers:
-            answerDict[answer.selected.value] = answerDict[answer.selected.value] + 1
-
-        answerList = []
-        for x in answerDict:
-            answerList.append((x, answerDict[x]))
-        answerList = sorted(answerList, key=itemgetter(1))
+        answers, answerList = _get_all_answers(AnswerSingleResponse)
         myAnswer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
         myComment = None
         if myAnswer.count() > 0:
@@ -100,7 +107,8 @@ def overview(request, id):
         )
 
     elif activity.type.type == "multi_response":
-        answers = AnswerMultiChoice.objects.filter(option__activity=activity)
+        #answers = AnswerMultiChoice.objects.filter(option__activity=activity)
+        answers, answerList = _get_all_answers(AnswerMultiChoice)
         comments = None
         answer_type = ContentType.objects.get_for_model(AnswerMultiChoice)
 
@@ -116,18 +124,6 @@ def overview(request, id):
         if myComment is not None and len(myComment) > 0:
             myComment = myComment[0]
 
-        answerDict = {}
-        choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
-        for choice in choices:
-            answerDict[choice.value] = 0
-
-        for answer in answers:
-            answerDict[answer.option.value] = answerDict[answer.option.value] + 1
-
-        answerList = []
-        for x in answerDict:
-            answerList.append((x, answerDict[x]))
-
         template = 'player_activities/single_overview.html'
         context.update(
             dict(
@@ -137,55 +133,6 @@ def overview(request, id):
             )
         )
 
-    elif activity.type.type == "map":
-        answers = AnswerMap.objects.filter(activity=activity)
-        init_coords = []
-        x = 0
-        for answer in answers:
-            map = answer.map
-            markers = simplejson.loads("%s" % map)["markers"]
-            for coor in markers if markers != None else []:
-                coor = coor["coordinates"]
-                init_coords.append( [x, coor[0], coor[1]] )
-                x = x + 1
-        map = activity.mission.instance.location
-
-        myAnswer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
-        myComment = None
-        if len(myAnswer) > 0:
-            myAnswer = myAnswer[0]
-            myComment = myAnswer.comments.all()[0]
-
-        template = 'player_activities/map_overview.html'
-        context.update(
-            dict(
-                comments = getComments(answers, AnswerMap),
-                answers = answers,
-                init_coords = init_coords,
-                map = map,
-                myComment = myComment,
-            )
-        )
-
-    elif activity.type.type == "empathy":
-        peactivities = PlayerEmpathyActivity.objects.language(get_language()).filter(id=activity.id)
-        if peactivities.count():
-            activity = peactivities[0]
-        answers = Answer.objects.filter(activity=activity)
-        myAnswer = Answer.objects.filter(activity=activity, answerUser=request.user)
-        myComment = None
-        if len(myAnswer) > 0:
-            myAnswer = myAnswer[0]
-            myComment = myAnswer.comments.all()[0]
-
-        template = 'player_activities/empathy_overview.html'
-        context.update(
-            dict(
-                comments = getComments(answers, Answer),
-                answers = answers,
-                myComment = myComment,
-            )
-        )
     if context and template:
         return render_to_response(template, context, RequestContext(request))
     return HttpResponse("web page not created yet")
@@ -207,23 +154,32 @@ def activity(request, id, template=None):
     comment_form = CommentForm()
     form = None
 
+    def _get_mc_choices():
+        return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id').values_list('pk', 'value')
+    def _get_mc_choice_ids():
+        return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id').values_list('pk', flat=True)
+
     if (activity.type.type == "open_ended"):
         template = 'player_activities/open_response.html'
 
     elif (activity.type.type == "single_response"):
         template = 'player_activities/single_response.html'
-        choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).values_list('pk', 'value')
+        choices = _get_mc_choices()
+        print choices
         form = make_single_form(choices)
 
     elif (activity.type.type == "multi_response"):
         template = 'player_activities/multi_response.html'
-        choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).values_list('pk', 'value')
+        choices = _get_mc_choices()
+        print choices
         form = make_multi_form(choices)
 
     else:
         raise Http404
 
+    errors = {}
     if request.method == "POST":
+    	print "submitted ", request.POST["form"]
         #If this game is a replay it should be set below. The reason to not check here
         # is because the type of the game might have changed. If that is the case, the Answer.objects.filteer
         # will exist but it will be the wrong one.  
@@ -242,42 +198,45 @@ def activity(request, id, template=None):
                 form_error = True
 
         elif request.POST["form"] == "single_response":
-            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
-            choices = []
-            for x in mc:
-                choices.append((x.id, x.value))
+            choices = _get_mc_choices()
             form = make_single_form(choices)(request.POST)
+            print choices
             if form.is_valid() and comment_form.is_valid():
-                answer = AnswerSingleResponse()
-                answer.activity = activity
-                answer.answerUser = request.user
-                mcactivities = MultiChoiceActivity.objects.filter(id=int(form.cleaned_data["response"]))
+            	cd = form.cleaned_data
+                mcactivities = MultiChoiceActivity.objects.filter(id=int(cd.get('response')))
                 if mcactivities.count():
-                    answer.selected = mcactivities[0]
-                answer.save()
+                    selected = mcactivities[0]
+
+                answer = AnswerSingleResponse.objects.create(
+                            activity = activity,
+                            answerUser = request.user,
+                            selected=selected,
+                )
+                print "saved answer %s" % answer
                 comment_fun(answer, comment_form, request)
             else:
+                if comment_form.errors:
+                    errors.update(comment_form.errors)
+                if form.errors:
+                    errors.update(form.errors)
+
                 template = 'player_activities/single_response.html'
                 form_error = True
 
         elif request.POST["form"] == "multi_response":
-            mc = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
-            choices = []
-            for x in mc:
-                choices.append((x.id, x.value))
+            choices = _get_mc_choices()
             form = make_multi_form(choices)(request.POST)
+            print choices
             if form.is_valid() and comment_form.is_valid():
                 #this gets very very messy....
-                choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
+
                 comment = None
-                   
-                ids = []
-                for choice in choices:
-                    ids.append(choice.id)
+                choice_ids =  _get_mc_choice_ids()
+
                 #cleans out all of the choices that the user selected from the check boxes
-                for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)):
+                for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=choice_ids)):
                     amc.comments.clear()
-                AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=ids)).delete()
+                AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=choice_ids)).delete()
                 first_found = False 
                 for key in request.POST.keys():
                     if key.find("response_") >= 0:
@@ -295,6 +254,10 @@ def activity(request, id, template=None):
                             comment_fun(answer, comment_form, request)
                             first_found = True
             else:
+                if comment_form.errors:
+                    errors.update(comment_form.errors)
+                if form.errors:
+                    errors.update(form.errors)
                 template = 'player_activities/multi_response.html'
                 form_error = True
         
@@ -303,15 +266,16 @@ def activity(request, id, template=None):
         if form_error == False:
             PointsAssigner().assignAct(request.user, activity)
 
-        if template == None:
-            if replay == False:
-                ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
-            else:
-                ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
-            return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+        #if template == None:
+        #    if replay == False:
+        #        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
+        #    else:
+        #        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
+        #    return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
     context = dict(
         form = form, 
         comment_form = comment_form,
+        errors = errors,
         activity =  activity,
     )
     return render_to_response(template, RequestContext(request, context))
@@ -360,13 +324,19 @@ def replay(request, id):
                 choices.append((x.id, x.value))
             form = make_single_form(choices)(request.POST)
             if form.is_valid():
+            	cd = form.cleaned_data
                 try:
                     answer = AnswerSingleResponse.objects.get(activity=activity, answerUser=request.user)
-                    answer.selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"]))
+                    answer.selected = MultiChoiceActivity.objects.get(id=int(cd.get('response')))
                     answer.save()
                 except AnswerSingleResponse.DoesNotExist:
-                    answer = AnswerSingleResponse.objects.create(activity=activity, answerUser=request.user,
-                                selected = MultiChoiceActivity.objects.get(id=int(form.cleaned_data["response"])))
+                    answer = AnswerSingleResponse.objects.create(
+                                                    activity=activity, 
+                                                    answerUser=request.user,
+                                                    selected = MultiChoiceActivity.objects.get(
+                                                                id=int(cd.get('response'))
+                                                    )
+                    )
             else:
                 template = 'player_activities/single_replay.html'
                 form_error = True

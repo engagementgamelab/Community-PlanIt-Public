@@ -2,7 +2,7 @@
 {%block title%}Single Response{%endblock%}
 
 {%block main%}
-    <form enctype="multipart/form-data" action="" method="post">{% csrf_token %}
+    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">{% csrf_token %}
         <input type="hidden" name="form" value="single_response">
         <h2>{{ activity.question|urlize }}</h2>
         {% include "player_activities/attachments.html" %}
@@ -18,8 +18,7 @@
         </div>
         
         {% block comment %}{% endblock %}
-
-        <input type="submit" class="button submit" value="Submit" />
+        <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
     </form>
     
 {%endblock%}

@@ -7,7 +7,17 @@
 
 
 {% block main %}
-    {% block activity %}{% endblock %}
+    {% block activity %}
+        <div id="content" style="text-color: red;"> 
+            {% if errors %} 
+                {% for k,v in errors.items %}
+                {{ k }}: {{ v }} 
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% endblock %}
+
+    {% comment %}
     {%if other_responses|length%}
         <h3>{% trans "Last 5 Responses" %}</h3>
         <ul class="listless fine">
@@ -21,6 +31,38 @@
     {%else%}
         {% trans "No responses yet." %}
     {%endif%}
+    {% endcomment %}
+
 {% endblock %}
 
 {%block aside%}{%endblock%}
+
+{%block body%}   
+    <script>
+        jQuery(function($) {
+            $("#id_activity-btn-submit").live("click", function(event){
+                event.preventDefault();
+                $.ajax({
+                        type: "POST",
+                        url: "{{ activity.get_activity_url }}",
+                        data: $('#id_activity-form').serialize(),
+                        success: function(data, textStatus) {
+                            var $data = $(data);
+                            var has_errors = $(data).find(".errorlist");
+
+                            if (has_errors.length > 0){
+                                $('#content').html($data.find('#content'));
+                            }
+                            else {
+                                window.location='{{ activity.get_overview_url }}';
+                            }
+                        },
+                        error: function(data){                                        
+                            $('#content').html(data.responseText);
+                        }
+                });
+            });
+
+        });
+    </script>
+{%endblock%}

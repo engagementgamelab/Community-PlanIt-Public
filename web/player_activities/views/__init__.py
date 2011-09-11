@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from comments.forms import *
+from comments.models import Comment
 
 def _get_activity(pk, model_klass):
     trans_model = model_klass.objects.translations_model()
@@ -7,6 +9,18 @@ def _get_activity(pk, model_klass):
         return model_klass.objects.get(pk=pk)
     except trans_model.DoesNotExist:
         return model_klass.objects.language(settings.LANGUAGE_CODE).get(pk=pk)
+
+def _get_translatable_field(instance, field_name):
+    val = None
+    trans_model = instance.__class__.objects.translations_model()
+    try:
+        return getattr(instance, field_name)
+    except trans_model.DoesNotExist:
+        for trans in instance.translations.all():
+            if trans.language_code == settings.LANGUAGE_CODE:
+                return trans.value
+    return val or "n/a"
+
 
 def comment_fun(answer, form, request):
     comment = answer.comments.create(
@@ -81,7 +95,7 @@ def getComments(answers, ModelType):
     answer_type = ContentType.objects.get_for_model(ModelType)
     for answer in answers:
         if comments == None:
-            comments = Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
+            comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
         else:
-            comments = comments | Comment.objects.language(get_language()).filter(content_type=answer_type, object_id=answer.pk)
+            comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
     return comments
