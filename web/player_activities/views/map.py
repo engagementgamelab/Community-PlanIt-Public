@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.utils.translation import get_language
+from django.utils import simplejson
 from django.contrib.auth.decorators import login_required
 
 from player_activities.views import _get_activity, getComments, comment_fun
@@ -16,39 +17,8 @@ from comments.forms import *
 from reports.actions import *
 
 @login_required
-def map_overview(request, id, template='player_activities/empathy_overview.html'):
-    activity = _get_activity(id, PlayerEmpathyActivity)
-
-    """
-    answers = AnswerMap.objects.filter(activity=activity)
-    init_coords = []
-    x = 0
-    for answer in answers:
-        map = answer.map
-        markers = simplejson.loads("%s" % map)["markers"]
-        for coor in markers if markers != None else []:
-            coor = coor["coordinates"]
-            init_coords.append( [x, coor[0], coor[1]] )
-            x = x + 1
-    map = activity.mission.instance.location
-
-    myAnswer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
-    myComment = None
-    if len(myAnswer) > 0:
-        myAnswer = myAnswer[0]
-        myComment = myAnswer.comments.all()[0]
-
-    template = 'player_activities/map_overview.html'
-    context.update(
-        dict(
-            comments =  getComments(answers, AnswerMap),
-            answers = answers,
-            init_coords = init_coords,
-            map = map,
-            myComment = myComment,
-        )
-    )
-    """
+def map_overview(request, id, template='player_activities/map_overview.html'):
+    activity = _get_activity(id, PlayerMapActivity)
 
     comment_form = CommentForm()
     comment_form.allow_replies = False
@@ -57,31 +27,50 @@ def map_overview(request, id, template='player_activities/empathy_overview.html'
             activity = activity,
             comment_form = comment_form,
     )
-    answers = AnswerEmpathy.objects.filter(activity=activity)
-    myAnswer = AnswerEmpathy.objects.filter(activity=activity, answerUser=request.user)
+
+    answers = AnswerMap.objects.filter(activity=activity)
+    init_coords = []
+    x = 0
+    print answers
+    for answer in answers:
+        map = answer.map
+        markers = simplejson.loads("%s" % map)["markers"]
+        print markers
+        for coor in markers if markers != None else []:
+            coor = coor["coordinates"]
+            init_coords.append( [x, coor[0], coor[1]] )
+            x = x + 1
+
+    map = activity.mission.instance.location
+
+    myAnswer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
     myComment = None
     if len(myAnswer) > 0:
         myAnswer = myAnswer[0]
         myComment = myAnswer.comments.all()[0]
 
-    context.update(
-        dict(
-            comments =  getComments(answers, AnswerEmpathy),
-            answers =  answers,
-            myComment =  myComment,
-        )
-    )
+    print init_coords
+
+
+    context.update(dict(
+        comments =  getComments(answers, AnswerMap),
+        answers = answers,
+        init_coords = init_coords,
+        map = map,
+        myComment = myComment,
+    ))
     return render_to_response(template, context, RequestContext(request))
 
 @login_required
-def map_activity(request, id, template='player_activities/empathy_response.html'):
+def map_activity(request, id, template='player_activities/map_response.html'):
 
+    activity = _get_activity(id, PlayerMapActivity)
+    init_coords = []
+    map = activity.mission.instance.location
+    form = MapForm()
 
-    activities = PlayerMapActivity.objects.filter(pk=activity.id)
-    if activities.count():
-        activity = activities[0]
-    template = 'player_activities/map_response.html'
     answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
+
     if (len(answer) > 0):
         form = MapForm()
         map = answer[0].map
@@ -91,53 +80,38 @@ def map_activity(request, id, template='player_activities/empathy_response.html'
             coor = coor["coordinates"]
             init_coords.append( [x, coor[0], coor[1]] )
             x = x + 1
-    else:
-        map = activity.mission.instance.location
-        form = MapForm()
-    answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
 
-    """
-    activity = _get_activity(id, PlayerEmpathyActivity)
-
-    answers = AnswerEmpathy.objects.filter(activity=activity, answerUser=request.user)
+    answers = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
     if len(answers) > 0:
-        return HttpResponseRedirect(reverse("activities:empathy-replay", args=[activity.id]))
-
-    #answers = AnswerMultiChoice.objects.filter(option__activity=activity, user=request.user)
-    #if len(answers) > 0:
-    #    return HttpResponseRedirect(reverse("activities:replay", args=[activity.id]))
+        return HttpResponseRedirect(reverse("activities:map-replay", args=[activity.id]))
 
     errors = {}
     if request.method == "POST":
-        comment_form = CommentForm(data=request.POST)
-        if comment_form.is_valid():
-            answer = AnswerEmpathy()
+        form = MapForm(request.POST)
+        comment_form = CommentForm(request.POST)
+        if form.is_valid() and comment_form.is_valid():
+            map = form.cleaned_data["map"]
+            answer = AnswerMap()
             answer.activity = activity
             answer.answerUser = request.user
+            answer.map = map;
             answer.save()
             comment_fun(answer, comment_form, request)
-            PointsAssigner().assignAct(request.user, activity)
         else:
             if comment_form.errors:
+                errors.update(comment_form.errors)
+            if form.errors:
                 errors.update(form.errors)
-
-        #if template == None:
-        #    if replay == False:
-        #        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
-        #    else:
-        #        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
-        #    return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
     else:
         comment_form = CommentForm(data=request.POST)
-
-    print errors
 
     context = dict(
         comment_form = comment_form,
         activity = activity,
         errors = errors,
+        init_coords = init_coords,
+        map = map,
     )
-    """
     return render_to_response(template, RequestContext(request, context))
 
 @login_required
@@ -147,6 +121,7 @@ def map_replay(request, id, template='player_activities/map_replay.html'):
 
     form = None
     comment_form = None
+    init_coords = []
 
     answer = AnswerMap.objects.filter(activity=activity, answerUser=request.user)
     if (len(answer) > 0):
@@ -182,6 +157,8 @@ def map_replay(request, id, template='player_activities/map_replay.html'):
     context = dict(
         form = form, 
         activity = activity,
+        map = map,
+        init_coords = init_coords,
     )
     return render_to_response(template, context, RequestContext(request))
 
