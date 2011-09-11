@@ -11,7 +11,9 @@ from web.answers.models import *
 from gmapsfield.fields import *
 
 def make_openended_form():
+
     class OpenEndedForm(forms.Form):
+        message = forms.CharField(widget=forms.Textarea)
         class Meta:
             model = AnswerOpenEnded
     return OpenEndedForm

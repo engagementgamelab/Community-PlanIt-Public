@@ -188,7 +188,7 @@ def activity(request, id, template=None):
         form = make_multi_form(choices)
 
     else:
-        raise Http404
+        raise Http404("unknown activity type")
 
     errors = {}
     if request.method == "POST":
@@ -307,11 +307,45 @@ def replay(request, id):
         template = 'player_activities/multi_replay.html'
         form = make_multi_form(choices)
 
+    elif (activity.type.type == "open_ended"):
+        form = make_openended_form()
+        template = 'player_activities/open_replay.html'
+
     else:
-        raise Http404
-    
+        raise Http404("cannot replay. unknown activity type")
 
     if request.method == "POST":
+
+        if request.POST["form"] == "open_ended":
+
+            form = make_openended_form()(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                msg = cd.get('message')
+                import ipdb;ipdb.set_trace()
+                #FIXME
+                # there should be one unique answer to replay?
+                try:
+                    answer = AnswerOpenEnded.objects.get(
+                                activity = activity,
+                                answerUser = request.user,
+                    )
+                    answer.comment = msg
+                except AnswerOpenEnded.DoesNotExist:
+                    answer = AnswerOpenEnded.objects.create(
+                                activity = activity,
+                                answerUser = request.user,
+                                comment = msg,
+                    )
+
+                #comment_fun(answer, comment_form, request)
+            else:
+                if form.errors:
+                    errors.update(form.errors)
+                if comment_form.errors:
+                    errors.update(comment_form.errors)
+
+
 
         if request.POST["form"] == "single_response":
             mc = MultiChoiceActivity.objects.filter(activity=activity)

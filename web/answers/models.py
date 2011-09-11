@@ -30,7 +30,7 @@ class Answer(models.Model):
 
 class AnswerOpenEnded(Answer):
     comment = models.TextField()
-    activity = models.ForeignKey(PlayerActivity, related_name='open_endedresponse_answers')
+    activity = models.ForeignKey(PlayerActivity, related_name='openended_answers')
 
 class AnswerSingleResponse(Answer):
     selected = models.ForeignKey(MultiChoiceActivity)
