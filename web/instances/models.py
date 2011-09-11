@@ -33,7 +33,7 @@ class InstanceManager(TranslationManager):
 
     def past(self):
         now = datetime.datetime.now()
-        return self.filter(missions__end_date__lt=now).order_by('start_date')
+        return self.exclude(missions__end_date__gte=now).order_by('start_date')
 
     def future(self):
         return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')

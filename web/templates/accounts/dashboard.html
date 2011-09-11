@@ -90,7 +90,7 @@
                 
             {% else %}
                 <div class="welcome">
-                    <p>{{ instance }}{% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
+                    <p>{{ instance }} {% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
                 <ul>
                     <li><strong>{{instance.user_profiles.count}}</strong> participant{{instance.user_profiles.count|pluralize}}
                     <li><strong>{{instance.coin_count}}</strong> token{{instance.coin_count|pluralize}} spent on issues

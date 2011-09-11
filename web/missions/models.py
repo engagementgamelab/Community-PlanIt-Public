@@ -63,9 +63,9 @@ class Mission(TranslatableModel):
 
     title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
     instance = models.ForeignKey(Instance, related_name='missions')
-    slug = models.SlugField(editable=False)
-    start_date = models.DateTimeField(editable=False)
-    end_date = models.DateTimeField(editable=False)
+    slug = models.SlugField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
     video = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
