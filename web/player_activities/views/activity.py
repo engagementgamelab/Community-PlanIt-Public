@@ -60,9 +60,9 @@ def overview(request, id):
         for answer in answers:
             if isinstance(answer, AnswerMultiChoice):
                 mc = answer.option
-            else:
-                mc = answer
-
+            elif isinstance(answer, AnswerSingleResponse):
+                mc = answer.selected
+            #import ipdb;ipdb.set_trace()
             ans_val = _get_translatable_field(mc, 'value')
             if answerDict.has_key(ans_val):
                 answerDict[ans_val] = answerDict[ans_val] + 1
@@ -71,7 +71,9 @@ def overview(request, id):
         return (answers, sorted(answerList, key=itemgetter(1)))
 
     if activity.type.type == "open_ended":
-        answers = Answer.objects.filter(activity=activity)
+
+        answers, answerList = _get_all_answers(Answer)
+        #answers = Answer.objects.filter(activity=activity)
         myAnswer = Answer.objects.filter(activity=activity, answerUser=request.user)
         myComment = None
         if len(myAnswer) > 0:
