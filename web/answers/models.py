@@ -12,7 +12,7 @@ from gmapsfield.fields import GoogleMapsField
 import datetime
 
 __all__ = (
-        'Answer', 'AnswerSingleResponse', 'AnswerMap', 'AnswerEmpathy', 'AnswerMultiChoice'
+        'Answer', 'AnswerSingleResponse', 'AnswerOpenEnded', 'AnswerMap', 'AnswerEmpathy', 'AnswerMultiChoice'
 )
 
 class Answer(models.Model):
@@ -28,8 +28,9 @@ class Answer(models.Model):
     def get_absolute_url(self):
         return ("player_activities:overview", [self.activity.id])
 
-#class AnswerOpenEnded(Answer):
-#    comment = models.ForeignKey(Comment)
+class AnswerOpenEnded(Answer):
+    comment = models.TextField()
+    activity = models.ForeignKey(PlayerActivity, related_name='open_endedresponse_answers')
 
 class AnswerSingleResponse(Answer):
     selected = models.ForeignKey(MultiChoiceActivity)

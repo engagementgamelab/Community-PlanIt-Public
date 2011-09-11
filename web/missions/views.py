@@ -32,14 +32,17 @@ def fetch(request, slug, template='missions/base.html'):
             if hasattr(activity, related_name) and getattr(activity, related_name).all():
                 completed.append(activity)
 
+        #if activity.type.type == 'multi_reponse':
+        #    answers = AnswerMultiChoice.objects.filter(user=request.user, option__activity__mission=mission)
+        #    print answers
+
             #TODO
-            #[, AnswerMultiChoice]
-            #for mc in AnswerMultiChoice.objects.filter(user=request.user, option__activity__mission=mission):
-            #    pk = mc.option.activity.pk
-            #    if pk not in pks:
-            #        pks.append(pk)
-    print completed
-    print activities
+        #isAnswerMultiChoice]
+        #for mc in AnswerMultiChoice.objects.filter(user=request.user, option__activity__mission=mission):
+        #    pk = mc.option.activity.pk
+        #    if pk not in pks:
+        #        pks.append(pk)
+
     context = dict(
         mission = mission,
         activities = activities,

@@ -63,7 +63,7 @@ def overview(request, id):
                 mc = answer.option
             elif isinstance(answer, AnswerSingleResponse):
                 mc = answer.selected
-            #import ipdb;ipdb.set_trace()
+
             ans_val = _get_translatable_field(mc, 'value')
             if answerDict.has_key(ans_val):
                 answerDict[ans_val] = answerDict[ans_val] + 1
@@ -72,20 +72,18 @@ def overview(request, id):
         return (answers, sorted(answerList, key=itemgetter(1)))
 
     if activity.type.type == "open_ended":
-
-        answers, answerList = _get_all_answers(Answer)
-        #answers = Answer.objects.filter(activity=activity)
-        myAnswer = Answer.objects.filter(activity=activity, answerUser=request.user)
-        myComment = None
-        if len(myAnswer) > 0:
-            myAnswer = myAnswer[0]
-            myComment = myAnswer.comments.all()[0]
+        answers = AnswerOpenEnded.objects.filter(activity=activity, answerUser=request.user)
+        #myAnswer = AnswerOpenEnded.objects.filter(activity=activity, answerUser=request.user)
+        #myComment = None
+        #if len(myAnswer) > 0:
+        #    myAnswer = myAnswer[0]
+        #    myComment = myAnswer.comments.all()[0]
         template = 'player_activities/open_overview.html'
         context.update(
             dict(
                 answers = answers,
-                comments = getComments(answers, Answer),
-                myComment = myComment
+        #        comments = getComments(answers, Answer),
+        #        myComment = myComment
             )
         )
 
@@ -143,16 +141,20 @@ def overview(request, id):
 @login_required
 def activity(request, id, template=None):
 
-    activity = _get_activity(id, PlayerActivity)
-    #import ipdb;ipdb.set_trace()
 
+    activity = _get_activity(id, PlayerActivity)
+
+    print activity
+
+    answer_kwargs = dict(activity = activity, answerUser = request.user)
+    answers = []
     if (activity.type.type == "single_response"):
-        answers = AnswerSingleResponse.objects.filter(
-                    activity = activity,
-                    answerUser = request.user,
-        )
-        if answers.count() > 0:
-            return HttpResponseRedirect(reverse("activities:replay", args=[activity.id]))
+        answers = AnswerSingleResponse.objects.filter(**answer_kwargs)
+    if (activity.type.type == "open_ended"):
+        answers = AnswerOpenEnded.objects.filter()
+
+    if len(list(answers)):
+        return HttpResponseRedirect(reverse("activities:replay", args=[activity.id]))
 
     #answers = Answer.objects.filter(activity=activity, answerUser=request.user)
     #if len(answers) > 0:
@@ -172,6 +174,7 @@ def activity(request, id, template=None):
         return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id').values_list('pk', flat=True)
 
     if (activity.type.type == "open_ended"):
+        form = make_openended_form()
         template = 'player_activities/open_response.html'
 
     elif (activity.type.type == "single_response"):
@@ -195,16 +198,25 @@ def activity(request, id, template=None):
         comment_form = CommentForm(request.POST)
 
         if request.POST["form"] == "open_ended":
-            if comment_form.is_valid():
-                answer = Answer()
-                answer.activity = activity
-                answer.answerUser = request.user
-                answer.save()
-                comment_fun(answer, comment_form, request)
+            template = 'player_activities/open_response.html'
+            form = make_openended_form()(request.POST)
+            if form.is_valid() and comment_form.is_valid():
+                cd = comment_form.cleaned_data
+                comment = cd.get('message')
+                answer = AnswerOpenEnded.objects.create(
+                            activity = activity,
+                            answerUser = request.user,
+                            comment = comment,
+                )
+                #comment_fun(answer, comment_form, request)
             else:
-                template = 'player_activities/open_response.html'
+                if form.errors:
+                    errors.update(form.errors)
+                if comment_form.errors:
+                    errors.update(comment_form.errors)
 
         elif request.POST["form"] == "single_response":
+            template = 'player_activities/single_response.html'
             choices = _get_mc_choices()
             form = make_single_form(choices)(request.POST)
             if form.is_valid() and comment_form.is_valid():
@@ -225,9 +237,8 @@ def activity(request, id, template=None):
                 if form.errors:
                     errors.update(form.errors)
 
-                template = 'player_activities/single_response.html'
-
         elif request.POST["form"] == "multi_response":
+            template = 'player_activities/multi_response.html'
             choices = _get_mc_choices()
             form = make_multi_form(choices)(request.POST)
             if form.is_valid() and comment_form.is_valid():
@@ -262,7 +273,6 @@ def activity(request, id, template=None):
                     errors.update(comment_form.errors)
                 if form.errors:
                     errors.update(form.errors)
-                template = 'player_activities/multi_response.html'
 
         ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
         return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))

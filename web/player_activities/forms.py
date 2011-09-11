@@ -10,6 +10,12 @@ from web.answers.models import *
 
 from gmapsfield.fields import *
 
+def make_openended_form():
+    class OpenEndedForm(forms.Form):
+        class Meta:
+            model = AnswerOpenEnded
+    return OpenEndedForm
+
 def make_single_form(choices):
     class SingleForm(forms.Form):
         response = forms.ChoiceField(widget=RadioSelect, choices=choices)
