@@ -33,14 +33,14 @@ class AnswerOpenEnded(Answer):
     activity = models.ForeignKey(PlayerActivity, related_name='openended_answers')
 
 class AnswerSingleResponse(Answer):
-    selected = models.ForeignKey(MultiChoiceActivity)
+    selected = models.ForeignKey(MultiChoiceActivity, related_name='singleresponse_answers')
     activity = models.ForeignKey(PlayerActivity, related_name='singleresponse_answers')
 
 #This is nasty but it's the simple way to get many checked values
 #for the user stored
 class AnswerMultiChoice(models.Model):
     user = models.ForeignKey(User)
-    option = models.ForeignKey(MultiChoiceActivity)
+    option = models.ForeignKey(MultiChoiceActivity, related_name='multiresponse_answers')
     comments = generic.GenericRelation(Comment)
 
 class AnswerMap(Answer):

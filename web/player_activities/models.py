@@ -192,37 +192,15 @@ class PlayerActivityTypeAdmin(ModelAdmin):
     list_display = ('type', 'defaultPoints',)
 
 
-class MultipleChoiceActivityInline(TranslatableStackedInline):
-	model = MultiChoiceActivity
-
-
 class PlayerActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
-
-    inlines = [
-            MultipleChoiceActivityInline,
-    ]
-    #list_display = ('creationUser', 'mission', 'type', 'createDate', 'points')
-    #'question', 
-    #'name', 
-
-    #fieldsets = (
-    #    (None, {
-    #        'fields': ('name', 'question', 'instructions', 'addInstructions')
-    #    }),
-        #('Advanced options', {
-        #    'classes': ('collapse',),
-        #    'fields': ('enable_comments', 'registration_required', 'template_name')
-        #}),
-    #)
-
 
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type')
 
 
 class MultiChoiceActivityAdmin(TranslatableAdmin):
-	list_display = ('id', 'activity_type', 'activity_points', 'mission_title', 'all_translations')
+	list_display = ('__str__', 'activity_type', 'activity_points', 'mission_title', 'all_translations')
 
 class PlayerMapActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type')

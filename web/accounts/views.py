@@ -448,7 +448,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     
     if (missions.count() > 0):
         mission = missions[0]
-        activities = PlayerActivity.objects.distinct().filter(mission=mission)
+        activities = PlayerActivity.objects.language(get_language()).distinct().filter(mission=mission)
 
     completed_challenges = PlayerChallenge.objects.completed().filter(player=request.user)
     challenges = instance and instance.challenges.active().exclude(player_challenges__in=completed_challenges) or Challenge.objects.none()

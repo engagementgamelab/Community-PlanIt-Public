@@ -1,6 +1,6 @@
 {% extends "player_activities/base.html" %}
 {% load gmap attachment_tags %}
-{% block title %}Single Response Overview{% endblock %}
+{% block title %}Multiple Response Overview{% endblock %}
 
 {% block main %}
     <h1>Response Overview</h1>
@@ -15,7 +15,7 @@
     
     <ul>
         {% for choice in choices %}
-            <li>{{choice.value}}: {{choice.singleresponse_answers.count}}</li>
+            <li>{{choice.value}}: {{choice.multiresponse_answers.count}}</li>
         {% endfor %}
     </ul>
     <h3>Answer Selections</h3>
@@ -38,7 +38,7 @@
         
         var answerData = new Array(0);
         {% for choice in choices %}
-            answerData.push({label: "{{choice.value}}", data: {{choice.singleresponse_answers.count}} });
+            answerData.push({label: "{{choice.value}}", data: {{choice.multiresponse_answers.count}} });
         {% empty %}
             answerData.push({label: "No answers yet.", data: 1});
         {% endfor %}

@@ -23,7 +23,7 @@ from reports.actions import *
 @login_required
 def overview(request, id):
 
-    activities = PlayerActivity.objects.filter(id=id)
+    activities = PlayerActivity.objects.language(get_language()).filter(id=id)
 
     if activities.count():
         activity = activities[0]
@@ -32,44 +32,11 @@ def overview(request, id):
 
     comment_form = process_comment(request, activity)
 
-    comment_form = CommentForm()
-    comment_form.allow_replies = False
-
     context = dict(
             activity = activity,
             comment_form = comment_form,
             view_action = 'overview',
     )
-
-    def _get_mc_choices():
-        return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
-
-    def _get_all_answers(response_klass):
-        answerDict = {}
-
-        #ans_kwargs = {'activity':activity} if response_klass == MultiChoiceActivity else {'option__activity':activity}
-        ans_kwargs = {'activity': activity}
-
-
-        answers = response_klass.objects.filter(**ans_kwargs)
-        choices = _get_mc_choices() 
-        trans_model = MultiChoiceActivity.objects.translations_model()
-        for choice in choices:
-            choice_value = _get_translatable_field(choice, 'value')
-            answerDict[choice_value] = 0
-
-        for answer in answers:
-            if isinstance(answer, AnswerMultiChoice):
-                mc = answer.option
-            elif isinstance(answer, AnswerSingleResponse):
-                mc = answer.selected
-
-            ans_val = _get_translatable_field(mc, 'value')
-            if answerDict.has_key(ans_val):
-                answerDict[ans_val] = answerDict[ans_val] + 1
-
-        answerList  = [(x, answerDict[x]) for x in answerDict.keys()]
-        return (answers, sorted(answerList, key=itemgetter(1)))
 
     if activity.type.type == "open_ended":
         answers = AnswerOpenEnded.objects.filter(activity=activity, answerUser=request.user)
@@ -89,8 +56,9 @@ def overview(request, id):
 
     elif activity.type.type == "single_response":
 
-        answers, answerList = _get_all_answers(AnswerSingleResponse)
-        myAnswer = AnswerSingleResponse.objects.filter(activity=activity, answerUser=request.user)
+        choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
+        answers = AnswerSingleResponse.objects.filter(activity=activity)
+        myAnswer = answers.filter(answerUser=request.user)
         myComment = None
         if myAnswer.count() > 0:
             myAnswer = myAnswer[0]
@@ -101,7 +69,8 @@ def overview(request, id):
         template = 'player_activities/single_overview.html'
         context.update(
             dict(
-                answers = answerList,
+                choices = choices,
+                answers = answers,
                 comments = getComments(answers, AnswerSingleResponse),
                 myComment = myComment,
             )
@@ -109,7 +78,9 @@ def overview(request, id):
 
     elif activity.type.type == "multi_response":
         #answers = AnswerMultiChoice.objects.filter(option__activity=activity)
-        answers, answerList = _get_all_answers(AnswerMultiChoice)
+        choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
+        answers = AnswerMultiChoice.objects.filter(option__activity=activity)
+        myAnswer = answers.filter(user=request.user)
         comments = None
         answer_type = ContentType.objects.get_for_model(AnswerMultiChoice)
 
@@ -125,11 +96,12 @@ def overview(request, id):
         if myComment is not None and len(myComment) > 0:
             myComment = myComment[0]
 
-        template = 'player_activities/single_overview.html'
+        template = 'player_activities/multi_overview.html'
         context.update(
             dict(
+                choices = choices,
+                answers = answers,
                 comments = comments,
-                answers = answerList,
                 myComment = myComment,
             )
         )
