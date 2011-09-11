@@ -23,7 +23,8 @@ class ActivityLogger:
         a.save()
 
         # Push to messages queue
-        messages.success(request, 'You ' + str(data) +' '+ str(action))
+        #import ipdb;ipdb.set_trace()
+        messages.success(request, 'You ' + data +' '+ action.encode('utf8'))
 
 class PointsAssigner:
     def fetch(self, action):
