@@ -211,7 +211,7 @@
 
 /* PIE CHARTS */
 .pielabel {
-  max-width: 90px;
+  max-width: 80px;
   border: 1px solid #fff;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -220,7 +220,7 @@
   font-size: .8em;
   text-align: center;
   color: black;
-  background: #fff;
+  background: #f0f0f0;
   background: rgba(255, 255, 255, 0.9); }
 
 html, body {
@@ -297,7 +297,7 @@ p.separate {
   .wrapper .instructionText {
     font-size: 1.25em; }
   .wrapper .thumbnail img {
-    width: 64px;
+    max-width: 80%;
     height: auto;
     border: 1px solid #f0f0f0; }
   .wrapper .orange {
@@ -867,6 +867,9 @@ p.separate {
         text-transform: lowercase; }
       .wrapper #main .content .comments {
         position: relative; }
+        .wrapper #main .content .comments .thumbnail img {
+          max-width: 128px;
+          max-height: 128px; }
         .wrapper #main .content .comments h2 {
           padding: 0;
           margin: .5em 0; }

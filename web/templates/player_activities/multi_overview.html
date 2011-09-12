@@ -1,24 +1,21 @@
 {% extends "player_activities/base.html" %}
 {% load gmap attachment_tags i18n %}
-{% block title %}Multiple Response Overview{% endblock %}
+{% block title %}{{activity.name}}: Response Overview{% endblock %}
 
 {% block main %}
-    <h1>Response Overview</h1>
-    <h2>{{activity.question}}</h2>
+<h1>{{activity.name}}</h1>
+<h3>{{activity.question}}</h3>
     
     <div>
-        <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
+        <h3>{% trans "Your answer:" %}</h3>
+        {{my_answers}}
         <input class="button" type="button" value="Replay" onClick="window.location='{% url activities:replay activity.id %}' ">
+        <input class="button" type="button" value="{% trans "See Your Answer" %}" onClick="window.location='#comment-{{my_comment.id}}' ">
     </div>
     
     {% include "player_activities/attachments.html" %}
     
-    <ul>
-        {% for choice in choices %}
-            <li>{{choice.value}}: {{choice.multiresponse_answers.count}}</li>
-        {% endfor %}
-    </ul>
-    <h3>Answer Selections</h3>
+    <h2>{% trans "Response Summary" %}</h2>
     <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
         margin-top: 25px; margin-bottom: 25px; "></div>
 
@@ -31,7 +28,7 @@
             <h3>
                 {% blocktrans %}{{comment_heading}}{% endblocktrans %}
                 <div class="controls right">
-                    Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+                    Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
                 </div>
             </h3>
             {% if comments %}
@@ -49,7 +46,7 @@
             <h3>
                 {% blocktrans %}{{comment_heading}}{% endblocktrans %}
                 <div class="controls right">
-                    Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+                    Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
                 </div>
             </h3>
             {% if comments %}

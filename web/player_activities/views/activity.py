@@ -2,8 +2,8 @@ from operator import itemgetter
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import Q
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -11,14 +11,16 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
-from player_activities.views import (_get_activity, 
-                                    getComments, comment_fun, 
-                                    _get_translatable_field)
-from player_activities.forms import *
-from player_activities.models import *
+from PIL import Image
+
 from answers.models import *
 from comments.models import *
 from comments.forms import *
+from player_activities.forms import *
+from player_activities.models import *
+from player_activities.views import (_get_activity, 
+                                    getComments, comment_fun, 
+                                    _get_translatable_field)
 from reports.actions import *
 
 @login_required
@@ -103,23 +105,28 @@ def overview(request, id):
         choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
         answers = AnswerMultiChoice.objects.filter(option__activity=activity)
 
+        my_comment = None
         answer_dict = {}
         for answer in answers:
             if answer.user not in answer_dict:
                 answer_dict[answer.user] = {'answers': [], 'comments': []}
             answer_dict[answer.user]['answers'].append('<li>%s</li>' % answer.option.value)
             for comment in answer.comments.all():
+                if not my_comment:
+                    my_comment = comment
                 answer_dict[answer.user]['comments'].append(comment)
 
         all_answers = []
         for user, data in sorted(answer_dict.items()):
             all_answers.append((user, mark_safe('<ul>' + ''.join(data['answers']) + '</ul>'), data['comments']))
-
+        my_answers = mark_safe('<ul>' + ''.join(answer_dict[request.user]['answers']) + '</ul>')
         template = 'player_activities/multi_overview.html'
         context.update(
             dict(
                 choices = choices,
-                all_answers = all_answers
+                all_answers = all_answers,
+                my_answers = my_answers,
+                my_comment = my_comment
             )
         )
 

@@ -7,7 +7,7 @@
     <h2>{% blocktrans %}{{comment_heading}}{% endblocktrans %}</h2>
     {% endif %}
     {% if instance.is_active %}
-        <h3>Add a comment</h3>
+    <h3>{% trans "Share your thoughts:" %}</h3>
         <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
             {% include "comments/duplicate.html" %}
             <button type="submit" class="button right">Add Comment</button>

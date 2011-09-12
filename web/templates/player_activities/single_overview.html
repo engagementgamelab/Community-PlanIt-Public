@@ -19,12 +19,7 @@
     </div>
     
     
-<h2>{% trans "Response Overview" %}</h2>
-    <ul>
-        {% for choice in choices %}
-            <li>{{choice.value}}: {{choice.singleresponse_answers.count}}</li>
-        {% endfor %}
-    </ul>
+<h2>{% trans "Response Summary" %}</h2>
     <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
         margin-top: 25px; margin-bottom: 25px; "></div>
 

@@ -1,11 +1,11 @@
 {% extends "player_activities/base.html" %}
 {% load gmap attachment_tags %}
-{% block title %}Open Response Overview{% endblock %}
+{% block title %}{{activity.name}}: Response Overview{% endblock %}
 
 {% block main %}
-    <h1>Open Response Overview</h1>
-    <h2>{{activity.question}}</h2>
-    
+<h1>{{activity.name}}</h1>
+<h3>{{activity.question}}</h3>
+
     <div>
         {% if myComment %}
         <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
@@ -15,7 +15,7 @@
     {% include "player_activities/attachments.html" %}
     
     <div id="comments">
-        {% with activity.mission.instance as instance %}
+        {% with instance=activity.mission.instance comment_heading="Responses" comments=activity.comments %}
         {% include "comments/post.html" %}
         {% endwith %}
         <div style="clear: both;"></div>

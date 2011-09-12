@@ -109,7 +109,7 @@ p.separate {
 
     .thumbnail {
         img {
-            width: 64px;
+            max-width: 80%;
             height: auto;
             border: 1px solid $lightgray;;
         }
@@ -911,6 +911,13 @@ p.separate {
 
             .comments {
                 position: relative;
+
+                .thumbnail {
+                    img {
+                        max-width: 128px;
+                        max-height: 128px;
+                    }
+                }
 
                 h2 {
                     padding: 0;
