@@ -1,3 +1,5 @@
+from PIL import Image
+
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from comments.forms import *
@@ -55,7 +57,6 @@ def process_comment(request, activity):
     Lovely side-effect programming, this. That monstrous overview method needs
     refactoring in the worst way.
     """
-
     if request.method == 'POST':
         print "POSTED COMMENT"
         comment_form = CommentForm(request.POST)
