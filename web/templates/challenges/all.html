@@ -61,11 +61,12 @@
 
 {% block main %}
 {% if not instance.is_expired %}
+    {% get_points challenge_completed as challenge_completed_points %}
     <ul class="challenge_list">
     {% for challenge in new_challenges %}
     <li class="challenge">
         <a href="{% url challenges:challenge challenge.pk %}">
-            {{challenge.name}}<span>{% get_points for completed challenge %} {% trans "points" %}</span>
+            {{challenge.name}}<span>{{challenge_completed_points}} {% trans "points" %}</span>
             {% if challenge.start_date or challenge.end_date %}
             <br/>
             <span class="dates">{{challenge.start_date|date:"m/d/Y"}} through {{challenge.end_date|date:"m/d/Y"}}</span>
