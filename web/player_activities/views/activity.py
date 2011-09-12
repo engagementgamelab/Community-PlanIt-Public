@@ -105,9 +105,9 @@ def overview(request, id):
     return HttpResponse("web page not created yet")
 
 
-def _activity_updated(request, activity):
-    ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
-    return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+def _activity_updated(request, activity, message):
+    ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", message, reverse("activities:activity", args=[activity.id]), "activity")
+    return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))   
 
 
 @login_required
@@ -177,7 +177,7 @@ def activity(request, id, template=None):
                             comment = comment,
                 )
                 #comment_fun(answer, comment_form, request)                
-                return _activity_updated(request, activity)
+                return _activity_updated(request, activity, "completed")
             else:
                 if form.errors:
                     errors.update(form.errors)
@@ -200,7 +200,7 @@ def activity(request, id, template=None):
                             selected=selected,
                 )
                 comment_fun(answer, comment_form, request)
-                return _activity_updated(request, activity)
+                return _activity_updated(request, activity, "completed")
             else:
                 if comment_form.errors:
                     errors.update(comment_form.errors)
@@ -237,7 +237,7 @@ def activity(request, id, template=None):
                             comment_fun(answer, comment_form, request)
                             first_found = True
                 PointsAssigner().assignAct(request.user, activity)
-                return _activity_updated(request, activity)
+                return _activity_updated(request, activity, "completed")
             else:
                 if comment_form.errors:
                     errors.update(comment_form.errors)
@@ -298,6 +298,7 @@ def replay(request, id):
                                 answerUser = request.user,
                     )
                     answer.comment = msg
+                    answer.save()
                 except AnswerOpenEnded.DoesNotExist:
                     answer = AnswerOpenEnded.objects.create(
                                 activity = activity,
@@ -306,12 +307,9 @@ def replay(request, id):
                     )
 
                 #comment_fun(answer, comment_form, request)
-            else:
-                if form.errors:
-                    errors.update(form.errors)
-                if comment_form.errors:
-                    errors.update(comment_form.errors)
-
+                return _activity_updated(request, activity, "replayed")
+            else:                
+                errors.update(form.errors)             
 
 
         if request.POST["form"] == "single_response":
@@ -334,6 +332,7 @@ def replay(request, id):
                                                                 id=int(cd.get('response'))
                                                     )
                     )
+                return _activity_updated(request, activity, "replayed")
             else:
                 errors.update(form.errors)
 
@@ -373,11 +372,11 @@ def replay(request, id):
                                 comment.save()
                             first_found = True
                 AnswerMultiChoice.objects.filter(pk__in=delete_answers).delete()
+                return _activity_updated(request, activity, "replayed")
             else:
                 errors.update(form.errors)
 
-        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
-        return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+        
 
     context = dict(
         form = form,
