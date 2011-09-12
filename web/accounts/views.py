@@ -324,11 +324,11 @@ def profile(request, id):
                 user=request.user,
                 instance=instance,
             ) 
-            try:
-                locale = request.META['PATH_INFO'].split('/')[1]
-            except:
-                locale = get_language()
-            comment.translate(locale)              
+            #try:
+            #    locale = request.META['PATH_INFO'].split('/')[1]
+            #except:
+            #    locale = get_language()
+            #comment.translate(locale)              
             comment.message = u'%s' % comment_form.cleaned_data['message']
             comment.save()
 

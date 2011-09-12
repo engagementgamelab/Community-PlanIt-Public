@@ -1,3 +1,5 @@
+from PIL import Image
+
 from django.conf import settings
 
 from django.contrib.contenttypes.models import ContentType
@@ -6,6 +8,7 @@ from PIL import Image
 
 from comments.forms import *
 from comments.models import Comment
+from player_activities.models import PlayerActivity
 
 def _get_activity(pk, model_klass):
     trans_model = model_klass.objects.translations_model()
@@ -53,8 +56,12 @@ def comment_fun(answer, form, request):
             user=request.user,
             instance=request.user.get_profile().instance)
 
-def getComments(answers, ModelType):
+def getComments(answers, ModelType, activity=None):
     comments = None
+    if activity:
+        act_type = ContentType.objects.get_for_model(PlayerActivity)
+        comments = Comment.objects.filter(content_type=act_type, object_id=activity.pk)
+
     answer_type = ContentType.objects.get_for_model(ModelType)
     for answer in answers:
         if comments == None:
@@ -62,3 +69,4 @@ def getComments(answers, ModelType):
         else:
             comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
     return comments
+

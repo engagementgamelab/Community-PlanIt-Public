@@ -22,5 +22,7 @@
     {% endfor %}
     </tbody>
 </table>
-{% pagenavigator activities_page request.get_full_path %}
+{% ifnotequal paginator.num_pages 1%}
+    {% pagenavigator activities_page request.get_full_path %}
+{% endifnotequal %}
 {% endif %}
