@@ -71,7 +71,7 @@ def overview(request, id):
             dict(
                 choices = choices,
                 answers = answers,
-                comments = getComments(answers, AnswerSingleResponse),
+                comments = getComments(answers, AnswerSingleResponse, activity=activity),
                 myComment = myComment,
             )
         )
@@ -81,14 +81,8 @@ def overview(request, id):
         choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
         answers = AnswerMultiChoice.objects.filter(option__activity=activity)
         myAnswer = answers.filter(user=request.user)
-        comments = None
-        answer_type = ContentType.objects.get_for_model(AnswerMultiChoice)
-
-        for answer in answers:
-            if comments == None:
-                comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-            else:
-                comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+        
+        comments = getComments(answers, AnswerMultiChoice, activity=activity)
 
         myComment = None
         if comments is not None:
