@@ -81,20 +81,9 @@ def reply(request, id):
 @login_required
 def edit(request, id, lang_code=None):    
     comment = get_object_or_404(Comment, id=id)    
-    trans = None
-    for language_code, _lang_name in settings.LANGUAGES:
-        try:
-            trans = get_translation(comment, language_code)
-            break
-        except:
-            pass
-    if trans is not None:
-        comment = Comment.objects.language(trans.language_code).get(id=id)    
-    
-    comment_form = CommentForm(data=request.POST or None)
-    comment_form.allow_replies = False
     
     if request.method == "POST":
+        comment_form = CommentForm(request.POST)
         s = ""
         for x in request.POST.keys():
             s = "%s%s: %s<br>" % (s, x, request.POST[x])
@@ -133,17 +122,17 @@ def edit(request, id, lang_code=None):
                     user=request.user,
                     instance=request.user.get_profile().instance)
             return HttpResponseRedirect(comment.get_absolute_url())
+
+    comment_form = CommentForm(initial={'message': comment.message})
    
     tmpl = loader.get_template('comments/edit.html')
     
     if comment.user != request.user:
         return HttpResponse(tmpl.render(RequestContext(request, {"not_permitted": True }, 
-            #[ip]
             )))
     else:
         return HttpResponse(tmpl.render(RequestContext(request, {"comment": comment,
                                                                  "comment_form": comment_form }, 
-                                                                 #[ip]
                                                                  )))
                                                                  
 
