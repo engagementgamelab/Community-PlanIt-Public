@@ -31,7 +31,7 @@ def affiliation(request, affiliation):
     affiliation_points = 0
     
     for player in players:
-        affiliation_points += player.get_profile().points
+        affiliation_points += player.get_profile().totalPoints
     
     tmpl = loader.get_template('affiliations/base.html')
     return HttpResponse(tmpl.render(RequestContext(request, {

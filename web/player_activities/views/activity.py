@@ -71,7 +71,7 @@ def overview(request, id):
             dict(
                 choices = choices,
                 answers = answers,
-                comments = getComments(answers, AnswerSingleResponse),
+                comments = getComments(answers, AnswerSingleResponse, activity=activity),
                 myComment = myComment,
             )
         )
@@ -81,14 +81,8 @@ def overview(request, id):
         choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
         answers = AnswerMultiChoice.objects.filter(option__activity=activity)
         myAnswer = answers.filter(user=request.user)
-        comments = None
-        answer_type = ContentType.objects.get_for_model(AnswerMultiChoice)
-
-        for answer in answers:
-            if comments == None:
-                comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-            else:
-                comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+        
+        comments = getComments(answers, AnswerMultiChoice, activity=activity)
 
         myComment = None
         if comments is not None:
@@ -110,14 +104,16 @@ def overview(request, id):
         return render_to_response(template, context, RequestContext(request))
     return HttpResponse("web page not created yet")
 
+
+def _activity_updated(request, activity, message):
+    ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", message, reverse("activities:activity", args=[activity.id]), "activity")
+    return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))   
+
+
 @login_required
-def activity(request, id, template=None):
-
-
+def activity(request, id, template=None):    
     activity = _get_activity(id, PlayerActivity)
-
-    print activity
-
+    
     answer_kwargs = dict(activity = activity, answerUser = request.user)
     answers = []
     if (activity.type.type == "single_response"):
@@ -180,14 +176,15 @@ def activity(request, id, template=None):
                             answerUser = request.user,
                             comment = comment,
                 )
-                #comment_fun(answer, comment_form, request)
+                #comment_fun(answer, comment_form, request)                
+                return _activity_updated(request, activity, "completed")
             else:
                 if form.errors:
                     errors.update(form.errors)
                 if comment_form.errors:
                     errors.update(comment_form.errors)
 
-        elif request.POST["form"] == "single_response":
+        elif request.POST["form"] == "single_response":            
             template = 'player_activities/single_response.html'
             choices = _get_mc_choices()
             form = make_single_form(choices)(request.POST)
@@ -203,12 +200,12 @@ def activity(request, id, template=None):
                             selected=selected,
                 )
                 comment_fun(answer, comment_form, request)
+                return _activity_updated(request, activity, "completed")
             else:
                 if comment_form.errors:
                     errors.update(comment_form.errors)
                 if form.errors:
                     errors.update(form.errors)
-
         elif request.POST["form"] == "multi_response":
             template = 'player_activities/multi_response.html'
             choices = _get_mc_choices()
@@ -240,14 +237,12 @@ def activity(request, id, template=None):
                             comment_fun(answer, comment_form, request)
                             first_found = True
                 PointsAssigner().assignAct(request.user, activity)
+                return _activity_updated(request, activity, "completed")
             else:
                 if comment_form.errors:
                     errors.update(comment_form.errors)
                 if form.errors:
-                    errors.update(form.errors)
-
-        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "completed", reverse("activities:activity", args=[activity.id]), "activity")
-        return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+                    errors.update(form.errors)        
 
     context = dict(
         form = form, 
@@ -303,6 +298,7 @@ def replay(request, id):
                                 answerUser = request.user,
                     )
                     answer.comment = msg
+                    answer.save()
                 except AnswerOpenEnded.DoesNotExist:
                     answer = AnswerOpenEnded.objects.create(
                                 activity = activity,
@@ -311,12 +307,9 @@ def replay(request, id):
                     )
 
                 #comment_fun(answer, comment_form, request)
-            else:
-                if form.errors:
-                    errors.update(form.errors)
-                if comment_form.errors:
-                    errors.update(comment_form.errors)
-
+                return _activity_updated(request, activity, "replayed")
+            else:                
+                errors.update(form.errors)             
 
 
         if request.POST["form"] == "single_response":
@@ -339,6 +332,7 @@ def replay(request, id):
                                                                 id=int(cd.get('response'))
                                                     )
                     )
+                return _activity_updated(request, activity, "replayed")
             else:
                 errors.update(form.errors)
 
@@ -378,11 +372,11 @@ def replay(request, id):
                                 comment.save()
                             first_found = True
                 AnswerMultiChoice.objects.filter(pk__in=delete_answers).delete()
+                return _activity_updated(request, activity, "replayed")
             else:
                 errors.update(form.errors)
 
-        ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", "replayed", reverse("activities:activity", args=[activity.id]), "activity")
-        return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+        
 
     context = dict(
         form = form,
