@@ -36,11 +36,9 @@ class Comment(models.Model):
 
     def __unicode__(self):
         if self.message:
-            try:
-                msg = self.message[:25]
-            except:
-                msg = self.message
-        return msg
+            return self.message
+        else:
+            return self.pk
 
     #
     # URL resolution cribbed from django's contrib comments

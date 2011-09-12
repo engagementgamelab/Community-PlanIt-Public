@@ -147,7 +147,7 @@ def activity(request, id, template=None):
     if (activity.type.type == "single_response"):
         answers = AnswerSingleResponse.objects.filter(**answer_kwargs)
     elif (activity.type.type == "open_ended"):
-        answers = AnswerOpenEnded.objects.filter()
+        answers = AnswerOpenEnded.objects.filter(**answer_kwargs)
     elif (activity.type.type == 'multi_response'):
         answers = AnswerMultiChoice.objects.filter(option__activity=activity, user=request.user)
 
@@ -196,13 +196,11 @@ def activity(request, id, template=None):
             form = make_openended_form()(request.POST)
             if form.is_valid() and comment_form.is_valid():
                 cd = comment_form.cleaned_data
-                comment = cd.get('message')
                 answer = AnswerOpenEnded.objects.create(
                             activity = activity,
                             answerUser = request.user,
-                            comment = comment,
                 )
-                #comment_fun(answer, comment_form, request)                
+                comment_fun(answer, comment_form, request)
                 return _activity_updated(request, activity, "completed")
             else:
                 if form.errors:

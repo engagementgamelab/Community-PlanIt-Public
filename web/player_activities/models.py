@@ -39,6 +39,12 @@ class PlayerActivityBase(TranslatableModel):
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
     comments = generic.GenericRelation(Comment)
 
+    def getPoints(self):
+        if self.points == None:
+            return self.type.defaultPoints
+        else:
+            return self.points
+
     class Meta:
         abstract = True
 
@@ -54,12 +60,6 @@ class PlayerActivity(PlayerActivityBase):
 
     class Meta:
         verbose_name_plural = 'Player Activities'
-
-    def getPoints(self):
-        if self.points == None:
-            return self.type.defaultPoints
-        else:
-            return self.points
 
     @models.permalink
     def get_absolute_url(self):
@@ -96,12 +96,6 @@ class PlayerMapActivity(PlayerActivityBase):
     
     class Meta:
         verbose_name_plural = 'Player Map Activities'
-
-    def getPoints(self):
-        if self.points == None:
-            return self.type.defaultPoints
-        else:
-            return self.points
 
     @models.permalink
     def get_absolute_url(self):
@@ -150,12 +144,6 @@ class PlayerEmpathyActivity(PlayerActivityBase):
 
     def get_replay_url(self):
         return reverse('activities:empathy-replay', args=(self.pk,))
-
-    def getPoints(self):
-        if self.points == None:
-            return self.type.defaultPoints
-        else:
-            return self.points
 
     def save(self, *args, **kwargs):
         self.createDate = datetime.datetime.now()
