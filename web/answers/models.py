@@ -46,6 +46,10 @@ class AnswerMultiChoice(models.Model):
     def __unicode__(self):
         return self.option.value
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ("player_activities:overview", [self.option.activity.id])
+
 class AnswerMap(Answer):
     map = GoogleMapsField()
     activity = models.ForeignKey(PlayerMapActivity, related_name='map_answers')
