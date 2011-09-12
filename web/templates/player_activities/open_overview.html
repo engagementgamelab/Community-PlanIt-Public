@@ -1,19 +1,21 @@
 {% extends "player_activities/base.html" %}
-{% load gmap attachment_tags %}
+{% load gmap attachment_tags i18n %}
 {% block title %}{{activity.name}}: Response Overview{% endblock %}
 
 {% block main %}
 <h1>{{activity.name}}</h1>
 <h3>{{activity.question}}</h3>
 
+
+    {% include "player_activities/attachments.html" %}
+
     <div>
-        {% if myComment %}
-        <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
+        {% if myAnswer %}
+        <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>
+        <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:replay activity.id %}' ">
         {% endif %}
     </div>
-    
-    {% include "player_activities/attachments.html" %}
-    
+
     <div id="comments">
         {% with instance=activity.mission.instance comment_heading="Responses" comments=activity.comments %}
         {% include "comments/post.html" %}

@@ -1,4 +1,5 @@
 {%extends "player_activities/base.html"%}
+{% load i18n %}
 {%block title%}Open Response{%endblock%}
 
 {%block activity%}
@@ -8,6 +9,8 @@
     {{ block.super }}
     <form id="id_activity-form" enctype="multipart/form-data" action="" method="POST">{% csrf_token %}
         <input type="hidden" name="form" value="open_ended">
+        <h3>{% trans "Enter your response" %}</h3>
+        {{ form.response_message }}
         {% block comment %}{% endblock %}
         <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
     </form>

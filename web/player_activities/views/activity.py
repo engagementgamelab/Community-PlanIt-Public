@@ -71,11 +71,19 @@ def overview(request, id):
     )
 
     if activity.type.type == "open_ended":
-        answers = AnswerOpenEnded.objects.filter(activity=activity, answerUser=request.user)
+        answers = AnswerOpenEnded.objects.filter(activity=activity)
+        myAnswer = answers.filter(answerUser=request.user)
+        if myAnswer.count() > 0:
+            myAnswer = myAnswer[0]
+            comments = myAnswer.comments.all()
+            if comments.count():
+                myComment = comments[0]
         template = 'player_activities/open_overview.html'
         context.update(
             dict(
                 answers = answers,
+                myAnswer = myAnswer, 
+                myComment = myComment,
             )
         )
 
@@ -195,10 +203,11 @@ def activity(request, id, template=None):
             template = 'player_activities/open_response.html'
             form = make_openended_form()(request.POST)
             if form.is_valid() and comment_form.is_valid():
-                cd = comment_form.cleaned_data
+                response_message = form.cleaned_data.get('response_message', '')
                 answer = AnswerOpenEnded.objects.create(
                             activity = activity,
                             answerUser = request.user,
+                            comment = response_message,
                 )
                 comment_fun(answer, comment_form, request)
                 return _activity_updated(request, activity, "completed")
@@ -278,7 +287,7 @@ def activity(request, id, template=None):
 
 @login_required
 def replay(request, id):    
-    activity = PlayerActivity.objects.get(id=id)
+    activity = _get_activity(id, PlayerActivity)
     form = None
     errors = {}
 
@@ -307,40 +316,26 @@ def replay(request, id):
 
     if request.method == "POST":
 
-        if request.POST["form"] == "open_ended":
+        def _get_mc_choices():
+            return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id').values_list('pk', 'value')
 
+        if request.POST["form"] == "open_ended":
             form = make_openended_form()(request.POST)
             if form.is_valid():
-                cd = form.cleaned_data
-                msg = cd.get('message')
-                import ipdb;ipdb.set_trace()
-                #FIXME
-                # there should be one unique answer to replay?
-                try:
-                    answer = AnswerOpenEnded.objects.get(
-                                activity = activity,
-                                answerUser = request.user,
-                    )
-                    answer.comment = msg
-                    answer.save()
-                except AnswerOpenEnded.DoesNotExist:
-                    answer = AnswerOpenEnded.objects.create(
-                                activity = activity,
-                                answerUser = request.user,
-                                comment = msg,
-                    )
+                answer = AnswerOpenEnded.objects.get(
+                            activity = activity,
+                            answerUser = request.user,
+                )
+                answer.comment = form.cleaned_data.get('message')
+                answer.save()
 
                 #comment_fun(answer, comment_form, request)
                 return _activity_updated(request, activity, "replayed")
             else:                
                 errors.update(form.errors)             
 
-
         if request.POST["form"] == "single_response":
-            mc = MultiChoiceActivity.objects.filter(activity=activity)
-            choices = []
-            for x in mc:
-                choices.append((x.id, x.value))
+            choices = _get_mc_choices()
             form = make_single_form(choices)(request.POST)
             if form.is_valid():
                 cd = form.cleaned_data
@@ -361,10 +356,8 @@ def replay(request, id):
                 errors.update(form.errors)
 
         elif request.POST["form"] == "multi_response":
-            mc = MultiChoiceActivity.objects.filter(activity=activity)
-            choices = []
-            for x in mc:
-                choices.append((x.id, x.value))
+
+            choices = _get_mc_choices()
             form = make_multi_form(choices)(request.POST)
             if form.is_valid():
                 #this gets very very messy....
