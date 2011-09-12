@@ -75,7 +75,7 @@ def reply(request, id):
 
     if recipient:
         recipient.notifications.create(content_object=c, message=message)
-
+    print "redir: ", c.get_absolute_url()
     return HttpResponseRedirect(c.get_absolute_url())
 
 @login_required

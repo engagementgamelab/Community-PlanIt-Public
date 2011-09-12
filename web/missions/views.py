@@ -29,10 +29,7 @@ def fetch(request, slug, template='missions/base.html'):
     for activity in activities:
         for answer_klass in [AnswerEmpathy, AnswerMap, AnswerSingleResponse, AnswerOpenEnded]:
             related_name = answer_klass.__name__.replace('Answer', '').lower() + '_answers'
-            print answer_klass.__name__, related_name
-            #if activity.type.type == 'open_ended' and answer_klass == AnswerOpenEnded:
-            #import ipdb;ipdb.set_trace()
-            if hasattr(activity, related_name) and getattr(activity, related_name).all():
+            if hasattr(activity, related_name) and getattr(activity, related_name).filter(answerUser=request.user):
                 completed.append(activity)
 
         #if activity.type.type == 'multi_reponse':
