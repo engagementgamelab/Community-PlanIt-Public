@@ -43,6 +43,9 @@ class AnswerMultiChoice(models.Model):
     option = models.ForeignKey(MultiChoiceActivity, related_name='multiresponse_answers')
     comments = generic.GenericRelation(Comment)
 
+    def __unicode__(self):
+        return self.option.value
+
 class AnswerMap(Answer):
     map = GoogleMapsField()
     activity = models.ForeignKey(PlayerMapActivity, related_name='map_answers')

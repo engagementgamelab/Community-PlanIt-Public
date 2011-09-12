@@ -909,15 +909,26 @@ p.separate {
                 }
             }
 
-            #comments {
+            .comments {
                 position: relative;
 
                 h2 {
-                    margin: 1em 0 0 0;
+                    padding: 0;
+                    margin: .5em 0;
 
                     .controls {
                         line-height: 2.25;
                         font-size: .5em;
+                        text-transform: uppercase;
+                    }
+                }
+
+                h3 {
+                    margin: .5em 0 0 0;
+                    padding: 0;
+                    .controls {
+                        line-height: 1;
+                        font-size: .75em;
                         text-transform: uppercase;
                     }
                 }
@@ -935,8 +946,9 @@ p.separate {
                     padding: 0;
                 }
 
-                .comments {
+                .comment_list {
                     position: relative;
+                    margin: 0;
                     padding: 0;
                     list-style: none;
 
@@ -944,11 +956,22 @@ p.separate {
                         position: relative;
                         float: none;
                         clear: both;
-                        margin: 1em 0 2em 0;
+                        margin: 0 0 2em 0;
                         min-width: 30em;
                         overflow: auto;
                         background: #f9fafa;
                         border-top: 1px solid $lightgray;
+
+                        .extra {
+                            font-weight: bold;
+                            margin: .5em 0;
+
+                            ul {
+                                list-style: disc;
+                                margin: 0;
+                                padding: 0;
+                            }
+                        }
 
                         .likes {
                             float: left;
@@ -1066,11 +1089,6 @@ p.separate {
                     font-size: 120%;
                 }
 
-                h3 {
-                    margin: 0;
-                    margin-bottom: 20px;
-                }
-                
                 textarea {
                     width: 98%;
                     border-width: 1px;
@@ -1078,7 +1096,7 @@ p.separate {
                     margin-bottom: 0;
                 }
 
-                #comments .counter {
+                .comments .counter {
                     float: left;
                     clear: left;
                 }

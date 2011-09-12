@@ -97,11 +97,12 @@
                     label: {
                         show: true,
                         radius: 1/2,
+                        radius: .55,
                         formatter: function(label, series) {
-                            var output = '<div style="font-size:.8em;text-align:center;color:black;">' + label;
-                            {% if player_spent > 0 %}
-                            output += '<br/>'+Math.round(series.percent)+'%</div>';
-                            {% endif %}
+                            var output = '<div class="pielabel">' + label;
+                            if (series.percent < 100) {
+                                output += '<br/><strong>'+Math.round(series.percent)+'%</strong></div>';
+                            }
                             return output;
                         },
                         threshold: 0.1

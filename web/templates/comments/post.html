@@ -1,22 +1,10 @@
-<div id="comments">
+{% load i18n %}
+{% with comment_heading=comment_heading|default:"Comments" %}
+<div class="comments">
     {% if not comment_form.just_one_form %}
-    <h2>
-        Comments
-        {% if comments.count %}
-        <div class="controls right">
-            Sort by: <a class="button comment_sort_time" href="#comments">timestamp</a> <a class="button comment_sort_activity" href="#comments">popularity</a>
-        </div>
-        {% endif %}
-    </h2>
-    <ul class="comments">
-        {% for comment in comments.all reversed %}
-            {% include "comments/comment.html" %}
-        {% empty %}
-        <li class="comment">No comments found.</li>
-        {% endfor %}
-    </ul>
+        {% include "comments/comments.html" %}
     {% else %}
-    <h2>Comments</h2>
+    <h2>{% blocktrans %}{{comment_heading}}{% endblocktrans %}</h2>
     {% endif %}
     {% if instance.is_active %}
         <h3>Add a comment</h3>
@@ -28,3 +16,4 @@
     <p>This community is no longer active.</p>
     {% endif %}
 </div>
+{% endwith %}

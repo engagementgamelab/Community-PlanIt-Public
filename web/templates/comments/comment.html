@@ -1,4 +1,4 @@
-{% load attachment_tags %}
+{% load attachment_tags i18n %}
 <li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
     <div class="likes">
         <div class="count">{{comment.likes.count}}</div>
@@ -18,14 +18,19 @@
                 {% endif %}
             </div>
             
-            On {{comment.posted_date|date:"F j, Y"}} at {{comment.posted_date|date:"g:i a"}},
-            <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a>
-            wrote:
+            {% trans "From" %}
+            {% if comment.user == request.user %}
+            <a href="{% url accounts_profile comment.user.id %}">you</a>,
+            {% else %}
+            <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a>,
+            {% endif %}
+            {{comment.posted_date|date:"F j, Y"}}, {{comment.posted_date|date:"g:i a"}}
         </div>
         <div class="message">
             {% if comment.hidden %}
                 <div class="notice">This content has been flagged by the community and hidden by the administrator.</div>
             {% else %}
+                {% if extra_message %}<div class="extra">{{extra_message|linebreaksbr}}</div>{% endif %}
                 {{comment.message|linebreaksbr}}
             {% endif %}
         </div>
@@ -59,7 +64,7 @@
             </div>
             <div class="reply-modal">
                 <form enctype="multipart/form-data" method="POST" action="{% url comments:reply comment.id %}">
-                    {%csrf_token%}
+                    {% csrf_token %}
                     <textarea name="message" class="comment_message" cols="40" rows="6" id="id-{{comment.id}}_message"></textarea>
                     <button type="submit" class="button small submit">save reply</button>
                     <button type="reset" class="button small cancel">cancel</button>

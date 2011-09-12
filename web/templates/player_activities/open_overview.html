@@ -7,7 +7,9 @@
     <h2>{{activity.question}}</h2>
     
     <div>
+        {% if myComment %}
         <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
+        {% endif %}
     </div>
     
     {% include "player_activities/attachments.html" %}

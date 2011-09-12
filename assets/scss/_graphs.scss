@@ -128,3 +128,18 @@
 .sparklist li { 
   padding: 0.4em 0; 
 }
+/* PIE CHARTS */
+
+.pielabel {
+    max-width: 90px;
+    border: 1px solid #fff;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    padding: 2px;
+    font-size:.8em;
+    text-align:center;
+    color:black;
+    background: #fff;
+    background: rgba(255, 255, 255, .9);
+}

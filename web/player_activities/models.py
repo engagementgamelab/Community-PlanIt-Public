@@ -1,16 +1,17 @@
 import datetime
 
-from nani.admin import TranslatableAdmin, TranslatableStackedInline
-from nani.models import TranslatableModel, TranslatedFields
-
-from django.db import models
 from django.core.urlresolvers import reverse
+from django.db import models
+
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
+
+from nani.models import TranslatableModel, TranslatedFields
 
 from web.accounts.models import determine_path
 from web.attachments.models import Attachment
+from web.comments.models import Comment
 from web.missions.models import Mission
-from django.contrib.admin.options import ModelAdmin
 
 __all__ = ( 'PlayerActivityType','PlayerActivity', 'PlayerMapActivity', 'PlayerEmpathyActivity', 'MultiChoiceActivity', )
 
@@ -36,6 +37,7 @@ class PlayerActivityBase(TranslatableModel):
     createDate = models.DateTimeField(editable=False)
     points = models.IntegerField(blank=True, null=True, default=None)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
+    comments = generic.GenericRelation(Comment)
 
     class Meta:
         abstract = True
@@ -58,6 +60,10 @@ class PlayerActivity(PlayerActivityBase):
             return self.type.defaultPoints
         else:
             return self.points
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('activities:overview', (self.pk,))
 
     def get_overview_url(self):
         return reverse('activities:overview', args=(self.pk,))
@@ -97,6 +103,10 @@ class PlayerMapActivity(PlayerActivityBase):
         else:
             return self.points
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('activities:map-overview', (self.pk,))
+
     def get_overview_url(self):
         return reverse('activities:map-overview', args=(self.pk,))
 
@@ -127,6 +137,10 @@ class PlayerEmpathyActivity(PlayerActivityBase):
     
     class Meta:
         verbose_name_plural = 'Player Empathy Activities'
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('activities:empathy-overview', (self.pk,))
 
     def get_overview_url(self):
         return reverse('activities:empathy-overview', args=(self.pk,))
@@ -167,11 +181,7 @@ class MultiChoiceActivity(TranslatableModel):
         verbose_name_plural = 'Multiple Choice Activities'
 
     def __unicode__(self):
-        return self.safe_translation_getter('value', '%s' % self.pk)
-
-    def admin_name(self):
-        return self.__unicode__()
-    admin_name.short_description = 'Name'
+        return '%s' % self.pk # self.safe_translation_getter('value', '%s' % self.pk)
 
     @property
     def activity_type(self):
@@ -184,23 +194,3 @@ class MultiChoiceActivity(TranslatableModel):
     @property
     def mission_title(self):
         return self.activity.mission.title
-
-#*******************
-#### admin =========
-
-class PlayerActivityTypeAdmin(ModelAdmin):
-    list_display = ('type', 'defaultPoints',)
-
-
-class PlayerActivityAdmin(TranslatableAdmin):
-    list_display = ('__str__', 'mission', 'type', 'all_translations')
-
-class PlayerEmpathyActivityAdmin(TranslatableAdmin):
-    list_display = ('__str__', 'mission', 'type')
-
-
-class MultiChoiceActivityAdmin(TranslatableAdmin):
-	list_display = ('__str__', 'activity_type', 'activity_points', 'mission_title', 'all_translations')
-
-class PlayerMapActivityAdmin(TranslatableAdmin):
-    list_display = ('__str__', 'mission', 'type')

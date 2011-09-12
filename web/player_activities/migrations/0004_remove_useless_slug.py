@@ -20,14 +20,9 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         
-        # User chose to not deal with backwards NULL issues for 'PlayerActivity.slug'
-        raise RuntimeError("Cannot reverse this migration. 'PlayerActivity.slug' and its values cannot be restored.")
-
-        # User chose to not deal with backwards NULL issues for 'PlayerMapActivity.slug'
-        raise RuntimeError("Cannot reverse this migration. 'PlayerMapActivity.slug' and its values cannot be restored.")
-
-        # User chose to not deal with backwards NULL issues for 'PlayerEmpathyActivity.slug'
-        raise RuntimeError("Cannot reverse this migration. 'PlayerEmpathyActivity.slug' and its values cannot be restored.")
+        db.add_column('player_activities_playeractivity', 'slug', self.gf('django.db.models.fields.SlugField')(default='', max_length=250, blank=True), keep_default=False)
+        db.add_column('player_activities_playermapactivity', 'slug', self.gf('django.db.models.fields.SlugField')(default='', max_length=250, blank=True), keep_default=False)
+        db.add_column('player_activities_playerempathyactivity', 'slug', self.gf('django.db.models.fields.SlugField')(default='', max_length=250, blank=True), keep_default=False)
 
 
     models = {

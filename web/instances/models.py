@@ -12,7 +12,6 @@ from dateutil.relativedelta import relativedelta
 from gmapsfield.fields import GoogleMapsField
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
-from nani.utils import get_translation_aware_manager
 from south.modelsinspector import add_introspection_rules
 
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])

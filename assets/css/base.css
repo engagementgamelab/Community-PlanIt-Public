@@ -209,6 +209,20 @@
 .sparklist li {
   padding: 0.4em 0; }
 
+/* PIE CHARTS */
+.pielabel {
+  max-width: 90px;
+  border: 1px solid #fff;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  padding: 2px;
+  font-size: .8em;
+  text-align: center;
+  color: black;
+  background: #fff;
+  background: rgba(255, 255, 255, 0.9); }
+
 html, body {
   border: 0;
   margin: 0;
@@ -851,35 +865,51 @@ p.separate {
         font-size: 10px;
         font-weight: normal;
         text-transform: lowercase; }
-      .wrapper #main .content #comments {
+      .wrapper #main .content .comments {
         position: relative; }
-        .wrapper #main .content #comments h2 {
-          margin: 1em 0 0 0; }
-          .wrapper #main .content #comments h2 .controls {
+        .wrapper #main .content .comments h2 {
+          padding: 0;
+          margin: .5em 0; }
+          .wrapper #main .content .comments h2 .controls {
             line-height: 2.25;
             font-size: .5em;
             text-transform: uppercase; }
-        .wrapper #main .content #comments .hidden {
+        .wrapper #main .content .comments h3 {
+          margin: .5em 0 0 0;
+          padding: 0; }
+          .wrapper #main .content .comments h3 .controls {
+            line-height: 1;
+            font-size: .75em;
+            text-transform: uppercase; }
+        .wrapper #main .content .comments .hidden {
           position: absolute;
           opacity: 0; }
-        .wrapper #main .content #comments .limited {
+        .wrapper #main .content .comments .limited {
           color: #f00; }
-        .wrapper #main .content #comments .nested {
+        .wrapper #main .content .comments .nested {
           padding: 0; }
-        .wrapper #main .content #comments .comments {
+        .wrapper #main .content .comments .comment_list {
           position: relative;
+          margin: 0;
           padding: 0;
           list-style: none; }
-          .wrapper #main .content #comments .comments .comment {
+          .wrapper #main .content .comments .comment_list .comment {
             position: relative;
             float: none;
             clear: both;
-            margin: 1em 0 2em 0;
+            margin: 0 0 2em 0;
             min-width: 30em;
             overflow: auto;
             background: #f9fafa;
             border-top: 1px solid #f0f0f0; }
-            .wrapper #main .content #comments .comments .comment .likes {
+            .wrapper #main .content .comments .comment_list .comment .extra {
+              font-weight: bold;
+              margin: .5em 0; }
+              .wrapper #main .content .comments .comment_list .comment .extra ul {
+                list-style: disc;
+                margin: 0;
+                padding: 0; }
+            .wrapper #main .content .comments .comment_list .comment .likes {
               float: left;
               width: 10%;
               background-color: #00aeef;
@@ -887,78 +917,75 @@ p.separate {
               font-weight: bold;
               text-align: center;
               padding: 1em 0; }
-              .wrapper #main .content #comments .comments .comment .likes .count {
+              .wrapper #main .content .comments .comment_list .comment .likes .count {
                 font-size: 3em;
                 line-height: 1; }
-              .wrapper #main .content #comments .comments .comment .likes .button {
+              .wrapper #main .content .comments .comment_list .comment .likes .button {
                 margin-top: 1em; }
-            .wrapper #main .content #comments .comments .comment .main {
+            .wrapper #main .content .comments .comment_list .comment .main {
               float: right;
               width: 89%; }
-              .wrapper #main .content #comments .comments .comment .main .meta {
+              .wrapper #main .content .comments .comment_list .comment .main .meta {
                 padding-left: 1em;
                 overflow: auto;
                 font-family: UbuntuMedium;
                 white-space: nowrap; }
-                .wrapper #main .content #comments .comments .comment .main .meta a {
+                .wrapper #main .content .comments .comment_list .comment .main .meta a {
                   color: #00aeef; }
-              .wrapper #main .content #comments .comments .comment .main .actions {
+              .wrapper #main .content .comments .comment_list .comment .main .actions {
                 background: #4c4d4f;
                 color: white;
                 padding: 2px 4px; }
-                .wrapper #main .content #comments .comments .comment .main .actions img {
+                .wrapper #main .content .comments .comment_list .comment .main .actions img {
                   vertical-align: middle;
                   margin-right: 1em; }
-                .wrapper #main .content #comments .comments .comment .main .actions .open {
+                .wrapper #main .content .comments .comment_list .comment .main .actions .open {
                   display: none; }
-                .wrapper #main .content #comments .comments .comment .main .actions span {
+                .wrapper #main .content .comments .comment_list .comment .main .actions span {
                   margin-right: 1em; }
-              .wrapper #main .content #comments .comments .comment .main .controls {
+              .wrapper #main .content .comments .comment_list .comment .main .controls {
                 float: right;
                 clear: both;
                 text-align: right;
                 margin: 0 0 1em 0; }
-                .wrapper #main .content #comments .comments .comment .main .controls .reply-modal {
+                .wrapper #main .content .comments .comment_list .comment .main .controls .reply-modal {
                   position: relative;
                   width: 90%; }
-                .wrapper #main .content #comments .comments .comment .main .controls .reply-modal button {
+                .wrapper #main .content .comments .comment_list .comment .main .controls .reply-modal button {
                   float: right;
                   margin: 2px; }
-              .wrapper #main .content #comments .comments .comment .main .message {
+              .wrapper #main .content .comments .comment_list .comment .main .message {
                 padding: 1em;
                 word-wrap: break-word; }
-              .wrapper #main .content #comments .comments .comment .main .attachments div {
+              .wrapper #main .content .comments .comment_list .comment .main .attachments div {
                 margin-top: 1em;
                 padding: 0 1em; }
-              .wrapper #main .content #comments .comments .comment .main .replies {
+              .wrapper #main .content .comments .comment_list .comment .main .replies {
                 display: none;
                 float: none;
                 clear: both;
                 margin: 1em 0 0 1em; }
-        .wrapper #main .content #comments .error {
+        .wrapper #main .content .comments .error {
           background: none;
           border-width: 0px;
           position: absolute;
           top: 8px;
           left: 21px; }
-        .wrapper #main .content #comments .expand, .wrapper #main .content #comments .collapse {
+        .wrapper #main .content .comments .expand, .wrapper #main .content .comments .collapse {
           color: #999999;
           font-size: 12px;
           cursor: pointer; }
-        .wrapper #main .content #comments .nested li.comment {
+        .wrapper #main .content .comments .nested li.comment {
           display: list-item; }
-        .wrapper #main .content #comments h4 {
+        .wrapper #main .content .comments h4 {
           color: #001a39;
           font-size: 120%; }
-        .wrapper #main .content #comments h3 {
-          margin: 0;
-          margin-bottom: 20px; }
-        .wrapper #main .content #comments textarea {
+        .wrapper #main .content .comments textarea {
           width: 98%;
           border-width: 1px;
           color: #001a39;
           margin-bottom: 0; }
-        .wrapper #main .content #comments #comments .counter {
+        .wrapper #main .content .comments .comments .counter {
           float: left;
           clear: left; }
       .wrapper #main .content .columns {

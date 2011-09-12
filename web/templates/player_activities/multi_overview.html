@@ -1,5 +1,5 @@
 {% extends "player_activities/base.html" %}
-{% load gmap attachment_tags %}
+{% load gmap attachment_tags i18n %}
 {% block title %}Multiple Response Overview{% endblock %}
 
 {% block main %}
@@ -22,12 +22,54 @@
     <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
         margin-top: 25px; margin-bottom: 25px; "></div>
 
-    <div id="comments">
-        {% with activity.mission.instance as instance %}
-        {% include "comments/post.html" %}
+    <h2>{% trans "Responses" %}</h2>
+    <div class="comments embedded">
+        {% for user, answers, comments in all_answers %}
+        {% with instance=activity.mission.instance %}
+        {% if user == request.user %}
+            {% with comment_heading="Your Answer" %}
+            <h3>
+                {% blocktrans %}{{comment_heading}}{% endblocktrans %}
+                <div class="controls right">
+                    Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+                </div>
+            </h3>
+            {% if comments %}
+            <ul class="comment_list">
+                {% with extra_message=answers %}
+                {% for comment in comments %}
+                {% include "comments/comment.html" %}
+                {% endfor %}
+                {% endwith %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+        {% else %}
+        {% with comment_heading=user.get_profile.screen_name %}
+            <h3>
+                {% blocktrans %}{{comment_heading}}{% endblocktrans %}
+                <div class="controls right">
+                    Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+                </div>
+            </h3>
+            {% if comments %}
+            <ul class="comment_list">
+                {% with extra_message=answers %}
+                {% for comment in comments %}
+                {% include "comments/comment.html" %}
+                {% endfor %}
+                {% endwith %}
+            </ul>
+            {% endif %}
         {% endwith %}
-        <div style="clear: both;"></div>
+        {% endif %}
+        {% endwith %}
+        {% endfor %}
     </div>
+
+    {% with instance=activity.mission.instance comment_heading="Comments on this activity" comments=activity.comments %}
+    {% include "comments/post.html" %}
+    {% endwith %}
 
 {% endblock %}
 
@@ -54,12 +96,12 @@
                     },
                     label: {
                         show: true,
-                        radius: 1/2,
+                        radius: .55,
                         formatter: function(label, series) {
-                            var output = '<div style="font-size:.8em;text-align:center;color:black;">' + label;
-                            {% if player_spent > 0 %}
-                            output += '<br/>'+Math.round(series.percent)+'%</div>';
-                            {% endif %}
+                            var output = '<div class="pielabel">' + label;
+                            if (series.percent < 100) {
+                                output += '<br/><strong>'+Math.round(series.percent)+'%</strong></div>';
+                            }
                             return output;
                         },
                         threshold: 0.1

@@ -5,14 +5,15 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.template import RequestContext
 from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
 from player_activities.views import (_get_activity, 
                                     getComments, comment_fun, 
-                                    process_comment, _get_translatable_field)
+                                    _get_translatable_field)
 from player_activities.forms import *
 from player_activities.models import *
 from answers.models import *
@@ -30,7 +31,36 @@ def overview(request, id):
     else:
         raise Http404 ("PlayerActivity with id %s does not exist" % id)
 
-    comment_form = process_comment(request, activity)
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = Comment.objects.create(
+                content_object=activity,
+                message=comment_form.cleaned_data['message'], 
+                user=request.user,
+                instance=activity.mission.instance,
+            )
+            if request.POST.has_key('yt-url'):
+                if request.POST.get('yt-url'):
+                    comment.attachment.create(
+                            file=None,
+                            url=request.POST.get('yt-url'),
+                            type='video',
+                            user=request.user,
+                            instance=activity.mission.instance)
+            
+            if request.FILES.has_key('picture'):
+                file = request.FILES.get('picture')
+                picture = Image.open(file)
+                if (file.name.rfind(".") -1):
+                    file.name = "%s.%s" % (file.name, picture.format.lower())
+                comment.attachment.create(
+                    file=request.FILES.get('picture'),
+                    user=request.user,
+                    instance=activity.mission.instance)
+            return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
+    else:
+        comment_form = CommentForm()
 
     context = dict(
             activity = activity,
@@ -40,17 +70,10 @@ def overview(request, id):
 
     if activity.type.type == "open_ended":
         answers = AnswerOpenEnded.objects.filter(activity=activity, answerUser=request.user)
-        #myAnswer = AnswerOpenEnded.objects.filter(activity=activity, answerUser=request.user)
-        #myComment = None
-        #if len(myAnswer) > 0:
-        #    myAnswer = myAnswer[0]
-        #    myComment = myAnswer.comments.all()[0]
         template = 'player_activities/open_overview.html'
         context.update(
             dict(
                 answers = answers,
-        #        comments = getComments(answers, Answer),
-        #        myComment = myComment
             )
         )
 
@@ -71,38 +94,34 @@ def overview(request, id):
             dict(
                 choices = choices,
                 answers = answers,
-                comments = getComments(answers, AnswerSingleResponse),
+                myAnswer = myAnswer, 
                 myComment = myComment,
             )
         )
 
     elif activity.type.type == "multi_response":
-        #answers = AnswerMultiChoice.objects.filter(option__activity=activity)
         choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
         answers = AnswerMultiChoice.objects.filter(option__activity=activity)
-        myAnswer = answers.filter(user=request.user)
-        comments = None
-        answer_type = ContentType.objects.get_for_model(AnswerMultiChoice)
 
+        answer_dict = {}
         for answer in answers:
-            if comments == None:
-                comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-            else:
-                comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
+            if answer.user not in answer_dict:
+                answer_dict[answer.user] = {'answers': [], 'comments': []}
+            answer_dict[answer.user]['answers'].append('<li>%s</li>' % answer.option.value)
+            for comment in answer.comments.all():
+                answer_dict[answer.user]['comments'].append(comment)
 
-        myComment = None
-        if comments is not None:
-            myComment = comments.filter(user=request.user)
-        if myComment is not None and len(myComment) > 0:
-            myComment = myComment[0]
+        print answer_dict
+
+        all_answers = []
+        for user, data in sorted(answer_dict.items()):
+            all_answers.append((user, mark_safe('<ul>' + ''.join(data['answers']) + '</ul>'), data['comments']))
 
         template = 'player_activities/multi_overview.html'
         context.update(
             dict(
                 choices = choices,
-                answers = answers,
-                comments = comments,
-                myComment = myComment,
+                all_answers = all_answers
             )
         )
 
@@ -113,10 +132,7 @@ def overview(request, id):
 @login_required
 def activity(request, id, template=None):
 
-
     activity = _get_activity(id, PlayerActivity)
-
-    print activity
 
     answer_kwargs = dict(activity = activity, answerUser = request.user)
     answers = []
@@ -126,7 +142,7 @@ def activity(request, id, template=None):
         answers = AnswerOpenEnded.objects.filter()
 
     if len(list(answers)):
-        return HttpResponseRedirect(reverse("activities:replay", args=[activity.id]))
+        return HttpResponseRedirect(reverse("activities:overview", args=[activity.id]))
 
     #answers = Answer.objects.filter(activity=activity, answerUser=request.user)
     #if len(answers) > 0:
