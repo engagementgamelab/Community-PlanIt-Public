@@ -10,6 +10,7 @@ from web.accounts.models import UserProfileIncomes
 from web.accounts.models import UserProfileLiving
 from web.accounts.models import UserProfileGender
 from web.accounts.models import UserProfileRace
+from django.contrib.auth.forms import AuthenticationForm
 
 class RegisterForm(forms.Form):
 
@@ -177,3 +178,14 @@ class UserProfileForm(forms.ModelForm):
         fields = ( 'email', 'first_name', 'last_name', 'preferred_language',
                   'stake', 'birth_year', 'gender', 'race', 'phone_number',
                   'affiliations', 'education', 'income', 'living' )
+
+
+class AccountAuthenticationForm(AuthenticationForm):
+    """
+    Base class for authenticating users. Extend this to get a form that accepts
+    username/password logins.
+    """
+    def __init__(self, *args, **kwargs):
+        super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
+        self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)        
+        
