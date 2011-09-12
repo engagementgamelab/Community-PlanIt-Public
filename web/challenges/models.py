@@ -84,14 +84,7 @@ class Challenge(models.Model):
         return label
 
 class ChallengeAdmin(admin.ModelAdmin):
-    def save_model(self, request, obj, form, change):
-        obj.user = request.user
-        obj.save()
-        
-    obj = None
-    def get_form(self, request, obj=None, **kwargs):
-        self.obj = obj 
-        return super(ChallengeAdmin, self).get_form(request, obj, **kwargs)
+    list_display = ('__str__', 'screen_name')
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == 'attachments' and getattr(self, 'obj', None):
@@ -104,6 +97,13 @@ class ChallengeAdmin(admin.ModelAdmin):
         elif db_field.name == 'comments':
             kwargs['queryset'] = Challenge.objects.filter(id=-2)
         return super(ChallengeAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+
+    def get_form(self, request, obj=None, **kwargs):
+        self.obj = obj 
+        return super(ChallengeAdmin, self).get_form(request, obj, **kwargs)
+
+    def screen_name(self, obj):
+        return obj.user.get_profile() and obj.user.get_profile().screen_name or obj.user.username
 
 class PlayerChallengeQueryMixin(object):
     def accepted(self):

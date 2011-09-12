@@ -1,52 +1,41 @@
 from django import template
+
 from web.instances.models import PointsAssignment
+from web.player_activities.models import PlayerActivityBase
 
 register = template.Library()
 
-class GlobalPointsNode(template.Node):
-    def __init__(self, action, category):
-        self.category = template.Variable(category)
+class GetPointsNode(template.Node):
+    def __init__(self, action, var=None):
         self.action = action
+        self.var = var
 
     def render(self, context):
         instance = context['instance']
-    
+
         try:
-            self.category = self.category.resolve(context)
-            self.category = self.category.activity_type #TODO: fix this as it doesn't work. 
-            self.action = str(self.action)
-
-            if self.action == "all":
-                values = PointsAssignment.objects.filter(instance=instance, action__icontains=self.category).values('points')
-            else:
-                test= "%s_%s" % (self.category, self.action)
-                values = PointsAssignment.objects.filter(instance=instance, action="%s_%s" % (self.category, self.action)).values('points')
-
-            values = [thing['points'] for thing in values]
-        except template.VariableDoesNotExist:
-            if self.action == "all":
-                values = PointsAssignment.objects.filter(instance=instance, action__icontains=self.category).values('points')
-            else:
-                values = PointsAssignment.objects.filter(instance=instance, action="%s_%s" % (self.category, self.action)).values('points')
-
-            values = [thing['points'] for thing in values]
-        except AttributeError:
-            return 0
+            points_assignment = PointsAssignment.objects.get(instance=instance, action__action=self.action)
+            points = points_assignment.points
+        except:
+            points = 0
         
-        return sum(values)
-    
+        if self.var:
+            context[self.var] = points
+            return ''
+        return points
 
 @register.tag(name="get_points")
 def do_get_points(parser, token):
     """
-      usage: {% get_points for completed action_type %}
-      usage: {% get_points for created action_type %}
-      usage: {% get_points for all action_type %}
-      usage: {% get_points for game game_id %}
+      usage: {% get_points challenge_created %}
+      usage: {% get_points challenge_completed as challenge_completed_points %}
     """
     bits = token.contents.split()
-    if len(bits) != 4:
-        raise TemplateSyntaxError, "get_points should be formatted 'get_points for all/[action] category"
-    elif bits[1] != 'for':
-        raise TemplateSyntaxError, "'for' should be the second word"
-    return GlobalPointsNode(bits[2], bits[3])
+    if len(bits) < 2:
+        raise template.TemplateSyntaxError, "get_points should be formatted 'get_points action [as var]'"
+    action = bits[1]
+    if len(bits) > 3:
+        var = bits[3]
+    else:
+        var = None
+    return GetPointsNode(action, var)
