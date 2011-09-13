@@ -70,6 +70,7 @@ def overview(request, id):
 
     if activity.type.type == "open_ended":
         answers = AnswerOpenEnded.objects.filter(activity=activity)
+        myComment = None
         myAnswer = answers.filter(answerUser=request.user)
         if myAnswer.count() > 0:
             myAnswer = myAnswer[0]
