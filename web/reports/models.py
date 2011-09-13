@@ -6,8 +6,11 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 
 from gmapsfield.fields import GoogleMapsField
+from localeurl.utils import locale_url
+from localeurl.templatetags.localeurl_tags import rmlocale
 
 from instances.models import Instance
+from django.utils import translation
 
 class Activity(models.Model):
     action = models.CharField(max_length=48)
@@ -27,3 +30,9 @@ class Activity(models.Model):
     def __unicode__(self):
         label = self.action +' - '+ self.data
         return label
+    
+    def get_url(self):
+        if self.url:            
+            url = rmlocale(self.url)            
+            return locale_url(url, translation.get_language())
+        return None
