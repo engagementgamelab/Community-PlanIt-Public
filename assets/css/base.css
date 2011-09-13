@@ -1288,8 +1288,8 @@ ul#messages {
 .challenge_list {
   position: relative;
   list-style: none;
-  margin: 1em 0;
-  padding: .5em;
+  margin: 0;
+  padding: 0;
   width: 90%; }
   .challenge_list li.challenge {
     display: block;
@@ -1298,7 +1298,7 @@ ul#messages {
     background-color: #617c00;
     color: white;
     padding: 0;
-    margin: 4px 0; }
+    margin: 0 0 4px 0; }
     .challenge_list li.challenge a {
       display: block;
       color: white;
