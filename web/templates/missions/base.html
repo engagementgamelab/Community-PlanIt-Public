@@ -12,13 +12,16 @@
 <p class="notice">{% trans "This mission is not currently active. You can click on the activities to see overviews, but you cannot complete them" %}.</p>
 {% endif %}
 
-<div class="left description">
-    {% if mission.video %}
-    <div class="left video">{% youtube_video mission.video %}</div>
-    {% endif %}
-
+{% if mission.video %}
+<div class="left video">{% youtube_video mission.video %}</div>
+<div class="description" style="margin-left: 340px;">
     {{mission.description|linebreaksbr}}
 </div>
+{% else %}
+<div class="description">
+    {{mission.description|linebreaksbr}}
+</div>
+{% endif %}
 
 <h3 class="clear">
 {% if activities and mission.is_active %}
