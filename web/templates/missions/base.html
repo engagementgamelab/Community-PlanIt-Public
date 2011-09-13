@@ -19,33 +19,38 @@
 <div class="left description">{{mission.description|linebreaksbr}}</div>
 
 <h3 class="clear">
-{% if activities %}
+{% if activities and mission.is_active %}
     {% trans "You've completed" %} {{ completed|length }}/{{ activities|length }} {% trans "activities" %}:
 {% else %}
     Activities:
 {% endif %}</h3>
-{# include "player_activities/all_activities.html" #}
 <table class="activities">
     <tbody>
     {% for activity in activities %}
         <tr class="{% cycle 'odd' 'even' %}">
-        {% if activity in completed %}
-            <td class="{{activity.type.type}}_activity">
-                <a href="{{ activity.get_activity_url }}">{{ forloop.counter }} {{ activity|trans_fallback:"name" }}</a>
-            </td>
-            <td>{{ activity.getPoints }} {% trans "pts" %}</td> 
-            <td class="final">
-                <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a>
-            </td>
+
+        {% if not mission.is_active %}
+                <td colspan="3" class="{{activity.type.type}}_activity">
+                    {{ activity|trans_fallback:"name" }}
         {% else %}
-            <td class="{{activity.type.type}}_activity">
-                <a href="{{ activity.get_activity_url }}">{{ forloop.counter }} {{activity|trans_fallback:"name"}}</a>
-            </td>
-            <td>{{ activity.getPoints }} pts</td> 
-            <td class="final">
-                <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a>
-            </td>
+            {% if activity in completed %}
+                <td class="{{activity.type.type}}_activity">
+                    <a href="{{ activity.get_activity_url }}">{{ forloop.counter }} {{ activity|trans_fallback:"name" }}</a>
+                </td>
+                <td>{{ activity.getPoints }} {% trans "pts" %}</td> 
+                <td class="final">
+                    <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a>
+                </td>
+            {% else %}
+                <td class="{{activity.type.type}}_activity">
+                    <a href="{{ activity.get_activity_url }}">{{ forloop.counter }} {{activity|trans_fallback:"name"}}</a>
+                </td>
+                <td>{{ activity.getPoints }} pts</td> 
+                <td class="final">
+                    <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a>
+                </td>
             {% endif %}
+        {% endif %}
         </tr>
             {% empty %}
         <tr>
@@ -54,5 +59,4 @@
     {% endfor %}
     </tbody>
 </table>
-{# endwith #}
 {% endblock %}

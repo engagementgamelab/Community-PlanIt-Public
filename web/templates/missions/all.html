@@ -38,7 +38,7 @@
 {% for mission in future_missions %}
     <li>
         <h3>
-            {{ mission.name }}
+            <a href="{% url missions:mission mission.slug %}">{{ mission.name }}</a>
             <span class="dates">
                 {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
             </span>
@@ -54,7 +54,7 @@
 {% for mission in past_missions %}
     <li>
         <h3>
-            {{mission.name}}
+            <a href="{% url missions:mission mission.slug %}">{{mission.name}}</a>
             <span class="dates">
                 {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
             </span>
