@@ -6,6 +6,8 @@ import types
 import urllib
 import urlparse
 
+from nani.utils import get_translation
+
 from django.conf import settings
 from django import template
 from django.template.defaultfilters import stringfilter
@@ -101,8 +103,9 @@ def pagenavigator(parser, argument_string):
 
 @register.filter
 def trans_fallback(obj, attr):
-    if not get_language() in obj.get_available_languages():
-        return getattr(obj.translations.get(language_code=settings.LANGUAGE_CODE), attr)
+    if not get_language() in obj.get_available_languages() and \
+            settings.LANGUAGE_CODE in obj.get_available_languages():
+        return getattr(get_translation(obj, settings.LANGUAGE_CODE), attr)
     return getattr(obj, attr)
 
 
