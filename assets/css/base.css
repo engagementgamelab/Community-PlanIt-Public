@@ -221,7 +221,8 @@
   text-align: center;
   color: black;
   background: #f0f0f0;
-  background: rgba(255, 255, 255, 0.9); }
+  background: rgba(255, 255, 255, 0.9);
+  word-wrap: break-word; }
 
 html, body {
   border: 0;
