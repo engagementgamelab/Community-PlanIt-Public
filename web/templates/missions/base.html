@@ -1,5 +1,5 @@
 {% extends "layouts/base.html" %}
-{% load gmap i18n game_extras %}
+{% load gmap i18n game_extras cpi_tags %}
 {% block section %}missions{% endblock %}
 
 {% block title %}{{ mission.name }} {% trans "Mission" %}{% endblock %}
@@ -31,7 +31,7 @@
         <tr class="{% cycle 'odd' 'even' %}">
         {% if activity in completed %}
             <td class="{{activity.type.type}}_activity">
-                <a href="{{ activity.get_activity_url }}">{{activity.name}}</a>
+                <a href="{{ activity.get_activity_url }}">{{ forloop.counter }} {{ activity|trans_fallback:"name" }}</a>
             </td>
             <td>{{ activity.getPoints }} {% trans "pts" %}</td> 
             <td class="final">
@@ -39,7 +39,7 @@
             </td>
         {% else %}
             <td class="{{activity.type.type}}_activity">
-                <a href="{{ activity.get_activity_url }}">{{activity.name}}</a>
+                <a href="{{ activity.get_activity_url }}">{{ forloop.counter }} {{activity|trans_fallback:"name"}}</a>
             </td>
             <td>{{ activity.getPoints }} pts</td> 
             <td class="final">

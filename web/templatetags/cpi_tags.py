@@ -14,7 +14,7 @@ from django.utils.encoding import force_unicode
 from django.utils.functional import Promise
 from django.utils.html import fix_ampersands
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, get_language
 
 register = template.Library()
 
@@ -98,3 +98,11 @@ def pagenavigator(parser, argument_string):
         return PageNavigatorNode(argv[1], argv[2], argv[3], argv[4:])
     
     raise template.TemplateSyntaxError('The %s tag requires a paginator page and a base URL.' % argv[0])
+
+@register.filter
+def trans_fallback(obj, attr):
+    if not get_language() in obj.get_available_languages():
+        return getattr(obj.translations.get(language_code=settings.LANGUAGE_CODE), attr)
+    return getattr(obj, attr)
+
+

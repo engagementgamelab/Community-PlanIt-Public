@@ -21,15 +21,15 @@ def fetch(request, slug, template='missions/base.html'):
     activities = []
     completed = []
 
+    #does not work. why?PlayerActivityBase.__subclasses__()
     for model_klass in [PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity]:
-        activities.extend(
-                list(model_klass.objects.language(get_language()).filter(mission=mission))
-        )
+        #qs_res = model_klass.objects.language(get_language()).filter(mission=mission)
+        activities.extend(list(model_klass.objects.untranslated().filter(mission=mission)))
 
     for activity in activities:
         for answer_klass in [AnswerEmpathy, AnswerMap, AnswerSingleResponse, AnswerOpenEnded]:
             related_name = answer_klass.__name__.replace('Answer', '').lower() + '_answers'
-            if hasattr(activity, related_name) and getattr(activity, related_name).filter(answerUser=request.user):
+            if hasattr(activity, related_name) and getattr(activity, related_name).filter(answerUser=request.user).count():
                 completed.append(activity)
 
         #if activity.type.type == 'multi_reponse':
