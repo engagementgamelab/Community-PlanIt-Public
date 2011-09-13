@@ -13,9 +13,11 @@
         {%if instance.missions.active.count%}
             {% for mission in instance.missions.active %}
             <h2>{% trans "Current Mission" %} <span class="fine">{{mission.start_date|date:"n/j"}}&#8211;{{mission.end_date|date:"n/j"}}</span></h2>
+            {% if mission.video %}
             <div class="video">
                 {% youtube_video mission.video %}
             </div>
+            {% endif %}
             <h3>{{mission.name}}</h3>
             <p class="separate">
             {{mission.description|teaser:100}}
