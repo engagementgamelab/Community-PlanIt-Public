@@ -21,7 +21,14 @@ admin.site.register(Answer)
 admin.site.register(AnswerEmpathy)
 admin.site.register(AnswerSingleResponse)
 admin.site.register(AnswerOpenEnded)
-admin.site.register(AnswerMap)
+
+class AnswerMapAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'activity', 'user_name')
+    
+    def user_name(self, obj):
+        return obj.answerUser.get_profile() and obj.answerUser.get_profile().screen_name or answerUser.answerUsername
+
+admin.site.register(AnswerMap, AnswerMapAdmin)
 
 class AnswerMultiChoiceAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'activity', 'user_name')

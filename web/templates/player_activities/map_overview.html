@@ -19,11 +19,9 @@
     {% endfor %}
     <div id="map" class="google-map" data-type="Point" data-state="overview"></div>
 
-    <div id="comments">
-        {% with activity.mission.instance as instance %}
-        {% include "comments/post.html" %}
-        {% endwith %}
-    </div>
+    {% with activity.mission.instance as instance %}
+    {% include "comments/post.html" %}
+    {% endwith %}
 
 {% endblock %}
 
