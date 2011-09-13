@@ -5,7 +5,15 @@
 {% block extra_body_class %}rightsidebar{% endblock %}
 
 {%block title%}{% trans "Dashboard" %}{%endblock%}
-{%block page_title%}<h2 id="page_title">{{ instance.title }}</h2>{% endblock %}
+
+{%block page_title%}
+<h2 id="page_title">
+    {{ instance.title }}
+    <span class="dates">
+        {{ instance.start_date|date:"m/d/Y" }} &#8211; {{ instance.end_date|date:"m/d/Y" }}
+    </span>
+</h2>
+{% endblock %}
 
 {% block rightsidebar %}
 {% if instance.is_started %}
