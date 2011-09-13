@@ -208,6 +208,7 @@ def activity(request, id, template=None):
                             comment = response_message,
                 )
                 comment_fun(answer, comment_form, request)
+                PointsAssigner().assignAct(request.user, activity)
                 return _activity_updated(request, activity, "completed")
             else:
                 if form.errors:
@@ -231,6 +232,7 @@ def activity(request, id, template=None):
                             selected=selected,
                 )
                 comment_fun(answer, comment_form, request)
+                PointsAssigner().assignAct(request.user, activity)
                 return _activity_updated(request, activity, "completed")
             else:
                 if comment_form.errors:
@@ -324,7 +326,7 @@ def replay(request, id):
                             activity = activity,
                             answerUser = request.user,
                 )
-                answer.comment = form.cleaned_data.get('message')
+                answer.comment = form.cleaned_data.get('response_message')
                 answer.save()
 
                 #comment_fun(answer, comment_form, request)
