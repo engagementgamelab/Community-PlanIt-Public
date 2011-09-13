@@ -26,10 +26,8 @@ def fetch(request, slug, template='missions/base.html'):
         activities.extend(list(model_klass.objects.untranslated().filter(mission=mission)))
 
     for activity in activities:
-        for answer_klass in [AnswerEmpathy, AnswerMap, AnswerSingleResponse, AnswerOpenEnded]:
-            related_name = answer_klass.__name__.replace('Answer', '').lower() + '_answers'
-            if hasattr(activity, related_name) and getattr(activity, related_name).filter(answerUser=request.user).count():
-                completed.append(activity)
+        if activity.is_completed(request.user):
+            completed.append(activity)
 
         #if activity.type.type == 'multi_reponse':
         #    answers = AnswerMultiChoice.objects.filter(user=request.user, option__activity__mission=mission)

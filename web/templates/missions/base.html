@@ -36,7 +36,8 @@
 
         {% if not mission.is_active %}
                 <td colspan="3" class="{{activity.type.type}}_activity">
-                    {{ activity|trans_fallback:"name" }}
+                    <a href="{{ activity.get_overview_url }}">{{ activity|trans_fallback:"name" }}</a>
+                </td>
         {% else %}
             {% if activity in completed %}
                 <td class="{{activity.type.type}}_activity">

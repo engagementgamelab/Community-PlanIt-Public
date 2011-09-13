@@ -127,8 +127,8 @@
                             <td>
                                 <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
                                 {{activity.data}} 
-                                {% if activity.url %}
-                                    <a href="{{activity.url}}">{{activity.action}}</a>
+                                {% if activity.get_url %}
+                                    <a href="{{activity.get_url}}">{{activity.action}}</a>
                                 {% else %}
                                     {{activity.action}}
                                 {% endif %}

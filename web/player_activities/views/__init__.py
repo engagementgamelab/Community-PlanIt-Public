@@ -1,7 +1,8 @@
 from PIL import Image
 
 from django.conf import settings
-
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 
 from PIL import Image
@@ -9,6 +10,7 @@ from PIL import Image
 from comments.forms import *
 from comments.models import Comment
 from player_activities.models import PlayerActivity
+from reports.actions import ActivityLogger
 
 def _get_activity(pk, model_klass):
     trans_model = model_klass.objects.translations_model()
@@ -60,4 +62,9 @@ def getComments(answers, ModelType, activity=None):
         else:
             comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
     return comments
+
+def log_activity(request, activity, message, url_reverse="activities:overview"):
+    ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", message, reverse("activities:activity", args=[activity.id]), "activity")
+    return HttpResponseRedirect(reverse(url_reverse, args=[activity.id]))   
+
 
