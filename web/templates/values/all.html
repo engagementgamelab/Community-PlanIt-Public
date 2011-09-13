@@ -138,10 +138,9 @@
 {% block main %}
     {% with request.user as user%}
     <div class="full">
-        <p style="font-size: 1.25em;">Once you've earned some tokens in the system, you can spend them below
-           on community values. Watch the graphs shift as the community spends
-           its tokens and voices its priorities.  Be sure to use the links below
-           to discuss each community value.</p>
+        <p style="font-size: 1.25em;">
+           How should {{ user.get_profile.instance.title }} prioritize their planning goals!  Spend your tokens on the values that matter to you and tell decision-makers what's important to the community.
+           </p>
         <p style="font-size: 1.25em;">
            You have <span style="font-weight: bold">{{ user.get_profile.currentCoins|default:"no"|apnumber }}</span> 
            token{{ user.get_profile.currentCoins|pluralize }} to spend.
