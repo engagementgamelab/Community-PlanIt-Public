@@ -132,9 +132,15 @@ class UserProfileForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
-        stakes = [(0, '------')]
-        for x in self.instance.instance.stakes.all().order_by("pos"):
-            stakes.append((x.pk, x.stake))
+        from core.utils import get_translation_with_fallback
+
+        #stakes = [(0, '------')]
+        #for x in self.instance.instance.stakes.language(get_language()).all().order_by("pos"):
+        #    stakes.append((x.pk, x.stake))
+        all_stakes = Stake.objects.untranslated().filter(instance=self.instance.instance).order_by("pos")
+        print all_stakes
+        stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
+
         self.fields['stake'] = forms.ChoiceField(label=_(u'Stake'), required=False, choices=stakes)
     
     def clean_gender(self):
