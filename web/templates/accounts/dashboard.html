@@ -1,5 +1,5 @@
 {%extends "layouts/base.html"%}
-{% load game_extras i18n %}
+{% load attachment_tags cpi_tags game_extras i18n %}
 
 {% block section %}accounts{% endblock %}
 {% block extra_body_class %}rightsidebar{% endblock %}
@@ -13,9 +13,14 @@
         {%if instance.missions.active.count%}
             {% for mission in instance.missions.active %}
             <h2>{% trans "Current Mission" %} <span class="fine">{{mission.start_date|date:"n/j"}}&#8211;{{mission.end_date|date:"n/j"}}</span></h2>
-            <div class="video">{{mission.video|safe}}</div>
+            <div class="video">
+                {% youtube_video mission.video %}
+            </div>
             <h3>{{mission.name}}</h3>
-            <p class="separate">{{mission.description}}</p>
+            <p class="separate">
+            {{mission.description|teaser:100}}
+            <a href="{% url missions:mission mission.slug %}" title="{{mission.name}}">{% trans "Read More" %}</a>
+            </p>
             {% include "player_activities/all_activities_paginated.html" %}
             <div class="buttons">
                 <a class="button" href="{% url missions:mission mission.slug %}" title="{{mission.name}}">{% trans "View Current Mission" %}</a>

@@ -1597,6 +1597,16 @@ p {
     border: 1px solid #f0f0f0;
 }
 
+.video.left {
+    margin-right: 2em;
+    margin-bottom: .75em;
+}
+
+.video.right {
+    margin-left: 2em;
+    margin-bottom: .75em;
+}
+
 .mask {
     display: none;
     position: absolute;
