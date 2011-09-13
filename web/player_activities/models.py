@@ -13,6 +13,7 @@ from web.attachments.models import Attachment
 from web.comments.models import Comment
 from web.missions.models import Mission
 
+
 __all__ = ( 'PlayerActivityType','PlayerActivity', 'PlayerMapActivity', 'PlayerEmpathyActivity', 'MultiChoiceActivity', )
 
 def determine_path(instance, filename):
@@ -44,6 +45,13 @@ class PlayerActivityBase(TranslatableModel):
             return self.type.defaultPoints
         else:
             return self.points
+        
+    def is_completed(self):
+        for answer_klass_name in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse', 'AnswerOpenEnded']:
+            related_name = answer_klass_name.replace('Answer', '').lower() + '_answers'
+            if hasattr(self, related_name) and getattr(self, related_name).all().count():
+                return True
+        return False    
 
     class Meta:
         abstract = True
