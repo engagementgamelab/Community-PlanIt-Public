@@ -35,7 +35,7 @@
         {% else %}
             {% if activity in completed %}
                 <td class="{{activity.type.type}}_activity">
-                    <a href="{{ activity.get_activity_url }}">{{ forloop.counter }} {{ activity|trans_fallback:"name" }}</a>
+                    <a href="{{ activity.get_activity_url }}">{{ activity|trans_fallback:"name" }}</a>
                 </td>
                 <td>{{ activity.getPoints }} {% trans "pts" %}</td> 
                 <td class="final">
@@ -43,7 +43,7 @@
                 </td>
             {% else %}
                 <td class="{{activity.type.type}}_activity">
-                    <a href="{{ activity.get_activity_url }}">{{ forloop.counter }} {{activity|trans_fallback:"name"}}</a>
+                    <a href="{{ activity.get_activity_url }}">{{activity|trans_fallback:"name"}}</a>
                 </td>
                 <td>{{ activity.getPoints }} pts</td> 
                 <td class="final">
