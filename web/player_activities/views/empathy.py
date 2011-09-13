@@ -7,7 +7,8 @@ from django.shortcuts import render_to_response
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
-from player_activities.views import _get_activity, getComments, comment_fun
+from player_activities.views import _get_activity, getComments, comment_fun,\
+    log_activity
 from player_activities.forms import *
 from player_activities.models import *
 from answers.models import *
@@ -67,6 +68,7 @@ def empathy_activity(request, id, template='player_activities/empathy_response.h
             answer.save()
             comment_fun(answer, comment_form, request)
             PointsAssigner().assignAct(request.user, activity)
+            return log_activity(request, activity, "completed", url_reverse="activities:empathy-overview")
         else:
             if comment_form.errors:
                 errors.update(comment_form.errors)

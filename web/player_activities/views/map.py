@@ -8,13 +8,15 @@ from django.utils.translation import get_language
 from django.utils import simplejson
 from django.contrib.auth.decorators import login_required
 
-from player_activities.views import _get_activity, getComments, comment_fun
+from player_activities.views import _get_activity, getComments, comment_fun,\
+    log_activity
 from player_activities.forms import *
 from player_activities.models import *
 from answers.models import *
 from comments.models import *
 from comments.forms import *
 from reports.actions import *
+
 
 @login_required
 def map_overview(request, id, template='player_activities/map_overview.html'):
@@ -48,7 +50,7 @@ def map_overview(request, id, template='player_activities/map_overview.html'):
         myComment = myAnswer.comments.all()[0]
 
     context.update(dict(
-        comments =  getComments(answers, AnswerMap),
+        comments =  getComments(answers, AnswerMap, activity=activity),
         answers = answers,
         init_coords = init_coords,
         map = map,
@@ -95,6 +97,7 @@ def map_activity(request, id, template='player_activities/map_response.html'):
             answer.save()
             PointsAssigner().assignAct(request.user, activity)
             comment_fun(answer, comment_form, request)
+            return log_activity(request, activity, "completed", url_reverse="activities:map-overview")
         else:
             if comment_form.errors:
                 errors.update(comment_form.errors)
@@ -146,6 +149,7 @@ def map_replay(request, id, template='player_activities/map_replay.html'):
             answer.save()
             #except AnswerMap.DoesNotExist:
             #    answer = AnswerMap.objects.create(activity=activity, answerUser=request.user, map=map)
+            return log_activity(request, activity, "replayed", url_reverse="activities:map-overview")
         else:
             if comment_form.errors:
                 errors.update(comment_form.errors)
