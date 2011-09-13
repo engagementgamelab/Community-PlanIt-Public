@@ -18,9 +18,7 @@ from comments.models import *
 from comments.forms import *
 from player_activities.forms import *
 from player_activities.models import *
-from player_activities.views import (_get_activity, 
-                                    getComments, comment_fun, 
-                                    _get_translatable_field)
+from player_activities.views import _get_activity, getComments, comment_fun
 from reports.actions import *
 
 @login_required
