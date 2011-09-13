@@ -251,6 +251,9 @@ hr.space {
   visibility: hidden;
   clear: both; }
 
+th {
+  text-align: left; }
+
 .clear {
   float: none;
   clear: both; }

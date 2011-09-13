@@ -2,7 +2,6 @@
 @import "colors";
 @import "graphs";
 
-//Mixins
 html, body {
     border: 0;
     margin: 0;
@@ -31,6 +30,10 @@ hr{
 hr.space {
     visibility: hidden;
     clear: both;
+}
+
+th {
+    text-align: left;
 }
 
 .clear {
