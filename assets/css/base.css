@@ -524,6 +524,9 @@ p.separate {
       background: #617c00;
       text-align: center; }
     .wrapper .rightsidebar .video {
+      width: 240px;
+      max-width: 100%;
+      height: 180px;
       position: relative;
       margin: 0 auto;
       overflow: hidden; }
@@ -1338,7 +1341,18 @@ p {
     color: #ff7812; }
 
 .video {
+  position: relative;
+  width: 320px;
+  height: 240px;
   border: 1px solid #f0f0f0; }
+
+.video.left {
+  margin-right: 20px;
+  margin-bottom: 10px; }
+
+.video.right {
+  margin-left: 20px;
+  margin-bottom: 10px; }
 
 .mask {
   display: none;

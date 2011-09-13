@@ -108,4 +108,12 @@ def trans_fallback(obj, attr):
         return getattr(get_translation(obj, settings.LANGUAGE_CODE), attr)
     return getattr(obj, attr)
 
+@register.filter
+def teaser(text, word_count):
+    teaser = ' '.join(text.split()[:word_count])
+    last_dot = teaser.rfind('.') + 1
+    teaser = teaser[:last_dot]
+    if len(teaser) < len(text):
+        teaser += '...'
+    return teaser
 

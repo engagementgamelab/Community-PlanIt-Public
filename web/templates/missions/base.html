@@ -1,5 +1,5 @@
 {% extends "layouts/base.html" %}
-{% load gmap i18n game_extras cpi_tags %}
+{% load attachment_tags gmap i18n game_extras cpi_tags %}
 {% block section %}missions{% endblock %}
 
 {% block title %}{{ mission.name }} {% trans "Mission" %}{% endblock %}
@@ -13,10 +13,15 @@
 {% endif %}
 
 {% if mission.video %}
-<div class="left video">{{mission.video|safe}}</div>
+<div class="left video">{% youtube_video mission.video %}</div>
+<div class="description" style="margin-left: 340px;">
+    {{mission.description|linebreaksbr}}
+</div>
+{% else %}
+<div class="description">
+    {{mission.description|linebreaksbr}}
+</div>
 {% endif %}
-
-<div class="left description">{{mission.description|linebreaksbr}}</div>
 
 <h3 class="clear">
 {% if activities and mission.is_active %}
