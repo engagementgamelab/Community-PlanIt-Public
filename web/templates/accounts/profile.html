@@ -1,5 +1,5 @@
 {%extends "layouts/base.html"%}
-{% load i18n %}
+{% load i18n cpi_tags %}
 
 {% block section %}accounts{% endblock %}
 
@@ -20,7 +20,11 @@
         {% endif %} 
         <!--Lives in East Boston, works in Fort Point and Plays in Fort Point.-->
         <span style="font-size: 1em">{% trans "Points" %}: {{player.get_profile.totalPoints}}</span><br>
-        <span style="font-size: 1em">{% trans "Community Stake" %}: {{player.get_profile.stake}}</span><br>
+        <span style="font-size: 1em">{% trans "Community Stake" %}: 
+            {% if player.get_profile.stake %}
+            {{ player.get_profile.stake|trans_fallback:"stake"}}
+            {% endif %}
+        </span><br>
         {% if player.get_profile.affiliations %}
         <span style="font-size: 1em">{% trans "Affiliated With" %}:
             {%for a in player.get_profile.affiliations_csv %} 
