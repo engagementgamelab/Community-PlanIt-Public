@@ -90,20 +90,29 @@ def empathy_activity(request, id, template='player_activities/empathy_response.h
     return render_to_response(template, RequestContext(request, context))
 
 @login_required
-def empathy_replay(request, id):    
+def empathy_replay(request, id, template='player_activities/empathy_response.html'):    
 
     activity = _get_activity(id, PlayerEmpathyActivity)
+    
+    comment_form = CommentForm(data=request.POST or None)
+    errors = {}
 
-    form = None
-    comment_form = None
-
-    raise Http404
+    answer = AnswerEmpathy.objects.get(activity=activity, answerUser=request.user)
 
     if request.method == "POST":
-        raise Http404
+        if comment_form.is_valid():            
+            #try:
+            answer = AnswerEmpathy.objects.get(activity=activity, answerUser=request.user)
+            comment_fun(answer, comment_form, request)
+            #except AnswerEmpathy.DoesNotExist:
+            #    answer = AnswerEmpathy.objects.create(activity=activity, answerUser=request.user, map=map)
+            return log_activity(request, activity, "replayed", url_reverse="activities:map-overview")
+        else:            
+            errors.update(comment_form.errors)
+            
 
     context = dict(
-        form = form, 
+        comment_form = comment_form, 
         activity = activity,
         view_action = 'replay',
     )
