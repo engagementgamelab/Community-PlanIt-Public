@@ -452,6 +452,11 @@ def dashboard(request, template_name='accounts/dashboard.html'):
 
     completed_challenges = PlayerChallenge.objects.completed().filter(player=request.user)
     challenges = instance and instance.challenges.active().exclude(player_challenges__in=completed_challenges) or Challenge.objects.none()
+    
+    completed = []
+    for activity in activities:
+        if activity.is_completed(request.user):
+            completed.append(activity)
 
     paginator = Paginator(activities, 5)
     activities_page = paginator.page(page)
@@ -464,6 +469,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
         last_mission = last_mission,
         paginator = paginator,
         activities_page = activities_page,
+        completed = completed,
         challenges = challenges,
         leaderboard = leaderboard,
         instance = instance

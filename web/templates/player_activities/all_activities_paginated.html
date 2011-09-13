@@ -6,7 +6,7 @@
     </thead>
     <tbody>
     {% for activity in activities_page.object_list %}
-    {% if activity.is_completed %}
+    {% if activity in completed %}
     <tr>
         <td class="{{activity.type.type}}_activity"><a href="{% url activities:overview activity.id %}">{{activity.name}}</a></td>
         <td>{{ activity.getPoints }}</td> 
