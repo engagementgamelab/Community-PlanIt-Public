@@ -6,8 +6,6 @@ import types
 import urllib
 import urlparse
 
-from nani.utils import get_translation
-
 from django.conf import settings
 from django import template
 from django.template.defaultfilters import stringfilter
@@ -17,6 +15,8 @@ from django.utils.functional import Promise
 from django.utils.html import fix_ampersands
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, get_language
+
+from core.utils import get_translation_with_fallback
 
 register = template.Library()
 
@@ -101,12 +101,6 @@ def pagenavigator(parser, argument_string):
     
     raise template.TemplateSyntaxError('The %s tag requires a paginator page and a base URL.' % argv[0])
 
-@register.filter
-def trans_fallback(obj, attr):
-    if not get_language() in obj.get_available_languages() and \
-            settings.LANGUAGE_CODE in obj.get_available_languages():
-        return getattr(get_translation(obj, settings.LANGUAGE_CODE), attr)
-    return getattr(obj, attr)
 
 @register.filter
 def teaser(text, word_count):
@@ -116,4 +110,10 @@ def teaser(text, word_count):
     if len(teaser) < len(text):
         teaser += '...'
     return teaser
+
+
+@register.filter
+def trans_fallback(obj, attr):
+	return get_translation_with_fallback(obj, attr)
+
 

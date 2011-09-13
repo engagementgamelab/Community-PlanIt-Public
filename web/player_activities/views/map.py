@@ -31,11 +31,9 @@ def map_overview(request, id, template='player_activities/map_overview.html'):
     answers = AnswerMap.objects.filter(activity=activity)
     init_coords = []
     x = 0
-    print answers
     for answer in answers:
         map = answer.map
         markers = simplejson.loads("%s" % map)["markers"]
-        print markers
         for coor in markers if markers != None else []:
             coor = coor["coordinates"]
             init_coords.append( [x, coor[0], coor[1]] )
@@ -48,9 +46,6 @@ def map_overview(request, id, template='player_activities/map_overview.html'):
     if len(myAnswer) > 0:
         myAnswer = myAnswer[0]
         myComment = myAnswer.comments.all()[0]
-
-    print init_coords
-
 
     context.update(dict(
         comments =  getComments(answers, AnswerMap),
@@ -98,7 +93,7 @@ def map_activity(request, id, template='player_activities/map_response.html'):
                                 map = map,
             )
             answer.save()
-            print "saved ", map
+            PointsAssigner().assignAct(request.user, activity)
             comment_fun(answer, comment_form, request)
         else:
             if comment_form.errors:
@@ -145,13 +140,12 @@ def map_replay(request, id, template='player_activities/map_replay.html'):
         form = MapForm(request.POST)
         if form.is_valid():
             map = form.cleaned_data["map"]
-            print 'got map ', map
-            try:
-                answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
-                answer.map = map;
-                answer.save()
-            except AnswerMap.DoesNotExist:
-                answer = AnswerMap.objects.create(activity=activity, answerUser=request.user, map=map)
+            #try:
+            answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
+            answer.map = map;
+            answer.save()
+            #except AnswerMap.DoesNotExist:
+            #    answer = AnswerMap.objects.create(activity=activity, answerUser=request.user, map=map)
         else:
             if comment_form.errors:
                 errors.update(comment_form.errors)

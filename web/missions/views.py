@@ -23,7 +23,6 @@ def fetch(request, slug, template='missions/base.html'):
 
     #does not work. why?PlayerActivityBase.__subclasses__()
     for model_klass in [PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity]:
-        #qs_res = model_klass.objects.language(get_language()).filter(mission=mission)
         activities.extend(list(model_klass.objects.untranslated().filter(mission=mission)))
 
     for activity in activities:
