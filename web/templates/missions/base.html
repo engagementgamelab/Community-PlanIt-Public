@@ -9,7 +9,7 @@
 <h2>{{ mission.name }}</h2>
 
 {% if not mission.is_active %}
-<p class="notice">"This mission has not yet started.  Check back on {{ mission.start_date|date:"m/d/Y" }} to join the conversation.</p>
+<p class="notice">This mission has not yet started.  Check back on {{ mission.start_date|date:"m/d/Y" }} to join the conversation.</p>
 {% endif %}
 
 {% if mission.video %}
