@@ -173,7 +173,7 @@ def register(request):
         uinfo.accepted_research = False
         uinfo.save()
         
-        tmpl = loader.get_template('accounts/email/welcome.html')
+        tmpl = loader.get_template('accounts/email/welcome_%s.html' % uinfo.preferred_language)
         context = Context({
             'instance': uinfo.instance,
             'first_name': firstName
