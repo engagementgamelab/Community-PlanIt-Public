@@ -483,3 +483,47 @@ def dashboard(request, template_name='accounts/dashboard.html'):
         instance = instance
     )
     return render_to_response(template_name, context, context_instance=RequestContext(request))
+
+
+@login_required
+def admin_instance_email(request, instance_id=None):
+    if not request.user.is_superuser:
+        return
+    instance = Instance.objects.untranslated()[0]
+    email_form = AdminInstanceEmailForm()
+    tmpl = loader.get_template("admin/instance_email.html")
+    return HttpResponse(tmpl.render(RequestContext(request, { 
+             "form": email_form,
+             "instance": instance,
+             "instance": instance,
+             })))
+ 
+@login_required
+def admin_sendemail(request):
+    if not request.user.is_superuser:
+        return
+
+    if (request.method != "POST"):
+        return HttpResponseServerError("The request method was not POST")
+    s = ""
+    for x in request.POST:
+        s = "%s%s: %s<br>" % (s, x, request.POST[x])
+    
+    instance = Instance.objects.untranslated().get(id=int(request.POST["instance_id"]))
+    form = AdminInstanceEmailForm(request.POST)
+    if form.is_valid():
+        body = form.cleaned_data["email"]
+        subject = form.cleaned_data["subject"]
+        emailList = []
+        ups = UserProfile.objects.filter(instance=instance, receive_email=True)
+        for up in ups:
+            send_mail(subject, body, settings.NOREPLY_EMAIL, [up.user.email], fail_silently=False)
+        return HttpResponseRedirect(reverse("home"))
+        
+    tmpl = loader.get_template("admin/instance_email.html")
+    return HttpResponse(tmpl.render(RequestContext(request, { 
+             "form": form,
+             "instance_value": instance,  
+             }, 
+            #[ip]
+            )))
