@@ -10,7 +10,6 @@
         <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>
         <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
     <div>
-        <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
     </div>
     {% endif %}
     
