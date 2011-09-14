@@ -164,7 +164,6 @@ def _get_mc_choice_ids(activity):
 
 
 def activity(request, activity_id, template=None, **kwargs):
-    #import ipdb;ipdb.set_trace()
     model = kwargs.pop('model')
     action = kwargs.pop('action')
     activity = _get_activity(activity_id, get_model(*(model.split('.'))))
@@ -175,7 +174,7 @@ def activity(request, activity_id, template=None, **kwargs):
         return HttpResponseRedirect(activity.get_overview_url())
 
     if action=='play' and activity.is_completed(request.user):
-        return HttpResponseRedirect(activity.get_replay_url())
+        return HttpResponseRedirect(activity.get_overview_url())
 
     comment_form = CommentForm(data=request.POST or None)
     form = None
