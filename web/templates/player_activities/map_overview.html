@@ -1,15 +1,17 @@
 {% extends "player_activities/base.html" %}
-{% load gmap attachment_tags %}
+{% load gmap attachment_tags i18n %}
 {% block title %}Map Overview{% endblock %}
 
 {% block main %}
     <h1>Map Overview</h1>
-    <h2>{{activity.question|urlize}}</h2>
+    <h2>{{activity.question|safe}}</h2>
     
+    {%if not activity.mission.is_expired %}
     <div>
         <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
         <input class="button" type="button" value="Replay" onClick="window.location='{% url activities:map-replay activity.id %}' ">
     </div>
+    {% endif %}
     
     {% include "player_activities/attachments.html" %}
 
@@ -18,10 +20,31 @@
         <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
     {% endfor %}
     <div id="map" class="google-map" data-type="Point" data-state="overview"></div>
-
-    {% with activity.mission.instance as instance %}
-    {% include "comments/post.html" %}
-    {% endwith %}
+    
+    
+    <div class="comments embedded">
+        {% for answer in answers %}
+        {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
+        <h3>
+            {% blocktrans %}{{comment_heading}}{% endblocktrans %}
+            {% if comments.count %}
+            <div class="controls right">
+                Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+            </div>
+            {% endif %}
+        </h3>
+        <ul class="comment_list">
+            {% for comment in comments.all reversed %}
+                {% with extra_message=answer.selected.value %}
+                {% include "comments/comment.html" %}
+                {% endwith %}
+            {% empty %}
+            <li class="comment">No comments found.</li>
+            {% endfor %}
+        </ul>
+        {% endwith %}
+        {% endfor %}
+    </div>
 
 {% endblock %}
 

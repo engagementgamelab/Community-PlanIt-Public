@@ -1,30 +1,23 @@
 {% extends "player_activities/base.html" %}
 {% load gmap attachment_tags i18n %}
-{% block title %}{{ activity.name }}: Empathy Question Overview{% endblock %}
+{% block title %}{{activity.name}}: Response Overview{% endblock %}
 
 {% block main %}
-    <h1>Empathy Response Overview</h1>
-    <h2>{{ activity.question|safe }}</h2>
-    
-    {%if not activity.mission.is_expired and myAnswer %}
-        <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>
-        <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
+<h1>{{activity.name}}</h1>
+<h3>{{activity.question|safe}}</h3>
+
+
+    {% include "player_activities/attachments.html" %}
+
+    {%if not activity.mission.is_expired %}
     <div>
-        <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
+        {% if myAnswer %}
+        <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>
+        <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:replay activity.id %}' ">
+        {% endif %}
     </div>
     {% endif %}
     
-    {% if activity.avatar %}
-        <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
-    {% else %}               
-        <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-    {% endif %}
-     
-    {% if activity.bio %}
-        <h3>{{activity.bio}}</h3>
-    {% endif %}
-    
-    {% include "player_activities/attachments.html" %}
     {% if answers %}
     <h2>{% trans "Responses" %}</h2>
     <div class="comments embedded">
@@ -50,6 +43,7 @@
         {% endwith %}
         {% endfor %}
     </div>
+    {% else %}
+    <h2>{% trans "No responses submitted" %}</h2>
     {% endif %}
-    
 {% endblock %}

@@ -12,4 +12,7 @@ urlpatterns = patterns('',
     url(r'^login/', login, {'template_name': 'accounts/login.html',
                             'authentication_form': AccountAuthenticationForm}, name='login'),
     url(r'^logout/', logout, {'next_page': '/'}, name='logout'),
+    #url(r"^admin_instance_email/(?P<instance_id>.*)/$", "accounts.views.admin_instance_email", name="admin-instance-email"),
+    url(r"^admin_instance_email/$", "accounts.views.admin_instance_email", name="admin-instance-email"),
+    url(r"^admin_sendemail/$", "accounts.views.admin_sendemail", name="admin-sendemail"),
 )

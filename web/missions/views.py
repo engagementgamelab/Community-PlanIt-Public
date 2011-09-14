@@ -16,7 +16,14 @@ from answers.models import *
 
 @login_required
 def fetch(request, slug, template='missions/base.html'):
-    mission = get_object_or_404(Mission, slug=slug, instance=request.user.get_profile().instance)
+    #TODO
+    # for now show admins just pick the first instance
+    if request.user.is_superuser:
+        my_instance = Instance.objects.all()[0]
+    else:
+        my_profile = request.user.get_profile()
+        my_instance = my_profile.instance
+    mission = get_object_or_404(Mission, slug=slug, instance=my_instance)
 
     activities = []
     completed = []
@@ -53,8 +60,13 @@ def all(request, template="missions/all.html"):
     #TODO
     #finished_activities = PlayerActivity.objects.filter(answers__answerUser=request.user)
 
-    my_profile = request.user.get_profile()
-    my_instance = my_profile.instance
+    #TODO
+    # for now show admins just pick the first instance
+    if request.user.is_superuser:
+        my_instance = Instance.objects.all()[0]
+    else:
+        my_profile = request.user.get_profile()
+        my_instance = my_profile.instance
     context = dict(
             active_missions = my_instance.missions.active(),
             future_missions = my_instance.missions.future(),

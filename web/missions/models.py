@@ -91,6 +91,9 @@ class Mission(TranslatableModel):
     def is_started(self):
         return datetime.datetime.now() >= self.start_date
 
+    def is_future(self):
+        return datetime.datetime.now() <= self.start_date
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]
         if not self.start_date and not self.end_date:

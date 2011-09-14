@@ -4,10 +4,11 @@
 
 {% block main %}
 <h1>{{activity.name}}</h1>
-<h3>{{activity.question}}</h3>
+<h3>{{activity.question|safe}}</h3>
     
 {% include "player_activities/attachments.html" %}
 
+    {%if not activity.mission.is_expired %}
     <div>
         {% if myAnswer %}
         <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.selected.value}}</span></h3>
@@ -17,12 +18,13 @@
         <input class="button" type="button" value="{% trans "See Your Answer" %}" onClick="window.location='#comment-{{myComment.id}}' ">
         {% endif %}
     </div>
+    {% endif %}
     
     
 <h2>{% trans "Response Summary" %}</h2>
     <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
         margin-top: 25px; margin-bottom: 25px; "></div>
-
+    {%if answers%}
     <h2>{% trans "Responses" %}</h2>
     <div class="comments embedded">
         {% for answer in answers %}
@@ -47,10 +49,9 @@
         {% endwith %}
         {% endfor %}
     </div>
-
-    {% with instance=activity.mission.instance comment_heading="Comments on this activity" comments=activity.comments %}
-    {% include "comments/post.html" %}
-    {% endwith %}
+    {% else %}
+    <h2>{% trans "No responses submitted" %}</h2>
+    {% endif %}
 
 {% endblock %}
 

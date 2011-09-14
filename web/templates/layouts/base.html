@@ -46,7 +46,7 @@
             <nav>
                 <ul>
                 {% block nav %}
-                    {% if user.is_authenticated and current_instance.is_started %}
+                    {% if user.is_authenticated and current_instance.is_started or user.is_superuser%}
                     <li><div class="home"><a href="{% url accounts:dashboard %}"><span>{% trans "Home" %}</span></a></div></li>
                     <li><div class="missions"><a href="{% url missions:index %}"><span>{% trans "Missions" %}</span></a></div></li>
                     <li><div class="challenges"><a href="{% url challenges:index %}"><span>{% trans "Challenges" %}</span></a></div></li>
@@ -70,11 +70,12 @@
                         </a>
                         {% endfor %}
                     {% endif %}
-                    {% comment %}
                     {% if user.is_superuser or user.is_staff or user in current_instance.curators.all %}
+                    {% comment %}
                     <li><div class="admin"><a href="{% url admin:admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
-                    {% endif %}
                     {% endcomment %}
+                    <li><div class="admin"><a href="{% url accounts:admin-instance-email %}"><span>send mail</span></a></div></li>
+                    {% endif %}
                     {% if user.is_authenticated %}
                     <li class="final"><div class="logout"><a href="{% url accounts:logout %}"><span>{% trans "Logout" %}</span></a></div></li>
                     {% endif %}

@@ -299,4 +299,8 @@ class AccountAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
         self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)        
-        
+
+class AdminInstanceEmailForm(forms.Form):
+    subject = forms.CharField()
+    email = forms.CharField(widget=forms.Textarea(attrs={"rows": 6, "cols": 40}))
+

@@ -5,8 +5,8 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h2>Send an Email to {{instance_value.name}}</h2>
-    <form action="{% url admin-sendemail %}" method="post">
+    <h2>Send an Email to {{instance.title}}</h2>
+    <form action="{% url accounts:admin-sendemail %}" method="post">
         <input type="hidden" id="instance_id" name="instance_id" value="{{instance.id}}">
         {%csrf_token%}
         <div class="fieldWrapper">

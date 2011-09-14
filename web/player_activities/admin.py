@@ -16,6 +16,8 @@ class PlayerActivityTypeAdmin(ModelAdmin):
 
 class PlayerActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
+    list_filter = ('mission', 'type')
+    ordering = ('mission', 'type',)
 
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type')
