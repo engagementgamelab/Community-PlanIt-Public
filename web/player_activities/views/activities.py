@@ -52,7 +52,7 @@ def _build_context(action, activity, user):
             context.update({'choices': choices})
 
             if activity.type.type == "multi_response":
-                #answers = AnswerMultiChoice.objects.filter(option__activity=activity)
+                answers = AnswerMultiChoice.objects.filter(option__activity=activity)
                 my_comment = None
                 answer_dict = {}
                 for answer in answers:
@@ -93,21 +93,13 @@ def _build_context(action, activity, user):
             ))
 
     elif action in ['play', 'replay']:
-
-        def _get_mcqs():
-            return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
-        def _get_mc_choices():
-            return _get_mcqs().values_list('pk', 'value')
-        def _get_mc_choice_ids():
-            return _get_mcqs().values_list('pk', flat=True)
-
         if (activity.type.type == "open_ended"):
             form = make_openended_form()
         elif (activity.type.type == "single_response"):
-            choices = _get_mc_choices()
+            choices = _get_mc_choices(activity)
             form = make_single_form(choices)
         elif (activity.type.type == "multi_response"):
-            choices = _get_mc_choices()
+            choices = _get_mc_choices(activity)
             form = make_multi_form(choices)
         elif (activity.type.type == "map"):
             init_coords = []
@@ -129,15 +121,21 @@ def _build_context(action, activity, user):
 
     return context
 
-def _get_mcqs():
+
+def _get_mcqs(activity):
     return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
-def _get_mc_choices():
-    return _get_mcqs().values_list('pk', 'value')
-def _get_mc_choice_ids():
-    return _get_mcqs().values_list('pk', flat=True)
+
+
+def _get_mc_choices(activity):
+    return _get_mcqs(activity).values_list('pk', 'value')
+
+
+def _get_mc_choice_ids(activity):
+    return _get_mcqs(activity).values_list('pk', flat=True)
+
 
 def activity(request, activity_id, template=None, **kwargs):
-    #import ipdb;ipdb.set_trace()
+    import ipdb;ipdb.set_trace()
     model = kwargs.pop('model')
     action = kwargs.pop('action')
     activity = _get_activity(activity_id, get_model(*(model.split('.'))))
@@ -179,7 +177,7 @@ def activity(request, activity_id, template=None, **kwargs):
                 else:
                     _update_errors
             elif request.POST["form"] == "single_response":                
-                choices = _get_mc_choices()
+                choices = _get_mc_choices(activity)
                 form = make_single_form(choices)(request.POST)
                 if form.is_valid() and comment_form.is_valid():
                     cd = form.cleaned_data
@@ -195,12 +193,12 @@ def activity(request, activity_id, template=None, **kwargs):
                 else:
                     _update_errors()
             elif request.POST["form"] == "multi_response":                
-                choices = _get_mc_choices()
+                choices = _get_mc_choices(activity)
                 form = make_multi_form(choices)(request.POST)
                 if form.is_valid() and comment_form.is_valid():
                     #this gets very very messy....
                     
-                    choice_ids =  _get_mc_choice_ids()
+                    choice_ids =  _get_mc_choice_ids(activity)
 
                     #cleans out all of the choices that the user selected from the check boxes
                     for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=choice_ids)):
@@ -209,18 +207,18 @@ def activity(request, activity_id, template=None, **kwargs):
                     first_found = False 
                     for key in request.POST.keys():
                         if key.find("response_") >= 0:
-                            answer = AnswerMultiChoice()
-                            answer.user = request.user
+                            new_answer = AnswerMultiChoice()
+                            new_answer.user = request.user
                             #This is tricky, the reponse: value returned object is response_$(id): id
                             #So basically if the response exists it means that checkbox was checked and the
                             # value returned will be the ID and will always be an int
-                            answer.option = MultiChoiceActivity.objects.language(get_language()).get(
+                            new_answer.option = MultiChoiceActivity.objects.language(get_language()).get(
                                                                             id=int(request.POST[key])
                             )
-                            answer.save()
+                            new_answer.save()
                             #Yes it's a hack, only make a comment for the first response
                             if not first_found:
-                                comment_fun(answer, comment_form, request)
+                                answer = new_answer
                                 first_found = True                    
                 else:
                     _update_errors()
