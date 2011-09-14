@@ -41,6 +41,9 @@ from web.core.utils import _fake_latest
 
 from PIL import Image
 
+import logging 
+log = logging.getLogger(__name__)
+
 @csrf_protect
 @never_cache
 def login(request, template_name='registration/login.html',
@@ -166,6 +169,7 @@ def register(request):
         uinfo = player.get_profile()
         uinfo.instance = form.cleaned_data['instance']
         uinfo.preferred_language = form.cleaned_data['preferred_language']
+        uinfo.email = email
         uinfo.coins = 0
         uinfo.points = 0
         uinfo.points_multiplier = 0
@@ -181,6 +185,10 @@ def register(request):
         body = tmpl.render(context)
         
         send_mail(_('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
+        from django.core.management import call_command
+        call_command('send_mail')
+        log.debug('registered %s' % uinfo.email)
+
         messages.success(request, _("Thanks for signing up!"))
         
         return HttpResponseRedirect(reverse('accounts:dashboard'))
