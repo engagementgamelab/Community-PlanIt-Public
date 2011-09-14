@@ -1,31 +1,20 @@
 {% extends "player_activities/base.html" %}
 {% load gmap attachment_tags i18n %}
-{% block title %}{{ activity.name }}: Empathy Question Overview{% endblock %}
+{% block title %}{{activity.name}}: Response Overview{% endblock %}
 
 {% block main %}
-    <h1>Empathy Response Overview</h1>
-    <h2>{{ activity.question }}</h2>
-    
-    {% if myAnswer %}
+<h1>{{activity.name}}</h1>
+<h3>{{activity.question}}</h3>
+
+
+    {% include "player_activities/attachments.html" %}
+
+    <div>
+        {% if myAnswer %}
         <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>
         <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:replay activity.id %}' ">
-    {% endif %}
-    
-    <div>
-        <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
+        {% endif %}
     </div>
-    
-    {% if activity.avatar %}
-        <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
-    {% else %}               
-        <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-    {% endif %}
-     
-    {% if activity.bio %}
-        <h3>{{activity.bio}}</h3>
-    {% endif %}
-    
-    {% include "player_activities/attachments.html" %}
     
     <h2>{% trans "Responses" %}</h2>
     <div class="comments embedded">
@@ -51,8 +40,7 @@
         {% endwith %}
         {% endfor %}
     </div>
-    
-    
+
     <div id="comments">
         {% with instance=activity.mission.instance comment_heading="Comments" comments=activity.comments %}
         {% include "comments/post.html" %}

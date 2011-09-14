@@ -56,4 +56,5 @@ class AnswerMap(Answer):
 
 class AnswerEmpathy(Answer):
     activity = models.ForeignKey(PlayerEmpathyActivity, related_name='empathy_answers')
+    comment = models.TextField()
 
