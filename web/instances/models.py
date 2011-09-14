@@ -101,24 +101,6 @@ class Instance(TranslatableModel):
         self.slug = slugify(self.title)[:50]
         super(Instance,self).save()
         
-class Stake(TranslatableModel):
-    """
-    The stakes users hold in the community, e.g. Live, Work, Play, or Teacher,
-    Administrator, Student.
-    """
-    instance = models.ForeignKey(Instance, related_name='stakes')
-    pos = models.IntegerField(blank=False, null=False)
-
-    translations = TranslatedFields(
-        stake = models.CharField(max_length=128),
-    )
-
-    class Meta:
-        ordering = ('instance', 'pos')
-
-    def __unicode__(self):
-        return self.stake
-
 class PointsAssignmentAction(models.Model):
     action = models.CharField(max_length=260)
 

@@ -1,6 +1,7 @@
 Django==1.3
 PIL
 PyYAML
+django-debug-toolbar
 django-extensions
 gunicorn
 python-dateutil

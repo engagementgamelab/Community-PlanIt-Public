@@ -5,34 +5,96 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-    depends_on = (
-        ("instances", "0005_auto__add_stake__add_staketranslation__add_unique_staketranslation_lan"),
-    )
 
     def forwards(self, orm):
         
-        # Changing field 'UserProfile.stake'
-        db.delete_column('accounts_userprofile', 'stake_id')
-        # Deleting model 'UserProfileStake'
-        db.delete_table('accounts_userprofilestake')
+        # Deleting model 'UserProfileIncomes'
+        db.delete_table('accounts_userprofileincomes')
 
-        # point stake at instance stake instead
-        db.add_column('accounts_userprofile', 'stake', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['instances.Stake'], null=True))
+        # Deleting model 'UserProfileGender'
+        db.delete_table('accounts_userprofilegender')
+
+        # Deleting model 'UserProfileLiving'
+        db.delete_table('accounts_userprofileliving')
+
+        # Deleting model 'UserProfileRace'
+        db.delete_table('accounts_userprofilerace')
+
+        # Deleting model 'UserProfileEducation'
+        db.delete_table('accounts_userprofileeducation')
+
+        # Deleting field 'UserProfile.education'
+        db.delete_column('accounts_userprofile', 'education_id')
+
+        # Deleting field 'UserProfile.race'
+        db.delete_column('accounts_userprofile', 'race_id')
+
+        # Deleting field 'UserProfile.income'
+        db.delete_column('accounts_userprofile', 'income_id')
+
+        # Deleting field 'UserProfile.living'
+        db.delete_column('accounts_userprofile', 'living_id')
+
+        # Deleting field 'UserProfile.gender'
+        db.delete_column('accounts_userprofile', 'gender_id')
 
 
     def backwards(self, orm):
         
-        # Adding model 'UserProfileStake'
-        db.create_table('accounts_userprofilestake', (
+        # Adding model 'UserProfileIncomes'
+        db.create_table('accounts_userprofileincomes', (
+            ('pos', self.gf('django.db.models.fields.IntegerField')()),
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('stake', self.gf('django.db.models.fields.CharField')(max_length=128)),
+            ('income', self.gf('django.db.models.fields.CharField')(max_length=128)),
+        ))
+        db.send_create_signal('accounts', ['UserProfileIncomes'])
+
+        # Adding model 'UserProfileGender'
+        db.create_table('accounts_userprofilegender', (
+            ('gender', self.gf('django.db.models.fields.CharField')(max_length=128)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('pos', self.gf('django.db.models.fields.IntegerField')()),
         ))
-        db.send_create_signal('accounts', ['UserProfileStake'])
+        db.send_create_signal('accounts', ['UserProfileGender'])
 
-        # Changing field 'UserProfile.stake'
-        db.delete_column('accounts_userprofile', 'stake_id')
-        db.add_column('accounts_userprofile', 'stake', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.UserProfileStake'], null=True))
+        # Adding model 'UserProfileLiving'
+        db.create_table('accounts_userprofileliving', (
+            ('livingSituation', self.gf('django.db.models.fields.CharField')(max_length=128)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('pos', self.gf('django.db.models.fields.IntegerField')()),
+        ))
+        db.send_create_signal('accounts', ['UserProfileLiving'])
+
+        # Adding model 'UserProfileRace'
+        db.create_table('accounts_userprofilerace', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('race', self.gf('django.db.models.fields.CharField')(max_length=128)),
+            ('pos', self.gf('django.db.models.fields.IntegerField')()),
+        ))
+        db.send_create_signal('accounts', ['UserProfileRace'])
+
+        # Adding model 'UserProfileEducation'
+        db.create_table('accounts_userprofileeducation', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('eduLevel', self.gf('django.db.models.fields.CharField')(max_length=128)),
+            ('pos', self.gf('django.db.models.fields.IntegerField')()),
+        ))
+        db.send_create_signal('accounts', ['UserProfileEducation'])
+
+        # Adding field 'UserProfile.education'
+        db.add_column('accounts_userprofile', 'education', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileEducation'], null=True, blank=True), keep_default=False)
+
+        # Adding field 'UserProfile.race'
+        db.add_column('accounts_userprofile', 'race', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileRace'], null=True, blank=True), keep_default=False)
+
+        # Adding field 'UserProfile.income'
+        db.add_column('accounts_userprofile', 'income', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileIncomes'], null=True, blank=True), keep_default=False)
+
+        # Adding field 'UserProfile.living'
+        db.add_column('accounts_userprofile', 'living', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileLiving'], null=True, blank=True), keep_default=False)
+
+        # Adding field 'UserProfile.gender'
+        db.add_column('accounts_userprofile', 'gender', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileGender'], null=True, blank=True), keep_default=False)
 
 
     models = {
@@ -53,54 +115,21 @@ class Migration(SchemaMigration):
             'affiliations': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'birth_year': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '128', 'blank': 'True'}),
             'coinPoints': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'currentCoins': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'editedProfile': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'education': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileEducation']", 'null': 'True', 'blank': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '250', 'blank': 'True'}),
             'flagged': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'following': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'following_user_set'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['auth.User']"}),
-            'gender': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileGender']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'income': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileIncomes']", 'null': 'True', 'blank': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'user_profiles'", 'null': 'True', 'to': "orm['instances.Instance']"}),
-            'living': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileLiving']", 'null': 'True', 'blank': 'True'}),
             'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '12', 'blank': 'True'}),
             'preferred_language': ('django.db.models.fields.CharField', [], {'default': "'en-us'", 'max_length': '5'}),
-            'race': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileRace']", 'null': 'True', 'blank': 'True'}),
             'receive_email': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'stake': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['instances.Stake']", 'null': 'True', 'blank': 'True'}),
             'totalPoints': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'unique': 'True'})
-        },
-        'accounts.userprofileeducation': {
-            'Meta': {'object_name': 'UserProfileEducation'},
-            'eduLevel': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'pos': ('django.db.models.fields.IntegerField', [], {})
-        },
-        'accounts.userprofilegender': {
-            'Meta': {'object_name': 'UserProfileGender'},
-            'gender': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'pos': ('django.db.models.fields.IntegerField', [], {})
-        },
-        'accounts.userprofileincomes': {
-            'Meta': {'object_name': 'UserProfileIncomes'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'income': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'pos': ('django.db.models.fields.IntegerField', [], {})
-        },
-        'accounts.userprofileliving': {
-            'Meta': {'object_name': 'UserProfileLiving'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'livingSituation': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'pos': ('django.db.models.fields.IntegerField', [], {})
-        },
-        'accounts.userprofilerace': {
-            'Meta': {'object_name': 'UserProfileRace'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'pos': ('django.db.models.fields.IntegerField', [], {}),
-            'race': ('django.db.models.fields.CharField', [], {'max_length': '128'})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'unique': 'True'}),
+            'zip_code': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10', 'blank': 'True'})
         },
         'attachments.attachment': {
             'Meta': {'object_name': 'Attachment'},
@@ -152,6 +181,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'comments'", 'to': "orm['instances.Instance']"}),
             'likes': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'liked_comments'", 'blank': 'True', 'to': "orm['auth.User']"}),
+            'message': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
             'object_id': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'posted_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
@@ -183,11 +213,10 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'instances.stake': {
-            'Meta': {'object_name': 'Stake'},
+            'Meta': {'ordering': "('instance', 'pos')", 'object_name': 'Stake'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'stakes'", 'to': "orm['instances.Instance']"}),
-            'pos': ('django.db.models.fields.IntegerField', [], {}),
-            'stake': ('django.db.models.fields.CharField', [], {'max_length': '128'})
+            'pos': ('django.db.models.fields.IntegerField', [], {})
         }
     }
 

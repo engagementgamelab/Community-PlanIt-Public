@@ -5,34 +5,23 @@ from south.v2 import SchemaMigration
 from django.db import models
 
 class Migration(SchemaMigration):
-    depends_on = (
-        ("instances", "0005_auto__add_stake__add_staketranslation__add_unique_staketranslation_lan"),
-    )
 
     def forwards(self, orm):
         
-        # Changing field 'UserProfile.stake'
-        db.delete_column('accounts_userprofile', 'stake_id')
-        # Deleting model 'UserProfileStake'
-        db.delete_table('accounts_userprofilestake')
+        # Adding field 'UserProfile.city'
+        db.add_column('accounts_userprofile', 'city', self.gf('django.db.models.fields.CharField')(default='', max_length=128, blank=True), keep_default=False)
 
-        # point stake at instance stake instead
-        db.add_column('accounts_userprofile', 'stake', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['instances.Stake'], null=True))
+        # Adding field 'UserProfile.zip_code'
+        db.add_column('accounts_userprofile', 'zip_code', self.gf('django.db.models.fields.CharField')(default='', max_length=10, blank=True), keep_default=False)
 
 
     def backwards(self, orm):
         
-        # Adding model 'UserProfileStake'
-        db.create_table('accounts_userprofilestake', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('stake', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('pos', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal('accounts', ['UserProfileStake'])
+        # Deleting field 'UserProfile.city'
+        db.delete_column('accounts_userprofile', 'city')
 
-        # Changing field 'UserProfile.stake'
-        db.delete_column('accounts_userprofile', 'stake_id')
-        db.add_column('accounts_userprofile', 'stake', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.UserProfileStake'], null=True))
+        # Deleting field 'UserProfile.zip_code'
+        db.delete_column('accounts_userprofile', 'zip_code')
 
 
     models = {
@@ -53,12 +42,13 @@ class Migration(SchemaMigration):
             'affiliations': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'birth_year': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '128', 'blank': 'True'}),
             'coinPoints': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'currentCoins': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'editedProfile': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'education': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileEducation']", 'null': 'True', 'blank': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '250', 'blank': 'True'}),
             'flagged': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'following': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'following_user_set'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['auth.User']"}),
             'gender': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileGender']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'income': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileIncomes']", 'null': 'True', 'blank': 'True'}),
@@ -70,7 +60,8 @@ class Migration(SchemaMigration):
             'receive_email': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'stake': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['instances.Stake']", 'null': 'True', 'blank': 'True'}),
             'totalPoints': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'unique': 'True'})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'unique': 'True'}),
+            'zip_code': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10', 'blank': 'True'})
         },
         'accounts.userprofileeducation': {
             'Meta': {'object_name': 'UserProfileEducation'},
@@ -152,6 +143,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'comments'", 'to': "orm['instances.Instance']"}),
             'likes': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'liked_comments'", 'blank': 'True', 'to': "orm['auth.User']"}),
+            'message': ('django.db.models.fields.CharField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
             'object_id': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'posted_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
@@ -183,11 +175,10 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'instances.stake': {
-            'Meta': {'object_name': 'Stake'},
+            'Meta': {'ordering': "('instance', 'pos')", 'object_name': 'Stake'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'stakes'", 'to': "orm['instances.Instance']"}),
-            'pos': ('django.db.models.fields.IntegerField', [], {}),
-            'stake': ('django.db.models.fields.CharField', [], {'max_length': '128'})
+            'pos': ('django.db.models.fields.IntegerField', [], {})
         }
     }
 

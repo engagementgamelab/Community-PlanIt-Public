@@ -416,31 +416,6 @@ def dashboard(request, template_name='accounts/dashboard.html'):
 
     page = request.GET.get('page', 1)
     
-    # Dashboard related forms
-    activation_form = ActivationForm()
-
-    # Handle the last bit of interaction necessary to fully set up an account.
-    # This step ensures they have entered in a first/last name and accepted terms/research.
-    if request.method == 'POST':
-        activation_form = ActivationForm(request.POST)
-
-        if activation_form.is_valid():
-            prof = request.user.get_profile()
-            prof.accepted_term = activation_form.cleaned_data['accepted_term']
-            prof.accepted_research = activation_form.cleaned_data['accepted_research']
-            #TODO: is_of_age is now deprecated!
-            prof.is_of_age = True;
-            prof.save()
-
-            user = request.user
-            user.is_active = True
-            user.save()
-
-            ActivityLogger().log(request.user, request, 'account', 'created', '/player/'+ str(user.id), 'profile')
-            PointsAssigner().assign(request.user, 'account_created')
-
-            return HttpResponseRedirect(reverse('accounts:dashboard'))
-    
     # Fetch activity log feed for dashboard.
     log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
     missions = instance and instance.missions.active() or Mission.objects.none()
@@ -464,7 +439,6 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20]
 
     context = dict(
-        activation_form = activation_form,
         log = log,
         last_mission = last_mission,
         paginator = paginator,
