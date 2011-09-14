@@ -25,14 +25,27 @@ from reports.actions import *
 from django.db.models import get_model
 
 def _build_context(action, activity, user):
+    
     context = {}
 
-    def _get_related():
-        for klass in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse', 
-                      'AnswerMultiResponse', 'AnswerOpenEnded']:
-            related_name = klass.replace('Answer', '').lower() + '_answers'
-            if hasattr(activity, related_name):
-                return getattr(activity, related_name)
+    def _get_related():        
+        #FIX_ME: it returns singleresponse_abswers for open_ended activity!
+        # Because multi, open and single are of PlayerActivity class.
+        
+        #for klass in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse', 
+        #              'AnswerMultiResponse', 'AnswerOpenEnded']:
+        #    related_name = klass.replace('Answer', '').lower() + '_answers'
+        #    if hasattr(activity, related_name):
+        #        return getattr(activity, related_name)
+        if activity.type.type == 'open_ended':
+            return getattr(activity, 'openended_answers')
+        elif activity.type.type == 'multi_response':
+            return getattr(activity, 'multiresponse_answers')
+        else:
+            for klass in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse']:
+                related_name = klass.replace('Answer', '').lower() + '_answers'
+                if hasattr(activity, related_name):
+                    return getattr(activity, related_name)
 
     if action == 'overview':
         if activity.type.type != 'multi_response':
@@ -46,7 +59,7 @@ def _build_context(action, activity, user):
                 if my_comments.count():
                     myComment = my_comments[0]
             context.update(dict(answers=answers, myAnswer=myAnswer, myComment=myComment,))
-
+        
         if activity.type.type in ['multi_response', 'single_response']:
             choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
             context.update({'choices': choices})
@@ -117,9 +130,10 @@ def _build_context(action, activity, user):
                     init_coords.append( [x, coor[0], coor[1]] )
                     x = x + 1
             else:
-                map = activity.mission.instance.location         
+                map = activity.mission.instance.location
+            context.update({'map': map})         
                 
-        context.update({'form': form, 'map': map})
+        context.update({'form': form})
 
     return context
 
@@ -137,7 +151,7 @@ def _get_mc_choice_ids(activity):
 
 
 def activity(request, activity_id, template=None, **kwargs):
-#    import ipdb;ipdb.set_trace()
+    #import ipdb;ipdb.set_trace()
     model = kwargs.pop('model')
     action = kwargs.pop('action')
     activity = _get_activity(activity_id, get_model(*(model.split('.'))))
@@ -175,11 +189,16 @@ def activity(request, activity_id, template=None, **kwargs):
                     forms_valid = form.is_valid()
                 if forms_valid:
                     response_message = form.cleaned_data.get('response_message', '')
-                    answer = AnswerOpenEnded.objects.create(
-                                activity = activity,
-                                answerUser = request.user,
-                                comment = response_message,
-                    )                  
+                    try:
+                        answer = AnswerOpenEnded.objects.get(activity=activity,
+                                                             answerUser=request.user)
+                        answer.comment = response_message
+                        answer.save()
+                    except AnswerOpenEnded.DoesNotExist:
+                        answer = AnswerOpenEnded.objects.create(
+                                                activity=activity,
+                                                answerUser=request.user,
+                                                comment=response_message)                                
                 else:
                     _update_errors
             elif request.POST["form"] == "single_response":                
