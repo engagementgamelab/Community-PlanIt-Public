@@ -129,6 +129,13 @@ def _build_context(action, activity, user):
 
     return context
 
+def _get_mcqs():
+    return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
+def _get_mc_choices():
+    return _get_mcqs().values_list('pk', 'value')
+def _get_mc_choice_ids():
+    return _get_mcqs().values_list('pk', flat=True)
+
 def activity(request, activity_id, template=None, **kwargs):
     #import ipdb;ipdb.set_trace()
     model = kwargs.pop('model')
@@ -149,22 +156,18 @@ def activity(request, activity_id, template=None, **kwargs):
     )
 
     errors = {}
-    if request.method == "POST":
-        if comment_form.is_valid():
-            answer = AnswerEmpathy()
-            answer.activity = activity
-            answer.answerUser = request.user
-            answer.save()
-            comment_fun(answer, comment_form, request)
-            PointsAssigner().assignAct(request.user, activity)
-            return log_activity(request, activity, "completed", url_reverse="activities:empathy-overview")
-        else:
-            if comment_form.errors:
-                errors.update(comment_form.errors)
-
-        if action == 'replay':
-            if request.POST["form"] == "open_ended":
-                template = 'player_activities/open_response.html'
+    
+    def _update_errors():
+        if comment_form.errors:
+            errors.update(comment_form.errors)
+        if form.errors:
+            errors.update(form.errors)
+            
+    if request.method == "POST":       
+        
+        if action in ['play', 'replay']:
+            answer = None
+            if request.POST["form"] == "open_ended":               
                 form = make_openended_form()(request.POST)
                 if form.is_valid() and comment_form.is_valid():
                     response_message = form.cleaned_data.get('response_message', '')
@@ -172,18 +175,10 @@ def activity(request, activity_id, template=None, **kwargs):
                                 activity = activity,
                                 answerUser = request.user,
                                 comment = response_message,
-                    )
-                    comment_fun(answer, comment_form, request)
-                    PointsAssigner().assignAct(request.user, activity)
-                    return log_activity(request, activity, "completed")
+                    )                  
                 else:
-                    if form.errors:
-                        errors.update(form.errors)
-                    if comment_form.errors:
-                        errors.update(comment_form.errors)
-
-            elif request.POST["form"] == "single_response":            
-                template = 'player_activities/single_response.html'
+                    _update_errors
+            elif request.POST["form"] == "single_response":                
                 choices = _get_mc_choices()
                 form = make_single_form(choices)(request.POST)
                 if form.is_valid() and comment_form.is_valid():
@@ -196,23 +191,15 @@ def activity(request, activity_id, template=None, **kwargs):
                                 activity = activity,
                                 answerUser = request.user,
                                 selected=selected,
-                    )
-                    comment_fun(answer, comment_form, request)
-                    PointsAssigner().assignAct(request.user, activity)
-                    return log_activity(request, activity, "completed")
+                    )                    
                 else:
-                    if comment_form.errors:
-                        errors.update(comment_form.errors)
-                    if form.errors:
-                        errors.update(form.errors)
-            elif request.POST["form"] == "multi_response":
-                template = 'player_activities/multi_response.html'
+                    _update_errors()
+            elif request.POST["form"] == "multi_response":                
                 choices = _get_mc_choices()
                 form = make_multi_form(choices)(request.POST)
                 if form.is_valid() and comment_form.is_valid():
                     #this gets very very messy....
-
-                    comment = None
+                    
                     choice_ids =  _get_mc_choice_ids()
 
                     #cleans out all of the choices that the user selected from the check boxes
@@ -234,15 +221,33 @@ def activity(request, activity_id, template=None, **kwargs):
                             #Yes it's a hack, only make a comment for the first response
                             if not first_found:
                                 comment_fun(answer, comment_form, request)
-                                first_found = True
-                    PointsAssigner().assignAct(request.user, activity)
-                    return log_activity(request, activity, "completed")
+                                first_found = True                    
                 else:
-                    if comment_form.errors:
-                        errors.update(comment_form.errors)
-                    if form.errors:
-                        errors.update(form.errors)        
-
+                    _update_errors()
+            elif request.POST["form"] == "map":
+                form = MapForm(request.POST)                 
+                if comment_form.is_valid() and form.is_valid():
+                    map = form.cleaned_data["map"]                
+                    answer = AnswerMap()
+                    answer.activity = activity
+                    answer.answerUser = request.user
+                    answer.map = map;
+                    answer.save()
+                else:
+                    _update_errors()
+            elif request.POST["form"] == "empathy":
+                answer = AnswerEmpathy()
+                answer.activity = activity
+                answer.answerUser = request.user
+                answer.save()
+        
+            if answer is not None:
+                comment_fun(answer, comment_form, request)
+                PointsAssigner().assignAct(request.user, activity)
+                if action == 'replay':
+                    return log_activity(request, activity, "replayed")
+                elif action == 'play':
+                    return log_activity(request, activity, "completed")
     ctx = _build_context(action, activity, request.user)
     context.update(ctx)
     template = "player_activities/" + activity.type.type

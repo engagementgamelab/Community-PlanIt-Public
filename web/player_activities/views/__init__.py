@@ -63,8 +63,8 @@ def getComments(answers, ModelType, activity=None):
             comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
     return comments
 
-def log_activity(request, activity, message, url_reverse="activities:overview"):
+def log_activity(request, activity, message):
     ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", message, reverse("activities:activity", args=[activity.id]), "activity")
-    return HttpResponseRedirect(reverse(url_reverse, args=[activity.id]))   
+    return HttpResponseRedirect(activity.get_overview_url())   
 
 

@@ -7,9 +7,25 @@ urlpatterns = patterns('player_activities.views',
     url(r"^(?P<id>\d+)/overview/$", "activity.overview", name="overview"),
     url(r"^(?P<id>\d+)/replay/$", "activity.replay", name="replay"),
 
-    #url(r"^empathy/(?P<id>\d+)/$", "empathy.empathy_activity", name="empathy-activity"),
-    #url(r"^empathy/(?P<id>\d+)/overview/$", "empathy.empathy_overview", name="empathy-overview"),
-    #url(r"^empathy/(?P<id>\d+)/replay/$", "empathy.empathy_replay", name="empathy-replay"),
+    
+#    url(r"^(?P<activity_id>\d+)/$", 
+#                        "activities.activity", 
+#                        dict(                                
+#                           action='play',
+#                        ),
+#                        "activity"),                        
+#    url(r"^(?P<activity_id>\d+)/overview/$", 
+#                        "activities.activity", 
+#                        dict(                                
+#                           action='overview',
+#                        ),
+#                        "overview"),
+#    url(r"^(?P<activity_id>\d+)/replay/$", 
+#                        "activities.activity", 
+#                        dict(                                
+#                           action='replay',
+#                        ),
+#                        "replay"),
 
     url(r"^empathy/(?P<activity_id>\d+)/$", 
                         "activities.activity", 
