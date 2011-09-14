@@ -27,6 +27,7 @@ from django.db.models import get_model
 def _build_context(action, activity, user):
     
     context = {}
+    past = activity.mission.is_expired()
 
     def _get_related():        
         #FIX_ME: it returns singleresponse_abswers for open_ended activity!
@@ -52,16 +53,22 @@ def _build_context(action, activity, user):
     if action == 'overview':
         if activity.type.type != 'multi_response':
             answers = activity.__class__.objects.none()
+            myAnswer = None
+            myComment = None
             related = _get_related()
             if related:
                 answers = related.filter(activity=activity)
-                myAnswer = related.get(activity=activity, answerUser=user)
-                my_comments =myAnswer.comments.all().order_by('-posted_date')
-                myComment = None
-                if my_comments.count():
-                    myComment = my_comments[0]
+                if not past:
+                    try:
+                        myAnswer = related.get(activity=activity, answerUser=user)
+                        my_comments =myAnswer.comments.all().order_by('-posted_date')
+                        myComment = None
+                        if my_comments.count():
+                            myComment = my_comments[0]
+                    except: 
+                        pass
             context.update(dict(answers=answers, myAnswer=myAnswer, myComment=myComment,))
-        
+
         if activity.type.type in ['multi_response', 'single_response']:
             choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
             context.update({'choices': choices})
@@ -69,19 +76,22 @@ def _build_context(action, activity, user):
             if activity.type.type == "multi_response":
                 answers = AnswerMultiChoice.objects.filter(option__activity=activity)
                 my_comment = None
+                my_answers = None
                 answer_dict = {}
                 for answer in answers:
                     if answer.user not in answer_dict:
                         answer_dict[answer.user] = {'answers': [], 'comments': []}
                     answer_dict[answer.user]['answers'].append('<li>%s</li>' % answer.option.value)
                     for comment in answer.comments.all():
-                        if not my_comment:
-                            my_comment = comment
+                        if not past:
+                            if not my_comment:
+                                my_comment = comment
                         answer_dict[answer.user]['comments'].append(comment)
                 all_answers = []
                 for user, data in sorted(answer_dict.items()):
                     all_answers.append((user, mark_safe('<ul>' + ''.join(data['answers']) + '</ul>'), data['comments']))
-                my_answers = mark_safe('<ul>' + ''.join(answer_dict[user]['answers']) + '</ul>')
+                if not past:
+                    my_answers = mark_safe('<ul>' + ''.join(answer_dict[user]['answers']) + '</ul>')
                 context.update(
                     dict(
                         all_answers = all_answers,
@@ -161,6 +171,9 @@ def activity(request, activity_id, template=None, **kwargs):
     activity = _get_activity(activity_id, get_model(*(model.split('.'))))
     if not activity:
         raise Http404("unknown activity type")
+
+    if action=='replay' and activity.mission.is_expired():
+        return HttpResponseRedirect(activity.get_overview_url())
 
     if action=='play' and activity.is_completed(request.user):
         return HttpResponseRedirect(activity.get_replay_url())

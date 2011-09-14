@@ -7,10 +7,12 @@
 <h3>{{activity.question}}</h3>
     
     <div>
-        <h3>{% trans "Your answer:" %}</h3>
-        {{my_answers}}
-        <input class="button" type="button" value="Replay" onClick="window.location='{% url activities:replay activity.id %}' ">
-        <input class="button" type="button" value="{% trans "See Your Answer" %}" onClick="window.location='#comment-{{my_comment.id}}' ">
+        {%if not activity.mission.is_expired %}
+            <h3>{% trans "Your answer:" %}</h3>
+            {{my_answers}}
+            <input class="button" type="button" value="Replay" onClick="window.location='{% url activities:replay activity.id %}' ">
+            <input class="button" type="button" value="{% trans "See Your Answer" %}" onClick="window.location='#comment-{{my_comment.id}}' ">
+        {% endif %}
     </div>
     
     {% include "player_activities/attachments.html" %}

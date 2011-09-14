@@ -9,13 +9,16 @@
 
     {% include "player_activities/attachments.html" %}
 
+    {%if not activity.mission.is_expired %}
     <div>
         {% if myAnswer %}
         <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>
         <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:replay activity.id %}' ">
         {% endif %}
     </div>
+    {% endif %}
     
+    {% if answers %}
     <h2>{% trans "Responses" %}</h2>
     <div class="comments embedded">
         {% for answer in answers %}
@@ -40,11 +43,7 @@
         {% endwith %}
         {% endfor %}
     </div>
-
-    <div id="comments">
-        {% with instance=activity.mission.instance comment_heading="Comments" comments=activity.comments %}
-        {% include "comments/post.html" %}
-        {% endwith %}
-        <div style="clear: both;"></div>
-    </div>
+    {% else %}
+    <h2>{% trans "No responses submitted" %}</h2>
+    {% endif %}
 {% endblock %}

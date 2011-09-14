@@ -6,15 +6,13 @@
     <h1>Empathy Response Overview</h1>
     <h2>{{ activity.question }}</h2>
     
-    {% if myAnswer %}
+    {%if not activity.mission.is_expired and myAnswer %}
         <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>
-        <input class="button" type="button" value="{% trans "Replay" %}"
-        onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
-    {% endif %}
-    
+        <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
     <div>
         <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
     </div>
+    {% endif %}
     
     {% if activity.avatar %}
         <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
@@ -27,7 +25,7 @@
     {% endif %}
     
     {% include "player_activities/attachments.html" %}
-    
+    {% if answers %}
     <h2>{% trans "Responses" %}</h2>
     <div class="comments embedded">
         {% for answer in answers %}
@@ -52,5 +50,6 @@
         {% endwith %}
         {% endfor %}
     </div>
+    {% endif %}
     
 {% endblock %}

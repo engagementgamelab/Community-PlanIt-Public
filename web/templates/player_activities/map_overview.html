@@ -6,10 +6,12 @@
     <h1>Map Overview</h1>
     <h2>{{activity.question|urlize}}</h2>
     
+    {%if not activity.mission.is_expired %}
     <div>
         <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
         <input class="button" type="button" value="Replay" onClick="window.location='{% url activities:map-replay activity.id %}' ">
     </div>
+    {% endif %}
     
     {% include "player_activities/attachments.html" %}
 
