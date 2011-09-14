@@ -167,20 +167,23 @@ def activity(request, activity_id, template=None, **kwargs):
 
     comment_form = CommentForm(data=request.POST or None)
     form = None
+    errors = {}
 
     context = dict(
         view_action = action,
         comment_form = comment_form,
         activity = activity,
+        errors = errors
     )
-
-    errors = {}
     
-    def _update_errors():
-        if comment_form.errors:
-            errors.update(comment_form.errors)
+    
+    def _update_errors():        
         if form.errors:
             errors.update(form.errors)
+        if action != 'replay':        
+            if comment_form.errors:
+                errors.update(comment_form.errors)        
+        context.update({'errors': errors})
             
     def _is_form_valid():
         is_valid = form.is_valid()        
@@ -207,7 +210,7 @@ def activity(request, activity_id, template=None, **kwargs):
                                                 answerUser=request.user,
                                                 comment=response_message)                                
                 else:
-                    _update_errors
+                    _update_errors()
             elif request.POST["form"] == "single_response":                
                 choices = _get_mc_choices(activity)
                 form = make_single_form(choices)(request.POST)
@@ -288,15 +291,15 @@ def activity(request, activity_id, template=None, **kwargs):
                                                 answerUser=request.user,
                                                 comment=response_message)                                
                 else:
-                    _update_errors                
+                    _update_errors()                
         
-            if answer is not None and action != 'replay':
-                comment_fun(answer, comment_form, request)
-                PointsAssigner().assignAct(request.user, activity)
-            if action == 'replay':
-                return log_activity(request, activity, "replayed")
-            elif action == 'play':
-                return log_activity(request, activity, "completed")
+            if answer is not None:
+                if action == 'replay':
+                    return log_activity(request, activity, "replayed")
+                elif action == 'play':
+                    comment_fun(answer, comment_form, request)
+                    PointsAssigner().assignAct(request.user, activity)
+                    return log_activity(request, activity, "completed")
     ctx = _build_context(action, activity, request.user)
     context.update(ctx)
     template = "player_activities/" + activity.type.type
