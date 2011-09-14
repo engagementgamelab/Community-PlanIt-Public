@@ -20,6 +20,9 @@ class Answer(models.Model):
     comments = generic.GenericRelation(Comment)
     createDate = models.DateTimeField(editable=False)
 
+    class Meta:
+        ordering = ('-createDate',)
+
     def save(self, *args, **kwargs):
         self.createDate = datetime.datetime.now()
         super(Answer, self).save(*args, **kwargs)
