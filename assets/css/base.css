@@ -275,6 +275,12 @@ th {
 .highlighted {
   line-height: 1.5; }
 
+.suggestion {
+  padding: 16px 8px 0 8px;
+  text-align: right;
+  color: #869f00;
+  font-style: italic; }
+
 body.about nav .about,
 body.accounts nav .home,
 body.base nav .home,

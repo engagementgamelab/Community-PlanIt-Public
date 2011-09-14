@@ -20,6 +20,7 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
 hr{
     background-color: #777;
     border-top: 1px solid #999;
@@ -77,6 +78,14 @@ th {
 .highlighted {
     line-height: 1.5;
 }
+
+.suggestion {
+    padding: 16px 8px 0 8px;
+    text-align: right;
+    color: $lightgreen;
+    font-style: italic;
+}
+
 // Base styles
 body.about nav .about,
 body.accounts nav .home,

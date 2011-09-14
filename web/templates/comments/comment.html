@@ -3,7 +3,7 @@
     <div class="likes">
         <div class="count">{{comment.likes.count}}</div>
         <div>Like{{comment.likes.count|pluralize}}</div>
-        {% if comment.user != user %}
+        {% if comment.user != request.user %}
         <a class="button" href="{% url comments:like comment.id %}" title="click to say you like this">Like</a>
         {% endif %}
     </div>
@@ -79,7 +79,7 @@
         <div id="replies-{{comment.pk}}" class="replies">
             <ul class="nested">
                 {% for comment in comment.comments.all %}
-                    {% with "comments/comment.html" as filename %}
+                    {% with filename="comments/comment.html" extra_message=None %}
                       {% include filename %}
                     {% endwith %}
                 {% endfor %}

@@ -81,6 +81,10 @@ class Mission(TranslatableModel):
         pass
         #get_latest_by = 'start_date'
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('missions:mission', [self.slug])
+
     def is_active(self):
         now = datetime.datetime.now()
         return self.start_date <= now and now <= self.end_date
