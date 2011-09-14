@@ -37,6 +37,8 @@ def _build_context(action, activity, user):
         #    related_name = klass.replace('Answer', '').lower() + '_answers'
         #    if hasattr(activity, related_name):
         #        return getattr(activity, related_name)
+        
+        # Quick fix:
         if activity.type.type == 'open_ended':
             return getattr(activity, 'openended_answers')
         elif activity.type.type == 'multi_response':
@@ -131,7 +133,9 @@ def _build_context(action, activity, user):
                     x = x + 1
             else:
                 map = activity.mission.instance.location
-            context.update({'map': map})         
+            context.update({'map': map})
+        elif activity.type.type == "empathy":
+            form = make_empathy_form()         
                 
         context.update({'form': form})
 
@@ -178,16 +182,19 @@ def activity(request, activity_id, template=None, **kwargs):
         if form.errors:
             errors.update(form.errors)
             
+    def _is_form_valid():
+        is_valid = form.is_valid()        
+        if action == 'replay':
+            return is_valid
+        return is_valid and comment_form.is_valid()
+            
     if request.method == "POST":       
         
         if action in ['play', 'replay']:
             answer = None
             if request.POST["form"] == "open_ended":               
-                form = make_openended_form()(request.POST)
-                forms_valid = form.is_valid() and comment_form.is_valid()
-                if action == 'replay':
-                    forms_valid = form.is_valid()
-                if forms_valid:
+                form = make_openended_form()(request.POST)                
+                if _is_form_valid():
                     response_message = form.cleaned_data.get('response_message', '')
                     try:
                         answer = AnswerOpenEnded.objects.get(activity=activity,
@@ -204,10 +211,7 @@ def activity(request, activity_id, template=None, **kwargs):
             elif request.POST["form"] == "single_response":                
                 choices = _get_mc_choices(activity)
                 form = make_single_form(choices)(request.POST)
-                forms_valid = form.is_valid() and comment_form.is_valid()
-                if action == 'replay':
-                    forms_valid = form.is_valid()
-                if forms_valid:                
+                if _is_form_valid():                
                     cd = form.cleaned_data
                     mcactivities = MultiChoiceActivity.objects.filter(id=int(cd.get('response')))
                     if mcactivities.count():
@@ -228,10 +232,7 @@ def activity(request, activity_id, template=None, **kwargs):
             elif request.POST["form"] == "multi_response":                
                 choices = _get_mc_choices(activity)
                 form = make_multi_form(choices)(request.POST)
-                forms_valid = form.is_valid() and comment_form.is_valid()
-                if action == 'replay':
-                    forms_valid = form.is_valid()
-                if forms_valid:
+                if _is_form_valid():
                     #this gets very very messy....
                     
                     choice_ids =  _get_mc_choice_ids(activity)
@@ -260,10 +261,7 @@ def activity(request, activity_id, template=None, **kwargs):
                     _update_errors()
             elif request.POST["form"] == "map":
                 form = MapForm(request.POST)                 
-                forms_valid = form.is_valid() and comment_form.is_valid()
-                if action == 'replay':
-                    forms_valid = form.is_valid()
-                if forms_valid:
+                if _is_form_valid():
                     map = form.cleaned_data["map"]
                     try:                
                         answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)                        
@@ -275,11 +273,22 @@ def activity(request, activity_id, template=None, **kwargs):
                     answer.save()
                 else:
                     _update_errors()
-            elif request.POST["form"] == "empathy":
-                answer = AnswerEmpathy()
-                answer.activity = activity
-                answer.answerUser = request.user
-                answer.save()
+            elif request.POST["form"] == "empathy":                              
+                form = make_empathy_form()(request.POST)
+                if _is_form_valid():
+                    response_message = form.cleaned_data.get('response_message', '')
+                    try:
+                        answer = AnswerEmpathy.objects.get(activity=activity,
+                                                           answerUser=request.user)
+                        answer.comment = response_message
+                        answer.save()
+                    except AnswerEmpathy.DoesNotExist:
+                        answer = AnswerEmpathy.objects.create(
+                                                activity=activity,
+                                                answerUser=request.user,
+                                                comment=response_message)                                
+                else:
+                    _update_errors                
         
             if answer is not None and action != 'replay':
                 comment_fun(answer, comment_form, request)

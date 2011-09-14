@@ -31,6 +31,13 @@ def make_multi_form(choices):
             model = AnswerMultiChoice
     return MultiForm
 
+def make_empathy_form():
+    class EmpathyForm(forms.Form):
+        response_message = forms.CharField(widget=forms.Textarea)
+        class Meta:
+            model = AnswerEmpathy
+    return EmpathyForm
+
 class MapForm(forms.Form):
     map = GoogleMapsField().formfield()
 
