@@ -3,7 +3,7 @@
 {%block title%}Open Response{%endblock%}
 
 {%block activity%}
-    <h2>{{activity.question|urlize}}</h2>
+    <h2>{{activity.question|safe}}</h2>
     {% include "player_activities/attachments.html" %}
     
     {{ block.super }}

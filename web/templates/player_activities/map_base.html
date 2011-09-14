@@ -6,7 +6,7 @@
 
 {%block activity%}
     {{ block.super }}
-    <h2>{{activity.question|urlize}}</h2>
+    <h2>{{activity.question|safe}}</h2>
     {% include "player_activities/attachments.html" %}
             
     <button class="button add">Add Point</button>

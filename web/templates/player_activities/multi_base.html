@@ -5,7 +5,7 @@
 {%block main%}
     <form id="id_activity-form" action="" method="post">{% csrf_token %}
         <input type="hidden" name="form" value="multi_response">
-        <h2>{{activity.question|urlize}}</h2>
+        <h2>{{activity.question|safe}}</h2>
         <div class="fieldWrapper">
             {{ form.response.errors }}
             <label for="id_answerbox">Your Choices:</label>
