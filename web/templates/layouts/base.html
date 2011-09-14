@@ -46,7 +46,7 @@
             <nav>
                 <ul>
                 {% block nav %}
-                    {% if user.is_authenticated and current_instance.is_started %}
+                    {% if user.is_authenticated and current_instance.is_started or user.is_superuser%}
                     <li><div class="home"><a href="{% url accounts:dashboard %}"><span>{% trans "Home" %}</span></a></div></li>
                     <li><div class="missions"><a href="{% url missions:index %}"><span>{% trans "Missions" %}</span></a></div></li>
                     <li><div class="challenges"><a href="{% url challenges:index %}"><span>{% trans "Challenges" %}</span></a></div></li>

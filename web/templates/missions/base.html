@@ -38,36 +38,34 @@
     {% for activity in activities %}
         <tr class="{% cycle 'odd' 'even' %}">
 
-        {% if not missions.is_expired and mission.is_future %}
-
-            <td colspan="3" class="{{activity.type.type}}_activity">{{ activity|trans_fallback:"name" }}</td>
-
-        {% else %}
-
-            {% if not mission.is_active %}
-                    <td colspan="3" class="{{activity.type.type}}_activity">
-                        <a href="{{ activity.get_overview_url }}">{{ activity|trans_fallback:"name" }}</a>
-                    </td>
+            {% if request.user.is_superuser or mission.is_expired %}
+                <td colspan="3" class="{{activity.type.type}}_activity">
+                    <a href="{{ activity.get_overview_url }}">{{ activity|trans_fallback:"name" }}</a>
+                </td>
             {% else %}
-                {% if activity in completed %}
-                    <td class="{{activity.type.type}}_activity">
-                        <a href="{{ activity.get_activity_url }}">{{ activity|trans_fallback:"name" }}</a>
-                    </td>
-                    <td>{{ activity.getPoints }} {% trans "pts" %}</td> 
-                    <td class="final">
-                        <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a>
-                    </td>
+                {% if mission.is_future %}
+                        <td colspan="3" class="{{activity.type.type}}_activity">{{ activity|trans_fallback:"name" }}</td>
                 {% else %}
-                    <td class="{{activity.type.type}}_activity">
-                        <a href="{{ activity.get_activity_url }}">{{activity|trans_fallback:"name"}}</a>
-                    </td>
-                    <td>{{ activity.getPoints }} pts</td> 
-                    <td class="final">
-                        <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a>
-                    </td>
+                    {% if activity in completed %}
+                        <td class="{{activity.type.type}}_activity">
+                            <a href="{{ activity.get_activity_url }}">{{ activity|trans_fallback:"name" }}</a>
+                        </td>
+                        <td>{{ activity.getPoints }} {% trans "pts" %}</td> 
+                        <td class="final">
+                            <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a>
+                        </td>
+                    {% else %}
+                        <td class="{{activity.type.type}}_activity">
+                            <a href="{{ activity.get_activity_url }}">{{activity|trans_fallback:"name"}}</a>
+                        </td>
+                        <td>{{ activity.getPoints }} pts</td> 
+                        <td class="final">
+                            <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a>
+                        </td>
+                    {% endif %}
                 {% endif %}
             {% endif %}
-        {% endif %}
+
         </tr>
             {% empty %}
         <tr>

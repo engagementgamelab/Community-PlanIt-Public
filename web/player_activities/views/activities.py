@@ -170,6 +170,9 @@ def activity(request, activity_id, template=None, **kwargs):
     if not activity:
         raise Http404("unknown activity type")
 
+    if request.user.is_superuser and action != 'overview' :
+        return HttpResponseRedirect(activity.get_overview_url())
+
     if action=='replay' and activity.mission.is_expired():
         return HttpResponseRedirect(activity.get_overview_url())
 
@@ -338,17 +341,19 @@ def activity(request, activity_id, template=None, **kwargs):
                         user=request.user,
                         instance=activity.mission.instance)
             return HttpResponseRedirect(activity.get_overview_url())
+
     user = None
-    if not(activity.mission.is_future() or activity.mission.is_expired()):
-        user = request.user
+    if not request.user.is_superuser:
+        if not(activity.mission.is_future() or activity.mission.is_expired()):
+            user = request.user
+
     ctx = _build_context(action, activity, user=user )
     context.update(ctx)
     template = "player_activities/" + activity.type.type
+
     if action == 'play':
         template = template + "_response.html"
     elif action in ['replay', 'overview']:
         template= "".join([template, "_", action, ".html"])
-
-    print context
 
     return render_to_response(template, RequestContext(request, context))
