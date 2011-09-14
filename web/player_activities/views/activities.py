@@ -24,10 +24,9 @@ from reports.actions import *
 
 from django.db.models import get_model
 
-def _build_context(action, activity, user):
+def _build_context(action, activity, user=None):
     
     context = {}
-    past = activity.mission.is_expired()
 
     def _get_related():        
         #FIX_ME: it returns singleresponse_abswers for open_ended activity!
@@ -58,7 +57,7 @@ def _build_context(action, activity, user):
             related = _get_related()
             if related:
                 answers = related.filter(activity=activity)
-                if not past:
+                if user:
                     try:
                         myAnswer = related.get(activity=activity, answerUser=user)
                         my_comments =myAnswer.comments.all().order_by('-posted_date')
@@ -83,14 +82,14 @@ def _build_context(action, activity, user):
                         answer_dict[answer.user] = {'answers': [], 'comments': []}
                     answer_dict[answer.user]['answers'].append('<li>%s</li>' % answer.option.value)
                     for comment in answer.comments.all():
-                        if not past:
+                        if user:
                             if not my_comment:
                                 my_comment = comment
                         answer_dict[answer.user]['comments'].append(comment)
                 all_answers = []
                 for user, data in sorted(answer_dict.items()):
                     all_answers.append((user, mark_safe('<ul>' + ''.join(data['answers']) + '</ul>'), data['comments']))
-                if not past:
+                if user:
                     my_answers = mark_safe('<ul>' + ''.join(answer_dict[user]['answers']) + '</ul>')
                 context.update(
                     dict(
@@ -340,8 +339,10 @@ def activity(request, activity_id, template=None, **kwargs):
                         user=request.user,
                         instance=activity.mission.instance)
             return HttpResponseRedirect(activity.get_overview_url())
-        
-    ctx = _build_context(action, activity, request.user)
+    user = None
+    if not(activity.mission.is_future() or activity.mission.is_expired()):
+        user = request.user
+    ctx = _build_context(action, activity, user=user )
     context.update(ctx)
     template = "player_activities/" + activity.type.type
     if action == 'play':
@@ -349,8 +350,6 @@ def activity(request, activity_id, template=None, **kwargs):
     elif action in ['replay', 'overview']:
         template= "".join([template, "_", action, ".html"])
 
-    print template
-    print "done: ", context
-    return render_to_response(template, RequestContext(request, context))
-    #raise Http404("done.")
+    print context
 
+    return render_to_response(template, RequestContext(request, context))
