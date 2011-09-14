@@ -78,6 +78,7 @@ def _build_context(action, activity, user):
             answers = AnswerMap.objects.filter(activity=activity)
             init_coords = []
             x = 0
+            map = None
             for answer in answers:
                 map = answer.map
                 markers = simplejson.loads("%s" % map)["markers"]
@@ -86,7 +87,8 @@ def _build_context(action, activity, user):
                     init_coords.append( [x, coor[0], coor[1]] )
                     x = x + 1
 
-            map = activity.mission.instance.location
+            if not map:
+                map = activity.mission.instance.location
             context.update(dict(
                 init_coords = init_coords,
                 map = map,
@@ -101,12 +103,12 @@ def _build_context(action, activity, user):
         elif (activity.type.type == "multi_response"):
             choices = _get_mc_choices(activity)
             form = make_multi_form(choices)
-        elif (activity.type.type == "map"):
+        elif (activity.type.type == "map"):            
+            form = MapForm()
             init_coords = []
-            x = 0
+            x = 0            
             answer = AnswerMap.objects.filter(activity=activity, answerUser=user)
-            if answer.count():
-                form = MapForm()
+            if answer.count():                
                 map = answer[0].map
                 markers = simplejson.loads("%s" % map)["markers"]
                 x = 0
@@ -115,9 +117,9 @@ def _build_context(action, activity, user):
                     init_coords.append( [x, coor[0], coor[1]] )
                     x = x + 1
             else:
-                map = activity.mission.instance.location
-                form = MapForm()
-        context.update({'form': form})
+                map = activity.mission.instance.location         
+                
+        context.update({'form': form, 'map': map})
 
     return context
 
@@ -135,7 +137,7 @@ def _get_mc_choice_ids(activity):
 
 
 def activity(request, activity_id, template=None, **kwargs):
-    import ipdb;ipdb.set_trace()
+#    import ipdb;ipdb.set_trace()
     model = kwargs.pop('model')
     action = kwargs.pop('action')
     activity = _get_activity(activity_id, get_model(*(model.split('.'))))
@@ -149,6 +151,7 @@ def activity(request, activity_id, template=None, **kwargs):
     form = None
 
     context = dict(
+        view_action = action,
         comment_form = comment_form,
         activity = activity,
     )
@@ -167,7 +170,10 @@ def activity(request, activity_id, template=None, **kwargs):
             answer = None
             if request.POST["form"] == "open_ended":               
                 form = make_openended_form()(request.POST)
-                if form.is_valid() and comment_form.is_valid():
+                forms_valid = form.is_valid() and comment_form.is_valid()
+                if action == 'replay':
+                    forms_valid = form.is_valid()
+                if forms_valid:
                     response_message = form.cleaned_data.get('response_message', '')
                     answer = AnswerOpenEnded.objects.create(
                                 activity = activity,
@@ -179,7 +185,10 @@ def activity(request, activity_id, template=None, **kwargs):
             elif request.POST["form"] == "single_response":                
                 choices = _get_mc_choices(activity)
                 form = make_single_form(choices)(request.POST)
-                if form.is_valid() and comment_form.is_valid():
+                forms_valid = form.is_valid() and comment_form.is_valid()
+                if action == 'replay':
+                    forms_valid = form.is_valid()
+                if forms_valid:                
                     cd = form.cleaned_data
                     mcactivities = MultiChoiceActivity.objects.filter(id=int(cd.get('response')))
                     if mcactivities.count():
@@ -195,7 +204,10 @@ def activity(request, activity_id, template=None, **kwargs):
             elif request.POST["form"] == "multi_response":                
                 choices = _get_mc_choices(activity)
                 form = make_multi_form(choices)(request.POST)
-                if form.is_valid() and comment_form.is_valid():
+                forms_valid = form.is_valid() and comment_form.is_valid()
+                if action == 'replay':
+                    forms_valid = form.is_valid()
+                if forms_valid:
                     #this gets very very messy....
                     
                     choice_ids =  _get_mc_choice_ids(activity)
@@ -224,11 +236,17 @@ def activity(request, activity_id, template=None, **kwargs):
                     _update_errors()
             elif request.POST["form"] == "map":
                 form = MapForm(request.POST)                 
-                if comment_form.is_valid() and form.is_valid():
-                    map = form.cleaned_data["map"]                
-                    answer = AnswerMap()
-                    answer.activity = activity
-                    answer.answerUser = request.user
+                forms_valid = form.is_valid() and comment_form.is_valid()
+                if action == 'replay':
+                    forms_valid = form.is_valid()
+                if forms_valid:
+                    map = form.cleaned_data["map"]
+                    try:                
+                        answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)                        
+                    except AnswerMap.DoesNotExist:
+                        answer = AnswerMap()
+                        answer.activity = activity
+                        answer.answerUser = request.user
                     answer.map = map;
                     answer.save()
                 else:
@@ -239,13 +257,13 @@ def activity(request, activity_id, template=None, **kwargs):
                 answer.answerUser = request.user
                 answer.save()
         
-            if answer is not None:
+            if answer is not None and action != 'replay':
                 comment_fun(answer, comment_form, request)
                 PointsAssigner().assignAct(request.user, activity)
-                if action == 'replay':
-                    return log_activity(request, activity, "replayed")
-                elif action == 'play':
-                    return log_activity(request, activity, "completed")
+            if action == 'replay':
+                return log_activity(request, activity, "replayed")
+            elif action == 'play':
+                return log_activity(request, activity, "completed")
     ctx = _build_context(action, activity, request.user)
     context.update(ctx)
     template = "player_activities/" + activity.type.type
