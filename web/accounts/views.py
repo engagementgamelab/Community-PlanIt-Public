@@ -296,17 +296,6 @@ def edit(request):
                 profile.save()
                 profile_form.save()
 
-                if not profile.editedProfile:
-                    try:
-                        # TODO: Break this out into a function
-                        if len(profile.affiliations) and profile.accepted_term and profile.accepted_research and len(profile.phone_number):
-
-                            profile.completed = True
-                            profile.save()
-                            PointsAssigner().assign(request.user, 'profile_completed')
-                    except:
-                        pass
-
                 return HttpResponseRedirect(reverse('accounts:dashboard'))
 
     tmpl = loader.get_template('accounts/profile_edit.html')
