@@ -300,6 +300,34 @@ def activity(request, activity_id, template=None, **kwargs):
                     comment_fun(answer, comment_form, request)
                     PointsAssigner().assignAct(request.user, activity)
                     return log_activity(request, activity, "completed")
+        elif action == "overview":            
+            if comment_form.is_valid():
+                comment = Comment.objects.create(
+                                    content_object=activity,
+                                    message=comment_form.cleaned_data['message'], 
+                                    user=request.user,
+                                    instance=activity.mission.instance,
+                )
+                if request.POST.has_key('yt-url'):
+                    if request.POST.get('yt-url'):
+                        comment.attachment.create(
+                            file=None,
+                            url=request.POST.get('yt-url'),
+                            type='video',
+                            user=request.user,
+                            instance=activity.mission.instance)
+            
+                if request.FILES.has_key('picture'):
+                    file = request.FILES.get('picture')
+                    picture = Image.open(file)
+                    if (file.name.rfind(".") -1):
+                        file.name = "%s.%s" % (file.name, picture.format.lower())
+                    comment.attachment.create(
+                        file=request.FILES.get('picture'),
+                        user=request.user,
+                        instance=activity.mission.instance)
+            return HttpResponseRedirect(activity.get_overview_url())
+        
     ctx = _build_context(action, activity, request.user)
     context.update(ctx)
     template = "player_activities/" + activity.type.type
