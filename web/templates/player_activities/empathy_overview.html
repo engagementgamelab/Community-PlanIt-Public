@@ -4,7 +4,7 @@
 
 {% block main %}
     <h1>Empathy Response Overview</h1>
-    <h2>{{ activity.question }}</h2>
+    <h2>{{ activity.question|safe }}</h2>
     
     {%if not activity.mission.is_expired and myAnswer %}
         <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>

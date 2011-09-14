@@ -4,7 +4,7 @@
 
 {% block main %}
 <h1>{{activity.name}}</h1>
-<h3>{{activity.question}}</h3>
+<h3>{{activity.question|safe}}</h3>
 
 
     {% include "player_activities/attachments.html" %}
