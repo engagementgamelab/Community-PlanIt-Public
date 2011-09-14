@@ -13,7 +13,7 @@
 {% endif %}
 
 {% if mission.is_expired %}
-<p class="notice">This mission has ended on {{ mission.start_date|date:"m/d/Y" }}.</p>
+<p class="notice">This mission has ended on {{ mission.end_date|date:"F j, Y" }}.</p>
 {% endif %}
 
 {% if mission.video %}
