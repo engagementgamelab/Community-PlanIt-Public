@@ -8,7 +8,8 @@
     
     {% if myAnswer %}
         <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>
-        <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:replay activity.id %}' ">
+        <input class="button" type="button" value="{% trans "Replay" %}"
+        onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
     {% endif %}
     
     <div>
@@ -52,11 +53,4 @@
         {% endfor %}
     </div>
     
-    
-    <div id="comments">
-        {% with instance=activity.mission.instance comment_heading="Comments" comments=activity.comments %}
-        {% include "comments/post.html" %}
-        {% endwith %}
-        <div style="clear: both;"></div>
-    </div>
 {% endblock %}

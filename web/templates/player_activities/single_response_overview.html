@@ -48,10 +48,6 @@
         {% endfor %}
     </div>
 
-    {% with instance=activity.mission.instance comment_heading="Comments on this activity" comments=activity.comments %}
-    {% include "comments/post.html" %}
-    {% endwith %}
-
 {% endblock %}
 
 {%block body%}   
