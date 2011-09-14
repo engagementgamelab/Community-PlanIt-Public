@@ -212,12 +212,17 @@ def activity(request, activity_id, template=None, **kwargs):
                     mcactivities = MultiChoiceActivity.objects.filter(id=int(cd.get('response')))
                     if mcactivities.count():
                         selected = mcactivities[0]
-
-                    answer = AnswerSingleResponse.objects.create(
-                                activity = activity,
-                                answerUser = request.user,
-                                selected=selected,
-                    )                    
+                    try:
+                        answer = AnswerSingleResponse.objects.get(activity = activity,
+                                                                  answerUser = request.user)
+                        answer.selected = selected
+                        answer.save()
+                    except AnswerSingleResponse.DoesNotExist:
+                        answer = AnswerSingleResponse.objects.create(
+                                   activity = activity,
+                                   answerUser = request.user,
+                                   selected=selected,
+                        )                    
                 else:
                     _update_errors()
             elif request.POST["form"] == "multi_response":                
