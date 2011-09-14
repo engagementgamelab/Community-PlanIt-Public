@@ -18,6 +18,8 @@ DEBUG = False
 DEFAULT_FROM_EMAIL = 'noreply@communityplanit.org'
 DIRNAME = os.path.dirname(__file__)
 
+INTERNAL_IPS = ('127.0.0.1',)
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
@@ -64,6 +66,7 @@ INSTALLED_APPS = (
     # 3rd party
     'django_mailer',
     'django_extensions',
+    'debug_toolbar',
     'gmapsfield',
     'gmapsfield.templatetags',
     'nani',
@@ -88,6 +91,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 NOREPLY_EMAIL = 'noreply@communityplanit.org'
@@ -140,6 +144,21 @@ LOCALE_INDEPENDENT_PATHS = (
 LOCALE_INDEPENDENT_MEDIA_URL = True
 PREFIX_DEFAULT_LOCALE = True
 
+#debug-toolbar
+DEBUG_TOOLBAR_PANELS = (
+    'debug_toolbar.panels.version.VersionDebugPanel',
+    'debug_toolbar.panels.timer.TimerDebugPanel',
+    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+    'debug_toolbar.panels.headers.HeaderDebugPanel',
+    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+    'debug_toolbar.panels.template.TemplateDebugPanel',
+    'debug_toolbar.panels.sql.SQLDebugPanel',
+    'debug_toolbar.panels.signals.SignalDebugPanel',
+    'debug_toolbar.panels.logger.LoggingPanel',
+)
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS' : False,
+}
 
 #
 # Community PlanIT settings
