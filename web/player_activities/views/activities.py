@@ -195,8 +195,7 @@ def activity(request, activity_id, template=None, **kwargs):
         activity = activity,
         errors = errors
     )
-    
-    
+
     def _update_errors():        
         if form.errors:
             errors.update(form.errors)
@@ -298,7 +297,17 @@ def activity(request, activity_id, template=None, **kwargs):
 
             if answer is not None:
                 if action == 'replay':
+                    # for open_ended/empathy update the message 
+                    # for the submitted comment with the response to the
+                    # question
+                    if activity.type.type in ['open_ended', 'empathy']:
+                        my_comments =answer.comments.all().order_by('-posted_date')
+                        if my_comments.count():
+                            myComment = my_comments[0]
+                            myComment.message=form.cleaned_data.get('response', '')
+                            myComment.save()
                     return log_activity_and_redirect(request, activity, "replayed")
+
                 elif action == 'play':
                     if activity.type.type in ['open_ended', 'empathy']:
                         comment_fun(answer, request, message=form.cleaned_data.get('response', ''))
