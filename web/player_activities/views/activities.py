@@ -180,7 +180,7 @@ def activity(request, activity_id, template=None, **kwargs):
         return HttpResponseRedirect(activity.get_overview_url())
 
     comment_form = None
-    if activity.type.type not in ['epen_ended', 'empathy']:
+    if activity.type.type not in ['open_ended', 'empathy']:
         comment_form = CommentForm(data=request.POST or None)
     form = None
     errors = {}
