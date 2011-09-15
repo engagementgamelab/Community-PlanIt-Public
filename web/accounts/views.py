@@ -260,7 +260,7 @@ def edit(request):
                 
                 request.user.set_password(confirm)
                 request.user.save()
-                messages.success(request, "Sucessfully updated password")
+                messages.success(request, "Your new password was saved.")
         else:
             # User profile form updated, not change password
             profile_form = UserProfileForm(data=request.POST, files=request.FILES, instance=profile)
