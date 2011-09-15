@@ -16,10 +16,10 @@
             {{activity.bio}}
         </p>
         
-        {% include "player_activities/attachments.html" %}
-         
         <h2 class="clear">{{activity.question|safe}}</h2>
 
+        {% include "player_activities/attachments.html" %}
+         
         <h3>{% trans "Enter your response" %}</h3>
         {{ form.response }}
         

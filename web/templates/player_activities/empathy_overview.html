@@ -24,10 +24,10 @@
         {{activity.bio}}
     </p>
     
-    {% include "player_activities/attachments.html" %}
-
     <h2>{{ activity.question|safe }}</h2>
     
+    {% include "player_activities/attachments.html" %}
+
     {% if answers %}
     <div class="comments embedded clear">
         <h2>
