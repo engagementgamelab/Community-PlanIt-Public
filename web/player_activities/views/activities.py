@@ -41,10 +41,12 @@ def _build_context(action, activity, user=None):
         # Quick fix:
         if activity.type.type == 'open_ended':
             return getattr(activity, 'openended_answers')
+        elif activity.type.type == 'empathy':
+            return getattr(activity, 'empathy_answers')
         elif activity.type.type == 'multi_response':
             return getattr(activity, 'multiresponse_answers')
         else:
-            for klass in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse']:
+            for klass in ['AnswerMap', 'AnswerSingleResponse']:
                 related_name = klass.replace('Answer', '').lower() + '_answers'
                 if hasattr(activity, related_name):
                     return getattr(activity, related_name)
@@ -119,8 +121,12 @@ def _build_context(action, activity, user=None):
             ))
 
     elif action in ['play', 'replay']:
-        if (activity.type.type == "open_ended"):
+
+
+        if activity.type.type == 'open_ended':
             form = make_openended_form()
+        elif activity.type.type == 'empathy':
+            form = make_empathy_form()
         elif (activity.type.type == "single_response"):
             choices = _get_mc_choices(activity)
             form = make_single_form(choices)
@@ -143,9 +149,7 @@ def _build_context(action, activity, user=None):
             else:
                 map = activity.mission.instance.location
             context.update({'map': map})
-        elif activity.type.type == "empathy":
-            form = make_empathy_form()         
-                
+
         context.update({'form': form})
 
     return context
@@ -213,26 +217,10 @@ def activity(request, activity_id, template=None, **kwargs):
 
         if action in ['play', 'replay']:
             answer = None
-            if request.POST["form"] == "open_ended":               
-                form = make_openended_form()(request.POST)                
-                if _is_form_valid():
-                    response_message = form.cleaned_data.get('response_message', '')
-                    try:
-                        answer = AnswerOpenEnded.objects.get(activity=activity,
-                                                             answerUser=request.user)
-                        answer.comment = response_message
-                        answer.save()
-                    except AnswerOpenEnded.DoesNotExist:
-                        answer = AnswerOpenEnded.objects.create(
-                                                activity=activity,
-                                                answerUser=request.user,
-                                                comment=response_message)                                
-                else:
-                    _update_errors()
-            elif request.POST["form"] == "single_response":                
+            if request.POST["form"] == "single_response":
                 choices = _get_mc_choices(activity)
                 form = make_single_form(choices)(request.POST)
-                if _is_form_valid():                
+                if _is_form_valid():
                     cd = form.cleaned_data
                     mcactivities = MultiChoiceActivity.objects.filter(id=int(cd.get('response')))
                     if mcactivities.count():
@@ -247,7 +235,7 @@ def activity(request, activity_id, template=None, **kwargs):
                                    activity = activity,
                                    answerUser = request.user,
                                    selected=selected,
-                        )                    
+                        )
                 else:
                     _update_errors()
             elif request.POST["form"] == "multi_response":                
@@ -294,28 +282,27 @@ def activity(request, activity_id, template=None, **kwargs):
                     answer.save()
                 else:
                     _update_errors()
-            elif request.POST["form"] == "empathy":                              
+
+            elif request.POST["form"] == "open_ended":
+                form = make_openended_form()(request.POST)
+                if _is_form_valid():
+                    answer, created = AnswerOpenEnded.objects.get_or_create(activity=activity, answerUser=request.user)
+                else:
+                    _update_errors()
+            elif request.POST["form"] == "empathy":
                 form = make_empathy_form()(request.POST)
                 if _is_form_valid():
-                    response_message = form.cleaned_data.get('response_message', '')
-                    try:
-                        answer = AnswerEmpathy.objects.get(activity=activity,
-                                                           answerUser=request.user)
-                        answer.comment = response_message
-                        answer.save()
-                    except AnswerEmpathy.DoesNotExist:
-                        answer = AnswerEmpathy.objects.create(
-                                                activity=activity,
-                                                answerUser=request.user,
-                                                comment=response_message)                                
+                    answer, created = AnswerEmpathy.objects.get_or_create(activity=activity, answerUser=request.user)
                 else:
-                    _update_errors()                
-        
+                    _update_errors()
+
             if answer is not None:
                 if action == 'replay':
                     return log_activity_and_redirect(request, activity, "replayed")
                 elif action == 'play':
-                    if activity.type.type not in ['open_ended', 'empathy']:
+                    if activity.type.type in ['open_ended', 'empathy']:
+                        comment_fun(answer, request, message=form.cleaned_data.get('response', ''))
+                    else:
                         comment_fun(answer, comment_form, request)
                     PointsAssigner().assignAct(request.user, activity)
                     return log_activity_and_redirect(request, activity, "completed")

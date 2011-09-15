@@ -31,10 +31,6 @@ class Answer(models.Model):
     def get_absolute_url(self):
         return ("player_activities:overview", [self.activity.id])
 
-class AnswerOpenEnded(Answer):
-    comment = models.TextField()
-    activity = models.ForeignKey(PlayerActivity, related_name='openended_answers')
-
 class AnswerSingleResponse(Answer):
     selected = models.ForeignKey(MultiChoiceActivity, related_name='singleresponse_answers')
     activity = models.ForeignKey(PlayerActivity, related_name='singleresponse_answers')
@@ -59,5 +55,8 @@ class AnswerMap(Answer):
 
 class AnswerEmpathy(Answer):
     activity = models.ForeignKey(PlayerEmpathyActivity, related_name='empathy_answers')
-    comment = models.TextField()
+
+class AnswerOpenEnded(Answer):
+    activity = models.ForeignKey(PlayerActivity, related_name='openended_answers')
+
 

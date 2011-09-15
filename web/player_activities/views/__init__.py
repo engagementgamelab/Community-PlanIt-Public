@@ -22,14 +22,16 @@ def _get_activity(pk, model_klass):
         except trans_model.DoesNotExist:
             raise model_klass.DoesNotExist("activity translation could not be located. fallback does not exist.")
 
-def comment_fun(answer, form, request):
+def comment_fun(answer, request, form=None, message=''):
+    if form:
+        message = form.cleaned_data['message']
     comment = answer.comments.create(
         content_object=answer,
-        message=form.cleaned_data['message'], 
+        message=message,
         user=request.user,
         instance=request.user.get_profile().instance,
     )
-    
+
     if request.POST.has_key('yt-url'):
         if request.POST.get('yt-url'):
             comment.attachment.create(

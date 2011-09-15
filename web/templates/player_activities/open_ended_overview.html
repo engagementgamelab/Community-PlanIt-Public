@@ -11,8 +11,8 @@
 
     {%if not activity.mission.is_expired %}
     <div>
-        {% if myAnswer %}
-        <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>
+        {% if myComment %}
+        <h3>{% trans "You answered:" %} <span class="highlight">{{ myComment.message }}</span></h3>
         <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:replay activity.id %}' ">
         {% endif %}
     </div>

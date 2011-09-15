@@ -10,12 +10,26 @@ from web.answers.models import *
 
 from gmapsfield.fields import *
 
+def make_answer_form():
+    class AnswerForm(forms.Form):
+        response = forms.CharField(widget=forms.Textarea)
+        class Meta:
+            model = Answer
+    return AnswerForm
+
 def make_openended_form():
-    class OpenEndedForm(forms.Form):
-        response_message = forms.CharField(widget=forms.Textarea)
+    class OpenEndedAnswerForm(forms.Form):
+        response = forms.CharField(widget=forms.Textarea)
         class Meta:
             model = AnswerOpenEnded
-    return OpenEndedForm
+    return OpenEndedAnswerForm
+
+def make_empathy_form():
+    class EmpathyAnswerForm(forms.Form):
+        response = forms.CharField(widget=forms.Textarea)
+        class Meta:
+            model = AnswerEmpathy
+    return EmpathyAnswerForm
 
 def make_single_form(choices):
     class SingleForm(forms.Form):
@@ -30,13 +44,6 @@ def make_multi_form(choices):
         class Meta:
             model = AnswerMultiChoice
     return MultiForm
-
-def make_empathy_form():
-    class EmpathyForm(forms.Form):
-        response_message = forms.CharField(widget=forms.Textarea)
-        class Meta:
-            model = AnswerEmpathy
-    return EmpathyForm
 
 class MapForm(forms.Form):
     map = GoogleMapsField().formfield()
