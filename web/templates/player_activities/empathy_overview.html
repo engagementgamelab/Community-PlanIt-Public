@@ -7,7 +7,7 @@
     <h2>{{ activity.question|safe }}</h2>
     
     {%if not activity.mission.is_expired and myAnswer %}
-        <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.comment}}</span></h3>
+        <h3>{% trans "You answered:" %} <span class="highlight">{{myComment.message}}</span></h3>
         <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
     <div>
     </div>
