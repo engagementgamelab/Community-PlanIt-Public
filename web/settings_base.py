@@ -66,7 +66,7 @@ INSTALLED_APPS = (
     # 3rd party
     'django_mailer',
     'django_extensions',
-    'debug_toolbar',
+    #'debug_toolbar',
     'gmapsfield',
     'gmapsfield.templatetags',
     'nani',
@@ -91,7 +91,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 NOREPLY_EMAIL = 'noreply@communityplanit.org'
