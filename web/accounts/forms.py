@@ -28,7 +28,7 @@ class RegisterFormOne(forms.Form):
     password_again = forms.CharField(required=True, label=_("Password Again"), widget=forms.PasswordInput(render_value=False))
     preferred_language = forms.ChoiceField(choices=settings.LANGUAGES)
 
-    birth_year = forms.CharField(max_length=30, label='Year you were born', required=False)
+    birth_year = forms.IntegerField(label='Year you were born', required=False)
 
     city = forms.CharField(max_length=128, label=_('Your neighborhood, town or city'))
     zip_code = forms.CharField(max_length=10, label=_('Your ZIP code'))
@@ -191,7 +191,9 @@ class RegistrationWizard(FormWizard):
         profile.email = form_one.cleaned_data.get('email')
         profile.instance = self.community
         profile.preferred_language = form_one.cleaned_data['preferred_language']
-        profile.birth_year = form_one.cleaned_data.get('birth_year')
+        birth_year = form_one.cleaned_data.get('birth_year')
+        if birth_year:
+            profile.birth_year = birth_year
         profile.city = form_one.cleaned_data.get('city')
         profile.zip_code = form_one.cleaned_data.get('zip_code')
 
