@@ -23,7 +23,7 @@ from PIL import Image
 
 @login_required
 def all(request, template='values/all.html'):
-    values = Value.objects.filter(instance=request.user.get_profile().instance)
+    values = Value.objects.untranslated().filter(instance=request.user.get_profile().instance)
     community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
     
     value_wrapper = []
