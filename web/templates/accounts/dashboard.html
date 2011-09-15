@@ -90,7 +90,7 @@
             <div class="welcome">
                 <p>{{ instance }} {% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
             <ul>
-                <li><strong>{{instance.user_profiles.count}}</strong> participant{{instance.user_profiles.count|pluralize}}
+                <li><strong>{{instance.user_profiles.count}}</strong> {% trans "participant" %}{{instance.user_profiles.count|pluralize}}
                 <li><strong>{{instance.coin_count}}</strong> token{{instance.coin_count|pluralize}} spent on issues
                 <li><strong>{{instance.comments.count}}</strong> comments
             </ul>
@@ -126,7 +126,7 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td class="odd">No news found.</td></tr>
+                    <tr><td class="odd">{% trans "No news found" %}.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -136,7 +136,7 @@
             </p>
         </div>
     {% else %}
-        <div>The community has not started yet. We will notify you once it has begun.  </div>
+    <div>{% trans "The community has not started yet. We will notify you once it has begun" %}.  </div>
         <br>
         <a href="{% url accounts:logout %}">Logout</a>
     {% endif %}
@@ -150,7 +150,7 @@
 <div class="leaderboard">
     <table>
         <thead>
-            <tr><th>Leader</th><th>Board</th></tr>
+            <tr><th>{% trans "Leader" %}</th><th>{% trans "Board" %}</th></tr>
         </thead>
         <tbody>
         {% for profile in leaderboard %}
