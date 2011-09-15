@@ -16,13 +16,11 @@
 
     {% include "player_activities/attachments.html" %}
 
-    {%if not activity.mission.is_expired %}
+    {% if not activity.mission.is_expired and myComment %}
     <div>
-        {% if myComment %}
         <h3>{% trans "You answered:" %}</h3>
         <blockquote class="highlight">{{ myComment.message }}</span></blockquote>
         <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:replay activity.id %}' ">
-        {% endif %}
     </div>
     {% endif %}
     

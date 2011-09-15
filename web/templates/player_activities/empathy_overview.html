@@ -12,11 +12,6 @@
 {% endif %}
     <h1>{{activity.name}}</h1>
 
-    {% if not activity.mission.is_expired and myAnswer %}
-        <h3>{% trans "You answered:" %} <span class="highlight">{{myComment.message}}</span></h3>
-        <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
-    {% endif %}
-    
     <p class="bio">
         {% if activity.avatar %}
             <img class="avatar left" src="{{MEDIA_URL}}/{{activity.avatar}}">
@@ -24,10 +19,18 @@
         {{activity.bio}}
     </p>
     
-    <h2>{{ activity.question|safe }}</h2>
+    <h3>{{ activity.question|safe }}</h3>
     
     {% include "player_activities/attachments.html" %}
 
+    {% if not activity.mission.is_expired and myComment %}
+    <div>
+        <h3>{% trans "You answered:" %}</h3>
+        <blockquote class="highlight">{{ myComment.message }}</span></blockquote>
+        <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
+    </div>
+    {% endif %}
+    
     {% if answers %}
     <div class="comments embedded clear">
         <h2>
