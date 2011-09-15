@@ -856,8 +856,6 @@ p.separate {
         display: inline-block; }
         .wrapper #main .content .content-title a {
           color: white; }
-      .wrapper #main .content p.bio {
-        line-height: 2; }
       .wrapper #main .content form {
         margin: 0px auto;
         text-align: left; }
