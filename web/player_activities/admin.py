@@ -20,13 +20,13 @@ class PlayerActivityAdmin(TranslatableAdmin):
     ordering = ('mission', 'type',)
 
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
-    list_display = ('__str__', 'mission', 'type')
+    list_display = ('__str__', 'mission', 'type', 'all_translations')
 
 class MultiChoiceActivityAdmin(TranslatableAdmin):
 	list_display = ('activity', 'activity_type', 'activity_points', 'mission_title', 'all_translations')
 
 class PlayerMapActivityAdmin(TranslatableAdmin):
-    list_display = ('__str__', 'mission', 'type')
+    list_display = ('__str__', 'mission', 'type', 'all_translations')
 
 admin.site.register(PlayerActivity, PlayerActivityAdmin)
 admin.site.register(PlayerActivityType, PlayerActivityTypeAdmin)
