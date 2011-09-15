@@ -97,10 +97,29 @@ class Instance(TranslatableModel):
     def is_started(self):
         return datetime.datetime.now() >= self.start_date
 
+    def rebuild_mission_dates(self):
+        # this will reset all start_date, end_date fields on 
+        # this instances missions
+
+        def _reset_fields(m, starton=None):
+            if not starton:
+                starton = m.instance.start_date
+            m.start_date = starton
+            m.end_date = m.start_date + relativedelta(days=+m.instance.days_for_mission)
+            m.save()
+            return m.end_date
+
+        starton = None
+        for m in  self.missions.all().distinct().order_by('date_created'):
+            starton = _reset_fields(m, starton)
+
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]
         super(Instance,self).save()
-        
+        if self.start_date:
+            self.rebuild_mission_dates()
+
 class PointsAssignmentAction(models.Model):
     action = models.CharField(max_length=260)
 
