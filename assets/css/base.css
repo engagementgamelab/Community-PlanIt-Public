@@ -1419,4 +1419,6 @@ p.bio {
   overflow: auto; }
   p.bio .avatar {
     height: auto;
-    width: 200px; }
+    width: auto;
+    max-width: 128px;
+    max-height: 128px; }
