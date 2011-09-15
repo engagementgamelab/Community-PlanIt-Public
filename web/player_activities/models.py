@@ -195,5 +195,9 @@ class MultiChoiceActivity(TranslatableModel):
         return self.activity.points
 
     @property
+    def mission(self):
+        return self.activity.mission
+
+    @property
     def mission_title(self):
         return self.activity.mission.title

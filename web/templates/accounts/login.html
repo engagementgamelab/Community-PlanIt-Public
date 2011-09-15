@@ -7,8 +7,10 @@
 {%block page_title%}<h2 id="page_title">{% trans "Player Login" %}</h2>{%endblock%}
 
 {%block aside%}
-    <h2>Forgot Password</h2>
+<div>
+    <h2>{% trans "Forgot Your Password?" %}</h2>
     <a href="{% url accounts:forgot %}">{% trans "Reset password" %}</a>
+</div>
 {%endblock%}
 
 {%block main%}

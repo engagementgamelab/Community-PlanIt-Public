@@ -31,6 +31,7 @@
             </div>
             {% endif %}
         </h3>
+        {% if comments.all %}
         <ul class="comment_list">
             {% for comment in comments.all reversed %}
                 {% with extra_message=answer.selected.value %}
@@ -40,6 +41,7 @@
             <li class="comment">No comments found.</li>
             {% endfor %}
         </ul>
+        {% endif %}
         {% endwith %}
         {% endfor %}
     </div>

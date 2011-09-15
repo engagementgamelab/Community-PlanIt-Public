@@ -3,10 +3,17 @@
 {% block title %}{{activity.name}}: Response Overview{% endblock %}
 
 {% block main %}
+{% if my_answers %}
+<div class="suggestion">
+    {% blocktrans with mission_url=activity.mission.get_absolute_url %}
+    Thanks for completing this activity. When you're ready for more, visit the <a href="{{mission_url}}">mission page</a>.
+    {% endblocktrans %}
+</div>
+{% endif %}
 <h1>{{activity.name}}</h1>
 <h3>{{activity.question|safe}}</h3>
     
-    {%if my_answers %}
+    {% if my_answers %}
     <div>
             <h3>{% trans "Your answer:" %}</h3>
             {{my_answers}}
@@ -21,50 +28,27 @@
     <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
         margin-top: 25px; margin-bottom: 25px; "></div>
 
-    {%if all_answers %}
-    <h2>{% trans "Responses" %}</h2>
+    {% if all_answers %}
     <div class="comments embedded">
-        {% for user, answers, comments in all_answers %}
+        <h2>
+            {% trans "Responses" %}
+            <div class="controls right">
+                Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+            </div>
+        </h2>
+        <ul class="comment_list">
         {% with instance=activity.mission.instance %}
-        {% if user == request.user %}
-            {% with comment_heading="Your Answer" %}
-            <h3>
-                {% blocktrans %}{{comment_heading}}{% endblocktrans %}
-                <div class="controls right">
-                    Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
-                </div>
-            </h3>
+        {% for user, answers, comments in all_answers %}
             {% if comments %}
-            <ul class="comment_list">
                 {% with extra_message=answers %}
                 {% for comment in comments %}
                 {% include "comments/comment.html" %}
                 {% endfor %}
                 {% endwith %}
-            </ul>
             {% endif %}
-            {% endwith %}
-        {% else %}
-        {% with comment_heading=user.get_profile.screen_name %}
-            <h3>
-                {% blocktrans %}{{comment_heading}}{% endblocktrans %}
-                <div class="controls right">
-                    Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
-                </div>
-            </h3>
-            {% if comments %}
-            <ul class="comment_list">
-                {% with extra_message=answers %}
-                {% for comment in comments %}
-                {% include "comments/comment.html" %}
-                {% endfor %}
-                {% endwith %}
-            </ul>
-            {% endif %}
-        {% endwith %}
-        {% endif %}
-        {% endwith %}
         {% endfor %}
+        {% endwith %}
+        </ul>
     </div>
     {% else %}
         <h2>{% trans "no responses have been submitted" %}</h2>
@@ -72,7 +56,7 @@
 
 {% endblock %}
 
-{%block body%}   
+{% block body %}   
 <script type="text/javascript">
     $(function () {
         try {
@@ -118,5 +102,5 @@
     });
     
 </script>    
-{%endblock body%}   
+{% endblock body %}   
 

@@ -18,8 +18,8 @@ from comments.models import *
 from comments.forms import *
 from player_activities.forms import *
 from player_activities.models import *
-from player_activities.views import _get_activity, getComments, comment_fun,\
-    log_activity
+from player_activities.views import _get_activity, comment_fun,\
+    log_activity_and_redirect
 from reports.actions import *
 
 from django.db.models import get_model
@@ -179,7 +179,9 @@ def activity(request, activity_id, template=None, **kwargs):
     if action=='play' and activity.is_completed(request.user):
         return HttpResponseRedirect(activity.get_overview_url())
 
-    comment_form = CommentForm(data=request.POST or None)
+    comment_form = None
+    if activity.type.type not in ['epen_ended', 'empathy']:
+        comment_form = CommentForm(data=request.POST or None)
     form = None
     errors = {}
 
@@ -195,18 +197,20 @@ def activity(request, activity_id, template=None, **kwargs):
         if form.errors:
             errors.update(form.errors)
         if action != 'replay':        
-            if comment_form.errors:
+            if comment_form and comment_form.errors:
                 errors.update(comment_form.errors)        
         context.update({'errors': errors})
-            
+
     def _is_form_valid():
-        is_valid = form.is_valid()        
+        is_valid = form.is_valid()
         if action == 'replay':
             return is_valid
-        return is_valid and comment_form.is_valid()
-            
-    if request.method == "POST":       
-        
+        if comment_form:
+            return is_valid and comment_form.is_valid()
+        return is_valid
+
+    if request.method == "POST":
+
         if action in ['play', 'replay']:
             answer = None
             if request.POST["form"] == "open_ended":               
@@ -309,13 +313,15 @@ def activity(request, activity_id, template=None, **kwargs):
         
             if answer is not None:
                 if action == 'replay':
-                    return log_activity(request, activity, "replayed")
+                    return log_activity_and_redirect(request, activity, "replayed")
                 elif action == 'play':
-                    comment_fun(answer, comment_form, request)
+                    if activity.type.type not in ['open_ended', 'empathy']:
+                        comment_fun(answer, comment_form, request)
                     PointsAssigner().assignAct(request.user, activity)
-                    return log_activity(request, activity, "completed")
-        elif action == "overview":            
-            if comment_form.is_valid():
+                    return log_activity_and_redirect(request, activity, "completed")
+
+        elif action == "overview":
+            if comment_form and comment_form.is_valid():
                 comment = Comment.objects.create(
                                     content_object=activity,
                                     message=comment_form.cleaned_data['message'], 

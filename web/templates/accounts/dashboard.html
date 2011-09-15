@@ -5,7 +5,15 @@
 {% block extra_body_class %}rightsidebar{% endblock %}
 
 {%block title%}{% trans "Dashboard" %}{%endblock%}
-{%block page_title%}<h2 id="page_title">{{ instance.title }}</h2>{% endblock %}
+
+{%block page_title%}
+<h2 id="page_title">
+    {{ instance.title }}
+    <span class="dates">
+        {{ instance.start_date|date:"m/d/Y" }} &#8211; {{ instance.end_date|date:"m/d/Y" }}
+    </span>
+</h2>
+{% endblock %}
 
 {% block rightsidebar %}
 {% if instance.is_started %}
@@ -73,78 +81,60 @@
 {% block main %}
 {% if instance %}
     {% if instance.is_started %}
-        {% if not user.is_active %}
-            <form method="POST" action="">
-                <h4>{% trans "One last step: Please verify that you have read our Terms of Use and Privacy Policy.  It is our commitment to provide a safe, friendly environment for community members to discuss important values." %}</h4>
-                {%csrf_token%}
-                <div class="fieldWrapper">
-                    {{ activation_form.accepted_term.errors }}
-                    <label for="id_accepted_term">{% trans "I have have read the " %}<a href="{% url terms %}" target="_blank">{% trans "Terms of Use." %}</a></label>
-                    {{ activation_form.accepted_term }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ activation_form.accepted_research.errors }}
-                    <label for="id_accepted_research">I have read the <a href="{% url privacy %}" target="_blank">Privacy Policy.</a></label>
-                    {{ activation_form.accepted_research }}
-                </div>
-                <button class="button">{% trans "Activate my account!" %}</button>
-            </form>
-        {% else %}
-            {% if not instance.is_expired %}                    
-                <div class="welcome">
-                    <p>{{ instance.description }} </p>
-                </div>
-                
-            {% else %}
-                <div class="welcome">
-                    <p>{{ instance }} {% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
-                <ul>
-                    <li><strong>{{instance.user_profiles.count}}</strong> participant{{instance.user_profiles.count|pluralize}}
-                    <li><strong>{{instance.coin_count}}</strong> token{{instance.coin_count|pluralize}} spent on issues
-                    <li><strong>{{instance.comments.count}}</strong> comments
-                </ul>
-
-                <p>Check out the results of the
-                {% if last_mission %}
-                    <a class="red" href="{% url missions:mission last_mission.slug %}" title="{{last_mission.name}}">activities</a>
-                {% else %}
-                <a class="red" href="{% url missions:index %}" title="mission">activities</a>
-                {% endif %}
-                results &#8212; and don't forget to see how the community spent its 
-                <a class="red" href="{% url values:index %}">tokens</a>!
-                </p>
-                <p>{% trans "Thanks for playing!" %}</p>
-                </div>
-            {% endif %}
+        {% if not instance.is_expired %}                    
+            <div class="welcome">
+                <p>{{ instance.description }} </p>
+            </div>
             
-            <div class="feed">
-                <h3>{% trans "Latest Events" %}</h3>
-                <table>
-                    <tbody>
-                        {% for activity in log %}
-                        <tr class="{% cycle "odd" "even" %}">
-                            <td>{{activity.date|date:"m/d/Y"}}</td>
-                            <td>
-                                <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
-                                {{activity.data}} 
-                                {% if activity.get_url %}
-                                    <a href="{{activity.get_url}}">{{activity.action}}</a>
-                                {% else %}
-                                    {{activity.action}}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr><td class="odd">No news found.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                
-                <p>
-                <a href="{% url instances:instance user.get_profile.instance.slug %}" class="right button">View more community news</a>
-                </p>
+        {% else %}
+            <div class="welcome">
+                <p>{{ instance }} {% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
+            <ul>
+                <li><strong>{{instance.user_profiles.count}}</strong> participant{{instance.user_profiles.count|pluralize}}
+                <li><strong>{{instance.coin_count}}</strong> token{{instance.coin_count|pluralize}} spent on issues
+                <li><strong>{{instance.comments.count}}</strong> comments
+            </ul>
+
+            <p>Check out the results of the
+            {% if last_mission %}
+                <a class="red" href="{% url missions:mission last_mission.slug %}" title="{{last_mission.name}}">activities</a>
+            {% else %}
+            <a class="red" href="{% url missions:index %}" title="mission">activities</a>
+            {% endif %}
+            results &#8212; and don't forget to see how the community spent its 
+            <a class="red" href="{% url values:index %}">tokens</a>!
+            </p>
+            <p>{% trans "Thanks for playing!" %}</p>
             </div>
         {% endif %}
+        
+        <div class="feed">
+            <h3>{% trans "Latest Events" %}</h3>
+            <table>
+                <tbody>
+                    {% for activity in log %}
+                    <tr class="{% cycle "odd" "even" %}">
+                        <td>{{activity.date|date:"m/d/Y"}}</td>
+                        <td>
+                            <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
+                            {{activity.data}} 
+                            {% if activity.get_url %}
+                                <a href="{{activity.get_url}}">{{activity.action}}</a>
+                            {% else %}
+                                {{activity.action}}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td class="odd">No news found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <p>
+            <a href="{% url instances:instance user.get_profile.instance.slug %}" class="right button">View more community news</a>
+            </p>
+        </div>
     {% else %}
         <div>The community has not started yet. We will notify you once it has begun.  </div>
         <br>
@@ -152,7 +142,7 @@
     {% endif %}
 {% endif %}
 
-    <div style="clear:both;"></div>
+<div style="clear:both;"></div>
 {% endblock %}
 
 {% block aside %}

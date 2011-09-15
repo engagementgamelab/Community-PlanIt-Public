@@ -1,0 +1,384 @@
+- fields: {education: High School or less, language_code: en-us, master: 1}
+  model: accounts.userprofileeducationtranslation
+  pk: 1
+- fields: {education: "Lek\xF2l Segond\xE8 oswa mwens", language_code: ht, master: 1}
+  model: accounts.userprofileeducationtranslation
+  pk: 2
+- fields: {education: Escuela secundaria o menos, language_code: es, master: 1}
+  model: accounts.userprofileeducationtranslation
+  pk: 3
+- fields: {education: Some College, language_code: en-us, master: 2}
+  model: accounts.userprofileeducationtranslation
+  pk: 4
+- fields: {education: "Gen k\xE8k Kol\xE8j", language_code: ht, master: 2}
+  model: accounts.userprofileeducationtranslation
+  pk: 5
+- fields: {education: Algo de universidad, language_code: es, master: 2}
+  model: accounts.userprofileeducationtranslation
+  pk: 6
+- fields: {education: Associate's Degree, language_code: en-us, master: 3}
+  model: accounts.userprofileeducationtranslation
+  pk: 7
+- fields: {education: Degre Associate a, language_code: ht, master: 3}
+  model: accounts.userprofileeducationtranslation
+  pk: 8
+- fields: {education: Grado Asociado, language_code: es, master: 3}
+  model: accounts.userprofileeducationtranslation
+  pk: 9
+- fields: {education: Bachelor's Degree, language_code: en-us, master: 4}
+  model: accounts.userprofileeducationtranslation
+  pk: 10
+- fields: {education: Degre Katran, language_code: ht, master: 4}
+  model: accounts.userprofileeducationtranslation
+  pk: 11
+- fields: {education: Bachillerato, language_code: es, master: 4}
+  model: accounts.userprofileeducationtranslation
+  pk: 12
+- fields: {education: Master's Degree, language_code: en-us, master: 5}
+  model: accounts.userprofileeducationtranslation
+  pk: 13
+- fields: {education: "Degre M\xE8t la", language_code: ht, master: 5}
+  model: accounts.userprofileeducationtranslation
+  pk: 14
+- fields: {education: Master's Degree, language_code: es, master: 5}
+  model: accounts.userprofileeducationtranslation
+  pk: 15
+- fields: {education: Doctoral Degree, language_code: en-us, master: 6}
+  model: accounts.userprofileeducationtranslation
+  pk: 16
+- fields: {education: Doktora Degre, language_code: ht, master: 6}
+  model: accounts.userprofileeducationtranslation
+  pk: 17
+- fields: {education: Doctorado, language_code: es, master: 6}
+  model: accounts.userprofileeducationtranslation
+  pk: 18
+- fields: {instance: {{INSTANCE_ID}}, pos: 0}
+  model: accounts.userprofileeducation
+  pk: 1
+- fields: {instance: {{INSTANCE_ID}}, pos: 1}
+  model: accounts.userprofileeducation
+  pk: 2
+- fields: {instance: {{INSTANCE_ID}}, pos: 2}
+  model: accounts.userprofileeducation
+  pk: 3
+- fields: {instance: {{INSTANCE_ID}}, pos: 3}
+  model: accounts.userprofileeducation
+  pk: 4
+- fields: {instance: {{INSTANCE_ID}}, pos: 4}
+  model: accounts.userprofileeducation
+  pk: 5
+- fields: {instance: {{INSTANCE_ID}}, pos: 5}
+  model: accounts.userprofileeducation
+  pk: 6
+- fields: {gender: Male, language_code: en-us, master: 1}
+  model: accounts.userprofilegendertranslation
+  pk: 1
+- fields: {gender: Gason, language_code: ht, master: 1}
+  model: accounts.userprofilegendertranslation
+  pk: 2
+- fields: {gender: Masculino, language_code: es, master: 1}
+  model: accounts.userprofilegendertranslation
+  pk: 3
+- fields: {gender: Female, language_code: en-us, master: 2}
+  model: accounts.userprofilegendertranslation
+  pk: 4
+- fields: {gender: Femenino, language_code: es, master: 2}
+  model: accounts.userprofilegendertranslation
+  pk: 5
+- fields: {gender: Fi, language_code: ht, master: 2}
+  model: accounts.userprofilegendertranslation
+  pk: 6
+- fields: {instance: {{INSTANCE_ID}}, pos: 0}
+  model: accounts.userprofilegender
+  pk: 1
+- fields: {instance: {{INSTANCE_ID}}, pos: 1}
+  model: accounts.userprofilegender
+  pk: 2
+- fields: {how: From an organization (i.e. boys and girls club), language_code: en-us,
+    master: 1}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 1
+- fields: {how: "Soti nan yon \xF2ganizasyon (dir ti gason ak ti fi klib)", language_code: ht,
+    master: 1}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 2
+- fields: {how: "De una organizaci\xF3n (es decir, los ni\xF1os y ni\xF1as del club)",
+    language_code: es, master: 1}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 3
+- fields: {how: From a friend, language_code: en-us, master: 2}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 4
+- fields: {how: Por un amigo, language_code: es, master: 2}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 5
+- fields: {how: Nan men yon zanmi, language_code: ht, master: 2}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 6
+- fields: {how: From a local blog, language_code: en-us, master: 3}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 7
+- fields: {how: Soti nan yon blog lokal, language_code: ht, master: 3}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 8
+- fields: {how: Desde un blog locales, language_code: es, master: 3}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 9
+- fields: {how: From the City website, language_code: en-us, master: 4}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 10
+- fields: {how: "Desde la p\xE1gina web de la Ciudad", language_code: es, master: 4}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 11
+- fields: {how: "Soti nan sit ent\xE8n\xE8t vil la", language_code: ht, master: 4}
+  model: accounts.userprofilehowdiscoveredtranslation
+  pk: 12
+- fields: {instance: {{INSTANCE_ID}}, pos: 0}
+  model: accounts.userprofilehowdiscovered
+  pk: 1
+- fields: {instance: {{INSTANCE_ID}}, pos: 1}
+  model: accounts.userprofilehowdiscovered
+  pk: 2
+- fields: {instance: {{INSTANCE_ID}}, pos: 2}
+  model: accounts.userprofilehowdiscovered
+  pk: 3
+- fields: {instance: {{INSTANCE_ID}}, pos: 3}
+  model: accounts.userprofilehowdiscovered
+  pk: 4
+- fields: {income: $25000 to $50000, language_code: en-us, master: 2}
+  model: accounts.userprofileincometranslation
+  pk: 4
+- fields: {income: $25000 a $50000, language_code: ht, master: 2}
+  model: accounts.userprofileincometranslation
+  pk: 5
+- fields: {income: $25000 a $50000, language_code: es, master: 2}
+  model: accounts.userprofileincometranslation
+  pk: 6
+- fields: {income: $0 to $25000, language_code: en-us, master: 1}
+  model: accounts.userprofileincometranslation
+  pk: 1
+- fields: {income: $0 a $25000, language_code: ht, master: 1}
+  model: accounts.userprofileincometranslation
+  pk: 2
+- fields: {income: $0 a $25000, language_code: es, master: 1}
+  model: accounts.userprofileincometranslation
+  pk: 3
+- fields: {income: $75000 to $100000, language_code: en-us, master: 3}
+  model: accounts.userprofileincometranslation
+  pk: 7
+- fields: {income: $75000 a $100000, language_code: ht, master: 3}
+  model: accounts.userprofileincometranslation
+  pk: 8
+- fields: {income: $75000 a $100000, language_code: es, master: 3}
+  model: accounts.userprofileincometranslation
+  pk: 9
+- fields: {income: over $100000, language_code: en-us, master: 4}
+  model: accounts.userprofileincometranslation
+  pk: 10
+- fields: {income: Plis pase $100000, language_code: ht, master: 4}
+  model: accounts.userprofileincometranslation
+  pk: 11
+- fields: {income: "M\xE1s de $100000", language_code: es, master: 4}
+  model: accounts.userprofileincometranslation
+  pk: 12
+- fields: {instance: {{INSTANCE_ID}}, pos: 0}
+  model: accounts.userprofileincome
+  pk: 1
+- fields: {instance: {{INSTANCE_ID}}, pos: 1}
+  model: accounts.userprofileincome
+  pk: 2
+- fields: {instance: {{INSTANCE_ID}}, pos: 2}
+  model: accounts.userprofileincome
+  pk: 3
+- fields: {instance: {{INSTANCE_ID}}, pos: 3}
+  model: accounts.userprofileincome
+  pk: 4
+- fields: {language_code: en-us, master: 1, situation: I own my house or condo}
+  model: accounts.userprofilelivingsituationtranslation
+  pk: 1
+- fields: {language_code: ht, master: 1, situation: "Mwen posede kay mwen an oswa\
+      \ kondominy\xF2m"}
+  model: accounts.userprofilelivingsituationtranslation
+  pk: 2
+- fields: {language_code: es, master: 1, situation: "Soy due\xF1o de mi casa o condominio"}
+  model: accounts.userprofilelivingsituationtranslation
+  pk: 3
+- fields: {language_code: en-us, master: 2, situation: I rent}
+  model: accounts.userprofilelivingsituationtranslation
+  pk: 4
+- fields: {language_code: en-us, master: 3, situation: I live with my parents or guardian}
+  model: accounts.userprofilelivingsituationtranslation
+  pk: 5
+- fields: {language_code: ht, master: 3, situation: "M ap viv av\xE8k paran mwen oswa\
+      \ gadyen legal"}
+  model: accounts.userprofilelivingsituationtranslation
+  pk: 6
+- fields: {language_code: es, master: 3, situation: Yo vivo con mis padres o tutor}
+  model: accounts.userprofilelivingsituationtranslation
+  pk: 7
+- fields: {instance: {{INSTANCE_ID}}, pos: 0}
+  model: accounts.userprofilelivingsituation
+  pk: 1
+- fields: {instance: {{INSTANCE_ID}}, pos: 1}
+  model: accounts.userprofilelivingsituation
+  pk: 2
+- fields: {instance: {{INSTANCE_ID}}, pos: 2}
+  model: accounts.userprofilelivingsituation
+  pk: 3
+- fields: {language_code: en-us, master: 1, race: American Indian or Alaskan Native}
+  model: accounts.userprofileracetranslation
+  pk: 1
+- fields: {language_code: ht, master: 1, race: Endyen Ameriken oswa natif natal Alaska}
+  model: accounts.userprofileracetranslation
+  pk: 2
+- fields: {language_code: es, master: 1, race: Indio americano o nativo de Alaska}
+  model: accounts.userprofileracetranslation
+  pk: 3
+- fields: {language_code: ht, master: 2, race: Nwa oubyen Nwa Ameriken}
+  model: accounts.userprofileracetranslation
+  pk: 5
+- fields: {language_code: es, master: 2, race: Negro o afro-americanos}
+  model: accounts.userprofileracetranslation
+  pk: 6
+- fields: {language_code: en-us, master: 2, race: Black or African American}
+  model: accounts.userprofileracetranslation
+  pk: 4
+- fields: {language_code: en-us, master: 3, race: Asian}
+  model: accounts.userprofileracetranslation
+  pk: 7
+- fields: {language_code: ht, master: 3, race: Azyatik}
+  model: accounts.userprofileracetranslation
+  pk: 8
+- fields: {language_code: es, master: 3, race: "Asi\xE1tico"}
+  model: accounts.userprofileracetranslation
+  pk: 9
+- fields: {language_code: en-us, master: 4, race: 'Hispanic, Latino or Spanish'}
+  model: accounts.userprofileracetranslation
+  pk: 10
+- fields: {language_code: ht, master: 4, race: "Ispanik, Latino oswa Pany\xF2l"}
+  model: accounts.userprofileracetranslation
+  pk: 11
+- fields: {language_code: es, master: 4, race: "Hispano, latino o espa\xF1ol"}
+  model: accounts.userprofileracetranslation
+  pk: 12
+- fields: {language_code: en-us, master: 5, race: Pacific Islander or Native Hawaiian}
+  model: accounts.userprofileracetranslation
+  pk: 13
+- fields: {language_code: ht, master: 5, race: Zil Pasifik oswa Awayi Natif Natal}
+  model: accounts.userprofileracetranslation
+  pk: 14
+- fields: {language_code: es, master: 5, race: "Nativo de las islas del Pac\xEDfico\
+      \ o de Hawai"}
+  model: accounts.userprofileracetranslation
+  pk: 15
+- fields: {language_code: en-us, master: 6, race: White}
+  model: accounts.userprofileracetranslation
+  pk: 16
+- fields: {language_code: ht, master: 6, race: Blan}
+  model: accounts.userprofileracetranslation
+  pk: 17
+- fields: {language_code: en-us, master: 7, race: Multiracial}
+  model: accounts.userprofileracetranslation
+  pk: 19
+- fields: {language_code: ht, master: 7, race: Ras melanje}
+  model: accounts.userprofileracetranslation
+  pk: 20
+- fields: {language_code: es, master: 7, race: Multirracial}
+  model: accounts.userprofileracetranslation
+  pk: 21
+- fields: {language_code: es, master: 6, race: Blanca}
+  model: accounts.userprofileracetranslation
+  pk: 18
+- fields: {instance: {{INSTANCE_ID}}, pos: 0}
+  model: accounts.userprofilerace
+  pk: 1
+- fields: {instance: {{INSTANCE_ID}}, pos: 2}
+  model: accounts.userprofilerace
+  pk: 2
+- fields: {instance: {{INSTANCE_ID}}, pos: 1}
+  model: accounts.userprofilerace
+  pk: 3
+- fields: {instance: {{INSTANCE_ID}}, pos: 3}
+  model: accounts.userprofilerace
+  pk: 4
+- fields: {instance: {{INSTANCE_ID}}, pos: 4}
+  model: accounts.userprofilerace
+  pk: 5
+- fields: {instance: {{INSTANCE_ID}}, pos: 5}
+  model: accounts.userprofilerace
+  pk: 6
+- fields: {instance: {{INSTANCE_ID}}, pos: 6}
+  model: accounts.userprofilerace
+  pk: 7
+- fields: {language_code: en-us, master: 1, stake: Student}
+  model: accounts.userprofilestaketranslation
+  pk: 1
+- fields: {language_code: ht, master: 1, stake: "El\xE8v la"}
+  model: accounts.userprofilestaketranslation
+  pk: 2
+- fields: {language_code: es, master: 1, stake: Estudiante}
+  model: accounts.userprofilestaketranslation
+  pk: 3
+- fields: {language_code: en-us, master: 2, stake: Alumnus}
+  model: accounts.userprofilestaketranslation
+  pk: 4
+- fields: {language_code: es, master: 2, stake: Antiguo alumno}
+  model: accounts.userprofilestaketranslation
+  pk: 5
+- fields: {language_code: ht, master: 2, stake: Alumnus}
+  model: accounts.userprofilestaketranslation
+  pk: 6
+- fields: {language_code: en-us, master: 3, stake: Parent}
+  model: accounts.userprofilestaketranslation
+  pk: 7
+- fields: {language_code: ht, master: 3, stake: Paran}
+  model: accounts.userprofilestaketranslation
+  pk: 8
+- fields: {language_code: es, master: 3, stake: Padre}
+  model: accounts.userprofilestaketranslation
+  pk: 9
+- fields: {language_code: en-us, master: 4, stake: Teacher}
+  model: accounts.userprofilestaketranslation
+  pk: 10
+- fields: {language_code: ht, master: 4, stake: "Pwofes\xE8"}
+  model: accounts.userprofilestaketranslation
+  pk: 11
+- fields: {language_code: es, master: 4, stake: Profesor}
+  model: accounts.userprofilestaketranslation
+  pk: 12
+- fields: {language_code: en-us, master: 5, stake: Administrator}
+  model: accounts.userprofilestaketranslation
+  pk: 13
+- fields: {language_code: ht, master: 5, stake: "Administrat\xE8"}
+  model: accounts.userprofilestaketranslation
+  pk: 14
+- fields: {language_code: es, master: 5, stake: Administrador}
+  model: accounts.userprofilestaketranslation
+  pk: 15
+- fields: {language_code: en-us, master: 6, stake: Other}
+  model: accounts.userprofilestaketranslation
+  pk: 16
+- fields: {language_code: ht, master: 6, stake: "L\xF2t"}
+  model: accounts.userprofilestaketranslation
+  pk: 17
+- fields: {language_code: es, master: 6, stake: Otro}
+  model: accounts.userprofilestaketranslation
+  pk: 18
+- fields: {instance: {{INSTANCE_ID}}, pos: 0}
+  model: accounts.userprofilestake
+  pk: 1
+- fields: {instance: {{INSTANCE_ID}}, pos: 1}
+  model: accounts.userprofilestake
+  pk: 2
+- fields: {instance: {{INSTANCE_ID}}, pos: 2}
+  model: accounts.userprofilestake
+  pk: 3
+- fields: {instance: {{INSTANCE_ID}}, pos: 3}
+  model: accounts.userprofilestake
+  pk: 4
+- fields: {instance: {{INSTANCE_ID}}, pos: 4}
+  model: accounts.userprofilestake
+  pk: 5
+- fields: {instance: {{INSTANCE_ID}}, pos: 5}
+  model: accounts.userprofilestake
+  pk: 6
