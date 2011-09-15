@@ -25,7 +25,7 @@ from reports.actions import *
 from django.db.models import get_model
 
 def _build_context(action, activity, user=None):
-    
+
     context = {}
 
     def _get_related():        
@@ -62,7 +62,7 @@ def _build_context(action, activity, user=None):
                 if user:
                     try:
                         myAnswer = related.get(activity=activity, answerUser=user)
-                        my_comments =myAnswer.comments.all().order_by('-posted_date')
+                        my_comments = myAnswer.comments.all().order_by('posted_date')
                         myComment = None
                         if my_comments.count():
                             myComment = my_comments[0]
@@ -301,7 +301,7 @@ def activity(request, activity_id, template=None, **kwargs):
                     # for the submitted comment with the response to the
                     # question
                     if activity.type.type in ['open_ended', 'empathy']:
-                        my_comments =answer.comments.all().order_by('-posted_date')
+                        my_comments = answer.comments.all().order_by('posted_date')
                         if my_comments.count():
                             myComment = my_comments[0]
                             myComment.message=form.cleaned_data.get('response', '')
@@ -310,9 +310,9 @@ def activity(request, activity_id, template=None, **kwargs):
 
                 elif action == 'play':
                     if activity.type.type in ['open_ended', 'empathy']:
-                        comment_fun(answer, request, message=form.cleaned_data.get('response', ''))
+                        comment_fun(answer, request, None, message=form.cleaned_data.get('response', ''))
                     else:
-                        comment_fun(answer, comment_form, request)
+                        comment_fun(answer, request, comment_form)
                     PointsAssigner().assignAct(request.user, activity)
                     return log_activity_and_redirect(request, activity, "completed")
 
@@ -345,9 +345,10 @@ def activity(request, activity_id, template=None, **kwargs):
             return HttpResponseRedirect(activity.get_overview_url())
 
     user = None
-    if not request.user.is_superuser:
-        if not(activity.mission.is_future() or activity.mission.is_expired()):
-            user = request.user
+    if activity.mission.is_active() and not request.user.is_superuser:
+        user = request.user
+    print "user:", user
+    
 
     ctx = _build_context(action, activity, user=user )
     context.update(ctx)

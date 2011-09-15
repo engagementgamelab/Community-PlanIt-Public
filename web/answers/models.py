@@ -1,14 +1,17 @@
 from django.template.defaultfilters import slugify
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.utils.translation import gettext as _
+
+from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
+
+from gmapsfield.fields import GoogleMapsField
+
 from web.comments.models import Comment
 from web.missions.models import Mission
 from web.player_activities.models import (PlayerActivity, MultiChoiceActivity, 
         PlayerEmpathyActivity, PlayerMapActivity)
-from django.contrib.auth.models import User
-from django.contrib.contenttypes import generic
-from gmapsfield.fields import GoogleMapsField
-
 import datetime
 
 __all__ = (
@@ -35,6 +38,9 @@ class AnswerSingleResponse(Answer):
     selected = models.ForeignKey(MultiChoiceActivity, related_name='singleresponse_answers')
     activity = models.ForeignKey(PlayerActivity, related_name='singleresponse_answers')
 
+    def __unicode__(self):
+        return _('an answer to %s' % self.activity)
+
 #This is nasty but it's the simple way to get many checked values
 #for the user stored
 class AnswerMultiChoice(models.Model):
@@ -53,10 +59,26 @@ class AnswerMap(Answer):
     map = GoogleMapsField()
     activity = models.ForeignKey(PlayerMapActivity, related_name='map_answers')
 
+    def __unicode__(self):
+        return _('an answer to %s' % self.activity)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("player_activities:map-overview", [self.activity.id])
+
 class AnswerEmpathy(Answer):
     activity = models.ForeignKey(PlayerEmpathyActivity, related_name='empathy_answers')
+
+    def __unicode__(self):
+        return _('an answer to %s' % self.activity)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("player_activities:empathy-overview", [self.activity.id])
 
 class AnswerOpenEnded(Answer):
     activity = models.ForeignKey(PlayerActivity, related_name='openended_answers')
 
+    def __unicode__(self):
+        return _('an answer to %s' % self.activity)
 

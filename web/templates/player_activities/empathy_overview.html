@@ -3,51 +3,50 @@
 {% block title %}{{ activity.name }}: Empathy Question Overview{% endblock %}
 
 {% block main %}
-    <h1>Empathy Response Overview</h1>
-    <h2>{{ activity.question|safe }}</h2>
-    
-    {%if not activity.mission.is_expired and myAnswer %}
+{% if myAnswer %}
+<div class="suggestion">
+    {% blocktrans with mission_url=activity.mission.get_absolute_url %}
+    Thanks for completing this activity. When you're ready for more, visit the <a href="{{mission_url}}">mission page</a>.
+    {% endblocktrans %}
+</div>
+{% endif %}
+    <h1>{{activity.name}}</h1>
+
+    {% if not activity.mission.is_expired and myAnswer %}
         <h3>{% trans "You answered:" %} <span class="highlight">{{myComment.message}}</span></h3>
         <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
-    <div>
-    </div>
     {% endif %}
     
-    {% if activity.avatar %}
-        <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
-    {% else %}               
-        <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-    {% endif %}
-     
-    {% if activity.bio %}
-        <h3>{{activity.bio}}</h3>
-    {% endif %}
+    <p class="bio">
+        {% if activity.avatar %}
+            <img class="avatar left" src="{{MEDIA_URL}}/{{activity.avatar}}">
+        {% endif %}
+        {{activity.bio}}
+    </p>
     
     {% include "player_activities/attachments.html" %}
+
+    <h2>{{ activity.question|safe }}</h2>
+    
     {% if answers %}
-    <h2>{% trans "Responses" %}</h2>
-    <div class="comments embedded">
-        {% for answer in answers %}
-        {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
-        <h3>
-            {% blocktrans %}{{comment_heading}}{% endblocktrans %}
-            {% if comments.count %}
+    <div class="comments embedded clear">
+        <h2>
+            {% trans "Responses" %}
             <div class="controls right">
-                Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+                Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
             </div>
-            {% endif %}
-        </h3>
+        </h2>
         <ul class="comment_list">
+        {% for answer in answers %}
+        {% with instance=activity.mission.instance comments=answer.comments %}
             {% for comment in comments.all reversed %}
                 {% with extra_message=answer.selected.value %}
                 {% include "comments/comment.html" %}
                 {% endwith %}
-            {% empty %}
-            <li class="comment">No comments found.</li>
             {% endfor %}
-        </ul>
         {% endwith %}
         {% endfor %}
+        </ul>
     </div>
     {% endif %}
     

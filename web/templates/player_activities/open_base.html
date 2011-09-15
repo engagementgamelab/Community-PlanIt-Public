@@ -3,7 +3,9 @@
 {%block title%}Open Response{%endblock%}
 
 {%block activity%}
-    <h2>{{activity.question|safe}}</h2>
+<h1>{{activity.name}}</h1>
+<h3>{{activity.question|safe}}</h3>
+
     {% include "player_activities/attachments.html" %}
     
     {{ block.super }}
@@ -12,7 +14,9 @@
         <h3>{% trans "Enter your response" %}</h3>
         {{ form.response }}
         {% block comment %}{% endblock %}
-        <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
+        <div class="controls">
+            <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
+        </div>
     </form>
 
     

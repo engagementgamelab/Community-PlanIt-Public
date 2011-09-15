@@ -3,6 +3,13 @@
 {% block title %}{{activity.name}}: Response Overview{% endblock %}
 
 {% block main %}
+{% if myAnswer %}
+<div class="suggestion">
+    {% blocktrans with mission_url=activity.mission.get_absolute_url %}
+    Thanks for completing this activity. When you're ready for more, visit the <a href="{{mission_url}}">mission page</a>.
+    {% endblocktrans %}
+</div>
+{% endif %}
 <h1>{{activity.name}}</h1>
 <h3>{{activity.question|safe}}</h3>
 
@@ -12,25 +19,23 @@
     {%if not activity.mission.is_expired %}
     <div>
         {% if myComment %}
-        <h3>{% trans "You answered:" %} <span class="highlight">{{ myComment.message }}</span></h3>
+        <h3>{% trans "You answered:" %}</h3>
+        <blockquote class="highlight">{{ myComment.message }}</span></blockquote>
         <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:replay activity.id %}' ">
         {% endif %}
     </div>
     {% endif %}
     
-    {% if answers %}
-    <h2>{% trans "Responses" %}</h2>
+    {% if answers.count %}
     <div class="comments embedded">
-        {% for answer in answers %}
-        {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
-        <h3>
-            {% blocktrans %}{{comment_heading}}{% endblocktrans %}
-            {% if comments.count %}
+        <h2>
+            {% trans "Responses" %}
             <div class="controls right">
-                Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+                Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
             </div>
-            {% endif %}
-        </h3>
+        </h2>
+        {% for answer in answers %}
+        {% with instance=activity.mission.instance comments=answer.comments %}
         {% if comments.all %}
         <ul class="comment_list">
             {% for comment in comments.all reversed %}

@@ -23,7 +23,7 @@ def _get_activity(pk, model_klass):
             raise model_klass.DoesNotExist("activity translation could not be located. fallback does not exist.")
 
 def comment_fun(answer, request, form=None, message=''):
-    if form:
+    if form is not None:
         message = form.cleaned_data['message']
     comment = answer.comments.create(
         content_object=answer,

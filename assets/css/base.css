@@ -1337,7 +1337,8 @@ body.rightsidebar .maincontent {
 
 p {
   margin: 1em 0;
-  line-height: 1.25; }
+  line-height: 1.25;
+  max-width: 60em; }
 
 .description {
   margin: 0 10px; }
@@ -1412,3 +1413,10 @@ p {
 
 body.communities ul.communities {
   list-style: none; }
+
+p.bio {
+  clear: both;
+  overflow: auto; }
+  p.bio .avatar {
+    height: auto;
+    width: 200px; }
