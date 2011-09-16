@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-16 15:31-0400\n"
-"PO-Revision-Date: 2011-09-16 15:41\n"
+"PO-Revision-Date: 2011-09-16 15:47\n"
 "Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -942,9 +942,8 @@ msgid "No responses submitted"
 msgstr "Pa gen repons soumèt"
 
 #: templates/static/contact.html:6 templates/static/contact.html.py:12
-#, fuzzy
 msgid "Contact Us"
-msgstr "Kontakte"
+msgstr "Kontakte Nou"
 
 #: templates/static/contact.html:13
 msgid ""
