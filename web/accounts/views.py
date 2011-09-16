@@ -276,11 +276,6 @@ def profile(request, id):
                 user=request.user,
                 instance=instance,
             ) 
-            #try:
-            #    locale = request.META['PATH_INFO'].split('/')[1]
-            #except:
-            #    locale = get_language()
-            #comment.translate(locale)              
             comment.message = u'%s' % comment_form.cleaned_data['message']
             comment.save()
 
@@ -313,11 +308,11 @@ def profile(request, id):
             return HttpResponseRedirect(reverse('accounts_profile', args=[id]))    
         
 
-    values = Value.objects.filter(instance=request.user.get_profile().instance)
+    values = Value.objects.filter(instance=profile.instance)
     community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
     
     value_wrapper = []
-    player_values = PlayerValue.objects.filter(user=request.user)
+    player_values = PlayerValue.objects.filter(user=player)
     
     player_spent = player_values.aggregate(Sum('coins'))['coins__sum'] or 0
 
