@@ -19,32 +19,37 @@
                 <input type="hidden" name="form" value="updated_profile">
                 {%csrf_token%}
                 <div class="fieldWrapper">
-                    <label for="id_first_name">{% trans "First Name" %}*</label>
+                    {{ profile_form.first_name.label_tag }}
                     {{ profile_form.first_name }}
                     {{ profile_form.first_name.errors }}
                 </div>
                 <div class="fieldWrapper">
-                    <label for="id_last_name">{% trans "Last Name" %}*</label>
+                    {{ profile_form.last_name.label_tag }}
                     {{ profile_form.last_name }}
                     {{ profile_form.last_name.errors }}
                 </div>
                 <div class="fieldWrapper">
-                    <label for="id_email">{% trans "Email" %}*</label>
+                    {{ profile_form.email.label_tag}}
                     {{ profile_form.email }}
                     {{ profile_form.email.errors }}
                 </div>
                 <div class="fieldWrapper">
-                    <label for="id_preferred_language">{% trans "Preferred Language" %}*</label>
+                    {{ profile_form.receive_email.label_tag}}
+                    {{ profile_form.receive_email }}
+                    {{ profile_form.receive_email.errors }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.preferred_language.label_tag }}
                     {{ profile_form.preferred_language }}
                     {{ profile_form.preferred_language.errors }}
                 </div>
                 <div class="fieldWrapper">
-                    <label for="id_stake">{% trans "Your stake in the community" %}</label>
+                    {{ profile_form.stake.label_tag }}
                     {{ profile_form.stake }}
                     {{ profile_form.stake.errors }}
                 </div>
                 <div class="fieldWrapper">
-                    <label for="id_affiliations">{% trans "Affiliations" %}</label>
+                    {{ profile_form.affiliations.label_tag }}
                     {{ profile_form.affiliations.help_text }}
                     {{ profile_form.affiliations }}
                     {{ profile_form.affiliations.errors }}

@@ -142,14 +142,15 @@ class UserProfile(models.Model):
 
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
+    receive_email = models.BooleanField(default=True)
     city = models.CharField(max_length=128, blank=True, default='')
     zip_code = models.CharField(max_length=10, blank=True, default='')
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
     preferred_language = models.CharField(max_length=5, default='en-us')
-    affiliations = models.TextField(blank=True, null=True)
+    affiliations = models.TextField(blank=True, null=True, default='')
 
     # Additional profile fields
-    birth_year = models.IntegerField(blank=True, null=True)
+    birth_year = models.IntegerField(blank=True, null=True, default=0)
     gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
     race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
     education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)

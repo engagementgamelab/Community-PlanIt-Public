@@ -262,10 +262,11 @@ class ChangePasswordForm(forms.Form):
 
 class UserProfileForm(forms.ModelForm):
     # Required fields
-    first_name = forms.CharField(max_length=30, required=True)
-    last_name = forms.CharField(max_length=30, required=True)
-    email = forms.CharField(max_length=250, required=True)
-    preferred_language = forms.ChoiceField(choices=settings.LANGUAGES)
+    first_name = forms.CharField(max_length=30, required=True, label=_('First Name'))
+    last_name = forms.CharField(max_length=30, required=True, label=_('Last Name'))
+    email = forms.CharField(max_length=250, required=True, label=_('Email'))
+    receive_email = forms.BooleanField(required=False, label=_('Should we send you notifications and news via email?'))
+    preferred_language = forms.ChoiceField(choices=settings.LANGUAGES, label=_('Preferred Language'))
 
     affiliations = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}), 
                                    help_text = _("Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club)."))
@@ -281,7 +282,7 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('email', 'first_name', 'last_name', 'preferred_language',
-                  'stake', 'affiliations')
+                  'receive_email', 'stake', 'affiliations')
 
     def clean_stake(self):
         try:
