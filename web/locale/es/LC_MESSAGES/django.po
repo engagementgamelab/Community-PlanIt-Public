@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-16 13:34-0400\n"
-"PO-Revision-Date: 2011-09-15 17:27\n"
-"Last-Translator: John Hensley <john@fairviewcomputing.com>\n"
+"POT-Creation-Date: 2011-09-16 15:29-0400\n"
+"PO-Revision-Date: 2011-09-16 15:40\n"
+"Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.2\n"
 
@@ -24,26 +24,26 @@ msgid "English"
 msgstr "Inglés"
 
 #: settings_base.py:133
-msgid "Kreyòl"
-msgstr "Kreyòl"
+msgid "Haitian Creole"
+msgstr "Creole Haitiano"
 
 #: settings_base.py:134
-msgid "Español"
+msgid "Spanish"
 msgstr "Español"
 
-#: accounts/forms.py:24 templates/accounts/profile_edit.html:22
+#: accounts/forms.py:24 accounts/forms.py:265
 msgid "First Name"
 msgstr "Nombre"
 
-#: accounts/forms.py:25 templates/accounts/profile_edit.html:27
+#: accounts/forms.py:25 accounts/forms.py:266
 msgid "Last Name"
 msgstr "Apellido"
 
-#: accounts/forms.py:26 templates/accounts/profile_edit.html:32
+#: accounts/forms.py:26 accounts/forms.py:267
 msgid "Email"
 msgstr "E-mail"
 
-#: accounts/forms.py:27 templates/accounts/profile_edit.html:76
+#: accounts/forms.py:27 templates/accounts/profile_edit.html:81
 msgid "Password"
 msgstr "Contraseña"
 
@@ -51,7 +51,7 @@ msgstr "Contraseña"
 msgid "Password Again"
 msgstr "Contraseña de nuevo"
 
-#: accounts/forms.py:29 templates/accounts/profile_edit.html:37
+#: accounts/forms.py:29 accounts/forms.py:269
 msgid "Preferred Language"
 msgstr "Idioma preferido"
 
@@ -74,11 +74,11 @@ msgstr "Comunidad"
 #: accounts/forms.py:46
 #, python-format
 msgid ""
-"Confirm that you have read and agree to the <a target=\"_blank\" href="
-"\"%(terms)s\">Terms of Use</a>."
+"Confirm that you have read and agree to the <a target=\"_blank\" "
+"href=\"%(terms)s\">Terms of Use</a>."
 msgstr ""
-"Confirmar que ha leído y acepto los <a target=\"_blank\" href=\"%(terms)s"
-"\">Términos de Uso</a>."
+"Confirmar que ha leído y acepto los <a target=\"_blank\" "
+"href=\"%(terms)s\">Términos de Uso</a>."
 
 #: accounts/forms.py:54
 msgid "Account already exists, please use a different email address."
@@ -137,14 +137,14 @@ msgstr "¿Cómo se enteró de la Comunidad PlanIt?"
 #: accounts/forms.py:125
 msgid "If the way you learned about us is not listed, please tell us"
 msgstr ""
-"Si la forma en que ha aprendido de nosotros no está en la lista, por favor "
-"díganos"
+"Si la forma en que ha aprendido de nosotros no está en la lista, por "
+"favor díganos"
 
-#: accounts/forms.py:215 accounts/views.py:187
+#: accounts/forms.py:215
 msgid "Welcome to Community PlanIt!"
 msgstr "Bienvenido a la Comunidad PlanIt!"
 
-#: accounts/forms.py:216 accounts/views.py:192
+#: accounts/forms.py:216
 msgid "Thanks for signing up!"
 msgstr "¡Gracias por registrarte!"
 
@@ -156,19 +156,25 @@ msgstr "Correo electrónico no se encuentra en nuestro sistema"
 msgid "Passwords must match"
 msgstr "Las contraseñas deben coincidir"
 
-#: accounts/forms.py:271
-msgid ""
-"Please place a comma between each affiliation (ie: YMCA, James Memorial "
-"Highschool, Gardening Club)."
+#: accounts/forms.py:268
+msgid "Should we send you notifications and news via email?"
 msgstr ""
-"Por favor, coloque una coma entre cada afiliación (es decir: YMCA, James "
-"Highschool Memorial, Club de Jardinería)."
+"En caso de que le enviamos las notificaciones y noticias por correo "
+"electrónico?"
 
-#: accounts/forms.py:279
+#: accounts/forms.py:272
+msgid ""
+"Please place a comma between each affiliation (ie: YMCA, James Memorial"
+" Highschool, Gardening Club)."
+msgstr ""
+"Por favor, coloque una coma entre cada afiliación (es decir: YMCA, "
+"James Highschool Memorial, Club de Jardinería)."
+
+#: accounts/forms.py:280
 msgid "Stake"
 msgstr "Estaca"
 
-#: accounts/forms.py:300
+#: accounts/forms.py:301
 msgid "Username"
 msgstr "Nombre de usuario"
 
@@ -176,27 +182,28 @@ msgstr "Nombre de usuario"
 msgid "e-mail address"
 msgstr "e-mail"
 
-#: accounts/models.py:267 comments/models.py:29
+#: accounts/models.py:268 comments/models.py:29
 msgid "content type"
 msgstr "tipo de contenido"
 
-#: accounts/models.py:270 comments/models.py:32
+#: accounts/models.py:271 comments/models.py:32
 msgid "object ID"
 msgstr "ID de objeto"
 
-#: accounts/views.py:213
+#: accounts/views.py:168
 msgid "Password Changed"
 msgstr "Contraseña cambiada"
 
-#: accounts/views.py:213
+#: accounts/views.py:168
 #, python-format
 msgid "Your temporary password is: %(password)s"
 msgstr "Su contraseña temporal: %(password)s "
 
-#: accounts/views.py:214
+#: accounts/views.py:169
 msgid "A temporary password has been sent to your email address."
 msgstr ""
-"Una contraseña temporal ha sido enviada a su dirección de correo electrónico."
+"Una contraseña temporal ha sido enviada a su dirección de correo "
+"electrónico."
 
 #: answers/models.py:42 answers/models.py:63 answers/models.py:73
 #: answers/models.py:83
@@ -227,8 +234,8 @@ msgstr "Comunidad PlanIT"
 #: templates/index.html:14
 msgid "Interested in playing? Click on a community below to find out more."
 msgstr ""
-"Interesado en jugar? Haga clic en una comunidad de abajo para obtener más "
-"información."
+"Interesado en jugar? Haga clic en una comunidad de abajo para obtener "
+"más información."
 
 #: templates/index.html:17
 msgid "Upcoming Communities"
@@ -256,10 +263,11 @@ msgstr "Un juego acerca de su comunidad."
 
 #: templates/index.html:74
 msgid ""
-"Voice opinions, earn coins, and spend them on your top community values!"
+"Voice opinions, earn coins, and spend them on your top community "
+"values!"
 msgstr ""
-"Sus opiniones, ganar monedas, y gastarlos en los valores de la comunidad "
-"arriba!"
+"Sus opiniones, ganar monedas, y gastarlos en los valores de la "
+"comunidad arriba!"
 
 #: templates/index.html:75
 msgid "See which"
@@ -312,18 +320,21 @@ msgstr "Ver misión actual"
 
 #: templates/accounts/dashboard.html:42
 msgid ""
-"Your missions have ended for now. Great work!  Your community is better "
-"because of your efforts.  You'll be notified when a new mission starts."
+"Your missions have ended for now. Great work!  Your community is better"
+" because of your efforts.  You'll be notified when a new mission "
+"starts."
 msgstr ""
-"Sus misiones han terminado por ahora. ¡Buen trabajo! Su comunidad es mejor "
-"gracias a sus esfuerzos. Se le notificará cuando se inicia una nueva misión."
+"Sus misiones han terminado por ahora. ¡Buen trabajo! Su comunidad es "
+"mejor gracias a sus esfuerzos. Se le notificará cuando se inicia una "
+"nueva misión."
 
 #: templates/accounts/dashboard.html:47
 msgid ""
-" The mission has not yet started. You will be notified when the mission "
-"starts."
+" The mission has not yet started. You will be notified when the mission"
+" starts."
 msgstr ""
-"La misión aún no ha comenzado. Se le notificará cuando la misión comienza."
+"La misión aún no ha comenzado. Se le notificará cuando la misión "
+"comienza."
 
 #: templates/accounts/dashboard.html:50
 msgid "No missions created."
@@ -372,7 +383,8 @@ msgstr "No hemos encontrado noticias"
 #: templates/accounts/dashboard.html:139
 msgid "The community has not started yet. We will notify you once it has begun"
 msgstr ""
-"La comunidad aún no ha comenzado. Se le notificará una vez que ha comenzado"
+"La comunidad aún no ha comenzado. Se le notificará una vez que ha "
+"comenzado"
 
 #: templates/accounts/dashboard.html:153
 msgid "Leader"
@@ -384,8 +396,8 @@ msgstr "Bordo"
 
 #: templates/accounts/forgot.html:11
 msgid ""
-"Enter in your email address below and we'll send you a new password right "
-"away!"
+"Enter in your email address below and we'll send you a new password "
+"right away!"
 msgstr ""
 "Escriba su dirección de correo electrónico y le enviaremos una nueva "
 "contraseña de inmediato!"
@@ -400,11 +412,11 @@ msgstr "Su privacidad"
 
 #: templates/accounts/list.html:12
 msgid ""
-"We need your email address to confirm your identity. We will not sell your "
-"information."
+"We need your email address to confirm your identity. We will not sell "
+"your information."
 msgstr ""
-"Necesitamos su dirección de correo electrónico para confirmar su identidad. "
-"Nosotros no venderemos su información."
+"Necesitamos su dirección de correo electrónico para confirmar su "
+"identidad. Nosotros no venderemos su información."
 
 #: templates/accounts/list.html:24
 msgid "No players found."
@@ -425,7 +437,8 @@ msgstr "Restablecimiento de la contraseña"
 #: templates/accounts/login.html:20
 msgid "Sorry, that's not a valid email address or password."
 msgstr ""
-"Lo sentimos, no es una dirección válida de correo electrónico y contraseña."
+"Lo sentimos, no es una dirección válida de correo electrónico y "
+"contraseña."
 
 #: templates/accounts/login.html:22
 msgid "Not a member? "
@@ -473,28 +486,19 @@ msgstr "Actualice su perfil"
 msgid "Please correct the errors below"
 msgstr "Por favor, corrija los errores a continuación"
 
-#: templates/accounts/profile_edit.html:42
-msgid "Your stake in the community"
-msgstr "Su participación en la comunidad"
-
-#: templates/accounts/profile_edit.html:47 templates/affiliations/base.html:5
-#: templates/affiliations/base.html.py:6
-msgid "Affiliations"
-msgstr "Afiliaciones"
-
-#: templates/accounts/profile_edit.html:53
+#: templates/accounts/profile_edit.html:58
 msgid "Your current avatar"
 msgstr "Tu avatar actual"
 
-#: templates/accounts/profile_edit.html:60
+#: templates/accounts/profile_edit.html:65
 msgid "New Avatar (leave empty to keep)"
 msgstr "Nuevo Avatar (dejar en blanco para mantener)"
 
-#: templates/accounts/profile_edit.html:69
+#: templates/accounts/profile_edit.html:74
 msgid "Change Your Password"
 msgstr "Cambie su contraseña"
 
-#: templates/accounts/profile_edit.html:78
+#: templates/accounts/profile_edit.html:83
 msgid "Password again to confirm"
 msgstr "Contraseña de nuevo para confirmar"
 
@@ -523,8 +527,7 @@ msgid ""
 "Before you register, you should read our privacy policy and terms of use.\n"
 msgstr ""
 "\n"
-"Antes de registrarse, usted debe leer nuestra política de privacidad y "
-"términos de uso.\n"
+"Antes de registrarse, usted debe leer nuestra política de privacidad y términos de uso.\n"
 
 #: templates/accounts/register_base.html:23
 msgid "View Privacy Policy"
@@ -540,31 +543,22 @@ msgid ""
 "\n"
 "Hello!\n"
 "\n"
-"Thanks for registering for Community PlanIt ! We're glad you've decided to "
-"join\n"
+"Thanks for registering for Community PlanIt ! We're glad you've decided to join\n"
 "us in helping to shape a vision for your community.\n"
 "\n"
 "From %(start_date)s through %(end_date)s,\n"
-"we are using https://communityplanit.org/ as a way to engage stakeholders "
-"in\n"
-"long-range, city-wide planning as we think toward the future. The feedback "
-"we\n"
-"receive will be considered when making future policy decisions in the "
-"Boston\n"
-"Public Schools. Remember that you can sign on to participate as often as "
-"you\n"
-"like, from any place that has access to the Internet. We hope you will "
-"share\n"
+"we are using https://communityplanit.org/ as a way to engage stakeholders in\n"
+"long-range, city-wide planning as we think toward the future. The feedback we\n"
+"receive will be considered when making future policy decisions in the Boston\n"
+"Public Schools. Remember that you can sign on to participate as often as you\n"
+"like, from any place that has access to the Internet. We hope you will share\n"
 "your thoughts about BPS by completing all the activities, interacting with\n"
-"other users, and spending your in-game tokens on the issues that matter to "
-"you\n"
+"other users, and spending your in-game tokens on the issues that matter to you\n"
 "most.\n"
 "\n"
 "There will be an in-person meeting at English High on October 20th at 6pm.\n"
-"Come together with other players to devise a plan for moving forward.  And "
-"one\n"
-"more thing...a brand new Nook e-reader will be raffled off to one of the "
-"top\n"
+"Come together with other players to devise a plan for moving forward.  And one\n"
+"more thing...a brand new Nook e-reader will be raffled off to one of the top\n"
 "fifty point earners.\n"
 "\n"
 "Happy planning!\n"
@@ -574,34 +568,23 @@ msgstr ""
 "\n"
 "¡Hola!\n"
 "\n"
-"Gracias por registrarse para Community PlanIt! Nos alegra que haya "
-"decidido \n"
+"Gracias por registrarse para Community PlanIt! Nos alegra que haya decidido \n"
 "unirse a nosotros para ayudar a dar forma a una visión de su comunidad.\n"
 "\n"
 "Desde %(start_date)s través %(end_date)s, estamos usando \n"
-"https://communityplanit.org/ como una forma de involucrar a los "
-"interesados \n"
-"en el largo plazo, la planificación de toda la ciudad como pensamos hacia "
-"el \n"
-"futuro. La retroalimentación que recibimos se consideran al tomar "
-"decisiones \n"
+"https://communityplanit.org/ como una forma de involucrar a los interesados \n"
+"en el largo plazo, la planificación de toda la ciudad como pensamos hacia el \n"
+"futuro. La retroalimentación que recibimos se consideran al tomar decisiones \n"
 "futuras de política en las Escuelas Públicas de Boston. Recuerde que usted \n"
-"puede firmar para participar tantas veces como desee, desde cualquier "
-"lugar \n"
-"con acceso a Internet. Esperamos que usted comparta sus pensamientos "
-"acerca \n"
-"de BPS por completar todas las actividades, interactuar con otros "
-"usuarios, \n"
-"y el gasto de sus fichas en el juego de los temas que importan a la "
-"mayoría \n"
+"puede firmar para participar tantas veces como desee, desde cualquier lugar \n"
+"con acceso a Internet. Esperamos que usted comparta sus pensamientos acerca \n"
+"de BPS por completar todas las actividades, interactuar con otros usuarios, \n"
+"y el gasto de sus fichas en el juego de los temas que importan a la mayoría \n"
 "de ustedes. \n"
 "\n"
-"Habrá una reunión en persona en English High el 20 de octubre a las 6pm. "
-"Se \n"
-"reúnen con otros jugadores para diseñar un plan para seguir adelante. Y "
-"una \n"
-"cosa más ... un nuevo Rincón de los lectores electrónicos se sortearon a "
-"uno \n"
+"Habrá una reunión en persona en English High el 20 de octubre a las 6pm. Se \n"
+"reúnen con otros jugadores para diseñar un plan para seguir adelante. Y una \n"
+"cosa más ... un nuevo Rincón de los lectores electrónicos se sortearon a uno \n"
 "de los perceptores de punto de los cincuenta mejores.\n"
 "\n"
 "Planificación feliz!\n"
@@ -693,27 +676,26 @@ msgstr "Añade otra %(verbose_name)s "
 msgid "Remove"
 msgstr "Eliminar"
 
+#: templates/affiliations/base.html:5 templates/affiliations/base.html.py:6
+msgid "Affiliations"
+msgstr "Afiliaciones"
+
 #: templates/affiliations/base.html:12
 #, python-format
 msgid ""
 "\n"
-"            <span class=\"highlight\">%(player_count)s</span> player, who "
-"has scored <span class=\"highlight\">%(affiliation_points)s</span> points.\n"
+"            <span class=\"highlight\">%(player_count)s</span> player, who has scored <span class=\"highlight\">%(affiliation_points)s</span> points.\n"
 "            "
 msgid_plural ""
 "\n"
-"            <span class=\"highlight\">%(player_count)s</span> players, who "
-"have scored a collective <span class=\"highlight\">%(affiliation_points)s</"
-"span> points.\n"
+"            <span class=\"highlight\">%(player_count)s</span> players, who have scored a collective <span class=\"highlight\">%(affiliation_points)s</span> points.\n"
 "        "
 msgstr[0] ""
 "\n"
-"<span class=\"highlight\">%(player_count)s</span> jugadores, que han anotado "
-"<span class=\"highlight\">%(affiliation_points)s</span> puntos."
+"<span class=\"highlight\">%(player_count)s</span> jugadores, que han anotado <span class=\"highlight\">%(affiliation_points)s</span> puntos."
 msgstr[1] ""
 "\n"
-"<span class=\"highlight\">%(player_count)s</span> jugador, que ha marcado "
-"<span class=\"highlight\">%(affiliation_points)s</span> puntos."
+"<span class=\"highlight\">%(player_count)s</span> jugador, que ha marcado <span class=\"highlight\">%(affiliation_points)s</span> puntos."
 
 #: templates/affiliations/base.html:30
 msgid "Leaderboard"
@@ -917,13 +899,11 @@ msgstr "Escriba su respuesta"
 #, python-format
 msgid ""
 "\n"
-"    Thanks for completing this activity. When you're ready for more, visit "
-"the <a href=\"%(mission_url)s\">mission page</a>.\n"
+"    Thanks for completing this activity. When you're ready for more, visit the <a href=\"%(mission_url)s\">mission page</a>.\n"
 "    "
 msgstr ""
 "\n"
-"Gracias por completar esta actividad. Cuando esté listo para realizar otra, "
-"visite la <a href=\"%(mission_url)s\">página de la misión</a> ."
+"Gracias por completar esta actividad. Cuando esté listo para realizar otra, visite la <a href=\"%(mission_url)s\">página de la misión</a> ."
 
 #: templates/player_activities/empathy_overview.html:28
 #: templates/player_activities/open_ended_overview.html:21
@@ -972,6 +952,49 @@ msgstr "no respuestas se han presentado"
 msgid "No responses submitted"
 msgstr "No hay respuestas presentadas"
 
+#: templates/static/contact.html:6 templates/static/contact.html.py:12
+#, fuzzy
+msgid "Contact Us"
+msgstr "Contacto"
+
+#: templates/static/contact.html:13
+msgid ""
+"We would love to hear from you and answer any questions you have about "
+"the project!"
+msgstr ""
+"Nos encantaría saber de usted y responder a cualquier pregunta que "
+"tenga sobre el proyecto!"
+
+#: templates/static/contact.html:14
+msgid ""
+"For comments or questions, please contact us at "
+"admin@communityplanit.org."
+msgstr ""
+"Para comentarios o preguntas, por favor contacte con nosotros en "
+"admin@communityplanit.org."
+
+#: templates/static/contact.html:17
+msgid "Follow Us"
+msgstr "Siga con nosotros"
+
+#: templates/static/contact.html:19
+msgid ""
+"\n"
+"    Learn more about the Engagement Game Lab at our <a href=\"http://engagementgamelab.org\">website</a>.\n"
+"    "
+msgstr ""
+"\n"
+"Obtenga más información sobre el Engagement Game Lab en nuestra <a href=\"http://engagementgamelab.org\">página web</a> ."
+
+#: templates/static/contact.html:24
+msgid ""
+"\n"
+"    You can also follow us on <a href=\"http://twitter.com/communityplanit\">Twitter</a> and <a href=\"http://www.facebook.com/CommunityPlanIt\">Facebook</a>.\n"
+"    "
+msgstr ""
+"\n"
+"También puede seguir con nosotros en <a href=\"http://twitter.com/communityplanit\">Twitter</a> y <a href=\"http://www.facebook.com/CommunityPlanIt\">Facebook</a> ."
+
 #: templates/values/all.html:7
 msgid "Token"
 msgstr "Ficha"
@@ -985,36 +1008,29 @@ msgstr "Depósito"
 msgid ""
 "\n"
 "            What should %(instance)s prioritize? Spend your tokens on the\n"
-"            values that matter to you and tell decision-makers what's "
-"important\n"
+"            values that matter to you and tell decision-makers what's important\n"
 "            to the community.\n"
 "            "
 msgstr ""
 "\n"
-"¿Qué debería %(instance)s priorizar? Pasar sus fichas en los valores que son "
-"importantes para usted y le dirá los tomadores de decisiones lo que es "
-"importante para la comunidad."
+"¿Qué debería %(instance)s priorizar? Pasar sus fichas en los valores que son importantes para usted y le dirá los tomadores de decisiones lo que es importante para la comunidad."
 
 #: templates/values/all.html:149
 #, python-format
 msgid ""
 "\n"
-"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</"
-"span> token to spend.\n"
+"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</span> token to spend.\n"
 "            "
 msgid_plural ""
 "\n"
-"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</"
-"span> tokens to spend.\n"
+"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</span> tokens to spend.\n"
 "            "
 msgstr[0] ""
 "\n"
-"Usted tiene <span style=\"font-weight: bold\">%(pretty_coins)s</span> fichas "
-"para gastar."
+"Usted tiene <span style=\"font-weight: bold\">%(pretty_coins)s</span> fichas para gastar."
 msgstr[1] ""
 "\n"
-"Usted tiene <span style=\"font-weight: bold\">%(pretty_coins)s</span> ficha "
-"para gastar."
+"Usted tiene <span style=\"font-weight: bold\">%(pretty_coins)s</span> ficha para gastar."
 
 #: templates/values/all.html:162
 msgid "Your tokens <div class=\"spent\">earned:</div>"
@@ -1059,3 +1075,12 @@ msgstr "No hay fichas se han gastado."
 #: templates/values/all.html:261
 msgid "You haven't spent any tokens yet."
 msgstr "Que no han pasado todavía fichas."
+
+#~ msgid "Kreyòl"
+#~ msgstr "Kreyòl"
+
+#~ msgid "Español"
+#~ msgstr "Español"
+
+#~ msgid "Your stake in the community"
+#~ msgstr "Su participación en la comunidad"

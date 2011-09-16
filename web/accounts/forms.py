@@ -6,7 +6,7 @@ from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.template import Context, RequestContext, loader
 from django.utils.safestring import mark_safe
-from django.utils.translation import get_language, ugettext as _
+from django.utils.translation import get_language, ugettext_lazy as _
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -266,7 +266,7 @@ class UserProfileForm(forms.ModelForm):
     last_name = forms.CharField(max_length=30, required=True, label=_('Last Name'))
     email = forms.CharField(max_length=250, required=True, label=_('Email'))
     receive_email = forms.BooleanField(required=False, label=_('Should we send you notifications and news via email?'))
-    preferred_language = forms.ChoiceField(choices=settings.LANGUAGES, label=_('Preferred Language'))
+    preferred_language = forms.ChoiceField(choices=[(l[0], _(l[1])) for l in settings.LANGUAGES], label=_('Preferred Language'))
 
     affiliations = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}), 
                                    help_text = _("Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club)."))

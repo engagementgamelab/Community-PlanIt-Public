@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-16 13:33-0400\n"
+"POT-Creation-Date: 2011-09-16 15:28-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,26 +22,26 @@ msgid "English"
 msgstr ""
 
 #: settings_base.py:133
-msgid "Kreyòl"
+msgid "Haitian Creole"
 msgstr ""
 
 #: settings_base.py:134
-msgid "Español"
+msgid "Spanish"
 msgstr ""
 
-#: accounts/forms.py:24 templates/accounts/profile_edit.html:22
+#: accounts/forms.py:24 accounts/forms.py:265
 msgid "First Name"
 msgstr ""
 
-#: accounts/forms.py:25 templates/accounts/profile_edit.html:27
+#: accounts/forms.py:25 accounts/forms.py:266
 msgid "Last Name"
 msgstr ""
 
-#: accounts/forms.py:26 templates/accounts/profile_edit.html:32
+#: accounts/forms.py:26 accounts/forms.py:267
 msgid "Email"
 msgstr ""
 
-#: accounts/forms.py:27 templates/accounts/profile_edit.html:76
+#: accounts/forms.py:27 templates/accounts/profile_edit.html:81
 msgid "Password"
 msgstr ""
 
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Password Again"
 msgstr ""
 
-#: accounts/forms.py:29 templates/accounts/profile_edit.html:37
+#: accounts/forms.py:29 accounts/forms.py:269
 msgid "Preferred Language"
 msgstr ""
 
@@ -132,11 +132,11 @@ msgstr ""
 msgid "If the way you learned about us is not listed, please tell us"
 msgstr ""
 
-#: accounts/forms.py:215 accounts/views.py:187
+#: accounts/forms.py:215
 msgid "Welcome to Community PlanIt!"
 msgstr ""
 
-#: accounts/forms.py:216 accounts/views.py:192
+#: accounts/forms.py:216
 msgid "Thanks for signing up!"
 msgstr ""
 
@@ -148,17 +148,21 @@ msgstr ""
 msgid "Passwords must match"
 msgstr ""
 
-#: accounts/forms.py:271
+#: accounts/forms.py:268
+msgid "Should we send you notifications and news via email?"
+msgstr ""
+
+#: accounts/forms.py:272
 msgid ""
 "Please place a comma between each affiliation (ie: YMCA, James Memorial "
 "Highschool, Gardening Club)."
 msgstr ""
 
-#: accounts/forms.py:279
+#: accounts/forms.py:280
 msgid "Stake"
 msgstr ""
 
-#: accounts/forms.py:300
+#: accounts/forms.py:301
 msgid "Username"
 msgstr ""
 
@@ -166,24 +170,24 @@ msgstr ""
 msgid "e-mail address"
 msgstr ""
 
-#: accounts/models.py:267 comments/models.py:29
+#: accounts/models.py:268 comments/models.py:29
 msgid "content type"
 msgstr ""
 
-#: accounts/models.py:270 comments/models.py:32
+#: accounts/models.py:271 comments/models.py:32
 msgid "object ID"
 msgstr ""
 
-#: accounts/views.py:213
+#: accounts/views.py:168
 msgid "Password Changed"
 msgstr ""
 
-#: accounts/views.py:213
+#: accounts/views.py:168
 #, python-format
 msgid "Your temporary password is: %(password)s"
 msgstr ""
 
-#: accounts/views.py:214
+#: accounts/views.py:169
 msgid "A temporary password has been sent to your email address."
 msgstr ""
 
@@ -449,28 +453,19 @@ msgstr ""
 msgid "Please correct the errors below"
 msgstr ""
 
-#: templates/accounts/profile_edit.html:42
-msgid "Your stake in the community"
-msgstr ""
-
-#: templates/accounts/profile_edit.html:47 templates/affiliations/base.html:5
-#: templates/affiliations/base.html.py:6
-msgid "Affiliations"
-msgstr ""
-
-#: templates/accounts/profile_edit.html:53
+#: templates/accounts/profile_edit.html:58
 msgid "Your current avatar"
 msgstr ""
 
-#: templates/accounts/profile_edit.html:60
+#: templates/accounts/profile_edit.html:65
 msgid "New Avatar (leave empty to keep)"
 msgstr ""
 
-#: templates/accounts/profile_edit.html:69
+#: templates/accounts/profile_edit.html:74
 msgid "Change Your Password"
 msgstr ""
 
-#: templates/accounts/profile_edit.html:78
+#: templates/accounts/profile_edit.html:83
 msgid "Password again to confirm"
 msgstr ""
 
@@ -628,6 +623,10 @@ msgstr ""
 
 #: templates/admin/nani/edit_inline/tabular.html:126
 msgid "Remove"
+msgstr ""
+
+#: templates/affiliations/base.html:5 templates/affiliations/base.html.py:6
+msgid "Affiliations"
 msgstr ""
 
 #: templates/affiliations/base.html:12
@@ -898,6 +897,42 @@ msgstr ""
 #: templates/player_activities/open_ended_overview.html:52
 #: templates/player_activities/single_response_overview.html:57
 msgid "No responses submitted"
+msgstr ""
+
+#: templates/static/contact.html:6 templates/static/contact.html.py:12
+msgid "Contact Us"
+msgstr ""
+
+#: templates/static/contact.html:13
+msgid ""
+"We would love to hear from you and answer any questions you have about the "
+"project!"
+msgstr ""
+
+#: templates/static/contact.html:14
+msgid ""
+"For comments or questions, please contact us at admin@communityplanit.org."
+msgstr ""
+
+#: templates/static/contact.html:17
+msgid "Follow Us"
+msgstr ""
+
+#: templates/static/contact.html:19
+msgid ""
+"\n"
+"    Learn more about the Engagement Game Lab at our <a href=\"http://"
+"engagementgamelab.org\">website</a>.\n"
+"    "
+msgstr ""
+
+#: templates/static/contact.html:24
+msgid ""
+"\n"
+"    You can also follow us on <a href=\"http://twitter.com/communityplanit"
+"\">Twitter</a> and <a href=\"http://www.facebook.com/CommunityPlanIt"
+"\">Facebook</a>.\n"
+"    "
 msgstr ""
 
 #: templates/values/all.html:7

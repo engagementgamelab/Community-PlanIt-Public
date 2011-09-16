@@ -130,8 +130,8 @@ LOCALE_PATHS = (
 ugettext = lambda s: s
 LANGUAGES = (
   ('en-us', ugettext('English')),
-  ('ht', ugettext(u'Kreyòl')),
-  ('es', ugettext(u'Español')),
+  ('ht', ugettext(u'Haitian Creole')),
+  ('es', ugettext(u'Spanish')),
 )
 #django-localeurl
 LOCALE_INDEPENDENT_PATHS = (

@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-16 13:36-0400\n"
-"PO-Revision-Date: 2011-09-15 17:42\n"
-"Last-Translator: John Hensley <john@fairviewcomputing.com>\n"
+"POT-Creation-Date: 2011-09-16 15:31-0400\n"
+"PO-Revision-Date: 2011-09-16 15:41\n"
+"Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "X-Translated-Using: django-rosetta 0.6.2\n"
 
 #: settings_base.py:132
@@ -23,26 +23,26 @@ msgid "English"
 msgstr "Angle"
 
 #: settings_base.py:133
-msgid "Kreyòl"
-msgstr "Kreyòl"
+msgid "Haitian Creole"
+msgstr "Kreyòl Ayisyen"
 
 #: settings_base.py:134
-msgid "Español"
+msgid "Spanish"
 msgstr "Panyòl"
 
-#: accounts/forms.py:24 templates/accounts/profile_edit.html:22
+#: accounts/forms.py:24 accounts/forms.py:265
 msgid "First Name"
 msgstr "Prenon"
 
-#: accounts/forms.py:25 templates/accounts/profile_edit.html:27
+#: accounts/forms.py:25 accounts/forms.py:266
 msgid "Last Name"
 msgstr "Non Fanmi"
 
-#: accounts/forms.py:26 templates/accounts/profile_edit.html:32
+#: accounts/forms.py:26 accounts/forms.py:267
 msgid "Email"
 msgstr "Imèl"
 
-#: accounts/forms.py:27 templates/accounts/profile_edit.html:76
+#: accounts/forms.py:27 templates/accounts/profile_edit.html:81
 msgid "Password"
 msgstr "Modpas"
 
@@ -50,7 +50,7 @@ msgstr "Modpas"
 msgid "Password Again"
 msgstr "Modpas Ankò"
 
-#: accounts/forms.py:29 templates/accounts/profile_edit.html:37
+#: accounts/forms.py:29 accounts/forms.py:269
 msgid "Preferred Language"
 msgstr "Lang Prefere"
 
@@ -73,11 +73,11 @@ msgstr "Kominote"
 #: accounts/forms.py:46
 #, python-format
 msgid ""
-"Confirm that you have read and agree to the <a target=\"_blank\" href="
-"\"%(terms)s\">Terms of Use</a>."
+"Confirm that you have read and agree to the <a target=\"_blank\" "
+"href=\"%(terms)s\">Terms of Use</a>."
 msgstr ""
-"Konfime ke ou te li epi mwen dakò ak <a target=\"_blank\" href=\"%(terms)s"
-"\">Kondisyon ki nan Itilize</a>."
+"Konfime ke ou te li epi mwen dakò ak <a target=\"_blank\" "
+"href=\"%(terms)s\">Kondisyon ki nan Itilize</a>."
 
 #: accounts/forms.py:54
 msgid "Account already exists, please use a different email address."
@@ -134,14 +134,14 @@ msgstr "Kijan ou te tande pale de Kominote PlanIt?"
 #: accounts/forms.py:125
 msgid "If the way you learned about us is not listed, please tell us"
 msgstr ""
-"Si wout la ou te aprann enfòmasyon sou nou pou nou pa se nan lis la, tanpri "
-"fè nou konnen"
+"Si wout la ou te aprann enfòmasyon sou nou pou nou pa se nan lis la, "
+"tanpri fè nou konnen"
 
-#: accounts/forms.py:215 accounts/views.py:187
+#: accounts/forms.py:215
 msgid "Welcome to Community PlanIt!"
 msgstr "Byenveni nan Kominote PlanIt!"
 
-#: accounts/forms.py:216 accounts/views.py:192
+#: accounts/forms.py:216
 msgid "Thanks for signing up!"
 msgstr "Mèsi pou ou siyen moute!"
 
@@ -153,19 +153,23 @@ msgstr "Imèl jwenn nan sistèm nou an"
 msgid "Passwords must match"
 msgstr "Modpas yo dwe matche ak"
 
-#: accounts/forms.py:271
-msgid ""
-"Please place a comma between each affiliation (ie: YMCA, James Memorial "
-"Highschool, Gardening Club)."
-msgstr ""
-"Tanpri mete yon ti vigil ant chak afilyasyon (sa vle di: YMCA, Jak, Memorial "
-"Highschool, Jadinaj Club)."
+#: accounts/forms.py:268
+msgid "Should we send you notifications and news via email?"
+msgstr "Eske nou ta dwe voye ba ou notifikasyon ak nouvèl via imel?"
 
-#: accounts/forms.py:279
+#: accounts/forms.py:272
+msgid ""
+"Please place a comma between each affiliation (ie: YMCA, James Memorial"
+" Highschool, Gardening Club)."
+msgstr ""
+"Tanpri mete yon ti vigil ant chak afilyasyon (sa vle di: YMCA, Jak, "
+"Memorial Highschool, Jadinaj Club)."
+
+#: accounts/forms.py:280
 msgid "Stake"
 msgstr "Mennen"
 
-#: accounts/forms.py:300
+#: accounts/forms.py:301
 msgid "Username"
 msgstr "Username"
 
@@ -173,24 +177,24 @@ msgstr "Username"
 msgid "e-mail address"
 msgstr "e-mail adrès"
 
-#: accounts/models.py:267 comments/models.py:29
+#: accounts/models.py:268 comments/models.py:29
 msgid "content type"
 msgstr "kalite kontni"
 
-#: accounts/models.py:270 comments/models.py:32
+#: accounts/models.py:271 comments/models.py:32
 msgid "object ID"
 msgstr "ID objè"
 
-#: accounts/views.py:213
+#: accounts/views.py:168
 msgid "Password Changed"
 msgstr "Modpas chanje"
 
-#: accounts/views.py:213
+#: accounts/views.py:168
 #, python-format
 msgid "Your temporary password is: %(password)s"
 msgstr "Mopas tanporè w la se: %(password)s"
 
-#: accounts/views.py:214
+#: accounts/views.py:169
 msgid "A temporary password has been sent to your email address."
 msgstr "Gen yon mopas tanporè te voye bay adrès imel ou."
 
@@ -223,7 +227,8 @@ msgstr "Kominote PlanIT"
 #: templates/index.html:14
 msgid "Interested in playing? Click on a community below to find out more."
 msgstr ""
-"Ki enterese nan jwe? Klike sou yon kominote ki anba a chèche jwenn plis."
+"Ki enterese nan jwe? Klike sou yon kominote ki anba a chèche jwenn "
+"plis."
 
 #: templates/index.html:17
 msgid "Upcoming Communities"
@@ -251,10 +256,11 @@ msgstr "Yon jwèt sou kominote w la."
 
 #: templates/index.html:74
 msgid ""
-"Voice opinions, earn coins, and spend them on your top community values!"
+"Voice opinions, earn coins, and spend them on your top community "
+"values!"
 msgstr ""
-"Opinyon vwa, touche pyès monnen, ak depanse nan yo sou valè tèt kominote w "
-"la!"
+"Opinyon vwa, touche pyès monnen, ak depanse nan yo sou valè tèt "
+"kominote w la!"
 
 #: templates/index.html:75
 msgid "See which"
@@ -307,18 +313,20 @@ msgstr "View Misyon Kouran"
 
 #: templates/accounts/dashboard.html:42
 msgid ""
-"Your missions have ended for now. Great work!  Your community is better "
-"because of your efforts.  You'll be notified when a new mission starts."
+"Your missions have ended for now. Great work!  Your community is better"
+" because of your efforts.  You'll be notified when a new mission "
+"starts."
 msgstr ""
-"Misyon ou a gen te fini pou kounye a. Gran travay! Kominote ou a pi bon "
-"paske nan efò ou yo. Yo pral avize w lè yon misyon nouvo kòmanse."
+"Misyon ou a gen te fini pou kounye a. Gran travay! Kominote ou a pi "
+"bon paske nan efò ou yo. Yo pral avize w lè yon misyon nouvo kòmanse."
 
 #: templates/accounts/dashboard.html:47
 msgid ""
-" The mission has not yet started. You will be notified when the mission "
-"starts."
+" The mission has not yet started. You will be notified when the mission"
+" starts."
 msgstr ""
-"Misyon an pa gen ankò te kòmanse. Ou pral fè yo konnen lè misyon an kòmanse."
+"Misyon an pa gen ankò te kòmanse. Ou pral fè yo konnen lè misyon an "
+"kòmanse."
 
 #: templates/accounts/dashboard.html:50
 msgid "No missions created."
@@ -367,7 +375,8 @@ msgstr "Pa gen nouvèl yo te jwenn"
 #: templates/accounts/dashboard.html:139
 msgid "The community has not started yet. We will notify you once it has begun"
 msgstr ""
-"Kominote an pa te kòmanse ankò. Nou pral fè ou konnen yon fwa li te kòmanse"
+"Kominote an pa te kòmanse ankò. Nou pral fè ou konnen yon fwa li te "
+"kòmanse"
 
 #: templates/accounts/dashboard.html:153
 msgid "Leader"
@@ -379,11 +388,11 @@ msgstr "Komisyon Konsèy"
 
 #: templates/accounts/forgot.html:11
 msgid ""
-"Enter in your email address below and we'll send you a new password right "
-"away!"
+"Enter in your email address below and we'll send you a new password "
+"right away!"
 msgstr ""
-"Antre nan adrès imel ou anba a epi ak nou ap voye ba ou yon nouvo modpas "
-"touswit!"
+"Antre nan adrès imel ou anba a epi ak nou ap voye ba ou yon nouvo "
+"modpas touswit!"
 
 #: templates/accounts/forgot.html:15
 msgid "Reset my password"
@@ -395,11 +404,11 @@ msgstr "Privacy ou"
 
 #: templates/accounts/list.html:12
 msgid ""
-"We need your email address to confirm your identity. We will not sell your "
-"information."
+"We need your email address to confirm your identity. We will not sell "
+"your information."
 msgstr ""
-"Nou bezwen adrès imel ou a konfime idantite ou. Nou pa pral vann enfòmasyon "
-"ou yo."
+"Nou bezwen adrès imel ou a konfime idantite ou. Nou pa pral vann "
+"enfòmasyon ou yo."
 
 #: templates/accounts/list.html:24
 msgid "No players found."
@@ -467,28 +476,19 @@ msgstr "Mizajou Pwofil Ou"
 msgid "Please correct the errors below"
 msgstr "Tanpri, korije erè ki anba yo"
 
-#: templates/accounts/profile_edit.html:42
-msgid "Your stake in the community"
-msgstr "Mennen ou nan kominote a"
-
-#: templates/accounts/profile_edit.html:47 templates/affiliations/base.html:5
-#: templates/affiliations/base.html.py:6
-msgid "Affiliations"
-msgstr "Afilyasyon"
-
-#: templates/accounts/profile_edit.html:53
+#: templates/accounts/profile_edit.html:58
 msgid "Your current avatar"
 msgstr "Avatar ou ye kounye a"
 
-#: templates/accounts/profile_edit.html:60
+#: templates/accounts/profile_edit.html:65
 msgid "New Avatar (leave empty to keep)"
 msgstr "Avatar Nouvo (kite l vid kenbe)"
 
-#: templates/accounts/profile_edit.html:69
+#: templates/accounts/profile_edit.html:74
 msgid "Change Your Password"
 msgstr "Chanjman Modpas Ou"
 
-#: templates/accounts/profile_edit.html:78
+#: templates/accounts/profile_edit.html:83
 msgid "Password again to confirm"
 msgstr "Modpas ankò nan konfime"
 
@@ -533,31 +533,22 @@ msgid ""
 "\n"
 "Hello!\n"
 "\n"
-"Thanks for registering for Community PlanIt ! We're glad you've decided to "
-"join\n"
+"Thanks for registering for Community PlanIt ! We're glad you've decided to join\n"
 "us in helping to shape a vision for your community.\n"
 "\n"
 "From %(start_date)s through %(end_date)s,\n"
-"we are using https://communityplanit.org/ as a way to engage stakeholders "
-"in\n"
-"long-range, city-wide planning as we think toward the future. The feedback "
-"we\n"
-"receive will be considered when making future policy decisions in the "
-"Boston\n"
-"Public Schools. Remember that you can sign on to participate as often as "
-"you\n"
-"like, from any place that has access to the Internet. We hope you will "
-"share\n"
+"we are using https://communityplanit.org/ as a way to engage stakeholders in\n"
+"long-range, city-wide planning as we think toward the future. The feedback we\n"
+"receive will be considered when making future policy decisions in the Boston\n"
+"Public Schools. Remember that you can sign on to participate as often as you\n"
+"like, from any place that has access to the Internet. We hope you will share\n"
 "your thoughts about BPS by completing all the activities, interacting with\n"
-"other users, and spending your in-game tokens on the issues that matter to "
-"you\n"
+"other users, and spending your in-game tokens on the issues that matter to you\n"
 "most.\n"
 "\n"
 "There will be an in-person meeting at English High on October 20th at 6pm.\n"
-"Come together with other players to devise a plan for moving forward.  And "
-"one\n"
-"more thing...a brand new Nook e-reader will be raffled off to one of the "
-"top\n"
+"Come together with other players to devise a plan for moving forward.  And one\n"
+"more thing...a brand new Nook e-reader will be raffled off to one of the top\n"
 "fifty point earners.\n"
 "\n"
 "Happy planning!\n"
@@ -573,21 +564,16 @@ msgstr ""
 "Soti nan %(start_date)s nan %(end_date)s, nou se lè l sèvi avèk \n"
 "https://communityplanit.org/ kòm yon fason angaje moun ki gen enterè nan \n"
 "long pòte, planifikasyon-vil laj ke nou panse nan direksyon lavni an. Pral \n"
-"fidbak la nou resevwa konsidere lè w ap pran desizyon politik avni nan "
-"Lekòl \n"
+"fidbak la nou resevwa konsidere lè w ap pran desizyon politik avni nan Lekòl \n"
 "Piblik Boston yo. Sonje ke ou ka siyen sou yo patisipe souvan tankou ou \n"
 "renmen, ki soti nan nenpòt ki kote ki gen aksè a entènèt la. Nou espere ou \n"
-"pral pataje panse ou sou BPS lè ou konplete tout aktivite yo, kominike "
-"avèk \n"
-"itilizatè lòt, ak depans marqueur nan jwèt ou sou kesyon sa yo ki matyè ba "
-"ou \n"
+"pral pataje panse ou sou BPS lè ou konplete tout aktivite yo, kominike avèk \n"
+"itilizatè lòt, ak depans marqueur nan jwèt ou sou kesyon sa yo ki matyè ba ou \n"
 "pi byen.\n"
 "\n"
 "Li pral fè yon reyinyon nan-moun nan an English High sou 20yèm nan 6pm mwa \n"
-"oktòb la. Vini non ansanm ak lòt jwè yo elabore yon plan pou pi devan. Ak "
-"yon \n"
-"pi plis bagay ... y ap fè yon mak nouvo Nook e-lektè dwe raffled yo ale "
-"nan \n"
+"oktòb la. Vini non ansanm ak lòt jwè yo elabore yon plan pou pi devan. Ak yon \n"
+"pi plis bagay ... y ap fè yon mak nouvo Nook e-lektè dwe raffled yo ale nan \n"
 "youn nan senkant mwayèn tèt yo pwen.\n"
 "\n"
 "Kè kontan planifikasyon!\n"
@@ -679,27 +665,26 @@ msgstr "Ajoute yon lòt %(verbose_name)s "
 msgid "Remove"
 msgstr "Retire tout"
 
+#: templates/affiliations/base.html:5 templates/affiliations/base.html.py:6
+msgid "Affiliations"
+msgstr "Afilyasyon"
+
 #: templates/affiliations/base.html:12
 #, python-format
 msgid ""
 "\n"
-"            <span class=\"highlight\">%(player_count)s</span> player, who "
-"has scored <span class=\"highlight\">%(affiliation_points)s</span> points.\n"
+"            <span class=\"highlight\">%(player_count)s</span> player, who has scored <span class=\"highlight\">%(affiliation_points)s</span> points.\n"
 "            "
 msgid_plural ""
 "\n"
-"            <span class=\"highlight\">%(player_count)s</span> players, who "
-"have scored a collective <span class=\"highlight\">%(affiliation_points)s</"
-"span> points.\n"
+"            <span class=\"highlight\">%(player_count)s</span> players, who have scored a collective <span class=\"highlight\">%(affiliation_points)s</span> points.\n"
 "        "
 msgstr[0] ""
 "\n"
-"<span class=\"highlight\">%(player_count)s</span> jwè yo, ki gen nòt yon "
-"kolektif <span class=\"highlight\">%(affiliation_points)s</span> pwen."
+"<span class=\"highlight\">%(player_count)s</span> jwè yo, ki gen nòt yon kolektif <span class=\"highlight\">%(affiliation_points)s</span> pwen."
 msgstr[1] ""
 "\n"
-"<span class=\"highlight\">%(player_count)s</span> jwè, ki moun ki gen nòt "
-"<span class=\"highlight\">%(affiliation_points)s</span> pwen."
+"<span class=\"highlight\">%(player_count)s</span> jwè, ki moun ki gen nòt <span class=\"highlight\">%(affiliation_points)s</span> pwen."
 
 #: templates/affiliations/base.html:30
 msgid "Leaderboard"
@@ -903,13 +888,11 @@ msgstr "Mete repons ou"
 #, python-format
 msgid ""
 "\n"
-"    Thanks for completing this activity. When you're ready for more, visit "
-"the <a href=\"%(mission_url)s\">mission page</a>.\n"
+"    Thanks for completing this activity. When you're ready for more, visit the <a href=\"%(mission_url)s\">mission page</a>.\n"
 "    "
 msgstr ""
 "\n"
-"Mèsi pou konplete aktivite sa a. Lè w ap pare pou plis, vizite <a href="
-"\"%(mission_url)s\">paj la misyon</a>."
+"Mèsi pou konplete aktivite sa a. Lè w ap pare pou plis, vizite <a href=\"%(mission_url)s\">paj la misyon</a>."
 
 #: templates/player_activities/empathy_overview.html:28
 #: templates/player_activities/open_ended_overview.html:21
@@ -958,6 +941,49 @@ msgstr "pa gen okenn repons yo te soumèt"
 msgid "No responses submitted"
 msgstr "Pa gen repons soumèt"
 
+#: templates/static/contact.html:6 templates/static/contact.html.py:12
+#, fuzzy
+msgid "Contact Us"
+msgstr "Kontakte"
+
+#: templates/static/contact.html:13
+msgid ""
+"We would love to hear from you and answer any questions you have about "
+"the project!"
+msgstr ""
+"Nou ta renmen tande nan men ou, epi reponn nenpòt kesyon ou genyen sou"
+" pwojè a!"
+
+#: templates/static/contact.html:14
+msgid ""
+"For comments or questions, please contact us at "
+"admin@communityplanit.org."
+msgstr ""
+"Pou kòmantè oswa kesyon, tanpri kontakte nou nan "
+"admin@communityplanit.org."
+
+#: templates/static/contact.html:17
+msgid "Follow Us"
+msgstr "Swiv Nou"
+
+#: templates/static/contact.html:19
+msgid ""
+"\n"
+"    Learn more about the Engagement Game Lab at our <a href=\"http://engagementgamelab.org\">website</a>.\n"
+"    "
+msgstr ""
+"\n"
+"Aprann plis bagay sou Engagement Game Lab nan nou an <a href=\"http://engagementgamelab.org\">sou sit wèb</a> ."
+
+#: templates/static/contact.html:24
+msgid ""
+"\n"
+"    You can also follow us on <a href=\"http://twitter.com/communityplanit\">Twitter</a> and <a href=\"http://www.facebook.com/CommunityPlanIt\">Facebook</a>.\n"
+"    "
+msgstr ""
+"\n"
+"Ou kapab tou swiv nou sou <a href=\"http://twitter.com/communityplanit\">Twitter</a> ak <a href=\"http://www.facebook.com/CommunityPlanIt\">Facebook</a> ."
+
 #: templates/values/all.html:7
 msgid "Token"
 msgstr "Siy"
@@ -971,35 +997,29 @@ msgstr "Depot"
 msgid ""
 "\n"
 "            What should %(instance)s prioritize? Spend your tokens on the\n"
-"            values that matter to you and tell decision-makers what's "
-"important\n"
+"            values that matter to you and tell decision-makers what's important\n"
 "            to the community.\n"
 "            "
 msgstr ""
 "\n"
-"Kisa mwen ta dwe %(instance)s priyorite? Pase marqueur ou sou valè yo ki "
-"matyè pou ou ak pou di desizyon-mizisyen sa ki enpòtan nan kominote-a."
+"Kisa mwen ta dwe %(instance)s priyorite? Pase marqueur ou sou valè yo ki matyè pou ou ak pou di desizyon-mizisyen sa ki enpòtan nan kominote-a."
 
 #: templates/values/all.html:149
 #, python-format
 msgid ""
 "\n"
-"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</"
-"span> token to spend.\n"
+"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</span> token to spend.\n"
 "            "
 msgid_plural ""
 "\n"
-"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</"
-"span> tokens to spend.\n"
+"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</span> tokens to spend.\n"
 "            "
 msgstr[0] ""
 "\n"
-"Ou gen <span style=\"font-weight: bold\">%(pretty_coins)s</span> marqueur "
-"depanse."
+"Ou gen <span style=\"font-weight: bold\">%(pretty_coins)s</span> marqueur depanse."
 msgstr[1] ""
 "\n"
-"Ou gen <span style=\"font-weight: bold\">%(pretty_coins)s</span> siy yo ap "
-"depanse."
+"Ou gen <span style=\"font-weight: bold\">%(pretty_coins)s</span> siy yo ap depanse."
 
 #: templates/values/all.html:162
 msgid "Your tokens <div class=\"spent\">earned:</div>"
@@ -1044,3 +1064,12 @@ msgstr "Pa gen marqueur yo te depanse."
 #: templates/values/all.html:261
 msgid "You haven't spent any tokens yet."
 msgstr "Ou pa gen depanse nenpòt ki marqueur ankò."
+
+#~ msgid "Kreyòl"
+#~ msgstr "Kreyòl"
+
+#~ msgid "Español"
+#~ msgstr "Panyòl"
+
+#~ msgid "Your stake in the community"
+#~ msgstr "Mennen ou nan kominote a"
