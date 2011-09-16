@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-16 15:31-0400\n"
-"PO-Revision-Date: 2011-09-16 15:47\n"
+"POT-Creation-Date: 2011-09-16 16:43-0400\n"
+"PO-Revision-Date: 2011-09-16 16:46\n"
 "Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -185,16 +185,16 @@ msgstr "kalite kontni"
 msgid "object ID"
 msgstr "ID objè"
 
-#: accounts/views.py:168
+#: accounts/views.py:163
 msgid "Password Changed"
 msgstr "Modpas chanje"
 
-#: accounts/views.py:168
+#: accounts/views.py:163
 #, python-format
 msgid "Your temporary password is: %(password)s"
 msgstr "Mopas tanporè w la se: %(password)s"
 
-#: accounts/views.py:169
+#: accounts/views.py:164
 msgid "A temporary password has been sent to your email address."
 msgstr "Gen yon mopas tanporè te voye bay adrès imel ou."
 
@@ -207,6 +207,38 @@ msgstr "yon repons bay %s"
 #: attachments/templatetags/attachment_tags.py:34
 msgid "This video is currently unavailable."
 msgstr "Videyo sa a se kounye a disponib."
+
+#: challenges/forms.py:22
+msgid "Location"
+msgstr "Kote"
+
+#: challenges/forms.py:23 templates/affiliations/base.html:33
+msgid "Name"
+msgstr "Non"
+
+#: challenges/forms.py:24
+msgid "Description"
+msgstr "Deskripsyon"
+
+#: challenges/forms.py:24
+msgid "Describe what people have to do to complete the challenge"
+msgstr "Dekri ki sa moun ki gen pou fè pou ranpli defi a"
+
+#: challenges/forms.py:27
+msgid "Challenge Start Date/Time (optional)"
+msgstr "Defi Kòmanse Dat / Lè (fakiltatif)"
+
+#: challenges/forms.py:31
+msgid "Challenge End Date/Time (optional)"
+msgstr "Defi Fen Dat / Lè (fakiltatif)"
+
+#: challenges/forms.py:43
+msgid "Please enter an end date not in the past."
+msgstr "Tanpri antre yon dat fen pa nan tan lontan an."
+
+#: challenges/forms.py:45
+msgid "Please enter an end date after the start date."
+msgstr "Tanpri antre yon dat apre dat fen a kòmanse."
 
 #: instances/views.py:41
 msgid "We'll let you know when {0} is active. Thanks for your interest!"
@@ -693,10 +725,6 @@ msgstr "Leaderboard"
 #: templates/affiliations/base.html:32
 msgid "Rank"
 msgstr "Rank"
-
-#: templates/affiliations/base.html:33
-msgid "Name"
-msgstr "Non"
 
 #: templates/affiliations/base.html:47
 msgid "No affiliation found."

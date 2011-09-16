@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-16 15:28-0400\n"
+"POT-Creation-Date: 2011-09-16 16:40-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -178,16 +178,16 @@ msgstr ""
 msgid "object ID"
 msgstr ""
 
-#: accounts/views.py:168
+#: accounts/views.py:163
 msgid "Password Changed"
 msgstr ""
 
-#: accounts/views.py:168
+#: accounts/views.py:163
 #, python-format
 msgid "Your temporary password is: %(password)s"
 msgstr ""
 
-#: accounts/views.py:169
+#: accounts/views.py:164
 msgid "A temporary password has been sent to your email address."
 msgstr ""
 
@@ -199,6 +199,38 @@ msgstr ""
 
 #: attachments/templatetags/attachment_tags.py:34
 msgid "This video is currently unavailable."
+msgstr ""
+
+#: challenges/forms.py:22
+msgid "Location"
+msgstr ""
+
+#: challenges/forms.py:23 templates/affiliations/base.html:33
+msgid "Name"
+msgstr ""
+
+#: challenges/forms.py:24
+msgid "Description"
+msgstr ""
+
+#: challenges/forms.py:24
+msgid "Describe what people have to do to complete the challenge"
+msgstr ""
+
+#: challenges/forms.py:27
+msgid "Challenge Start Date/Time (optional)"
+msgstr ""
+
+#: challenges/forms.py:31
+msgid "Challenge End Date/Time (optional)"
+msgstr ""
+
+#: challenges/forms.py:43
+msgid "Please enter an end date not in the past."
+msgstr ""
+
+#: challenges/forms.py:45
+msgid "Please enter an end date after the start date."
 msgstr ""
 
 #: instances/views.py:41
@@ -651,10 +683,6 @@ msgstr ""
 
 #: templates/affiliations/base.html:32
 msgid "Rank"
-msgstr ""
-
-#: templates/affiliations/base.html:33
-msgid "Name"
 msgstr ""
 
 #: templates/affiliations/base.html:47
