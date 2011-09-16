@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 from django.utils.datastructures import SortedDict
