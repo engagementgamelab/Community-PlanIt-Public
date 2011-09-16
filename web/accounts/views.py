@@ -1,7 +1,6 @@
-import urlparse
 import datetime
-import math
-import re
+from operator import attrgetter
+import urlparse
 
 from localeurl.models import reverse
 from localeurl.utils import strip_path, locale_path
@@ -18,13 +17,14 @@ from django.utils.translation import ugettext as _, get_language
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 
-
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import get_current_site
+
+from PIL import Image
 
 from web.accounts.forms import *
 from web.accounts.models import Notification, UserProfile
@@ -33,16 +33,11 @@ from web.challenges.models import Challenge, PlayerChallenge
 from web.comments.forms import CommentForm
 from web.instances.models import Instance
 from web.missions.models import Mission
-from web.player_activities.models import PlayerActivity
+from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
 from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
 from web.values.models import *
 from web.core.utils import _fake_latest
-
-from PIL import Image
-
-import logging 
-log = logging.getLogger(__name__)
 
 @csrf_protect
 @never_cache
@@ -370,7 +365,10 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     
     if (missions.count() > 0):
         mission = missions[0]
-        activities = PlayerActivity.objects.language(get_language()).distinct().filter(mission=mission)
+        activities = []
+        for model_klass in [PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity]:
+            activities.extend(list(model_klass.objects.filter(mission=mission)))
+        activities = sorted(activities, key=lambda a: (a.is_completed(request.user), a.name))
 
     completed_challenges = PlayerChallenge.objects.completed().filter(player=request.user)
     challenges = instance and instance.challenges.active().exclude(player_challenges__in=completed_challenges) or Challenge.objects.none()

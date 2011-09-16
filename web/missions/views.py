@@ -1,4 +1,5 @@
 import datetime
+from operator import attrgetter
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render_to_response
@@ -7,17 +8,15 @@ from django.utils.translation import get_language
 
 from django.contrib.auth.decorators import login_required
 
+from answers.models import *
 from comments.forms import CommentForm
 from comments.models import Comment
 from instances.models import Instance
 from missions.models import *
 from player_activities.models import *
-from answers.models import *
 
 @login_required
 def fetch(request, slug, template='missions/base.html'):
-    #TODO
-    # for now show admins just pick the first instance
     if request.user.is_superuser:
         my_instance = Instance.objects.all()[0]
     else:
@@ -26,26 +25,14 @@ def fetch(request, slug, template='missions/base.html'):
     mission = get_object_or_404(Mission, slug=slug, instance=my_instance)
 
     activities = []
-    completed = []
-
-    #does not work. why?PlayerActivityBase.__subclasses__()
     for model_klass in [PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity]:
-        activities.extend(list(model_klass.objects.untranslated().filter(mission=mission)))
+        activities.extend(list(model_klass.objects.filter(mission=mission)))
+    activities = sorted(activities, key=attrgetter('name'))
 
+    completed = []
     for activity in activities:
         if activity.is_completed(request.user):
             completed.append(activity)
-
-        #if activity.type.type == 'multi_reponse':
-        #    answers = AnswerMultiChoice.objects.filter(user=request.user, option__activity__mission=mission)
-        #    print answers
-
-            #TODO
-        #isAnswerMultiChoice]
-        #for mc in AnswerMultiChoice.objects.filter(user=request.user, option__activity__mission=mission):
-        #    pk = mc.option.activity.pk
-        #    if pk not in pks:
-        #        pks.append(pk)
 
     context = dict(
         mission = mission,

@@ -177,7 +177,6 @@ class MultiChoiceActivity(TranslatableModel):
     
     def is_completed(self, answerUser):
         return self.multi_choice_answers.filter(answerUser=answerUser).count()
-          
 
     class Meta:
         verbose_name = 'Multiple Choice Activity'
