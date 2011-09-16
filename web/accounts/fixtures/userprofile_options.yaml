@@ -192,38 +192,38 @@
   pk: 3
 - fields: {instance: {{INSTANCE_ID}}, pos: 3}
   model: accounts.userprofileincome
-  pk: 4
-- fields: {language_code: en-us, master: 1, situation: I own my house or condo}
-  model: accounts.userprofilelivingsituationtranslation
-  pk: 1
-- fields: {language_code: ht, master: 1, situation: "Mwen posede kay mwen an oswa\
-      \ kondominy\xF2m"}
-  model: accounts.userprofilelivingsituationtranslation
-  pk: 2
-- fields: {language_code: es, master: 1, situation: "Soy due\xF1o de mi casa o condominio"}
-  model: accounts.userprofilelivingsituationtranslation
-  pk: 3
-- fields: {language_code: en-us, master: 2, situation: I rent}
-  model: accounts.userprofilelivingsituationtranslation
-  pk: 4
-- fields: {language_code: en-us, master: 3, situation: I live with my parents or guardian}
-  model: accounts.userprofilelivingsituationtranslation
-  pk: 5
-- fields: {language_code: ht, master: 3, situation: "M ap viv av\xE8k paran mwen oswa\
-      \ gadyen legal"}
-  model: accounts.userprofilelivingsituationtranslation
-  pk: 6
-- fields: {language_code: es, master: 3, situation: Yo vivo con mis padres o tutor}
-  model: accounts.userprofilelivingsituationtranslation
-  pk: 7
-- fields: {instance: {{INSTANCE_ID}}, pos: 0}
-  model: accounts.userprofilelivingsituation
-  pk: 1
-- fields: {instance: {{INSTANCE_ID}}, pos: 1}
-  model: accounts.userprofilelivingsituation
-  pk: 2
-- fields: {instance: {{INSTANCE_ID}}, pos: 2}
-  model: accounts.userprofilelivingsituation
+  #pk: 4
+- #fields: {language_code: en-us, master: 1, situation: I own my house or condo}
+  #model: accounts.userprofilelivingsituationtranslation
+  #pk: 1
+- #fields: {language_code: ht, master: 1, situation: "Mwen posede kay mwen an oswa\
+  #    \ kondominy\xF2m"}
+  #model: accounts.userprofilelivingsituationtranslation
+  #pk: 2
+- #fields: {language_code: es, master: 1, situation: "Soy due\xF1o de mi casa o condominio"}
+  #model: accounts.userprofilelivingsituationtranslation
+  #pk: 3
+- #fields: {language_code: en-us, master: 2, situation: I rent}
+  #model: accounts.userprofilelivingsituationtranslation
+  #pk: 4
+- #fields: {language_code: en-us, master: 3, situation: I live with my parents or guardian}
+  #model: accounts.userprofilelivingsituationtranslation
+  #pk: 5
+- #fields: {language_code: ht, master: 3, situation: "M ap viv av\xE8k paran mwen oswa\
+  #    \ gadyen legal"}
+  #model: accounts.userprofilelivingsituationtranslation
+  #pk: 6
+- #fields: {language_code: es, master: 3, situation: Yo vivo con mis padres o tutor}
+  #model: accounts.userprofilelivingsituationtranslation
+  #pk: 7
+- #fields: {instance: {{INSTANCE_ID}}, pos: 0}
+  #model: accounts.userprofilelivingsituation
+  #pk: 1
+- #fields: {instance: {{INSTANCE_ID}}, pos: 1}
+  #model: accounts.userprofilelivingsituation
+  #pk: 2
+- #fields: {instance: {{INSTANCE_ID}}, pos: 2}
+  #model: accounts.userprofilelivingsituation
   pk: 3
 - fields: {language_code: en-us, master: 1, race: American Indian or Alaskan Native}
   model: accounts.userprofileracetranslation

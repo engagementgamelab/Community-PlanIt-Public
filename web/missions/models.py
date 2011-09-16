@@ -10,25 +10,6 @@ from nani.manager import TranslationManager
 
 from instances.models import Instance
 
-def rebuild_mission_dates(instance=None):
-    # this will reset all start_date, end_date fields
-    # will conflict with Mission.save()
-    # you have been warned
-
-    def _reset_fields(m, starton=None):
-        if not starton:
-            starton = m.instance.start_date
-        m.start_date = starton
-        m.end_date = m.start_date + relativedelta(days=+m.instance.days_for_mission)
-        m.save()
-        return m.end_date
-
-    for instance in Instance.objects.untranslated():
-        starton = None
-        for m in  Mission.objects.filter(instance=instance).order_by('date_created'):
-            starton = _reset_fields(m, starton)
-
-
 class MissionManager(TranslationManager):
 
     def latest_by_instance(self, instance):

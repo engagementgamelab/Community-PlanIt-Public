@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 from django.utils.datastructures import SortedDict
@@ -433,7 +433,7 @@ def admin_sendemail(request):
         body = form.cleaned_data["email"]
         subject = form.cleaned_data["subject"]
         emailList = []
-        ups = UserProfile.objects.filter(instance=instance, receive_email=True)
+        ups = UserProfile.objects.filter(instance=instance)
         for up in ups:
             send_mail(subject, body, settings.NOREPLY_EMAIL, [up.user.email], fail_silently=False)
         return HttpResponseRedirect(reverse("home"))
