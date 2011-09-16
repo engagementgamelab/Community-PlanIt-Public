@@ -5,6 +5,7 @@ from web.challenges.models import Challenge
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 @login_required
 def add(request, app, id):
