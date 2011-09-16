@@ -114,7 +114,7 @@
                 <tbody>
                     {% for activity in log %}
                     <tr class="{% cycle "odd" "even" %}">
-                        <td>{{activity.date|date:"m/d/Y"}}</td>
+                        <td>{{activity.date|date:"m/d/Y h:i a"}}</td>
                         <td>
                             <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
                             {{activity.data}} 
