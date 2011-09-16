@@ -6,7 +6,7 @@ from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.template import Context, RequestContext, loader
 from django.utils.safestring import mark_safe
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import get_language, ugettext, ugettext_lazy as _
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -212,7 +212,7 @@ class RegistrationWizard(FormWizard):
         context = { 'instance': profile.instance }
         body = tmpl.render(RequestContext(request, context))
         
-        send_mail(_('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
+        send_mail(ugettext('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
         messages.success(request, _("Thanks for signing up!"))
         
         return HttpResponseRedirect(reverse('accounts:dashboard'))
