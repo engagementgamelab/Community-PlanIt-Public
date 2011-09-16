@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 
+@login_required
 def add(request, app, id):
     id = int(id)
     if app == 'account':

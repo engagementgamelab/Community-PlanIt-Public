@@ -11,7 +11,7 @@
 
 {% block aside %}
 <div>
-    <h2>Thanks for your interest in Community PlanIt!</h2>
+    <h2>{% trans "Thanks for your interest in Community PlanIt!" %}</h2>
 </div>
 <div>
 {% blocktrans %}
@@ -20,7 +20,7 @@ Before you register, you should read our privacy policy and terms of use.
 </div>
 
 <div>
-    <p><a href="{% url privacy %}" target="_blank">View Privacy Policy</a></p>
-    <p><a href="{% url terms %}" target="_blank">View Terms of Use</a></p>
+    <p><a href="{% url privacy %}" target="_blank">{% trans "View Privacy Policy" %}</a></p>
+    <p><a href="{% url terms %}" target="_blank">{% trans "View Terms of Use" %}</a></p>
 </div>
 {% endblock %}

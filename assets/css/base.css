@@ -495,7 +495,7 @@ p.separate {
           text-decoration: none;
           display: block;
           text-align: center;
-          font-family: UbuntuLight;
+          font-weight: 100;
           padding: 0 20px 10px 20px;
           margin: 0;
           background-position: 50% 50%;
@@ -689,7 +689,8 @@ p.separate {
       .wrapper #main aside div {
         padding: 5px 10px 0 10px; }
       .wrapper #main aside h2 {
-        font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
+        font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+        font-weight: 100;
         font-size: 1.5em;
         margin: 0;
         padding: 0;
@@ -725,8 +726,8 @@ p.separate {
         margin-top: 1px; }
         .wrapper #main aside .leaderboard th {
           font-size: 2em;
-          font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
-          font-weight: normal;
+          font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+          font-weight: 100;
           text-transform: uppercase;
           text-align: left; }
         .wrapper #main aside .leaderboard th:first-child {
@@ -824,7 +825,8 @@ p.separate {
           -webkit-border-radius: 100px;
           border-radius: 100px; }
       .wrapper #main aside .details {
-        font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif; }
+        font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+        font-weight: 100; }
         .wrapper #main aside .details h2 {
           margin-bottom: 0px;
           text-shadow: none; }
@@ -942,7 +944,6 @@ p.separate {
               .wrapper #main .content .comments .comment_list .comment .main .meta {
                 padding-left: 1em;
                 overflow: auto;
-                font-family: UbuntuMedium;
                 white-space: nowrap; }
                 .wrapper #main .content .comments .comment_list .comment .main .meta a {
                   color: #00aeef; }
@@ -1053,7 +1054,7 @@ p.separate {
     position: relative;
     background-color: #001a39;
     color: #00aeef;
-    font-family: UbuntuLight;
+    font-weight: 100;
     font-size: .9em; }
     .wrapper #footer a {
       color: white; }
@@ -1219,8 +1220,8 @@ table.activities {
   table.activities th {
     text-align: left;
     text-transform: uppercase;
-    font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
-    font-weight: normal;
+    font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+    font-weight: 100;
     font-size: 1.25em;
     padding: 2px 10px 2px 4px; }
   table.activities td {
@@ -1266,7 +1267,8 @@ ul#messages {
   list-style: none;
   background-color: #4c4d4f;
   color: white;
-  font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
+  font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+  font-weight: 100;
   font-size: 1.2em; }
   .page_navigator .current {
     color: #ff7812; }

@@ -11,6 +11,7 @@ from web.instances.models import Instance
 #from web.processors import instance_processor as ip
 from web.values.models import *
 
+@login_required
 def display_list(request, players, title):
     p = Paginator(players, 10)
 

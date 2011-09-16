@@ -167,6 +167,7 @@ def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
 
 
+@login_required
 def activity(request, activity_id, template=None, **kwargs):
     model = kwargs.pop('model')
     action = kwargs.pop('action')

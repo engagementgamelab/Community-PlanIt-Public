@@ -365,7 +365,7 @@ p.separate {
                     text-decoration: none;
                     display: block;
                     text-align: center;
-                    font-family: UbuntuLight;
+                    font-weight: 100;
                     padding: 0 20px 10px 20px;
                     margin: 0;
                     background-position: 50% 50%;
@@ -648,7 +648,8 @@ p.separate {
             }
 
             h2 {
-                font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
+                font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+                font-weight: 100;
                 font-size: 1.5em;
                 margin: 0;
                 padding: 0;
@@ -702,8 +703,8 @@ p.separate {
 
                 th {
                     font-size: 2em;
-                    font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
-                    font-weight: normal;
+                    font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+                    font-weight: 100;
                     text-transform: uppercase;
                     text-align: left;
                 }
@@ -837,7 +838,8 @@ p.separate {
             }
 
             .details {
-                font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
+                font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+                font-weight: 100;
                 h2 {
                     margin-bottom: 0px;
                     text-shadow: none;
@@ -1017,7 +1019,6 @@ p.separate {
                             .meta {
                                 padding-left: 1em;
                                 overflow: auto;
-                                font-family: UbuntuMedium;
                                 white-space: nowrap;
 
                                 a {
@@ -1202,7 +1203,7 @@ p.separate {
         position: relative;
         background-color: $darkblue;
         color: $vibrantblue;
-        font-family: UbuntuLight;
+        font-weight: 100;
         font-size: .9em;
 
         a {
@@ -1432,8 +1433,8 @@ table.activities {
     th {
         text-align: left;
         text-transform: uppercase;
-        font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
-        font-weight: normal;
+        font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+        font-weight: 100;
         font-size: 1.25em;
         padding: 2px 10px 2px 4px;
     }
@@ -1498,7 +1499,8 @@ ul#messages {
     list-style: none;
     background-color: $darkgray;
     color: $white;
-    font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
+    font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+    font-weight: 100;
     font-size: 1.2em;
 
     .current {

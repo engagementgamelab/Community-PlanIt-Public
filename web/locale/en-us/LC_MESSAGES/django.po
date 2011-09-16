@@ -1,0 +1,979 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-16 13:33-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: settings_base.py:132
+msgid "English"
+msgstr ""
+
+#: settings_base.py:133
+msgid "Kreyòl"
+msgstr ""
+
+#: settings_base.py:134
+msgid "Español"
+msgstr ""
+
+#: accounts/forms.py:24 templates/accounts/profile_edit.html:22
+msgid "First Name"
+msgstr ""
+
+#: accounts/forms.py:25 templates/accounts/profile_edit.html:27
+msgid "Last Name"
+msgstr ""
+
+#: accounts/forms.py:26 templates/accounts/profile_edit.html:32
+msgid "Email"
+msgstr ""
+
+#: accounts/forms.py:27 templates/accounts/profile_edit.html:76
+msgid "Password"
+msgstr ""
+
+#: accounts/forms.py:28
+msgid "Password Again"
+msgstr ""
+
+#: accounts/forms.py:29 templates/accounts/profile_edit.html:37
+msgid "Preferred Language"
+msgstr ""
+
+#: accounts/forms.py:31
+msgid "Year you were born"
+msgstr ""
+
+#: accounts/forms.py:33
+msgid "Your neighborhood, town or city"
+msgstr ""
+
+#: accounts/forms.py:34
+msgid "Your ZIP code"
+msgstr ""
+
+#: accounts/forms.py:41
+msgid "Community"
+msgstr ""
+
+#: accounts/forms.py:46
+#, python-format
+msgid ""
+"Confirm that you have read and agree to the <a target=\"_blank\" href="
+"\"%(terms)s\">Terms of Use</a>."
+msgstr ""
+
+#: accounts/forms.py:54
+msgid "Account already exists, please use a different email address."
+msgstr ""
+
+#: accounts/forms.py:61
+msgid "Please provide your first name."
+msgstr ""
+
+#: accounts/forms.py:68
+msgid "Please provide your last name."
+msgstr ""
+
+#: accounts/forms.py:75
+msgid "Please provide a password."
+msgstr ""
+
+#: accounts/forms.py:82
+msgid "Please type the password again."
+msgstr ""
+
+#: accounts/forms.py:84
+msgid "The passwords do not match."
+msgstr ""
+
+#: accounts/forms.py:99
+msgid "Stake in the community"
+msgstr ""
+
+#: accounts/forms.py:103
+msgid "Gender"
+msgstr ""
+
+#: accounts/forms.py:107
+msgid "Race/Ethnicity"
+msgstr ""
+
+#: accounts/forms.py:111
+msgid "Education"
+msgstr ""
+
+#: accounts/forms.py:115
+msgid "Income"
+msgstr ""
+
+#: accounts/forms.py:119
+msgid "Living Situation"
+msgstr ""
+
+#: accounts/forms.py:123
+msgid "How did you hear about Community PlanIt?"
+msgstr ""
+
+#: accounts/forms.py:125
+msgid "If the way you learned about us is not listed, please tell us"
+msgstr ""
+
+#: accounts/forms.py:215 accounts/views.py:187
+msgid "Welcome to Community PlanIt!"
+msgstr ""
+
+#: accounts/forms.py:216 accounts/views.py:192
+msgid "Thanks for signing up!"
+msgstr ""
+
+#: accounts/forms.py:248
+msgid "Email not found in our system"
+msgstr ""
+
+#: accounts/forms.py:259
+msgid "Passwords must match"
+msgstr ""
+
+#: accounts/forms.py:271
+msgid ""
+"Please place a comma between each affiliation (ie: YMCA, James Memorial "
+"Highschool, Gardening Club)."
+msgstr ""
+
+#: accounts/forms.py:279
+msgid "Stake"
+msgstr ""
+
+#: accounts/forms.py:300
+msgid "Username"
+msgstr ""
+
+#: accounts/models.py:144
+msgid "e-mail address"
+msgstr ""
+
+#: accounts/models.py:267 comments/models.py:29
+msgid "content type"
+msgstr ""
+
+#: accounts/models.py:270 comments/models.py:32
+msgid "object ID"
+msgstr ""
+
+#: accounts/views.py:213
+msgid "Password Changed"
+msgstr ""
+
+#: accounts/views.py:213
+#, python-format
+msgid "Your temporary password is: %(password)s"
+msgstr ""
+
+#: accounts/views.py:214
+msgid "A temporary password has been sent to your email address."
+msgstr ""
+
+#: answers/models.py:42 answers/models.py:63 answers/models.py:73
+#: answers/models.py:83
+#, python-format
+msgid "an answer to %s"
+msgstr ""
+
+#: attachments/templatetags/attachment_tags.py:34
+msgid "This video is currently unavailable."
+msgstr ""
+
+#: instances/views.py:41
+msgid "We'll let you know when {0} is active. Thanks for your interest!"
+msgstr ""
+
+#: missions/management/commands/email_notifications.py:30
+msgid "Community PlanIT Weekly Mission Update"
+msgstr ""
+
+#: templates/index.html:6
+msgid "Welcome"
+msgstr ""
+
+#: templates/index.html:8
+msgid "Community PlanIT"
+msgstr ""
+
+#: templates/index.html:14
+msgid "Interested in playing? Click on a community below to find out more."
+msgstr ""
+
+#: templates/index.html:17
+msgid "Upcoming Communities"
+msgstr ""
+
+#: templates/index.html:35
+msgid "Active Communities"
+msgstr ""
+
+#: templates/index.html:48 templates/instances/all.html:22
+msgid "player"
+msgstr ""
+
+#: templates/index.html:48
+msgid "signed up."
+msgstr ""
+
+#: templates/index.html:56
+msgid "Past Communities"
+msgstr ""
+
+#: templates/index.html:72
+msgid "A game about your community."
+msgstr ""
+
+#: templates/index.html:74
+msgid ""
+"Voice opinions, earn coins, and spend them on your top community values!"
+msgstr ""
+
+#: templates/index.html:75
+msgid "See which"
+msgstr ""
+
+#: templates/index.html:75
+msgid "are playing now, or learn more"
+msgstr ""
+
+#: templates/index.html:75
+msgid "about us"
+msgstr ""
+
+#: templates/index.html:80 templates/layouts/base.html:126
+msgid "New Player?"
+msgstr ""
+
+#: templates/index.html:80 templates/layouts/base.html:126
+msgid "Sign Up"
+msgstr ""
+
+#: templates/index.html:82
+msgid "Have an account?"
+msgstr ""
+
+#: templates/index.html:93
+msgid "Login"
+msgstr ""
+
+#: templates/index.html:93 templates/accounts/forgot.html:6
+#: templates/accounts/forgot.html.py:7
+msgid "Forgot password"
+msgstr ""
+
+#: templates/accounts/dashboard.html:7 templates/accounts/profile.html:6
+msgid "Dashboard"
+msgstr ""
+
+#: templates/accounts/dashboard.html:23 templates/missions/all.html:14
+msgid "Current Mission"
+msgstr ""
+
+#: templates/accounts/dashboard.html:32
+msgid "Read More"
+msgstr ""
+
+#: templates/accounts/dashboard.html:36
+msgid "View Current Mission"
+msgstr ""
+
+#: templates/accounts/dashboard.html:42
+msgid ""
+"Your missions have ended for now. Great work!  Your community is better "
+"because of your efforts.  You'll be notified when a new mission starts."
+msgstr ""
+
+#: templates/accounts/dashboard.html:47
+msgid ""
+" The mission has not yet started. You will be notified when the mission "
+"starts."
+msgstr ""
+
+#: templates/accounts/dashboard.html:50
+msgid "No missions created."
+msgstr ""
+
+#: templates/accounts/dashboard.html:57 templates/challenges/all.html:6
+msgid "Available Challenges"
+msgstr ""
+
+#: templates/accounts/dashboard.html:67
+msgid "No active challenges found."
+msgstr ""
+
+#: templates/accounts/dashboard.html:74
+msgid "Create Challenge"
+msgstr ""
+
+#: templates/accounts/dashboard.html:75
+msgid "All Challenges"
+msgstr ""
+
+#: templates/accounts/dashboard.html:91
+msgid "ended on"
+msgstr ""
+
+#: templates/accounts/dashboard.html:91
+msgid "with"
+msgstr ""
+
+#: templates/accounts/dashboard.html:93
+msgid "participant"
+msgstr ""
+
+#: templates/accounts/dashboard.html:107
+msgid "Thanks for playing!"
+msgstr ""
+
+#: templates/accounts/dashboard.html:112
+msgid "Latest Events"
+msgstr ""
+
+#: templates/accounts/dashboard.html:129
+msgid "No news found"
+msgstr ""
+
+#: templates/accounts/dashboard.html:139
+msgid "The community has not started yet. We will notify you once it has begun"
+msgstr ""
+
+#: templates/accounts/dashboard.html:153
+msgid "Leader"
+msgstr ""
+
+#: templates/accounts/dashboard.html:153
+msgid "Board"
+msgstr ""
+
+#: templates/accounts/forgot.html:11
+msgid ""
+"Enter in your email address below and we'll send you a new password right "
+"away!"
+msgstr ""
+
+#: templates/accounts/forgot.html:15
+msgid "Reset my password"
+msgstr ""
+
+#: templates/accounts/list.html:11
+msgid "Your Privacy"
+msgstr ""
+
+#: templates/accounts/list.html:12
+msgid ""
+"We need your email address to confirm your identity. We will not sell your "
+"information."
+msgstr ""
+
+#: templates/accounts/list.html:24
+msgid "No players found."
+msgstr ""
+
+#: templates/accounts/login.html:6 templates/accounts/login.html.py:7
+msgid "Player Login"
+msgstr ""
+
+#: templates/accounts/login.html:11
+msgid "Forgot Your Password?"
+msgstr ""
+
+#: templates/accounts/login.html:12
+msgid "Reset password"
+msgstr ""
+
+#: templates/accounts/login.html:20
+msgid "Sorry, that's not a valid email address or password."
+msgstr ""
+
+#: templates/accounts/login.html:22
+msgid "Not a member? "
+msgstr ""
+
+#: templates/accounts/login.html:22
+msgid "Find your community and sign up now!"
+msgstr ""
+
+#: templates/accounts/login.html:25
+msgid "Email address:"
+msgstr ""
+
+#: templates/accounts/login.html:28 templates/admin/login.html:25
+msgid "Password:"
+msgstr ""
+
+#: templates/accounts/profile.html:22 templates/affiliations/base.html:34
+#: templates/player_activities/all_activities_paginated.html:5
+msgid "Points"
+msgstr ""
+
+#: templates/accounts/profile.html:23
+msgid "Community Stake"
+msgstr ""
+
+#: templates/accounts/profile.html:29
+msgid "Affiliated With"
+msgstr ""
+
+#: templates/accounts/profile.html:38
+msgid "Token spending"
+msgstr ""
+
+#: templates/accounts/profile.html:64
+msgid "has created no activities."
+msgstr ""
+
+#: templates/accounts/profile_edit.html:5
+#: templates/accounts/profile_edit.html:14
+msgid "Update Your Profile"
+msgstr ""
+
+#: templates/accounts/profile_edit.html:11
+msgid "Please correct the errors below"
+msgstr ""
+
+#: templates/accounts/profile_edit.html:42
+msgid "Your stake in the community"
+msgstr ""
+
+#: templates/accounts/profile_edit.html:47 templates/affiliations/base.html:5
+#: templates/affiliations/base.html.py:6
+msgid "Affiliations"
+msgstr ""
+
+#: templates/accounts/profile_edit.html:53
+msgid "Your current avatar"
+msgstr ""
+
+#: templates/accounts/profile_edit.html:60
+msgid "New Avatar (leave empty to keep)"
+msgstr ""
+
+#: templates/accounts/profile_edit.html:69
+msgid "Change Your Password"
+msgstr ""
+
+#: templates/accounts/profile_edit.html:78
+msgid "Password again to confirm"
+msgstr ""
+
+#: templates/accounts/register_0.html:6 templates/accounts/register_1.html:6
+#: templates/accounts/register_base.html:6
+msgid "Registration"
+msgstr ""
+
+#: templates/accounts/register_0.html:9 templates/accounts/register_1.html:9
+#: templates/accounts/register_base.html:9
+#, python-format
+msgid "Registration: Step %(step)s of %(step_count)s"
+msgstr ""
+
+#: templates/accounts/register_0.html:15 templates/accounts/register_1.html:15
+msgid "Please correct the errors below."
+msgstr ""
+
+#: templates/accounts/register_base.html:14
+msgid "Thanks for your interest in Community PlanIt!"
+msgstr ""
+
+#: templates/accounts/register_base.html:17
+msgid ""
+"\n"
+"Before you register, you should read our privacy policy and terms of use.\n"
+msgstr ""
+
+#: templates/accounts/register_base.html:23
+msgid "View Privacy Policy"
+msgstr ""
+
+#: templates/accounts/register_base.html:24
+msgid "View Terms of Use"
+msgstr ""
+
+#: templates/accounts/email/welcome.html:1
+#, python-format
+msgid ""
+"\n"
+"Hello!\n"
+"\n"
+"Thanks for registering for Community PlanIt ! We're glad you've decided to "
+"join\n"
+"us in helping to shape a vision for your community.\n"
+"\n"
+"From %(start_date)s through %(end_date)s,\n"
+"we are using https://communityplanit.org/ as a way to engage stakeholders "
+"in\n"
+"long-range, city-wide planning as we think toward the future. The feedback "
+"we\n"
+"receive will be considered when making future policy decisions in the "
+"Boston\n"
+"Public Schools. Remember that you can sign on to participate as often as "
+"you\n"
+"like, from any place that has access to the Internet. We hope you will "
+"share\n"
+"your thoughts about BPS by completing all the activities, interacting with\n"
+"other users, and spending your in-game tokens on the issues that matter to "
+"you\n"
+"most.\n"
+"\n"
+"There will be an in-person meeting at English High on October 20th at 6pm.\n"
+"Come together with other players to devise a plan for moving forward.  And "
+"one\n"
+"more thing...a brand new Nook e-reader will be raffled off to one of the "
+"top\n"
+"fifty point earners.\n"
+"\n"
+"Happy planning!\n"
+"\n"
+"The Community PlanIt Team\n"
+msgstr ""
+
+#: templates/admin/base.html:31 templates/layouts/base.html:50
+#: templates/layouts/base.html.py:55
+msgid "Home"
+msgstr ""
+
+#: templates/admin/base.html:48
+msgid "Welcome,"
+msgstr ""
+
+#: templates/admin/base.html:58
+msgid "Change password"
+msgstr ""
+
+#: templates/admin/base.html:65
+msgid "Log out"
+msgstr ""
+
+#: templates/admin/index.html:47
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr ""
+
+#: templates/admin/index.html:48
+#, python-format
+msgid "%(name)s"
+msgstr ""
+
+#: templates/admin/index.html:58
+msgid "Add"
+msgstr ""
+
+#: templates/admin/index.html:64
+msgid "Change"
+msgstr ""
+
+#: templates/admin/index.html:74
+msgid "You don't have permission to edit anything."
+msgstr ""
+
+#: templates/admin/index.html:82
+msgid "Recent Actions"
+msgstr ""
+
+#: templates/admin/index.html:83
+msgid "My Actions"
+msgstr ""
+
+#: templates/admin/index.html:87
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:101
+msgid "Unknown content"
+msgstr ""
+
+#: templates/admin/login.html:22
+msgid "Username:"
+msgstr ""
+
+#: templates/admin/login.html:29
+msgid "Log in"
+msgstr ""
+
+#: templates/admin/nani/edit_inline/tabular.html:12
+#: templates/admin/nani/edit_inline/tabular.html:14
+msgid "Delete Translation"
+msgstr ""
+
+#: templates/admin/nani/edit_inline/tabular.html:25
+msgid "Delete?"
+msgstr ""
+
+#: templates/admin/nani/edit_inline/tabular.html:38
+msgid "View on site"
+msgstr ""
+
+#: templates/admin/nani/edit_inline/tabular.html:123
+#, python-format
+msgid "Add another %(verbose_name)s"
+msgstr ""
+
+#: templates/admin/nani/edit_inline/tabular.html:126
+msgid "Remove"
+msgstr ""
+
+#: templates/affiliations/base.html:12
+#, python-format
+msgid ""
+"\n"
+"            <span class=\"highlight\">%(player_count)s</span> player, who "
+"has scored <span class=\"highlight\">%(affiliation_points)s</span> points.\n"
+"            "
+msgid_plural ""
+"\n"
+"            <span class=\"highlight\">%(player_count)s</span> players, who "
+"have scored a collective <span class=\"highlight\">%(affiliation_points)s</"
+"span> points.\n"
+"        "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/affiliations/base.html:30
+msgid "Leaderboard"
+msgstr ""
+
+#: templates/affiliations/base.html:32
+msgid "Rank"
+msgstr ""
+
+#: templates/affiliations/base.html:33
+msgid "Name"
+msgstr ""
+
+#: templates/affiliations/base.html:47
+msgid "No affiliation found."
+msgstr ""
+
+#: templates/challenges/all.html:4 templates/layouts/base.html:52
+msgid "Challenges"
+msgstr ""
+
+#: templates/challenges/all.html:15
+msgid "Create a Challenge"
+msgstr ""
+
+#: templates/challenges/all.html:19
+msgid "Completed challenges"
+msgstr ""
+
+#: templates/challenges/all.html:31
+msgid "No completed challenges found"
+msgstr ""
+
+#: templates/challenges/all.html:40
+msgid "Past Challenges"
+msgstr ""
+
+#: templates/challenges/all.html:52
+msgid "No past challenges found"
+msgstr ""
+
+#: templates/challenges/all.html:69
+msgid "points"
+msgstr ""
+
+#: templates/challenges/all.html:78
+msgid "There are no active challenges"
+msgstr ""
+
+#: templates/challenges/all.html:78
+msgid "Create one!"
+msgstr ""
+
+#: templates/challenges/all.html:83
+msgid "has ended"
+msgstr ""
+
+#: templates/challenges/all.html:85
+msgid "You may not add or accept new challenges"
+msgstr ""
+
+#: templates/comments/comment.html:24
+msgid "From"
+msgstr ""
+
+#: templates/comments/comments.html:4 templates/comments/post.html:7
+#: templates/player_activities/map_overview.html:29
+#, python-format
+msgid "%(comment_heading)s"
+msgstr ""
+
+#: templates/comments/post.html:10
+msgid "Share your thoughts:"
+msgstr ""
+
+#: templates/instances/all.html:6 templates/layouts/base.html:56
+msgid "Communities"
+msgstr ""
+
+#: templates/instances/all.html:8
+msgid "Participating Communities"
+msgstr ""
+
+#: templates/instances/all.html:13
+msgid "Active"
+msgstr ""
+
+#: templates/instances/all.html:19
+msgid "Started"
+msgstr ""
+
+#: templates/instances/all.html:22
+msgid "signed up"
+msgstr ""
+
+#: templates/instances/all.html:30
+msgid "Future"
+msgstr ""
+
+#: templates/instances/all.html:36
+msgid "Starts"
+msgstr ""
+
+#: templates/instances/all.html:44
+msgid "Past"
+msgstr ""
+
+#: templates/layouts/base.html:51 templates/missions/all.html:8
+msgid "Missions"
+msgstr ""
+
+#: templates/layouts/base.html:53 templates/values/all.html:5
+msgid "Token Depot"
+msgstr ""
+
+#: templates/layouts/base.html:57
+msgid "About"
+msgstr ""
+
+#: templates/layouts/base.html:58
+msgid "Contact"
+msgstr ""
+
+#: templates/layouts/base.html:81
+msgid "Logout"
+msgstr ""
+
+#: templates/missions/all.html:12
+msgid "is not active at this time"
+msgstr ""
+
+#: templates/missions/all.html:32
+msgid "There are no active missions at this time"
+msgstr ""
+
+#: templates/missions/all.html:36
+msgid "Upcoming Missions"
+msgstr ""
+
+#: templates/missions/all.html:48
+msgid "There are no upcoming missions at this time."
+msgstr ""
+
+#: templates/missions/all.html:52
+msgid "Past Missions"
+msgstr ""
+
+#: templates/missions/all.html:64
+msgid "There are no past missions at this time."
+msgstr ""
+
+#: templates/missions/base.html:5
+msgid "Mission"
+msgstr ""
+
+#: templates/missions/base.html:32
+msgid "You've completed"
+msgstr ""
+
+#: templates/missions/base.html:32
+msgid "activities"
+msgstr ""
+
+#: templates/missions/base.html:53
+#: templates/player_activities/all_activities.html:10
+msgid "pts"
+msgstr ""
+
+#: templates/missions/base.html:72
+#: templates/player_activities/all_activities.html:24
+msgid "No activities found"
+msgstr ""
+
+#: templates/pagination/pagination.html:6
+#: templates/pagination/pagination.html:8
+msgid "previous"
+msgstr ""
+
+#: templates/pagination/pagination.html:26
+#: templates/pagination/pagination.html:28
+msgid "next"
+msgstr ""
+
+#: templates/player_activities/all_activities_paginated.html:5
+msgid "Activities"
+msgstr ""
+
+#: templates/player_activities/base.html:6
+msgid "Activity"
+msgstr ""
+
+#: templates/player_activities/empathy_base.html:23
+#: templates/player_activities/open_base.html:14
+msgid "Enter your response"
+msgstr ""
+
+#: templates/player_activities/empathy_overview.html:8
+#: templates/player_activities/multi_response_overview.html:8
+#: templates/player_activities/open_ended_overview.html:8
+#: templates/player_activities/single_response_overview.html:8
+#, python-format
+msgid ""
+"\n"
+"    Thanks for completing this activity. When you're ready for more, visit "
+"the <a href=\"%(mission_url)s\">mission page</a>.\n"
+"    "
+msgstr ""
+
+#: templates/player_activities/empathy_overview.html:28
+#: templates/player_activities/open_ended_overview.html:21
+#: templates/player_activities/single_response_overview.html:21
+msgid "You answered:"
+msgstr ""
+
+#: templates/player_activities/empathy_overview.html:30
+#: templates/player_activities/open_ended_overview.html:23
+#: templates/player_activities/single_response_overview.html:22
+msgid "Replay"
+msgstr ""
+
+#: templates/player_activities/empathy_overview.html:37
+#: templates/player_activities/multi_response_overview.html:34
+#: templates/player_activities/open_ended_overview.html:30
+#: templates/player_activities/single_response_overview.html:37
+msgid "Responses"
+msgstr ""
+
+#: templates/player_activities/map_response.html:5
+#: templates/player_activities/single_response_response.html:5
+msgid "Add a comment"
+msgstr ""
+
+#: templates/player_activities/multi_response_overview.html:18
+msgid "Your answer:"
+msgstr ""
+
+#: templates/player_activities/multi_response_overview.html:21
+#: templates/player_activities/single_response_overview.html:25
+msgid "See Your Answer"
+msgstr ""
+
+#: templates/player_activities/multi_response_overview.html:27
+#: templates/player_activities/single_response_overview.html:31
+msgid "Response Summary"
+msgstr ""
+
+#: templates/player_activities/multi_response_overview.html:54
+msgid "no responses have been submitted"
+msgstr ""
+
+#: templates/player_activities/open_ended_overview.html:52
+#: templates/player_activities/single_response_overview.html:57
+msgid "No responses submitted"
+msgstr ""
+
+#: templates/values/all.html:7
+msgid "Token"
+msgstr ""
+
+#: templates/values/all.html:7
+msgid "Depot"
+msgstr ""
+
+#: templates/values/all.html:142
+#, python-format
+msgid ""
+"\n"
+"            What should %(instance)s prioritize? Spend your tokens on the\n"
+"            values that matter to you and tell decision-makers what's "
+"important\n"
+"            to the community.\n"
+"            "
+msgstr ""
+
+#: templates/values/all.html:149
+#, python-format
+msgid ""
+"\n"
+"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</"
+"span> token to spend.\n"
+"            "
+msgid_plural ""
+"\n"
+"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</"
+"span> tokens to spend.\n"
+"            "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/values/all.html:162
+msgid "Your tokens <div class=\"spent\">earned:</div>"
+msgstr ""
+
+#: templates/values/all.html:179
+msgid "Community <div class=\"spent\">spent:</div>"
+msgstr ""
+
+#: templates/values/all.html:198
+msgid "Community Values"
+msgstr ""
+
+#: templates/values/all.html:199
+msgid "Community Spending"
+msgstr ""
+
+#: templates/values/all.html:200
+msgid "Your Spending"
+msgstr ""
+
+#: templates/values/all.html:206
+msgid "comments"
+msgstr ""
+
+#: templates/values/all.html:218 templates/values/all.html.py:220
+msgid "Spend"
+msgstr ""
+
+#: templates/values/all.html:224 templates/values/all.html.py:226
+msgid "Take back"
+msgstr ""
+
+#: templates/values/all.html:235
+msgid "No values created yet for this instance"
+msgstr ""
+
+#: templates/values/all.html:247
+msgid "No tokens have been spent."
+msgstr ""
+
+#: templates/values/all.html:261
+msgid "You haven't spent any tokens yet."
+msgstr ""
