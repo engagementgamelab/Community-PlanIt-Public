@@ -89,10 +89,10 @@ def _build_context(action, activity, user=None):
                                 my_comment = comment
                         answer_dict[answer.user]['comments'].append(comment)
                 all_answers = []
-                for user, data in sorted(answer_dict.items()):
-                    all_answers.append((user, mark_safe('<ul>' + ''.join(data['answers']) + '</ul>'), data['comments']))
                 if user:
                     my_answers = mark_safe('<ul>' + ''.join(answer_dict[user]['answers']) + '</ul>')
+                for user, data in sorted(answer_dict.items()):
+                    all_answers.append((user, mark_safe('<ul>' + ''.join(data['answers']) + '</ul>'), data['comments']))
                 context.update(
                     dict(
                         all_answers = all_answers,
@@ -347,8 +347,6 @@ def activity(request, activity_id, template=None, **kwargs):
     user = None
     if activity.mission.is_active() and not request.user.is_superuser:
         user = request.user
-    print "user:", user
-    
 
     ctx = _build_context(action, activity, user=user )
     context.update(ctx)
