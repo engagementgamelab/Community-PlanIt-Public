@@ -433,7 +433,7 @@ def admin_sendemail(request):
         body = form.cleaned_data["email"]
         subject = form.cleaned_data["subject"]
         emailList = []
-        ups = UserProfile.objects.filter(instance=instance)
+        ups = UserProfile.objects.filter(instance=instance, receive_email=True)
         for up in ups:
             send_mail(subject, body, settings.NOREPLY_EMAIL, [up.user.email], fail_silently=False)
         return HttpResponseRedirect(reverse("home"))
