@@ -122,7 +122,7 @@
                             {% endif %}
                         {% else %}
                             {% if active_instances.count %}
-                                <h3>New Player? <a href="{% url accounts:register %}" class="button">Sign Up</a></h3>
+                            <h3>{% trans "New Player?" %} <a href="{% url accounts:register %}" class="button">{% trans "Sign Up" %}</a></h3>
                             {% endif %}
                         {% endif %}
                         </div>

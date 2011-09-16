@@ -158,51 +158,6 @@ def notifications(request):
         context_instance=RequestContext(request)
     )
 
-def register(request):
-    def valid(firstName, lastName, email, password, form):
-        player = User.objects.create(email=email,first_name=firstName, last_name=lastName, is_active=True)
-        player.set_password(password)
-        player.save()
-        player = auth.authenticate(username=email, password=password)
-        auth.login(request, player)
-        player.save()
-        uinfo = player.get_profile()
-        uinfo.instance = form.cleaned_data['instance']
-        uinfo.preferred_language = form.cleaned_data['preferred_language']
-        uinfo.email = email
-        uinfo.coins = 0
-        uinfo.points = 0
-        uinfo.points_multiplier = 0
-        uinfo.accepted_term = False
-        uinfo.accepted_research = False
-        uinfo.save()
-        
-        tmpl = loader.get_template('accounts/email/welcome_%s.html' % uinfo.preferred_language)
-        context = Context({
-            'instance': uinfo.instance,
-            'first_name': firstName
-        })
-        body = tmpl.render(context)
-        
-        send_mail(_('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
-        from django.core.management import call_command
-        call_command('send_mail')
-        log.debug('registered %s' % uinfo.email)
-
-        messages.success(request, _("Thanks for signing up!"))
-        
-        return HttpResponseRedirect(reverse('accounts:dashboard'))
-
-    # If not valid, show normal form
-    form = validate_and_generate(RegisterForm, request, valid)
-    if(isinstance(form, RegisterForm)):
-        tmpl = loader.get_template('accounts/register.html')
-        return HttpResponse(tmpl.render(RequestContext(request,{
-            'form': form,    
-        })))
-    else:
-        return form
-
 # Forgot your password
 def forgot(request):
     def valid(firstName, lastName, email, password, form):

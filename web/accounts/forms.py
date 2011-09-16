@@ -26,9 +26,9 @@ class RegisterFormOne(forms.Form):
     email = forms.EmailField(required=True, label=_("Email"))
     password = forms.CharField(required=True, label=_("Password"), widget=forms.PasswordInput(render_value=False))
     password_again = forms.CharField(required=True, label=_("Password Again"), widget=forms.PasswordInput(render_value=False))
-    preferred_language = forms.ChoiceField(choices=settings.LANGUAGES)
+    preferred_language = forms.ChoiceField(label=_("Preferred Language"), choices=settings.LANGUAGES)
 
-    birth_year = forms.IntegerField(label='Year you were born', required=False)
+    birth_year = forms.IntegerField(label=_('Year you were born'), required=False)
 
     city = forms.CharField(max_length=128, label=_('Your neighborhood, town or city'))
     zip_code = forms.CharField(max_length=10, label=_('Your ZIP code'))
@@ -43,7 +43,7 @@ class RegisterFormOne(forms.Form):
         self.fields['accepted_terms'] = forms.BooleanField(
             required=True,
             label=mark_safe(
-                _('Confirm that you have read and agree to the <a href="%s">Terms of Use</a>' % reverse('terms'))
+                _('Confirm that you have read and agree to the <a target="_blank" href="%(terms)s">Terms of Use</a>.') % {'terms': reverse('terms')}
             )
         )
 
@@ -122,7 +122,7 @@ class RegisterFormTwo(forms.Form):
         hows = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'how')) for x in all_hows]
         self.fields['how_discovered'] = forms.ChoiceField(label=_(u'How did you hear about Community PlanIt?'), required=False, choices=hows)
 
-        self.fields['how_discovered_other'] = forms.CharField(required=False, label='If the way you learned about us is not listed, please tell us')
+        self.fields['how_discovered_other'] = forms.CharField(required=False, label=_('If the way you learned about us is not listed, please tell us'))
 
     def clean_gender(self):
         try:
@@ -209,11 +209,8 @@ class RegistrationWizard(FormWizard):
         profile.save()
         
         tmpl = loader.get_template('accounts/email/welcome.html')
-        context = Context({
-            'instance': profile.instance,
-            'first_name': first_name
-        })
-        body = tmpl.render(context)
+        context = { 'instance': profile.instance }
+        body = tmpl.render(RequestContext(request, context))
         
         send_mail(_('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
         messages.success(request, _("Thanks for signing up!"))
