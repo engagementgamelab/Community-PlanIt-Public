@@ -14,9 +14,9 @@
         <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
 
         <div class="fieldWrapper">
-            {{form.map.label_tag}}
-            {{form.map}}
-            {{form.map.errors}}
+            {{form.name.label_tag}}
+            {{form.name}}
+            {{form.name.errors}}
         </div>
 
         <div class="fieldWrapper">
@@ -26,6 +26,12 @@
             </div>
             {{form.description}}
             {{form.description.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.map.label_tag}}
+            {{form.map}}
+            {{form.map.errors}}
         </div>
 
         <div class="fieldWrapper">
