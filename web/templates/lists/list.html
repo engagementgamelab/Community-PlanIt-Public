@@ -1,40 +1,39 @@
-{%extends "layouts/base.html"%}
+{% extends "layouts/base.html" %}
 
-{%block section%}lists{%endblock%}
-{%block title%}{{page}} player list{%endblock%}
-{%block page_title%}{{page}} player list{%endblock%}
+{% block section %}lists{% endblock %}
+{% block title %}{{page}} player list{% endblock %}
+{% block page_title %}<h2 id="page_title">{{page}} player list</h2>{% endblock %}
 
-{%block main%}
+{% block main %}
     <div class="wrapper">
-        <h3>{{page}} player list</h3>
-        {%if players.object_list|length%}
+        {% if players.object_list|length %}
         <table style="width:100%">
             <th>
                 <td>Name</td>
                 <td>Points</td>
                 <td>Coins</td>
             </th>
-            {%for player in players.object_list%}
+            {% for player in players.object_list %}
             <tr>
                 <td>
-                    {%if player.get_profile.avatar%}
-                        <img class="avatar" style="float:left" src="{{MEDIA_URL}}{{player.get_profile.avatar}}">
-                    {%else%}               
+                    {% if player.avatar %}
+                        <img class="avatar" style="float:left" src="{{MEDIA_URL}}{{player.avatar}}">
+                    {% else %}               
                         <img class="avatar" style="float:left" src="{{MEDIA_URL}}img/avatar-blank.jpg">
-                    {%endif%} 
+                    {% endif %} 
 
                 </td>
                 <td>
-                    <a href="{% url accounts_profile player.id %}">{{player.get_profile.screen_name}}</a>
+                    <a href="{% url accounts_profile player.id %}">{{player.screen_name}}</a>
                 </td>
                 <td>
-                    {{player.get_profile.points}}
+                    {{player.points}}
                 </td>
                 <td>
-                    {{player.get_profile.coins}}
+                    {{player.coins}}
                 </td>
             </tr>
-            {%endfor%}
+            {% endfor %}
         </table>
         <hr class="space">
         <div class="pagination">
@@ -53,8 +52,8 @@
             </span>
         </div>
 
-        {%else%}
+        {% else %}
             No players found.   
-        {%endif%}
+        {% endif %}
     </div>
-{%endblock%}
+{% endblock %}

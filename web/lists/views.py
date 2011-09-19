@@ -35,6 +35,6 @@ def display_list(request, players, title):
 @login_required
 def instance(request, slug):
     instance = Instance.objects.get(slug=slug)
-    players = User.objects.filter(is_active=True)
+    players = UserProfile.objects.filter(user__is_active=True, instance=instance)
 
     return display_list(request, players, instance.title +' Community')
