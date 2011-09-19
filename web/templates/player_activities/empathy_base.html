@@ -22,6 +22,7 @@
          
         <h3>{% trans "Enter your response" %}</h3>
         {{ form.response }}
+        <h4>You have <span id="charsLeft"></span> chars left.</h4>
         
         {% block comment %}{% endblock %}
         <div class="controls">
