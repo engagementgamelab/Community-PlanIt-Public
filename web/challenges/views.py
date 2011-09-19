@@ -136,7 +136,7 @@ def add(request):
             challenge.save()
 
             PointsAssigner().assign(request.user, 'challenge_created')
-            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'created', '/challenge/'+ str(challenge.id), 'challenge')
+            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'created', reverse('challenges:challenge', args=[challenge.id]), 'challenge')
 
             return HttpResponseRedirect(reverse('challenges:index'))
     else:
