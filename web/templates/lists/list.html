@@ -24,7 +24,7 @@
 
                 </td>
                 <td>
-                    <a href="{% url accounts_profile player.id %}">{{player.screen_name}}</a>
+                    <a href="{% url accounts_profile player.user.id %}">{{player.screen_name}}</a>
                 </td>
                 <td>
                     {{player.points}}
