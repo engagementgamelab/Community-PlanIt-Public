@@ -387,7 +387,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     for user in UserProfile.objects.all().order_by("-totalPoints"):
         if user.affiliations != None:
             user_affiliations = user.affiliations.split(', ')
-            for affiliation in user.affiliations:
+            for affiliation in user_affiliations:
                 if affiliation.strip() != '':
                     if affiliation in affiliations_leaderboard:
                         affiliations_leaderboard[affiliation] += user.totalPoints
@@ -395,6 +395,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
                         affiliations_leaderboard[affiliation] = user.totalPoints
     if affiliations_leaderboard:
         affiliations_leaderboard = sorted(affiliations_leaderboard.items(), reverse=True)[:20]
+    import ipdb;ipdb.set_trace()
     print leaderboard
     print affiliations_leaderboard
     context = dict(
