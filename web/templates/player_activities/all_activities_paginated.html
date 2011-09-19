@@ -8,15 +8,15 @@
     {% for activity in activities_page.object_list %}
     {% if activity in completed %}
     <tr>
-        <td class="{{activity.type.type}}_activity"><a href="{% url activities:overview activity.id %}">{{activity.name}}</a></td>
+        <td class="{{activity.type.type}}_activity"><a href="{{ activity.get_overview_url }}">{{activity.name}}</a></td>
         <td>{{ activity.getPoints }}</td> 
-        <td class="final"><a href="{% url activities:overview activity.id %}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a></td>
+        <td class="final"><a href="{{ activity.get_overview_url }}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a></td>
     </tr>
     {% else %}
     <tr>
-        <td class="{{activity.type.type}}_activity"><a href="{% url activities:activity activity.id %}">{{activity.name}}</a></td>
+        <td class="{{activity.type.type}}_activity"><a href="{{ activity.get_activity_url }}">{{activity.name}}</a></td>
         <td>{{ activity.getPoints }}</td> 
-        <td class="final"><a href="{% url activities:activity activity.id %}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a></td>
+        <td class="final"><a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a></td>
     </tr>
     {% endif %}
     {% endfor %}
