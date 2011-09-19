@@ -29,16 +29,6 @@ def _build_context(action, activity, user=None):
     context = {}
 
     def _get_related():        
-        #FIX_ME: it returns singleresponse_abswers for open_ended activity!
-        # Because multi, open and single are of PlayerActivity class.
-        
-        #for klass in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse', 
-        #              'AnswerMultiResponse', 'AnswerOpenEnded']:
-        #    related_name = klass.replace('Answer', '').lower() + '_answers'
-        #    if hasattr(activity, related_name):
-        #        return getattr(activity, related_name)
-        
-        # Quick fix:
         if activity.type.type == 'open_ended':
             return getattr(activity, 'openended_answers')
         elif activity.type.type == 'empathy':

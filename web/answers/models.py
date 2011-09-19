@@ -45,7 +45,7 @@ class AnswerSingleResponse(Answer):
 #for the user stored
 class AnswerMultiChoice(models.Model):
     user = models.ForeignKey(User)
-    option = models.ForeignKey(MultiChoiceActivity, related_name='multiresponse_answers')
+    option = models.ForeignKey(MultiChoiceActivity, related_name='multichoice_answers')
     comments = generic.GenericRelation(Comment)
 
     def __unicode__(self):

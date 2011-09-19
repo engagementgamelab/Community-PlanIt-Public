@@ -51,9 +51,6 @@ class PlayerActivityBase(TranslatableModel):
             related_name = answer_klass_name.replace('Answer', '').lower() + '_answers'
             if hasattr(self, related_name) and getattr(self, related_name).filter(answerUser=answerUser).count():
                 return True
-        if self.type.type == 'multi_response':
-            #TODO: implement
-            pass
         return False    
 
     class Meta:
@@ -176,7 +173,7 @@ class MultiChoiceActivity(TranslatableModel):
     )
     
     def is_completed(self, answerUser):
-        return self.multi_choice_answers.filter(answerUser=answerUser).count()
+        return self.multi_choice_answers.filter(answerUser=answerUser).count() > 0
 
     class Meta:
         verbose_name = 'Multiple Choice Activity'
