@@ -38,7 +38,7 @@
     {% for activity in activities %}
         <tr class="{% cycle 'odd' 'even' %}">
 
-            {% if request.user.is_superuser or mission.is_expired %}
+            {% if mission.is_expired %}
                 <td colspan="3" class="{{activity.type.type}}_activity">
                     <a href="{{ activity.get_overview_url }}">{{ activity|trans_fallback:"name" }}</a>
                 </td>
