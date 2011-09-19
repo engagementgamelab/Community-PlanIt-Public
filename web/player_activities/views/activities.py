@@ -34,7 +34,7 @@ def _build_context(action, activity, user=None):
         elif activity.type.type == 'empathy':
             return getattr(activity, 'empathy_answers')
         elif activity.type.type == 'multi_response':
-            return getattr(activity, 'multiresponse_answers')
+            return getattr(activity, 'multichoice_answers')
         else:
             for klass in ['AnswerMap', 'AnswerSingleResponse']:
                 related_name = klass.replace('Answer', '').lower() + '_answers'

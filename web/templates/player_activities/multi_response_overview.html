@@ -63,7 +63,7 @@
         
         var answerData = new Array(0);
         {% for choice in choices %}
-            answerData.push({label: "{{choice.value}}", data: {{choice.multiresponse_answers.count}} });
+            answerData.push({label: "{{choice.value}}", data: {{choice.multichoice_answers.count}} });
         {% empty %}
             answerData.push({label: "No answers yet.", data: 1});
         {% endfor %}
