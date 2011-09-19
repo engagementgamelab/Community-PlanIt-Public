@@ -12,6 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from attachments.models import Attachment
 from instances.models import Instance
 
+
 class Comment(models.Model):
     posted_date = models.DateTimeField(default=datetime.datetime.now)
     flagged = models.IntegerField(default=0)
@@ -39,6 +40,11 @@ class Comment(models.Model):
             return self.message
         else:
             return self.pk
+        
+    def save(self, *args, **kwargs):
+        if len(self.message) > 1000:
+            self.message = self.message.replace('\r\n', '\n')
+        super(Comment, self).save(*args, **kwargs)
 
     #
     # URL resolution cribbed from django's contrib comments
