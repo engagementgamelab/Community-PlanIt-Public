@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-16 16:43-0400\n"
-"PO-Revision-Date: 2011-09-16 16:46\n"
+"POT-Creation-Date: 2011-09-19 13:31-0400\n"
+"PO-Revision-Date: 2011-09-19 13:41\n"
 "Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -204,7 +204,7 @@ msgstr "Gen yon mopas tanporè te voye bay adrès imel ou."
 msgid "an answer to %s"
 msgstr "yon repons bay %s"
 
-#: attachments/templatetags/attachment_tags.py:34
+#: attachments/util.py:39
 msgid "This video is currently unavailable."
 msgstr "Videyo sa a se kounye a disponib."
 
@@ -372,7 +372,8 @@ msgstr "Difikilte Available"
 msgid "No active challenges found."
 msgstr "Pa gen defi aktif te jwenn yo."
 
-#: templates/accounts/dashboard.html:74
+#: templates/accounts/dashboard.html:74 templates/challenges/add.html:8
+#: templates/challenges/add.html.py:50
 msgid "Create Challenge"
 msgstr "Kreye defi"
 
@@ -868,6 +869,21 @@ msgstr "Pa gen okenn misyon sot pase nan tan sa a."
 msgid "Mission"
 msgstr "Misyon"
 
+#: templates/missions/base.html:12
+#, fuzzy
+msgid "This mission has not yet started."
+msgstr "Pa gen misyon kreye."
+
+#: templates/missions/base.html:12
+#, python-format
+msgid "Check back on %(start_date)s to join the conversation."
+msgstr "Tcheke tounen sou %(start_date)s rantre nan konvèsasyon an."
+
+#: templates/missions/base.html:16
+#, python-format
+msgid "This mission ended on %(end_date)s."
+msgstr "Misyon sa a te fini sou %(end_date)s."
+
 #: templates/missions/base.html:32
 msgid "You've completed"
 msgstr "Ou te ranpli"
@@ -875,6 +891,11 @@ msgstr "Ou te ranpli"
 #: templates/missions/base.html:32
 msgid "activities"
 msgstr "aktivite"
+
+#: templates/missions/base.html:34
+#: templates/player_activities/all_activities_paginated.html:5
+msgid "Activities"
+msgstr "Aktivite"
 
 #: templates/missions/base.html:53
 #: templates/player_activities/all_activities.html:10
@@ -895,10 +916,6 @@ msgstr "anvan"
 #: templates/pagination/pagination.html:28
 msgid "next"
 msgstr "pwochen"
-
-#: templates/player_activities/all_activities_paginated.html:5
-msgid "Activities"
-msgstr "Aktivite"
 
 #: templates/player_activities/base.html:6
 msgid "Activity"

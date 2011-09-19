@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-16 16:40-0400\n"
+"POT-Creation-Date: 2011-09-19 13:28-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -197,7 +197,7 @@ msgstr ""
 msgid "an answer to %s"
 msgstr ""
 
-#: attachments/templatetags/attachment_tags.py:34
+#: attachments/util.py:39
 msgid "This video is currently unavailable."
 msgstr ""
 
@@ -355,7 +355,8 @@ msgstr ""
 msgid "No active challenges found."
 msgstr ""
 
-#: templates/accounts/dashboard.html:74
+#: templates/accounts/dashboard.html:74 templates/challenges/add.html:8
+#: templates/challenges/add.html.py:50
 msgid "Create Challenge"
 msgstr ""
 
@@ -827,12 +828,31 @@ msgstr ""
 msgid "Mission"
 msgstr ""
 
+#: templates/missions/base.html:12
+msgid "This mission has not yet started."
+msgstr ""
+
+#: templates/missions/base.html:12
+#, python-format
+msgid "Check back on %(start_date)s to join the conversation."
+msgstr ""
+
+#: templates/missions/base.html:16
+#, python-format
+msgid "This mission ended on %(end_date)s."
+msgstr ""
+
 #: templates/missions/base.html:32
 msgid "You've completed"
 msgstr ""
 
 #: templates/missions/base.html:32
 msgid "activities"
+msgstr ""
+
+#: templates/missions/base.html:34
+#: templates/player_activities/all_activities_paginated.html:5
+msgid "Activities"
 msgstr ""
 
 #: templates/missions/base.html:53
@@ -853,10 +873,6 @@ msgstr ""
 #: templates/pagination/pagination.html:26
 #: templates/pagination/pagination.html:28
 msgid "next"
-msgstr ""
-
-#: templates/player_activities/all_activities_paginated.html:5
-msgid "Activities"
 msgstr ""
 
 #: templates/player_activities/base.html:6

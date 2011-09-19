@@ -280,8 +280,8 @@ def profile(request, id):
                 )
                 player.notifications.create(content_object=profile, message=message)
 
-            if request.POST.has_key('yt-url'):
-                url = request.POST.get('yt-url')
+            if request.POST.has_key('video-url'):
+                url = request.POST.get('video-url')
                 if url:
                     comment.attachment.create(
                         file=None,

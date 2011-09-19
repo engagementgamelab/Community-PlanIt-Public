@@ -25,11 +25,11 @@
                     
                     {% for attachment in comment.attachment.all %}
                         {% if attachment.url|length %}
-                            yt = document.getElementById("yt-url_label");
-                            yt.innerHTML = "Paste the link to your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID. (Current:{{attachment.url}})"
+                            var vid = document.getElementById("video-url_label");
+                            vid.innerHTML = "Paste the link to your video below. For Vimeo, it should look like http://vimeo.com/VIDEOID. For YouTube, it should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID. (Current:{{attachment.url}})"
                         {% endif %}
                         {% if attachment.file|length %}
-                            picture = document.getElementById("picture_label");
+                            var picture = document.getElementById("picture_label");
                             picture.innerHTML = "Picture (max size 5MB, Currently: {{attachment.file}}";
                         {% endif %}
                     {% endfor %} 

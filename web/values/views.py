@@ -65,8 +65,8 @@ def detail(request, id):
                 instance=value.instance
             )
 
-            if request.POST.has_key('yt-url'):
-                url = request.POST.get('yt-url')
+            if request.POST.has_key('video-url'):
+                url = request.POST.get('video-url')
                 if url:
                     comment.attachment.create(
                         file=None,

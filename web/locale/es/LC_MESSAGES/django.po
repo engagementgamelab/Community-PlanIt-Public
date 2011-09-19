@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-16 16:42-0400\n"
-"PO-Revision-Date: 2011-09-16 16:49\n"
+"POT-Creation-Date: 2011-09-19 13:29-0400\n"
+"PO-Revision-Date: 2011-09-19 13:42\n"
 "Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -211,7 +211,7 @@ msgstr ""
 msgid "an answer to %s"
 msgstr "una respuesta a %s"
 
-#: attachments/templatetags/attachment_tags.py:34
+#: attachments/util.py:39
 msgid "This video is currently unavailable."
 msgstr "Este vídeo no está disponible actualmente."
 
@@ -382,7 +382,8 @@ msgstr "Desafíos disponibles"
 msgid "No active challenges found."
 msgstr "No desafíos activo que se encuentra."
 
-#: templates/accounts/dashboard.html:74
+#: templates/accounts/dashboard.html:74 templates/challenges/add.html:8
+#: templates/challenges/add.html.py:50
 msgid "Create Challenge"
 msgstr "Crear Desafío"
 
@@ -881,6 +882,21 @@ msgstr "No hay misiones anteriores en este momento."
 msgid "Mission"
 msgstr "Misión"
 
+#: templates/missions/base.html:12
+#, fuzzy
+msgid "This mission has not yet started."
+msgstr "No hay misiones creadas."
+
+#: templates/missions/base.html:12
+#, python-format
+msgid "Check back on %(start_date)s to join the conversation."
+msgstr "Vuelve en %(start_date)s para unirse a la conversación."
+
+#: templates/missions/base.html:16
+#, python-format
+msgid "This mission ended on %(end_date)s."
+msgstr "Esta misión finalizó el %(end_date)s."
+
 #: templates/missions/base.html:32
 msgid "You've completed"
 msgstr "Usted ha terminado"
@@ -888,6 +904,11 @@ msgstr "Usted ha terminado"
 #: templates/missions/base.html:32
 msgid "activities"
 msgstr "las actividades"
+
+#: templates/missions/base.html:34
+#: templates/player_activities/all_activities_paginated.html:5
+msgid "Activities"
+msgstr "Actividades"
 
 #: templates/missions/base.html:53
 #: templates/player_activities/all_activities.html:10
@@ -908,10 +929,6 @@ msgstr "anterior"
 #: templates/pagination/pagination.html:28
 msgid "next"
 msgstr "próximo"
-
-#: templates/player_activities/all_activities_paginated.html:5
-msgid "Activities"
-msgstr "Actividades"
 
 #: templates/player_activities/base.html:6
 msgid "Activity"

@@ -47,11 +47,11 @@ def fetch(request, id):
                     )
                     challenge.user.notifications.create(content_object=challenge, message=message)
 
-                if request.POST.has_key('yt-url'):
-                    if request.POST.get('yt-url'):
+                if request.POST.has_key('video-url'):
+                    if request.POST.get('video-url'):
                         pc.attachments.create(
                             file=None,
-                            url=request.POST.get('yt-url'),
+                            url=request.POST.get('video-url'),
                             type='video',
                             user=request.user,
                             instance=request.user.get_profile().instance
@@ -179,8 +179,8 @@ def comment(request, id):
     instance = request.user.get_profile().instance
 
     if request.method == 'POST':
-        if request.POST.has_key('yt-url'):
-            url = request.POST.get('yt-url')
+        if request.POST.has_key('video-url'):
+            url = request.POST.get('video-url')
             if url:
                 a = Attachment(
                     file=None,

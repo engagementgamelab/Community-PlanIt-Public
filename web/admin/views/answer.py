@@ -159,11 +159,11 @@ def comment_fun(form, request, is_new=True):
         comment.user = user[0]
         comment.save()
     
-    if request.POST.has_key('yt-url'):
-        if request.POST.get('yt-url'):
+    if request.POST.has_key('video-url'):
+        if request.POST.get('video-url'):
             comment.attachment.create(
                     file=None,
-                    url=request.POST.get('yt-url'),
+                    url=request.POST.get('video-url'),
                     type='video',
                     user=user,
                     instance=instance)
