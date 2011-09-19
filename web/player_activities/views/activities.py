@@ -79,7 +79,7 @@ def _build_context(action, activity, user=None):
                                 my_comment = comment
                         answer_dict[answer.user]['comments'].append(comment)
                 all_answers = []
-                if user:
+                if user and user in answer_dict:
                     my_answers = mark_safe('<ul>' + ''.join(answer_dict[user]['answers']) + '</ul>')
                 for user, data in sorted(answer_dict.items()):
                     all_answers.append((user, mark_safe('<ul>' + ''.join(data['answers']) + '</ul>'), data['comments']))

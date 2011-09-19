@@ -47,10 +47,15 @@ class PlayerActivityBase(TranslatableModel):
             return self.points
         
     def is_completed(self, answerUser):
-        for answer_klass_name in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse', 'AnswerOpenEnded', 'AnswerMultiChoice']:
-            related_name = answer_klass_name.replace('Answer', '').lower() + '_answers'
-            if hasattr(self, related_name) and getattr(self, related_name).filter(answerUser=answerUser).count():
-                return True
+        if self.type.type == 'multi_response':
+            answers = MultiChoiceActivity.objects.filter(multichoice_answers__user=answerUser, activity=self).count()
+            return answers > 0
+        else:
+            for answer_klass_name in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse', 'AnswerOpenEnded']:
+                related_name = answer_klass_name.replace('Answer', '').lower() + '_answers'
+                if hasattr(self, related_name):
+                    if getattr(self, related_name).filter(answerUser=answerUser).count():
+                        return True
         return False    
 
     class Meta:
@@ -166,7 +171,7 @@ class MultiChoiceActivity(TranslatableModel):
     This seems to be misnamed. These are answers to activities with multiple
     choices.
     """
-    activity = models.ForeignKey(PlayerActivity)
+    activity = models.ForeignKey(PlayerActivity, related_name='answer_choices')
 
     translations = TranslatedFields(
         value = models.CharField(max_length=255),
