@@ -382,19 +382,21 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     activities_page = paginator.page(page)
 
     leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20]
-    
+
     affiliations_leaderboard = {}
     for user in UserProfile.objects.all().order_by("-totalPoints"):
-        user_affiliations = user.affiliations.split(', ')
-        for affiliation in user_affiliations:            
-            if not affiliation.strip() == '':
-                if affiliation in affiliations_leaderboard:
-                    affiliations_leaderboard[affiliation] += user.totalPoints
-                else:
-                    affiliations_leaderboard[affiliation] = user.totalPoints
-                
-    affiliations_leaderboard = sorted(affiliations_leaderboard.items(), reverse=True)[:20]    
-
+        if user.affiliations != None:
+            user_affiliations = user.affiliations.split(', ')
+            for affiliation in user.affiliations:
+                if affiliation.strip() != '':
+                    if affiliation in affiliations_leaderboard:
+                        affiliations_leaderboard[affiliation] += user.totalPoints
+                    else:
+                        affiliations_leaderboard[affiliation] = user.totalPoints
+    if affiliations_leaderboard:
+        affiliations_leaderboard = sorted(affiliations_leaderboard.items(), reverse=True)[:20]
+    print leaderboard
+    print affiliations_leaderboard
     context = dict(
         log = log,
         last_mission = last_mission,
