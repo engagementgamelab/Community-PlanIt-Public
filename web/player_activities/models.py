@@ -2,6 +2,7 @@ import datetime
 
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models.signals import pre_delete
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
@@ -12,6 +13,7 @@ from web.accounts.models import determine_path
 from web.attachments.models import Attachment
 from web.comments.models import Comment
 from web.missions.models import Mission
+from web.reports.models import Activity
 
 
 __all__ = ( 'PlayerActivityType','PlayerActivity', 'PlayerMapActivity', 'PlayerEmpathyActivity', 'MultiChoiceActivity', )
@@ -202,3 +204,15 @@ class MultiChoiceActivity(TranslatableModel):
     @property
     def mission_title(self):
         return self.activity.mission.title
+    
+
+def remove_url_from_news_feeds(sender, **kwargs):     
+    instance = kwargs['instance']
+    reports = Activity.objects.filter(url=instance.get_activity_url())
+    for report in reports:
+        report.url = ''
+        report.save() 
+     
+pre_delete.connect(remove_url_from_news_feeds, sender=PlayerActivity)
+pre_delete.connect(remove_url_from_news_feeds, sender=PlayerMapActivity)
+pre_delete.connect(remove_url_from_news_feeds, sender=PlayerEmpathyActivity) 
