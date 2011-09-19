@@ -382,6 +382,18 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     activities_page = paginator.page(page)
 
     leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20]
+    
+    affiliations_leaderboard = {}
+    for user in UserProfile.objects.all().order_by("-totalPoints"):
+        user_affiliations = user.affiliations.split(', ')
+        for affiliation in user_affiliations:            
+            if not affiliation.strip() == '':
+                if affiliation in affiliations_leaderboard:
+                    affiliations_leaderboard[affiliation] += user.totalPoints
+                else:
+                    affiliations_leaderboard[affiliation] = user.totalPoints
+                
+    affiliations_leaderboard = sorted(affiliations_leaderboard.items(), reverse=True)[:20]    
 
     context = dict(
         log = log,
@@ -391,7 +403,8 @@ def dashboard(request, template_name='accounts/dashboard.html'):
         completed = completed,
         challenges = challenges,
         leaderboard = leaderboard,
-        instance = instance
+        instance = instance,
+        affiliations_leaderboard = affiliations_leaderboard,
     )
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 

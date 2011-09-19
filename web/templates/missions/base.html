@@ -27,6 +27,20 @@
 </div>
 {% endif %}
 
+
+{% if mission_completed %}
+<br/>
+{% trans "You completed all the activities in this mission." %}  
+{% trans "Congratulations!" %}
+{% trans "Now, you can look at the activities again to see what others have said, reply to and like comments, and create challenges." %}
+{% if next_mission %}  
+    {% trans "Be sure to come back again on" %} <b>{{ next_mission.start_date|date:"m/d/Y" }}</b> {% trans "when the new mission starts." %}
+{% else %}
+    {% trans "This is the last mission." %}  
+    {% trans "Hope to see you at the town hall meeting to discuss what happened and plan for next steps." %}
+{% endif %}
+{% endif %}
+
 <h3 class="clear">
 {% if activities and mission.is_active %}
     {% trans "You've completed" %} {{ completed|length }}/{{ activities|length }} {% trans "activities" %}:
@@ -38,7 +52,7 @@
     {% for activity in activities %}
         <tr class="{% cycle 'odd' 'even' %}">
 
-            {% if request.user.is_superuser or mission.is_expired %}
+            {% if mission.is_expired %}
                 <td colspan="3" class="{{activity.type.type}}_activity">
                     <a href="{{ activity.get_overview_url }}">{{ activity|trans_fallback:"name" }}</a>
                 </td>

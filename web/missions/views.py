@@ -33,12 +33,21 @@ def fetch(request, slug, template='missions/base.html'):
     for activity in activities:
         if activity.is_completed(request.user):
             completed.append(activity)
+    
+    next_mission = None
+    my_missions = Mission.objects.filter(instance=my_instance).exclude(slug=slug).order_by('-start_date')
+    if my_missions.count() > 0:
+        next_mission = my_missions[0]
+        if next_mission.is_expired():
+            next_mission = None
 
     context = dict(
         mission = mission,
         activities = activities,
         completed = completed,
         comment_form = CommentForm(),
+        mission_completed = len(activities) == len(completed),
+        next_mission = next_mission,
     )
     return render_to_response(template, RequestContext(request, context))
     

@@ -37,7 +37,23 @@
                     <tr>
                         <td>{{forloop.counter}}</td>
                         <td>{{user.get_profile.screen_name}}</td>
-                        <td>{{user.get_profile.points}}</td>
+                        <td>{{user.get_profile.totalPoints}}</td>
+                    </tr>
+                {%endfor%}
+            </table>
+        </div>
+        {%endif%}
+        {%if affiliations_leaderboard|length%}
+        <div class="leaderboard-wrapper" style="clear:both;">
+            <h3>{% trans "Affiliation Leaderboard" %}</h3>
+            <table class="leaderboard">
+                <th>{% trans "Rank" %}</th>                
+                <th>{% trans "Name" %}</th>               
+
+                {%for aff in affiliations_leaderboard%}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ aff }}</td>                        
                     </tr>
                 {%endfor%}
             </table>

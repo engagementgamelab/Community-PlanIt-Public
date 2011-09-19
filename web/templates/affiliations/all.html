@@ -5,11 +5,11 @@
 {%block aside%}
 {%endblock%}
 {%block main%}
-    {%for affiliation in affiliations%}
+    {% for affiliation in affiliations %}
         <h2>
-            {{affiliation.name}}
+            <a href="{% url affiliations:affiliations_affiliation affiliation %}">{{ affiliation }}</a>
         </h2>
-    {%endfor%}
+    {% endfor %}
 {%endblock%}
 
 {%block body%}
