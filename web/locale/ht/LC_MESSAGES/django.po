@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-20 12:50-0400\n"
-"PO-Revision-Date: 2011-09-20 12:59\n"
+"POT-Creation-Date: 2011-09-20 13:17-0400\n"
+"PO-Revision-Date: 2011-09-20 13:19\n"
 "Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -505,6 +505,18 @@ msgstr "Siy depans"
 msgid "has created no activities."
 msgstr "te kreye pa gen okenn aktivite."
 
+#: templates/accounts/profile.html:74 templates/comments/comments.html:4
+#: templates/comments/post.html:7
+#: templates/player_activities/map_overview.html:29
+#, python-format
+msgid "%(comment_heading)s"
+msgstr ""
+
+#: templates/accounts/profile.html:77
+#, python-format
+msgid "Share your thoughts with %(player)s &#8212; leave a comment below"
+msgstr "Pataje panse ou a ak %(player)s - kite yon kòmantè ki anba a"
+
 #: templates/accounts/profile_edit.html:5
 #: templates/accounts/profile_edit.html:14
 msgid "Update Your Profile"
@@ -864,12 +876,6 @@ msgstr "Pesonn pa fin ranpli sa a defi."
 #: templates/comments/comment.html:24
 msgid "From"
 msgstr "Soti nan"
-
-#: templates/comments/comments.html:4 templates/comments/post.html:7
-#: templates/player_activities/map_overview.html:29
-#, python-format
-msgid "%(comment_heading)s"
-msgstr ""
 
 #: templates/comments/post.html:10
 msgid "Share your thoughts:"

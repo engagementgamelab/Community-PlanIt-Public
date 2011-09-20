@@ -270,8 +270,8 @@ def profile(request, id):
                 content_object=profile,                 
                 user=request.user,
                 instance=instance,
+                message = u'%s' % comment_form.cleaned_data['message']
             ) 
-            comment.message = u'%s' % comment_form.cleaned_data['message']
             comment.save()
 
             if request.user != player:
