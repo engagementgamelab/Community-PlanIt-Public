@@ -31,15 +31,14 @@ def challenge(request, id, template='challenges/base.html'):
     if request.method == 'POST':
         form = PlayerChallengeForm(request.POST)
         if form.is_valid():
-            pc = form.save(commit=False)
-            pc.player=request.user
-            pc.challenge=challenge
-            pc.completed = True
-            pc.save()
-
+            if not pc:
+                pc = PlayerChallenge.objects.create(response = None, 
+                        player=request.user,
+                        challenge=challenge,
+                        completed = True)
             comment = pc.comments.create(
                 content_object=pc,
-                message=form.cleaned_data['response'],
+                message=form.cleaned_data['message'],
                 user=request.user,
                 instance=request.user.get_profile().instance,
             )

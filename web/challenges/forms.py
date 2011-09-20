@@ -47,7 +47,7 @@ class AddChallenge(forms.Form):
         return self.cleaned_data.get('end_date')
 
 class PlayerChallengeForm(forms.ModelForm):
-    response = forms.CharField(widget=forms.Textarea)
+    message = forms.CharField(widget=forms.Textarea)
     class Meta:
         model = PlayerChallenge
         exclude = ('player', 'challenge',)
