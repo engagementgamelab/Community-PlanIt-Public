@@ -385,16 +385,16 @@ def dashboard(request, template_name='accounts/dashboard.html'):
 
     affiliations_leaderboard = {}
     for user in UserProfile.objects.all().order_by("-totalPoints"):
-        if user.affiliations != None:
+        if user.affiliations is not None and user.affiliations.strip() != u'':
             user_affiliations = user.affiliations.split(', ')
             for affiliation in user_affiliations:
-                if affiliation.strip() != '':
-                    if affiliation in affiliations_leaderboard:
+                if affiliation != u'':
+                    if affiliations_leaderboard.has_key(affiliation):
                         affiliations_leaderboard[affiliation] += user.totalPoints
                     else:
                         affiliations_leaderboard[affiliation] = user.totalPoints
     if affiliations_leaderboard:
-        affiliations_leaderboard = sorted(affiliations_leaderboard.items(), reverse=True)[:20]
+        affiliations_leaderboard = sorted(affiliations_leaderboard.items(), key=lambda pts: pts[1], reverse=True)[:20]
     context = dict(
         log = log,
         last_mission = last_mission,

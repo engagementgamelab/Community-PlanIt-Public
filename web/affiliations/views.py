@@ -14,18 +14,22 @@ from web.reports.actions import ActivityLogger
 #from web.processors import instance_processor as ip
 
 @login_required
-def affiliation(request, affiliation):
+def affiliation(request):
+    aff = request.GET.get('aff', '')
+    if not aff:
+        return Http404("affiliation could not be located")
+
     instance = request.user.get_profile().instance
     users = []
     for up in UserProfile.objects.filter(instance=instance):
         users.append(up.user)
 
     players = []
-    for up in UserProfile.objects.filter(affiliations__contains=affiliation):
+    for up in UserProfile.objects.filter(affiliations__contains=aff):
         players.append(up.user)
     
     affiliation_leaderboard = []
-    for up in UserProfile.objects.filter(affiliations__contains=affiliation).order_by("-totalPoints"):
+    for up in UserProfile.objects.filter(affiliations__contains=aff).order_by("-totalPoints"):
         affiliation_leaderboard.append(up.user)
     
     affiliation_points = 0
@@ -35,7 +39,7 @@ def affiliation(request, affiliation):
     
     tmpl = loader.get_template('affiliations/base.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
-        'affiliation': affiliation,
+        'affiliation': aff,
         'players': players,
         'affiliation_leaderboard': affiliation_leaderboard,
         'affiliations_leaderboard': _get_affiliations_leaderboard(),    
@@ -48,19 +52,18 @@ def affiliation(request, affiliation):
 def _get_affiliations_leaderboard():
     affiliations = []  
     for user in UserProfile.objects.all().order_by("-totalPoints"):        
-        user_affiliations = user.affiliations.split(', ')
-        for affiliation in user_affiliations:            
-            if not affiliation.strip() == '' and not affiliation in affiliations:
-                affiliations.append(affiliation)    
-    return affiliations                    
+        if user.affiliations is not None:
+            user_affiliations = user.affiliations.split(', ')
+            for affiliation in user_affiliations:
+                if affiliation != u'':
+                    if not affiliation.strip() == '' and not affiliation in affiliations:
+                        affiliations.append(affiliation)    
+    return affiliations
 
 
 @login_required
 def all(request):
     tmpl = loader.get_template('affiliations/all.html')
     affiliations = _get_affiliations_leaderboard()               
-    return HttpResponse(tmpl.render(RequestContext(request, {
-                            'affiliations': affiliations
-                        }, 
-                            #[ip]
-                    )))
+    return HttpResponse(tmpl.render(RequestContext(request, { 'affiliations': affiliations},))
+    )
