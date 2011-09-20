@@ -105,7 +105,7 @@ class Instance(TranslatableModel):
             if not starton:
                 starton = m.instance.start_date
             m.start_date = starton
-            m.end_date = m.start_date + relativedelta(days=+m.instance.days_for_mission)
+            m.end_date = m.start_date + relativedelta(days=+m.instance.days_for_mission, hour=23, minute=59, second=59)
             m.save()
             return m.end_date
 

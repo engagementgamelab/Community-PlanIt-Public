@@ -88,7 +88,7 @@ class Mission(TranslatableModel):
                 self.end_date = latest.end_date + relativedelta(days=+self.instance.days_for_mission)
             else:
                 self.start_date = datetime.datetime.now()
-                self.end_date = self.start_date + relativedelta(days=+self.instance.days_for_mission)
+                self.end_date = self.start_date + relativedelta(days=+self.instance.days_for_mission, hour=23, minute=59, second=59)
 
         super(Mission, self).save(*args, **kwargs)
 
