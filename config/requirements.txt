@@ -31,3 +31,9 @@ django-rosetta
 # database test data generation
 django-dilla
 git+https://github.com/aerosol/identicon.git
+
+# django-sentry
+django-sentry
+django-indexer
+django-paging
+django-templatetag-sugar

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-19 13:28-0400\n"
+"POT-Creation-Date: 2011-09-20 12:33-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: settings_base.py:132
+#: settings_base.py:134
 msgid "English"
 msgstr ""
 
-#: settings_base.py:133
+#: settings_base.py:135
 msgid "Haitian Creole"
 msgstr ""
 
-#: settings_base.py:134
+#: settings_base.py:136
 msgid "Spanish"
 msgstr ""
 
@@ -206,6 +206,7 @@ msgid "Location"
 msgstr ""
 
 #: challenges/forms.py:23 templates/affiliations/base.html:33
+#: templates/affiliations/base.html:51
 msgid "Name"
 msgstr ""
 
@@ -392,12 +393,16 @@ msgstr ""
 msgid "The community has not started yet. We will notify you once it has begun"
 msgstr ""
 
-#: templates/accounts/dashboard.html:153
+#: templates/accounts/dashboard.html:153 templates/accounts/dashboard.html:177
 msgid "Leader"
 msgstr ""
 
-#: templates/accounts/dashboard.html:153
+#: templates/accounts/dashboard.html:153 templates/accounts/dashboard.html:177
 msgid "Board"
+msgstr ""
+
+#: templates/accounts/dashboard.html:170
+msgid "Affiliation"
 msgstr ""
 
 #: templates/accounts/forgot.html:11
@@ -682,11 +687,15 @@ msgstr[1] ""
 msgid "Leaderboard"
 msgstr ""
 
-#: templates/affiliations/base.html:32
+#: templates/affiliations/base.html:32 templates/affiliations/base.html:50
 msgid "Rank"
 msgstr ""
 
-#: templates/affiliations/base.html:47
+#: templates/affiliations/base.html:48
+msgid "Affiliation Leaderboard"
+msgstr ""
+
+#: templates/affiliations/base.html:63
 msgid "No affiliation found."
 msgstr ""
 
@@ -732,6 +741,80 @@ msgstr ""
 
 #: templates/challenges/all.html:85
 msgid "You may not add or accept new challenges"
+msgstr ""
+
+#: templates/challenges/base.html:11
+#, python-format
+msgid "Created by %(creator)s"
+msgstr ""
+
+#: templates/challenges/base.html:18
+msgid "This challenge has expired."
+msgstr ""
+
+#: templates/challenges/base.html:20
+msgid "This challenge has not yet started."
+msgstr ""
+
+#: templates/challenges/base.html:28
+msgid "Provide evidence to complete this challenge"
+msgstr ""
+
+#: templates/challenges/base.html:36
+msgid ""
+"\n"
+"                Include <a id=\"add-video\" href=\"#add-video\" class=\"add-"
+"video button small\">Video</a> or <a id=\"add-picture\" href=\"#add-picture"
+"\" class=\"add-picture button small\">Picture</a>\n"
+"                "
+msgstr ""
+
+#: templates/challenges/base.html:41
+msgid ""
+"Paste the link to your video below. For Vimeo, it should look like http://"
+"vimeo.com/VIDEOID. For YouTube, it should look like http://youtu.be/VIDEOID "
+"or http://www.youtube.com/watch?v=VIDEOID."
+msgstr ""
+
+#: templates/challenges/base.html:44 templates/challenges/base.html.py:51
+msgid "add"
+msgstr ""
+
+#: templates/challenges/base.html:45 templates/challenges/base.html.py:52
+msgid "remove"
+msgstr ""
+
+#: templates/challenges/base.html:49
+msgid "Picture (max size 5MB)"
+msgstr ""
+
+#: templates/challenges/base.html:58
+msgid "characters left"
+msgstr ""
+
+#: templates/challenges/base.html:59
+msgid "Submit response"
+msgstr ""
+
+#: templates/challenges/base.html:65
+#: templates/player_activities/empathy_overview.html:37
+#: templates/player_activities/multi_response_overview.html:34
+#: templates/player_activities/open_ended_overview.html:30
+#: templates/player_activities/single_response_overview.html:37
+msgid "Responses"
+msgstr ""
+
+#: templates/challenges/base.html:75
+#, python-format
+msgid "%(screen_name)s completed this challenge."
+msgstr ""
+
+#: templates/challenges/base.html:89
+msgid "This content is currently unavailable."
+msgstr ""
+
+#: templates/challenges/base.html:97
+msgid "No one has completed this challenge."
 msgstr ""
 
 #: templates/comments/comment.html:24
@@ -842,25 +925,57 @@ msgstr ""
 msgid "This mission ended on %(end_date)s."
 msgstr ""
 
-#: templates/missions/base.html:32
-msgid "You've completed"
-msgstr ""
-
-#: templates/missions/base.html:32
-msgid "activities"
+#: templates/missions/base.html:33
+msgid "You completed all the activities in this mission."
 msgstr ""
 
 #: templates/missions/base.html:34
+msgid "Congratulations!"
+msgstr ""
+
+#: templates/missions/base.html:35
+msgid ""
+"Now, you can look at the activities again to see what others have said, "
+"reply to and like comments, and create challenges."
+msgstr ""
+
+#: templates/missions/base.html:37
+msgid "Be sure to come back again on"
+msgstr ""
+
+#: templates/missions/base.html:37
+msgid "when the new mission starts."
+msgstr ""
+
+#: templates/missions/base.html:39
+msgid "This is the last mission."
+msgstr ""
+
+#: templates/missions/base.html:40
+msgid ""
+"Hope to see you at the town hall meeting to discuss what happened and plan "
+"for next steps."
+msgstr ""
+
+#: templates/missions/base.html:46
+msgid "You've completed"
+msgstr ""
+
+#: templates/missions/base.html:46
+msgid "activities"
+msgstr ""
+
+#: templates/missions/base.html:48
 #: templates/player_activities/all_activities_paginated.html:5
 msgid "Activities"
 msgstr ""
 
-#: templates/missions/base.html:53
+#: templates/missions/base.html:67
 #: templates/player_activities/all_activities.html:10
 msgid "pts"
 msgstr ""
 
-#: templates/missions/base.html:72
+#: templates/missions/base.html:86
 #: templates/player_activities/all_activities.html:24
 msgid "No activities found"
 msgstr ""
@@ -906,13 +1021,6 @@ msgstr ""
 #: templates/player_activities/open_ended_overview.html:23
 #: templates/player_activities/single_response_overview.html:22
 msgid "Replay"
-msgstr ""
-
-#: templates/player_activities/empathy_overview.html:37
-#: templates/player_activities/multi_response_overview.html:34
-#: templates/player_activities/open_ended_overview.html:30
-#: templates/player_activities/single_response_overview.html:37
-msgid "Responses"
 msgstr ""
 
 #: templates/player_activities/map_response.html:5

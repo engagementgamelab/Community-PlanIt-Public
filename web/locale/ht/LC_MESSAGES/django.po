@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-19 13:31-0400\n"
-"PO-Revision-Date: 2011-09-19 13:41\n"
+"POT-Creation-Date: 2011-09-20 12:35-0400\n"
+"PO-Revision-Date: 2011-09-20 12:43\n"
 "Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Language: \n"
 "X-Translated-Using: django-rosetta 0.6.2\n"
 
-#: settings_base.py:132
+#: settings_base.py:134
 msgid "English"
 msgstr "Angle"
 
-#: settings_base.py:133
+#: settings_base.py:135
 msgid "Haitian Creole"
 msgstr "Kreyòl Ayisyen"
 
-#: settings_base.py:134
+#: settings_base.py:136
 msgid "Spanish"
 msgstr "Panyòl"
 
@@ -213,6 +213,7 @@ msgid "Location"
 msgstr "Kote"
 
 #: challenges/forms.py:23 templates/affiliations/base.html:33
+#: templates/affiliations/base.html:51
 msgid "Name"
 msgstr "Non"
 
@@ -411,13 +412,17 @@ msgstr ""
 "Kominote an pa te kòmanse ankò. Nou pral fè ou konnen yon fwa li te "
 "kòmanse"
 
-#: templates/accounts/dashboard.html:153
+#: templates/accounts/dashboard.html:153 templates/accounts/dashboard.html:177
 msgid "Leader"
 msgstr "Lidè"
 
-#: templates/accounts/dashboard.html:153
+#: templates/accounts/dashboard.html:153 templates/accounts/dashboard.html:177
 msgid "Board"
 msgstr "Komisyon Konsèy"
+
+#: templates/accounts/dashboard.html:170
+msgid "Affiliation"
+msgstr "Afilyasyon"
 
 #: templates/accounts/forgot.html:11
 msgid ""
@@ -723,11 +728,15 @@ msgstr[1] ""
 msgid "Leaderboard"
 msgstr "Leaderboard"
 
-#: templates/affiliations/base.html:32
+#: templates/affiliations/base.html:32 templates/affiliations/base.html:50
 msgid "Rank"
 msgstr "Rank"
 
-#: templates/affiliations/base.html:47
+#: templates/affiliations/base.html:48
+msgid "Affiliation Leaderboard"
+msgstr "Leaderboard Afilyasyon"
+
+#: templates/affiliations/base.html:63
 msgid "No affiliation found."
 msgstr "Pa gen afilyasyon te jwenn yo."
 
@@ -774,6 +783,83 @@ msgstr "gen te fini"
 #: templates/challenges/all.html:85
 msgid "You may not add or accept new challenges"
 msgstr "Ou pa pouvwa ajoute oswa aksepte nouvo defi"
+
+#: templates/challenges/base.html:11
+#, python-format
+msgid "Created by %(creator)s"
+msgstr "Kreye pa %(creator)s"
+
+#: templates/challenges/base.html:18
+msgid "This challenge has expired."
+msgstr "Sa a te defi ekspire."
+
+#: templates/challenges/base.html:20
+msgid "This challenge has not yet started."
+msgstr "Sa a defi pa gen ankò te kòmanse."
+
+#: templates/challenges/base.html:28
+msgid "Provide evidence to complete this challenge"
+msgstr "Bay prèv ki ranpli sa a defi"
+
+#: templates/challenges/base.html:36
+msgid ""
+"\n"
+"                Include <a id=\"add-video\" href=\"#add-video\" class=\"add-video button small\">Video</a> or <a id=\"add-picture\" href=\"#add-picture\" class=\"add-picture button small\">Picture</a>\n"
+"                "
+msgstr ""
+"\n"
+"Mete <a id=\"add-video\" href=\"#add-video\" class=\"add-video button small\">Videyo</a> oswa <a id=\"add-picture\" href=\"#add-picture\" class=\"add-picture button small\">Foto</a>"
+
+#: templates/challenges/base.html:41
+msgid ""
+"Paste the link to your video below. For Vimeo, it should look like "
+"http://vimeo.com/VIDEOID. For YouTube, it should look like "
+"http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID."
+msgstr ""
+"Paste lyen nan videyo ou anba-a. Pou Vimeo, li dwe gade tankou "
+"http://vimeo.com/VIDEOID. Pou YouTube, li dwe gade tankou "
+"http://youtu.be/VIDEOID oswa http://www.youtube.com/watch?v=VIDEOID."
+
+#: templates/challenges/base.html:44 templates/challenges/base.html.py:51
+msgid "add"
+msgstr "ajoute"
+
+#: templates/challenges/base.html:45 templates/challenges/base.html.py:52
+msgid "remove"
+msgstr "retire"
+
+#: templates/challenges/base.html:49
+msgid "Picture (max size 5MB)"
+msgstr "Foto (max gwosè 5MB)"
+
+#: templates/challenges/base.html:58
+msgid "characters left"
+msgstr "karaktè kite"
+
+#: templates/challenges/base.html:59
+msgid "Submit response"
+msgstr "Soumèt repons"
+
+#: templates/challenges/base.html:65
+#: templates/player_activities/empathy_overview.html:37
+#: templates/player_activities/multi_response_overview.html:34
+#: templates/player_activities/open_ended_overview.html:30
+#: templates/player_activities/single_response_overview.html:37
+msgid "Responses"
+msgstr "Repons"
+
+#: templates/challenges/base.html:75
+#, python-format
+msgid "%(screen_name)s completed this challenge."
+msgstr " %(screen_name)s ranpli sa a defi."
+
+#: templates/challenges/base.html:89
+msgid "This content is currently unavailable."
+msgstr "Sa a kontni se kounye a disponib."
+
+#: templates/challenges/base.html:97
+msgid "No one has completed this challenge."
+msgstr "Pesonn pa fin ranpli sa a defi."
 
 #: templates/comments/comment.html:24
 msgid "From"
@@ -870,9 +956,8 @@ msgid "Mission"
 msgstr "Misyon"
 
 #: templates/missions/base.html:12
-#, fuzzy
 msgid "This mission has not yet started."
-msgstr "Pa gen misyon kreye."
+msgstr "Misyon sa a pa gen ankò te kòmanse."
 
 #: templates/missions/base.html:12
 #, python-format
@@ -884,25 +969,61 @@ msgstr "Tcheke tounen sou %(start_date)s rantre nan konvèsasyon an."
 msgid "This mission ended on %(end_date)s."
 msgstr "Misyon sa a te fini sou %(end_date)s."
 
-#: templates/missions/base.html:32
+#: templates/missions/base.html:33
+msgid "You completed all the activities in this mission."
+msgstr "Ou ranpli tout aktivite yo nan misyon sa a."
+
+#: templates/missions/base.html:34
+msgid "Congratulations!"
+msgstr "Konpliman!"
+
+#: templates/missions/base.html:35
+msgid ""
+"Now, you can look at the activities again to see what others have said,"
+" reply to and like comments, and create challenges."
+msgstr ""
+"Koulye a, ou ka gade nan aktivite yo ankò yo wè sa lòt moun te di, ki "
+"reponn a ak renmen kòmantè, ak kreye defi."
+
+#: templates/missions/base.html:37
+msgid "Be sure to come back again on"
+msgstr "Asire w ke w tounen ankò sou"
+
+#: templates/missions/base.html:37
+msgid "when the new mission starts."
+msgstr "lè misyon an nouvo kòmanse."
+
+#: templates/missions/base.html:39
+msgid "This is the last mission."
+msgstr "Sa a se misyon an dènye."
+
+#: templates/missions/base.html:40
+msgid ""
+"Hope to see you at the town hall meeting to discuss what happened and "
+"plan for next steps."
+msgstr ""
+"Espere wè ou nan reyinyon an sal vil diskite sou sa ki te pase ak plan"
+" pou etap ki vini."
+
+#: templates/missions/base.html:46
 msgid "You've completed"
 msgstr "Ou te ranpli"
 
-#: templates/missions/base.html:32
+#: templates/missions/base.html:46
 msgid "activities"
 msgstr "aktivite"
 
-#: templates/missions/base.html:34
+#: templates/missions/base.html:48
 #: templates/player_activities/all_activities_paginated.html:5
 msgid "Activities"
 msgstr "Aktivite"
 
-#: templates/missions/base.html:53
+#: templates/missions/base.html:67
 #: templates/player_activities/all_activities.html:10
 msgid "pts"
 msgstr "Pts"
 
-#: templates/missions/base.html:72
+#: templates/missions/base.html:86
 #: templates/player_activities/all_activities.html:24
 msgid "No activities found"
 msgstr "Pa gen okenn aktivite yo te jwenn"
@@ -950,13 +1071,6 @@ msgstr "Ou reponn:"
 #: templates/player_activities/single_response_overview.html:22
 msgid "Replay"
 msgstr "Rpase"
-
-#: templates/player_activities/empathy_overview.html:37
-#: templates/player_activities/multi_response_overview.html:34
-#: templates/player_activities/open_ended_overview.html:30
-#: templates/player_activities/single_response_overview.html:37
-msgid "Responses"
-msgstr "Repons"
 
 #: templates/player_activities/map_response.html:5
 #: templates/player_activities/single_response_response.html:5
