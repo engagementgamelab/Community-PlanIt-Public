@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-20 12:34-0400\n"
-"PO-Revision-Date: 2011-09-20 12:45\n"
+"POT-Creation-Date: 2011-09-20 12:48-0400\n"
+"PO-Revision-Date: 2011-09-20 13:00\n"
 "Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1057,8 +1057,8 @@ msgstr "Actividad"
 
 #: templates/player_activities/empathy_base.html:23
 #: templates/player_activities/open_base.html:14
-msgid "Enter your response"
-msgstr "Escriba su respuesta"
+msgid "Enter your response (required)"
+msgstr "Ingrese su respuesta (requerido)"
 
 #: templates/player_activities/empathy_overview.html:8
 #: templates/player_activities/multi_response_overview.html:8

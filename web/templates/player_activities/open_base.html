@@ -11,7 +11,7 @@
     {{ block.super }}
     <form id="id_activity-form" enctype="multipart/form-data" action="" method="POST">{% csrf_token %}
         <input type="hidden" name="form" value="open_ended">
-        <h3>{% trans "Enter your response" %}</h3>
+        <h3>{% trans "Enter your response (required)" %}</h3>
         {{ form.response }}
         <h4>You have <span id="charsLeft"></span> chars left.</h4>
         {% block comment %}{% endblock %}

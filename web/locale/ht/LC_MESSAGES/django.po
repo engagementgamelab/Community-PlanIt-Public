@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-20 12:35-0400\n"
-"PO-Revision-Date: 2011-09-20 12:43\n"
+"POT-Creation-Date: 2011-09-20 12:50-0400\n"
+"PO-Revision-Date: 2011-09-20 12:59\n"
 "Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1044,8 +1044,8 @@ msgstr "Aktivite"
 
 #: templates/player_activities/empathy_base.html:23
 #: templates/player_activities/open_base.html:14
-msgid "Enter your response"
-msgstr "Mete repons ou"
+msgid "Enter your response (required)"
+msgstr "Mete repons ou (obligatwa)"
 
 #: templates/player_activities/empathy_overview.html:8
 #: templates/player_activities/multi_response_overview.html:8
