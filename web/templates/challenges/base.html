@@ -1,5 +1,5 @@
 {% extends "layouts/base.html" %}
-{% load gmap attachment_tags %}
+{% load gmap attachment_tags i18n %}
 {% block section %}challenges{% endblock %}
 {% block title %}Challenge{% endblock %}
 {% block page_title %}
@@ -8,7 +8,7 @@
 
 {% block main %}
 
-<p>{{challenge.description}}</p>
+<p>{{ challenge.description }}</p>
 
 <div>
 {% if not challenge.is_active %}
@@ -20,7 +20,7 @@
 {% endif %}
 </div>
 
-{{challenge.map|show}}
+{{ challenge.map|show }}
 
 {% if challenge.is_active and not player_challenge.completed %}
     <p>Provide evidence to complete this challenge:</p>
@@ -50,7 +50,7 @@
             </div>
             <div class="notification"></div>
         </div>
-        {{response_form.message}}
+        {{response_form.response}}
         <div class="fine counter">(<span class="count">1000</span> characters left)</div>
         <button type="submit" class="button submit right">Submit response</button>
         <div style="clear: both;"></div>
@@ -86,18 +86,55 @@
             {% endif %}
         {% endfor %}
         </div>
+        {% comment %}
         <p>{{pc.response.message}}</p>
+        {% endcomment %}
     </div>
+
+
+    {% if pc.comments.all %}
+    <div class="comments embedded">
+        <h3>
+            {{pc.player.get_profile.screen_name}}'s {% trans "response" %}
+            <div class="controls right">
+                Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+            </div>
+        </h3>
+        {% with instance=pc.challenge.instance comments=pc.comments %}
+        {% if comments.all %}
+        <ul class="comment_list">
+            {% for comment in comments.all reversed %}
+                {# with extra_message=answer.selected.value #}
+                {% include "comments/comment.html" %}
+                {# endwith #}
+            {% empty %}
+            <li class="comment">No comments found.</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+    {% comment %}
+    {% else %}
+    <h2>{% trans "No responses submitted" %}</h2>
+    {% endif %}
+    {% endcomment %}
+    {% endif %}
+
+
+
 </div>
 {% empty %}
     <p>No one has completed this challenge</p>
 {% endfor %}
 {% endif %}
 
+{% comment %}
 {% url challenges:comment challenge.id as comment_post_url %}
 {% with challenge.comments as comments %}
 {% include "comments/post.html" %}
 {% endwith %}
+{% endcomment %}
 
 {% endblock %}
 

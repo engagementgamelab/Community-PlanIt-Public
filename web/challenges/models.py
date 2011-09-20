@@ -136,14 +136,24 @@ class PlayerChallenge(models.Model):
     declined = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
     response_type = models.CharField(max_length=30, blank=True, null=True)
-
     attachments = models.ManyToManyField(Attachment, blank=True, null=True)
-    response = models.OneToOneField(CommentResponse, null=True, blank=True, related_name='player_challenge')
     challenge = models.ForeignKey(Challenge, related_name='player_challenges')
     player = models.ForeignKey(User, related_name='player_challenges')
+    comments = generic.GenericRelation(Comment)
+    response = models.OneToOneField(CommentResponse, null=True, blank=True, related_name='player_challenge')
 
     objects = PlayerChallengeManager()
     
     def __unicode__(self):
         pc = None
         return (self.player.get_profile() and self.player.get_profile().screen_name or self.player.username) + ": " + self.challenge.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("challenges:challenge", [self.challenge.id,])
+
+
+    class Meta:
+    	unique_together = (('player', 'challenge'),)
+
+
