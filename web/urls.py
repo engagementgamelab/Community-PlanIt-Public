@@ -86,3 +86,7 @@ if 'rosetta' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^rosetta/', include('rosetta.urls')),
     )
+if 'sentry' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^sentry/', include('sentry.web.urls')),
+    )

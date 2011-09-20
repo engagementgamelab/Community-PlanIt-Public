@@ -66,6 +66,8 @@ INSTALLED_APPS = (
     # 3rd party
     'django_mailer',
     'django_extensions',
+    'sentry',
+    'sentry.client',
     #'debug_toolbar',
     'gmapsfield',
     'gmapsfield.templatetags',
