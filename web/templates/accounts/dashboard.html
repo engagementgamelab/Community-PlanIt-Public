@@ -147,7 +147,7 @@
 
 {% block aside %}
 {% if leaderboard.count %}
-<div class="leaderboard">
+<div class="leaderboard1">
     <table>
         <thead>
             <tr><th>{% trans "Leader" %}</th><th>{% trans "Board" %}</th></tr>
@@ -164,7 +164,7 @@
 </div>
 {% endif %}
 {% if affiliations_leaderboard %}
-<div class="leaderboard">
+<div class="leaderboard1">
     <table>
         <thead>
             <tr><th>{% trans "Affiliation" %}</th></tr>
@@ -172,22 +172,12 @@
         </thead>
     </table>
     <table>
-        <thead>
-            
-            <tr><th>{% trans "Leader" %}</th><th>{% trans "Board" %}</th></tr>            
-        </thead>
+        <thead><tr><th>{% trans "Leader" %}</th><th>{% trans "Board" %}</th></tr></thead>
         <tbody>
         {% for aff in affiliations_leaderboard %}            
-            {% for item in aff %}
-                <tr>
-                {% if forloop.first %}
-                    <td><a href="{% url affiliations:affiliations_affiliation item %}">{{ item }}:</a></td><td></td>
-                {% else %}
-                    <td></td><td>{{ item }}</td>
-                {% endif %}                
-                </tr>            
-            {% endfor %}
-            
+            <tr>
+                <td><a href="{% url affiliations:affiliation %}?aff={{ aff.0|urlencode }}">{{ aff.0 }}:</a></td><td>{{ aff.1 }}</td>
+            </tr>            
         {% endfor %}
         </tbody>
     </table>

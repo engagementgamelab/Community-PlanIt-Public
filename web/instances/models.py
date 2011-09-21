@@ -111,7 +111,7 @@ class Instance(TranslatableModel):
 
         starton = None
         for m in  self.missions.all().distinct().order_by('date_created'):
-            starton = _reset_fields(m, starton)
+            starton = _reset_fields(m, starton) + relativedelta(seconds=+1)
 
 
     def save(self, *args, **kwargs):

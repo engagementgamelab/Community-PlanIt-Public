@@ -12,8 +12,8 @@ urlpatterns = patterns('',
     # Add
     url(r'^add/$', 'challenges.views.add', name='add'),
     url(r'^remove/$', 'challenges.views.delete', name='delete'),
-    # Fetch
-    url(r'^(?P<id>\d+)/$', 'challenges.views.fetch', name='challenge'),
+    #Submit Response
+    url(r'^(?P<id>\d+)/$', 'challenges.views.challenge', name='challenge'),
     # Show all
     url(r'^$', 'challenges.views.all', name='index'),
 )
