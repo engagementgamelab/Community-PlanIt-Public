@@ -1,7 +1,7 @@
 (function(window, $) {
 
     $.fn.mapit = function(opts) {
-        var markers = [], marker, line, coordinates, map, _map, polygons = [], data = {}, type, state, infowindow,
+        var markers = [], marker, line, map, _map, polygons = [], data = {}, type, state, infowindow,
             colors = ['#FF0000', '#00FF00', '#0000FF', '#FF8C00', '#F0F8FF', '#8B008B', '#FF0000'];
 
         opts = $.extend({
@@ -11,17 +11,17 @@
             add: ".add",
             rm: ".rm",
             submit: ".submit",
-            autocomplete: [],
+            autocomplete: []
         }, opts);
 
-        function callback(results, status) {
-            if (status == google.maps.places.PlacesServiceStatus.OK) {
-                for (var i = 0; i < results.length; i++) {
-                    var place = results[i];
-                }
+        function adjustMapBounds() {
+            var bounds = new google.maps.LatLngBounds();
+            for (var i = 0, markerCount = markers.length; i < markerCount; i++) {
+                bounds.extend(markers[i].position);
             }
+            map.panToBounds(bounds);
+            map.fitBounds(bounds);
         }
-
 
         function updatePolygons(color, keep) {
             if(!keep) {
@@ -111,8 +111,7 @@
             // Actions for Point/Line/Shape
             switch(type) {
                 case 'Point':
-                    
-                    maxPoints = -1; 
+                    maxPoints = -1;
                     input = document.getElementById("max_points_input");
                     if (input != null && input.value != "")
                         if (parseInt(input.value) != NaN)
@@ -196,9 +195,6 @@
                 that = $(this);
             type = that.attr("data-type");
             state = that.attr("data-state");
-
-            debug.log(state)
-            debug.log(type)
 
             map = new google.maps.Map(this, {
                 zoom: opts.zoom,
@@ -310,19 +306,9 @@
             // Displays an overview of all markers points lines etc from games that have been previously
             // played.
             else if(state === 'overview') {
-                debug.log('overview')
-                var lats = [], lngs = [], sw, ne;
                 if(type === "Point" && opts.markers && opts.markers.length) {
-                    debug.log(opts.markers)
                     $.each(opts.markers, function() {
                         var message = '', player = '';
-                        //$.each(this, function() {
-                        lats.push(this.coordinates[0]);
-                        lngs.push(this.coordinates[1]);
-
-                        debug.log(this.coordinates[0]);
-                        debug.log(this.coordinates[1]);
-
                         var marker_coordinates = new google.maps.LatLng(this.coordinates[0], this.coordinates[1]);
                         var marker = new google.maps.Marker({
                             position: marker_coordinates,
@@ -330,7 +316,6 @@
                             map: map
                         });
                         markers.push(marker);
-                        debug.log('pushed', marker)
 
                         if(message = this.message) {
                             player = this.player;
@@ -347,22 +332,10 @@
                                 infowindow.open(map, marker);
                             });
                         }
-                        //});
                     });
-
-                    // Set bounding area
-                    lats = lats.sort();
-                    lngs = lngs.sort();
-
-                    sw = new google.maps.LatLng(lats.shift(), lngs.pop());
-                    ne = new google.maps.LatLng(lats.pop(), lngs.shift());
-
-                    var bounds = new google.maps.LatLngBounds(sw, ne);
-                    map.panToBounds(bounds);
-                    //map.fitBounds(bounds);
                 }
                 else if(type === "Shape" && opts.markers && opts.markers.length) {
-                    var lats = [], lngs = [], sw, ne, first_marker, shape;
+                    var first_marker, shape;
 
                     // Iterate over each shape
                     $.each(opts.markers, function(i) {
@@ -371,9 +344,6 @@
 
                         // Iterate over each point in the shape
                         $.each(this, function() {
-                            lats.push(this.coordinates[0]);
-                            lngs.push(this.coordinates[1]);
-
                             var coord = new google.maps.LatLng(this.coordinates[0], this.coordinates[1]);
                             var marker = new google.maps.Marker({
                                 position: coord,
@@ -403,20 +373,8 @@
                             infowindow.open(map, placement);
                         });
                     });
-
-                    // Set bounding area
-                    lats = lats.sort();
-                    lngs = lngs.sort();
-
-                    sw = new google.maps.LatLng(lats.shift(), lngs.pop());
-                    ne = new google.maps.LatLng(lats.pop(), lngs.shift());
-
-                    var bounds = new google.maps.LatLngBounds(sw, ne);
-                    map.panToBounds(bounds);
-                    map.fitBounds(bounds);
                 }
                 else if(type === 'Line' && opts.markers) {
-                    var lats = [], lngs = [], sw, ne;
                     var message = '', player = '';
 
                     // Iterate over each line
@@ -434,9 +392,6 @@
 
                         // Iterate over the points of each line
                         $.each(this, function() {
-                            lats.push(this.coordinates[0]);
-                            lngs.push(this.coordinates[1]);
-
                             var loc = new google.maps.LatLng(this.coordinates[0], this.coordinates[1]);
                             path.push(loc);
 
@@ -464,17 +419,6 @@
                             }
                         });
                     });
-
-                    // Set bounding area
-                    lats = lats.sort();
-                    lngs = lngs.sort();
-
-                    sw = new google.maps.LatLng(lats.shift(), lngs.pop());
-                    ne = new google.maps.LatLng(lats.pop(), lngs.shift());
-
-                    var bounds = new google.maps.LatLngBounds(sw, ne);
-                    map.panToBounds(bounds);
-                    map.fitBounds(bounds);
                 }
             }
 
@@ -484,9 +428,7 @@
             }catch(err){
                 alert(error)
             }
-
-            bounds.extend(coordinates);
-            map.panToBounds(bounds);
+            adjustMapBounds();
         });
 
     };
