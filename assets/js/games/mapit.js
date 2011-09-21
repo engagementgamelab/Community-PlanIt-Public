@@ -15,12 +15,15 @@
         }, opts);
 
         function adjustMapBounds() {
-            var bounds = new google.maps.LatLngBounds();
-            for (var i = 0, markerCount = markers.length; i < markerCount; i++) {
-                bounds.extend(markers[i].position);
+            var markerCount = markers.length;
+            if (markerCount > 0) {
+                var bounds = new google.maps.LatLngBounds();
+                for (var i = 0; i < markerCount; i++) {
+                    bounds.extend(markers[i].position);
+                }
+                map.panToBounds(bounds);
+                map.fitBounds(bounds);
             }
-            map.panToBounds(bounds);
-            map.fitBounds(bounds);
         }
 
         function updatePolygons(color, keep) {
@@ -217,7 +220,6 @@
                 lat = parseFloat(elem.lat.value);
                 lon = parseFloat(elem.lon.value);
                 marker = new google.maps.Marker({
-                    //position: map.getCenter(),
                     position: new google.maps.LatLng(lat,lon),
                     draggable: draggable,
                     map: map
@@ -226,6 +228,8 @@
                     update();
                     type === 'Shape' && updatePolygons();
                 }); 
+                marker.message = elem.message.value;
+                marker.player = elem.player.value;
                 markers.push(marker);
                 
                 x++;
@@ -307,31 +311,25 @@
             // played.
             else if(state === 'overview') {
                 if(type === "Point" && opts.markers && opts.markers.length) {
-                    $.each(opts.markers, function() {
-                        var message = '', player = '';
-                        var marker_coordinates = new google.maps.LatLng(this.coordinates[0], this.coordinates[1]);
-                        var marker = new google.maps.Marker({
-                            position: marker_coordinates,
-                            draggable: false,
-                            map: map
-                        });
-                        markers.push(marker);
+                    $.each(markers, function() {
+                        this.draggable = false;
 
-                        if(message = this.message) {
-                            player = this.player;
+                        var message = this.message;
+                        var player = this.player;
 
-                            google.maps.event.addListener(marker, 'click', function() {
-                                if (infowindow){
-                                    infowindow.close()
-                                }
+                        console.log('message: ' + message);
 
-                                infowindow = new google.maps.InfoWindow({
-                                    content:  message + ' - ' + player
-                                });
-                                
-                                infowindow.open(map, marker);
+                        google.maps.event.addListener(this, 'click', function() {
+                            if (infowindow){
+                                infowindow.close()
+                            }
+
+                            infowindow = new google.maps.InfoWindow({
+                                content:  '<div>' + message + '</div><div style="text-align:right;">&#8211; ' + player + '</div>'
                             });
-                        }
+                            
+                            infowindow.open(map, this);
+                        });
                     });
                 }
                 else if(type === "Shape" && opts.markers && opts.markers.length) {
