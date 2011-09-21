@@ -317,8 +317,6 @@
                         var message = this.message;
                         var player = this.player;
 
-                        console.log('message: ' + message);
-
                         google.maps.event.addListener(this, 'click', function() {
                             if (infowindow){
                                 infowindow.close()
