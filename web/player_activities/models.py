@@ -9,7 +9,6 @@ from django.contrib.contenttypes import generic
 
 from nani.models import TranslatableModel, TranslatedFields
 
-from web.accounts.models import determine_path
 from web.attachments.models import Attachment
 from web.comments.models import Comment
 from web.missions.models import Mission

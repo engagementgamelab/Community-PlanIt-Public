@@ -27,8 +27,8 @@
         </span><br>
         {% if player.get_profile.affiliations %}
         <span style="font-size: 1em">{% trans "Affiliated With" %}:
-            {%for a in player.get_profile.affiliations_csv %} 
-            <a href="{% url affiliations:affiliations_affiliation a %}" class="highlight">{{a}}</a>
+            {%for affiliation in player.get_profile.affiliations_csv %} 
+            <a class="highlight" href="{% url affiliations:affiliation %}?aff={{ affiliation|urlencode }}">{{ affiliation }}</a>
             {% endfor %}
         </span>
         {% endif %}

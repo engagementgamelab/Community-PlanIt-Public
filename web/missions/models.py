@@ -8,7 +8,7 @@ from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
 
-from instances.models import Instance
+from web.instances.models import Instance
 
 class MissionManager(TranslationManager):
 

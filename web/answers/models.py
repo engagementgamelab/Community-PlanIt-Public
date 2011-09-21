@@ -1,6 +1,8 @@
-from django.template.defaultfilters import slugify
+import datetime
+
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.template.defaultfilters import slugify
 from django.utils.translation import gettext as _
 
 from django.contrib.auth.models import User
@@ -12,7 +14,6 @@ from web.comments.models import Comment
 from web.missions.models import Mission
 from web.player_activities.models import (PlayerActivity, MultiChoiceActivity, 
         PlayerEmpathyActivity, PlayerMapActivity)
-import datetime
 
 __all__ = (
         'Answer', 'AnswerSingleResponse', 'AnswerOpenEnded', 'AnswerMap', 'AnswerEmpathy', 'AnswerMultiChoice'

@@ -8,7 +8,8 @@
 
 {% block main %}
 {% if challenge.user.get_profile %}
-<h3>{% blocktrans with creator=challenge.user.get_profile.screen_name %}Created by {{creator}}{% endblocktrans %}</h3>
+{% url accounts_profile challenge.user.pk as creator_profile_url %}
+<h3>{% blocktrans with creator=challenge.user.get_profile.screen_name %}Created by <a href="{{creator_profile_url}}">{{creator}}</a>{% endblocktrans %}</h3>
 {% endif %}
 
 <p>{{ challenge.description }}</p>

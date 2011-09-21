@@ -17,7 +17,7 @@ from django.contrib.formtools.wizard import FormWizard
 from web.accounts.models import *
 from web.instances.models import Instance
 
-from core.utils import get_translation_with_fallback
+from web.core.utils import get_translation_with_fallback
 
 class RegisterFormOne(forms.Form):
 

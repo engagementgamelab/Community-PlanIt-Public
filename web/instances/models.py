@@ -68,7 +68,7 @@ class Instance(TranslatableModel):
         return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
 
     def dump_users(self):
-        from accounts.models import UserProfile
+        from web.accounts.models import UserProfile
         profiles = UserProfile.objects.filter(instance=self)
         out = ["Instance: %s" % self.title,]
         for prof in profiles:

@@ -9,10 +9,10 @@ from django.contrib.contenttypes import generic
 
 from gmapsfield.fields import GoogleMapsField
 
-from attachments.models import Attachment
-from comments.models import Comment
-from instances.models import Instance
-from responses.comment.models import CommentResponse
+from web.attachments.models import Attachment
+from web.comments.models import Comment
+from web.instances.models import Instance
+from web.responses.comment.models import CommentResponse
 
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
