@@ -280,7 +280,4 @@ class Notification(models.Model):
         """
         Return the URL of the object associated with the notification.
         """
-        return reverse(
-            'generic_redirect',
-            args=(self.content_type_id, self.object_id)
-        )
+        return self.content_object.get_absolute_url()
