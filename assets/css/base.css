@@ -276,10 +276,12 @@ th {
   line-height: 1.5; }
 
 .suggestion {
-  padding: 16px 8px 0 8px;
-  text-align: right;
+  padding: 16px 0 8px 0;
+  text-align: left;
   color: #869f00;
   font-style: italic; }
+  .suggestion a.button {
+    font-style: normal; }
 
 body.about nav .about,
 body.accounts nav .home,
