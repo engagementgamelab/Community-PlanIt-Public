@@ -16,8 +16,8 @@
     {% include "player_activities/attachments.html" %}
 
     <input type="hidden" id="dragable" name="dragable" value="false">
-    {% for x, lat, lon in init_coords %}
-        <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
+    {% for x, lat, lon, message, player in init_coords %}
+    <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}" message="{{message}}" player="{{player}}"/>
     {% endfor %}
     <div id="map" class="google-map" data-type="Point" data-state="overview"></div>
     

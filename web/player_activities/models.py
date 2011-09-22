@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -89,7 +90,11 @@ class PlayerActivity(PlayerActivityBase):
         return reverse('activities:replay', args=(self.pk,))
 
     def __unicode__(self):
-        return self.safe_translation_getter('name', '%s' % self.pk)
+        s = self.safe_translation_getter('name', None)
+        if s is None:
+            translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
+            s = translated.safe_translation_getter('name', str(self.pk))
+        return s
 
     def save(self, *args, **kwargs):
         self.createDate = datetime.datetime.now()
@@ -125,7 +130,11 @@ class PlayerMapActivity(PlayerActivityBase):
         return reverse('activities:map-replay', args=(self.pk,))
 
     def __unicode__(self):
-        return self.safe_translation_getter('name', '%s' % self.pk)
+        s = self.safe_translation_getter('name', None)
+        if s is None:
+            translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
+            s = translated.safe_translation_getter('name', str(self.pk))
+        return s
 
     def save(self, *args, **kwargs):
         self.createDate = datetime.datetime.now()
@@ -165,7 +174,11 @@ class PlayerEmpathyActivity(PlayerActivityBase):
         super(PlayerEmpathyActivity, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return self.safe_translation_getter('value', '%s' % self.bio[:10])
+        s = self.safe_translation_getter('value', None)
+        if s is None:
+            translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
+            s = translated.safe_translation_getter('value', str(self.pk))
+        return s
 
 class MultiChoiceActivity(TranslatableModel):
     """
@@ -186,7 +199,11 @@ class MultiChoiceActivity(TranslatableModel):
         verbose_name_plural = 'Multiple Choice Activities'
 
     def __unicode__(self):
-        return '%s' % self.pk # self.safe_translation_getter('value', '%s' % self.pk)
+        s = self.safe_translation_getter('value', None)
+        if s is None:
+            translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
+            s = translated.safe_translation_getter('value', str(self.pk))
+        return s
 
     @property
     def activity_type(self):

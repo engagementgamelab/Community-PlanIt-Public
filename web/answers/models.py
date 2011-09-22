@@ -40,7 +40,7 @@ class AnswerSingleResponse(Answer):
     activity = models.ForeignKey(PlayerActivity, related_name='singleresponse_answers')
 
     def __unicode__(self):
-        return _('an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.activity)
 
 #This is nasty but it's the simple way to get many checked values
 #for the user stored
@@ -61,7 +61,7 @@ class AnswerMap(Answer):
     activity = models.ForeignKey(PlayerMapActivity, related_name='map_answers')
 
     def __unicode__(self):
-        return _('an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.activity)
 
     @models.permalink
     def get_absolute_url(self):
@@ -71,7 +71,7 @@ class AnswerEmpathy(Answer):
     activity = models.ForeignKey(PlayerEmpathyActivity, related_name='empathy_answers')
 
     def __unicode__(self):
-        return _('an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.activity)
 
     @models.permalink
     def get_absolute_url(self):
@@ -81,5 +81,5 @@ class AnswerOpenEnded(Answer):
     activity = models.ForeignKey(PlayerActivity, related_name='openended_answers')
 
     def __unicode__(self):
-        return _('an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.activity)
 

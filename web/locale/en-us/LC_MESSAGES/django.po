@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-20 13:15-0400\n"
+"POT-Creation-Date: 2011-09-21 12:22-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -191,8 +191,8 @@ msgstr ""
 msgid "A temporary password has been sent to your email address."
 msgstr ""
 
-#: answers/models.py:42 answers/models.py:63 answers/models.py:73
-#: answers/models.py:83
+#: answers/models.py:43 answers/models.py:64 answers/models.py:74
+#: answers/models.py:84
 #, python-format
 msgid "an answer to %s"
 msgstr ""
@@ -201,36 +201,36 @@ msgstr ""
 msgid "This video is currently unavailable."
 msgstr ""
 
-#: challenges/forms.py:22
+#: challenges/forms.py:23
 msgid "Location"
 msgstr ""
 
-#: challenges/forms.py:23 templates/affiliations/base.html:33
+#: challenges/forms.py:24 templates/affiliations/base.html:33
 #: templates/affiliations/base.html:51
 msgid "Name"
 msgstr ""
 
-#: challenges/forms.py:24
+#: challenges/forms.py:25
 msgid "Description"
 msgstr ""
 
-#: challenges/forms.py:24
+#: challenges/forms.py:25
 msgid "Describe what people have to do to complete the challenge"
 msgstr ""
 
-#: challenges/forms.py:27
+#: challenges/forms.py:28
 msgid "Challenge Start Date/Time (optional)"
 msgstr ""
 
-#: challenges/forms.py:31
+#: challenges/forms.py:32
 msgid "Challenge End Date/Time (optional)"
 msgstr ""
 
-#: challenges/forms.py:43
+#: challenges/forms.py:44
 msgid "Please enter an end date not in the past."
 msgstr ""
 
-#: challenges/forms.py:45
+#: challenges/forms.py:46
 msgid "Please enter an end date after the start date."
 msgstr ""
 
@@ -393,11 +393,11 @@ msgstr ""
 msgid "The community has not started yet. We will notify you once it has begun"
 msgstr ""
 
-#: templates/accounts/dashboard.html:153 templates/accounts/dashboard.html:177
+#: templates/accounts/dashboard.html:153 templates/accounts/dashboard.html:175
 msgid "Leader"
 msgstr ""
 
-#: templates/accounts/dashboard.html:153 templates/accounts/dashboard.html:177
+#: templates/accounts/dashboard.html:153 templates/accounts/dashboard.html:175
 msgid "Board"
 msgstr ""
 
@@ -552,6 +552,33 @@ msgstr ""
 msgid "View Terms of Use"
 msgstr ""
 
+#: templates/accounts/email/notifications.html:6
+msgid "Notifications"
+msgstr ""
+
+#: templates/accounts/email/notifications.html:17
+#, python-format
+msgid "News from %(instance_title)s"
+msgstr ""
+
+#: templates/accounts/email/notifications.html:29
+msgid "See all your notifications here:"
+msgstr ""
+
+#: templates/accounts/email/notifications.html:34
+msgid "The Community PlanIt Team"
+msgstr ""
+
+#: templates/accounts/email/notifications.html:39
+msgid ""
+"\n"
+"We sent this message because your Community PlanIt account is set to "
+"receive \n"
+"updates. If you want to stop receiving news from Community PlanIt, just "
+"edit \n"
+"your profile:\n"
+msgstr ""
+
 #: templates/accounts/email/welcome.html:1
 #, python-format
 msgid ""
@@ -675,6 +702,10 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+#: templates/affiliations/all.html:4
+msgid "All Affiliations"
+msgstr ""
+
 #: templates/affiliations/base.html:5 templates/affiliations/base.html.py:6
 msgid "Affiliations"
 msgstr ""
@@ -755,24 +786,28 @@ msgstr ""
 msgid "You may not add or accept new challenges"
 msgstr ""
 
-#: templates/challenges/base.html:11
-#, python-format
-msgid "Created by %(creator)s"
+#: templates/challenges/base.html:4
+msgid "Challenge"
 msgstr ""
 
-#: templates/challenges/base.html:18
-msgid "This challenge has expired."
+#: templates/challenges/base.html:12
+#, python-format
+msgid "Created by <a href=\"%(creator_profile_url)s\">%(creator)s</a>"
 msgstr ""
 
 #: templates/challenges/base.html:20
+msgid "This challenge has expired."
+msgstr ""
+
+#: templates/challenges/base.html:22
 msgid "This challenge has not yet started."
 msgstr ""
 
-#: templates/challenges/base.html:28
-msgid "Provide evidence to complete this challenge"
+#: templates/challenges/base.html:30
+msgid "Provide evidence to complete this challenge:"
 msgstr ""
 
-#: templates/challenges/base.html:36
+#: templates/challenges/base.html:38
 msgid ""
 "\n"
 "                Include <a id=\"add-video\" href=\"#add-video\" class=\"add-"
@@ -781,34 +816,34 @@ msgid ""
 "                "
 msgstr ""
 
-#: templates/challenges/base.html:41
+#: templates/challenges/base.html:43
 msgid ""
 "Paste the link to your video below. For Vimeo, it should look like http://"
 "vimeo.com/VIDEOID. For YouTube, it should look like http://youtu.be/VIDEOID "
 "or http://www.youtube.com/watch?v=VIDEOID."
 msgstr ""
 
-#: templates/challenges/base.html:44 templates/challenges/base.html.py:51
+#: templates/challenges/base.html:46 templates/challenges/base.html.py:53
 msgid "add"
 msgstr ""
 
-#: templates/challenges/base.html:45 templates/challenges/base.html.py:52
+#: templates/challenges/base.html:47 templates/challenges/base.html.py:54
 msgid "remove"
 msgstr ""
 
-#: templates/challenges/base.html:49
+#: templates/challenges/base.html:51
 msgid "Picture (max size 5MB)"
 msgstr ""
 
-#: templates/challenges/base.html:58
+#: templates/challenges/base.html:60
 msgid "characters left"
 msgstr ""
 
-#: templates/challenges/base.html:59
+#: templates/challenges/base.html:61
 msgid "Submit response"
 msgstr ""
 
-#: templates/challenges/base.html:65
+#: templates/challenges/base.html:67
 #: templates/player_activities/empathy_overview.html:37
 #: templates/player_activities/multi_response_overview.html:34
 #: templates/player_activities/open_ended_overview.html:30
@@ -816,16 +851,15 @@ msgstr ""
 msgid "Responses"
 msgstr ""
 
-#: templates/challenges/base.html:75
-#, python-format
-msgid "%(screen_name)s completed this challenge."
+#: templates/challenges/base.html:73
+msgid "response"
 msgstr ""
 
-#: templates/challenges/base.html:89
-msgid "This content is currently unavailable."
+#: templates/challenges/base.html:86
+msgid "No comments found."
 msgstr ""
 
-#: templates/challenges/base.html:97
+#: templates/challenges/base.html:94
 msgid "No one has completed this challenge."
 msgstr ""
 

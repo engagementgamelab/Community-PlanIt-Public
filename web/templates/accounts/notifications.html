@@ -15,7 +15,7 @@
 {% for notification in notifications_page.object_list %}
         <tr class="{% cycle "odd" "even" %}{% if notification.unread %} unread{% endif %}">
             <td>{{notification.timestamp}}</td>
-            <td><a href="{{notification.get_content_object_url}}">{{notification.message}}</a></td>
+            <td><a href="{{notification.content_object.get_absolute_url}}">{{notification.message}}</a></td>
         </tr>
 {% endfor %}
     </tbody>
