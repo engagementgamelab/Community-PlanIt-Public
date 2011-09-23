@@ -8,8 +8,8 @@ from django.contrib.auth.models import User
 
 from gmapsfield.fields import GoogleMapsField
 
-from instances.models import Instance
-from challenges.models import PlayerChallenge
+from web.instances.models import Instance
+from web.challenges.models import PlayerChallenge
 
 def list_submodels(parent):
     _models = []
