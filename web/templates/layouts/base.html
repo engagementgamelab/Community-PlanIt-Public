@@ -59,26 +59,57 @@
                     <li><div class="contact"><a href="{% url contact %}"><span>{% trans "Contact" %}</span></a></div></li>
                     {% endif %}
 
+                    {% comment %}
                     {% if user.is_authenticated %}
                         {% for lang in current_instance.languages.all %}
-                        <li class="flag"><div><a href="{{ request.path|chlocale:lang.code }}"><img src="{{MEDIA_URL}}img/flags/{{lang.code}}.png" border="0" title="{{ lang.name }}"/></a></div></li>
+                        <li class="flag">
+                            <div class="flag_{{ lang.code }}">
+                                <a href="{{ request.path|chlocale:lang.code }}"></a>
+                            </div>
+                        </li>
                         {% endfor %}
                     {% else %}
                         {% for lang in LANGUAGES %}
-                        <li class="flag"><div><a href="{{ request.path|chlocale:lang.0 }}"> <img src="{{MEDIA_URL}}img/flags/{{ lang.0 }}.png" border="0" title="{{ lang.1 }}"/></a></li></div>
+                        <li class="flag">
+                            <div class="flag_{{ lang.code }}">
+                                <a href="{{ request.path|chlocale:lang.0 }}"></a>
+                            </div>
+                        </li>
                         {% endfor %}
                     {% endif %}
-                    <li class="faq"><div><a href="{% url faq %}"><img border="0" src="{{ MEDIA_URL }}/img/faq.png"></a></div></li>
+                    <li class="faq"><div class="faqlink"><a href="{% url faq %}"></a></div></li>
 
                     {% if user.is_superuser or user.is_staff or user in current_instance.curators.all %}
-                    {% comment %}
-                    <li><div class="admin"><a href="{% url admin:admin-base %}"><span>{% trans "Admin" %}</span></a></div></li>
-                    {% endcomment %}
                     <li><div class="admin"><a href="{% url accounts:admin-instance-email %}"><span>send mail</span></a></div></li>
                     {% endif %}
+                    {% endcomment %}
                 {% endblock %}
                 </ul>
             </nav>
+
+            <nav class="misc_nav">
+                <ul>
+                {% if user.is_authenticated %}
+                    {% for lang in current_instance.languages.all %}
+                    <li class="flag">
+                        <div class="flag_{{ lang.code }}">
+                            <a href="{{ request.path|chlocale:lang.code }}"></a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    {% for lang in LANGUAGES %}
+                    <li class="flag">
+                        <div class="flag_{{ lang.code }}">
+                            <a href="{{ request.path|chlocale:lang.0 }}"></a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                {% endif %}
+                    <li class="faq"><div class="faqlink"><a href="{% url faq %}"></a></div></li>
+                </ul>
+            </nav>
+
             <div class="clear"></div>
         </div>
 

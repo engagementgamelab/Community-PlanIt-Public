@@ -453,10 +453,12 @@ p.separate {
       .wrapper #header .logo a {
         padding: 0;
         margin: 0; }
+
+
     .wrapper #header nav {
       position: relative;
       float: left;
-      width: 80%;
+      width: 50%;
       font-size: 1.25em; }
       .wrapper #header nav ul {
         margin: 0;
@@ -483,7 +485,6 @@ p.separate {
           padding: 0;
           margin: 0; }
         .wrapper #header nav li .values a {
-          width: 230px;
           background-position: 50% 20%;
           background-image: url(../img/tokendepot.png); }
         @media screen and (max-width: 768px) {
@@ -504,14 +505,73 @@ p.separate {
           .wrapper #header nav li a span {
             line-height: 1.5;
             vertical-align: bottom; }
-      .wrapper #header nav li.final {
+
+    .wrapper #header nav.misc_nav {
+      position: relative;
+      float: left;
+      width: 30%;
+      font-size: 1.25em; }
+      .wrapper #header nav.misc_nav ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        position: relative;
+        float: left;
+        width: 100%;
+        display: block; }
+      .wrapper #header nav.misc_nav li {
+        line-height: 130px;
+        display: block;
+        float: left;
+        background-position: 100% 100%;
+        background-repeat: no-repeat;
+        padding: 0 2px 0 1px;
+        margin: 0;
+        text-align: center;
+        position: relative; }
+
+        .wrapper #header nav.misc_nav li div {
+          background-position: 50% 100%;
+          background-repeat: no-repeat;
+          padding: 0;
+          margin: 0; }
+
+        .wrapper #header nav.misc_nav li a {
+          position: relative;
+          color: black;
+          text-decoration: none;
+          display: block;
+          text-align: center;
+          font-weight: 100;
+          padding: 15px 2px 10px 2px;
+          margin: 0;
+          background-position: 50% 50%;
+          background-repeat: no-repeat; }
+          .wrapper #header nav.misc_nav li a span {
+            line-height: 1.5;
+            vertical-align: bottom; }
+
+      .wrapper #header nav.misc_nav li.flag {
         background-image: none; }
-      .wrapper #header nav li.flag {
-        background-image: none; 
+
+      .wrapper #header nav.misc_nav li div.flag_en-us a{
+        background-image: url(../img/flags/en-us.png);
         width: 16px; }
-      .wrapper #header nav li.faq {
-        background-image: none; 
-        width: 24; }
+      .wrapper #header nav.misc_nav li div.flag_ht a{
+        background-image: url(../img/flags/ht.png); 
+        width: 16px; }
+      .wrapper #header nav.misc_nav li div.flag_es a{
+        background-image: url(../img/flags/es.png); 
+        width: 16px; }
+    
+      .wrapper #header nav.misc_nav li.faq {
+        background-image: none;
+        width: 32px; }
+      .wrapper #header nav.misc_nav li.faq div.faqlink a{
+        background-image: url(../img/faq.png); 
+        width: 32px; }
+
+
   .wrapper .feed {
     border-top: 3px solid #ff7812; }
     .wrapper .feed h3 {
