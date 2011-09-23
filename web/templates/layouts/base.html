@@ -58,31 +58,6 @@
                     <li><div class="about"><a href="{% url about %}"><span>{% trans "About" %}</span></a></div></li>
                     <li><div class="contact"><a href="{% url contact %}"><span>{% trans "Contact" %}</span></a></div></li>
                     {% endif %}
-
-                    {% comment %}
-                    {% if user.is_authenticated %}
-                        {% for lang in current_instance.languages.all %}
-                        <li class="flag">
-                            <div class="flag_{{ lang.code }}">
-                                <a href="{{ request.path|chlocale:lang.code }}"></a>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    {% else %}
-                        {% for lang in LANGUAGES %}
-                        <li class="flag">
-                            <div class="flag_{{ lang.code }}">
-                                <a href="{{ request.path|chlocale:lang.0 }}"></a>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    {% endif %}
-                    <li class="faq"><div class="faqlink"><a href="{% url faq %}"></a></div></li>
-
-                    {% if user.is_superuser or user.is_staff or user in current_instance.curators.all %}
-                    <li><div class="admin"><a href="{% url accounts:admin-instance-email %}"><span>send mail</span></a></div></li>
-                    {% endif %}
-                    {% endcomment %}
                 {% endblock %}
                 </ul>
             </nav>
@@ -100,7 +75,7 @@
                 {% else %}
                     {% for lang in LANGUAGES %}
                     <li class="flag">
-                        <div class="flag_{{ lang.code }}">
+                        <div class="flag_{{ lang.0 }}">
                             <a href="{{ request.path|chlocale:lang.0 }}"></a>
                         </div>
                     </li>
