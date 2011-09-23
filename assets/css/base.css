@@ -506,6 +506,12 @@ p.separate {
             vertical-align: bottom; }
       .wrapper #header nav li.final {
         background-image: none; }
+      .wrapper #header nav li.flag {
+        background-image: none; 
+        width: 16px; }
+      .wrapper #header nav li.faq {
+        background-image: none; 
+        width: 24; }
   .wrapper .feed {
     border-top: 3px solid #ff7812; }
     .wrapper .feed h3 {
