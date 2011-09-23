@@ -56,6 +56,7 @@
                     <li><div class="communities"><a href="{% url instances:instances %}"><span>{% trans "Communities" %}</span></a></div></li>
                     <li><div class="about"><a href="{% url about %}"><span>{% trans "About" %}</span></a></div></li>
                     <li><div class="contact"><a href="{% url contact %}"><span>{% trans "Contact" %}</span></a></div></li>
+                    <li><div class="faq"><a href="{% url faq %}"><span>{% trans "FAQ" %}</span></a></div></li>
                     {% endif %}
 
                     {% if user.is_authenticated %}

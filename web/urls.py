@@ -15,6 +15,14 @@ handler500 = 'web.views.server_error'
 urlpatterns = patterns('',
     url(r'^$', 'web.views.index', name='home'),
 
+    url(r'^faq/',
+        direct_to_template,
+        {
+            'template': 'static/faq.html',
+            #'extra_context': { 'instances': Instance.objects.all }
+        },
+        name='faq'
+    ),
     url(r'^about/',
         direct_to_template,
         {
