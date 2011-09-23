@@ -1,8 +1,8 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns('',
-    url(r'^flag/(?P<id>.*)/', 'web.comments.views.flag', name='flag'),
-    url(r'^like/(?P<id>.*)/', 'web.comments.views.like', name='like'),
-    url(r'^reply/(?P<id>.*)/', 'web.comments.views.reply', name='reply'),
-    url(r'^edit/(?P<id>.*)/', 'web.comments.views.edit', name='edit'),
+urlpatterns = patterns('web.comments.views',
+    url(r'^flag/(?P<id>.*)/', 'flag', name='flag'),
+    url(r'^like/(?P<id>.*)/', 'like', name='like'),
+    url(r'^reply/(?P<id>.*)/', 'reply', name='reply'),
+    url(r'^edit/(?P<id>.*)/', 'edit', name='edit'),
 )
