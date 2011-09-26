@@ -16,6 +16,7 @@ from web.comments.forms import *
 from web.comments.models import Comment
 
 from PIL import Image
+from attachments.models import Attachment
 
 
 @login_required
@@ -133,6 +134,15 @@ def edit(request, id, lang_code=None):
         return HttpResponse(tmpl.render(RequestContext(request, {"comment": comment,
                                                                  "comment_form": comment_form }, 
                                                                  )))
+
                                                                  
 
+    
+
+@login_required
+def remove_attachment(request, id, comment_id):
+    attachment = get_object_or_404(Attachment, id=id)
+    comment = get_object_or_404(Comment, id=comment_id) 
+    attachment.delete()
+    return HttpResponseRedirect(reverse("comments:edit", args=[comment.pk,]))
     
