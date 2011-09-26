@@ -2,7 +2,7 @@
 {% load attachment_tags %}
 {% block main %}
 <div id="comments">
-    <h1>Edit Comment</h1>
+    <h1>Edit Comment</h1>    
     {% if not_permitted %}
         <h2>You do not have proper permissions to edit this post.</h2>
     {% else %}
@@ -22,14 +22,12 @@
                     comment_box = document.getElementById("message_area");
                     comment_box.innerHTML = "{{ comment.message }}";
                     
-                    {% for attachment in comment.attachment.all %}
+                    {% for attachment in comment.attachment.all %}                        
                         {% if attachment.url|length %}
-                            var vid = document.getElementById("video-url_label");
-                            vid.innerHTML = "Paste the link to your video below. For Vimeo, it should look like http://vimeo.com/VIDEOID. For YouTube, it should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID. (Current:{{attachment.url}})"
+                            $("#yt-url_label").html("Paste the link to your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID. (Current:{{attachment.url}})<a href=\"{% url comments:remove_attachment attachment.pk comment.pk %}\">Remove video</a>");
                         {% endif %}
                         {% if attachment.file|length %}
-                            var picture = document.getElementById("picture_label");
-                            picture.innerHTML = "Picture (max size 5MB, Currently: {{attachment.file}}";
+                            $("#picture_label").html("Picture (max size 5MB, Currently: {{attachment.file.url}}<a href=\"{% url comments:remove_attachment attachment.pk comment.pk %}\">Remove picture</a>");
                         {% endif %}
                     {% endfor %} 
                 {% endif %}
