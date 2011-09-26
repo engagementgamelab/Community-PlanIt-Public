@@ -68,7 +68,7 @@ class Instance(TranslatableModel):
         return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
 
     def dump_users(self):
-        from accounts.models import UserProfile
+        from web.accounts.models import UserProfile
         profiles = UserProfile.objects.filter(instance=self)
         out = ["Instance: %s" % self.title,]
         for prof in profiles:
@@ -105,13 +105,13 @@ class Instance(TranslatableModel):
             if not starton:
                 starton = m.instance.start_date
             m.start_date = starton
-            m.end_date = m.start_date + relativedelta(days=+m.instance.days_for_mission)
+            m.end_date = m.start_date + relativedelta(days=+m.instance.days_for_mission, hour=23, minute=59, second=59)
             m.save()
             return m.end_date
 
         starton = None
         for m in  self.missions.all().distinct().order_by('date_created'):
-            starton = _reset_fields(m, starton)
+            starton = _reset_fields(m, starton) + relativedelta(seconds=+1)
 
 
     def save(self, *args, **kwargs):

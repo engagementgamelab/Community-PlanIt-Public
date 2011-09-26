@@ -2,11 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from instances.models import Instance
-from comments.models import Comment
-
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
+
+from web.instances.models import Instance
+from web.comments.models import Comment
 
 #TODO: change coins to something like coinsSpentOnIntance or something
 #more descriptive

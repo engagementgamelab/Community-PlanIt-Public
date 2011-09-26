@@ -8,7 +8,7 @@ from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
 
-from instances.models import Instance
+from web.instances.models import Instance
 
 class MissionManager(TranslationManager):
 
@@ -85,10 +85,10 @@ class Mission(TranslatableModel):
             latest = Mission.objects.latest_by_instance(self.instance)
             if latest:
                 self.start_date = latest.end_date
-                self.end_date = latest.end_date + relativedelta(days=+self.instance.days_for_mission)
+                self.end_date = latest.end_date + relativedelta(days=+self.instance.days_for_mission+1, hour=0, minute=0, second=0)
             else:
                 self.start_date = datetime.datetime.now()
-                self.end_date = self.start_date + relativedelta(days=+self.instance.days_for_mission)
+                self.end_date = self.start_date + relativedelta(days=+self.instance.days_for_mission+1, hour=0, minute=0, second=0)
 
         super(Mission, self).save(*args, **kwargs)
 

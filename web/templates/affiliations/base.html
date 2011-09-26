@@ -43,6 +43,7 @@
             </table>
         </div>
         {%endif%}
+        {% comment %}
         {%if affiliations_leaderboard|length%}
         <div class="leaderboard-wrapper" style="clear:both;">
             <h3>{% trans "Affiliation Leaderboard" %}</h3>
@@ -59,6 +60,7 @@
             </table>
         </div>
         {%endif%}
+        {% endcomment %}
     {%else%}
     <h2>{% trans "No affiliation found." %}</h2>
     {%endif%}

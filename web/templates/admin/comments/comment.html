@@ -25,7 +25,7 @@
             {% if attachment.is_valid %}
             <div>
                 {% if attachment.type == 'video' %}
-                {% youtube_video attachment.url %}
+                {% embed_video attachment.url %}
                 {% else %}
                 <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
                 {% endif %}

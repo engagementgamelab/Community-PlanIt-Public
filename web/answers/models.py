@@ -1,6 +1,8 @@
-from django.template.defaultfilters import slugify
+import datetime
+
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.template.defaultfilters import slugify
 from django.utils.translation import gettext as _
 
 from django.contrib.auth.models import User
@@ -12,7 +14,6 @@ from web.comments.models import Comment
 from web.missions.models import Mission
 from web.player_activities.models import (PlayerActivity, MultiChoiceActivity, 
         PlayerEmpathyActivity, PlayerMapActivity)
-import datetime
 
 __all__ = (
         'Answer', 'AnswerSingleResponse', 'AnswerOpenEnded', 'AnswerMap', 'AnswerEmpathy', 'AnswerMultiChoice'
@@ -39,7 +40,7 @@ class AnswerSingleResponse(Answer):
     activity = models.ForeignKey(PlayerActivity, related_name='singleresponse_answers')
 
     def __unicode__(self):
-        return _('an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.activity)
 
 #This is nasty but it's the simple way to get many checked values
 #for the user stored
@@ -60,7 +61,7 @@ class AnswerMap(Answer):
     activity = models.ForeignKey(PlayerMapActivity, related_name='map_answers')
 
     def __unicode__(self):
-        return _('an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.activity)
 
     @models.permalink
     def get_absolute_url(self):
@@ -70,7 +71,7 @@ class AnswerEmpathy(Answer):
     activity = models.ForeignKey(PlayerEmpathyActivity, related_name='empathy_answers')
 
     def __unicode__(self):
-        return _('an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.activity)
 
     @models.permalink
     def get_absolute_url(self):
@@ -80,5 +81,5 @@ class AnswerOpenEnded(Answer):
     activity = models.ForeignKey(PlayerActivity, related_name='openended_answers')
 
     def __unicode__(self):
-        return _('an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.activity)
 

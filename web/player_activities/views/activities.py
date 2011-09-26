@@ -97,10 +97,15 @@ def _build_context(action, activity, user=None):
             map = None
             for answer in answers:
                 map = answer.map
+                message = None
+                if answer.comments.count():
+                    message = answer.comments.all()[0].message or None
+                player = answer.answerUser.get_profile().screen_name
+
                 markers = simplejson.loads("%s" % map)["markers"]
                 for coor in markers if markers != None else []:
                     coor = coor["coordinates"]
-                    init_coords.append( [x, coor[0], coor[1]] )
+                    init_coords.append( [x, coor[0], coor[1], message, player] )
                     x = x + 1
 
             if not map:
@@ -109,6 +114,7 @@ def _build_context(action, activity, user=None):
                 init_coords = init_coords,
                 map = map,
             ))
+            print "FINAL MAP:", map
 
     elif action in ['play', 'replay']:
 
@@ -314,11 +320,11 @@ def activity(request, activity_id, template=None, **kwargs):
                                     user=request.user,
                                     instance=activity.mission.instance,
                 )
-                if request.POST.has_key('yt-url'):
-                    if request.POST.get('yt-url'):
+                if request.POST.has_key('video-url'):
+                    if request.POST.get('video-url'):
                         comment.attachment.create(
                             file=None,
-                            url=request.POST.get('yt-url'),
+                            url=request.POST.get('video-url'),
                             type='video',
                             user=request.user,
                             instance=activity.mission.instance)

@@ -23,7 +23,7 @@
             <h2>{% trans "Current Mission" %} <span class="fine">{{mission.start_date|date:"n/j"}}&#8211;{{mission.end_date|date:"n/j"}}</span></h2>
             {% if mission.video %}
             <div class="video">
-                {% youtube_video mission.video %}
+                {% embed_video mission.video %}
             </div>
             {% endif %}
             <h3>{{mission.name}}</h3>
@@ -172,22 +172,12 @@
         </thead>
     </table>
     <table>
-        <thead>
-            
-            <tr><th>{% trans "Leader" %}</th><th>{% trans "Board" %}</th></tr>            
-        </thead>
+        <thead><tr><th>{% trans "Leader" %}</th><th>{% trans "Board" %}</th></tr></thead>
         <tbody>
         {% for aff in affiliations_leaderboard %}            
-            {% for item in aff %}
-                <tr>
-                {% if forloop.first %}
-                    <td><a href="{% url affiliations:affiliations_affiliation item %}">{{ item }}:</a></td><td></td>
-                {% else %}
-                    <td></td><td>{{ item }}</td>
-                {% endif %}                
-                </tr>            
-            {% endfor %}
-            
+            <tr>
+                <td><a href="{% url affiliations:affiliation %}?aff={{ aff.0|urlencode }}">{{ aff.0 }}:</a></td><td>{{ aff.1 }}</td>
+            </tr>            
         {% endfor %}
         </tbody>
     </table>

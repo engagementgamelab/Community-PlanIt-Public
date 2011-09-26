@@ -14,13 +14,13 @@ from web.comments.forms import CommentForm
 from web.comments.models import Comment
 #from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger, PointsAssigner
-from web.responses.comment.forms import CommentAttachmentResponseForm
+#from web.responses.comment.forms import CommentAttachmentResponseForm
 from web.core.utils import _fake_latest
 
 from PIL import Image
 
 @login_required
-def fetch(request, id):
+def challenge(request, id, template='challenges/base.html'):
     challenge = get_object_or_404(Challenge, id=id)
 
     try:
@@ -29,61 +29,63 @@ def fetch(request, id):
         pc = None
 
     if request.method == 'POST':
-        pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-        if not pc.completed:
-            carf = CommentAttachmentResponseForm(request.POST, instance=pc.response)
-            if carf.is_valid():
-                pc.response = carf.save()
-                pc.completed = True
-                pc.save()
+        form = PlayerChallengeForm(request.POST)
+        if form.is_valid():
+            if not pc:
+                pc = PlayerChallenge.objects.create(response = None, 
+                        player=request.user,
+                        challenge=challenge,
+                        completed = True)
+            comment = pc.comments.create(
+                content_object=pc,
+                message=form.cleaned_data['message'],
+                user=request.user,
+                instance=request.user.get_profile().instance,
+            )
 
-                ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges:challenge', args=[id]), 'challenge')
-                PointsAssigner().assign(request.user, 'challenge_completed')
-
-                if pc.player != challenge.user:
-                    message = "%s completed %s" % (
-                        request.user.get_profile().screen_name,
-                        challenge.name
-                    )
-                    challenge.user.notifications.create(content_object=challenge, message=message)
-
-                if request.POST.has_key('yt-url'):
-                    if request.POST.get('yt-url'):
-                        pc.attachments.create(
+            if request.POST.has_key('video-url'):
+                if request.POST.get('video-url'):
+                    comment.attachment.create(
                             file=None,
-                            url=request.POST.get('yt-url'),
+                            url=request.POST.get('video-url'),
                             type='video',
                             user=request.user,
-                            instance=request.user.get_profile().instance
-                        )                
-                if request.FILES.has_key('picture'):
-                    file = request.FILES.get('picture')
-                    picture = Image.open(file)
-                    if (file.name.rfind(".") -1):
-                        file.name = "%s.%s" % (file.name, picture.format.lower())
-                    pc.attachments.create(
-                        file=request.FILES.get('picture'),
-                        user=request.user,
-                        instance=request.user.get_profile().instance
-                    )
+                            instance=request.user.get_profile().instance)
 
-                    return HttpResponseRedirect(reverse('challenges:challenge', args=[id]))
+            if request.FILES.has_key('picture'):
+                file = request.FILES.get('picture')
+                picture = Image.open(file)
+                if (file.name.rfind(".") -1):
+                    file.name = "%s.%s" % (file.name, picture.format.lower())
+                comment.attachment.create(
+                    file=request.FILES.get('picture'),
+                    user=request.user,
+                    instance=request.user.get_profile().instance)
+
+
+            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges:challenge', args=[id]), 'challenge')
+            PointsAssigner().assign(request.user, 'challenge_completed')
+
+            if pc.player != challenge.user:
+                message = "%s completed %s" % (
+                    request.user.get_profile().screen_name,
+                    challenge.name
+                )
+                challenge.user.notifications.create(content_object=challenge, message=message)
+
+
+            return HttpResponseRedirect(reverse('challenges:challenge', args=[id]))
     else:
-        carf = CommentAttachmentResponseForm()
+        form = PlayerChallengeForm()
 
     data = {
         'challenge': challenge,
         'player_challenge': pc,
         'instance': challenge.instance,
-        'comment_form': CommentForm(),
-        'response_form': carf,
+        #'comment_form': CommentForm(),
+        'response_form': form,
     }
-
-    return render_to_response(
-        'challenges/base.html',
-        data,
-        context_instance=RequestContext(request)
-    )
+    return render_to_response(template, data, context_instance=RequestContext(request))
 
 @login_required
 def accept(request, id):
@@ -136,7 +138,7 @@ def add(request):
             challenge.save()
 
             PointsAssigner().assign(request.user, 'challenge_created')
-            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'created', '/challenge/'+ str(challenge.id), 'challenge')
+            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'created', reverse('challenges:challenge', args=[challenge.id]), 'challenge')
 
             return HttpResponseRedirect(reverse('challenges:index'))
     else:
@@ -179,8 +181,8 @@ def comment(request, id):
     instance = request.user.get_profile().instance
 
     if request.method == 'POST':
-        if request.POST.has_key('yt-url'):
-            url = request.POST.get('yt-url')
+        if request.POST.has_key('video-url'):
+            url = request.POST.get('video-url')
             if url:
                 a = Attachment(
                     file=None,
@@ -259,5 +261,4 @@ def all(request):
         'instance': instance,
         'new_challenges': new_challenges,
     }, 
-    #[ip]
     )))

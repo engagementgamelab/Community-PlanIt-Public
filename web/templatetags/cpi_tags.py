@@ -16,7 +16,7 @@ from django.utils.html import fix_ampersands
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, get_language
 
-from core.utils import get_translation_with_fallback
+from web.core.utils import get_translation_with_fallback
 
 register = template.Library()
 

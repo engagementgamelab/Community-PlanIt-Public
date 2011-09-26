@@ -5,6 +5,7 @@ import re
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.utils.translation import get_language
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 
@@ -65,8 +66,8 @@ def detail(request, id):
                 instance=value.instance
             )
 
-            if request.POST.has_key('yt-url'):
-                url = request.POST.get('yt-url')
+            if request.POST.has_key('video-url'):
+                url = request.POST.get('video-url')
                 if url:
                     comment.attachment.create(
                         file=None,
@@ -92,7 +93,7 @@ def detail(request, id):
             ActivityLogger().log(request.user, request, 'to value: ' + value.message[:30], 'added comment', log_url, 'value')
             return HttpResponseRedirect(reverse('values:detail', args=[id]))
 
-    values = Value.objects.filter(instance=value.instance)
+    values = value.instance.values.language(get_language())
     total_coins = values.aggregate(Sum('coins'))['coins__sum'] or 0
 
     tmpl = loader.get_template('values/base.html')

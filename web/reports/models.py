@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.utils import translation
 
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -9,8 +10,7 @@ from gmapsfield.fields import GoogleMapsField
 from localeurl.utils import locale_url
 from localeurl.templatetags.localeurl_tags import rmlocale
 
-from instances.models import Instance
-from django.utils import translation
+from web.instances.models import Instance
 
 class Activity(models.Model):
     action = models.CharField(max_length=48)

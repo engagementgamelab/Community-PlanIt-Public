@@ -75,7 +75,7 @@ def login(request, template_name='registration/login.html',
             lang = up.preferred_language
 
             if lang in dict(settings.LANGUAGES).keys():
-            	spath = strip_path(redirect_to)[1]
+                spath = strip_path(redirect_to)[1]
                 return HttpResponseRedirect(locale_path(spath, lang))
 
             return HttpResponseRedirect(redirect_to)
@@ -164,7 +164,7 @@ def forgot(request):
         messages.success(request, _('A temporary password has been sent to your email address.'))
 
         return HttpResponseRedirect(reverse('accounts:login'))
-        
+
     # If not valid, show normal form
     form = validate_and_generate(ForgotForm, request, valid)
     if(isinstance(form, ForgotForm)):
@@ -186,17 +186,17 @@ def edit(request):
     change_password_form = ChangePasswordForm()
     profile_form = UserProfileForm(instance=profile,
                                    initial={
-                                        'myInstance': profile.instance.id if profile.instance != None else 0,
-                                        'education': profile.education.id if profile.education != None else 0,
-                                        'income': profile.income.id if profile.income != None else 0,
-                                        'living': profile.living.id if profile.living != None else 0,
-                                        'gender': profile.gender.id if profile.gender != None else 0,
-                                        'race': profile.race.id if profile.race != None else 0,
-                                        'stake': profile.stake.id if profile.stake != None else 0,
-                                        'first_name': profile.user.first_name if profile.user.first_name != None else "",
-                                        'last_name': profile.user.last_name if profile.user.last_name != None else "",
-                                        'email': profile.email if profile.email != None else "",
-                                        'birth_year': profile.birth_year if profile.birth_year != None else "",
+                                        'myInstance': profile.instance.id if profile.instance is not None else 0,
+                                        'education': profile.education.id if profile.education is not None else 0,
+                                        'income': profile.income.id if profile.income is not None else 0,
+                                        'living': profile.living.id if profile.living is not None else 0,
+                                        'gender': profile.gender.id if profile.gender is not None else 0,
+                                        'race': profile.race.id if profile.race is not None else 0,
+                                        'stake': profile.stake.id if profile.stake is not None else 0,
+                                        'first_name': profile.user.first_name if profile.user.first_name is not None else "",
+                                        'last_name': profile.user.last_name if profile.user.last_name is not None else "",
+                                        'email': profile.email if profile.email is not None else "",
+                                        'birth_year': profile.birth_year if profile.birth_year is not None else "",
                                         'preferred_language': profile.preferred_language,
                                     }
     )
@@ -207,7 +207,7 @@ def edit(request):
             if change_password_form.is_valid():
                 password = change_password_form.cleaned_data['password']
                 confirm = change_password_form.cleaned_data['confirm']
-                
+
                 request.user.set_password(confirm)
                 request.user.save()
                 messages.success(request, "Your new password was saved.")
@@ -259,19 +259,19 @@ def edit(request):
 def profile(request, id):
     player = get_object_or_404(User, id=id)
     profile = player.get_profile()
-    
+
     instance = profile.instance
     log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
     comment_form = CommentForm(data=request.POST or None)
-    
+
     if request.method == 'POST':        
         if comment_form.is_valid():           
             comment = profile.comments.create(
                 content_object=profile,                 
                 user=request.user,
                 instance=instance,
+                message = u'%s' % comment_form.cleaned_data['message']
             ) 
-            comment.message = u'%s' % comment_form.cleaned_data['message']
             comment.save()
 
             if request.user != player:
@@ -280,8 +280,8 @@ def profile(request, id):
                 )
                 player.notifications.create(content_object=profile, message=message)
 
-            if request.POST.has_key('yt-url'):
-                url = request.POST.get('yt-url')
+            if request.POST.has_key('video-url'):
+                url = request.POST.get('video-url')
                 if url:
                     comment.attachment.create(
                         file=None,
@@ -301,14 +301,14 @@ def profile(request, id):
                     instance=instance
                 )           
             return HttpResponseRedirect(reverse('accounts_profile', args=[id]))    
-        
+
 
     values = Value.objects.filter(instance=profile.instance)
     community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
-    
+
     value_wrapper = []
     player_values = PlayerValue.objects.filter(user=player)
-    
+
     player_spent = player_values.aggregate(Sum('coins'))['coins__sum'] or 0
 
     for value in values:
@@ -320,9 +320,9 @@ def profile(request, id):
         else:
             value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': 0,
                                    'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
-    
+
     tmpl = loader.get_template('accounts/profile.html')
-    
+
     return HttpResponse(tmpl.render(RequestContext(request, {
         'player': player,
         'comment_form': comment_form,
@@ -357,12 +357,12 @@ def dashboard(request, template_name='accounts/dashboard.html'):
         last_mission = Mission.objects.order_by('end_date')
 
     page = request.GET.get('page', 1)
-    
+
     # Fetch activity log feed for dashboard.
     log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
     missions = instance and instance.missions.active() or Mission.objects.none()
     activities = PlayerActivity.objects.none()
-    
+
     if (missions.count() > 0):
         mission = missions[0]
         activities = []
@@ -372,7 +372,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
 
     completed_challenges = PlayerChallenge.objects.completed().filter(player=request.user)
     challenges = instance and instance.challenges.active().exclude(player_challenges__in=completed_challenges) or Challenge.objects.none()
-    
+
     completed = []
     for activity in activities:
         if activity.is_completed(request.user):
@@ -382,19 +382,19 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     activities_page = paginator.page(page)
 
     leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20]
-    
+
     affiliations_leaderboard = {}
     for user in UserProfile.objects.all().order_by("-totalPoints"):
-        user_affiliations = user.affiliations.split(', ')
-        for affiliation in user_affiliations:            
-            if not affiliation.strip() == '':
-                if affiliation in affiliations_leaderboard:
-                    affiliations_leaderboard[affiliation] += user.totalPoints
-                else:
-                    affiliations_leaderboard[affiliation] = user.totalPoints
-                
-    affiliations_leaderboard = sorted(affiliations_leaderboard.items(), reverse=True)[:20]    
-
+        if user.affiliations is not None and user.affiliations.strip() != u'':
+            user_affiliations = user.affiliations.split(', ')
+            for affiliation in user_affiliations:
+                if affiliation != u'':
+                    if affiliations_leaderboard.has_key(affiliation):
+                        affiliations_leaderboard[affiliation] += user.totalPoints
+                    else:
+                        affiliations_leaderboard[affiliation] = user.totalPoints
+    if affiliations_leaderboard:
+        affiliations_leaderboard = sorted(affiliations_leaderboard.items(), key=lambda pts: pts[1], reverse=True)[:20]
     context = dict(
         log = log,
         last_mission = last_mission,
@@ -421,7 +421,7 @@ def admin_instance_email(request, instance_id=None):
              "instance": instance,
              "instance": instance,
              })))
- 
+
 @login_required
 def admin_sendemail(request):
     if not request.user.is_superuser:
@@ -432,7 +432,7 @@ def admin_sendemail(request):
     s = ""
     for x in request.POST:
         s = "%s%s: %s<br>" % (s, x, request.POST[x])
-    
+
     instance = Instance.objects.untranslated().get(id=int(request.POST["instance_id"]))
     form = AdminInstanceEmailForm(request.POST)
     if form.is_valid():
@@ -443,7 +443,7 @@ def admin_sendemail(request):
         for up in ups:
             send_mail(subject, body, settings.NOREPLY_EMAIL, [up.user.email], fail_silently=False)
         return HttpResponseRedirect(reverse("home"))
-        
+
     tmpl = loader.get_template("admin/instance_email.html")
     return HttpResponse(tmpl.render(RequestContext(request, { 
              "form": form,

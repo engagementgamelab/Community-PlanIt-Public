@@ -32,11 +32,11 @@ def comment_fun(answer, request, form=None, message=''):
         instance=request.user.get_profile().instance,
     )
 
-    if request.POST.has_key('yt-url'):
-        if request.POST.get('yt-url'):
+    if request.POST.has_key('video-url'):
+        if request.POST.get('video-url'):
             comment.attachment.create(
                     file=None,
-                    url=request.POST.get('yt-url'),
+                    url=request.POST.get('video-url'),
                     type='video',
                     user=request.user,
                     instance=request.user.get_profile().instance)

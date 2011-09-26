@@ -27,8 +27,8 @@
         </span><br>
         {% if player.get_profile.affiliations %}
         <span style="font-size: 1em">{% trans "Affiliated With" %}:
-            {%for a in player.get_profile.affiliations_csv %} 
-            <a href="{% url affiliations:affiliations_affiliation a %}" class="highlight">{{a}}</a>
+            {%for affiliation in player.get_profile.affiliations_csv %} 
+            <a class="highlight" href="{% url affiliations:affiliation %}?aff={{ affiliation|urlencode }}">{{ affiliation }}</a>
             {% endfor %}
         </span>
         {% endif %}
@@ -66,8 +66,23 @@
     </div>
     
     <div style="clear: both; padding: 1em 0;">
-        {% with player.get_profile.comments as comments %}
-            {% include "comments/post.html" %}	            
+        {% with comments=player.get_profile.comments comment_heading=comment_heading|default:"Comments" %}
+        <div class="comments">
+            {% if not comment_form.just_one_form %}
+                {% include "comments/comments.html" %}
+            {% else %}
+            <h2>{% blocktrans %}{{comment_heading}}{% endblocktrans %}</h2>
+            {% endif %}
+            {% if instance.is_active %}
+            <h3>{% blocktrans with player=player.get_profile.screen_name %}Share your thoughts with {{player}} &#8212; leave a comment below{% endblocktrans %}</h3>
+                <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
+                    {% include "comments/duplicate.html" %}
+                    <button type="submit" class="button right">Add Comment</button>
+                </form>
+            {% else %}
+            <p>This community is no longer active.</p>
+            {% endif %}
+        </div>
         {% endwith %}
         <div style="clear: both;"></div>
     </div>

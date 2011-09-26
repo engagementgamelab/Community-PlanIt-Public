@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from gmapsfield.fields import GoogleMapsField
 
 from web.instances.models import Instance
+from web.challenges.models import PlayerChallenge
 
 def list_submodels(parent):
     _models = []
@@ -44,3 +45,10 @@ class AddChallenge(forms.Form):
             if self.cleaned_data.get('end_date') < self.cleaned_data.get('start_date'):
                 raise forms.ValidationError(_("Please enter an end date after the start date."))
         return self.cleaned_data.get('end_date')
+
+class PlayerChallengeForm(forms.ModelForm):
+    message = forms.CharField(widget=forms.Textarea)
+    class Meta:
+        model = PlayerChallenge
+        exclude = ('player', 'challenge',)
+

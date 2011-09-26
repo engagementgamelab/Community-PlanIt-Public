@@ -32,7 +32,7 @@ def like(request, id):
     c = Comment.objects.get(id=id)
     if request.user != c.user:
         c.likes.add(request.user)
-        message = "%s liked your comment on %s" % (
+        message = u"%s liked your comment on %s" % (
             request.user.get_profile().screen_name,
             c.content_object
         )
@@ -46,7 +46,7 @@ def reply(request, id):
   
     c = parent_comment.comments.create(
         content_object=parent_comment,
-        message=request.POST.get('message'), 
+        message=request.POST.get(u'message'), 
         user=request.user,
         instance=instance,
     )
@@ -103,29 +103,29 @@ def edit(request, id, lang_code=None):
             # can only have one attachment, this needs to be enforced. 
             comment.attachment.clear()
 
-            if request.POST.has_key('yt-url'):
-                if request.POST.get('yt-url'):
+            if request.POST.has_key(u'video-url'):
+                if request.POST.get(u'video-url'):
                     comment.attachment.create(
                             file=None,
-                            url=request.POST.get('yt-url'),
-                            type='video',
+                            url=request.POST.get(u'video-url'),
+                            type=u'video',
                             user=request.user,
                             instance=request.user.get_profile().instance)
             
-            if request.FILES.has_key('picture'):
-                file = request.FILES.get('picture')
+            if request.FILES.has_key(u'picture'):
+                file = request.FILES.get(u'picture')
                 picture = Image.open(file)
                 if (file.name.rfind(".") -1):
                     file.name = "%s.%s" % (file.name, picture.format.lower())
                 comment.attachment.create(
-                    file=request.FILES.get('picture'),
+                    file=request.FILES.get(u'picture'),
                     user=request.user,
                     instance=request.user.get_profile().instance)
             return HttpResponseRedirect(comment.get_absolute_url())
 
     comment_form = CommentForm(initial={'message': comment.message})
    
-    tmpl = loader.get_template('comments/edit.html')
+    tmpl = loader.get_template(u'comments/edit.html')
     
     if comment.user != request.user:
         return HttpResponse(tmpl.render(RequestContext(request, {"not_permitted": True }, 

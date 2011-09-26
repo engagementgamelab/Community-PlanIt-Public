@@ -13,7 +13,7 @@
 {% endif %}
 
 {% if mission.is_expired %}
-<p class="notice">This mission has ended on {{ mission.end_date|date:"F j, Y" }}.</p>
+<p class="notice">{% blocktrans with end_date=mission.end_date|date:"F j, Y" %}This mission ended on {{ end_date }}.{% endblocktrans %}</p>
 {% endif %}
 
 {% if not mission.is_future %}
@@ -49,7 +49,7 @@
 {% if activities and mission.is_active %}
     {% trans "You've completed" %} {{ completed|length }}/{{ activities|length }} {% trans "activities" %}:
 {% else %}
-    Activities:
+    {% trans "Activities" %}:
 {% endif %}</h3>
 <table class="activities">
     <tbody>

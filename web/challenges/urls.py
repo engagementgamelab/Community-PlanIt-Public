@@ -1,19 +1,19 @@
 from django.conf.urls.defaults import *
 from django.contrib.auth.views import login, logout
 
-urlpatterns = patterns('',
+urlpatterns = patterns('web.challenges.views',
     # Accept
-    url(r'^(?P<id>\d+)/accept/$', 'challenges.views.accept', name='accept'),
+    url(r'^(?P<id>\d+)/accept/$', 'accept', name='accept'),
     # Decline
-    url(r'^(?P<id>\d+)/decline/$', 'challenges.views.decline', name='decline'),
+    url(r'^(?P<id>\d+)/decline/$', 'decline', name='decline'),
     # Comment
-    url(r'^(?P<id>\d+)/comment/$', 'challenges.views.comment', name='comment'),
+    url(r'^(?P<id>\d+)/comment/$', 'comment', name='comment'),
 
     # Add
-    url(r'^add/$', 'challenges.views.add', name='add'),
-    url(r'^remove/$', 'challenges.views.delete', name='delete'),
-    # Fetch
-    url(r'^(?P<id>\d+)/$', 'challenges.views.fetch', name='challenge'),
+    url(r'^add/$', 'add', name='add'),
+    url(r'^remove/$', 'delete', name='delete'),
+    #Submit Response
+    url(r'^(?P<id>\d+)/$', 'challenge', name='challenge'),
     # Show all
-    url(r'^$', 'challenges.views.all', name='index'),
+    url(r'^$', 'all', name='index'),
 )

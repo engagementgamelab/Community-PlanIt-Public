@@ -17,7 +17,7 @@ from django.contrib.formtools.wizard import FormWizard
 from web.accounts.models import *
 from web.instances.models import Instance
 
-from core.utils import get_translation_with_fallback
+from web.core.utils import get_translation_with_fallback
 
 class RegisterFormOne(forms.Form):
 
@@ -117,6 +117,8 @@ class RegisterFormTwo(forms.Form):
         all_livings = UserProfileLivingSituation.objects.untranslated().filter(instance=self.community).order_by("pos")
         livings = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'situation')) for x in all_livings]
         self.fields['living'] = forms.ChoiceField(label=_(u'Living Situation'), required=False, choices=livings)
+
+        self.fields['affiliations'] = forms.CharField(required=False, label=_('Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club'))
         
         all_hows = UserProfileHowDiscovered.objects.untranslated().filter(instance=self.community).order_by("pos")
         hows = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'how')) for x in all_hows]
@@ -201,6 +203,7 @@ class RegistrationWizard(FormWizard):
         profile.gender = form_two.cleaned_data.get('gender')
         profile.income = form_two.cleaned_data.get('income')
         profile.living = form_two.cleaned_data.get('living')
+        profile.affiliations = form_two.cleaned_data.get('affiliations')
         profile.race = form_two.cleaned_data.get('race')
         profile.stake = form_two.cleaned_data.get('stake')
         profile.how_discovered = form_two.cleaned_data.get('how_discovered')
