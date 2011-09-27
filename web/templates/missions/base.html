@@ -18,7 +18,7 @@
 
 {% if not mission.is_future %}
 	{% if mission.video %}
-	<div class="left video">{% youtube_video mission.video %}</div>
+	<div class="left video">{% embed_video mission.video %}</div>
 	<div class="description" style="margin-left: 340px;">
 	    {{mission.description|linebreaksbr}}
 	</div>
