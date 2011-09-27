@@ -68,7 +68,6 @@ INSTALLED_APPS = (
     'django_extensions',
     'sentry',
     'sentry.client',
-    #'debug_toolbar',
     'gmapsfield',
     'gmapsfield.templatetags',
     'nani',

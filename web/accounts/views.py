@@ -384,17 +384,32 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20]
 
     affiliations_leaderboard = {}
-    for user in UserProfile.objects.all().order_by("-totalPoints"):
-        if user.affiliations is not None and user.affiliations.strip() != u'':
-            user_affiliations = user.affiliations.split(', ')
-            for affiliation in user_affiliations:
-                if affiliation != u'':
-                    if affiliations_leaderboard.has_key(affiliation):
-                        affiliations_leaderboard[affiliation] += user.totalPoints
-                    else:
-                        affiliations_leaderboard[affiliation] = user.totalPoints
-    if affiliations_leaderboard:
-        affiliations_leaderboard = sorted(affiliations_leaderboard.items(), key=lambda pts: pts[1], reverse=True)[:20]
+    #for user in UserProfile.objects.all().order_by("-totalPoints"):
+    #    if user.affiliations is not None and user.affiliations.strip() != u'':
+    #        user_affiliations = user.affiliations.split(', ')
+    #        for affiliation in user_affiliations:
+    #            if affiliation != u'':
+    #                if affiliations_leaderboard.has_key(affiliation):
+    #                    affiliations_leaderboard[affiliation] += user.totalPoints
+    #                else:
+    #                    affiliations_leaderboard[affiliation] = user.totalPoints
+    #if affiliations_leaderboard:
+    #    affiliations_leaderboard = sorted(affiliations_leaderboard.items(), key=lambda pts: pts[1], reverse=True)[:20]
+
+
+    all_aff = UserProfile.objects.exclude(affiliations__isnull=True).exclude(affiliations=u'').values_list('affiliations', flat=True).distinct()
+    s = set()
+    for x in all_aff:
+        for y in x.split(','):
+            if y.strip() != '':
+                s.add(y.strip().lower())
+    print s
+
+    for a in s:
+        affiliations_leaderboard[a.title()] = UserProfile.objects.select_related('user').filter(affiliations__icontains=a).aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
+    affiliations_leaderboard = sorted(affiliations_leaderboard.items(), key=lambda pts: pts[1], reverse=True)[:20]
+
+    print affiliations_leaderboard
     context = dict(
         log = log,
         last_mission = last_mission,
