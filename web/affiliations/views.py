@@ -20,7 +20,7 @@ def affiliation(request):
     if not aff:
         return Http404("affiliation could not be located")
 
-    players = UserProfile.objects.select_related('user').filter(affiliations__contains=aff)
+    players = UserProfile.objects.select_related('user').filter(affiliations__icontains=aff)
 
     affiliation_points = players.aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
 
