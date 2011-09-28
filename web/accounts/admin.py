@@ -7,7 +7,11 @@ from web.accounts.models import *
 class UserProfileOptionAdmin(TranslatableAdmin):
     list_display = ('__str__', 'instance', 'pos', 'all_translations')
 
-admin.site.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'instance', 'affiliations',)
+    search_fields = ('affiliations',)
+
+admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(UserProfileEducation, UserProfileOptionAdmin)
 admin.site.register(UserProfileGender, UserProfileOptionAdmin)
 admin.site.register(UserProfileHowDiscovered, UserProfileOptionAdmin)
