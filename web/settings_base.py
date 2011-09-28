@@ -10,6 +10,10 @@ ROOTDIR = os.path.dirname(os.path.realpath(__file__))
 # Standard Django settings
 #
 ADMIN_MEDIA_PREFIX = '/admin-media/'
+
+#admin_tools
+ADMIN_TOOLS_MEDIA_URL = '/static/'
+
 ADMINS = ( ('Benedict Holland', 'sheepskin505@gmail.com'), )
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 AUTHENTICATION_BACKENDS = ( 'web.accounts.backends.EmailBackend', )
@@ -147,6 +151,7 @@ LOCALE_INDEPENDENT_PATHS = (
     #re.compile('^/$'),
     re.compile('^/ajax/'),
     re.compile('^/assets/'),
+    re.compile('^/static/'),
     re.compile('^/admin-media/'),
     re.compile('^/favicon.ico$'),
 )

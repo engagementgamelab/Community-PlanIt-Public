@@ -15,10 +15,10 @@ from django.contrib.contenttypes.models import ContentType
 
 from nani.models import TranslatableModel, TranslatedFields
 
-from web.comments.models import Comment
-from web.accounts.models import *
-from web.challenges.models import *
-from web.instances.models import Instance
+from comments.models import Comment
+from accounts.models import *
+from challenges.models import *
+from instances.models import Instance, Affiliation
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
@@ -148,6 +148,7 @@ class UserProfile(models.Model):
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
     preferred_language = models.CharField(max_length=5, default='en-us')
     affiliations = models.TextField(blank=True, null=True, default='')
+    affils = models.ManyToManyField(Affiliation)
 
     # Additional profile fields
     birth_year = models.IntegerField(blank=True, null=True, default=0)

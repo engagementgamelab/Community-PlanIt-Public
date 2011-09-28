@@ -10,6 +10,7 @@ class UserProfileOptionAdmin(TranslatableAdmin):
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'instance', 'affiliations',)
     search_fields = ('affiliations',)
+    filter_horizontal = ('affils',)
 
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(UserProfileEducation, UserProfileOptionAdmin)

@@ -17,7 +17,7 @@ from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
 __all__ = (
-    'Language', 'Instance', 'PointsAssignment', 'NotificationRequest',
+    'Language', 'Instance', 'PointsAssignment', 'NotificationRequest', 'Affiliation',
 )
 
 
@@ -27,6 +27,15 @@ class Language(models.Model):
 
     def __unicode__(self):
         return "%s <%s>" %(self.name, self.code)
+
+
+class Affiliation(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=10, blank=True, default='')
+
+    def __unicode__(self):
+        return "%s" %(self.name,)
+
 
 class InstanceManager(TranslationManager):
 
@@ -50,6 +59,7 @@ class Instance(TranslatableModel):
     location = GoogleMapsField()
     curators = models.ManyToManyField(User)
     languages = models.ManyToManyField(Language)
+    affiliations = models.ManyToManyField(Affiliation)
     days_for_mission = models.IntegerField(default=7)
 
     translations = TranslatedFields(
