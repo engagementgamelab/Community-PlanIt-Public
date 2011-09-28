@@ -2,16 +2,22 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
 from django.template import Context, RequestContext, loader
+from django.conf import settings
+
+from nani.utils import get_translation
 
 from web.accounts.models import UserProfile
+from web.reports.actions import PointsAssigner
 from web.answers.models import Answer
 from web.challenges.models import Challenge
 from web.comments.forms import *
 from web.comments.models import Comment
-from web.processors import instance_processor as ip
 
 from PIL import Image
+from attachments.models import Attachment
+
 
 @login_required
 def flag(request, id):
@@ -26,7 +32,7 @@ def like(request, id):
     c = Comment.objects.get(id=id)
     if request.user != c.user:
         c.likes.add(request.user)
-        message = "%s liked your comment on %s" % (
+        message = u"%s liked your comment on %s" % (
             request.user.get_profile().screen_name,
             c.content_object
         )
@@ -35,48 +41,49 @@ def like(request, id):
 
 @login_required
 def reply(request, id):
-    p = Comment.objects.get(id=id)
-    instance = request.user.get_profile().instance
+    parent_comment = get_object_or_404(Comment, id=id)
+    instance = parent_comment.instance
   
-    c = p.comments.create(
-        content_object=p,
-        message=request.POST.get('message'), 
+    c = parent_comment.comments.create(
+        content_object=parent_comment,
+        message=request.POST.get(u'message'), 
         user=request.user,
         instance=instance,
     )
+    PointsAssigner().assign(request.user, 'comment_created')
 
-    topic = p.topic
+    topic = parent_comment.topic
 
     recipient = None
-    if request.user != p.user:
-        message = "%s replied to your comment on %s" % (
-            request.user.get_profile().screen_name,
-            topic
-        )
-        recipient = p.user
-    elif isinstance(topic, Challenge):
-        message = "%s replied to a comment on %s" % (
-            request.user.get_profile().screen_name,
-            topic
-        )
-        recipient = topic.player
-    elif isinstance(topic, UserProfile):
-        message = "%s replied to a comment on your profile" % (
-            request.user.get_profile().screen_name
-        )
-        recipient = topic.user
+    if request.user != parent_comment.user:
+        if isinstance(topic, Challenge):
+            message = "%s replied to a comment on %s" % (
+                request.user.get_profile().screen_name,
+                topic
+            )
+            recipient = topic.user
+        elif isinstance(topic, UserProfile):
+            message = "%s replied to a comment on your profile" % (
+                request.user.get_profile().screen_name
+            )
+            recipient = topic.user
+        else:
+            message = "%s replied to your comment on %s" % (
+                request.user.get_profile().screen_name,
+                topic
+            )
+            recipient = parent_comment.user
 
     if recipient:
         recipient.notifications.create(content_object=c, message=message)
-
     return HttpResponseRedirect(c.get_absolute_url())
 
 @login_required
-def edit(request, id):
-    comment = Comment.objects.get(id=id)
-    instance = request.user.get_profile().instance
+def edit(request, id, lang_code=None):    
+    comment = get_object_or_404(Comment, id=id)    
     
     if request.method == "POST":
+        comment_form = CommentForm(request.POST)
         s = ""
         for x in request.POST.keys():
             s = "%s%s: %s<br>" % (s, x, request.POST[x])
@@ -85,7 +92,7 @@ def edit(request, id):
             s = "%s%s: %s" % (s, x, request.FILES[x])
         #return HttpResponse(s)
         
-        comment_form = CommentForm(request.POST)
+        
         if comment_form.is_valid(): 
             comment.message = comment_form.cleaned_data['message']
             comment.save()
@@ -96,38 +103,46 @@ def edit(request, id):
             # can only have one attachment, this needs to be enforced. 
             comment.attachment.clear()
 
-            if request.POST.has_key('yt-url'):
-                if request.POST.get('yt-url'):
+            if request.POST.has_key(u'video-url'):
+                if request.POST.get(u'video-url'):
                     comment.attachment.create(
                             file=None,
-                            url=request.POST.get('yt-url'),
-                            type='video',
+                            url=request.POST.get(u'video-url'),
+                            type=u'video',
                             user=request.user,
                             instance=request.user.get_profile().instance)
             
-            if request.FILES.has_key('picture'):
-                file = request.FILES.get('picture')
+            if request.FILES.has_key(u'picture'):
+                file = request.FILES.get(u'picture')
                 picture = Image.open(file)
                 if (file.name.rfind(".") -1):
                     file.name = "%s.%s" % (file.name, picture.format.lower())
                 comment.attachment.create(
-                    file=request.FILES.get('picture'),
+                    file=request.FILES.get(u'picture'),
                     user=request.user,
                     instance=request.user.get_profile().instance)
-            
-            activity_id = Answer.objects.get(id=comment.object_id).activity.id
-            return HttpResponseRedirect(reverse("player_activities_overview", args=[activity_id]))
-    else:
-        comment_form = CommentForm()
-    
-    comment_form.allow_replies = False
-    tmpl = loader.get_template('comments/edit.html')
+            return HttpResponseRedirect(comment.get_absolute_url())
+
+    comment_form = CommentForm(initial={'message': comment.message})
+   
+    tmpl = loader.get_template(u'comments/edit.html')
     
     if comment.user != request.user:
-        return HttpResponse(tmpl.render(RequestContext(request, {"not_permitted": True }, [ip])))
+        return HttpResponse(tmpl.render(RequestContext(request, {"not_permitted": True }, 
+            )))
     else:
         return HttpResponse(tmpl.render(RequestContext(request, {"comment": comment,
-                                                                 "comment_form": comment_form }, [ip])))
+                                                                 "comment_form": comment_form }, 
+                                                                 )))
+
                                                                  
 
+    
+
+@login_required
+def remove_attachment(request, id, comment_id):
+    attachment = get_object_or_404(Attachment, id=id)
+    comment = get_object_or_404(Comment, id=comment_id) 
+    attachment.delete()
+    return HttpResponseRedirect(reverse("comments:edit", args=[comment.pk,]))
     

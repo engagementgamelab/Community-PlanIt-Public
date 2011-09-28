@@ -6,6 +6,7 @@
 
 assets/CACHE
 assets/uploads
+web/cpi.log
 web/settings.py
 data/
 data/staging

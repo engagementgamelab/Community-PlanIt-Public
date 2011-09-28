@@ -1,29 +1,57 @@
-{%extends "player_activities/base.html"%}
-{% load gmap attachment_tags %}
-{%block title%}Open Response Overview{%endblock%}
+{% extends "player_activities/base.html" %}
+{% load gmap attachment_tags i18n %}
+{% block title %}{{ activity.name }}: Empathy Question Overview{% endblock %}
 
-{%block main%}
-    <h1>Empathy Response Overview</h1>
-    <h2>{{activity.question}}</h2>
+{% block main %}
+{% if myAnswer %}
+<div class="suggestion">
+    <a class="back button" href="{{activity.mission.get_absolute_url}}"><img src="{{MEDIA_URL}}img/icons/arrow-back.png"> {% trans "Return to mission" %}</a>
+    {% blocktrans with mission_url=activity.mission.get_absolute_url %}
+    Thanks for completing this activity. When you're ready for more, visit the <a href="{{mission_url}}">mission page</a>.
+    {% endblocktrans %}
+</div>
+{% endif %}
+    <h1>{{activity.name}}</h1>
+
+    <p class="bio">
+        {% if activity.avatar %}
+            <img class="avatar left" src="{{MEDIA_URL}}/{{activity.avatar}}">
+        {% endif %}
+        {{activity.bio}}
+    </p>
     
-    <div>
-        <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
-    </div>
-    
-    {%if activity.avatar%}
-        <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
-    {%else%}               
-        <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-    {%endif%}
-     
-    {% if activity.bio %}
-        <h3>{{activity.bio}}</h3>
-    {% endif %}
+    <h3>{{ activity.question|safe }}</h3>
     
     {% include "player_activities/attachments.html" %}
-    
-    <div id="comments">
-        {%include "comments/post.html"%}
-        <div style="clear: both;"></div>
+
+    {% if not activity.mission.is_expired and myComment %}
+    <div>
+        <h3>{% trans "You answered:" %}</h3>
+        <blockquote class="highlight">{{ myComment.message }}</span></blockquote>
+        <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
     </div>
-{%endblock%}
+    {% endif %}
+    
+    {% if answers %}
+    <div class="comments embedded clear">
+        <h2>
+            {% trans "Responses" %}
+            <div class="controls right">
+                Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+            </div>
+        </h2>
+        <ul class="comment_list">
+        {% for answer in answers %}
+        {% with instance=activity.mission.instance comments=answer.comments %}
+            {% for comment in comments.all reversed %}
+                {% with extra_message=answer.selected.value %}
+                {% include "comments/comment.html" %}
+                {% endwith %}
+            {% endfor %}
+        {% endwith %}
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    
+{% endblock %}

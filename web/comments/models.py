@@ -4,7 +4,6 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
@@ -12,8 +11,8 @@ from django.contrib.contenttypes.models import ContentType
 from web.attachments.models import Attachment
 from web.instances.models import Instance
 
+
 class Comment(models.Model):
-    message = models.CharField(max_length=1000)
     posted_date = models.DateTimeField(default=datetime.datetime.now)
     flagged = models.IntegerField(default=0)
     hidden = models.BooleanField(default=False)
@@ -32,9 +31,19 @@ class Comment(models.Model):
                                      )
     object_id      = models.TextField(_('object ID'), blank=True)
     content_object = generic.GenericForeignKey()
-    
+
+    message = models.CharField(max_length=1000, blank=True, null=True)
+
     def __unicode__(self):
-        return self.message[:25] or ''
+        if self.message:
+            return self.message
+        else:
+            return self.pk
+        
+    def save(self, *args, **kwargs):
+        if len(self.message) > 1000:
+            self.message = self.message.replace('\r\n', '\n')
+        super(Comment, self).save(*args, **kwargs)
 
     #
     # URL resolution cribbed from django's contrib comments
@@ -66,34 +75,3 @@ class Comment(models.Model):
             'generic_redirect',
             args=(comment.content_type_id, comment.object_id)
         )
-
-class CommentAdmin(admin.ModelAdmin):
-    list_filter = ('posted_date', 'flagged', 'hidden')
-    list_display = ('posted_date', 'user', 'flagged', 'hidden', 'message')
-
-    actions = ['hide_selected', 'reveal_selected']
-
-    def get_actions(self, request):
-        actions = super(CommentAdmin, self).get_actions(request)
-        del actions['delete_selected']
-        return actions
-    
-    def hide_selected(self, request, queryset):
-        queryset.update(hidden=True)
-        count = queryset.count()
-        self.message_user(request, "Hid %d comment%s." % (count, (count == 1 and '' or 's')))
-
-    def queryset(self, request):
-        qs = super(CommentAdmin, self).queryset(request)
-        return qs.filter(instance=request.session.get('admin_instance'))
-
-    def save_model(self, request, obj, form, change):
-        obj.instance = request.session.get('admin_instance')
-        obj.user = request.user
-        obj.save()
-
-    def reveal_selected(self, request, queryset):
-        queryset.update(hidden=False)
-        count = queryset.count()
-        self.message_user(request, "Revealed %d comment%s." % (count, (count == 1 and '' or 's')))
-

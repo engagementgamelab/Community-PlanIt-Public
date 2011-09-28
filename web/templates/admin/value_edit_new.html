@@ -6,7 +6,7 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h2>Values for Instance: {{instance_value.name}}</h2>
+    <h2>Values for Instance n: {{instance_value.name}}</h2>
     <form action="" method="post">
         {%csrf_token%}
         <input type="hidden" name="instance_id" id="instance_id" value="{{instance_value.id}}"/>

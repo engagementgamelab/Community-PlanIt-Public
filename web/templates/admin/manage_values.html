@@ -1,0 +1,71 @@
+{%extends "layouts/base.html"%}
+{% load admin_tags %}
+
+{%block section%}misisons{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h1>Manage Values for Instance: {{ instance.title }}</h1>
+    {# if is_staff #}
+    <div>
+        <input type="button" value="New Value" onClick="window.location='{% url admin:value-new instance.pk %}' "/>
+    </div>
+    {# endif #}
+
+    {% for value, translations in data.items %}
+
+        <div>
+            <p>
+            <h2>{{ value }} - ({{ value.coins }}) coins</h2>
+            <div>
+                <p>Available Languages:
+                <strong> {{ instance.languages.all|languages_formatted }} </strong>
+                </p>                   
+            </div>
+                <input type="button" value="edit" onClick="window.location='{% url admin:value-edit instance.pk value.pk %}' "/>
+                <input type="button" value="delete" onClick="window.location='{% url admin:value-delete value.pk %}' "/>                
+                {% if translations.value_translations.all.count %}
+                <br/> <br/>
+                <input type="button" value="show translations" onClick="show_hide('trans_details_{{ value.pk }}')"/>
+                {% else %}
+                <p> no translation exist. edit object to add. </p>
+                {% endif %}
+            </p>
+        </div>
+        <div id="trans_details_{{ value.pk }}" style="display: None">
+            {% for t in translations.value_translations %}
+            <p>Coins: {{ value.coins }}</p>
+            <div>
+                <h2> {{ t.language_code|lang }}
+                    <input type="button" value="show" onClick="show_form('{{ t.pk }}')" />
+                </h2> 
+                <form id="id_trans-form-{{ t.pk}}" style="display: None"> 
+                    <p>Message: {{ t.message}}</p>                    
+                    <br>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+
+    
+    {% endfor %} <!-- instance for -->
+{%endblock%}
+
+{%block body%}
+    <script>       
+        function show_hide(id) {
+            elem = document.getElementById(id);
+            if (elem.style.display == "") {
+                elem.style.display = "none";
+            }
+            else {
+                elem.style.display = "";
+            }
+        }
+        
+        function show_form(instance_id) {
+            $("#id_trans-form-" + instance_id).toggle();            
+        }
+    </script>
+{% endblock %}

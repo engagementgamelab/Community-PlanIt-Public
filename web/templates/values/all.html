@@ -1,10 +1,10 @@
 {% extends "layouts/base.html" %}
-{% load humanize %}
+{% load humanize i18n %}
 
 {% block section %}values{% endblock %}
-{% block title %}Token Depot{% endblock %}
+{% block title %}{% trans "Token Depot" %}{% endblock %}
 {% block page_title %}
-<h2 id="page_title">Token <span>Depot</span></h2>
+<h2 id="page_title">{% trans "Token" %} <span>{% trans "Depot" %}</span></h2>
 {% endblock %}
 
 {% block head %}
@@ -136,14 +136,21 @@
 {% endblock head %}
 
 {% block main %}
+    {% with request.user as user%}
     <div class="full">
-        <p style="font-size: 1.25em;">Once you've earned some tokens in the system, you can spend them below
-           on community values. Watch the graphs shift as the community spends
-           its tokens and voices its priorities.  Be sure to use the links below
-           to discuss each community value.</p>
         <p style="font-size: 1.25em;">
-           You have <span style="font-weight: bold">{{user.get_profile.currentCoins|default:"no"|apnumber}}</span> 
-           token{{user.get_profile.currentCoins|pluralize}} to spend.
+            {% blocktrans with instance=user.get_profile.instance.title %}
+            What should {{ instance}} prioritize? Spend your tokens on the
+            values that matter to you and tell decision-makers what's important
+            to the community.
+            {% endblocktrans %}
+           </p>
+        <p style="font-size: 1.25em;">
+            {% blocktrans with pretty_coins=user.get_profile.currentCoins|default:"no"|apnumber count coins=user.get_profile.currentCoins %}
+            You have <span style="font-weight: bold">{{ pretty_coins }}</span> token to spend.
+            {% plural %}
+            You have <span style="font-weight: bold">{{ pretty_coins }}</span> tokens to spend.
+            {% endblocktrans %}
        </p>
         
         <div>
@@ -152,10 +159,8 @@
                     <table>
                         <tbody>
                             <tr>
-                                <th>Your <div class="spent">tokens:</div></th>
-                                <td>{{player_spent}}</td>
-                                <th>Your total <div class="spent">earned:</div></th>
-                                <td>{{user.get_profile.earned_tokens}}</td>
+                                <th>{% blocktrans %}Your tokens <div class="spent">earned:</div>{% endblocktrans %}</th>
+                                <td>{{ user.get_profile.earned_tokens }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -170,7 +175,10 @@
                 <div class="banner">
                     <table>
                         <tbody>
-                            <tr><th>Community <div class="spent">spent:</div></th><td>{{community_spent}}</td></tr>
+                            <tr>
+                                <th>{% blocktrans %}Community <div class="spent">spent:</div>{% endblocktrans %}</th>
+                                <td>{{ community_spent }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -187,15 +195,15 @@
         <div class="values-wrapper">
             {% if values|length %}
             <table class="values"> 
-                <th>Community Values</th>
-                <th>Community Spending</th>
-                <th>Your Spending</th>
+                <th>{% trans "Community Values" %}</th>
+                <th>{% trans "Community Spending" %}</th>
+                <th>{% trans "Your Spending" %}</th>
                 <th>&nbsp;</th>
                 {% for wrapper in value_wrapper %}
                     <tr>
                         <td class="alignleft">
-                            <a href="{% url values_detail wrapper.value.id %}" class="value-message">{{wrapper.value.message}}</a>
-                            <span class="fine">({{wrapper.value.comments.all|length}} comments)</span>
+                            <a href="{% url values:detail wrapper.value.id %}" class="value-message">{{wrapper.value.message}}</a>
+                            <span class="fine">({{wrapper.value.comments.all|length}} {% trans "comments" %})</span>
                         </td>
                         <td>
                             {{wrapper.value.coins}}
@@ -207,15 +215,15 @@
                             {% if not instance.is_expired %}
 
                             {% if user.get_profile.currentCoins > 0 %}
-                            <a href="{% url values_spend wrapper.value.id %}" class="button">Spend</a>
+                            <a href="{% url values:spend wrapper.value.id %}" class="button">{% trans "Spend" %}</a>
                             {% else %}
-                            <div class="button disabled">Spend</div>
+                            <div class="button disabled">{% trans "Spend" %}</div>
                             {% endif %}
 
                             {% if wrapper.player_coins %}
-                            <a href="{% url values_take wrapper.value.id %}" class="button">Take back</a>
+                            <a href="{% url values:take wrapper.value.id %}" class="button">{% trans "Take back" %}</a>
                             {% else %}
-                            <div class="button disabled">Take back</div>
+                            <div class="button disabled">{% trans "Take back" %}</div>
                             {% endif %}
 
                             {% endif %}
@@ -224,7 +232,7 @@
                 {% endfor %}
             </table>
             {% else %}
-                <span>No values created yet for this instance</span>
+            <span>{% trans "No values created yet for this instance" %}</span>
             {% endif %}
         </div>
     </div>
@@ -236,7 +244,7 @@
         var globalData = [];
         var i = 0;
         {% if community_spent == 0 %}
-        globalData[i] = { label: "No tokens have been spent.", data: 1 }
+        globalData[i] = { label: "{% trans "No tokens have been spent." %}", data: 1 }
         {% else %}
         {% for wrapper in value_wrapper %}
         globalData[i] = {
@@ -250,7 +258,7 @@
         var userData = [];
         i = 0;
         {% if player_spent == 0 %}
-        userData[i] = { label: "You haven't spent any tokens yet.", data: 1 }
+        userData[i] = { label: "{% trans "You haven't spent any tokens yet." %}", data: 1 }
         i++;
         {% else %}
             {% for wrapper in value_wrapper %}
@@ -272,10 +280,10 @@
                         show: true,
                         radius: 1/2,
                         formatter: function(label, series) {
-                            var output = '<div style="font-size:.8em;text-align:center;color:black;">' + label;
-                            {% if community_spent > 0 %}
-                            output += '<br/>'+Math.round(series.percent)+'%</div>';
-                            {% endif %}
+                            var output = '<div class="pielabel">' + label;
+                            if (series.percent < 100) {
+                                output += '<br/><strong>'+Math.round(series.percent)+'%</strong></div>';
+                            }
                             return output;
                         },
                         threshold: 0.1
@@ -308,10 +316,10 @@
                         show: true,
                         radius: 1/2,
                         formatter: function(label, series) {
-                            var output = '<div style="font-size:.8em;text-align:center;color:black;">' + label;
-                            {% if player_spent > 0 %}
-                            output += '<br/>'+Math.round(series.percent)+'%</div>';
-                            {% endif %}
+                            var output = '<div class="pielabel">' + label;
+                            if (series.percent < 100) {
+                                output += '<br/><strong>'+Math.round(series.percent)+'%</strong></div>';
+                            }
                             return output;
                         },
                         threshold: 0.1
@@ -334,4 +342,5 @@
     
 </script>
 
+{% endwith %}
 {% endblock %}

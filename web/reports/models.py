@@ -1,11 +1,14 @@
 import datetime
 
 from django.db import models
+from django.utils import translation
 
 from django.contrib import admin
 from django.contrib.auth.models import User
 
 from gmapsfield.fields import GoogleMapsField
+from localeurl.utils import locale_url
+from localeurl.templatetags.localeurl_tags import rmlocale
 
 from web.instances.models import Instance
 
@@ -27,12 +30,9 @@ class Activity(models.Model):
     def __unicode__(self):
         label = self.action +' - '+ self.data
         return label
-
-class ActivityAdmin(admin.ModelAdmin):
-    def save_model(self, request, obj, form, change):
-        obj.instance = request.session.get('admin_instance')
-        obj.save()
-
-    def queryset(self, request):
-        qs = super(ActivityAdmin, self).queryset(request)
-        return qs.filter(instance=request.session.get('admin_instance'))
+    
+    def get_url(self):
+        if self.url:            
+            url = rmlocale(self.url)            
+            return locale_url(url, translation.get_language())
+        return None

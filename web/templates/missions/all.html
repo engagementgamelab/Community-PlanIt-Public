@@ -1,50 +1,67 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
 {% load game_extras %}
 
 {% block section %}missions rightsidebar{% endblock %}
 
-{% block title %}Missions{% endblock %}
+{% block title %}{% trans "Missions" %}{% endblock %}
 {% block page_title %}
 <h2 id="page_title">
 {% if instance.is_expired %}
-    {{instance}} is not active at this time.
+    {{instance}} {% trans "is not active at this time" %}.
 {% else %}
-    Current Mission{{missions.active.count|pluralize}}
+    {% trans "Current Mission" %}{{missions.active.count|pluralize}}
 {% endif %}
 </h2>
 {% endblock %}
 
 {% block main %}
 <ul class="listless">
-{% for mission in missions.active %}
+{% for mission in active_missions %}
     <li>
         <h3>
-            <a href="{% url missions_mission mission.slug %}">{{mission.name}}</a>
+            <a href="{% url missions:mission mission.slug %}">{% if mission.name %}{{ mission.name }}{% else %}{{ mission.title }}{% endif %}</a>
             <span class="dates">
-                {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
+                {{ mission.start_date|date:"m/d/Y" }} &#8211; {{ mission.end_date|date:"m/d/Y" }}
             </span>
         </h3>
-        <div class="description">{{mission.description|linebreaksbr}}</div>
+        <div class="description">{{ mission.description|linebreaksbr }}</div>
     </li>
 {% empty %}
-    <li>There are no active missions at this time.</li>
+    <li>{% trans "There are no active missions at this time" %}.</li>
 {% endfor %}
 </ul>
 
-<h2>Upcoming Missions</h2>
+<h2>{% trans "Upcoming Missions" %}</h2>
 <ul class="listless">
-{% for mission in missions.future %}
+{% for mission in future_missions %}
     <li>
         <h3>
-            <a href="{% url missions_mission mission.slug %}">{{mission.name}}</a>
+            <a href="{% url missions:mission mission.slug %}">{% if mission.name %}{{ mission.name }}{% else %}{{ mission.title }}{% endif %}</a>
             <span class="dates">
                 {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
             </span>
         </h3>
     </li>
 {% empty %}
-    <li>There are no upcoming missions at this time.</li>
+    <li>{% trans "There are no upcoming missions at this time." %}</li>
+{% endfor %}
+</ul>
+
+<h2>{% trans "Past Missions" %}</h2>
+<ul class="listless">
+{% for mission in past_missions %}
+    <li>
+        <h3>
+            <a href="{% url missions:mission mission.slug %}">{% if mission.name %}{{ mission.name }}{% else %}{{ mission.title }}{% endif %}</a>
+            <span class="dates">
+                {{mission.start_date|date:"m/d/Y"}} &#8211; {{mission.end_date|date:"m/d/Y"}}
+            </span>
+        </h3>
+    </li>
+{% empty %}
+    <li>{% trans "There are no past missions at this time." %}</li>
 {% endfor %}
 </ul>
 {% endblock %}

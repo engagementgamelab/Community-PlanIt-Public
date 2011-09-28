@@ -6,7 +6,7 @@
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <form action="{% url value-save %}" method="post">
+    <form action="{% url admin:value-save %}" method="post">
         {%csrf_token%}
         <input type="hidden" name="instance_id" id="instance_id" value="{{instance_value.id}}"/>
         

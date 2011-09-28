@@ -1,103 +1,99 @@
 {% extends "layouts/base.html" %}
-{% load gmap attachment_tags %}
+{% load gmap attachment_tags i18n %}
 {% block section %}challenges{% endblock %}
-{% block title %}Challenge{% endblock %}
+{% block title %}{% trans "Challenge" %}{% endblock %}
 {% block page_title %}
 <h2 id="page_title">{{challenge.name}}</h2>
 {% endblock %}
 
 {% block main %}
+{% if challenge.user.get_profile %}
+{% url accounts_profile challenge.user.pk as creator_profile_url %}
+<h3>{% blocktrans with creator=challenge.user.get_profile.screen_name %}Created by <a href="{{creator_profile_url}}">{{creator}}</a>{% endblocktrans %}</h3>
+{% endif %}
 
-<p>{{challenge.description}}</p>
+<p>{{ challenge.description }}</p>
 
 <div>
 {% if not challenge.is_active %}
     {% if challenge.is_expired %}
-        This challenge has expired.
+        {% trans "This challenge has expired." %}
     {% else %}
-        This challenge has not yet started.
+        {% trans "This challenge has not yet started." %}
     {% endif %}
 {% endif %}
 </div>
 
-{{challenge.map|show}}
+{{ challenge.map|show }}
 
 {% if challenge.is_active and not player_challenge.completed %}
-    <p>Provide evidence to complete this challenge:</p>
+    <p>{% trans "Provide evidence to complete this challenge:" %}</p>
 
-    <form class="response" enctype="multipart/form-data" action="{% url challenges_challenge challenge.pk %}" method="POST">
+    <form class="response" enctype="multipart/form-data" action="{% url challenges:challenge challenge.pk %}" method="POST">{% csrf_token %}
+
         {{response_form.errors}}
 
-        {% csrf_token %}
         <div class="attachments">
             <div class="controls">
-                Include <a id="add-video" href="#add-video" class="add-video button small">Youtube Video</a> or <a id="add-picture" href="#add-picture" class="add-picture button small">Picture</a>
+                {% blocktrans %}
+                Include <a id="add-video" href="#add-video" class="add-video button small">Video</a> or <a id="add-picture" href="#add-picture" class="add-picture button small">Picture</a>
+                {% endblocktrans %}
             </div>
             <div class="add-video form">
-                <label for="yt-url">Paste the URL of your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID.</label>
-                <textarea name="yt-url" type="text" maxlength="255"></textarea>
+                <label id="video-url_label" for="video-url">{% trans "Paste the link to your video below. For Vimeo, it should look like http://vimeo.com/VIDEOID. For YouTube, it should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID." %}</label>
+                <textarea name="video-url" type="text" maxlength="255"></textarea>
                 <div class="controls">
-                    <button class="button small add">add</button>
-                    <button type="reset" class="button small reset">remove</button>
+                    <button class="button small add">{% trans "add" %}</button>
+                    <button type="reset" class="button small reset">{% trans "remove" %}</button>
                 </div>
             </div>
             <div class="add-picture form">
-                <label for="picture">Picture (max size 5MB):</label> <input name="picture" type="file">
+                <label for="picture">{% trans "Picture (max size 5MB)" %}:</label> <input name="picture" type="file">
                 <div class="controls">
-                    <button class="button small add">add</button>
-                    <button type="reset" class="button small reset">remove</button>
+                    <button class="button small add">{% trans "add" %}</button>
+                    <button type="reset" class="button small reset">{% trans "remove" %}</button>
                 </div>
             </div>
             <div class="notification"></div>
         </div>
         {{response_form.message}}
-        <div class="fine counter">(<span class="count">1000</span> characters left)</div>
-        <button type="submit" class="button submit right">Submit response</button>
+        <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div>
+        <button type="submit" class="button submit right">{% trans "Submit response" %}</button>
         <div style="clear: both;"></div>
     </form>
 {% endif %}
 
 {% if challenge.is_started %}
-<h2>Responses</h2>
+<h2>{% trans "Responses" %}</h2>
 
 {% for pc in challenge.player_challenges.completed %}
-<div class="response">
-    <div class="meta">
-    {% if pc.player.user.get_profile.avatar %}
-        <img class="avatar" src="{{MEDIA_URL}}/{{pc.player.get_profile.avatar}}">
-    {% else %}               
-        <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-    {% endif %} 
-        <p>{{pc.player.get_profile.screen_name}} completed this challenge.</p>
-    </div>
-    <div class="main">
-        <div class="attachments">
-        {% for attachment in pc.attachments.all %}
-            {% if attachment.is_valid %}
-            <div>
-                {% if attachment.type == 'video' %}
-                {% youtube_video attachment.url %}
-                {% else %}
-                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                {% endif %}
+    {% if pc.comments.all %}
+    <div class="comments embedded">
+        <h2>
+            {{pc.player.get_profile.screen_name}}'s {% trans "response" %}
+            <div class="controls right">
+                Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
             </div>
-            {% else %}
-            <div class="notice">This content is currently unavailable.</div>
-            {% endif %}
-        {% endfor %}
-        </div>
-        <p>{{pc.response.message}}</p>
+        </h2>
+        {% with instance=pc.challenge.instance comments=pc.comments %}
+        {% if comments.all %}
+        <ul class="comment_list">
+            {% for comment in comments.all reversed %}
+                {# with extra_message=answer.selected.value #}
+                {% include "comments/comment.html" %}
+                {# endwith #}
+            {% empty %}
+            <li class="comment">{% trans "No comments found." %}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
     </div>
-</div>
+    {% endif %}
 {% empty %}
-    <p>No one has completed this challenge</p>
+<p>{% trans "No one has completed this challenge." %}</p>
 {% endfor %}
 {% endif %}
-
-{% url challenges_comment challenge.id as comment_post_url %}
-{% with challenge.comments as comments %}
-{% include "comments/post.html" %}
-{% endwith %}
 
 {% endblock %}
 

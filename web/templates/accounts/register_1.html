@@ -1,0 +1,78 @@
+{% extends "accounts/register_base.html" %}
+{% load i18n %}
+
+{% block section %}accounts{% endblock %}
+
+{% block title %}{% trans "Registration" %}{% endblock %}
+
+{% block page_title %}
+<h2 id="page_title">{% blocktrans %}Registration: Step {{step}} of {{step_count}}{% endblocktrans %}</h2>
+{% endblock %}
+
+{% block main %}
+    {% if form.errors or form.non_field_errors or wizard_error %}
+    <div id="form_errors" class="error">
+        {% trans "Please correct the errors below." %}
+        {{form.non_field_errors.as_ul}}
+        {{wizard_error}}
+    </div>
+    {% endif %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="{{step_field}}" value="{{step0}}"/>
+        {{previous_fields|safe}}
+
+        <div class="left half">
+            {{form.stake.label_tag}}
+            {{form.stake}}
+            {{form.stake.errors}}
+
+            {{form.gender.label_tag}}
+            {{form.gender}}
+            {{form.gender.errors}}
+
+            {{form.race.label_tag}}
+            {{form.race}}
+            {{form.race.errors}}
+
+            {{form.education.label_tag}}
+            {{form.education}}
+            {{form.education.errors}}
+
+            {{form.income.label_tag}}
+            {{form.income}}
+            {{form.income.errors}}
+
+            {{form.living.label_tag}}
+            {{form.living}}
+            {{form.living.errors}}
+
+            {{ form.affiliations.label_tag }}
+            {{ form.affiliations }}
+            {{ form.affiliations.errors }}
+
+        </div>
+        <div class="left half">
+            {{form.how_discovered.label_tag}}
+            {{form.how_discovered}}
+            {{form.how_discovered.errors}}
+
+            {{form.how_discovered_other.label_tag}}
+            {{form.how_discovered_other}}
+            {{form.how_discovered_other.errors}}
+        </div>
+        <div class="clear">
+            {{form.accepted_terms.label_tag}}
+            {{form.accepted_terms}}
+            {{form.accepted_terms.errors}}
+        </div>
+        <div class="clear">
+            {% if step == step_count %}
+            <input class="button submit" type="submit" value="Register">
+            {% else %}
+            <input class="button submit" type="submit" value="Continue">
+            {% endif %}
+        </div>
+    </form>
+{% endblock %}

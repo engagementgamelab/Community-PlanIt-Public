@@ -1,32 +1,58 @@
-{%extends "layouts/base.html"%}
+{% extends "layouts/base.html" %}
+{% load i18n %}
 
-{%block section%}challenges{%endblock%}
+{% block section %}challenges{% endblock %}
 
-{%block title%}Add | Challenges{%endblock%}
-{%block page_title%}{%endblock%}
+{% block title %}Create Challenge{% endblock %}
+{% block page_title %}
+    <h2 id="page_title">{% trans "Create Challenge" %}</h2>
+{% endblock %}
 
-{%block content-title%}
-    {%if instance%}
-        {{instance}}
-    {%else%}
-        {%if session%}
-            {{session}} has not started yet
-        {%else%}
-            Not associated with a session.
-        {%endif%}
-    {%endif%}
-{%endblock%}
-{%block main%}
-    <h2>Create new Challenge</h2>
+{% block main %}
     <form action="" method="POST">
-        {%csrf_token%}
+        {% csrf_token %}
         <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
-        {{form.as_p}}
-        <input type="submit" class="button submit" value="Create Challenge">
+
+        <div class="fieldWrapper">
+            {{form.name.label_tag}}
+            {{form.name}}
+            {{form.name.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.description.label_tag}}
+            <div class="help">
+                {{form.description.help_text}}
+            </div>
+            {{form.description}}
+            {{form.description.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.map.label_tag}}
+            {{form.map}}
+            {{form.map.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.start_date.label_tag}}
+            {{form.start_date}}
+            {{form.start_date.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.end_date.label_tag}}
+            {{form.end_date}}
+            {{form.end_date.errors}}
+        </div>
+
+        <div class="controls">
+            <input type="submit" class="button submit" value="{% trans "Create Challenge" %}">
+        </div>
     </form>
-{%endblock%}
+{% endblock %}
     
-{%block body%}
+{% block body %}
     <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript" src="/admin/gmapsfield/admin/admin.js"></script>
     <script src="{{MEDIA_URL}}3pty/js/date.js" type="text/javascript" charset="utf-8"></script>
@@ -34,17 +60,21 @@
         jQuery(function($) {
             $(".add-map, .remove-map").remove();
 
-            $("#id_end_date").datetimepicker({
-                    hourGrid: 6,
-                    minuteGrid: 10,
-                	ampm: false
-                });
-            
-            $("#id_start_date").datetimepicker({
+            $("#id_end_date_0").datepicker();
+            $("#id_end_date_1").timepicker({
                 hourGrid: 6,
-                minuteGrid: 10,
-            	ampm: false
+                minuteGrid: 15,
+                ampm: true,
+                timeFormat: "hh:mm TT"
+            });
+
+            $("#id_start_date_0").datepicker();
+            $("#id_start_date_1").timepicker({
+                hourGrid: 6,
+                minuteGrid: 15,
+            	ampm: true,
+                timeFormat: "hh:mm TT"
             });
         });
     </script>
-{%endblock%}
+{% endblock %}

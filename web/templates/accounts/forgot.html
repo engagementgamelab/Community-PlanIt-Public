@@ -1,18 +1,18 @@
 {%extends "layouts/base.html" %}
+{% load i18n %}}
 
 {%block section%}accounts{%endblock%}
 
-{%block title%}Forgot password{%endblock%}
-{%block page_title%}Forgot password{%endblock%}
-{%block asideholder%}{%endblock%}
+{%block title%}{% trans "Forgot password" %}{%endblock%}
+{%block page_title%}<h2 id="page_title">{% trans "Forgot password" %}</h2>{%endblock%}
 
 {%block main%}
     <div class="wrapper">
-        <div class="pad">Enter in your email address below and we'll send you a new password right away!</div>
+        <div class="pad">{% trans "Enter in your email address below and we'll send you a new password right away!" %}</div>
         <form action="" method="post">
             {%csrf_token%}
             {{form.as_p}}
-            <button class="button">Reset my password</button>
+            <button class="button">{% trans "Reset my password" %}</button>
         </form>
     </div>
 {%endblock%}

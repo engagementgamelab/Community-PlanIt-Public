@@ -1,36 +1,86 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
 {%block section%}accounts{%endblock%}
-{%block title%}Edit Profile{%endblock%}
+{%block title%}{% trans "Update Your Profile" %}{%endblock%}
 {%block page_title%}
-<h2 id="page_title">Update Your Profile</h2>
 {%endblock%}
 {%block main%}
     <div class="profile-wrapper">
     {%if profile_form.errors %}
-        Form errors
+    <p class="error">{% trans "Please correct the errors below" %}</p>
     {%endif%}
-        <!-- TODO CSS: make the avatar text appear below
-            the image without having to resort to style="width:100%" as this
-            is a bad anoying hack. -->
-        <div class="half">
-            <label>Your current avatar</label>
-            {%if user.get_profile.avatar%}
-                <img class="avatar-edit" src="{{MEDIA_URL}}{{user.get_profile.avatar}}" style="width:100%;">
-            {%else%}
-                <img class="avatar-edit" src="{{MEDIA_URL}}img/avatar-blank.jpg" style="width:100%;">
-            {%endif%}
-            
+        <div class="left half">
+            <h2>{% trans "Update Your Profile" %}</h2>
+                <div>
+                    <label style="font-size: .75em; font-style:italic;">* denotes a required field</label>
+                </div>
+            <form enctype="multipart/form-data" action="" method="post">
+                <input type="hidden" name="form" value="updated_profile">
+                {%csrf_token%}
+                <div class="fieldWrapper">
+                    {{ profile_form.first_name.label_tag }}
+                    {{ profile_form.first_name }}
+                    {{ profile_form.first_name.errors }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.last_name.label_tag }}
+                    {{ profile_form.last_name }}
+                    {{ profile_form.last_name.errors }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.email.label_tag}}
+                    {{ profile_form.email }}
+                    {{ profile_form.email.errors }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.receive_email.label_tag}}
+                    {{ profile_form.receive_email }}
+                    {{ profile_form.receive_email.errors }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.preferred_language.label_tag }}
+                    {{ profile_form.preferred_language }}
+                    {{ profile_form.preferred_language.errors }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.stake.label_tag }}
+                    {{ profile_form.stake }}
+                    {{ profile_form.stake.errors }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ profile_form.affiliations.label_tag }}
+                    {{ profile_form.affiliations.help_text }}
+                    {{ profile_form.affiliations }}
+                    {{ profile_form.affiliations.errors }}
+                </div>
+                <div class="fieldWrapper">
+                    <label>{% trans "Your current avatar" %}</label>
+                    {%if user.get_profile.avatar%}
+                        <img class="avatar-edit" src="{{MEDIA_URL}}{{user.get_profile.avatar}}">
+                    {%else%}
+                        <img class="avatar-edit" src="{{MEDIA_URL}}img/avatar-blank.jpg">
+                    {%endif%}
+                    
+                    <label class="clear" for="id_stake">{% trans "New Avatar (leave empty to keep)" %}</label>
+                    {{ profile_form.avatar }}
+                    {{ profile_form.avatar.errors }}
+                </div>
+                
+                <input type="submit" class="button submit" value="Update Profile" />
+            </form>
+        </div>
+        <div class="right third">
+            <h2>{% trans "Change Your Password" %}</h2>
             <form action="" method="post">
                 <input type="hidden" name="form" value="change_password">
-                <label>Change Password:</label>
                 {%csrf_token%}
                 {%if change_password_form.errors%}
-                    <span class="error">Passwords must match</span>
+                {{change_password_form.errors}}
                 {%endif%}
-                <div><label>Password</label></div>
+                <div><label>{% trans "Password" %}</label></div>
                 {{change_password_form.password}}
-                <div><label>Confirm<label></label></div>
+                <div><label>{% trans "Password again to confirm" %}<label></label></div>
                 {{change_password_form.confirm}}
                 <br>
                 <input type="submit" class="button submit" value="Change Password" />
@@ -39,112 +89,6 @@
 
         </div>
         
-        <div class="half last">
-            
-            <div class="twothird"></div>
-            <form enctype="multipart/form-data" action="" method="post">
-                <input type="hidden" name="form" value="updated_profile">
-                {%csrf_token%}
-                <div class="fieldWrapper">
-                    {{ profile_form.avatar.errors }}
-                    <label for="id_stake">Avatar:</label>
-                    {{ profile_form.avatar }}
-                </div>
-                
-                <div class="fieldWrapper">
-                    {{ profile_form.email.errors }}
-                    <label for="id_email">Email:*</label>
-                    {{ profile_form.email }}
-                    <p style="font-size: .75em; font-style:italic;">{{ profile_form.affiliations.help_text }}</p>
-                </div>
-                <div class="fieldWrapper">
-                    {{ profile_form.first_name.errors }}
-                    <label for="id_first_name">First Name:*</label>
-                    {{ profile_form.first_name }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ profile_form.last_name.errors }}
-                    <label for="id_last_name">Last Name:*</label>
-                    {{ profile_form.last_name }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ profile_form.stake.errors }}
-                    <label for="id_stake">stake</label>
-                    {{ profile_form.stake }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ profile_form.affiliations.errors }}
-                    <label for="id_affiliations">Affiliations:</label>
-                    {{ profile_form.affiliations }}
-                   <p style="font-size: .75em; font-style:italic;">{{ profile_form.affiliations.help_text }}</p>
-                </div>
-                <br>
-                <br>
-                <hr>
-                <div>
-                    <label style="font-size: 1em;">
-                        The information below will be used by administrators only to better understand Community
-                        PlanIt users. Other users cannot see this information. Please see our
-                        <a href="{% url privacy %}">privacy policy</a>.
-                    </label>
-                </div>
-                <div class="fieldWrapper">
-                    {{ profile_form.gender.errors }}
-                    <label for="id_gender">Gender:</label>
-                    {{ profile_form.gender }}
-                    <p style="font-size: .75em; font-style:italic;">{{ profile_form.gender.help_text }}</p>
-                </div>
-                <div class="fieldWrapper">
-                    {{ profile_form.birth_year.errors }}
-                    <label for="id_birth_year">Age:</label>
-                    {{ profile_form.birth_year }}
-                    <p style="font-size: .75em; font-style:italic;">{{ profile_form.birth_year.help_text }}</p>
-                </div>
-                <div class="fieldWrapper">
-                    {{ profile_form.race.errors }}
-                    <label for="id_race">Race/Ethnicity:</label>
-                    {{ profile_form.race }}
-                </div>
-                
-                <!--
-                {% if user.is_superuser == True or user.is_staff == True %}
-                    <div class="fieldWrapper">
-                        {{ profile_form.myInstance.errors }}
-                        <label for="id_myInstance">Community</label>
-                        {{ profile_form.myInstance }}
-                    </div>
-                {%endif%}
-                -->
-                <div class="fieldWrapper">
-                    {{ profile_form.myInstance.errors }}
-                    <label for="id_myInstance">Community</label>
-                    {{ profile_form.myInstance }}
-                </div>
-                
-                <div class="fieldWrapper">
-                    {{ profile_form.education.errors }}
-                    <label for="id_education">Educational attainment:</label>
-                    {{ profile_form.education }}
-                </div>
-                
-                <div class="fieldWrapper">
-                    {{ profile_form.incomes.errors }}
-                    <label for="id_incomes">Household income:</label>
-                    {{ profile_form.income }}
-                </div>
-                
-                <div class="fieldWrapper">
-                    {{ profile_form.living.errors }}
-                    <label for="id_incomes">Current Living Situation:</label>
-                    {{ profile_form.living }}
-                </div>
-                
-                <input type="submit" class="button submit" value="Update Profile" />
-                <div>
-                    <label style="font-size: .75em; font-style:italic;">* denotes a required field</label>
-                </div>
-            </form>
-        </div>
         <div style="clear:both;"></div>
     </div>
 {%endblock%}

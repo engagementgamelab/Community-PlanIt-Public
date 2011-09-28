@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
             for user_profile in instance.user_profiles.filter(user__is_active=True):
                 user = user_profile.user
-                if email_re.search(user.email or ''):
+                if email_re.search(user_profile.email or ''):
                     data['user'] = user
                     body = tmpl.render(Context(data))
-                    send_mail(_('Community PlanIT Weekly Mission Update'), body, settings.NOREPLY_EMAIL, [user.email])
+                    send_mail(_('Community PlanIT Weekly Mission Update'), body, settings.NOREPLY_EMAIL, [user_profile.email])

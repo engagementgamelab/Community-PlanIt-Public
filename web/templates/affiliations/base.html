@@ -1,44 +1,67 @@
 {%extends "layouts/base.html"%} 
+{% load i18n %}
 
 {%block section%}affiliations{%endblock%}
-{%block title%}Affiliations{%endblock%}
-{%block page_title%}affiliations{%endblock%}
+{%block title%}{% trans "Affiliations" %}{%endblock%}
+{%block page_title%}<h2 id="page_title">{% trans "Affiliations" %}</h2>{%endblock%}
 
 {%block main%}
     {%if affiliation|length%}
         <h2>{{affiliation}}</h2>
         <p>
-            has <span class="highlight">{{affiliation_leaderboard|length}}</span> players, who have scored a collective <span class="highlight">{{affiliation_points}}</span> points.
+        {% blocktrans count player_count=affiliation_leaderboard|length %}
+            <span class="highlight">{{player_count}}</span> player, who has scored <span class="highlight">{{affiliation_points}}</span> points.
+            {% plural %}
+            <span class="highlight">{{player_count}}</span> players, who have scored a collective <span class="highlight">{{affiliation_points}}</span> points.
+        {% endblocktrans %}
         </p>
-        {%for user in players%}
-        <a href="{% url accounts_profile user.id %}">
-            {%if user.get_profile.avatar%}
-                <img class="avatar" src="{{MEDIA_URL}}/{{user.get_profile.avatar}}">
+        {%for user_profile in players%}
+        <a href="{% url accounts_profile user_profile.user.id %}" title="{{ user_profile.screen_name }}">
+            {%if user_profile.avatar%}
+                <img class="avatar" src="{{MEDIA_URL}}{{user_profile.avatar}}" title="{{ user_profile.screen_name }}">
             {%else%}               
-                <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+                <img class="avatar" src="{{MEDIA_URL}}img/avatar-blank.jpg">
             {%endif%}
             </a> 
         {%endfor%}
 
         {%if affiliation_leaderboard|length%}
         <div class="leaderboard-wrapper" style="clear:both;">
-            <h3>Leaderboard</h3>
+            <h3>{% trans "Leaderboard" %}</h3>
             <table class="leaderboard">
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Points</th>
-
+                <th>{% trans "Rank" %}</th>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Points" %}</th>
                 {%for user in affiliation_leaderboard%}
                     <tr>
                         <td>{{forloop.counter}}</td>
-                        <td>{{user.get_profile.screen_name}}</td>
-                        <td>{{user.get_profile.points}}</td>
+                        <td>{{user.screen_name}}</td>
+                        <td>{{user.totalPoints}}</td>
+                    </tr>
+                {%endfor%}
+            </table>
+        </div>
+        <div style="clear:both;">&nbsp;</div>
+        {%endif%}
+        {% comment %}
+        {%if affiliations_leaderboard|length%}
+        <div class="leaderboard-wrapper" style="clear:both;">
+            <h3>{% trans "Affiliation Leaderboard" %}</h3>
+            <table class="leaderboard">
+                <th>{% trans "Rank" %}</th>                
+                <th>{% trans "Name" %}</th>               
+
+                {%for aff in affiliations_leaderboard%}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ aff }}</td>                        
                     </tr>
                 {%endfor%}
             </table>
         </div>
         {%endif%}
+        {% endcomment %}
     {%else%}
-        <h2>No affiliation found.</h2>
+    <h2>{% trans "No affiliation found." %}</h2>
     {%endif%}
 {%endblock%}

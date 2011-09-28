@@ -1,0 +1,26 @@
+{% extends "layouts/base.html" %}
+{% load i18n %}
+
+{% block section %}accounts{% endblock %}
+
+{% block title %}{% trans "Registration" %}{% endblock %}
+
+{% block page_title %}
+<h2 id="page_title">{% blocktrans %}Registration: Step {{step}} of {{step_count}}{% endblocktrans %}</h2>
+{% endblock %}
+
+{% block aside %}
+<div>
+    <h2>{% trans "Thanks for your interest in Community PlanIt!" %}</h2>
+</div>
+<div>
+{% blocktrans %}
+Before you register, you should read our privacy policy and terms of use.
+{% endblocktrans %}
+</div>
+
+<div>
+    <p><a href="{% url privacy %}" target="_blank">{% trans "View Privacy Policy" %}</a></p>
+    <p><a href="{% url terms %}" target="_blank">{% trans "View Terms of Use" %}</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{%extends "layouts/base.html"%}
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+<h1>Delete {{ inst_formatted }}?</h1>
+
+    <div>
+    <form id="id_instance-form" action="." method="post"> {%csrf_token%}
+
+        <div>
+            <input type="submit" class="btn-submit" name="submit_btn" value="Confirm Delete?" />
+            <input type="submit" class="btn-submit" name="submit_btn" value="Cancel"
+                            onClick="window.location='{{ redir_cancel }}'"/>
+        </div>
+    </form>
+    </div>
+
+{%endblock%}
+

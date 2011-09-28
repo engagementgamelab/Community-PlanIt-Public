@@ -12,11 +12,9 @@ from web.instances.models import Instance
 def index(request):
     # Show index page
     if not request.user.is_authenticated():
-        data = {
-            'instances': Instance.objects.all(),
-        }
-        return render_to_response('index.html', data, context_instance=RequestContext(request))
-
+        context = { 'active_instances': Instance.objects.active(), }
+        return render_to_response('index.html', context, context_instance=RequestContext(request)
+        )
     return dashboard(request)
 
 @never_cache

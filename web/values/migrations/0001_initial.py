@@ -4,6 +4,7 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
@@ -17,14 +18,6 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('values', ['Value'])
 
-        # Adding M2M table for field comments on 'Value'
-        db.create_table('values_value_comments', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('value', models.ForeignKey(orm['values.value'], null=False)),
-            ('comment', models.ForeignKey(orm['comments.comment'], null=False))
-        ))
-        db.create_unique('values_value_comments', ['value_id', 'comment_id'])
-
         # Adding model 'PlayerValue'
         db.create_table('values_playervalue', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -34,18 +27,13 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('values', ['PlayerValue'])
 
-
     def backwards(self, orm):
         
         # Deleting model 'Value'
         db.delete_table('values_value')
 
-        # Removing M2M table for field comments on 'Value'
-        db.delete_table('values_value_comments')
-
         # Deleting model 'PlayerValue'
         db.delete_table('values_playervalue')
-
 
     models = {
         'attachments.attachment': {
@@ -92,14 +80,14 @@ class Migration(SchemaMigration):
         'comments.comment': {
             'Meta': {'object_name': 'Comment'},
             'attachment': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['attachments.Attachment']", 'null': 'True', 'blank': 'True'}),
-            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['comments.Comment']", 'symmetrical': 'False', 'blank': 'True'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'content_type_set_for_comment'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
             'flagged': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'hidden': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
+            'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'comments'", 'to': "orm['instances.Instance']"}),
             'likes': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'liked_comments'", 'blank': 'True', 'to': "orm['auth.User']"}),
-            'message': ('django.db.models.fields.CharField', [], {'max_length': '1000'}),
-            'posted_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'object_id': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'posted_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'contenttypes.contenttype': {
@@ -111,14 +99,13 @@ class Migration(SchemaMigration):
         },
         'instances.instance': {
             'Meta': {'object_name': 'Instance'},
-            'content': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'curator': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
-            'end_date': ('django.db.models.fields.DateTimeField', [], {}),
+            'curators': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'}),
+            'end_date': ('django.db.models.fields.DateTimeField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location': ('gmapsfield.fields.GoogleMapsField', [], {}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
-            'start_date': ('django.db.models.fields.DateTimeField', [], {})
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
+            'start_date': ('django.db.models.fields.DateTimeField', [], {}),
+            'state': ('django.db.models.fields.CharField', [], {'max_length': '2'})
         },
         'values.playervalue': {
             'Meta': {'object_name': 'PlayerValue'},
@@ -128,9 +115,8 @@ class Migration(SchemaMigration):
             'value': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['values.Value']"})
         },
         'values.value': {
-            'Meta': {'object_name': 'Value'},
+            'Meta': {'ordering': "['message']", 'object_name': 'Value'},
             'coins': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'comments': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['comments.Comment']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
             'message': ('django.db.models.fields.CharField', [], {'max_length': '260'})

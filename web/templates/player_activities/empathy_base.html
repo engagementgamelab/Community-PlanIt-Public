@@ -1,26 +1,33 @@
-{%extends "player_activities/base.html"%}
-{%block title%}Empathy Response{%endblock%}
+{% extends "player_activities/base.html" %}
+{% load i18n %}
+{% block title %}Empathy Response{% endblock %}
 
-{%block activity%}
-    <form enctype="multipart/form-data" action="" method="post">
+{% block activity %}
+    {{ block.super }}
+    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">{% csrf_token %}
         <input type="hidden" name="form" value="empathy">
-        {% csrf_token %}
-        <h2>{{activity.question|urlize}}</h2>
+
+        <h1>{{activity.name}}</h1>
+
+        <p class="bio">
+            {% if activity.avatar %}
+                <img class="left avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
+            {% endif %}
+            {{activity.bio}}
+        </p>
         
-        {%if activity.avatar%}
-            <img class="avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
-        {%else%}               
-            <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
-        {%endif%}
-         
-        {% if activity.bio %}
-            <h3>{{activity.bio}}</h3>
-        {% endif %}
-        
+        <h3 class="clear">{{activity.question|safe}}</h3>
+
         {% include "player_activities/attachments.html" %}
+         
+        <h3>{% trans "Enter your response (required)" %}</h3>
+        {{ form.response }}
+        <h4>You have <span id="charsLeft"></span> chars left.</h4>
         
         {% block comment %}{% endblock %}
-        
-        <input type="submit" class="button submit" value="Submit" />
+        <div class="controls">
+            <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
+        </div>
     </form>
-{%endblock%}
+{% endblock %}
+

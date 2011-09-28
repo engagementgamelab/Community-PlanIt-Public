@@ -38,7 +38,7 @@
             {% endfor %}
         </table>
         <hr class="space">
-        <a href="{% url lists_instance community.slug %}" class="right">View all players &rarr;</a>
+        <a href="{% url lists:lists_instance community.slug %}" class="right">View all players &rarr;</a>
     {% else %}
         No players in this community.
     {% endif %}
@@ -46,7 +46,7 @@
 {% else %}
 {% if not community.is_started %}
 <p>If you'd like to be notified via email when this community gets going, just leave us your email address. This is all we'll use it for, and we won't share it with anyone.</p>
-<form action="{% url instances_instance community.slug %}" method="POST">
+<form action="{% url instances:instance community.slug %}" method="POST">
     {% csrf_token %}
     {{notification_form}}
     <div class="controls">
@@ -71,8 +71,8 @@
             {% endif %} 
             <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a>
             {{activity.data}} 
-            {% if activity.url %}
-                <a href="{{activity.url}}">{{activity.action}}</a>
+            {% if activity.get_url %}
+                <a href="{{activity.get_url}}">{{activity.action}}</a>
             {% else %}
                 {{activity.action}}
             {% endif %}

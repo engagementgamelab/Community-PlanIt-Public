@@ -1,11 +1,11 @@
-{%csrf_token%}
+{% csrf_token %}
 <div class="attachments">
     <div class="controls">
-        Include <a id="add-comment-video" href="#add-comment-video" class="add-video button small">Youtube Video</a> or <a id="add-comment-picture" href="#add-comment-picture" class="add-picture button small">Picture</a>
+        Include <a id="add-comment-video" href="#add-comment-video" class="add-video button small">Video</a> or <a id="add-comment-picture" href="#add-comment-picture" class="add-picture button small">Picture</a>
     </div>
     <div class="add-comment-video form">
-        <label id="yt-url_label" for="yt-url">Paste the link to your YouTube video below. It should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID.</label>
-        <textarea name="yt-url" type="text" maxlength="255"></textarea>
+        <label id="video-url_label" for="video-url">Paste the link to your video below. For Vimeo, it should look like http://vimeo.com/VIDEOID. For YouTube, it should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID.</label>
+        <textarea name="video-url" type="text" maxlength="255"></textarea>
         <div class="controls">
             <button class="button small add">add</button>
             <button type="reset" class="button small reset">remove</button>
@@ -20,6 +20,6 @@
     </div>
     <div class="notification"></div>
 </div>
-{{comment_form.message.errors}}
+{# comment_form.message.errors #}
 <textarea id="message_area" name="message" class="comment_message" cols="80" rows="6"></textarea>
 <div class="fine counter">(<span class="count">1000</span> characters left)</div>

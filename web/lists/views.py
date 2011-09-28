@@ -8,9 +8,10 @@ from django.contrib.auth.models import User
 
 from web.accounts.models import UserProfile
 from web.instances.models import Instance
-from web.processors import instance_processor as ip
+#from web.processors import instance_processor as ip
 from web.values.models import *
 
+@login_required
 def display_list(request, players, title):
     p = Paginator(players, 10)
 
@@ -28,32 +29,12 @@ def display_list(request, players, title):
     return HttpResponse(tmpl.render(RequestContext(request, {
         'page': title,
         'players': players,
-    }, [ip])))
+    }, #[ip]
+    )))
 
 @login_required
 def instance(request, slug):
     instance = Instance.objects.get(slug=slug)
-    players = User.objects.filter(is_active=True)
+    players = UserProfile.objects.filter(user__is_active=True, instance=instance)
 
-    return display_list(request, players, instance.name +' Community')
-
-@login_required
-def following(request, id):
-    player = User.objects.get(id=id)
-    players = player.get_profile().following.all()
-
-    return display_list(request, players, player.first_name +' is following')
-
-def followers(request, id):
-
-    player = User.objects.get(id=id)
-    players = []
-
-    for p in User.objects.select_related():
-        try:
-            if player and player.get_profile() and player in p.get_profile().following.all():
-                players.append(p)
-        except:
-            pass
-
-    return display_list(request, players, player.first_name +' followers')
+    return display_list(request, players, instance.title +' Community')

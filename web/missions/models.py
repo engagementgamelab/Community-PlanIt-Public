@@ -1,41 +1,71 @@
 import datetime
+from dateutil.relativedelta import relativedelta
 from django.template.defaultfilters import slugify
 from django.db import models
 from django.contrib import admin
+
+from nani.admin import TranslatableAdmin
+from nani.models import TranslatableModel, TranslatedFields
+from nani.manager import TranslationManager
+
 from web.instances.models import Instance
 
-class MissionQueryMixin(object):
-    def past(self):
-        return self.filter(end_date__lt=datetime.datetime.now()).order_by('-end_date')
+class MissionManager(TranslationManager):
 
-    def future(self):
-        return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
+    def latest_by_instance(self, instance):
+        missions_for_instance = self.filter(instance=instance)
+        if missions_for_instance:
+            latest_by =  max(missions_for_instance.values_list('end_date', flat=True))
+            return self.get(**dict(end_date=latest_by))
 
-    def active(self):
+        return self.none()
+
+    def past(self, instance=None):
+        kwargs = dict(end_date__lt=datetime.datetime.now(),)
+        if instance:
+            kwargs.update(dict(instance=instance))
+        return self.filter(**kwargs).order_by('-end_date')
+
+    def future(self, instance=None):
+        kwargs = dict(start_date__gt=datetime.datetime.now(),)
+        if instance:
+            kwargs.update(dict(instance=instance))
+        return self.filter(**kwargs).order_by('start_date')
+
+    def active(self, instance=None):
         now = datetime.datetime.now()
-        return self.filter(start_date__lte=now, end_date__gte=now).order_by('start_date')
+        kwargs = dict(start_date__lte=now, end_date__gte=now,)
+        if instance:
+            kwargs.update(dict(instance=instance))
+        return self.filter(**kwargs).order_by('start_date')
 
-class MissionQuerySet(models.query.QuerySet, MissionQueryMixin):
-    pass
 
-class MissionManager(models.Manager, MissionQueryMixin):
-    def get_query_set(self):
-        return MissionQuerySet(self.model, using=self._db)
+class Mission(TranslatableModel):
 
-class Mission(models.Model):
+    title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
     instance = models.ForeignKey(Instance, related_name='missions')
-    name = models.CharField(max_length=45)
-    slug = models.SlugField(editable=False)
+    slug = models.SlugField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    description = models.TextField(blank=True)
     video = models.TextField(blank=True)
-    
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    translations = TranslatedFields(
+        name = models.CharField(max_length=255, blank=True),
+        description = models.TextField(blank=True),
+        #meta = {'get_latest_by': 'start_date'}
+    )
+
     objects = MissionManager()
 
     class Meta:
-        get_latest_by = 'start_date'
-        
+        pass
+        #get_latest_by = 'start_date'
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('missions:mission', [self.slug])
+
     def is_active(self):
         now = datetime.datetime.now()
         return self.start_date <= now and now <= self.end_date
@@ -45,33 +75,25 @@ class Mission(models.Model):
     
     def is_started(self):
         return datetime.datetime.now() >= self.start_date
-    
-    def save(self):
-        self.slug = slugify(self.name)
-        super(Mission, self).save()
+
+    def is_future(self):
+        return datetime.datetime.now() <= self.start_date
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)[:50]
+        if not self.start_date and not self.end_date:
+            latest = Mission.objects.latest_by_instance(self.instance)
+            if latest:
+                self.start_date = latest.end_date
+                self.end_date = latest.end_date + relativedelta(days=+self.instance.days_for_mission+1, hour=0, minute=0, second=0)
+            else:
+                self.start_date = datetime.datetime.now()
+                self.end_date = self.start_date + relativedelta(days=+self.instance.days_for_mission+1, hour=0, minute=0, second=0)
+
+        super(Mission, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return self.name
+        return self.title
 
-class MissionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'start_date', 'end_date', 'instance')
-
-    def queryset(self, request):
-        qs = super(MissionAdmin, self).queryset(request)
-        return qs.filter(instance=request.session.get('admin_instance'))
-
-    def save_model(self, request, obj, form, change):
-        #obj.instance = request.session.get('admin_instance')
-        obj.save()
-
-    obj = None
-    def get_form(self, request, obj=None, **kwargs):
-        self.obj = obj 
-        return super(MissionAdmin, self).get_form(request, obj, **kwargs)
-
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field.name == 'games' and getattr(self, 'obj', None):
-            kwargs['queryset'] = Mission.objects.get(id=self.obj.id).games.all()
-        elif db_field.name == 'games':
-            kwargs['queryset'] = Mission.objects.filter(id=-2)
-        return super(MissionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+class MissionAdmin(TranslatableAdmin):
+    list_display = ('title', 'instance', 'start_date', 'end_date')

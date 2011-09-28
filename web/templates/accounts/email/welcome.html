@@ -1,9 +1,25 @@
+{% load i18n %}{% blocktrans with start_date=instance.start_date|date:"F j, Y" end_date=instance.end_date|date:"F j, Y" %}
 Hello!
 
-Thanks for registering for Community PlanIt {{instance.name}}! We're glad you've decided to join us in helping to shape a vision for your community.
+Thanks for registering for Community PlanIt ! We're glad you've decided to join
+us in helping to shape a vision for your community.
 
-From {{instance.start_date|date:"F j, Y"}} through {{instance.end_date|date:"F j, Y"}}, we are using http://communityplanit.org/ as a way to engage residents in long-range, city-wide planning as we think toward the future. The feedback we receive will be considered when making future policy decisions in {{instance.city}}. Remember that you can sign on to participate as often as you like, from any place that has access to the Internet. We hope you will share your thoughts about {{instance.city}} by completing all the activities, interacting with other users, and spending your in-game tokens on the issues that matter to you most. 
+From {{start_date}} through {{end_date}},
+we are using https://communityplanit.org/ as a way to engage stakeholders in
+long-range, city-wide planning as we think toward the future. The feedback we
+receive will be considered when making future policy decisions in the Boston
+Public Schools. Remember that you can sign on to participate as often as you
+like, from any place that has access to the Internet. We hope you will share
+your thoughts about BPS by completing all the activities, interacting with
+other users, and spending your in-game tokens on the issues that matter to you
+most.
+
+There will be an in-person meeting at English High on October 20th at 6pm.
+Come together with other players to devise a plan for moving forward.  And one
+more thing...a brand new Nook e-reader will be raffled off to one of the top
+fifty point earners.
 
 Happy planning!
 
 The Community PlanIt Team
+{% endblocktrans %}

@@ -1,0 +1,70 @@
+{%extends "layouts/base.html"%}
+{% load game_extras admin_tags %}
+
+{%block section%}misisons{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h1>Manage Answers for {{ activity.type.displayType }} Activity: {{ activity.pk }}</h1>
+    {# if is_staff #}
+    <div>
+        <input type="button" value="New Answer" onClick="window.location='{% url admin:answer-new activity.pk %}' "/>
+    </div>
+    {# endif #}
+
+    {% for answer, comments in data.items %}
+
+        <div>           
+            <h2>Answer {{ answer.pk }}</h2> 
+            
+           <input type="button" value="edit" onClick="window.location='{% url admin:answer-edit activity.pk answer.pk %}' "/>
+           <input type="button" value="delete" onClick="window.location='{% url admin:answer-delete answer.pk %}' "/>
+                                       
+        </div>
+        
+        <h4 id="id_english">English</h4>
+        <div id="id_english_comments" class="accordion">
+            <ul class="comments">        
+	        {% for comment in comments.en_comments.all reversed%}
+	            {% include "admin/comments/comment.html" %}
+	        {% empty %}
+	        <li class="comment">No comments found.</li>
+	        {%endfor%}
+    	    </ul>
+        </div>
+        
+        <h4 id="id_spanish">Spanish</h4>
+        <div id="id_spanish_comments" class="accordion">
+            <ul class="comments">        
+	        {% for comment in comments.es_comments.all reversed%}
+	            {% include "admin/comments/comment.html" %}
+	        {% empty %}
+	        <li class="comment">No comments found.</li>
+	        {%endfor%}
+    	    </ul>
+        </div>
+        
+        <h4 id="id_haitian">Haitian Creole</h4>
+        <div id="id_haitian_comments" class="accordion">
+            <ul class="comments">        
+	        {% for comment in comments.ht_comments.all reversed%}
+	            {% include "admin/comments/comment.html" %}
+	        {% empty %}
+	        <li class="comment">No comments found.</li>
+	        {%endfor%}
+    	    </ul>
+        </div>
+        
+        {%if comment_form.allow_replies %}
+        <h3>Add a comment</h3>
+        <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">            
+            {% include "admin/comments/duplicate.html" %}
+            <input type="hidden" name="answer_pk" value="{{ answer.pk }}"></input>
+            <button type="submit" class="button right">Add Comment</button>
+        </form>
+        {% endif %}
+                    
+    {% endfor %} 
+{%endblock%}
+

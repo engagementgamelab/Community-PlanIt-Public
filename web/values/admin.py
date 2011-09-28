@@ -1,5 +1,10 @@
 from django.contrib import admin
 
-from web.values.models import *
+from nani.admin import TranslatableAdmin
+
+from web.values.models import Value
+
+class ValueAdmin(TranslatableAdmin):
+    list_display = ('__str__', 'instance')
 
 admin.site.register(Value, ValueAdmin)

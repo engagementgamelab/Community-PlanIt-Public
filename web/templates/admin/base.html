@@ -47,7 +47,7 @@
         <div id="user-tools">
             {% trans 'Welcome,' %}
             <strong>{% filter force_escape %}{% firstof user.first_name user.username %}{% endfilter %}</strong>.
-            <a href="{% url dashboard %}">Return to Dashboard</a> / 
+            <a href="{% url accounts:dashboard %}">Return to Dashboard</a> / 
             {% block userlinks %}
                 {% url admin:password_change as password_change_url %}
                 {% if password_change_url %}

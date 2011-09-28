@@ -13,6 +13,9 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
+from nani.models import TranslatableModel, TranslatedFields
+
+from web.comments.models import Comment
 from web.accounts.models import *
 from web.challenges.models import *
 from web.instances.models import Instance
@@ -20,62 +23,146 @@ from web.instances.models import Instance
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
 
-class UserProfileIncomes(models.Model):
-    income = models.CharField(max_length=128)
+class UserProfileOptionBase(TranslatableModel):
     pos = models.IntegerField(blank=False, null=False)
+    instance = models.ForeignKey(Instance)
+
+    class Meta:
+        ordering = ('pos',)
+        abstract = True
+
+class UserProfileEducation(UserProfileOptionBase):
+    translations = TranslatedFields(
+        education = models.CharField(max_length=128)
+    )
+
+    class Meta:
+        ordering = ('pos',)
+        verbose_name = "User Profile Education option"
+        verbose_name_plural = "User Profile Education options"
 
     def __unicode__(self):
-        return self.income
-    
-class UserProfileEducation(models.Model):
-    eduLevel = models.CharField(max_length=128)
-    pos = models.IntegerField(blank=False, null=False)
+        return self.education
 
-    def __unicode__(self):
-        return self.eduLevel
+class UserProfileGender(UserProfileOptionBase):
+    translations = TranslatedFields(
+        gender = models.CharField(max_length=128)
+    )
 
-class UserProfileLiving(models.Model):
-    livingSituation = models.CharField(max_length=128)
-    pos = models.IntegerField(blank=False, null=False)
-
-    def __unicode__(self):
-        return self.livingSituation
-
-class UserProfileGender(models.Model):
-    gender = models.CharField(max_length=128)
-    pos = models.IntegerField(blank=False, null=False)
+    class Meta:
+        ordering = ('pos',)
+        verbose_name = "User Profile Gender option"
+        verbose_name_plural = "User Profile Gender options"
 
     def __unicode__(self):
         return self.gender
 
-class UserProfileRace(models.Model):
-    race = models.CharField(max_length=128)
-    pos = models.IntegerField(blank=False, null=False)
+class UserProfileHowDiscovered(UserProfileOptionBase):
+    translations = TranslatedFields(
+        how = models.CharField(max_length=128)
+    )
+
+    class Meta:
+        ordering = ('pos',)
+        verbose_name = "User Profile How Discovered option"
+        verbose_name_plural = "User Profile How Discovered options"
+
+    def __unicode__(self):
+        return self.how
+
+class UserProfileIncome(UserProfileOptionBase):
+    translations = TranslatedFields(
+        income = models.CharField(max_length=128)
+    )
+
+    class Meta:
+        ordering = ('pos',)
+        verbose_name = "User Profile Income option"
+        verbose_name_plural = "User Profile Income options"
+
+    def __unicode__(self):
+        return self.income
+    
+class UserProfileLivingSituation(UserProfileOptionBase):
+    translations = TranslatedFields(
+        situation = models.CharField(max_length=128)
+    )
+
+    class Meta:
+        ordering = ('pos',)
+        verbose_name = "User Profile Living Situation option"
+        verbose_name_plural = "User Profile Living Situation options"
+
+    def __unicode__(self):
+        return self.situation
+
+class UserProfileRace(UserProfileOptionBase):
+    translations = TranslatedFields(
+        race = models.CharField(max_length=128)
+    )
+
+    class Meta:
+        ordering = ('pos',)
+        verbose_name = "User Profile Race option"
+        verbose_name_plural = "User Profile Race options"
 
     def __unicode__(self):
         return self.race
 
-class UserProfileStake(models.Model):
-    stake = models.CharField(max_length=128)
-    pos = models.IntegerField(blank=False, null=False)
+class UserProfileStake(UserProfileOptionBase):
+    """
+    The stakes users hold in the community, e.g. Live, Work, Play, or Teacher,
+    Administrator, Student.
+    """
+    translations = TranslatedFields(
+        stake = models.CharField(max_length=128),
+    )
+
+    class Meta:
+        ordering = ('pos',)
+        verbose_name = "User Profile Stake option"
+        verbose_name_plural = "User Profile Stake options"
 
     def __unicode__(self):
         return self.stake
-    
+
+class CPIUser(User):
+    class Meta:
+        proxy = True
+
+    def __unicode__(self):
+        if self.first_name and self.last_name:
+            return "%s %s" % (self.first_name, self.last_name)
+        return self.username
+
+
 class UserProfile(models.Model):
-    #Foreign key fields
     user = models.ForeignKey(User, unique=True)
     instance = models.ForeignKey(Instance, blank=True, null=True, related_name='user_profiles')
+
+    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
+    email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
+    receive_email = models.BooleanField(default=True)
+    city = models.CharField(max_length=128, blank=True, default='')
+    zip_code = models.CharField(max_length=10, blank=True, default='')
+    stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
+    preferred_language = models.CharField(max_length=5, default='en-us')
+    affiliations = models.TextField(blank=True, null=True, default='')
+
+    # Additional profile fields
+    birth_year = models.IntegerField(blank=True, null=True, default=0)
     gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
     race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
-    stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
     education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
-    income = models.ForeignKey(UserProfileIncomes, blank=True, null=True, default=None)
-    living = models.ForeignKey(UserProfileLiving, blank=True, null=True, default=None)
-    
-    accepted_term = models.BooleanField(default=False)
-    accepted_research = models.BooleanField(default=False)
-    phone_number = models.CharField(max_length=12, blank=True, help_text = '<p class="fine">Please use the following phone number format: <em>xxx-xxx-xxx</em>.</p>')
+    income = models.ForeignKey(UserProfileIncome, blank=True, null=True, default=None)
+    living = models.ForeignKey(UserProfileLivingSituation, blank=True, null=True, default=None)
+    how_discovered = models.ForeignKey(UserProfileHowDiscovered, blank=True, null=True, default=None)
+    how_discovered_other = models.CharField(max_length=128, blank=True, default='')
+
+    #
+    # internal system records
+    # 
+
     # the current number of coins that the player has
     currentCoins = models.IntegerField(default=0)
     # the total points that the player has accrued
@@ -83,17 +170,6 @@ class UserProfile(models.Model):
     # points to the next coin
     coinPoints = models.IntegerField(default=0)
         
-    flagged = models.BooleanField(default=0)
-    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
-    affiliations = models.TextField(blank=True, null=True)
-    editedProfile = models.BooleanField(default=0)
-    receive_email = models.BooleanField(default=True)
-    # Additional profile fields
-    birth_year = models.IntegerField(blank=True, null=True)
-
-    # Internal fields
-    following = models.ManyToManyField(User, related_name='following_user_set', blank=True, null=True)
-
     # comments on the profile from others
     comments = generic.GenericRelation(Comment)
 
@@ -125,7 +201,7 @@ class UserProfile(models.Model):
     
     def points_to_coin_for_fill(self):
         return self.coinPoints
-
+    
     @property
     def screen_name(self):
         #First name and last name are required
@@ -146,61 +222,6 @@ class UserProfile(models.Model):
 
         return self.user.username
 
-class UserProfileInline(admin.StackedInline):
-    model = UserProfile
-
-class UserCreationForm(UserCreationForm):
-    username = forms.CharField(label="Username", initial=str(uuid().hex)[:30])
-
-class UserChangeForm(UserChangeForm):
-    username = forms.CharField(label="Username")
-
-class UserProfileAdmin(UserAdmin):
-    form = UserChangeForm
-    add_form = UserCreationForm
-    
-    inlines = [ UserProfileInline, ]
-    list_display = ('email', 'first_name', 'last_name',)
-    obj = None
-    always_show_username = False
-
-    def get_form(self, request, obj=None, **kwargs):
-        self.obj = obj 
-        return super(UserProfileAdmin, self).get_form(request, obj, **kwargs)
-
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field.name == 'player_challenges' and getattr(self, 'obj', None):
-            kwargs['queryset'] = UserProfile.objects.get(id=self.obj.id).player_challenges.all()
-        elif db_field.name == 'player_challenges':
-            kwargs['queryset'] = UserProfile.objects.filter(id=-2)
-
-        if db_field.name == 'following' and getattr(self, 'obj', None):
-            kwargs['queryset'] = UserProfile.objects.get(id=self.obj.id).following.all()
-        elif db_field.name == 'following':
-            kwargs['queryset'] = UserProfile.objects.filter(id=-2)
-
-        if db_field.rel.to == User:
-            field.label_from_instance = self.get_user_label
-
-        return super(UserProfileAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
-
-    def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
-        field = super(UserProfileAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-        if db_field.rel.to == User:
-            field.label_from_instance = self.get_user_label
-
-        return field
-
-    def get_user_label(self, user):
-        name = user.get_full_name()
-        return name
-        username = user.username
-        if not self.always_show_username:
-            return name or username
-        return (name and name != username and '%s (%s)' % (name, username)
-                or username)
-
 # Custom hook for adding an anonymous username to the User model.
 def user_pre_save(instance, **kwargs):
     if not instance.username:
@@ -212,10 +233,10 @@ def user_post_save(instance, created, **kwargs):
         # Create a user profile for the player and add them to the
         # `Player` group.  Default the player to inactive.
         player_group, created = Group.objects.get_or_create(name='Player')
-
-        UserProfile.objects.create(user=instance)
-        instance.is_active = False
-        instance.groups.add(player_group)
+        user_profile = UserProfile.objects.get_or_create(user=instance)
+        #instance.is_active = False
+        #instance.groups.add(player_group)
+        instance.save()
 
 models.signals.pre_save.connect(user_pre_save, sender=User)
 models.signals.post_save.connect(user_post_save, sender=User)
@@ -259,7 +280,4 @@ class Notification(models.Model):
         """
         Return the URL of the object associated with the notification.
         """
-        return reverse(
-            'generic_redirect',
-            args=(self.content_type_id, self.object_id)
-        )
+        return self.content_object.get_absolute_url()

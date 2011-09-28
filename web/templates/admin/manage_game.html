@@ -1,62 +1,73 @@
 {%extends "layouts/base.html"%}
-{% load game_extras %}
+{% load admin_tags %}
 
 {%block section%}misisons{%endblock%}
 {%block title%}Administration{%endblock%}
 {%block page_title%}{%endblock%}
 
 {%block main%}
-    <h1>Manage Game</h1>
-    {% if is_staff %}
-        <input type="button" value="New Instance" onClick="window.location='{% url instance-new %}' "/>
-    {% endif %}
-    
-    {% for instance in instance_list %}
-    
-    <div>
-        {% if instance.end_date %}
-            <h2>Instance Options for Instance: {{instance.name}} ({{instance.start_date}} to {{instance.end_date}})</h2> 
-            <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.id}})" />
-            {% if is_staff %}
-                <input type="button" value="Email Users" onClick="window.location='{% url instance-email instance.id %}' "/>
-            {% endif %}
-        {% else %}
-            <h2>Instance Options for Instance: {{instance.name}} (Starts {{instance.start_date}})</h2> 
-            <input type="button" value="(click to expand/reduce properties)" onClick="showInstanceForm({{instance.id}})" />
-            {% if is_staff %}
-                <input type="button" value="Email Users" onClick="window.location='{% url instance-email instance.id %}' "/>
-            {% endif %}
+    <h1>Manage Instances
+        {% if request.user.is_superuser %}
+            <input type="button" value="Create New Instance" onClick="window.location='{% url admin:instance-new %}' "/>
         {% endif %}
-        <form id="instanceForm_{{instance.id}}" style="display: None"> 
-            <p>Name: {{instance.name}}</p>
-            <p>Location: {{instance.city}}, {{instance.state}}</p>
-            <p>Start Date: {{instance.start_date}}</p>
-            <br>
-        </form>
-        
-        <h3>Values</h3> <input type="button" value="Edit Values" onClick="window.location='{% url values-edit instance.id %}' "/>
-        <ul>
-            {% for value in value_list %}
-                {%if value.instance = instance %}
-                    <li>{{value.message}}</li>
-                {% endif %}
-            {% endfor %}    
-        </ul>
-    </div>
+    </h1>
+
+    {% for instance, translations in instances_data.items %}
+
+        <div>
+            <p>
+            <h2>{{ instance.title }} <{{ instance.pk }}></h2>
+                <input type="button" value="edit" onClick="window.location='{% url admin:instance-edit instance.pk %}' "/>
+                <input type="button" value="delete" onClick="window.location='{% url admin:instance-delete instance.pk %}' "/>
+                <br/> <br/>
+                <!--button type="submit" name="email_btn" id="email_btn" style="display:none">Send Email to all in Instance</button-->
+                <input type="button" value="missions" onClick="window.location='{% url admin:manage-missions instance.pk %}' "/>
+                <input type="button" value="values" onClick="window.location='{% url admin:manage-values instance.pk %}' "/>
+                <br/> <br/>
+                <input type="button" value="show/hide details" onClick="show_hide('instance_{{ instance.pk }}')"/>
+            </p>
+        </div>
+        <div id="instance_{{ instance.pk }}" style="display: None">
+            <div>
+                <p>Available Languages: 
+                    <strong> {{ instance.languages.all|languages_formatted }} </strong>
+                </p>
+                    <p>Start Date: {{instance.start_date}}</p>
+                    {% comment %}
+                    # TODO deal with instance end dates
+                    {% if instance.end_date %} <p>End Date: {{instance.end_date}}</p> {% endif %}
+                    {% endcomment %}
+            </div>
+            {% for t in translations.instance_translations %}
+            <div>
+                <h2> {{ t.language_code|lang }} 
+                    <input type="button" value="more" onClick="show_form({{ t.pk}})" /> 
+                </h2> 
+
+                <form id="id_instance-form-{{t.id}}" style="display: None"> 
+                    <p>Description: {{ t.description}}</p>
+                    <br>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+
+
+    {% comment %}
     
-    <input type="button" value="Edit Instance" onClick="window.location='{% url instance-edit instance.id %}' "/>
     <input type="button" value="Edit Instance Missions" onClick="window.location='{% url mission-order instance.id %}' "/>
-        
+
     <hr>
     <h2>Missions for {{instance.name}}</h2>
     {% for mission in mission_list %}
         {% if mission.instance = instance %}
             <h3>{{mission.name}} ({{mission.start_date}}-{{mission.end_date}})</h3>
-            
+
             {% for activity in activity_list %}
                 {% if activity.mission = mission %}
                     <ul>
-                        <li style="font-style:italic;">{{activity.name}} <input type="button" value="Edit Activity" onClick="window.location='{% url activity-edit mission.id activity.id %}' "/></li>
+                        <li style="font-style:italic;">{{activity.name}}
+                        <input type="button" value="Edit Activity" onClick="window.location='{% url admin:activity-edit mission.id activity.id %}' "/></li>
                     </ul>
                 {% endif %}
             {% endfor %}
@@ -64,23 +75,34 @@
         {% endif %}
     {% endfor %}
     <hr>
+        {% endcomment %}
     
     {% endfor %} <!-- instance for -->
 {%endblock%}
 
 {%block body%}
     <script>
-        var instanceList = new Array(0);
-        var missionList = new Array(0);
-        var activityList = new Array(0);
-        
-        function showInstanceForm(instance_id) {
-            instanceForm = document.getElementById("instanceForm_" + instance_id);
-            if (instanceForm.style.display == "") {
-                instanceForm.style.display = "none";
+        //var instanceList = new Array(0);
+        //var missionList = new Array(0);
+        //var activityList = new Array(0);
+
+        function show_hide(id) {
+            elem = document.getElementById(id);
+            if (elem.style.display == "") {
+                elem.style.display = "none";
             }
             else {
-                instanceForm.style.display = "";
+                elem.style.display = "";
+            }
+        }
+        
+        function show_form(instance_id) {
+            elem = document.getElementById("id_instance-form-" + instance_id);
+            if (elem.style.display == "") {
+                elem.style.display = "none";
+            }
+            else {
+                elem.style.display = "";
             }
         }
     </script>

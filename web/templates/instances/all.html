@@ -1,52 +1,52 @@
 {% extends "layouts/base.html" %}
-{% load gmap %}
+{% load gmap i18n %}
 
 {% block section %}communities{% endblock %}
 
-{% block title %}Communities{% endblock %}
+{% block title %}{% trans "Communities" %}{% endblock %}
 {% block page_title %}
-<h2 id="page_title">Participating Communities</h2>
+<h2 id="page_title">{% trans "Participating Communities" %}</h2>
 {% endblock %}
 
 {% block main %}
-{% if instances.active.count %}
-<h3>Active</h3>
+{% if mgr.active.count %}
+<h3>{% trans "Active" %}</h3>
     <ul class="communities">
-        {% for instance in instances.active %}
+        {% for instance in mgr.active %}
         <li>
             <h3>
-                <a href="{% url instances_instance instance.slug %}">{{instance}}</a>
-                <span class="dates">{% if not instance.end_date %}Started {% endif %}{{instance.start_date|date:"m/d/Y"}} {% if instance.end_date %}&#8211; {{instance.end_date|date:"m/d/Y"}}{% endif %}</span>
+                <a href="{% url instances:instance instance.slug %}">{{instance}}</a>
+                <span class="dates">{% if not instance.end_date %}{% trans "Started"%} {% endif %}{{instance.start_date|date:"m/d/Y"}} {% if instance.end_date %}&#8211; {{instance.end_date|date:"m/d/Y"}}{% endif %}</span>
             </h3>
             {% if instance.player_count %}
-            <p>{{instance.player_count}} player{{instance.player_count|pluralize}} {{instance.player_count|pluralize:"has,have"}} signed up.</p>
+            <p>{{instance.player_count}} {% trans "player" %}{{instance.player_count|pluralize}} {{instance.player_count|pluralize:"has,have" }} {% trans "signed up"%}.</p>
             {% endif %}
         </li>
         {% endfor %}
     </ul>
 {% endif %}
 
-{% if instances.future.count %}
-<h3>Future</h3>
+{% if mgr.future.count %}
+<h3>{% trans "Future" %}</h3>
     <ul class="communities">
-        {% for instance in instances.future %}
+        {% for instance in mgr.future %}
         <li>
             <h3>
-                <a href="{% url instances_instance instance.slug %}">{{instance}}</a>
-                <span class="dates">{% if not instance.end_date %}Starts {% endif %}{{instance.start_date|date:"m/d/Y"}} {% if instance.end_date %}&#8211; {{instance.end_date|date:"m/d/Y"}}{% endif %}</span>
+                <a href="{% url instances:instance instance.slug %}">{{instance}}</a>
+                <span class="dates">{% if not instance.end_date %}{% trans "Starts" %} {% endif %}{{instance.start_date|date:"m/d/Y"}} {% if instance.end_date %}&#8211; {{instance.end_date|date:"m/d/Y"}}{% endif %}</span>
             </h3>
         </li>
         {% endfor %}
     </ul>
 {% endif %}
 
-{% if instances.past.count %}
-<h3>Past</h3>
+{% if mgr.past.count %}
+<h3>{% trans "Past" %}</h3>
     <ul class="communities">
-        {% for instance in instances.past %}
+        {% for instance in mgr.past %}
         <li>
             <h3>
-                <a href="{% url instances_instance instance.slug %}">{{instance}}</a>
+                <a href="{% url instances:instance instance.slug %}">{{instance}}</a>
                 <span class="dates">{{instance.start_date|date:"m/d/Y"}} &#8211; {{instance.end_date|date:"m/d/Y"}}</span>
             </h3>
         </li>

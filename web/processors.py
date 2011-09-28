@@ -1,6 +1,7 @@
 from web.challenges.models import Challenge, PlayerChallenge
 from web.instances.models import Instance
 from web.player_activities.models import PlayerActivity
+#from web.core.utils import _fake_latest
 
 # Provides "globals" within the templates to populate things such as the sidebar
 # and other content that was previously only generated in the dashboard.
@@ -11,16 +12,17 @@ from web.player_activities.models import PlayerActivity
 # problematic. There are also cases where users may not have profiles or be
 # associated with an instance (non-participatory admin users); they require
 # extra care here to avoid exceptions. JH
-def instance_processor(request):
+def instance_processor_depr(request):
     if request.user.is_anonymous():
         return {}
 
     instance = request.user.get_profile().instance
     if not instance:
         if request.user.is_staff or request.user.is_superuser:
-            instances = Instance.objects.all()
+            instances = Instance.objects.untranslated()
             if instances.count():
                 instance = instances.latest()
+                #instance = _fake_latest(Instance, Instance.objects.untranslated())
 
     if not instance:
         return {}

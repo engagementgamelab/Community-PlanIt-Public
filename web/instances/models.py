@@ -8,87 +8,138 @@ from django.utils.safestring import mark_safe
 from django.contrib import admin
 from django.contrib.auth.models import User
 
+from dateutil.relativedelta import relativedelta
 from gmapsfield.fields import GoogleMapsField
+from nani.models import TranslatableModel, TranslatedFields
+from nani.manager import TranslationManager
 from south.modelsinspector import add_introspection_rules
 
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
-class InstanceQueryMixin(object):
+__all__ = (
+    'Language', 'Instance', 'PointsAssignment', 'NotificationRequest',
+)
+
+
+class Language(models.Model):
+    code = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return "%s <%s>" %(self.name, self.code)
+
+class InstanceManager(TranslationManager):
+
     def past(self):
-        return self.filter(end_date__lt=datetime.datetime.now()).order_by('start_date')
+        now = datetime.datetime.now()
+        return self.exclude(missions__end_date__gte=now).order_by('start_date')
 
     def future(self):
         return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
 
     def active(self):
         now = datetime.datetime.now()
-        return self.filter(start_date__lte=now).filter(Q(end_date__isnull=True)|Q(end_date__gte=now)).order_by('start_date')
+        return self.filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
 
-class InstanceQuerySet(models.query.QuerySet, InstanceQueryMixin):
-    pass
-
-class InstanceManager(models.Manager, InstanceQueryMixin):
-    def get_query_set(self):
-        return InstanceQuerySet(self.model, using=self._db)
-
-class Instance(models.Model):
-    name = models.CharField(max_length=45)
+class Instance(TranslatableModel):
+    slug = models.SlugField()
+    title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=2)
-    slug = models.SlugField(editable=False) #unique can not be enforced here, editing throws a unique constraint error
     start_date = models.DateTimeField()
-    end_date = models.DateTimeField(blank=True, null=True, default=None)
     location = GoogleMapsField()
-    content = models.TextField(null=True, blank=True)
-    process_name = models.CharField(max_length=255, null=True, blank=True)
-    process_description = models.TextField(null=True, blank=True)
     curators = models.ManyToManyField(User)
+    languages = models.ManyToManyField(Language)
     days_for_mission = models.IntegerField(default=7)
 
+    translations = TranslatedFields(
+        description = models.TextField(),
+        #meta = {'get_latest_by': 'start_date'}
+    )
     objects = InstanceManager()
 
     class Meta:
         get_latest_by = 'start_date'
         
     def __unicode__(self):
-        return self.name
-    
-    def is_active(self):
-        now = datetime.datetime.now()
-        if now >= self.start_date and (self.end_date is None or now <= self.end_date):
-            return True;
-        else:
-            return False;
-        
-    def is_expired(self):
-        if self.end_date and datetime.datetime.now() >= self.end_date:
-            return True
-        else:
-            return False
-    
-    def is_started(self):
-        if datetime.datetime.now() >= self.start_date:
-            return True
-        else:
-            return False
-        
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super(Instance,self).save()
+        return self.title
 
     def coin_count(self):
         return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
 
-#TODO: Perhaps this should be in it's own project
-class PointsAssignment(models.Model):
+    def dump_users(self):
+        from web.accounts.models import UserProfile
+        profiles = UserProfile.objects.filter(instance=self)
+        out = ["Instance: %s" % self.title,]
+        for prof in profiles:
+            u = prof.user
+            prefix = u""
+            if u in self.curators.all():
+                prefix = u"CURATOR: "
+            out.append(u"%s %s %s <%s>, username: %s" %(prefix, u.first_name.capitalize(), u.last_name.capitalize(), 
+                                                prof.email, u.username)
+            )
+        return out
+        
+    def end_date(self):
+        missions = self.missions.order_by('-end_date')
+        if missions:
+            last_mission = missions[0]
+            return last_mission.end_date
+        return None
+    
+    def is_active(self):
+        return self in Instance.objects.active()
+
+    def is_expired(self):
+        return self in Instance.objects.past()
+    
+    def is_started(self):
+        return datetime.datetime.now() >= self.start_date
+
+    def rebuild_mission_dates(self):
+        # this will reset all start_date, end_date fields on 
+        # this instances missions
+
+        def _reset_fields(m, starton=None):
+            if not starton:
+                starton = m.instance.start_date
+            m.start_date = starton
+            m.end_date = m.start_date + relativedelta(days=+m.instance.days_for_mission, hour=23, minute=59, second=59)
+            m.save()
+            return m.end_date
+
+        starton = None
+        for m in  self.missions.all().distinct().order_by('date_created'):
+            starton = _reset_fields(m, starton) + relativedelta(seconds=+1)
+
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)[:50]
+        super(Instance,self).save()
+        if self.start_date:
+            self.rebuild_mission_dates()
+
+class PointsAssignmentAction(models.Model):
     action = models.CharField(max_length=260)
+
+    class Meta:
+        ordering = ('action',)
+
+    def __unicode__(self):
+        return self.action[:50]
+
+class PointsAssignment(models.Model):
+    action = models.ForeignKey(PointsAssignmentAction, related_name='points_assignments')
     points = models.IntegerField(default=0)
-    coins = models.IntegerField(default=0)
 
-    instance = models.ForeignKey(Instance, editable=False)
+    instance = models.ForeignKey(Instance, related_name='points_assignments')
 
-class InstanceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'start_date', 'end_date',)
+    class Meta:
+        ordering = ('action__action', 'instance', 'points')
+
+    def __unicode__(self):
+        return '%d: %s' % (self.points, self.action)
 
 class NotificationRequest(models.Model):
     instance = models.ForeignKey(Instance, related_name='notification_requests')

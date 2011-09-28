@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
+from django.utils.translation import ugettext as _
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -18,7 +19,7 @@ from web.challenges.models import *
 from web.instances.forms import NotificationRequestForm
 from web.instances.models import *
 from web.missions.models import *
-from web.processors import instance_processor as ip
+#from web.processors import instance_processor as ip
 from web.reports.actions import ActivityLogger
 from web.reports.models import Activity 
 
@@ -37,7 +38,7 @@ def region(request, slug):
                 # good
                 notification_request.instance = community
                 notification_request.save()
-            messages.success(request, "We'll let you know when {0} is active. Thanks for your interest!".format(community))
+            messages.success(request, _("We'll let you know when {0} is active. Thanks for your interest!").format(community))
             return HttpResponseRedirect(reverse('instances'))
     else:
         notification_form = NotificationRequestForm(community)
@@ -63,17 +64,18 @@ def region(request, slug):
     return render_to_response('instances/base.html', data, context_instance=RequestContext(request))
 
 def all(request):
-    instances = Instance.objects.all()
+    mgr = Instance.objects
     now = datetime.datetime.now()
-    
-    # Get number of players in instance
-    for instance in instances:
-        instance.player_count = UserProfile.objects.filter(instance=instance).count()
 
-    tmpl = loader.get_template('instances/all.html')
+    # Get number of players in instance
+    #for instance in instances:
+    #    instance.player_count = UserProfile.objects.filter(instance=instance).count()
+    #    print instance.player_count
+
+    #tmpl = loader.get_template('instances/all.html')
 
     data = {
-        'instances': instances,
+        'mgr': mgr,
         'now': now,
     }
     return render_to_response('instances/all.html', data, context_instance=RequestContext(request))

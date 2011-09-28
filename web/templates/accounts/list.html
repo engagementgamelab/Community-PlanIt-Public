@@ -1,4 +1,5 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
 {%block section%}accounts{%endblock%}
 
@@ -7,10 +8,8 @@
 {%block content-title%}Create An Account{%endblock%}
 {%block aside%}
     <hr class="space">
-    <h2>Your Privacy</h2>
-    <p>
-        We need your email address to confirm your identity. We will not sell your information.
-    </p>
+    <h2>{% trans "Your Privacy" %}</h2>
+    <p> {% trans "We need your email address to confirm your identity. We will not sell your information." %}</p>
 {%endblock%}
 {%block main%}
     <div class="wrapper">
@@ -22,8 +21,8 @@
                 {%endfor%}
             </ul>
             {%else%}
-                No players found.
+            {% trans "No players found." %}
             {%endif%}
         </div>
     </div>
-{%endblock%}
+{%endblock%} 

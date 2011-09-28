@@ -10,11 +10,21 @@ from web.instances.models import PointsAssignment
 
 class ActivityLogger:
     def log(self, user, request, action, data, url, type):
-        a = Activity(user=user, instance=user.get_profile().instance, action=action, data=data, location=None, url=url, type=type)
+    	kwargs = dict(
+                user=user, 
+                instance=user.get_profile().instance, 
+                action=action, 
+                data=data, 
+                location=None, 
+                url=url, 
+                type=type
+        )
+        a = Activity.objects.create(**kwargs)
         a.save()
 
         # Push to messages queue
-        messages.success(request, 'You ' + str(data) +' '+ str(action))
+        #import ipdb;ipdb.set_trace()
+        messages.success(request, 'You ' + data +' '+ action.encode('utf8'))
 
 class PointsAssigner:
     def fetch(self, action):
@@ -42,11 +52,11 @@ class PointsAssigner:
             up.save()
     
     def assign(self, user, action):
-        p = PointsAssignment.objects.filter(action=action)
-        if len(p) > 0:
-            self.assignPoints(user, p[0].points)
-        else:
-            self.assignPoints(user, None)
+        try:
+            p = PointsAssignment.objects.get(instance=user.get_profile().instance, action__action=action)
+            self.assignPoints(user, p.points)
+        except PointsAssignment.DoesNotExist:
+            pass
     
     def assignAct(self, user, activity):
         self.assignPoints(user, activity.getPoints())

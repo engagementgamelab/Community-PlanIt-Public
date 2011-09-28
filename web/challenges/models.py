@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.db.models import Q
 
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -19,7 +20,7 @@ add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 class ChallengeQueryMixin(object):
     def active(self):
         now = datetime.datetime.now()
-        return self.filter(start_date__lte=now).filter(end_date__gte=now).order_by('start_date')
+        return self.filter(Q(start_date__isnull=True)|Q(start_date__lte=now)).filter(Q(end_date__isnull=True)|Q(end_date__gte=now)).order_by('start_date')
 
     def available(self, user):
         return self.active().exclude(player_challenges__player=user).order_by('start_date')
@@ -39,8 +40,8 @@ class Challenge(models.Model):
     map = GoogleMapsField()
     name = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField()
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    start_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
     flagged = models.BooleanField(default=0, editable=False)
 
     instance = models.ForeignKey(Instance, related_name='challenges')
@@ -56,17 +57,20 @@ class Challenge(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
-        return ('challenges_challenge', [str(self.id)])
+        return ('challenges:challenge', [str(self.id)])
     
     def is_active(self):
+        if not self.start_date:
+            return True
+
         now = datetime.datetime.now()
         return self.start_date <= now and now <= self.end_date
         
     def is_expired(self):
-        return datetime.datetime.now() > self.end_date
+        return self.end_date is not None and datetime.datetime.now() > self.end_date
     
     def is_started(self):
-        return datetime.datetime.now() >= self.start_date
+        return self.start_date is None or datetime.datetime.now() >= self.start_date
     
     def save(self):
         self.game_type = "challenge"
@@ -80,19 +84,7 @@ class Challenge(models.Model):
         return label
 
 class ChallengeAdmin(admin.ModelAdmin):
-    def queryset(self, request):
-        qs = super(ChallengeAdmin, self).queryset(request)
-        return qs.filter(instance=request.session.get('admin_instance'))
-
-    def save_model(self, request, obj, form, change):
-        obj.instance = request.session.get('admin_instance')
-        obj.user = request.user
-        obj.save()
-        
-    obj = None
-    def get_form(self, request, obj=None, **kwargs):
-        self.obj = obj 
-        return super(ChallengeAdmin, self).get_form(request, obj, **kwargs)
+    list_display = ('__str__', 'screen_name')
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == 'attachments' and getattr(self, 'obj', None):
@@ -106,6 +98,13 @@ class ChallengeAdmin(admin.ModelAdmin):
             kwargs['queryset'] = Challenge.objects.filter(id=-2)
         return super(ChallengeAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
+    def get_form(self, request, obj=None, **kwargs):
+        self.obj = obj 
+        return super(ChallengeAdmin, self).get_form(request, obj, **kwargs)
+
+    def screen_name(self, obj):
+        return obj.user.get_profile() and obj.user.get_profile().screen_name or obj.user.username
+
 class PlayerChallengeQueryMixin(object):
     def accepted(self):
         return self.filter(accepted=True, completed=False)
@@ -113,7 +112,7 @@ class PlayerChallengeQueryMixin(object):
     def available(self):
         now = datetime.datetime.now()
         result = self.filter(accepted=False, completed=False)
-        result = result.filter(challenge__start_date__lte=now, challenge__end_date__gte=now)
+        result = result.filter(Q(challenge__start_date__isnull=True)|Q(challenge__start_date__lte=now), Q(challenge__end_date__isnull=True)|Q(challenge__end_date__gte=now))
         return result
 
     def completed(self):
@@ -137,14 +136,24 @@ class PlayerChallenge(models.Model):
     declined = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
     response_type = models.CharField(max_length=30, blank=True, null=True)
-
     attachments = models.ManyToManyField(Attachment, blank=True, null=True)
-    response = models.OneToOneField(CommentResponse, null=True, blank=True, related_name='player_challenge')
     challenge = models.ForeignKey(Challenge, related_name='player_challenges')
     player = models.ForeignKey(User, related_name='player_challenges')
+    comments = generic.GenericRelation(Comment)
+    response = models.OneToOneField(CommentResponse, null=True, blank=True, related_name='player_challenge')
 
     objects = PlayerChallengeManager()
     
     def __unicode__(self):
-        label = self.player.username +"_"+ self.challenge.description
-        return label[:25]
+        pc = None
+        return (self.player.get_profile() and self.player.get_profile().screen_name or self.player.username) + ": " + self.challenge.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("challenges:challenge", [self.challenge.id,])
+
+
+    class Meta:
+    	unique_together = (('player', 'challenge'),)
+
+

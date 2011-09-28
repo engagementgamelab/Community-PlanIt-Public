@@ -1,31 +1,38 @@
-{% load attachment_tags %}
+{% load attachment_tags i18n %}
 <li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
     <div class="likes">
         <div class="count">{{comment.likes.count}}</div>
         <div>Like{{comment.likes.count|pluralize}}</div>
-        {% if comment.user != user %}
-        <a class="button" href="{% url comments_like comment.id %}" title="click to say you like this">Like</a>
+        {% if comment.user != request.user %}
+        <a class="button" href="{% url comments:like comment.id %}" title="click to say you like this">Like</a>
         {% endif %}
     </div>
     <div class="main">
         <div class="meta">
             
             <div class="right">
-                {% if not comment.hidden and comment.user != user%}
-                    <a href="{% url flags_add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
+                {% if not comment.hidden and comment.user != user %}
+                    <a href="{% url flags:add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
+                    
                 {% else %}
-                    <a href="{% url comments_edit comment.id %}" title="click to edit this comment">edit</a>
+                    <a href="{% url comments:edit comment.id %}" title="click to edit this comment">edit</a>
+                    
                 {% endif %}
             </div>
             
-            On {{comment.posted_date|date:"F j, Y"}} at {{comment.posted_date|date:"g:i a"}},
-            <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a>
-            wrote:
+            {% trans "From" %}
+            {% if comment.user == request.user %}
+            <a href="{% url accounts_profile comment.user.id %}">you</a>,
+            {% else %}
+            <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a>,
+            {% endif %}
+            {{comment.posted_date|date:"F j, Y"}}, {{comment.posted_date|date:"g:i a"}}
         </div>
         <div class="message">
             {% if comment.hidden %}
                 <div class="notice">This content has been flagged by the community and hidden by the administrator.</div>
             {% else %}
+                {% if extra_message %}<div class="extra">{{extra_message|linebreaksbr}}</div>{% endif %}
                 {{comment.message|linebreaksbr}}
             {% endif %}
         </div>
@@ -35,7 +42,7 @@
             {% if attachment.is_valid %}
             <div>
                 {% if attachment.type == 'video' %}
-                {% youtube_video attachment.url %}
+                {% embed_video attachment.url %}
                 {% else %}
                 <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
                 {% endif %}
@@ -58,8 +65,8 @@
                     <a class="small button reply" href="#reply-{{comment.id}}">reply</a>
             </div>
             <div class="reply-modal">
-                <form enctype="multipart/form-data" method="POST" action="{% url comments_reply comment.id %}">
-                    {%csrf_token%}
+                <form enctype="multipart/form-data" method="POST" action="{% url comments:reply comment.id %}">
+                    {% csrf_token %}
                     <textarea name="message" class="comment_message" cols="40" rows="6" id="id-{{comment.id}}_message"></textarea>
                     <button type="submit" class="button small submit">save reply</button>
                     <button type="reset" class="button small cancel">cancel</button>
@@ -70,17 +77,17 @@
         </div>
         {% endif %}
 
-        {%if comment.comments.all%}
+        {% if comment.comments.all %}
         <div id="replies-{{comment.pk}}" class="replies">
             <ul class="nested">
-                {%for comment in comment.comments.all%}
-                    {%with "comments/comment.html" as filename%}
-                      {%include filename%}
-                    {%endwith%}
-                {%endfor%}
+                {% for comment in comment.comments.all %}
+                    {% with filename="comments/comment.html" extra_message=None %}
+                      {% include filename %}
+                    {% endwith %}
+                {% endfor %}
             </ul>
             <div style="clear:both"></div>
         </div>
-        {%endif%}
+        {% endif %}
     </div>
 </li>

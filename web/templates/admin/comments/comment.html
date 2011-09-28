@@ -1,0 +1,66 @@
+{% load attachment_tags %}
+<li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">    
+    <div class="main">
+        <div class="meta">
+            
+            <div class="right">
+                <a href="{% url admin:answer-comment-edit activity.pk answer.pk comment.pk %}" title="click to edit this comment">edit</a>                
+            </div>
+            
+            On {{comment.posted_date|date:"F j, Y"}} at {{comment.posted_date|date:"g:i a"}},
+            <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a>
+            wrote:
+        </div>
+        <div class="message">
+            {% if comment.hidden %}
+                <div class="notice">This content has been flagged by the community and hidden by the administrator.</div>            
+                {{comment.message|linebreaksbr}}
+            {% else %}
+                {{comment.message|linebreaksbr}}
+            {% endif %}
+        </div>        
+        
+        <div class="attachments">
+        {% for attachment in comment.attachment.all %}
+            {% if attachment.is_valid %}
+            <div>
+                {% if attachment.type == 'video' %}
+                {% embed_video attachment.url %}
+                {% else %}
+                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="notice">This content is currently unavailable.</div>
+            {% endif %}
+        {% endfor %}
+        </div>
+        
+        <div class="controls">
+            {% if comment.instance.is_active %}
+            <div class="actions">
+                    {% if comment.comments.count %}
+                    <a class="togglereplies" href="#replies-{{comment.pk}}">
+                        <img class="closed" src="{{MEDIA_URL}}img/icons/plus.png" alt=""/>
+                        <img class="open" src="{{MEDIA_URL}}img/icons/minus.png" alt=""/>
+                    </a>
+                    <span>{{comment.comments.count}} repl{{ comment.comments.count|pluralize:"y,ies" }}</span>
+                    {% endif %}                    
+            </div>           
+            {% endif %}
+        </div>        
+
+        {%if comment.comments.all%}
+        <div id="replies-{{comment.pk}}" class="replies">
+            <ul class="nested">
+                {%for comment in comment.comments.all%}
+                    {%with "admin/comments/comment.html" as filename%}
+                      {%include filename%}
+                    {%endwith%}
+                {%endfor%}
+            </ul>
+            <div style="clear:both"></div>
+        </div>
+        {%endif%}
+    </div>
+</li>

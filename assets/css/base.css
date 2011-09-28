@@ -209,6 +209,21 @@
 .sparklist li {
   padding: 0.4em 0; }
 
+/* PIE CHARTS */
+.pielabel {
+  max-width: 80px;
+  border: 1px solid #fff;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  padding: 2px;
+  font-size: .8em;
+  text-align: center;
+  color: black;
+  background: #f0f0f0;
+  background: rgba(255, 255, 255, 0.9);
+  word-wrap: break-word; }
+
 html, body {
   border: 0;
   margin: 0;
@@ -236,13 +251,16 @@ hr.space {
   visibility: hidden;
   clear: both; }
 
+th {
+  text-align: left; }
+
 .clear {
   float: none;
   clear: both; }
 
 .highlight, .highlight a {
   color: white;
-  background-color: #00aeef;
+  background-color: #ff7812;
   padding: 5px 10px 5px 10px; }
 
 .fine.highlight {
@@ -256,6 +274,14 @@ hr.space {
 
 .highlighted {
   line-height: 1.5; }
+
+.suggestion {
+  padding: 16px 0 8px 0;
+  text-align: left;
+  color: #869f00;
+  font-style: italic; }
+  .suggestion a.button {
+    font-style: normal; }
 
 body.about nav .about,
 body.accounts nav .home,
@@ -283,7 +309,7 @@ p.separate {
   .wrapper .instructionText {
     font-size: 1.25em; }
   .wrapper .thumbnail img {
-    width: 64px;
+    max-width: 80%;
     height: auto;
     border: 1px solid #f0f0f0; }
   .wrapper .orange {
@@ -350,8 +376,7 @@ p.separate {
     border: 2px solid #cdd4e1;
     padding: 5px;
     display: inline-block;
-    margin-bottom: 10px;
-    width: 195px; }
+    margin-bottom: 10px; }
   .wrapper label {
     display: block;
     font-weight: bold;
@@ -428,10 +453,12 @@ p.separate {
       .wrapper #header .logo a {
         padding: 0;
         margin: 0; }
+
+
     .wrapper #header nav {
       position: relative;
       float: left;
-      width: 80%;
+      width: 65%;
       font-size: 1.25em; }
       .wrapper #header nav ul {
         margin: 0;
@@ -458,7 +485,6 @@ p.separate {
           padding: 0;
           margin: 0; }
         .wrapper #header nav li .values a {
-          width: 230px;
           background-position: 50% 20%;
           background-image: url(../img/tokendepot.png); }
         @media screen and (max-width: 768px) {
@@ -471,7 +497,7 @@ p.separate {
           text-decoration: none;
           display: block;
           text-align: center;
-          font-family: UbuntuLight;
+          font-weight: 100;
           padding: 0 20px 10px 20px;
           margin: 0;
           background-position: 50% 50%;
@@ -479,8 +505,75 @@ p.separate {
           .wrapper #header nav li a span {
             line-height: 1.5;
             vertical-align: bottom; }
-      .wrapper #header nav li.final {
+        .wrapper #header nav li.final {
+            background-image: none; }
+
+    .wrapper #header nav.misc_nav {
+      position: relative;
+      float: left;
+      width: 15%;
+      font-size: 1.25em; }
+      .wrapper #header nav.misc_nav ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        position: relative;
+        float: left;
+        width: 100%;
+        display: block; }
+      .wrapper #header nav.misc_nav li {
+        line-height: 130px;
+        display: block;
+        float: left;
+        background-position: 100% 100%;
+        background-repeat: no-repeat;
+        padding: 0 2px 0 1px;
+        margin: 0;
+        text-align: center;
+        position: relative; }
+
+        .wrapper #header nav.misc_nav li div {
+          background-position: 50% 100%;
+          background-repeat: no-repeat;
+          padding: 0;
+          margin: 0; }
+
+        .wrapper #header nav.misc_nav li a {
+          position: relative;
+          color: black;
+          text-decoration: none;
+          display: block;
+          text-align: center;
+          font-weight: 100;
+          padding: 15px 2px 10px 2px;
+          margin: 0;
+          background-position: 50% 50%;
+          background-repeat: no-repeat; }
+          .wrapper #header nav.misc_nav li a span {
+            line-height: 1.5;
+            vertical-align: bottom; }
+
+      .wrapper #header nav.misc_nav li.flag {
         background-image: none; }
+
+      .wrapper #header nav.misc_nav li div.flag_en-us a{
+        background-image: url(../img/flags/en-us.png);
+        width: 16px; }
+      .wrapper #header nav.misc_nav li div.flag_ht a{
+        background-image: url(../img/flags/ht.png); 
+        width: 16px; }
+      .wrapper #header nav.misc_nav li div.flag_es a{
+        background-image: url(../img/flags/es.png); 
+        width: 16px; }
+    
+      .wrapper #header nav.misc_nav li.faq {
+        background-image: none;
+        width: 32px; }
+      .wrapper #header nav.misc_nav li.faq div.faqlink a{
+        background-image: url(../img/faq.png); 
+        width: 32px; }
+
+
   .wrapper .feed {
     border-top: 3px solid #ff7812; }
     .wrapper .feed h3 {
@@ -510,6 +603,9 @@ p.separate {
       background: #617c00;
       text-align: center; }
     .wrapper .rightsidebar .video {
+      width: 240px;
+      max-width: 100%;
+      height: 180px;
       position: relative;
       margin: 0 auto;
       overflow: hidden; }
@@ -584,7 +680,6 @@ p.separate {
   .wrapper h2, .wrapper h3, .wrapper h3, .wrapper h4, .wrapper h5, .wrapper h6 {
     position: relative;
     overflow: auto;
-    font-family: UbuntuBold;
     font-weight: normal; }
   .wrapper h2, .wrapper h3 {
     font-size: 2em; }
@@ -592,7 +687,7 @@ p.separate {
     border-bottom: none;
     padding: 4px 5px 5px 0;
     font-size: 1.25em;
-    margin: 5px 0 10px 0; }
+    margin: 10px 0 5px 0; }
   .wrapper h4 {
     font-size: 1em;
     margin: 20px 0 10px 0; }
@@ -663,7 +758,8 @@ p.separate {
       .wrapper #main aside div {
         padding: 5px 10px 0 10px; }
       .wrapper #main aside h2 {
-        font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
+        font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+        font-weight: 100;
         font-size: 1.5em;
         margin: 0;
         padding: 0;
@@ -699,8 +795,8 @@ p.separate {
         margin-top: 1px; }
         .wrapper #main aside .leaderboard th {
           font-size: 2em;
-          font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
-          font-weight: normal;
+          font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+          font-weight: 100;
           text-transform: uppercase;
           text-align: left; }
         .wrapper #main aside .leaderboard th:first-child {
@@ -710,7 +806,7 @@ p.separate {
           margin: 0 auto; }
         .wrapper #main aside .leaderboard td {
           width: 50%;
-          padding: 0 10px; }
+          padding: 5px 0px 5px 0px; }
         .wrapper #main aside .leaderboard td:first-child {
           text-align: right; }
       .wrapper #main aside .profile {
@@ -791,7 +887,6 @@ p.separate {
           text-decoration: none; }
         .wrapper #main aside .notifications .count {
           display: inline-block;
-          font-family: UbuntuBold;
           margin: 4px;
           padding: 0 8px;
           background-color: #ff7812;
@@ -799,7 +894,8 @@ p.separate {
           -webkit-border-radius: 100px;
           border-radius: 100px; }
       .wrapper #main aside .details {
-        font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif; }
+        font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+        font-weight: 100; }
         .wrapper #main aside .details h2 {
           margin-bottom: 0px;
           text-shadow: none; }
@@ -831,8 +927,6 @@ p.separate {
         display: inline-block; }
         .wrapper #main .content .content-title a {
           color: white; }
-      .wrapper #main .content p.bio {
-        line-height: 2; }
       .wrapper #main .content form {
         margin: 0px auto;
         text-align: left; }
@@ -853,35 +947,54 @@ p.separate {
         font-size: 10px;
         font-weight: normal;
         text-transform: lowercase; }
-      .wrapper #main .content #comments {
+      .wrapper #main .content .comments {
         position: relative; }
-        .wrapper #main .content #comments h2 {
-          margin: 1em 0 0 0; }
-          .wrapper #main .content #comments h2 .controls {
+        .wrapper #main .content .comments .thumbnail img {
+          max-width: 128px;
+          max-height: 128px; }
+        .wrapper #main .content .comments h2 {
+          padding: 0;
+          margin: .5em 0; }
+          .wrapper #main .content .comments h2 .controls {
             line-height: 2.25;
             font-size: .5em;
             text-transform: uppercase; }
-        .wrapper #main .content #comments .hidden {
+        .wrapper #main .content .comments h3 {
+          margin: .5em 0 0 0;
+          padding: 0; }
+          .wrapper #main .content .comments h3 .controls {
+            line-height: 1;
+            font-size: .75em;
+            text-transform: uppercase; }
+        .wrapper #main .content .comments .hidden {
           position: absolute;
           opacity: 0; }
-        .wrapper #main .content #comments .limited {
+        .wrapper #main .content .comments .limited {
           color: #f00; }
-        .wrapper #main .content #comments .nested {
+        .wrapper #main .content .comments .nested {
           padding: 0; }
-        .wrapper #main .content #comments .comments {
+        .wrapper #main .content .comments .comment_list {
           position: relative;
+          margin: 0;
           padding: 0;
           list-style: none; }
-          .wrapper #main .content #comments .comments .comment {
+          .wrapper #main .content .comments .comment_list .comment {
             position: relative;
             float: none;
             clear: both;
-            margin: 1em 0 2em 0;
+            margin: 0 0 2em 0;
             min-width: 30em;
             overflow: auto;
             background: #f9fafa;
             border-top: 1px solid #f0f0f0; }
-            .wrapper #main .content #comments .comments .comment .likes {
+            .wrapper #main .content .comments .comment_list .comment .extra {
+              font-weight: bold;
+              margin: .5em 0; }
+              .wrapper #main .content .comments .comment_list .comment .extra ul {
+                list-style: disc;
+                margin: 0;
+                padding: 0; }
+            .wrapper #main .content .comments .comment_list .comment .likes {
               float: left;
               width: 10%;
               background-color: #00aeef;
@@ -889,78 +1002,74 @@ p.separate {
               font-weight: bold;
               text-align: center;
               padding: 1em 0; }
-              .wrapper #main .content #comments .comments .comment .likes .count {
+              .wrapper #main .content .comments .comment_list .comment .likes .count {
                 font-size: 3em;
                 line-height: 1; }
-              .wrapper #main .content #comments .comments .comment .likes .button {
+              .wrapper #main .content .comments .comment_list .comment .likes .button {
                 margin-top: 1em; }
-            .wrapper #main .content #comments .comments .comment .main {
+            .wrapper #main .content .comments .comment_list .comment .main {
               float: right;
               width: 89%; }
-              .wrapper #main .content #comments .comments .comment .main .meta {
+              .wrapper #main .content .comments .comment_list .comment .main .meta {
                 padding-left: 1em;
                 overflow: auto;
-                font-family: UbuntuMedium;
                 white-space: nowrap; }
-                .wrapper #main .content #comments .comments .comment .main .meta a {
+                .wrapper #main .content .comments .comment_list .comment .main .meta a {
                   color: #00aeef; }
-              .wrapper #main .content #comments .comments .comment .main .actions {
+              .wrapper #main .content .comments .comment_list .comment .main .actions {
                 background: #4c4d4f;
                 color: white;
                 padding: 2px 4px; }
-                .wrapper #main .content #comments .comments .comment .main .actions img {
+                .wrapper #main .content .comments .comment_list .comment .main .actions img {
                   vertical-align: middle;
                   margin-right: 1em; }
-                .wrapper #main .content #comments .comments .comment .main .actions .open {
+                .wrapper #main .content .comments .comment_list .comment .main .actions .open {
                   display: none; }
-                .wrapper #main .content #comments .comments .comment .main .actions span {
+                .wrapper #main .content .comments .comment_list .comment .main .actions span {
                   margin-right: 1em; }
-              .wrapper #main .content #comments .comments .comment .main .controls {
+              .wrapper #main .content .comments .comment_list .comment .main .controls {
                 float: right;
                 clear: both;
                 text-align: right;
                 margin: 0 0 1em 0; }
-                .wrapper #main .content #comments .comments .comment .main .controls .reply-modal {
+                .wrapper #main .content .comments .comment_list .comment .main .controls .reply-modal {
                   position: relative;
                   width: 90%; }
-                .wrapper #main .content #comments .comments .comment .main .controls .reply-modal button {
+                .wrapper #main .content .comments .comment_list .comment .main .controls .reply-modal button {
                   float: right;
                   margin: 2px; }
-              .wrapper #main .content #comments .comments .comment .main .message {
+              .wrapper #main .content .comments .comment_list .comment .main .message {
                 padding: 1em;
                 word-wrap: break-word; }
-              .wrapper #main .content #comments .comments .comment .main .attachments div {
+              .wrapper #main .content .comments .comment_list .comment .main .attachments div {
                 margin-top: 1em;
                 padding: 0 1em; }
-              .wrapper #main .content #comments .comments .comment .main .replies {
+              .wrapper #main .content .comments .comment_list .comment .main .replies {
                 display: none;
                 float: none;
                 clear: both;
                 margin: 1em 0 0 1em; }
-        .wrapper #main .content #comments .error {
+        .wrapper #main .content .comments .error {
           background: none;
           border-width: 0px;
           position: absolute;
           top: 8px;
           left: 21px; }
-        .wrapper #main .content #comments .expand, .wrapper #main .content #comments .collapse {
+        .wrapper #main .content .comments .expand, .wrapper #main .content .comments .collapse {
           color: #999999;
           font-size: 12px;
           cursor: pointer; }
-        .wrapper #main .content #comments .nested li.comment {
+        .wrapper #main .content .comments .nested li.comment {
           display: list-item; }
-        .wrapper #main .content #comments h4 {
+        .wrapper #main .content .comments h4 {
           color: #001a39;
           font-size: 120%; }
-        .wrapper #main .content #comments h3 {
-          margin: 0;
-          margin-bottom: 20px; }
-        .wrapper #main .content #comments textarea {
+        .wrapper #main .content .comments textarea {
           width: 98%;
           border-width: 1px;
           color: #001a39;
           margin-bottom: 0; }
-        .wrapper #main .content #comments #comments .counter {
+        .wrapper #main .content .comments .comments .counter {
           float: left;
           clear: left; }
       .wrapper #main .content .columns {
@@ -1014,7 +1123,7 @@ p.separate {
     position: relative;
     background-color: #001a39;
     color: #00aeef;
-    font-family: UbuntuLight;
+    font-weight: 100;
     font-size: .9em; }
     .wrapper #footer a {
       color: white; }
@@ -1180,8 +1289,8 @@ table.activities {
   table.activities th {
     text-align: left;
     text-transform: uppercase;
-    font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
-    font-weight: normal;
+    font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+    font-weight: 100;
     font-size: 1.25em;
     padding: 2px 10px 2px 4px; }
   table.activities td {
@@ -1227,7 +1336,8 @@ ul#messages {
   list-style: none;
   background-color: #4c4d4f;
   color: white;
-  font-family: YanoneKaffeesatzThin, Tahoma, Helvetica, Arial, sans-serif;
+  font-family: YanoneKaffeesatz, Tahoma, Helvetica, Arial, sans-serif;
+  font-weight: 100;
   font-size: 1.2em; }
   .page_navigator .current {
     color: #ff7812; }
@@ -1253,8 +1363,8 @@ ul#messages {
 .challenge_list {
   position: relative;
   list-style: none;
-  margin: 1em 0;
-  padding: .5em;
+  margin: 0;
+  padding: 0;
   width: 90%; }
   .challenge_list li.challenge {
     display: block;
@@ -1263,7 +1373,7 @@ ul#messages {
     background-color: #617c00;
     color: white;
     padding: 0;
-    margin: 4px 0; }
+    margin: 0 0 4px 0; }
     .challenge_list li.challenge a {
       display: block;
       color: white;
@@ -1295,23 +1405,34 @@ body.rightsidebar .maincontent {
   padding-left: 2em; }
 
 p {
-  margin: 1em 0; }
+  margin: 1em 0;
+  line-height: 1.25;
+  max-width: 60em; }
 
 .description {
   margin: 0 10px; }
 
 #page_title {
   padding-left: 10px;
-  font-family: UbuntuBold;
   color: black;
   font-weight: normal;
   font-size: 2em; }
   #page_title span {
-    font-family: UbuntuBold;
     color: #ff7812; }
 
 .video {
+  position: relative;
+  width: 320px;
+  height: 240px;
   border: 1px solid #f0f0f0; }
+
+.video.left {
+  margin-right: 20px;
+  margin-bottom: 10px; }
+
+.video.right {
+  margin-left: 20px;
+  margin-bottom: 10px; }
 
 .mask {
   display: none;
@@ -1361,3 +1482,12 @@ p {
 
 body.communities ul.communities {
   list-style: none; }
+
+p.bio {
+  clear: both;
+  overflow: auto; }
+  p.bio .avatar {
+    height: auto;
+    width: auto;
+    max-width: 128px;
+    max-height: 128px; }

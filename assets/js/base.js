@@ -6,11 +6,12 @@ CPI.sort_comments_by_activity = function(evt) {
     evt.preventDefault();
     evt.stopPropagation();
 
-    $('#comments ul.comments').css('cursor', 'wait');
-    $('#comments ul.comments').append($(CPI.mask));
-    $('#comments ul.comments .mask').fadeIn(200);
+    var comment_list = $('ul.comment_list', $(this).closest('.comments'));
+    comment_list.css('cursor', 'wait');
+    comment_list.append($(CPI.mask));
+    $('.mask', comment_list).fadeIn(200);
     var comments = [];
-    $('#comments ul.comments>li').each(function(i) {
+    comment_list.children('li').each(function(i) {
         var comments_in_thread = $('li.comment', $(this)).size() + 1;
         var like_counts = $(this).find('.likes .count').map(function() {
             return Number($(this).text());
@@ -26,11 +27,11 @@ CPI.sort_comments_by_activity = function(evt) {
         return cmp;
     });
     for (var i = 0; i < comments.length; i++) {
-        $('#comments ul.comments').append(comments[i].comment);
+        comment_list.append(comments[i].comment);
     }
-    $('#comments ul.comments .mask').fadeOut(200, function() {
-        $('#comments ul.comments .mask').remove();
-        $('#comments ul.comments').css('cursor', 'auto');
+    $('.mask', comment_list).fadeOut(200, function() {
+        $('.mask', comment_list).remove();
+        comment_list.css('cursor', 'auto');
     });
     return false;
 }
@@ -39,22 +40,23 @@ CPI.sort_comments_by_timestamp = function(evt) {
     evt.preventDefault();
     evt.stopPropagation();
 
-    $('#comments ul.comments').css('cursor', 'wait');
-    $('#comments ul.comments').append($(CPI.mask));
-    $('#comments ul.comments .mask').fadeIn(200);
+    var comment_list = $('ul.comment_list', $(this).closest('.comments'));
+    comment_list.css('cursor', 'wait');
+    comment_list.append($(CPI.mask));
+    $('.mask', comment_list).fadeIn(200);
     var comments = [];
-    $('#comments ul.comments>li').each(function(i) {
+    comment_list.children('li').each(function(i) {
         comments.push($(this).detach());
     });
     comments.sort(function(o1, o2) {
         return o2.data('timestamp') - o1.data('timestamp');
     });
     for (var i = 0; i < comments.length; i++) {
-        $('#comments ul.comments').append(comments[i]);
+        comment_list.append(comments[i]);
     }
-    $('#comments ul.comments .mask').fadeOut(200, function() {
-        $('#comments ul.comments .mask').remove();
-        $('#comments ul.comments').css('cursor', 'auto');
+    $('.mask', comment_list).fadeOut(200, function() {
+        $('.mask', comment_list).remove();
+        comment_list.css('cursor', 'auto');
     });
     return false;
 }

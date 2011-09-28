@@ -7,22 +7,22 @@
 {%block main%}
     <h2>The Administration Pages</h2>
     <label>Please make a selection below to create or edit</label>
-    <form method="get" action="{% url instance-base %}">
+    <form method="get" action="{% url admin:instance-base %}">
         {%csrf_token%}
         <input type="submit" value="Instances" />
     </form>
     
-    <form method="get" action="{% url value-base %}">
+    <form method="get" action="{% url admin:value-base %}">
         {%csrf_token%}
         <input type="submit" value="Values" />
     </form>
     
-    <form method="get" action="/admin/mission">
+    <form method="get" action="">
         {%csrf_token%}
         <input type="submit" value="Missions" />
     </form>
     
-    <form method="get" action="/admin/activity">
+    <form method="get" action="">
         {%csrf_token%}
         <input type="submit" value="Activities" />
     </form>

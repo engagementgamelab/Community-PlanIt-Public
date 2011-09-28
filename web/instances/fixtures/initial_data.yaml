@@ -1,0 +1,20 @@
+-   model: instances.pointsassignmentaction
+    pk: 1
+    fields:
+        action: profile_completed
+-   model: instances.pointsassignmentaction
+    pk: 2
+    fields:
+        action: account_created
+-   model: instances.pointsassignmentaction
+    pk: 3
+    fields:
+        action: challenge_created
+-   model: instances.pointsassignmentaction
+    pk: 4
+    fields:
+        action: challenge_completed
+-   model: instances.pointsassignmentaction
+    pk: 5
+    fields:
+        action: comment_created
