@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, RequestContext, loader
 from django.utils.translation import ugettext as _
+from django.db.models import Sum
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -67,15 +68,61 @@ def all(request):
     mgr = Instance.objects
     now = datetime.datetime.now()
 
-    # Get number of players in instance
-    #for instance in instances:
-    #    instance.player_count = UserProfile.objects.filter(instance=instance).count()
-    #    print instance.player_count
-
-    #tmpl = loader.get_template('instances/all.html')
-
-    data = {
+    context = {
         'mgr': mgr,
         'now': now,
     }
-    return render_to_response('instances/all.html', data, context_instance=RequestContext(request))
+    return render_to_response('instances/all.html', context, context_instance=RequestContext(request))
+
+
+
+@login_required
+def affiliation(request, slug, template='affiliations/base.html'):
+    aff = request.GET.get('aff', '')
+    if not aff:
+        #return Http404("affiliation could not be located")
+        return HttpResponseRedirect(reverse('instances:affiliations', (slug,)))
+
+    players = UserProfile.objects.select_related('user').filter(affiliations__contains=aff)
+
+    affiliation_points = players.aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
+
+
+    #affiliation_leaderboard = []
+    #for up in UserProfile.objects.filter(affiliations__contains=aff).order_by("-totalPoints"):
+    #    affiliation_leaderboard.append(up.user)
+    affiliation_leaderboard = players.order_by('-totalPoints')
+
+    context = {
+        'affiliation': aff,
+        'players': players,
+        'affiliation_leaderboard': affiliation_leaderboard,
+        'affiliations_leaderboard': _get_affiliations_leaderboard(),    
+        'affiliation_points': affiliation_points,
+    }
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
+
+def _get_affiliations_leaderboard():
+    affiliations = []  
+    for user in UserProfile.objects.all().order_by("-totalPoints"):        
+        if user.affiliations is not None:
+            user_affiliations = user.affiliations.split(', ')
+            for affiliation in user_affiliations:
+                if affiliation != u'':
+                    if not affiliation.strip() == '' and not affiliation in affiliations:
+                        affiliations.append(affiliation)    
+    return affiliations
+
+@login_required
+def affiliations_all(request, slug, template='affiliations/all.html'):
+    instance = get_object_or_404(Instance, slug=slug)
+    #affiliations = _get_affiliations_leaderboard()
+    #affiliations = UserProfile.objects.filter(instance=instance) #.aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
+
+    context = {
+            'instance': instance, 
+            'affiliations': instance.affiliations.all().order_by('name')
+    }
+    return render_to_response(template, context, context_instance=RequestContext(request))
+
