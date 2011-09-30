@@ -7,7 +7,7 @@
 
 {%block main%}
     {% for affiliation in affiliations %}
-    <p><a class="highlight" href="{% url instances:affiliation instance.slug %}?aff={{ affiliation|urlencode }}">{{ affiliation }}</a></p>
+    <p><a class="highlight" href="{% url instances:affiliation instance.slug affiliation.slug%}">{{ affiliation }}</a></p>
     {% endfor %}
 {%endblock%}
 

@@ -25,10 +25,10 @@
             {{ player.get_profile.stake|trans_fallback:"stake"}}
             {% endif %}
         </span><br>
-        {% if player.get_profile.affiliations %}
-        <span style="font-size: 1em">{% trans "Affiliated With" %}:
-            {%for affiliation in player.get_profile.affiliations_csv %} 
-            <a class="highlight" href="{% url affiliations:affiliation %}?aff={{ affiliation|urlencode }}">{{ affiliation }}</a>
+        {% if player.get_profile.affils.all %}
+        <span style="font-size: 1em">{% trans "Affiliated With" %}: 
+            {% for aff in player.get_profile.affils.all %} 
+                <a class="highlight" href="{% url instances:affiliation player.get_profile.instance.slug  aff.slug %}">{{ aff.name }}</a>
             {% endfor %}
         </span>
         {% endif %}

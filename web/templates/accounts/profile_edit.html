@@ -55,6 +55,12 @@
                     {{ profile_form.affiliations.errors }}
                 </div>
                 <div class="fieldWrapper">
+                    {{ profile_form.affiliations_other.label_tag }}
+                    {{ profile_form.affiliations_other.help_text }}
+                    {{ profile_form.affiliations_other }}
+                    {{ profile_form.affiliations_other.errors }}
+                </div>
+                <div class="fieldWrapper">
                     <label>{% trans "Your current avatar" %}</label>
                     {%if user.get_profile.avatar%}
                         <img class="avatar-edit" src="{{MEDIA_URL}}{{user.get_profile.avatar}}">

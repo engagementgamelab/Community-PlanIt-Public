@@ -1,5 +1,4 @@
 import datetime
-from operator import attrgetter
 import urlparse
 
 from localeurl.models import reverse
@@ -198,6 +197,7 @@ def edit(request):
                                         'email': profile.email if profile.email is not None else "",
                                         'birth_year': profile.birth_year if profile.birth_year is not None else "",
                                         'preferred_language': profile.preferred_language,
+                                        'affiliations': profile.affils.values_list('pk', flat=True), 
                                     }
     )
     if request.method == 'POST':
@@ -238,6 +238,18 @@ def edit(request):
                     profile.user.last_name = None
                 else:
                     profile.user.last_name = profile_form.cleaned_data['last_name']
+
+
+                profile.affils = profile_form.cleaned_data.get('affiliations')
+                aff_other = profile_form.cleaned_data.get('affiliations_other')
+                if aff_other != '':
+                    for a in aff_other.split(','):
+                        aff, created = Affiliation.objects.get_or_create(name=a.strip())
+                        aff.is_admin_created=False
+                        aff.save()
+                        profile.affils.add(aff)
+
+
 
                 profile.user.save()
 
@@ -381,35 +393,13 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     paginator = Paginator(activities, 5)
     activities_page = paginator.page(page)
 
-    leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20]
+    affboard = []
+    for a in Affiliation.objects.filter(instance=instance):
+        points = a.userprofile_set.all().aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
+        affboard.append((points, a))
+    affboard.sort()
+    affboard.reverse()
 
-    affiliations_leaderboard = {}
-    #for user in UserProfile.objects.all().order_by("-totalPoints"):
-    #    if user.affiliations is not None and user.affiliations.strip() != u'':
-    #        user_affiliations = user.affiliations.split(', ')
-    #        for affiliation in user_affiliations:
-    #            if affiliation != u'':
-    #                if affiliations_leaderboard.has_key(affiliation):
-    #                    affiliations_leaderboard[affiliation] += user.totalPoints
-    #                else:
-    #                    affiliations_leaderboard[affiliation] = user.totalPoints
-    #if affiliations_leaderboard:
-    #    affiliations_leaderboard = sorted(affiliations_leaderboard.items(), key=lambda pts: pts[1], reverse=True)[:20]
-
-
-    all_aff = UserProfile.objects.exclude(affiliations__isnull=True).exclude(affiliations=u'').values_list('affiliations', flat=True).distinct()
-    s = set()
-    for x in all_aff:
-        for y in x.split(','):
-            if y.strip() != '':
-                s.add(y.strip().lower())
-    print s
-
-    for a in s:
-        affiliations_leaderboard[a.title()] = UserProfile.objects.select_related('user').filter(affiliations__icontains=a).aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
-    affiliations_leaderboard = sorted(affiliations_leaderboard.items(), key=lambda pts: pts[1], reverse=True)[:20]
-
-    print affiliations_leaderboard
     context = dict(
         log = log,
         last_mission = last_mission,
@@ -417,9 +407,9 @@ def dashboard(request, template_name='accounts/dashboard.html'):
         activities_page = activities_page,
         completed = completed,
         challenges = challenges,
-        leaderboard = leaderboard,
+        leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20],
         instance = instance,
-        affiliations_leaderboard = affiliations_leaderboard,
+        affiliations_leaderboard = affboard[:20],
     )
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 

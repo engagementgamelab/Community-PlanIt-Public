@@ -174,9 +174,9 @@
     <table>
         <thead><tr><th>{% trans "Leader" %}</th><th>{% trans "Board" %}</th></tr></thead>
         <tbody>
-        {% for aff in affiliations_leaderboard %}            
+        {% for points, aff in affiliations_leaderboard %}            
             <tr>
-                <td><a href="{% url affiliations:affiliation %}?aff={{ aff.0|urlencode }}">{{ aff.0 }}:</a></td><td>{{ aff.1 }}</td>
+                <td><a href="{% url instances:affiliation instance.slug aff.slug%}">{{ aff.name }}:</a></td><td>{{ points }}</td>
             </tr>            
         {% endfor %}
         </tbody>

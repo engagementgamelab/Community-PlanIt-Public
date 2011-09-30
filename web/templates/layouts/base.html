@@ -67,6 +67,7 @@
 
             <nav class="misc_nav">
                 <ul>
+                    {% comment %}
                 {% if user.is_authenticated %}
                     {% for lang in current_instance.languages.all %}
                     <li class="flag">
@@ -86,6 +87,7 @@
                     </li>
                     {% endfor %}
                 {% endif %}
+                    {% endcomment %}
                 <li class="faq"><div class="faqlink"><a href="{% url faq %}"></a></div></li>
                 </ul>
             </nav>

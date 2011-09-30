@@ -118,7 +118,11 @@ class RegisterFormTwo(forms.Form):
         livings = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'situation')) for x in all_livings]
         self.fields['living'] = forms.ChoiceField(label=_(u'Living Situation'), required=False, choices=livings)
 
-        self.fields['affiliations'] = forms.CharField(required=False, label=_('Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club'))
+
+        affiliations = Affiliation.objects.filter(instance=self.community, is_admin_created=True).order_by("name").values_list('pk', 'name')
+        self.fields['affiliations'] = forms.MultipleChoiceField(label=_(u'Affiliation'), required=False, choices=affiliations)
+
+        self.fields['affiliations_other'] = forms.CharField(required=False, label=_('Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club'))
         
         all_hows = UserProfileHowDiscovered.objects.untranslated().filter(instance=self.community).order_by("pos")
         hows = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'how')) for x in all_hows]
@@ -167,9 +171,11 @@ class RegisterFormTwo(forms.Form):
             return UserProfileStake.objects.get(pk=self.cleaned_data['stake'])
         except UserProfileStake.DoesNotExist:
             return None
-    
+
+
 class RegistrationWizard(FormWizard):
     community = None
+    __name__ = 'RegistrationWizard'
 
     @transaction.commit_on_success
     def done(self, request, form_list):
@@ -203,7 +209,15 @@ class RegistrationWizard(FormWizard):
         profile.gender = form_two.cleaned_data.get('gender')
         profile.income = form_two.cleaned_data.get('income')
         profile.living = form_two.cleaned_data.get('living')
-        profile.affiliations = form_two.cleaned_data.get('affiliations')
+        profile.affils = form_two.cleaned_data.get('affiliations')
+        aff_other = form_two.cleaned_data.get('affiliations_other')
+        if aff_other != '':
+            for a in aff_other.split(','):
+                aff, created = Affiliation.objects.get_or_create(name=a.strip())
+                aff.is_admin_created=False
+                aff.save()
+                profile.affils.add(aff)
+
         profile.race = form_two.cleaned_data.get('race')
         profile.stake = form_two.cleaned_data.get('stake')
         profile.how_discovered = form_two.cleaned_data.get('how_discovered')
@@ -270,18 +284,28 @@ class UserProfileForm(forms.ModelForm):
     email = forms.CharField(max_length=250, required=True, label=_('Email'))
     receive_email = forms.BooleanField(required=False, label=_('Should we send you notifications and news via email?'))
     preferred_language = forms.ChoiceField(choices=[(l[0], _(l[1])) for l in settings.LANGUAGES], label=_('Preferred Language'))
-
-    affiliations = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 2, "cols": 40}), 
-                                   help_text = _("Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club)."))
-    
     avatar = forms.ImageField(required=False)
-    
+
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
         all_stakes = UserProfileStake.objects.untranslated().filter(instance=self.instance.instance).order_by("pos")
         stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
         self.fields['stake'] = forms.ChoiceField(label=_(u'Stake'), required=False, choices=stakes)
-    
+
+        #TODO
+        # need to include the user selected choices in the list
+        affil_choices = Affiliation.objects.filter(
+                                                    instance=self.instance.instance, 
+                                                    is_admin_created=True
+                                            ).order_by("name").values_list('pk', 'name')
+
+        self.fields['affiliations'] = forms.MultipleChoiceField(label=_(u'Affiliations'), required=False, choices=affil_choices)
+
+        self.fields['affiliations_other'] = forms.CharField(required=False, 
+               label=_('Please place a comma between each affiliation (ie: YMCA, James Memorial Highschool, Gardening Club'),
+                widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
+
+
     class Meta:
         model = UserProfile
         fields = ('email', 'first_name', 'last_name', 'preferred_language',

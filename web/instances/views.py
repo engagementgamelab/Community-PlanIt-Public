@@ -77,16 +77,11 @@ def all(request):
 
 
 @login_required
-def affiliation(request, slug, template='affiliations/base.html'):
-    aff = request.GET.get('aff', '')
-    if not aff:
-        #return Http404("affiliation could not be located")
-        return HttpResponseRedirect(reverse('instances:affiliations', (slug,)))
+def affiliation(request, instance_slug, affiliation_slug, template='affiliations/base.html'):
+    aff = get_object_or_404(Affiliation, slug=affiliation_slug)
 
-    players = UserProfile.objects.select_related('user').filter(affiliations__contains=aff)
-
+    players = aff.userprofile_set.all()
     affiliation_points = players.aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
-
 
     #affiliation_leaderboard = []
     #for up in UserProfile.objects.filter(affiliations__contains=aff).order_by("-totalPoints"):

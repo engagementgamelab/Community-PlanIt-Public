@@ -10,8 +10,14 @@ class Migration(DataMigration):
         for profile in orm['accounts.UserProfile'].objects.exclude(affiliations__isnull=True).exclude(affiliations=u''):
             for prof_aff in profile.affiliations.split(','):
                 try:
-                    profile.affils.add(orm['instances.Affiliation'].objects.get(name=prof_aff.lower()))
-                except:
+                    if prof_aff.strip() == '':
+                        continue
+                    profile.affils.clear()
+                    #print "adding %s"  % prof_aff
+                    aff = orm['instances.Affiliation'].objects.get(name__iexact=prof_aff.strip())
+                    #print "got: ", aff.name
+                    profile.affils.add(aff)
+                except orm['instances.Affiliation'].DoesNotExist:
                     print u"cant find %s" % prof_aff
 
     def backwards(self, orm):
