@@ -297,7 +297,7 @@ class UserProfileForm(forms.ModelForm):
         # need to include the user selected choices in the list
         affil_choices = Affiliation.objects.filter(instance=self.instance.instance).order_by("name").values_list('pk', 'name')
 
-        self.fields['affiliations'] = forms.MultipleChoiceField(label=_(u'Affiliations'), required=False, choices=affil_choices)
+        self.fields['affiliations'] = forms.MultipleChoiceField(label=_(u'Affiliations'), help_text=_('Right Click (or control and click on a Mac) to select more than one affiliation'), required=False, choices=affil_choices)
 
         self.fields['affiliations_other'] = forms.CharField(required=False, 
                label=_('Don\'t see your affiliations? Enter it here. Please place a comman between each affiliation.'),
