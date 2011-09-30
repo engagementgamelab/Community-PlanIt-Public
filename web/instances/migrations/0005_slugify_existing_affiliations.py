@@ -9,7 +9,7 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         for affiliation in orm['instances.Affiliation'].objects.all():
-            self.slug = slugify(self.name)[:100]
+            self.slug = slugify(affiliation.name)[:100]
             affiliation.save()
 
     def backwards(self, orm):
