@@ -24,7 +24,7 @@ from reports.actions import *
 
 from django.db.models import get_model
 
-def _build_context(action, activity, user=None):
+def _build_context(request, action, activity, user=None):
 
     context = {}
 
@@ -147,7 +147,14 @@ def _build_context(action, activity, user=None):
             context.update({'map': map})
 
         context.update({'form': form})
-
+    
+    
+    if user:    
+        context['is_completed'] = activity.is_completed(user)
+    # is_completed variavle is checked for displaying responses.
+    # admin should be able to see the responses even if he had not completed an activity
+    if request.user.is_superuser:
+        context['is_completed'] = True
     return context
 
 
@@ -344,7 +351,7 @@ def activity(request, activity_id, template=None, **kwargs):
     if activity.mission.is_active() and not request.user.is_superuser:
         user = request.user
 
-    ctx = _build_context(action, activity, user=user )
+    ctx = _build_context(request, action, activity, user=user )
     context.update(ctx)
     template = "player_activities/" + activity.type.type
 

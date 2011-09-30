@@ -28,8 +28,8 @@
     </div>
     {% endif %}
     
-    
-<h2>{% trans "Response Summary" %}</h2>
+{% if is_completed %}
+    <h2>{% trans "Response Summary" %}</h2>
     <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
         margin-top: 25px; margin-bottom: 25px; "></div>
     {% if answers.count %}
@@ -57,7 +57,9 @@
     {% else %}
     <h2>{% trans "No responses submitted" %}</h2>
     {% endif %}
-
+{% else %}
+    <h2>{% trans "Complete the activity to see everyone's responses" %}</h2>
+{% endif %}
 {% endblock %}
 
 {% block body %}   
