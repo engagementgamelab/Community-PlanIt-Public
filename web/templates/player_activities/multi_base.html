@@ -3,6 +3,7 @@
 {%block title%}Multi Response{%endblock%}
 
 {%block main%}
+<p> Complete the activity to see everyone's responses.  </p>
     <form id="id_activity-form" action="" method="post">{% csrf_token %}
         <input type="hidden" name="form" value="multi_response">
         <h2>{{activity.question|safe}}</h2>
