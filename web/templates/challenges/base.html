@@ -66,6 +66,16 @@
 {% if challenge.is_started %}
 <h2>{% trans "Responses" %}</h2>
 
+{% if challenge.player_challenges.completed %}
+<div class="comments embedded">
+     <h2>            
+         <div class="controls right">
+             Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+         </div>
+    </h2>
+</div>
+{% endif %}
+        
 {% for pc in challenge.player_challenges.completed %}
     {% if pc.comments.all %}
     <div class="comments embedded">

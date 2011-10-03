@@ -31,7 +31,6 @@ class Language(models.Model):
 
 class Affiliation(models.Model):
     slug = models.SlugField()
-    is_admin_created = models.BooleanField(default=True)
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=10, blank=True, default='')
 

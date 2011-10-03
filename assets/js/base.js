@@ -168,9 +168,8 @@ jQuery(function($) {
         width: 300,
         height: 300
     });
-
-    // Comment count
-    $('textarea.comment_message').live('change keyup keydown blur', function(evt) {
+    
+    var type_count = function(evt) {
         var comment_form = $(this.form);
         var val = this.value.replace(/\r?\n/g, 'xx');
         var len = Math.max(0, 1000 - val.length);
@@ -182,7 +181,13 @@ jQuery(function($) {
             }
         }
         comment_form.find('.counter').removeClass('limited');
-    }).attr('maxlength', '1000').change();
+    }
+
+    // Challenge description count
+    $('textarea#id_description').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
+    
+    // Comment count
+    $('textarea#id_message').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
 
     // Notifications code
     if (window.webkitNotifications) {

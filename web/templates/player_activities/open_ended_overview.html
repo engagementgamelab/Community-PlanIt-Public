@@ -25,6 +25,7 @@
     </div>
     {% endif %}
     
+    {% if is_completed %}
     {% if answers.count %}
     <div class="comments embedded">
         <h2>
@@ -51,5 +52,8 @@
     </div>
     {% else %}
     <h2>{% trans "No responses submitted" %}</h2>
+    {% endif %}        
+    {% else %}
+         <h2>{% trans "Complete the activity to see everyone's responses" %}</h2>
     {% endif %}
 {% endblock %}

@@ -245,11 +245,8 @@ def edit(request):
                 if aff_other != '':
                     for a in aff_other.split(','):
                         aff, created = Affiliation.objects.get_or_create(name=a.strip())
-                        aff.is_admin_created=False
                         aff.save()
                         profile.affils.add(aff)
-
-
 
                 profile.user.save()
 
