@@ -71,9 +71,11 @@
     <div class="comments embedded">
         <h2>
             {{pc.player.get_profile.screen_name}}'s {% trans "response" %}
+            {% comment %}
             <div class="controls right">
                 Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
             </div>
+            {% endcomment %}
         </h2>
         {% with instance=pc.challenge.instance comments=pc.comments %}
         {% if comments.all %}
