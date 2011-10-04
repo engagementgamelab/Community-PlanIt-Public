@@ -123,7 +123,7 @@ class RegisterFormTwo(forms.Form):
         self.fields['affiliations'] = forms.MultipleChoiceField(label=_(u'Affiliation'), required=False, choices=affiliations)
 
         self.fields['affiliations_other'] = forms.CharField(required=False, 
-               label=_('Don\'t see your affiliations? Enter it here. Please place a comman between each affiliation.'),
+               label=_('Don\'t see your affiliations? Enter it here. Please place a comma between each affiliation.'),
                 widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
         
         all_hows = UserProfileHowDiscovered.objects.untranslated().filter(instance=self.community).order_by("pos")
@@ -300,7 +300,7 @@ class UserProfileForm(forms.ModelForm):
         self.fields['affiliations'] = forms.MultipleChoiceField(label=_(u'Affiliations'), help_text=_('Right Click (or control and click on a Mac) to select more than one affiliation'), required=False, choices=affil_choices)
 
         self.fields['affiliations_other'] = forms.CharField(required=False, 
-               label=_('Don\'t see your affiliations? Enter it here. Please place a comman between each affiliation.'),
+               label=_('Don\'t see your affiliations? Enter it here. Please place a comma between each affiliation.'),
                 widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
 
     class Meta:
