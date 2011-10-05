@@ -149,9 +149,9 @@ def _build_context(request, action, activity, user=None):
         context.update({'form': form})
     
     
-    if user:    
+    if user:
         context['is_completed'] = activity.is_completed(user)
-    # is_completed variavle is checked for displaying responses.
+    # is_completed variable is checked for displaying responses.
     # admin should be able to see the responses even if he had not completed an activity
     if request.user.is_superuser:
         context['is_completed'] = True

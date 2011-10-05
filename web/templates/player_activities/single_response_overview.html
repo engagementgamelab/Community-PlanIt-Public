@@ -28,7 +28,7 @@
     </div>
     {% endif %}
     
-{% if is_completed %}
+{% if is_completed or activity.is_past %}
     <h2>{% trans "Response Summary" %}</h2>
     <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
         margin-top: 25px; margin-bottom: 25px; "></div>

@@ -58,7 +58,10 @@ class PlayerActivityBase(TranslatableModel):
                 if hasattr(self, related_name):
                     if getattr(self, related_name).filter(answerUser=answerUser).count():
                         return True
-        return False    
+        return False
+
+    def is_past(self):
+        return self.mission.end_date < datetime.datetime.now()
 
     class Meta:
         abstract = True
