@@ -97,6 +97,6 @@ class Mission(TranslatableModel):
 
 class MissionAdmin(TranslatableAdmin):
     list_display = ('title', 'instance', 'start_date', 'end_date')
-    readonly_fields = ('start_date', 'end_date',)
+    #readonly_fields = ('start_date', 'end_date',)
 
 
