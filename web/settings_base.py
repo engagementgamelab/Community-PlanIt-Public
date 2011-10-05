@@ -28,6 +28,9 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
+        'KEY_PREFIX': 'cpi',
+        'TIMEOUT': 300,
+        'VERSION': 1,
     }
 } 
 
@@ -98,12 +101,14 @@ ADMIN_TOOLS_MEDIA_URL = '/static/'
 MIDDLEWARE_CLASSES = (
     'localeurl.middleware.LocaleURLMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
@@ -153,6 +158,7 @@ LOCALE_INDEPENDENT_PATHS = (
     re.compile('^/assets/'),
     re.compile('^/static/'),
     re.compile('^/admin-media/'),
+    re.compile('^/status/cache/'),
     re.compile('^/favicon.ico$'),
 )
 LOCALE_INDEPENDENT_MEDIA_URL = True
