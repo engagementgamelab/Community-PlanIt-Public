@@ -27,33 +27,36 @@ def flag(request, id):
 
     return HttpResponseRedirect(c.get_absolute_url())
 
-@login_required
-def like(request, id):
-    c = Comment.objects.get(id=id)
-    if request.user != c.user:
-        c.likes.add(request.user)
-        message = u"%s liked your comment on %s" % (
-            request.user.get_profile().screen_name,
-            c.content_object
-        )
-        c.user.notifications.create(content_object=c, message=message)
-    return HttpResponseRedirect(c.get_absolute_url())
+# deprecated. ajax only now
+#@login_required
+#def like(request, id):
+#    c = Comment.objects.get(id=id)
+#    if request.user != c.user:
+#        c.likes.add(request.user)
+#        message = u"%s liked your comment on %s" % (
+#            request.user.get_profile().screen_name,
+#            c.content_object
+#        )
+#        c.user.notifications.create(content_object=c, message=message)
+#    return HttpResponseRedirect(c.get_absolute_url())
 
 @login_required
 def ajax_like(request, id):
-    import ipdb;ipdb.set_trace()
-    if not request.is_ajax() == True:
-        return ""
+    if not request.is_ajax():
+        return HttpResponse("")
 
-    c = Comment.objects.get(id=id)
-    if request.user != c.user:
+    try:
+        c = Comment.objects.get(id=id)
+    except Comment.DoesNotExist:
+        return HttpResponse("")
+
+    if request.user != c.user and not request.user in c.likes.all():
         c.likes.add(request.user)
         message = u"%s liked your comment on %s" % (
-            request.user.get_profile().screen_name,
-            c.content_object
+            request.user.get_profile().screen_name, c.content_object
         )
         c.user.notifications.create(content_object=c, message=message)
-    return c.likes.all().count()
+    return HttpResponse(str(c.likes.all().count()))
 
 @login_required
 def reply(request, id):

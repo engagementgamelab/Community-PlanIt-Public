@@ -100,6 +100,20 @@ jQuery(function($) {
         return false;
     });
 
+
+    // comments like button ajax
+    $('div[id^=id_like-]').live("click", function(e){
+        var comment_id = $(this).attr('id').replace('id_like-','');
+        $.ajax({
+            type: "GET",
+            url: '/comments/ajax/like/'+ comment_id +'/',
+            success: function(data, textStatus) {
+                $('div[id=id_likes-count-'+comment_id+']').text(data);
+            },
+            error: function(data){}
+        });
+    });
+
     // Post reply modal
     var reply = $('.reply').bind('click', function(evt) {
         evt.preventDefault();

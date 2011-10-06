@@ -78,7 +78,7 @@
 </div>
 {% endif %}
         
-{% for pc in challenge.player_challenges.completed|slice:":1" %}
+{% for pc in challenge.player_challenges.completed %}
     {% if pc.comments.all %}
     <div class="comments embedded">
         <h2> {{pc.player.get_profile.screen_name}}'s {% trans "response" %} </h2>
@@ -100,6 +100,4 @@
 
 {% endblock %}
 
-{% block body %}
-    {% gmap_includes %}
-{% endblock %}
+{% block body %} {% gmap_includes %} {% endblock %}

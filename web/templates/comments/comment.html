@@ -2,9 +2,12 @@
 <li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
     <div class="likes">
         <div id="id_likes-count-{{ comment.pk }}" class="count">{{comment.likes.count}}</div>
-        <div>Like{{comment.likes.count|pluralize}}</div>
+        <div id="id_like-count-{{ comment.id }}">Like{{comment.likes.count|pluralize}}</div>
         {% if comment.user != request.user %}
-        <a id="id_like-{{ comment.id }}" class="button" href="{% url comments:like comment.id %}" title="click to say you like this">Like</a>
+        <div id="id_like-{{ comment.id }}" class="button" title="click to say you like this">Like</div>
+            {% comment %}
+            href="{% url comments:like comment.id %}" 
+            {% endcomment %}
         {% endif %}
     </div>
     <div class="main">
@@ -13,10 +16,9 @@
             <div class="right">
                 {% if not comment.hidden and comment.user != user %}
                     <a href="{% url flags:add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
-                    
-                {% else %}
+                {% endif %}
+                {% if not comment.hidden and comment.user == request.user %}
                     <a href="{% url comments:edit comment.id %}" title="click to edit this comment">edit</a>
-                    
                 {% endif %}
             </div>
             
