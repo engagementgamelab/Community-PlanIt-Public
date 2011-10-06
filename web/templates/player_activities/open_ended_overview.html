@@ -25,7 +25,7 @@
     </div>
     {% endif %}
     
-    {% if is_completed %}
+    {% if is_completed  or activity.is_past %}
     {% if answers.count %}
     <div class="comments embedded">
         <h2>

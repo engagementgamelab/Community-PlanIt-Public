@@ -21,7 +21,7 @@
     {% endfor %}
     <div id="map" class="google-map" data-type="Point" data-state="overview"></div>
     
-    {% if is_completed %}
+    {% if is_completed  or activity.is_past %}
     <div class="comments embedded">
         {% if answers %}
             <div class="controls right">
