@@ -8,10 +8,6 @@ import urlparse
 
 from django.conf import settings
 from django import template
-from django.template.defaultfilters import stringfilter
-from django.utils import simplejson
-from django.utils.encoding import force_unicode
-from django.utils.functional import Promise
 from django.utils.html import fix_ampersands
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, get_language
@@ -111,9 +107,18 @@ def teaser(text, word_count):
         teaser += '...'
     return teaser
 
-
 @register.filter
 def trans_fallback(obj, attr):
 	return get_translation_with_fallback(obj, attr)
 
+@register.filter
+def order_by(queryset, args):
+    print "order_by", args
+    args = [x.strip() for x in args.split(',')]
+    return queryset.order_by(*args)
 
+@register.filter
+def order_by_custom(queryset):
+    print "order_by_custom"
+    #import ipdb;ipdb.set_trace()
+    return queryset.order_by(*args)

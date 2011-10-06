@@ -1,5 +1,5 @@
 {% extends "layouts/base.html" %}
-{% load gmap attachment_tags i18n %}
+{% load gmap attachment_tags cpi_tags i18n %}
 {% block section %}challenges{% endblock %}
 {% block title %}{% trans "Challenge" %}{% endblock %}
 {% block page_title %}
@@ -78,29 +78,18 @@
 </div>
 {% endif %}
         
-{% for pc in challenge.player_challenges.completed %}
+{% for pc in challenge.player_challenges.completed|slice:":1" %}
     {% if pc.comments.all %}
     <div class="comments embedded">
-        <h2>
-            {{pc.player.get_profile.screen_name}}'s {% trans "response" %}
-            {% comment %}
-            <div class="controls right">
-                Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
-            </div>
-            {% endcomment %}
-        </h2>
+        <h2> {{pc.player.get_profile.screen_name}}'s {% trans "response" %} </h2>
         {% with instance=pc.challenge.instance comments=pc.comments %}
-        {% if comments.all %}
         <ul class="comment_list">
-            {% for comment in comments.all reversed %}
-                {# with extra_message=answer.selected.value #}
+            {% for comment in comments.all %}
                 {% include "comments/comment.html" %}
-                {# endwith #}
             {% empty %}
             <li class="comment">{% trans "No comments found." %}</li>
             {% endfor %}
         </ul>
-        {% endif %}
         {% endwith %}
     </div>
     {% endif %}

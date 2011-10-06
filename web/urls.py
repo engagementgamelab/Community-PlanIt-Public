@@ -80,9 +80,6 @@ urlpatterns = patterns('',
     # generic content redirect, used for comments and notifications
     url(r'^gr/(\d+)/(.+)/$', 'django.contrib.contenttypes.views.shortcut', name='generic_redirect'),
 
-    # generic content redirect, used for comments and notifications
-    url(r'^gr/(\d+)/(.+)/$', 'django.contrib.contenttypes.views.shortcut', name='generic_redirect'),
-
     # Admin stuff
     (r'^curator/', include('web.curator.urls')),
     (r'^admin/gmapsfield/admin/(?P<file>.*)$', 'gmapsfield.views.serve'),

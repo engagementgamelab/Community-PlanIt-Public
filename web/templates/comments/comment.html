@@ -1,10 +1,10 @@
 {% load attachment_tags i18n %}
 <li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
     <div class="likes">
-        <div class="count">{{comment.likes.count}}</div>
+        <div id="id_likes-count-{{ comment.pk }}" class="count">{{comment.likes.count}}</div>
         <div>Like{{comment.likes.count|pluralize}}</div>
         {% if comment.user != request.user %}
-        <a class="button" href="{% url comments:like comment.id %}" title="click to say you like this">Like</a>
+        <a id="id_like-{{ comment.id }}" class="button" href="{% url comments:like comment.id %}" title="click to say you like this">Like</a>
         {% endif %}
     </div>
     <div class="main">

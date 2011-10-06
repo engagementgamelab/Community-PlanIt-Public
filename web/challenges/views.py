@@ -21,10 +21,13 @@ from PIL import Image
 
 @login_required
 def challenge(request, id, template='challenges/base.html'):
-    challenge = get_object_or_404(Challenge, id=id)
+    try:
+        challenge = Challenge.objects.select_related().get(pk=id)
+    except PlayerChallenge.DoesNotExist:
+        return Http404("Challenge could not be found")
 
     try:
-        pc = PlayerChallenge.objects.get(player=request.user, challenge=challenge)
+        pc = PlayerChallenge.objects.select_related().get(player=request.user, challenge=challenge)
     except PlayerChallenge.DoesNotExist:
         pc = None
 
