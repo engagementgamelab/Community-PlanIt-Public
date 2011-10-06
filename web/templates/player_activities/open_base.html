@@ -14,7 +14,7 @@
         <input type="hidden" name="form" value="open_ended">
         <h3>{% trans "Enter your response (required)" %}</h3>
         {{ form.response }}
-        <h4>You have <span id="charsLeft"></span> chars left.</h4>
+        <h4>You have <span id="charsLeft">1000</span> chars left.</h4>
         {% block comment %}{% endblock %}
         <div class="controls">
             <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />

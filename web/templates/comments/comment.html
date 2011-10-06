@@ -69,11 +69,53 @@
             <div class="reply-modal">
                 <form enctype="multipart/form-data" method="POST" action="{% url comments:reply comment.id %}">
                     {% csrf_token %}
-                    <textarea name="message" class="comment_message" cols="40" rows="6" id="id-{{comment.id}}_message"></textarea>
+                    <textarea name="message" class="comment_message" cols="40" rows="6" id="message-{{comment.id}}"></textarea>
                     <button type="submit" class="button small submit">save reply</button>
                     <button type="reset" class="button small cancel">cancel</button>
-                    <div class="fine counter">(<span class="count">1000</span> characters left)</div>
+                    {% comment %}
+                    <h4><span class="count" id="charsLeft">1000</span> characters left</h4>
+                    {% endcomment %}
+                    <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div>
                 </form>
+                <script type="text/javascript"> 
+
+                    $.fn.extend({  
+                        limit: function(limit,element) {
+                            var interval, f;
+                            var self = $(this);
+                            $(this).focus(function(){
+                                interval = window.setInterval(substring,100);
+                            });
+                            $(this).blur(function(){
+                                clearInterval(interval);
+                                substring();
+                            });
+                            substringFunction = "function substring(){ var val = $(self).val(); if (val) {var length = val.length;if(length > limit){$(self).val($(self).val().substring(0,limit));}}";
+                            if(typeof element != 'undefined')
+                                substringFunction += "if($(element).html() != limit-length){$(element).html((limit-length<=0)?'0':limit-length);}"
+                            substringFunction += "}";
+                            eval(substringFunction);
+                            substring();
+                            
+                        } 
+                    }); 
+
+                    var type_count = function(evt) {
+                        var comment_form = $(this.form);
+                        var val = this.value.replace(/\r?\n/g, 'xx');
+                        var len = Math.max(0, 1000 - val.length);
+                        comment_form.find('.count').text(len);
+                        if (len < 1) {
+                            comment_form.find('.counter').addClass('limited');
+                            if (!(evt.ctrlKey || evt.which < 48 && evt.which !== 9 && evt.which !== 13)) {
+                                return false;
+                            }
+                        }
+                        comment_form.find('.counter').removeClass('limited');
+                    }
+                    $('textarea#message-{{ comment.pk }}').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
+                    $('textarea#message-{{ comment.pk }}').limit('1000','#charsLeft');
+                </script>
             </div>
             {% endif %}
         </div>

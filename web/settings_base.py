@@ -155,6 +155,7 @@ LOCALE_INDEPENDENT_PATHS = (
     #re.compile('^/$'),
     re.compile('^/ajax/'),
     re.compile('^/comments/'),
+    re.compile('^/__debug__/'),
     re.compile('^/assets/'),
     re.compile('^/static/'),
     re.compile('^/admin-media/'),
