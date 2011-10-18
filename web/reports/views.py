@@ -84,20 +84,11 @@ def report_general(request):
             'education',
             'income',
             'living',
+            'affiliations',
             'points',
-            #'affiliations',
     )
     values_list = []
-    users = UserProfile.objects.exclude(user__is_superuser=True, user__is_staff=True).order_by('-user__date_joined')
-    def gen_detail_list(details):
-        out = []
-        d = {}
-        for i in details:
-            d[i.item.name] = i
-        for item_name in fee_item_names:
-            out.append(str(d.get(item_name).fee) if d.has_key(item_name) else  "",)
-        return tuple(out)
-
+    users = UserProfile.objects.exclude(user__is_superuser=True, user__is_staff=True)
     for user in users:
         all_details = (
                 user.stake.stake if hasattr(user, 'stake') and user.stake is not None else "",
@@ -106,10 +97,9 @@ def report_general(request):
                 user.education.education if hasattr(user, 'education') and user.education is not None else "",
                 user.income.income if hasattr(user, 'income') and user.income is not None else "",
                 user.living.situation if hasattr(user, 'living') and user.living is not None else "",
+                ", ".join(user.affils.values_list('name', flat=True)) if hasattr(user, 'affils') else "",
                 user.totalPoints,
         )
-
-        #all_details = all_details + gen_detail_list(list(inventory.fee_details_set.all()))
         values_list.append(all_details)
     NOW = datetime.now()
     return render_to_excel(values_list, field_titles, NOW.strftime('%Y-%m-%d-%H-%M-'))
