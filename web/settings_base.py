@@ -13,6 +13,7 @@ ADMIN_MEDIA_PREFIX = '/admin-media/'
 
 #admin_tools
 ADMIN_TOOLS_MEDIA_URL = '/static/'
+ADMIN_TOOLS_MENU = 'web.reports.admin.ReportsMenu'
 
 ADMINS = ( ('Benedict Holland', 'sheepskin505@gmail.com'), )
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
@@ -79,8 +80,8 @@ INSTALLED_APPS = (
     # 3rd party
     'django_mailer',
     'django_extensions',
-    'sentry',
-    'sentry.client',
+    #'sentry',
+    #'sentry.client',
     'gmapsfield',
     'gmapsfield.templatetags',
     'nani',

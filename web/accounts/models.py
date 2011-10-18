@@ -181,12 +181,12 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.screen_name +"'s profile"
 
+    @property
     def affiliations_csv(self):
-        if self.affiliations:
-            return self.affiliations.split(", ")
-
+        if self.affils:
+            return self.affils.values_list('name', flat=True)
         return ""
-    
+
     def earned_tokens(self):
         return self.totalPoints // 100
 
