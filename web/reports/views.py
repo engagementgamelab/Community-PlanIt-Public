@@ -1,9 +1,11 @@
 from datetime import datetime
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required
-from accounts.models import UserProfile
 from django.http import HttpResponseRedirect
+from accounts.models import UserProfile
+from comments.models import Comment
 
-def render_to_excel(values_list, field_titles, filename):
+def render_to_excel(values_list, field_titles=[], filename='report'):
     from datetime import datetime, date
     from django.http import HttpResponse
     import xlwt
@@ -63,7 +65,9 @@ def report_comments_by_activity(request):
 
 @login_required
 def report_comments_popular(request):
-	pass
+    values_list = Comment.objects.annotate(num_likes=Count('likes')).filter(num_likes__gt=2).values_list('user__pk', 'num_likes', 'message').order_by('user__pk')
+    NOW = datetime.now()
+    return render_to_excel(values_list, field_titles=('user id', 'num of likes', 'message'), filename=NOW.strftime('%Y-%m-%d-%H-%M-'))
 
 @login_required
 def report_general(request):
@@ -89,22 +93,22 @@ def report_general(request):
     )
     values_list = []
     users = UserProfile.objects.exclude(user__is_superuser=True, user__is_staff=True)
-    for user in users:
+    for profile in users:
         all_details = (
-                user.pk,
-                user.stake.stake if hasattr(user, 'stake') and user.stake is not None else "",
-                user.race.race if hasattr(user, 'race') and user.race is not None else "",
-                user.gender.gender if hasattr(user, 'gender') and user.gender is not None else "",
-                user.education.education if hasattr(user, 'education') and user.education is not None else "",
-                user.income.income if hasattr(user, 'income') and user.income is not None else "",
-                user.living.situation if hasattr(user, 'living') and user.living is not None else "",
-                ", ".join(user.affils.values_list('name', flat=True)) if hasattr(user, 'affils') else "",
-                user.totalPoints,
+                profile.user.pk,
+                profile.stake.stake if hasattr(profile, 'stake') and profile.stake is not None else "",
+                profile.race.race if hasattr(profile, 'race') and profile.race is not None else "",
+                profile.gender.gender if hasattr(profile, 'gender') and profile.gender is not None else "",
+                profile.education.education if hasattr(profile, 'education') and profile.education is not None else "",
+                profile.income.income if hasattr(profile, 'income') and profile.income is not None else "",
+                profile.living.situation if hasattr(profile, 'living') and profile.living is not None else "",
+                ", ".join(profile.affils.values_list('name', flat=True)) if hasattr(profile, 'affils') else "",
+                profile.totalPoints,
         )
         values_list.append(all_details)
         #values_list.append((user.pk, 'comment1', '', '', '', ''))
-        for c in user.user.comment_set.all():
-            values_list.append((user.pk, c.message, '', '', '', ''))
+        for c in profile.user.comment_set.all():
+            values_list.append((profile.user.pk, c.message, '', '', '', ''))
     NOW = datetime.now()
-    return render_to_excel(values_list, field_titles, NOW.strftime('%Y-%m-%d-%H-%M-'))
+    return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-'))
 
