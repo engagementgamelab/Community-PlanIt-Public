@@ -54,7 +54,6 @@ def _excel_report(request, field_titles, qs_args):
         return HttpResponseRedirect(reverse("admin:index"))
 
     NOW = datetime.now()
-    print qs_args, field_titles
     values_list = UserProfile.objects.untranslated().values_list(*qs_args).order_by('-user__date_joined')
     return render_to_excel(values_list, field_titles, NOW.strftime('%Y-%m-%d-%H-%M-'))
 
@@ -78,6 +77,7 @@ def report_general(request):
     - token distribution
     """
     field_titles = (
+            'ID',
             'stake',
             'race',
             'gender',
@@ -91,6 +91,7 @@ def report_general(request):
     users = UserProfile.objects.exclude(user__is_superuser=True, user__is_staff=True)
     for user in users:
         all_details = (
+                user.pk,
                 user.stake.stake if hasattr(user, 'stake') and user.stake is not None else "",
                 user.race.race if hasattr(user, 'race') and user.race is not None else "",
                 user.gender.gender if hasattr(user, 'gender') and user.gender is not None else "",
@@ -101,6 +102,9 @@ def report_general(request):
                 user.totalPoints,
         )
         values_list.append(all_details)
+        #values_list.append((user.pk, 'comment1', '', '', '', ''))
+        for c in user.user.comment_set.all():
+            values_list.append((user.pk, c.message, '', '', '', ''))
     NOW = datetime.now()
     return render_to_excel(values_list, field_titles, NOW.strftime('%Y-%m-%d-%H-%M-'))
 
