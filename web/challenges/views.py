@@ -66,7 +66,7 @@ def challenge(request, id, template='challenges/base.html'):
                     instance=request.user.get_profile().instance)
 
 
-            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'completed', reverse('challenges:challenge', args=[id]), 'challenge')
+                ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'completed', reverse('challenges:challenge', args=[id]), 'challenge')
             PointsAssigner().assign(request.user, 'challenge_completed')
 
             if pc.player != challenge.user:
@@ -94,7 +94,7 @@ def challenge(request, id, template='challenges/base.html'):
 def accept(request, id):
     challenge = Challenge.objects.get(id=id)
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'accepted', reverse('challenges:challenge', args=[id]), 'challenge')
+    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'accepted', reverse('challenges:challenge', args=[id]), 'challenge')
 
     pc.completed = False
     pc.accepted = True
@@ -107,7 +107,7 @@ def decline(request, id):
     challenge = get_object_or_404(Challenge, id=id)
 
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'declined', reverse('challenges:challenge', args=[id]), 'challenge')
+    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'declined', reverse('challenges:challenge', args=[id]), 'challenge')
     
     pc.declined = True
     pc.accepted = False
@@ -141,7 +141,7 @@ def add(request):
             challenge.save()
 
             PointsAssigner().assign(request.user, 'challenge_created')
-            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name, 'created', reverse('challenges:challenge', args=[challenge.id]), 'challenge')
+            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'created', reverse('challenges:challenge', args=[challenge.id]), 'challenge')
 
             return HttpResponseRedirect(reverse('challenges:index'))
     else:
@@ -167,7 +167,7 @@ def delete(request, id):
         challenge = Challenge.objects.get(id=id)
         challenge.delete()
 
-        ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name, 'deleted', 'challenge')
+        ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'deleted', 'challenge')
     except:
         pass
 
@@ -231,7 +231,7 @@ def comment(request, id):
             challenge.save()
 
             PointsAssigner().assign(request.user, 'comment_created')
-            ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name, 'added comment', reverse('challenges:challenge', args=[id]), 'challenge')
+            ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name[:30], 'added comment', reverse('challenges:challenge', args=[id]), 'challenge')
 
             if request.user != challenge.user:
                 message = "%s commented on %s" % (
