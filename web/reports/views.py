@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect
 from accounts.models import UserProfile
 from comments.models import Comment
 
+#from player_activity.models import *
+
 def render_to_excel(values_list, field_titles=[], filename='report'):
     from datetime import datetime, date
     from django.http import HttpResponse
@@ -61,13 +63,43 @@ def _excel_report(request, field_titles, qs_args):
 
 @login_required
 def report_comments_by_activity(request):
-	pass
+    from player_activities.models import PlayerEmpathyActivity, PlayerMapActivity, PlayerActivity
+    #empathy_comments = Comment.objects.filter(content_type__model='playerempathyactivity').order_by('user__pk').values_list('user__pk', 'message')
+
+    field_titles = ('comment id', 'activity type', 'message', 'posted date')
+    values_list = []
+    #for a in PlayerEmpathyActivity.objects.all():
+    #    for answ in a.empathy_answers.all():
+    #        for c in answ.comments.all():
+    #            values_list.append((c.pk, 'empathy', c.message, c.posted_date.strftime('%Y-%m-%d %H:%M'),))
+
+    #for a in PlayerMapActivity.objects.all():
+    #    for answ in a.map_answers.all():
+    #        for c in answ.comments.all():
+    #            values_list.append((c.pk, 'empathy', c.message, c.posted_date.strftime('%Y-%m-%d %H:%M'),))
+
+    answers = None
+    for a in PlayerActivity.objects.all().order_by('type'):
+        if a.type.type == 'open_ended':
+            answers =  getattr(a, 'openended_answers')
+        elif a.type.type == 'empathy':
+            answers =  getattr(a, 'empathy_answers')
+        #elif a.type.type == 'multi_response':
+        #    answers =  getattr(a, 'multichoice_answers')
+
+        if answers:
+            for answ in answers.all():
+                for c in answ.comments.all():
+                    values_list.append((c.pk, a.type.type, c.message, c.posted_date.strftime('%Y-%m-%d %H:%M'),))
+
+    NOW = datetime.now()
+    return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-popular_comments'))
 
 @login_required
 def report_comments_popular(request):
     values_list = Comment.objects.annotate(num_likes=Count('likes')).filter(num_likes__gt=2).values_list('user__pk', 'num_likes', 'message').order_by('user__pk')
     NOW = datetime.now()
-    return render_to_excel(values_list, field_titles=('user id', 'num of likes', 'message'), filename=NOW.strftime('%Y-%m-%d-%H-%M-'))
+    return render_to_excel(values_list, field_titles=('user id', 'num of likes', 'message'), filename=NOW.strftime('%Y-%m-%d-%H-%M-popular_comments'))
 
 @login_required
 def report_general(request):
@@ -79,6 +111,8 @@ def report_general(request):
     - affiliations
     - points
     - token distribution
+    - date of birth
+    - neighborhood
     """
     field_titles = (
             'ID',
@@ -89,6 +123,7 @@ def report_general(request):
             'income',
             'living',
             'affiliations',
+            'birth year',
             'points',
     )
     values_list = []
@@ -103,6 +138,7 @@ def report_general(request):
                 profile.income.income if hasattr(profile, 'income') and profile.income is not None else "",
                 profile.living.situation if hasattr(profile, 'living') and profile.living is not None else "",
                 ", ".join(profile.affils.values_list('name', flat=True)) if hasattr(profile, 'affils') else "",
+                profile.birth_year or "",
                 profile.totalPoints,
         )
         values_list.append(all_details)
@@ -110,5 +146,5 @@ def report_general(request):
         for c in profile.user.comment_set.all():
             values_list.append((profile.user.pk, c.message, '', '', '', ''))
     NOW = datetime.now()
-    return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-'))
+    return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-profile_stats'))
 
