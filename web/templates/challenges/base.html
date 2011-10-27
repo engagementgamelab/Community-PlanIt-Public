@@ -26,7 +26,7 @@
 
 {{ challenge.map|show }}
 
-{% if challenge.is_active and not player_challenge.completed %}
+{% if challenge.is_active and not player_challenge.completed  and not instance.is_expired %}
     <p>{% trans "Provide evidence to complete this challenge:" %}</p>
 
     <form class="response" enctype="multipart/form-data" action="{% url challenges:challenge challenge.pk %}" method="POST">{% csrf_token %}
@@ -69,11 +69,9 @@
 {% if challenge.player_challenges.completed %}
 <div class="comments embedded">
      <h2>            
-            {% comment %}
          <div class="controls right">
              Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
          </div>
-            {% endcomment %}
     </h2>
 </div>
 {% endif %}

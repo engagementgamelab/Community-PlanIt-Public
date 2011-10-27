@@ -3,7 +3,7 @@
     <div class="likes">
         <div id="id_likes-count-{{ comment.pk }}" class="count">{{comment.likes.count}}</div>
         <div id="id_like-count-{{ comment.id }}">Like{{comment.likes.count|pluralize}}</div>
-        {% if comment.user != request.user %}
+        {% if comment.user != request.user and comment.instance.is_active %}
         <div id="id_like-{{ comment.id }}" class="button" title="click to say you like this">Like</div>
             {% comment %}
             href="{% url comments:like comment.id %}" 
@@ -14,7 +14,7 @@
         <div class="meta">
             
             <div class="right">
-                {% if not comment.hidden and comment.user != user %}
+                {% if not comment.hidden and comment.user != user and comment.instance.is_active %}
                     <a href="{% url flags:add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
                 {% endif %}
                 {% if not comment.hidden and comment.user == request.user %}

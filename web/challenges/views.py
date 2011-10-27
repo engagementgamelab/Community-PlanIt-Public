@@ -31,7 +31,12 @@ def challenge(request, id, template='challenges/base.html'):
     except PlayerChallenge.DoesNotExist:
         pc = None
 
+    instance = request.user.get_profile().instance
     if request.method == 'POST':
+
+        if instance.is_expired:
+            return HttpResponseRedirect(reverse('challenges:index'))
+
         form = PlayerChallengeForm(request.POST)
         if form.is_valid():
             if not pc:
@@ -53,7 +58,7 @@ def challenge(request, id, template='challenges/base.html'):
                             url=request.POST.get('video-url'),
                             type='video',
                             user=request.user,
-                            instance=request.user.get_profile().instance)
+                            instance=instance)
 
             if request.FILES.has_key('picture'):
                 file = request.FILES.get('picture')
@@ -92,6 +97,11 @@ def challenge(request, id, template='challenges/base.html'):
 
 @login_required
 def accept(request, id):
+
+    instance = request.user.get_profile().instance
+    if instance.is_expired:
+        return HttpResponseRedirect(reverse('challenges:index'))
+
     challenge = Challenge.objects.get(id=id)
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
     ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'accepted', reverse('challenges:challenge', args=[id]), 'challenge')
@@ -104,6 +114,10 @@ def accept(request, id):
 
 @login_required
 def decline(request, id):
+    instance = request.user.get_profile().instance
+    if instance.is_expired:
+        return HttpResponseRedirect(reverse('challenges:index'))
+
     challenge = get_object_or_404(Challenge, id=id)
 
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
@@ -117,7 +131,10 @@ def decline(request, id):
 
 @login_required
 def add(request):
+
     instance = request.user.get_profile().instance
+    if instance.is_expired:
+        return HttpResponseRedirect(reverse('challenges:index'))
 
     if request.method == 'POST':
         form = AddChallenge(instance, request.POST)
@@ -160,6 +177,11 @@ def add(request):
 
 @login_required
 def delete(request, id):
+
+    instance = request.user.get_profile().instance
+    if instance.is_expired:
+        return HttpResponseRedirect(reverse('challenges:index'))
+
     try:
         pc = PlayerChallenge.objects.get(challenge__id=id)
         pc.delete()
@@ -182,6 +204,8 @@ def comment(request, id):
     a = None
     b = None
     instance = request.user.get_profile().instance
+    if instance.is_expired:
+        return HttpResponseRedirect(reverse('challenges:index'))
 
     if request.method == 'POST':
         if request.POST.has_key('video-url'):

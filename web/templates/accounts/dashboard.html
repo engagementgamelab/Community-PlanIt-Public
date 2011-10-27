@@ -53,6 +53,7 @@
         {%endif%}
     </div>
 
+    {% if not instance.missions.past.all|length %}
     <div class="section">
         <h2 class="missions">{% trans "Available Challenges" %}</h2>
         <div class="challenges">
@@ -75,6 +76,7 @@
             <a class="button right" href="{% url challenges:index %}">{% trans "All Challenges" %}</a>
         </div>
     </div>
+    {% endif %}
 {% endif %}
 {% endblock rightsidebar %}
 
