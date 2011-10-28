@@ -97,7 +97,7 @@ def report_comments_by_activity(request):
         update_list(getattr(a, 'map_answers'))
 
     NOW = datetime.now()
-    return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-popular_comments'))
+    return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-comments_by_activity'))
 
 @login_required
 def report_comments_popular(request):
