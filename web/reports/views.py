@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from accounts.models import UserProfile
 from comments.models import Comment
+from answers.models import AnswerMultiChoice
 
 #from player_activity.models import *
 
@@ -68,29 +69,32 @@ def report_comments_by_activity(request):
 
     field_titles = ('comment id', 'activity type', 'message', 'posted date')
     values_list = []
-    #for a in PlayerEmpathyActivity.objects.all():
-    #    for answ in a.empathy_answers.all():
-    #        for c in answ.comments.all():
-    #            values_list.append((c.pk, 'empathy', c.message, c.posted_date.strftime('%Y-%m-%d %H:%M'),))
 
-    #for a in PlayerMapActivity.objects.all():
-    #    for answ in a.map_answers.all():
-    #        for c in answ.comments.all():
-    #            values_list.append((c.pk, 'empathy', c.message, c.posted_date.strftime('%Y-%m-%d %H:%M'),))
+    def update_list(answers):
+        for answ in answers.all():
+            for c in answ.comments.all():
+                values_list.append((c.pk, a.type.type + ' response' , c.message, c.posted_date.strftime('%Y-%m-%d %H:%M'),))
 
-    answers = None
     for a in PlayerActivity.objects.all().order_by('type'):
         if a.type.type == 'open_ended':
-            answers =  getattr(a, 'openended_answers')
-        elif a.type.type == 'empathy':
-            answers =  getattr(a, 'empathy_answers')
-        #elif a.type.type == 'multi_response':
-        #    answers =  getattr(a, 'multichoice_answers')
+            values_list.append((a.pk, "OPEN ENDED ACTIVITY:", a.question,))
+            update_list(getattr(a, 'openended_answers'))
+        elif a.type.type == 'multi_response':
+                answers = AnswerMultiChoice.objects.filter(option__activity=a)
+                for answer in answers:
+                    for c in answer.comments.all():
+                        values_list.append((c.pk, a.type.type, c.message, c.posted_date.strftime('%Y-%m-%d %H:%M'),))
+        elif a.type.type == 'single_response':
+            values_list.append((a.pk, "SINGLE RESPONSE ACTIVITY:", a.question,))
+            update_list(getattr(a, 'singleresponse_answers'))
 
-        if answers:
-            for answ in answers.all():
-                for c in answ.comments.all():
-                    values_list.append((c.pk, a.type.type, c.message, c.posted_date.strftime('%Y-%m-%d %H:%M'),))
+    for a in PlayerEmpathyActivity.objects.all():
+        values_list.append((a.pk, "EMPATHY ACTIVITY:", a.question,))
+        update_list(getattr(a, 'empathy_answers'))
+
+    for a in PlayerMapActivity.objects.all():
+        values_list.append((a.pk, "MAP ACTIVITY:", a.question,))
+        update_list(getattr(a, 'map_answers'))
 
     NOW = datetime.now()
     return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-popular_comments'))
