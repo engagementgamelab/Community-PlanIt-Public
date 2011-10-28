@@ -116,7 +116,8 @@ def report_general(request):
     - points
     - token distribution
     - date of birth
-    - neighborhood
+    - city
+    - zip_code
     """
     field_titles = (
             'ID',
@@ -128,6 +129,9 @@ def report_general(request):
             'living',
             'affiliations',
             'birth year',
+            'city/neighborhood',
+            'zip code',
+            'how discovered?',
             'points',
     )
     values_list = []
@@ -143,6 +147,9 @@ def report_general(request):
                 profile.living.situation if hasattr(profile, 'living') and profile.living is not None else "",
                 ", ".join(profile.affils.values_list('name', flat=True)) if hasattr(profile, 'affils') else "",
                 profile.birth_year or "",
+                profile.city or "",
+                profile.zip_code or "",
+                profile.how_discovered.how if hasattr(profile, 'how_discovered') and profile.how_discovered is not None else "",
                 profile.totalPoints,
         )
         values_list.append(all_details)
