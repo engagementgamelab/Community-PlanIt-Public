@@ -153,9 +153,8 @@ def report_general(request):
                 profile.totalPoints,
         )
         values_list.append(all_details)
-        #values_list.append((user.pk, 'comment1', '', '', '', ''))
-        for c in profile.user.comment_set.all():
-            values_list.append((profile.user.pk, c.message, '', '', '', ''))
+        #for c in profile.user.comment_set.all():
+        #    values_list.append((profile.user.pk, c.message, '', '', '', ''))
     NOW = datetime.now()
     return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-profile_stats'))
 
