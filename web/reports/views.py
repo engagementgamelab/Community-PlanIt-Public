@@ -101,12 +101,6 @@ def report_comments_by_activity(request):
     return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-comments_by_activity'))
 
 @login_required
-def report_comments_popular(request):
-    values_list = Comment.objects.annotate(num_likes=Count('likes')).filter(num_likes__gt=2).values_list('user__pk', 'num_likes', 'message').order_by('user__pk')
-    NOW = datetime.now()
-    return render_to_excel(values_list, field_titles=('user id', 'num of likes', 'message'), filename=NOW.strftime('%Y-%m-%d-%H-%M-popular_comments'))
-
-@login_required
 def report_comments_by_activity2(request):
     """
     Comment ID
@@ -135,41 +129,98 @@ def report_comments_by_activity2(request):
     )
     values_list = []
 
+
+    def fetch_replies(answer, comment):
+    	replies = []
+        if comment.comments.all().count():
+            for res in comment.comments.all():
+                replies.append(
+                        (
+                            res.pk,
+                            answer.mission.title,
+                            answer.name,
+                            answer.type.type,
+                            res.posted_date.strftime('%Y-%m-%d %H:%M'),
+                            res.user.pk,
+                            "response to %s" %(comment.pk),
+                            res.message,
+                            res.likes.all().count(),
+                        )
+                )
+                fetch_replies(a, res)
+        return replies
+
     def update_list(answers):
         for answ in answers.all():
             for c in answ.comments.all():
                 values_list.append(
                         (
                             c.pk, 
-                            a.type.type + ' response' , 
-                            c.message, 
+                            a.mission.title,
+                            a.name, 
+                            a.type.type, 
                             c.posted_date.strftime('%Y-%m-%d %H:%M'),
+                            c.user.pk,
+                            '--',
+                            c.message, 
+                            c.likes.all().count(),
                         )
                 )
+                if c.comments.all().count():
+                    values_list.extend(fetch_replies(a, c))
 
-    for a in PlayerActivity.objects.all().order_by('type'):
-        if a.type.type == 'open_ended':
-            #values_list.append((a.pk, "OPEN ENDED ACTIVITY:", a.question,))
-            update_list(getattr(a, 'openended_answers'))
-        elif a.type.type == 'multi_response':
-                answers = AnswerMultiChoice.objects.filter(option__activity=a)
-                for answer in answers:
-                    for c in answer.comments.all():
-                        values_list.append(
-                                (
-                                    c.pk, 
-                                    a.type.type, 
-                                    c.message, 
-                                    c.posted_date.strftime('%Y-%m-%d %H:%M'),
-                                )
-                        )
-        elif a.type.type == 'single_response':
-            #values_list.append((a.pk, "SINGLE RESPONSE ACTIVITY:", a.question,))
-            update_list(getattr(a, 'singleresponse_answers'))
+    def fetch_multichoice_replies(answer, comment, mission_title):
+    	replies = []
+        for res in comment.comments.all():
+            replies.append(
+                    (
+                        res.pk,
+                        mission_title,
+                        "---",
+                        'multichoice',
+                        res.posted_date.strftime('%Y-%m-%d %H:%M'),
+                        res.user.pk,
+                        "response to %s" %(comment.pk),
+                        res.message,
+                        res.likes.all().count(),
+                    )
+            )
+            fetch_multichoice_replies(a, res, mission_title=mission_title)
+        return replies
+
 
     for a in PlayerEmpathyActivity.objects.all():
         #values_list.append((a.pk, "EMPATHY ACTIVITY:", a.question,))
         update_list(getattr(a, 'empathy_answers'))
+
+    for a in PlayerActivity.objects.select_related().all().order_by('type'):
+        if a.type.type == 'open_ended':
+            #values_list.append((a.pk, "OPEN ENDED ACTIVITY:", a.question,))
+            update_list(getattr(a, 'openended_answers'))
+        elif a.type.type == 'single_response':
+            #values_list.append((a.pk, "SINGLE RESPONSE ACTIVITY:", a.question,))
+            update_list(getattr(a, 'singleresponse_answers'))
+
+        elif a.type.type == 'multi_response':
+            answers = AnswerMultiChoice.objects.select_related().filter(option__activity=a)
+            for answer in answers:
+                for c in answer.comments.all():
+                    mission_title = answer.option.mission.title
+                    values_list.append(
+                            (
+                                c.pk, 
+                                mission_title,
+                                "--",
+                                'multichoice',
+                                c.posted_date.strftime('%Y-%m-%d %H:%M'),
+                                c.user.pk,
+                                '--',
+                                c.message, 
+                                c.likes.all().count(),
+                            )
+                    )
+                    if c.comments.all().count():
+                        values_list.extend(fetch_multichoice_replies(answer, c, mission_title))
 
     for a in PlayerMapActivity.objects.all():
         #values_list.append((a.pk, "MAP ACTIVITY:", a.question,))
@@ -177,6 +228,12 @@ def report_comments_by_activity2(request):
 
     NOW = datetime.now()
     return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-activity-comments'))
+
+@login_required
+def report_comments_popular(request):
+    values_list = Comment.objects.annotate(num_likes=Count('likes')).filter(num_likes__gt=2).values_list('user__pk', 'num_likes', 'message').order_by('user__pk')
+    NOW = datetime.now()
+    return render_to_excel(values_list, field_titles=('user id', 'num of likes', 'message'), filename=NOW.strftime('%Y-%m-%d-%H-%M-popular_comments'))
 
 
 @login_required
