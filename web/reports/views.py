@@ -1,4 +1,6 @@
 from datetime import datetime
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -6,6 +8,7 @@ from accounts.models import UserProfile
 from comments.models import Comment
 from answers.models import AnswerMultiChoice
 from reports.models import Activity
+from player_activities.models import PlayerEmpathyActivity, PlayerMapActivity, PlayerActivity
 
 #from player_activity.models import *
 
@@ -65,8 +68,6 @@ def _excel_report(request, field_titles, qs_args):
 
 @login_required
 def report_comments_by_activity(request):
-    from player_activities.models import PlayerEmpathyActivity, PlayerMapActivity, PlayerActivity
-    #empathy_comments = Comment.objects.filter(content_type__model='playerempathyactivity').order_by('user__pk').values_list('user__pk', 'message')
 
     field_titles = ('comment id', 'activity type', 'message', 'posted date')
     values_list = []
@@ -101,7 +102,75 @@ def report_comments_by_activity(request):
     return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-comments_by_activity'))
 
 @login_required
+def report_comments_by_activity2_multi(request):
+    #import ipdb;ipdb.set_trace()
+    if not request.user.is_superuser:
+        return HttpResponseRedirect(reverse("admin:index"))
+
+
+    field_titles = ('comment id', 
+                    'mission', 
+                    'activity title', 
+                    'activity type', 
+                    'timestamp',
+                    'user id',
+                    'response code',
+                    'comment', 
+                    'likes'
+    )
+
+    def fetch_multichoice_replies(answer, comment, mission_title):
+    	replies = []
+        for res in comment.comments.all():
+            replies.append(
+                    (
+                        res.pk,
+                        mission_title,
+                        "---",
+                        'multichoice',
+                        res.posted_date.strftime('%Y-%m-%d %H:%M'),
+                        res.user.pk,
+                        "response to %s" %(comment.pk),
+                        res.message,
+                        res.likes.all().count(),
+                    )
+            )
+            fetch_multichoice_replies(a, res, mission_title=mission_title)
+        return replies
+
+    values_list = []
+
+    for a in PlayerActivity.objects.select_related().all().order_by('type'):
+
+        if a.type.type == 'multi_response':
+            answers = AnswerMultiChoice.objects.select_related().filter(option__activity=a)
+            for answer in answers:
+                for c in answer.comments.all():
+                    mission_title = answer.option.mission.title
+                    values_list.append(
+                            (
+                                c.pk, 
+                                mission_title,
+                                "--",
+                                'multichoice',
+                                c.posted_date.strftime('%Y-%m-%d %H:%M'),
+                                c.user.pk,
+                                '--',
+                                c.message, 
+                                c.likes.all().count(),
+                            )
+                    )
+                    if c.comments.all().count():
+                        values_list.extend(fetch_multichoice_replies(answer, c, mission_title))
+
+    NOW = datetime.now()
+    return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-activity-comments2_multi'))
+
+@login_required
 def report_comments_by_activity2(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect(reverse("admin:index"))
+
     """
     Comment ID
     Mission
@@ -114,8 +183,6 @@ def report_comments_by_activity2(request):
     Comment (raw text of the comment)
     Likes (number of likes)
     """
-    from player_activities.models import PlayerEmpathyActivity, PlayerMapActivity, PlayerActivity
-    #empathy_comments = Comment.objects.filter(content_type__model='playerempathyactivity').order_by('user__pk').values_list('user__pk', 'message')
 
     field_titles = ('comment id', 
                     'mission', 
@@ -231,6 +298,9 @@ def report_comments_by_activity2(request):
 
 @login_required
 def report_comments_popular(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect(reverse("admin:index"))
+
     values_list = Comment.objects.annotate(num_likes=Count('likes')).filter(num_likes__gt=2).values_list('user__pk', 'num_likes', 'message').order_by('user__pk')
     NOW = datetime.now()
     return render_to_excel(values_list, field_titles=('user id', 'num of likes', 'message'), filename=NOW.strftime('%Y-%m-%d-%H-%M-popular_comments'))
@@ -238,6 +308,10 @@ def report_comments_popular(request):
 
 @login_required
 def demographic(request):
+
+    if not request.user.is_superuser:
+        return HttpResponseRedirect(reverse("admin:index"))
+
     field_titles = (
             'ID',
             'stake',
@@ -301,6 +375,10 @@ def demographic2(request):
     Priority 6 Tokens Spent
     Priority 7 Tokens Spent
     """
+
+    if not request.user.is_superuser:
+        return HttpResponseRedirect(reverse("admin:index"))
+
     field_titles = (
             'ID',
             'stake',

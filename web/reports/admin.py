@@ -33,6 +33,8 @@ class ReportsMenu(Menu):
                     items.MenuItem('popular comments', reverse('reports:comments_popular')),
                     items.MenuItem('comments by activity', reverse('reports:comments_by_activity')),
                     items.MenuItem('comments by activity 2', reverse('reports:comments_by_activity2')),
+                    items.MenuItem('comments by activity 2 (multi only)', reverse('reports:comments_by_activity2_multi')),
+
                 ]
             ),
         ]
