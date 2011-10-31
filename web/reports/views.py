@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from accounts.models import UserProfile
 from comments.models import Comment
 from answers.models import AnswerMultiChoice
+from reports.models import Activity
 
 #from player_activity.models import *
 
@@ -106,19 +107,80 @@ def report_comments_popular(request):
     return render_to_excel(values_list, field_titles=('user id', 'num of likes', 'message'), filename=NOW.strftime('%Y-%m-%d-%H-%M-popular_comments'))
 
 @login_required
-def report_general(request):
+def report_comments_by_activity2(request):
     """
-    - race/ethnicity
-    - income
-    - gender
-    - stake
-    - affiliations
-    - points
-    - token distribution
-    - date of birth
-    - city
-    - zip_code
+    Comment ID
+    Mission
+    Activity Title
+    Activity Type
+    Timestamp
+    User ID
+    Response Code (maybe comma separated where they could choose multiple -
+    i.e. A,B,D or Strongly Agree)
+    Comment (raw text of the comment)
+    Likes (number of likes)
     """
+    from player_activities.models import PlayerEmpathyActivity, PlayerMapActivity, PlayerActivity
+    #empathy_comments = Comment.objects.filter(content_type__model='playerempathyactivity').order_by('user__pk').values_list('user__pk', 'message')
+
+    field_titles = ('comment id', 
+                    'mission', 
+                    'activity title', 
+                    'activity type', 
+                    'timestamp',
+                    'user id',
+                    'response code',
+                    'comment', 
+                    'likes'
+    )
+    values_list = []
+
+    def update_list(answers):
+        for answ in answers.all():
+            for c in answ.comments.all():
+                values_list.append(
+                        (
+                            c.pk, 
+                            a.type.type + ' response' , 
+                            c.message, 
+                            c.posted_date.strftime('%Y-%m-%d %H:%M'),
+                        )
+                )
+
+    for a in PlayerActivity.objects.all().order_by('type'):
+        if a.type.type == 'open_ended':
+            #values_list.append((a.pk, "OPEN ENDED ACTIVITY:", a.question,))
+            update_list(getattr(a, 'openended_answers'))
+        elif a.type.type == 'multi_response':
+                answers = AnswerMultiChoice.objects.filter(option__activity=a)
+                for answer in answers:
+                    for c in answer.comments.all():
+                        values_list.append(
+                                (
+                                    c.pk, 
+                                    a.type.type, 
+                                    c.message, 
+                                    c.posted_date.strftime('%Y-%m-%d %H:%M'),
+                                )
+                        )
+        elif a.type.type == 'single_response':
+            #values_list.append((a.pk, "SINGLE RESPONSE ACTIVITY:", a.question,))
+            update_list(getattr(a, 'singleresponse_answers'))
+
+    for a in PlayerEmpathyActivity.objects.all():
+        #values_list.append((a.pk, "EMPATHY ACTIVITY:", a.question,))
+        update_list(getattr(a, 'empathy_answers'))
+
+    for a in PlayerMapActivity.objects.all():
+        #values_list.append((a.pk, "MAP ACTIVITY:", a.question,))
+        update_list(getattr(a, 'map_answers'))
+
+    NOW = datetime.now()
+    return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-activity-comments'))
+
+
+@login_required
+def demographic(request):
     field_titles = (
             'ID',
             'stake',
@@ -157,4 +219,70 @@ def report_general(request):
         #    values_list.append((profile.user.pk, c.message, '', '', '', ''))
     NOW = datetime.now()
     return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-profile_stats'))
+
+
+@login_required
+def demographic2(request):
+    """
+    UserID
+    Stake
+    Affiliation(s)
+    Preferred Language
+    Picture? (Y/N)
+    Race
+    Gender
+    Education
+    Income
+    Rent/Own
+    Neighborhood/Zip
+    Points
+    Priority 1 Tokens Spent
+    Priority 2 Tokens Spent
+    Priority 3 Tokens Spent
+    Priority 4 Tokens Spent
+    Priority 5 Tokens Spent
+    Priority 6 Tokens Spent
+    Priority 7 Tokens Spent
+    """
+    field_titles = (
+            'ID',
+            'stake',
+            'affiliations',
+            'preferred language',
+            'picture',
+            'race',
+            'gender',
+            'education',
+            'income',
+            'rent/own',
+            'city/neighborhood',
+            'zip code',
+            'points',
+            'tokens spent'
+    )
+    values_list = []
+    users = UserProfile.objects.exclude(user__is_superuser=True, user__is_staff=True)
+    for profile in users:
+        all_details = (
+                profile.user.pk,
+                profile.stake.stake if hasattr(profile, 'stake') and profile.stake is not None else "",
+                ", ".join(profile.affils.values_list('name', flat=True)) if hasattr(profile, 'affils') else "",
+                profile.preferred_language,
+                "Yes" if profile.avatar else "No",
+                profile.race.race if hasattr(profile, 'race') and profile.race is not None else "",
+                profile.gender.gender if hasattr(profile, 'gender') and profile.gender is not None else "",
+                profile.education.education if hasattr(profile, 'education') and profile.education is not None else "",
+                profile.income.income if hasattr(profile, 'income') and profile.income is not None else "",
+                profile.living.situation if hasattr(profile, 'living') and profile.living is not None else "",
+                profile.city or "",
+                profile.zip_code or "",
+                profile.totalPoints,
+                Activity.objects.filter(data='spent token', user=profile.user).count(),
+        )
+        values_list.append(all_details)
+        #for c in profile.user.comment_set.all():
+        #    values_list.append((profile.user.pk, c.message, '', '', '', ''))
+    NOW = datetime.now()
+    return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-profile_stats'))
+
 

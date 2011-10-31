@@ -28,9 +28,11 @@ class ReportsMenu(Menu):
             ),
             items.MenuItem('Excel Reports',
                 children=[
-                    items.MenuItem('general', reverse('reports:general')),
+                    items.MenuItem('demographic report', reverse('reports:demographic')),
+                    items.MenuItem('demographic report 2', reverse('reports:demographic2')),
                     items.MenuItem('popular comments', reverse('reports:comments_popular')),
                     items.MenuItem('comments by activity', reverse('reports:comments_by_activity')),
+                    items.MenuItem('comments by activity 2', reverse('reports:comments_by_activity2')),
                 ]
             ),
         ]
