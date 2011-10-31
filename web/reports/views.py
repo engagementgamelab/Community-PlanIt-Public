@@ -2,6 +2,7 @@ from datetime import datetime
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.db.models import Count
+from django.db import connection
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from accounts.models import UserProfile
@@ -103,7 +104,6 @@ def report_comments_by_activity(request):
 
 @login_required
 def report_comments_by_activity2_multi(request):
-    #import ipdb;ipdb.set_trace()
     if not request.user.is_superuser:
         return HttpResponseRedirect(reverse("admin:index"))
 
@@ -164,25 +164,13 @@ def report_comments_by_activity2_multi(request):
                         values_list.extend(fetch_multichoice_replies(answer, c, mission_title))
 
     NOW = datetime.now()
+    print len(connection.queries)
     return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-activity-comments2_multi'))
 
 @login_required
 def report_comments_by_activity2(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect(reverse("admin:index"))
-
-    """
-    Comment ID
-    Mission
-    Activity Title
-    Activity Type
-    Timestamp
-    User ID
-    Response Code (maybe comma separated where they could choose multiple -
-    i.e. A,B,D or Strongly Agree)
-    Comment (raw text of the comment)
-    Likes (number of likes)
-    """
 
     field_titles = ('comment id', 
                     'mission', 
@@ -194,13 +182,11 @@ def report_comments_by_activity2(request):
                     'comment', 
                     'likes'
     )
-    values_list = []
-
 
     def fetch_replies(answer, comment):
     	replies = []
         if comment.comments.all().count():
-            for res in comment.comments.all():
+            for res in comment.comments.select_related().all():
                 replies.append(
                         (
                             res.pk,
@@ -217,9 +203,10 @@ def report_comments_by_activity2(request):
                 fetch_replies(a, res)
         return replies
 
+    values_list = []
     def update_list(answers):
-        for answ in answers.all():
-            for c in answ.comments.all():
+        for answ in answers.select_related('comments').all():
+            for c in answ.comments.select_related('user', 'likes').all():
                 values_list.append(
                         (
                             c.pk, 
@@ -236,64 +223,20 @@ def report_comments_by_activity2(request):
                 if c.comments.all().count():
                     values_list.extend(fetch_replies(a, c))
 
-    def fetch_multichoice_replies(answer, comment, mission_title):
-    	replies = []
-        for res in comment.comments.all():
-            replies.append(
-                    (
-                        res.pk,
-                        mission_title,
-                        "---",
-                        'multichoice',
-                        res.posted_date.strftime('%Y-%m-%d %H:%M'),
-                        res.user.pk,
-                        "response to %s" %(comment.pk),
-                        res.message,
-                        res.likes.all().count(),
-                    )
-            )
-            fetch_multichoice_replies(a, res, mission_title=mission_title)
-        return replies
-
-
-    for a in PlayerEmpathyActivity.objects.all():
-        #values_list.append((a.pk, "EMPATHY ACTIVITY:", a.question,))
+    for a in PlayerEmpathyActivity.objects.select_related().all():
         update_list(getattr(a, 'empathy_answers'))
 
     for a in PlayerActivity.objects.select_related().all().order_by('type'):
         if a.type.type == 'open_ended':
-            #values_list.append((a.pk, "OPEN ENDED ACTIVITY:", a.question,))
             update_list(getattr(a, 'openended_answers'))
         elif a.type.type == 'single_response':
-            #values_list.append((a.pk, "SINGLE RESPONSE ACTIVITY:", a.question,))
             update_list(getattr(a, 'singleresponse_answers'))
 
-        elif a.type.type == 'multi_response':
-            answers = AnswerMultiChoice.objects.select_related().filter(option__activity=a)
-            for answer in answers:
-                for c in answer.comments.all():
-                    mission_title = answer.option.mission.title
-                    values_list.append(
-                            (
-                                c.pk, 
-                                mission_title,
-                                "--",
-                                'multichoice',
-                                c.posted_date.strftime('%Y-%m-%d %H:%M'),
-                                c.user.pk,
-                                '--',
-                                c.message, 
-                                c.likes.all().count(),
-                            )
-                    )
-                    if c.comments.all().count():
-                        values_list.extend(fetch_multichoice_replies(answer, c, mission_title))
-
-    for a in PlayerMapActivity.objects.all():
-        #values_list.append((a.pk, "MAP ACTIVITY:", a.question,))
+    for a in PlayerMapActivity.objects.select_related().all():
         update_list(getattr(a, 'map_answers'))
 
     NOW = datetime.now()
+    print len(connection.queries)
     return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-activity-comments'))
 
 @login_required
