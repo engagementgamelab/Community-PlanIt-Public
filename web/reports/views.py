@@ -10,6 +10,8 @@ from comments.models import Comment
 from answers.models import AnswerMultiChoice
 from reports.models import Activity
 from player_activities.models import PlayerEmpathyActivity, PlayerMapActivity, PlayerActivity
+from values.models import *
+from django.db.models import Sum
 
 #from player_activity.models import *
 
@@ -119,7 +121,7 @@ def report_comments_by_activity2_multi(request):
                     'likes'
     )
 
-    def fetch_multichoice_replies(answer, comment, mission_title):
+    def _fetch_multichoice_replies(answer, comment, mission_title):
     	replies = []
         for res in comment.comments.all():
             replies.append(
@@ -135,33 +137,32 @@ def report_comments_by_activity2_multi(request):
                         res.likes.all().count(),
                     )
             )
-            fetch_multichoice_replies(a, res, mission_title=mission_title)
+            _fetch_multichoice_replies(a, res, mission_title=mission_title)
         return replies
 
     values_list = []
 
-    for a in PlayerActivity.objects.select_related().all().order_by('type'):
+    for a in PlayerActivity.objects.select_related().filter(type__type='multi_response').order_by('mission'):
 
-        if a.type.type == 'multi_response':
-            answers = AnswerMultiChoice.objects.select_related().filter(option__activity=a)
-            for answer in answers:
-                for c in answer.comments.all():
-                    mission_title = answer.option.mission.title
-                    values_list.append(
-                            (
-                                c.pk, 
-                                mission_title,
-                                "--",
-                                'multichoice',
-                                c.posted_date.strftime('%Y-%m-%d %H:%M'),
-                                c.user.pk,
-                                '--',
-                                c.message, 
-                                c.likes.all().count(),
-                            )
-                    )
-                    if c.comments.all().count():
-                        values_list.extend(fetch_multichoice_replies(answer, c, mission_title))
+        answers = AnswerMultiChoice.objects.select_related().filter(option__activity=a)
+        for answer in answers:
+            for c in answer.comments.all():
+                mission_title = answer.option.mission.title
+                values_list.append(
+                        (
+                            c.pk, 
+                            mission_title,
+                            a.name,
+                            'multichoice',
+                            c.posted_date.strftime('%Y-%m-%d %H:%M'),
+                            c.user.pk,
+                            answer.option.value,
+                            c.message, 
+                            c.likes.all().count(),
+                        )
+                )
+                if c.comments.all().count():
+                    values_list.extend(_fetch_multichoice_replies(answer, c, mission_title))
 
     NOW = datetime.now()
     print len(connection.queries)
@@ -336,13 +337,27 @@ def demographic2(request):
             'city/neighborhood',
             'zip code',
             'points',
-            'tokens spent'
+            'total tokens spent',
+            'School Environment and Safety', 
+            'Attendance', 
+            'Achievement Gaps', 
+            'Growth', 
+            'Proficiency ', 
+            'Family And Community Engagement', 
+            'Opportunities To Learn',
     )
     values_list = []
     users = UserProfile.objects.exclude(user__is_superuser=True, user__is_staff=True)
+    def coins_by_value(user, value_id):
+        try:
+        	return PlayerValue.objects.get(user=user, value__pk=value_id).coins
+        except PlayerValue.DoesNotExist:
+        	return 0
+
     for profile in users:
+    	user = profile.user
         all_details = (
-                profile.user.pk,
+                user.pk,
                 profile.stake.stake if hasattr(profile, 'stake') and profile.stake is not None else "",
                 ", ".join(profile.affils.values_list('name', flat=True)) if hasattr(profile, 'affils') else "",
                 profile.preferred_language,
@@ -355,11 +370,20 @@ def demographic2(request):
                 profile.city or "",
                 profile.zip_code or "",
                 profile.totalPoints,
-                Activity.objects.filter(data='spent token', user=profile.user).count(),
+                PlayerValue.objects.filter(user=user).aggregate(Sum('coins')).get('coins__sum'),
+                #Activity.objects.filter(data='spent token', user=profile.user).count(),
+                coins_by_value(user, 173),
+                coins_by_value(user, 174),
+                coins_by_value(user, 175),
+                coins_by_value(user, 176),
+                coins_by_value(user, 177),
+                coins_by_value(user, 178),
+                coins_by_value(user, 179),
         )
         values_list.append(all_details)
         #for c in profile.user.comment_set.all():
         #    values_list.append((profile.user.pk, c.message, '', '', '', ''))
+    print len(connection.queries)
     NOW = datetime.now()
     return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-profile_stats'))
 
