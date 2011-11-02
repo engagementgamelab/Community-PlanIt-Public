@@ -357,14 +357,6 @@ def dashboard(request, template_name='accounts/dashboard.html'):
         #instance = Instance.objects.latest()
         instance = _fake_latest(Instance, Instance.objects.all())#.active())
 
-    last_mission = None
-    if instance and instance.missions.count():
-        #looks like `latest` qs method is broken in django-nani
-        #applying a workaround for now.
-        #TODO fix
-        #last_mission = _fake_latest(Mission, instance.missions)
-        last_mission = Mission.objects.order_by('end_date')
-
     page = request.GET.get('page', 1)
 
     # Fetch activity log feed for dashboard.
@@ -399,7 +391,6 @@ def dashboard(request, template_name='accounts/dashboard.html'):
 
     context = dict(
         log = log,
-        last_mission = last_mission,
         paginator = paginator,
         activities_page = activities_page,
         completed = completed,

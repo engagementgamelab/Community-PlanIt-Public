@@ -98,11 +98,7 @@
             </ul>
 
             <p>Check out the results of the
-            {% if last_mission %}
-                <a class="red" href="{% url missions:mission last_mission.slug %}" title="{{last_mission.name}}">activities</a>
-            {% else %}
             <a class="red" href="{% url missions:index %}" title="mission">activities</a>
-            {% endif %}
             &#8212; and don't forget to see how the community spent its 
             <a class="red" href="{% url values:index %}">tokens</a>!
             </p>
