@@ -97,7 +97,6 @@ MANAGERS = ADMINS
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
 MEDIA_URL = '/assets/'
-ADMIN_TOOLS_MEDIA_URL = '/static/'
 
 MIDDLEWARE_CLASSES = (
     'localeurl.middleware.LocaleURLMiddleware',

@@ -41,6 +41,7 @@ class PlayerActivityBase(TranslatableModel):
     points = models.IntegerField(blank=True, null=True, default=None)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
     comments = generic.GenericRelation(Comment)    
+    official_response = models.TextField(max_length=500, blank=True, default='')
 
     def getPoints(self):
         if self.points == None:

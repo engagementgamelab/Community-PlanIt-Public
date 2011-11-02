@@ -13,6 +13,10 @@
 {% endif %}
 <h1>{{activity.name}}</h1>
 <h3>{{activity.question|safe}}</h3>
+{% if activity.official_response %}
+<h2> {% trans "Official Response" %} </h2>
+<h3>{{activity.official_response|safe}}</h3>
+{% endif %}
 
 
     {% include "player_activities/attachments.html" %}
