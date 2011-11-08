@@ -142,6 +142,7 @@ LANGUAGES = (
 LOCALE_INDEPENDENT_PATHS = (
     #re.compile('^/$'),
     re.compile('^/ajax/'),
+    re.compile('^/admin/'),
     re.compile('^/comments/'),
     re.compile('^/__debug__/'),
     re.compile('^/assets/'),

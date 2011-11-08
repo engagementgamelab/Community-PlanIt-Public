@@ -21,7 +21,7 @@
     </p>
     
     {% if official_response %}
-    <h2> {% trans "Official Response" %} </h2>
+    <h2> {{ activity.mission.instance.title }}'s {% trans "Official Response" %} </h2>
 
     {% with instance=activity.mission.instance comments=official_response.comments %}
         <div class="comments embedded">

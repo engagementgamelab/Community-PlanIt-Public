@@ -13,11 +13,27 @@
 {% endif %}
 <h1>{{activity.name}}</h1>
 <h3>{{activity.question|safe}}</h3>
-{% if activity.official_response %}
-<h2> {% trans "Official Response" %} </h2>
-<h3>{{activity.official_response|safe}}</h3>
+
+
+{% if official_response %}
+<h2> {{ activity.mission.instance.title }}'s {% trans "Official Response" %} </h2>
+
+{% with instance=activity.mission.instance comments=official_response.comments %}
+    <div class="comments embedded">
+        <ul class="comment_list">
+
+            {% for comment in comments.all %}
+                {% with extra_message=activity.title %}
+                {% include "comments/comment.html" %}
+                {% endwith %}
+            {% empty %}
+            <li class="comment">No comments found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endwith %}
 {% endif %}
-    
+
     {% if my_answers %}
     <div>
             <h3>{% trans "Your answer:" %}</h3>
