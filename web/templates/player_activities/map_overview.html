@@ -5,10 +5,27 @@
 {% block main %}
     <h1>Map Overview</h1>
     <h2>{{activity.question|safe}}</h2>
-    {% if activity.official_response %}
+
+    {% if official_response %}
     <h2> {% trans "Official Response" %} </h2>
-    <h3>{{activity.official_response|safe}}</h3>
+
+    {% with instance=activity.mission.instance comments=official_response.comments %}
+        <div class="comments embedded">
+            <ul class="comment_list">
+
+                {% for comment in comments.all %}
+                    {% with extra_message=activity.title %}
+                    {% include "comments/comment.html" %}
+                    {% endwith %}
+                {% empty %}
+                <li class="comment">No comments found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endwith %}
     {% endif %}
+
+
     
     {%if not activity.mission.is_expired %}
     <div>
@@ -40,7 +57,7 @@
             
         </h3>
         <ul class="comment_list">
-            {% for comment in comments.all reversed %}
+            {% for comment in comments.all %}
                 {% with extra_message=answer.selected.value %}
                 {% include "comments/comment.html" %}
                 {% endwith %}

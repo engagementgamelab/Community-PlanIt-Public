@@ -202,14 +202,14 @@ class UserProfile(models.Model):
     
     def points_to_coin_for_fill(self):
         return self.coinPoints
-    
+
     @property
     def screen_name(self):
         #First name and last name are required
         first = self.user.first_name or ''
         if first and len(first) > 1:
             first = first[0].upper() + first[1:]
-        
+
         last = self.user.last_name or ''
         if last:
             if len(last) > 1:
@@ -217,7 +217,7 @@ class UserProfile(models.Model):
                 last = "%s." % last[0]
             else:
                 last = last[0]
-        
+
         if first or last:
             return "%s %s" % (first, last)
 

@@ -20,11 +20,26 @@
         {{activity.bio}}
     </p>
     
-    <h3>{{ activity.question|safe }}</h3>
-    {% if activity.official_response %}
+    {% if official_response %}
     <h2> {% trans "Official Response" %} </h2>
-    <h3>{{activity.official_response|safe}}</h3>
+
+    {% with instance=activity.mission.instance comments=official_response.comments %}
+        <div class="comments embedded">
+            <ul class="comment_list">
+
+                {% for comment in comments.all %}
+                    {% with extra_message=activity.title %}
+                    {% include "comments/comment.html" %}
+                    {% endwith %}
+                {% empty %}
+                <li class="comment">No comments found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endwith %}
     {% endif %}
+
+
     
     {% include "player_activities/attachments.html" %}
 

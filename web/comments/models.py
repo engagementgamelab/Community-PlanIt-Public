@@ -18,8 +18,8 @@ class Comment(models.Model):
     hidden = models.BooleanField(default=False)
 
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
-    user = models.ForeignKey(User, editable=False)
-    instance = models.ForeignKey(Instance, editable=False, related_name='comments')
+    user = models.ForeignKey(User, editable=False, null=True, blank=True)
+    instance = models.ForeignKey(Instance, editable=False, blank=True, null=True, related_name='comments')
     comments = generic.GenericRelation('self')
     likes = models.ManyToManyField(User, blank=True, editable=False, related_name='liked_comments')
 

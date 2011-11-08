@@ -3,7 +3,7 @@ import datetime
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
@@ -14,9 +14,19 @@ from web.attachments.models import Attachment
 from web.comments.models import Comment
 from web.missions.models import Mission
 from web.reports.models import Activity
+from web.instances.models import Instance
 
 
-__all__ = ( 'PlayerActivityType','PlayerActivity', 'PlayerMapActivity', 'PlayerEmpathyActivity', 'MultiChoiceActivity', )
+__all__ = ( 
+    'PlayerActivityType',
+    'PlayerActivity', 
+    'PlayerMapActivity', 
+    'PlayerEmpathyActivity', 
+    'MultiChoiceActivity', 
+    'PlayerActivityOfficialResponse',
+    'MapOfficialResponse',
+    'EmpathyOfficialResponse',
+)
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.creationUser.id) +'/'+ filename
@@ -41,7 +51,6 @@ class PlayerActivityBase(TranslatableModel):
     points = models.IntegerField(blank=True, null=True, default=None)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
     comments = generic.GenericRelation(Comment)    
-    official_response = models.TextField(max_length=500, blank=True, default='')
 
     def getPoints(self):
         if self.points == None:
@@ -104,6 +113,19 @@ class PlayerActivity(PlayerActivityBase):
         self.createDate = datetime.datetime.now()
         super(PlayerActivity, self).save(*args, **kwargs)
 
+class PlayerActivityOfficialResponse(models.Model):
+    activity = models.OneToOneField(PlayerActivity, unique=True)
+    response = models.TextField(max_length=500, blank=True, default='')
+    comments = generic.GenericRelation(Comment)
+    date_added = models.DateTimeField(editable=False, auto_now_add=True)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('activities:overview', (self.activity.pk,))
+
+    def __unicode__(self):
+    	return self.response
+
 
 class PlayerMapActivity(PlayerActivityBase):
     maxNumMarkers = models.IntegerField(default=5)
@@ -146,6 +168,20 @@ class PlayerMapActivity(PlayerActivityBase):
         super(PlayerMapActivity, self).save(*args, **kwargs)
 
 
+class MapOfficialResponse(models.Model):
+    activity = models.OneToOneField(PlayerMapActivity, unique=True)
+    response = models.TextField(max_length=500, blank=True, default='')
+    comments = generic.GenericRelation(Comment)
+    date_added = models.DateTimeField(editable=False, auto_now_add=True)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('activities:map-overview', (self.activity.pk,))
+
+    def __unicode__(self):
+    	return self.response
+
+
 class PlayerEmpathyActivity(PlayerActivityBase):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     translations = TranslatedFields(        
@@ -183,6 +219,21 @@ class PlayerEmpathyActivity(PlayerActivityBase):
             translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
             s = translated.safe_translation_getter('value', str(self.pk))
         return s
+
+class EmpathyOfficialResponse(models.Model):
+    activity = models.OneToOneField(PlayerEmpathyActivity, unique=True)
+    response = models.TextField(max_length=500, blank=True, default='')
+    comments = generic.GenericRelation(Comment)
+    date_added = models.DateTimeField(editable=False, auto_now_add=True)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('activities:empathy-overview', (self.activity.pk,))
+
+    def __unicode__(self):
+    	return self.response
+
+
 
 class MultiChoiceActivity(TranslatableModel):
     """
@@ -236,3 +287,25 @@ def remove_url_from_news_feeds(sender, **kwargs):
 pre_delete.connect(remove_url_from_news_feeds, sender=PlayerActivity)
 pre_delete.connect(remove_url_from_news_feeds, sender=PlayerMapActivity)
 pre_delete.connect(remove_url_from_news_feeds, sender=PlayerEmpathyActivity) 
+
+def add_response_as_comment(sender, **kwargs):
+    created =  kwargs.get('created')
+    instance = kwargs['instance']
+    print sender
+    if created:
+        active_instance = Instance.objects.language(settings.LANGUAGE_CODE)[0]
+        comment = Comment.objects.create(
+                user = User.objects.filter(is_superuser=True)[0],
+                message = instance.response,
+                object_id = instance.pk,
+                instance=active_instance,
+        )
+        instance.comments.add(comment)
+        print "new comments %s" % instance.response
+    else:
+        Comment.objects.filter(object_id=instance.pk).update(message=instance.response)
+        print "updated comments: %s" % instance.response
+
+post_save.connect(add_response_as_comment, sender=PlayerActivityOfficialResponse, dispatch_uid='web.playeractivities.models')
+post_save.connect(add_response_as_comment, sender=MapOfficialResponse, dispatch_uid='web.playeractivities.models')
+post_save.connect(add_response_as_comment, sender=EmpathyOfficialResponse, dispatch_uid='web.playeractivities.models')

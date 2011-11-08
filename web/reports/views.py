@@ -207,7 +207,11 @@ def report_comments_by_activity2(request):
     values_list = []
     def update_list(answers):
         for answ in answers.select_related('comments').all():
-            for c in answ.comments.select_related('user', 'likes').all():
+            for c in answ.comments.select_related('user', 'selected', 'likes').all():
+                if a.type.type == 'single_response':
+                    answer_value = answ.selected.value
+                else:
+                    answer_value = ''
                 values_list.append(
                         (
                             c.pk, 
@@ -216,7 +220,7 @@ def report_comments_by_activity2(request):
                             a.type.type, 
                             c.posted_date.strftime('%Y-%m-%d %H:%M'),
                             c.user.pk,
-                            '--',
+                            answer_value,
                             c.message, 
                             c.likes.all().count(),
                         )

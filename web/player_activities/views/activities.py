@@ -114,7 +114,26 @@ def _build_context(request, action, activity, user=None):
                 init_coords = init_coords,
                 map = map,
             ))
-            print "FINAL MAP:", map
+        official_response  = None
+        if isinstance(activity, PlayerActivity):
+            try:
+                official_response  = PlayerActivityOfficialResponse.objects.get(activity=activity)
+            except PlayerActivityOfficialResponse.DoesNotExist:
+                pass
+        elif isinstance(activity, PlayerMapActivity):
+            try:
+                official_response  = MapOfficialResponse.objects.get(activity=activity)
+            except MapOfficialResponse.DoesNotExist:
+                pass
+        elif isinstance(activity, PlayerEmpathyActivity):
+            try:
+                official_response  = EmpathyOfficialResponse.objects.get(activity=activity)
+            except EmpathyOfficialResponse.DoesNotExist:
+                pass
+
+        #elif isinstance(activity, PlayerMapActivity):
+
+        context.update(official_response=official_response)
 
     elif action in ['play', 'replay']:
 

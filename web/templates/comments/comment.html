@@ -5,9 +5,7 @@
         <div id="id_like-count-{{ comment.id }}">Like{{comment.likes.count|pluralize}}</div>
         {% if comment.user != request.user and comment.instance.is_active %}
         <div id="id_like-{{ comment.id }}" class="button" title="click to say you like this">Like</div>
-            {% comment %}
-            href="{% url comments:like comment.id %}" 
-            {% endcomment %}
+            {% comment %} href="{% url comments:like comment.id %}" {% endcomment %}
         {% endif %}
     </div>
     <div class="main">
@@ -72,9 +70,6 @@
                     <textarea name="message" class="comment_message" cols="40" rows="6" id="message-{{comment.id}}"></textarea>
                     <button type="submit" class="button small submit">save reply</button>
                     <button type="reset" class="button small cancel">cancel</button>
-                    {% comment %}
-                    <h4><span class="count" id="charsLeft">1000</span> characters left</h4>
-                    {% endcomment %}
                     <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div>
                 </form>
                 <script type="text/javascript"> 
@@ -120,7 +115,6 @@
             {% endif %}
         </div>
         {% endif %}
-
         {% if comment.comments.all %}
         <div id="replies-{{comment.pk}}" class="replies">
             <ul class="nested">

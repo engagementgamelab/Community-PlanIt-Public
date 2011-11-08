@@ -25,16 +25,6 @@ DIRNAME = os.path.dirname(__file__)
 
 INTERNAL_IPS = ('127.0.0.1',)
 
-#CACHES = {
-#    'default': {
-#        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#        'LOCATION': '127.0.0.1:11211',
-#        'KEY_PREFIX': 'cpi',
-#        'TIMEOUT': 300,
-#        'VERSION': 1,
-#    }
-#} 
-
 # DATABASES: complete your database configuration in settings.py
 
 EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
@@ -101,14 +91,12 @@ MEDIA_URL = '/assets/'
 MIDDLEWARE_CLASSES = (
     'localeurl.middleware.LocaleURLMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
-    #'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
-    #'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 NOREPLY_EMAIL = 'noreply@communityplanit.org'
@@ -158,6 +146,7 @@ LOCALE_INDEPENDENT_PATHS = (
     re.compile('^/__debug__/'),
     re.compile('^/assets/'),
     re.compile('^/static/'),
+    re.compile('^/gr/'),
     re.compile('^/admin-media/'),
     re.compile('^/status/cache/'),
     re.compile('^/favicon.ico$'),
