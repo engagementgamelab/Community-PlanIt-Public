@@ -34,12 +34,16 @@ class Comment(models.Model):
 
     message = models.CharField(max_length=1000, blank=True, null=True)
 
+    @property
+    def display_user(self):
+        return not self.content_object.__class__.__name__ in ['PlayerActivityOfficialResponse', 'MapOfficialResponse', 'EmpathyOfficialResponse']
+
     def __unicode__(self):
         if self.message:
             return self.message
         else:
             return self.pk
-        
+
     def save(self, *args, **kwargs):
         if len(self.message) > 1000:
             self.message = self.message.replace('\r\n', '\n')

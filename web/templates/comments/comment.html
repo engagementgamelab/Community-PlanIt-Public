@@ -19,12 +19,13 @@
                     <a href="{% url comments:edit comment.id %}" title="click to edit this comment">edit</a>
                 {% endif %}
             </div>
-            
+            {% if comment.display_user %} 
             {% trans "From" %}
             {% if comment.user == request.user %}
             <a href="{% url accounts_profile comment.user.id %}">you</a>,
             {% else %}
             <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a>,
+            {% endif %}
             {% endif %}
             {{comment.posted_date|date:"F j, Y"}}, {{comment.posted_date|date:"g:i a"}}
         </div>

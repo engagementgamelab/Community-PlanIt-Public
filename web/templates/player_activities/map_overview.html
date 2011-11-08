@@ -6,26 +6,7 @@
     <h1>Map Overview</h1>
     <h2>{{activity.question|safe}}</h2>
 
-    {% if official_response %}
-    <h2> {{ activity.mission.instance.title }}'s {% trans "Official Response" %} </h2>
-
-    {% with instance=activity.mission.instance comments=official_response.comments %}
-        <div class="comments embedded">
-            <ul class="comment_list">
-
-                {% for comment in comments.all %}
-                    {% with extra_message=activity.title %}
-                    {% include "comments/comment.html" %}
-                    {% endwith %}
-                {% empty %}
-                <li class="comment">No comments found.</li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endwith %}
-    {% endif %}
-
-
+    {% include "player_activities/official_responses.html" %}
     
     {%if not activity.mission.is_expired %}
     <div>
