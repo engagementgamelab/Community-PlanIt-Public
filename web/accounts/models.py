@@ -127,6 +127,7 @@ class UserProfileStake(UserProfileOptionBase):
         return self.stake
 
 class CPIUser(User):
+
     class Meta:
         proxy = True
 

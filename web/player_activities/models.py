@@ -3,6 +3,7 @@ import datetime
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.dispatch import receiver
 from django.db.models.signals import pre_delete, post_save
 
 from django.contrib.auth.models import User
@@ -10,11 +11,12 @@ from django.contrib.contenttypes import generic
 
 from nani.models import TranslatableModel, TranslatedFields
 
-from web.attachments.models import Attachment
-from web.comments.models import Comment
-from web.missions.models import Mission
-from web.reports.models import Activity
-from web.instances.models import Instance
+from attachments.models import Attachment
+from comments.models import Comment
+from missions.models import Mission
+from reports.models import Activity
+from instances.models import Instance
+from reports.signals import log_event
 
 
 __all__ = ( 
@@ -276,36 +278,34 @@ class MultiChoiceActivity(TranslatableModel):
     def mission_title(self):
         return self.activity.mission.title
     
-
+@receiver(pre_delete, sender=PlayerActivity, dispatch_uid='web.playeractivities.models')
+@receiver(pre_delete, sender=PlayerMapActivity, dispatch_uid='web.playeractivities.models')
+@receiver(pre_delete, sender=PlayerEmpathyActivity, dispatch_uid='web.playeractivities.models')
 def remove_url_from_news_feeds(sender, **kwargs):     
     instance = kwargs['instance']
-    reports = Activity.objects.filter(url=instance.get_activity_url())
-    for report in reports:
-        report.url = ''
-        report.save() 
-     
-pre_delete.connect(remove_url_from_news_feeds, sender=PlayerActivity)
-pre_delete.connect(remove_url_from_news_feeds, sender=PlayerMapActivity)
-pre_delete.connect(remove_url_from_news_feeds, sender=PlayerEmpathyActivity) 
+    Activity.objects.filter(url=instance.get_activity_url()).update(url='')
 
+@receiver(post_save, sender=PlayerActivityOfficialResponse, dispatch_uid='web.playeractivities.models')
+@receiver(post_save, sender=MapOfficialResponse, dispatch_uid='web.playeractivities.models')
+@receiver(post_save, sender=EmpathyOfficialResponse, dispatch_uid='web.playeractivities.models')
 def add_response_as_comment(sender, **kwargs):
     created =  kwargs.get('created')
-    instance = kwargs['instance']
-    print sender
+    obj = kwargs.get('instance')
+    active_instance = Instance.objects.language(settings.LANGUAGE_CODE)[0]
+
+    user = User.objects.filter(is_superuser=True)[0]
     if created:
-        active_instance = Instance.objects.language(settings.LANGUAGE_CODE)[0]
         comment = Comment.objects.create(
-                user = User.objects.filter(is_superuser=True)[0],
-                message = instance.response,
-                object_id = instance.pk,
+                user = user,
+                message = obj.response,
+                object_id = obj.pk,
                 instance=active_instance,
         )
-        instance.comments.add(comment)
-        print "new comments %s" % instance.response
+        obj.comments.add(comment)
     else:
-        Comment.objects.filter(object_id=instance.pk).update(message=instance.response)
-        print "updated comments: %s" % instance.response
+        Comment.objects.filter(object_id=obj.pk).update(message=obj.response)
 
-post_save.connect(add_response_as_comment, sender=PlayerActivityOfficialResponse, dispatch_uid='web.playeractivities.models')
-post_save.connect(add_response_as_comment, sender=MapOfficialResponse, dispatch_uid='web.playeractivities.models')
-post_save.connect(add_response_as_comment, sender=EmpathyOfficialResponse, dispatch_uid='web.playeractivities.models')
+    #from actstream import action
+    #action.send(request.user, verb="test", action_object=obj)
+
+    log_event.send(sender=sender, instance=obj, test='123')

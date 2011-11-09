@@ -33,7 +33,6 @@ from web.comments.forms import CommentForm
 from web.instances.models import Instance
 from web.missions.models import Mission
 from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
-from web.reports.actions import ActivityLogger, PointsAssigner
 from web.reports.models import Activity
 from web.values.models import *
 from web.core.utils import _fake_latest

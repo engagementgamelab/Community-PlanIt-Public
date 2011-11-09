@@ -1,16 +1,18 @@
 import datetime
 
-from django.db import models
-from django.utils import translation
-
-from django.contrib import admin
-from django.contrib.auth.models import User
-
-from gmapsfield.fields import GoogleMapsField
 from localeurl.utils import locale_url
 from localeurl.templatetags.localeurl_tags import rmlocale
 
-from web.instances.models import Instance
+from gmapsfield.fields import GoogleMapsField
+
+from django.dispatch import receiver
+from django.db import models
+from django.utils import translation
+from django.contrib import admin
+from django.contrib.auth.models import User
+
+from reports.signals import log_event
+from instances.models import Instance
 
 class Activity(models.Model):
     action = models.CharField(max_length=48)
@@ -36,3 +38,18 @@ class Activity(models.Model):
             url = rmlocale(self.url)            
             return locale_url(url, translation.get_language())
         return None
+
+
+from player_activities.models import EmpathyOfficialResponse, MapOfficialResponse, PlayerActivityOfficialResponse
+@receiver(log_event, sender=EmpathyOfficialResponse, dispatch_uid='web.playeractivities.models')
+@receiver(log_event, sender=PlayerActivityOfficialResponse, dispatch_uid='web.playeractivities.models')
+@receiver(log_event, sender=MapOfficialResponse, dispatch_uid='web.playeractivities.models')
+def log_official_response(sender, **kwargs):
+    ActivityLogger().log(
+                "the activity: " + activity.name[:30] + "...",
+                message,
+                activity.get_activity_url(),
+                "activity"
+    )
+
+

@@ -77,6 +77,7 @@ INSTALLED_APPS = (
     'nani',
     #'dilla',
     'rosetta',
+    'actstream',
     'django_extensions',
     'south',
 )
@@ -142,7 +143,6 @@ LANGUAGES = (
 LOCALE_INDEPENDENT_PATHS = (
     #re.compile('^/$'),
     re.compile('^/ajax/'),
-    re.compile('^/admin/'),
     re.compile('^/comments/'),
     re.compile('^/__debug__/'),
     re.compile('^/assets/'),
@@ -154,6 +154,19 @@ LOCALE_INDEPENDENT_PATHS = (
 )
 LOCALE_INDEPENDENT_MEDIA_URL = True
 PREFIX_DEFAULT_LOCALE = True
+
+#actstream
+ACTSTREAM_ACTION_TEMPLATE = 'actstream/single_action.txt'
+ACTSTREAM_MANAGER = 'actstream.managers.ActionManager'
+ACTSTREAM_ACTION_MODELS = [
+    'auth.User',
+    'player_activities.PlayerActivity', 
+    'player_activities.PlayerMapActivity', 
+    'player_activities.PlayerEmpathyActivity', 
+    'player_activities.PlayerActivityOfficialResponse',
+    'player_activities.MapOfficialResponse',
+    'player_activities.EmpathyOfficialResponse',
+]
 
 #debug-toolbar
 DEBUG_TOOLBAR_PANELS = (

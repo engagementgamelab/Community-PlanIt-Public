@@ -1,30 +1,38 @@
 import urllib
 import math
-from django.utils import simplejson
 from gmapsfield.fields import GoogleMaps
+
+from django.utils import simplejson
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from web.reports.models import Activity
-from web.instances.models import PointsAssignment 
+
+from instances.models import PointsAssignment 
+from reports.models import Activity
+
+
 
 class ActivityLogger:
-    def log(self, user, request, action, data, url, type):
-    	kwargs = dict(
-                user=user, 
-                instance=user.get_profile().instance, 
-                action=action, 
-                data=data, 
-                location=None, 
-                url=url, 
+    def log(self, action, data, url, type, instance=None, user=None, request=None):
+
+        if user:
+            instance = user.get_profile().instance,
+
+        kwargs = dict(
+                user=user,
+                instance=instance,
+                action=action,
+                data=data,
+                location=None,
+                url=url,
                 type=type
         )
         a = Activity.objects.create(**kwargs)
         a.save()
 
-        # Push to messages queue
-        #import ipdb;ipdb.set_trace()
-        messages.success(request, 'You ' + data +' '+ action.encode('utf8'))
+        if request:
+            # Push to messages queue
+            messages.success(request, 'You ' + data +' '+ action.encode('utf8'))
 
 class PointsAssigner:
     def fetch(self, action):

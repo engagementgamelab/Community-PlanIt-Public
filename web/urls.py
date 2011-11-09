@@ -76,6 +76,7 @@ urlpatterns = patterns('',
     (r'^lists/', include('lists.urls', namespace='lists', app_name='lists')),
     (r'^flags/', include('flags.urls', namespace='flags', app_name='flags')),
     (r"^activities/", include("player_activities.urls", namespace='activities', app_name='player_activities')),
+    ('^stream/', include=('actstream.urls')),
 
     # generic content redirect, used for comments and notifications
     url(r'^gr/(\d+)/(.+)/$', 'django.contrib.contenttypes.views.shortcut', name='generic_redirect'),

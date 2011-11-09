@@ -12,7 +12,6 @@ from accounts.models import *
 from missions.models import *
 from challenges.models import *
 from accounts.forms import *
-from reports.actions import ActivityLogger
 
 @login_required
 def affiliation(request):
