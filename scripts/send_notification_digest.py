@@ -14,8 +14,8 @@ from django.utils.translation import gettext as _
 
 from django.contrib.sites.models import Site
 
-from web.accounts.models import UserProfile, Notification
-from web.instances.models import Instance
+from accounts.models import UserProfile, Notification
+from instances.models import Instance
 
 text_template = loader.get_template('accounts/email/notifications.txt')
 html_template = loader.get_template('accounts/email/notifications.html')

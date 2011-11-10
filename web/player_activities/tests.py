@@ -7,7 +7,7 @@ from core.test_fixtures import create_fixtures
 from player_activities.models import PlayerActivity, PlayerActivityType,\
     MultiChoiceActivity, PlayerMapActivity
 from missions.models import Mission
-from web.comments.forms import CommentForm
+from comments.forms import CommentForm
 from answers.models import Answer
 
 

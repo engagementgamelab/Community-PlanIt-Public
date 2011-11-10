@@ -1,5 +1,5 @@
 from django import forms
-from web.missions.models import Mission
+from missions.models import Mission
 
 class MissionAdminForm(forms.ModelForm):
     class Meta:

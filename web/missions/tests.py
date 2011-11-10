@@ -1,14 +1,14 @@
 import unittest, datetime
 from django.test import TestCase
 from django.contrib.auth.models import User, Group
-from web.accounts.models import UserProfile
+from accounts.models import UserProfile
 from django.test.client import Client
-from web.instances.models import Instance
-from web.values.models import Value, PlayerValue
-from web.comments.models import Comment
-from web.missions.models import Mission
-from web.player_activities.models import *
-from web.answers.models import *
+from instances.models import Instance
+from values.models import Value, PlayerValue
+from comments.models import Comment
+from missions.models import Mission
+from player_activities.models import *
+from answers.models import *
 
 def createGame(game, mission):
     game.title = "test %s" % game._meta.app_label

@@ -4,7 +4,7 @@ from django.db import models
 
 from django.contrib import admin
 
-from web.responses.models import Response
+from responses.models import Response
 
 class CommentResponse(Response):
     message = models.CharField(default=' ', max_length=1000)

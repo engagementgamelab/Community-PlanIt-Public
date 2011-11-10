@@ -1,4 +1,6 @@
 import datetime
+from stream import utils as stream_utils
+from nani.models import TranslatableModel, TranslatedFields
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -9,15 +11,11 @@ from django.db.models.signals import pre_delete, post_save
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from nani.models import TranslatableModel, TranslatedFields
-
 from attachments.models import Attachment
 from comments.models import Comment
 from missions.models import Mission
 from reports.models import Activity
 from instances.models import Instance
-from reports.signals import log_event
-
 
 __all__ = ( 
     'PlayerActivityType',
@@ -115,6 +113,8 @@ class PlayerActivity(PlayerActivityBase):
         self.createDate = datetime.datetime.now()
         super(PlayerActivity, self).save(*args, **kwargs)
 
+
+
 class PlayerActivityOfficialResponse(models.Model):
     activity = models.OneToOneField(PlayerActivity, unique=True)
     response = models.TextField(max_length=500, blank=True, default='')
@@ -126,8 +126,19 @@ class PlayerActivityOfficialResponse(models.Model):
         return ('activities:overview', (self.activity.pk,))
 
     def __unicode__(self):
-    	return self.response
+        return u"Official Response (%s) for <%s> " % (self.response[:10], self.activity.mission.title )
 
+    @property
+    def stream_action_title(self):
+        return self.response
+
+    @property
+    def instance(self):
+        return self.activity.mission.instance
+
+    @property
+    def mission(self):
+        return self.activity.mission
 
 class PlayerMapActivity(PlayerActivityBase):
     maxNumMarkers = models.IntegerField(default=5)
@@ -181,7 +192,19 @@ class MapOfficialResponse(models.Model):
         return ('activities:map-overview', (self.activity.pk,))
 
     def __unicode__(self):
-    	return self.response
+        return "Official Response (%s) for <%s> " % (self.response[:10], self.activity.mission.title )
+
+    @property
+    def stream_action_title(self):
+        return self.response
+
+    @property
+    def instance(self):
+        return self.activity.mission.instance
+
+    @property
+    def mission(self):
+        return self.activity.mission
 
 
 class PlayerEmpathyActivity(PlayerActivityBase):
@@ -233,8 +256,19 @@ class EmpathyOfficialResponse(models.Model):
         return ('activities:empathy-overview', (self.activity.pk,))
 
     def __unicode__(self):
-    	return self.response
+        return u"Official Response (%s) for <%s> " % (self.response[:10], self.activity.mission.title )
 
+    @property
+    def stream_action_title(self):
+        return self.response
+
+    @property
+    def instance(self):
+        return self.activity.mission.instance
+
+    @property
+    def mission(self):
+        return self.activity.mission
 
 
 class MultiChoiceActivity(TranslatableModel):
@@ -277,7 +311,25 @@ class MultiChoiceActivity(TranslatableModel):
     @property
     def mission_title(self):
         return self.activity.mission.title
-    
+
+
+#django-stream registrations
+stream_utils.register_action_object(PlayerActivity)
+stream_utils.register_target(PlayerActivity)
+
+stream_utils.register_action_object(PlayerActivity)
+stream_utils.register_target(PlayerActivity)
+
+stream_utils.register_action_object(PlayerMapActivity)
+stream_utils.register_target(PlayerMapActivity)
+
+stream_utils.register_action_object(PlayerEmpathyActivity)
+stream_utils.register_target(PlayerEmpathyActivity)
+
+stream_utils.register_action_object(PlayerActivityOfficialResponse)
+stream_utils.register_action_object(MapOfficialResponse)
+stream_utils.register_action_object(EmpathyOfficialResponse)
+
 @receiver(pre_delete, sender=PlayerActivity, dispatch_uid='web.playeractivities.models')
 @receiver(pre_delete, sender=PlayerMapActivity, dispatch_uid='web.playeractivities.models')
 @receiver(pre_delete, sender=PlayerEmpathyActivity, dispatch_uid='web.playeractivities.models')
@@ -302,10 +354,9 @@ def add_response_as_comment(sender, **kwargs):
                 instance=active_instance,
         )
         obj.comments.add(comment)
+
+        stream_utils.action.send(actor=user, verb='activity_official_response_created', target=obj.activity, action_object=obj, description='Official response created')
+
     else:
         Comment.objects.filter(object_id=obj.pk).update(message=obj.response)
 
-    #from actstream import action
-    #action.send(request.user, verb="test", action_object=obj)
-
-    log_event.send(sender=sender, instance=obj, test='123')

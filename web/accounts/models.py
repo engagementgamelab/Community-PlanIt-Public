@@ -1,6 +1,8 @@
 import datetime
 from uuid import uuid4 as uuid
 
+from stream import utils as stream_utils
+
 from django import forms
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -15,10 +17,10 @@ from django.contrib.contenttypes.models import ContentType
 
 from nani.models import TranslatableModel, TranslatedFields
 
-from web.comments.models import Comment
-from web.accounts.models import *
-from web.challenges.models import *
-from web.instances.models import Instance, Affiliation
+from comments.models import Comment
+from accounts.models import *
+from challenges.models import *
+from instances.models import Instance, Affiliation
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename
@@ -242,6 +244,8 @@ def user_post_save(instance, created, **kwargs):
 
 models.signals.pre_save.connect(user_pre_save, sender=User)
 models.signals.post_save.connect(user_post_save, sender=User)
+
+stream_utils.register_actor(User)
 
 class NotificationQueryMixin(object):
     def unread(self):

@@ -1,5 +1,6 @@
 import datetime
 import re
+from stream import utils as stream_utils
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -8,16 +9,19 @@ from django.template import Context, RequestContext, loader
 
 from django.contrib.auth.decorators import login_required
 
-from web.challenges.forms import *
-from web.challenges.models import *
-from web.comments.forms import CommentForm
-from web.comments.models import Comment
-#from web.processors import instance_processor as ip
-from web.reports.actions import ActivityLogger, PointsAssigner
-#from web.responses.comment.forms import CommentAttachmentResponseForm
-from web.core.utils import _fake_latest
+from challenges.forms import *
+from challenges.models import *
+from comments.forms import CommentForm
+from comments.models import Comment
+from reports.models import ActivityLogger
+from reports.actions import PointsAssigner
+#from responses.comment.forms import CommentAttachmentResponseForm
+from core.utils import _fake_latest
 
 from PIL import Image
+
+import logging
+log = logging.getLogger(__name__)
 
 @login_required
 def challenge(request, id, template='challenges/base.html'):
@@ -34,7 +38,7 @@ def challenge(request, id, template='challenges/base.html'):
     instance = request.user.get_profile().instance
     if request.method == 'POST':
 
-        if instance.is_expired:
+        if instance.is_expired():
             return HttpResponseRedirect(reverse('challenges:index'))
 
         form = PlayerChallengeForm(request.POST)
@@ -71,7 +75,10 @@ def challenge(request, id, template='challenges/base.html'):
                     instance=request.user.get_profile().instance)
 
 
-                ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'completed', reverse('challenges:challenge', args=[id]), 'challenge')
+                #ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'completed', reverse('challenges:challenge', args=[id]), 'challenge')
+                stream_utils.action.send(request.user, 'challenge_completed', target=instance, action_object=challenge, 
+                                        description="A challenge was completed"
+                )
             PointsAssigner().assign(request.user, 'challenge_completed')
 
             if pc.player != challenge.user:
@@ -99,12 +106,15 @@ def challenge(request, id, template='challenges/base.html'):
 def accept(request, id):
 
     instance = request.user.get_profile().instance
-    if instance.is_expired:
+    if instance.is_expired():
         return HttpResponseRedirect(reverse('challenges:index'))
 
     challenge = Challenge.objects.get(id=id)
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'accepted', reverse('challenges:challenge', args=[id]), 'challenge')
+    #ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'accepted', reverse('challenges:challenge', args=[id]), 'challenge')
+    stream_utils.action.send(request.user, 'challenge_accepted', target=instance, action_object=challenge, 
+                            description="A challenge was accepted"
+    )
 
     pc.completed = False
     pc.accepted = True
@@ -115,13 +125,16 @@ def accept(request, id):
 @login_required
 def decline(request, id):
     instance = request.user.get_profile().instance
-    if instance.is_expired:
+    if instance.is_expired():
         return HttpResponseRedirect(reverse('challenges:index'))
 
     challenge = get_object_or_404(Challenge, id=id)
 
     pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-    ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'declined', reverse('challenges:challenge', args=[id]), 'challenge')
+    #ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'declined', reverse('challenges:challenge', args=[id]), 'challenge')
+    stream_utils.action.send(request.user, 'challenge_declined', target=instance, action_object=challenge, 
+                            description="A challenge was declined"
+    )
     
     pc.declined = True
     pc.accepted = False
@@ -133,7 +146,7 @@ def decline(request, id):
 def add(request):
 
     instance = request.user.get_profile().instance
-    if instance.is_expired:
+    if instance.is_expired():
         return HttpResponseRedirect(reverse('challenges:index'))
 
     if request.method == 'POST':
@@ -158,8 +171,10 @@ def add(request):
             challenge.save()
 
             PointsAssigner().assign(request.user, 'challenge_created')
-            ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'created', reverse('challenges:challenge', args=[challenge.id]), 'challenge')
-
+            #ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'created', reverse('challenges:challenge', args=[challenge.id]), 'challenge')
+            stream_utils.action.send(request.user, 'challenge_created', target=instance, action_object=challenge, 
+                                     description="A challenge was created"
+            )
             return HttpResponseRedirect(reverse('challenges:index'))
     else:
         form = AddChallenge(instance)
@@ -179,7 +194,7 @@ def add(request):
 def delete(request, id):
 
     instance = request.user.get_profile().instance
-    if instance.is_expired:
+    if instance.is_expired():
         return HttpResponseRedirect(reverse('challenges:index'))
 
     try:
@@ -189,7 +204,10 @@ def delete(request, id):
         challenge = Challenge.objects.get(id=id)
         challenge.delete()
 
-        ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'deleted', 'challenge')
+        #ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'deleted', 'challenge')
+        stream_utils.action.send(request.user, 'challenge_deleted', target=instance, action_object=challenge, 
+                                    description="A challenge was deleted"
+        )
     except:
         pass
 
@@ -204,7 +222,7 @@ def comment(request, id):
     a = None
     b = None
     instance = request.user.get_profile().instance
-    if instance.is_expired:
+    if instance.is_expired():
         return HttpResponseRedirect(reverse('challenges:index'))
 
     if request.method == 'POST':
@@ -255,7 +273,10 @@ def comment(request, id):
             challenge.save()
 
             PointsAssigner().assign(request.user, 'comment_created')
-            ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name[:30], 'added comment', reverse('challenges:challenge', args=[id]), 'challenge')
+            #ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name[:30], 'added comment', reverse('challenges:challenge', args=[id]), 'challenge')
+            stream_utils.action.send(request.user, 'challenge_commented', target=challenge, action_object=c, 
+                                    description="Commented on a challenge"
+            )
 
             if request.user != challenge.user:
                 message = "%s commented on %s" % (

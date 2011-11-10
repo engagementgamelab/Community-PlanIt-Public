@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from nani.admin import TranslatableAdmin
 
-from web.accounts.models import *
+from accounts.models import *
 
 class UserProfileOptionAdmin(TranslatableAdmin):
     list_display = ('__str__', 'instance', 'pos', 'all_translations')

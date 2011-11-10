@@ -1,7 +1,7 @@
 from django import forms
 from django.db import models
 
-from web.instances.models import NotificationRequest
+from instances.models import NotificationRequest
 
 class NotificationRequestForm(forms.ModelForm):
 

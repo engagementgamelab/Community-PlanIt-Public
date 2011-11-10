@@ -1,4 +1,6 @@
 import datetime
+from stream import utils as stream_utils
+from gmapsfield.fields import GoogleMapsField
 
 from django.db import models
 from django.db.models import Q
@@ -7,12 +9,10 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from gmapsfield.fields import GoogleMapsField
-
-from web.attachments.models import Attachment
-from web.comments.models import Comment
-from web.instances.models import Instance
-from web.responses.comment.models import CommentResponse
+from attachments.models import Attachment
+from comments.models import Comment
+from instances.models import Instance
+from responses.comment.models import CommentResponse
 
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
@@ -54,24 +54,28 @@ class Challenge(models.Model):
 
     class Meta:
         ordering = ['start_date']
-    
+
     @models.permalink
     def get_absolute_url(self):
         return ('challenges:challenge', [str(self.id)])
-    
+
+    @property
+    def stream_action_title(self):
+        return self.name
+
     def is_active(self):
         if not self.start_date:
             return True
 
         now = datetime.datetime.now()
         return self.start_date <= now and now <= self.end_date
-        
+
     def is_expired(self):
         return self.end_date is not None and datetime.datetime.now() > self.end_date
-    
+
     def is_started(self):
         return self.start_date is None or datetime.datetime.now() >= self.start_date
-    
+
     def save(self):
         self.game_type = "challenge"
         #TODO: Make sure this is correct, the None map I am not sure about - BMH
@@ -82,6 +86,10 @@ class Challenge(models.Model):
     def __unicode__(self):
         label = self.name or 'None'
         return label
+
+stream_utils.register_action_object(Challenge)
+stream_utils.register_target(Challenge)
+
 
 class ChallengeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'screen_name')

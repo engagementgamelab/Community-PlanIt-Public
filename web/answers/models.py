@@ -10,9 +10,9 @@ from django.contrib.contenttypes import generic
 
 from gmapsfield.fields import GoogleMapsField
 
-from web.comments.models import Comment
-from web.missions.models import Mission
-from web.player_activities.models import (PlayerActivity, MultiChoiceActivity, 
+from comments.models import Comment
+from missions.models import Mission
+from player_activities.models import (PlayerActivity, MultiChoiceActivity, 
         PlayerEmpathyActivity, PlayerMapActivity)
 
 __all__ = (

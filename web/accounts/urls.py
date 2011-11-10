@@ -2,8 +2,8 @@ from django.conf.urls.defaults import *
 
 from django.contrib.auth.views import logout
 
-from web.accounts.views import login
-from web.accounts.forms import AccountAuthenticationForm, RegisterFormOne, RegisterFormTwo, RegistrationWizard
+from accounts.views import login
+from accounts.forms import AccountAuthenticationForm, RegisterFormOne, RegisterFormTwo, RegistrationWizard
 
 urlpatterns = patterns('',
     url(r'^dashboard/', 'web.views.index', name='dashboard'),

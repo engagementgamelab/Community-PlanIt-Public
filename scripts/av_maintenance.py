@@ -1,8 +1,8 @@
 import datetime
 import time
 
-from web.attachments.models import *
-from web.attachments.util import get_youtube_video_id, is_valid_youtube_video
+from attachments.models import *
+from attachments.util import get_youtube_video_id, is_valid_youtube_video
 
 run_time = datetime.datetime.now()
 cutoff = run_time - datetime.timedelta(ATTACHMENT_VALIDITY_CHECK_INTERVAL)

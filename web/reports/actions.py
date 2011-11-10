@@ -1,38 +1,30 @@
-import urllib
-import math
-from gmapsfield.fields import GoogleMaps
-
-from django.utils import simplejson
 from django.conf import settings
-from django.contrib import messages
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.contrib.auth.models import User
+from stream import utils as stream_utils
 
 from instances.models import PointsAssignment 
-from reports.models import Activity
 
+"""
+        Actor. The object that performed the activity.
+        Verb. The verb phrase that identifies the action of the activity.
+        Action Object. (Optional) The object linked to the action itself.
+        Target. (Optional) The object to which the activity was performed.
 
+example:
 
-class ActivityLogger:
-    def log(self, action, data, url, type, instance=None, user=None, request=None):
+    justquick (actor) closed (verb) issue 2 (object) on activity-stream (target) 12 hours ago
 
-        if user:
-            instance = user.get_profile().instance,
+----------------------------
+User created/update/deleted, accepted/declined, commented ->Challenge (object), on instance (target)
+-----------------------------
+User replayed/compeleted -> PlayerActivity (object) etc. on mission (target)
+-----------------------------
+User created OfficialResponse etc.
+-----------------------------
+User commented/spent_token/reclaimed_token -> Value
 
-        kwargs = dict(
-                user=user,
-                instance=instance,
-                action=action,
-                data=data,
-                location=None,
-                url=url,
-                type=type
-        )
-        a = Activity.objects.create(**kwargs)
-        a.save()
+"""
 
-        if request:
-            # Push to messages queue
-            messages.success(request, 'You ' + data +' '+ action.encode('utf8'))
 
 class PointsAssigner:
     def fetch(self, action):

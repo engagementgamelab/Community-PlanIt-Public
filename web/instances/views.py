@@ -13,14 +13,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 
-from web.accounts.forms import *
-from web.accounts.models import *
-from web.attachments.models import Attachment
-from web.challenges.models import *
-from web.instances.forms import NotificationRequestForm
-from web.instances.models import *
-from web.missions.models import *
-from web.reports.models import Activity 
+from accounts.forms import *
+from accounts.models import *
+from attachments.models import Attachment
+from challenges.models import *
+from instances.forms import NotificationRequestForm
+from instances.models import *
+from missions.models import *
+from reports.models import Activity 
 
 #TODO: this does not fail nicely, it should 
 def region(request, slug):

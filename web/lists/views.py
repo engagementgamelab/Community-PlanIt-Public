@@ -6,10 +6,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from web.accounts.models import UserProfile
-from web.instances.models import Instance
-#from web.processors import instance_processor as ip
-from web.values.models import *
+from accounts.models import UserProfile
+from instances.models import Instance
+from values.models import *
 
 @login_required
 def display_list(request, players, title):

@@ -1,8 +1,8 @@
 import unittest, datetime
 from django.test import TestCase
 from django.contrib.auth.models import User, Group
-from web.challenges.models import Challenge
-from web.instances.models import Instance
+from challenges.models import Challenge
+from instances.models import Instance
 from django.test.client import Client
 
 class ChallengesTestCases(TestCase):

@@ -10,7 +10,7 @@ from PIL import Image
 from comments.forms import *
 from comments.models import Comment
 from player_activities.models import PlayerActivity
-from reports.actions import ActivityLogger
+from reports.models import ActivityLogger
 
 def _get_activity(pk, model_klass):
     trans_model = model_klass.objects.translations_model()

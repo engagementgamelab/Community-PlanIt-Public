@@ -4,9 +4,9 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate
 from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 from django.utils import simplejson
-from web.instances.models import Instance
-from web.player_activities.models import PlayerActivity
-from web.answers.models import *
+from instances.models import Instance
+from player_activities.models import PlayerActivity
+from answers.models import *
 
 from gmapsfield.fields import *
 

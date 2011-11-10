@@ -4,8 +4,8 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from web.attachments.models import Attachment
-from web.comments.models import Comment
+from attachments.models import Attachment
+from comments.models import Comment
 
 class Response(models.Model):
     response_type = models.CharField(max_length=45, editable=False)

@@ -5,6 +5,7 @@ import re
 import logging
 
 ROOTDIR = os.path.dirname(os.path.realpath(__file__))
+DIRNAME = os.path.dirname(__file__)
 
 #
 # Standard Django settings
@@ -20,14 +21,18 @@ AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 AUTHENTICATION_BACKENDS = ( 'web.accounts.backends.EmailBackend', )
 DATE_FORMAT = '%m/%d/%Y'
 DEBUG = False
+TEMPLATE_DEBUG = DEBUG
 DEFAULT_FROM_EMAIL = 'noreply@communityplanit.org'
-DIRNAME = os.path.dirname(__file__)
 
 INTERNAL_IPS = ('127.0.0.1',)
 
 # DATABASES: complete your database configuration in settings.py
 
 EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
+
+TEMPLATE_DIRS = (
+        os.path.join(ROOTDIR, 'templates')
+)
 
 INSTALLED_APPS = (
     # localeurl should be first
@@ -45,29 +50,29 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
 
-    'web',
-    'web.accounts',
-    'web.answers',
-    'web.attachments',
-    'web.challenges',
-    'web.comments',
-    'web.core',
-    'web.curator',
-    'web.flags',
-    'web.instances',
-    'web.lists',
-    'web.missions',
-    'web.player_activities',
-    'web.reports',
-    'web.responses',
-    'web.values',
-    
+    'accounts',
+    'answers',
+    'attachments',
+    'challenges',
+    'comments',
+    'core',
+    'curator',
+    'flags',
+    'instances',
+    'lists',
+    'missions',
+    'player_activities',
+    'reports',
+    'responses',
+    'values',
+
     # Need this after web.admin because of test runner: 
     # it loads django admin tests by 'admin' app label first
     'django.contrib.admin',
     'django.contrib.admindocs',
 
     # 3rd party
+    'stream',
     'django_mailer',
     'django_extensions',
     #'sentry',
@@ -77,7 +82,6 @@ INSTALLED_APPS = (
     'nani',
     #'dilla',
     'rosetta',
-    'actstream',
     'django_extensions',
     'south',
 )
@@ -122,7 +126,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
 )
 
-TEMPLATE_DEBUG = True
 TIME_ZONE = 'America/New_York'
 USE_I18N = True
 USE_L10N = True
@@ -155,18 +158,26 @@ LOCALE_INDEPENDENT_PATHS = (
 LOCALE_INDEPENDENT_MEDIA_URL = True
 PREFIX_DEFAULT_LOCALE = True
 
-#actstream
-ACTSTREAM_ACTION_TEMPLATE = 'actstream/single_action.txt'
-ACTSTREAM_MANAGER = 'actstream.managers.ActionManager'
-ACTSTREAM_ACTION_MODELS = [
-    'auth.User',
-    'player_activities.PlayerActivity', 
-    'player_activities.PlayerMapActivity', 
-    'player_activities.PlayerEmpathyActivity', 
-    'player_activities.PlayerActivityOfficialResponse',
-    'player_activities.MapOfficialResponse',
-    'player_activities.EmpathyOfficialResponse',
-]
+#django-stream
+# see notes in web.reports.actions
+STREAM_VERBS = (
+    ('challenge_created','created a challenge'),
+    ('challenge_updated','updated a challenge'),
+    ('challenge_accepted','accepted a challenge'),
+    ('challenge_declined','declined a challenge'),
+    ('challenge_deleted','deleted a challenge'),
+    ('challenge_commented','commented on a challenge'),
+
+    ('activity_official_response_created', 'created an official response'),
+
+    ('replayed', 'Activity replayed'),
+    ('completed', 'Activity completed'),
+    ('spent', 'Token spent'),
+    ('reclaimed', 'Token reclaimed'),
+    ('replied', 'Replied with comment'),
+    ('commented', 'Created a comment'),
+)
+
 
 #debug-toolbar
 DEBUG_TOOLBAR_PANELS = (
@@ -203,17 +214,6 @@ SOUTH_TESTS_MIGRATE = False
 #
 GMAP_DEFAULT = [42.355241376822725,-71.06010156250015] # Boston
 GMAP_JQUERY = '/assets/3pty/js/jquery-1.4.4.min.js'
-
-#Configure logging
-LOGFILE = "cpi.log"
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-                    datefmt='%a, %d %b %Y %H:%M:%S',
-                    filename=os.path.join(ROOTDIR, LOGFILE),
-                    filemode='w')
-
-logging.getLogger(__name__).setLevel(logging.INFO)
-logging.info("cpi started")
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

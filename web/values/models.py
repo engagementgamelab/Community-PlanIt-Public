@@ -1,12 +1,13 @@
+from stream import utils as stream_utils
+from nani.models import TranslatableModel, TranslatedFields
+from nani.manager import TranslationManager
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from nani.models import TranslatableModel, TranslatedFields
-from nani.manager import TranslationManager
-
-from web.instances.models import Instance
-from web.comments.models import Comment
+from instances.models import Instance
+from comments.models import Comment
 
 #TODO: change coins to something like coinsSpentOnIntance or something
 #more descriptive
@@ -28,6 +29,8 @@ class Value(TranslatableModel):
     @models.permalink
     def get_absolute_url(self):
         return ('values:detail', [str(self.id)])
+
+stream_utils.register_target(Value)
 
 class PlayerValue(models.Model):
 

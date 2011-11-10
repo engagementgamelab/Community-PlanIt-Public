@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.validators import email_re
 from django.utils.translation import ugettext as _
 from django.template import Context, loader
-from web.instances.models import Instance
+from instances.models import Instance
 
 class Command(BaseCommand):
     def handle(self, *args, **options):

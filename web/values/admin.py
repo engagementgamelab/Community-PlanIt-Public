@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from nani.admin import TranslatableAdmin
 
-from web.values.models import Value
+from values.models import Value
 
 class ValueAdmin(TranslatableAdmin):
     list_display = ('__str__', 'instance')

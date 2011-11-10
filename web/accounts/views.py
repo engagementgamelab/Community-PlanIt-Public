@@ -1,6 +1,8 @@
 import datetime
 import urlparse
 
+from stream.models import Action
+
 from localeurl.models import reverse
 from localeurl.utils import strip_path, locale_path
 
@@ -25,17 +27,17 @@ from django.contrib.sites.models import get_current_site
 
 from PIL import Image
 
-from web.accounts.forms import *
-from web.accounts.models import Notification, UserProfile
-from web.answers.models import Answer
-from web.challenges.models import Challenge, PlayerChallenge
-from web.comments.forms import CommentForm
-from web.instances.models import Instance
-from web.missions.models import Mission
-from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
-from web.reports.models import Activity
-from web.values.models import *
-from web.core.utils import _fake_latest
+from accounts.forms import *
+from accounts.models import Notification, UserProfile
+from answers.models import Answer
+from challenges.models import Challenge, PlayerChallenge
+from comments.forms import CommentForm
+from instances.models import Instance
+from missions.models import Mission
+from player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
+from reports.models import Activity
+from values.models import *
+from core.utils import _fake_latest
 
 @csrf_protect
 @never_cache
@@ -297,7 +299,7 @@ def profile(request, id):
                         type='video',
                         user=request.user,
                         instance=instance
-                    )            
+                    )
             if request.FILES.has_key('picture'):
                 file = request.FILES.get('picture')
                 picture = Image.open(file)
@@ -307,8 +309,8 @@ def profile(request, id):
                     file=request.FILES.get('picture'),
                     user=request.user,
                     instance=instance
-                )           
-            return HttpResponseRedirect(reverse('accounts_profile', args=[id]))    
+                )
+            return HttpResponseRedirect(reverse('accounts_profile', args=[id]))
 
 
     values = Value.objects.filter(instance=profile.instance)
@@ -348,7 +350,6 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     prof = request.user.get_profile()
     if prof.instance:
         instance = prof.instance
-
     elif request.user.is_staff or request.user.is_superuser:
         #looks like `latest` qs method is broken in django-nani
         #applying a workaround for now.
@@ -359,8 +360,19 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     page = request.GET.get('page', 1)
 
     # Fetch activity log feed for dashboard.
-    log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
     missions = instance and instance.missions.active() or Mission.objects.none()
+
+    #if missions.count():
+    #    log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
+    #else:
+    #log = Activity.objects.filter(instance=instance, type='official_response').order_by('-date')[:9]
+    if not instance.is_expired():
+        stream = Action.objects.filter()
+    else:
+        stream = Action.objects.filter(verb='activity_official_response_created')
+
+    stream = stream.order_by('datetime')
+
     activities = PlayerActivity.objects.none()
 
     if (missions.count() > 0):
@@ -389,7 +401,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     affboard.reverse()
 
     context = dict(
-        log = log,
+        stream = stream,
         paginator = paginator,
         activities_page = activities_page,
         completed = completed,

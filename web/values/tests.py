@@ -1,11 +1,11 @@
 import unittest, datetime
 from django.test import TestCase
 from django.contrib.auth.models import User, Group
-from web.accounts.models import UserProfile
+from accounts.models import UserProfile
 from django.test.client import Client
-from web.instances.models import Instance
-from web.values.models import Value, PlayerValue
-from web.comments.models import Comment
+from instances.models import Instance
+from values.models import Value, PlayerValue
+from comments.models import Comment
 
 class ValuesTestCase(TestCase):
     def setUp(self):

@@ -12,13 +12,13 @@ from django.template import Context, RequestContext, loader
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from web.accounts.models import UserProfile
-from web.attachments.models import Attachment
-from web.comments.forms import CommentForm
-from web.comments.models import Comment
-#from web.processors import instance_processor as ip
-from web.reports.actions import ActivityLogger, PointsAssigner
-from web.values.models import *
+from accounts.models import UserProfile
+from attachments.models import Attachment
+from comments.forms import CommentForm
+from comments.models import Comment
+from reports.models import ActivityLogger
+from reports.actions import PointsAssigner
+from values.models import *
 
 from PIL import Image
 

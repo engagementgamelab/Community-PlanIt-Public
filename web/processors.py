@@ -1,7 +1,7 @@
-from web.challenges.models import Challenge, PlayerChallenge
-from web.instances.models import Instance
-from web.player_activities.models import PlayerActivity
-#from web.core.utils import _fake_latest
+from challenges.models import Challenge, PlayerChallenge
+from instances.models import Instance
+from player_activities.models import PlayerActivity
+#from core.utils import _fake_latest
 
 # Provides "globals" within the templates to populate things such as the sidebar
 # and other content that was previously only generated in the dashboard.

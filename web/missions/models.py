@@ -1,5 +1,6 @@
 import datetime
 from dateutil.relativedelta import relativedelta
+from stream import utils as stream_utils
 from django.template.defaultfilters import slugify
 from django.db import models
 from django.contrib import admin
@@ -8,7 +9,7 @@ from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
 
-from web.instances.models import Instance
+from instances.models import Instance
 
 class MissionManager(TranslationManager):
 
@@ -94,6 +95,8 @@ class Mission(TranslatableModel):
 
     def __unicode__(self):
         return self.title
+
+stream_utils.register_target(Mission)
 
 class MissionAdmin(TranslatableAdmin):
     list_display = ('title', 'instance', 'start_date', 'end_date')

@@ -1,5 +1,7 @@
 import datetime
 
+from stream import utils as stream_utils
+
 from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import slugify
@@ -84,7 +86,7 @@ class Instance(TranslatableModel):
         return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
 
     def dump_users(self):
-        from web.accounts.models import UserProfile
+        from accounts.models import UserProfile
         profiles = UserProfile.objects.filter(instance=self)
         out = ["Instance: %s" % self.title,]
         for prof in profiles:
@@ -135,6 +137,8 @@ class Instance(TranslatableModel):
         super(Instance,self).save()
         if self.start_date:
             self.rebuild_mission_dates()
+
+stream_utils.register_target(Instance)
 
 class PointsAssignmentAction(models.Model):
     action = models.CharField(max_length=260)

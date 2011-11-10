@@ -21,11 +21,13 @@
         {%if instance.missions.active.count%}
             {% for mission in instance.missions.active %}
             <h2>{% trans "Current Mission" %} <span class="fine">{{mission.start_date|date:"n/j"}}&#8211;{{mission.end_date|date:"n/j"}}</span></h2>
+            {% comment %}
             {% if mission.video %}
             <div class="video">
                 {% embed_video mission.video %}
             </div>
             {% endif %}
+            {% endcomment %}
             <h3>{{mission.name}}</h3>
             <p class="separate">
             {{mission.description|teaser:100}}
@@ -109,6 +111,35 @@
         <div class="feed">
             <h3>{% trans "Latest Events" %}</h3>
             <table>
+            <tbody>
+            {% for action in stream %}
+            <tr class="{% cycle "odd" "even" %}">
+                <td>{{action.datetime|date:"m/d/Y h:i a"}}</td>
+                <td >
+                    {% if not action.actor.is_superuser %}
+                    <a href="{% url accounts_profile action.actor.id %}">{{action.actor.get_profile.screen_name}}</a>
+                    {% else %}
+                    Instance Admin
+                    {% endif %}
+
+                    {{ action.get_verb_display }} 
+                    <a href="{{ action.action_object.get_absolute_url }}">{{ action.action_object.stream_action_title }}</a>
+                    {% comment %}
+                    {% if activity.get_url %}
+                        <a href="{{activity.get_url}}">{{activity.action}}</a>
+                    {% else %}
+                        {{activity.action}}
+                    {% endif %}
+                    {% endcomment %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td class="odd">{% trans "No news found" %}.</td></tr>
+            {% endfor %}
+            </tbody>
+            </table>
+            {% comment %}
+            <table>
                 <tbody>
                     {% for activity in log %}
                     <tr class="{% cycle "odd" "even" %}">
@@ -128,6 +159,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% endcomment %}
             
             <p>
             <a href="{% url instances:instance user.get_profile.instance.slug %}" class="right button">View more community news</a>
