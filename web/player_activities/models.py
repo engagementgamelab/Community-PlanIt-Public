@@ -109,6 +109,10 @@ class PlayerActivity(PlayerActivityBase):
             s = translated.safe_translation_getter('name', str(self.pk))
         return s
 
+    @property
+    def stream_action_title(self):
+        return self.__unicode__()
+
     def save(self, *args, **kwargs):
         self.createDate = datetime.datetime.now()
         super(PlayerActivity, self).save(*args, **kwargs)
@@ -224,6 +228,17 @@ class PlayerEmpathyActivity(PlayerActivityBase):
     def get_absolute_url(self):
         return ('activities:empathy-overview', (self.pk,))
 
+    def __unicode__(self):
+        s = self.safe_translation_getter('name', None)
+        if s is None:
+            translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
+            s = translated.safe_translation_getter('name', str(self.pk))
+        return s
+
+    @property
+    def stream_action_title(self):
+        return self.__unicode__()
+
     def get_overview_url(self):
         return reverse('activities:empathy-overview', args=(self.pk,))
 
@@ -238,12 +253,6 @@ class PlayerEmpathyActivity(PlayerActivityBase):
         self.type = PlayerActivityType.objects.get(type="empathy")
         super(PlayerEmpathyActivity, self).save(*args, **kwargs)
 
-    def __unicode__(self):
-        s = self.safe_translation_getter('value', None)
-        if s is None:
-            translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
-            s = translated.safe_translation_getter('value', str(self.pk))
-        return s
 
 class EmpathyOfficialResponse(models.Model):
     activity = models.OneToOneField(PlayerEmpathyActivity, unique=True)

@@ -7,6 +7,7 @@ import urllib
 import urlparse
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django import template
 from django.utils.html import fix_ampersands
 from django.utils.safestring import mark_safe
@@ -122,3 +123,52 @@ def order_by_custom(queryset):
     print "order_by_custom"
     #import ipdb;ipdb.set_trace()
     return queryset.order_by(*args)
+
+
+@register.simple_tag(takes_context=True)
+def format_action(context):
+    """ 
+        Admin created a response to [activity or challenge name].  
+
+        If it's a challenge, the full news item should say: 
+            "Admin created a response to [challenge name] created by [user name].
+    """
+    action = context.get('action')
+    print action
+    if not action:
+        return ""
+
+    if not action.actor.is_superuser:
+        actor_format = '<a href="%s">%s</a>' %(reverse('accounts_profile', args=(action.actor.pk,)), action.actor.get_profile().screen_name)
+    else:
+        actor_format = 'Admin'
+
+    if action.action_object:
+        obj = action.action_object
+        if obj.__class__.__name__ in \
+                                ['PlayerActivityOfficialResponse', 
+                                'MapOfficialResponse', 
+                                'EmpathyOfficialResponse']:
+
+            target_url = '<a href="%s">%s</a>' % (obj.activity.get_absolute_url(), 
+                                                  obj.activity.stream_action_title)
+
+            return "%s %s to %s" % ( actor_format,
+                                     action.get_verb_display(),
+                                     target_url,
+            )
+
+        if obj.__class__.__name__ in \
+                                    ['Challenge', ]:
+            target_url = '<a href="%s">%s</a>' % (obj.get_absolute_url(), 
+                                                  obj.stream_action_title)
+            return "%s %s to %s" % ( actor_format, 
+                                     action.get_verb_display(), 
+                                     target_url,
+            )
+
+    return ""
+
+    #action obj: <a href="{{ action_object.get_absolute_url }}">{{ action_object.stream_action_title }}</a>
+    #target: <a href="{{ target.get_absolute_url }}">{{ target.stream_action_title }}</a>
+

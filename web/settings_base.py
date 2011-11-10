@@ -168,7 +168,7 @@ STREAM_VERBS = (
     ('challenge_deleted','deleted a challenge'),
     ('challenge_commented','commented on a challenge'),
 
-    ('activity_official_response_created', 'created an official response'),
+    ('activity_official_response_created', 'created a response'),
 
     ('replayed', 'Activity replayed'),
     ('completed', 'Activity completed'),

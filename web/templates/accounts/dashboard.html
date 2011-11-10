@@ -116,17 +116,22 @@
             <table>
             <tbody>
             {% for action in stream %}
+            {% with actor=action.actor action_object=action.action_object target=action.target %}
             <tr class="{% cycle "odd" "even" %}">
                 <td>{{action.datetime|date:"m/d/Y h:i a"}}</td>
                 <td >
-                    {% if not action.actor.is_superuser %}
-                    <a href="{% url accounts_profile action.actor.id %}">{{action.actor.get_profile.screen_name}}</a>
-                    {% else %}
-                    Instance Admin
-                    {% endif %}
-
+                    {% format_action %}
+                    {% comment %}
+                    {% if not actor.is_superuser %} 
+                    <a href="{% url accounts_profile actor.id %}">{{actor.get_profile.screen_name}}</a> 
+                    {% else %} Admin {% endif %}
                     {{ action.get_verb_display }} 
-                    <a href="{{ action.action_object.get_absolute_url }}">{{ action.action_object.stream_action_title }}</a>
+                    to 
+                    
+                    action obj: <a href="{{ action_object.get_absolute_url }}">{{ action_object.stream_action_title }}</a>
+                    target: <a href="{{ target.get_absolute_url }}">{{ target.stream_action_title }}</a>
+                    {% endcomment %}
+
                     {% comment %}
                     {% if activity.get_url %}
                         <a href="{{activity.get_url}}">{{activity.action}}</a>
@@ -136,6 +141,7 @@
                     {% endcomment %}
                 </td>
             </tr>
+            {% endwith %}
             {% empty %}
             <tr><td class="odd">{% trans "No news found" %}.</td></tr>
             {% endfor %}
@@ -163,10 +169,10 @@
                 </tbody>
             </table>
             {% endcomment %}
-            
-            <p>
-            <a href="{% url instances:instance user.get_profile.instance.slug %}" class="right button">View more community news</a>
-            </p>
+
+            {% if not instance.is_expired %}
+                <p><a href="{% url instances:instance instance.slug %}" class="right button">View more community news</a> </p>
+            {% endif %}
         </div>
     {% else %}
     <div>{% trans "The community has not started yet. We will notify you once it has begun" %}.  </div>

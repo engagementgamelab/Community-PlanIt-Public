@@ -82,6 +82,10 @@ class Instance(TranslatableModel):
     def __unicode__(self):
         return self.title
 
+    @property
+    def stream_action_title(self):
+        return self.title
+
     def coin_count(self):
         return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
 
