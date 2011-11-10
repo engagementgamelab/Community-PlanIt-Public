@@ -21,13 +21,11 @@
         {%if instance.missions.active.count%}
             {% for mission in instance.missions.active %}
             <h2>{% trans "Current Mission" %} <span class="fine">{{mission.start_date|date:"n/j"}}&#8211;{{mission.end_date|date:"n/j"}}</span></h2>
-            {% comment %}
             {% if mission.video %}
             <div class="video">
                 {% embed_video mission.video %}
             </div>
             {% endif %}
-            {% endcomment %}
             <h3>{{mission.name}}</h3>
             <p class="separate">
             {{mission.description|teaser:100}}
@@ -87,24 +85,29 @@
     {% if instance.is_started %}
         {% if not instance.is_expired %}                    
             <div class="welcome">
-                <p>{{ instance.description }} </p>
+                {{ instance.description }}
             </div>
             
         {% else %}
             <div class="welcome">
-                <p>{{ instance }} {% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
-            <ul>
-                <li><strong>{{instance.user_profiles.count}}</strong> {% trans "participant" %}{{instance.user_profiles.count|pluralize}}
-                <li><strong>{{instance.coin_count}}</strong> token{{instance.coin_count|pluralize}} spent on issues
-                <li><strong>{{instance.comments.count}}</strong> comments
-            </ul>
 
-            <p>Check out the results of the
-            <a class="red" href="{% url missions:index %}" title="mission">activities</a>
-            &#8212; and don't forget to see how the community spent its 
-            <a class="red" href="{% url values:index %}">tokens</a>!
-            </p>
-            <p>{% trans "Thanks for playing!" %}</p>
+                <p>The {{ instance.title }} planning session has ended.  Thanks for participating!  We're now reading through everything and planning for next steps.  Periodically, we'll post responses to activities that will come directly from decision makers.  So, please check back often and help keep the conversation going in your community.
+</p>
+                {% comment %}
+                        <p>{{ instance }} {% trans "ended on" %} {{instance.end_date|date:"F j, Y"}}, {% trans "with" %}:</p>
+                    <ul>
+                        <li><strong>{{instance.user_profiles.count}}</strong> {% trans "participant" %}{{instance.user_profiles.count|pluralize}}
+                        <li><strong>{{instance.coin_count}}</strong> token{{instance.coin_count|pluralize}} spent on issues
+                        <li><strong>{{instance.comments.count}}</strong> comments
+                    </ul>
+
+                    <p>Check out the results of the
+                    <a class="red" href="{% url missions:index %}" title="mission">activities</a>
+                    &#8212; and don't forget to see how the community spent its 
+                    <a class="red" href="{% url values:index %}">tokens</a>!
+                    </p>
+                    <p>{% trans "Thanks for playing!" %}</p>
+                {% endcomment %}
             </div>
         {% endif %}
         
