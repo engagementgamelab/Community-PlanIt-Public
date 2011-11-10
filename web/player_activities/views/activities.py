@@ -116,22 +116,13 @@ def _build_context(request, action, activity, user=None):
             ))
         official_response  = None
         if isinstance(activity, PlayerActivity):
-            try:
-                official_response  = PlayerActivityOfficialResponse.objects.get(activity=activity)
-            except PlayerActivityOfficialResponse.DoesNotExist:
-                pass
+            official_response  = activity.playeractivityofficialresponse
         elif isinstance(activity, PlayerMapActivity):
-            try:
-                official_response  = MapOfficialResponse.objects.get(activity=activity)
-            except MapOfficialResponse.DoesNotExist:
-                pass
+            official_response  = activity.mapofficialresponse
         elif isinstance(activity, PlayerEmpathyActivity):
-            try:
-                official_response  = EmpathyOfficialResponse.objects.get(activity=activity)
-            except EmpathyOfficialResponse.DoesNotExist:
-                pass
+            official_response  = activity.empathyofficialresponse
 
-        #elif isinstance(activity, PlayerMapActivity):
+        print official_response
 
         context.update(official_response=official_response)
 

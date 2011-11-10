@@ -11,6 +11,9 @@
     {% endblocktrans %}
 </div>
 {% endif %}
+
+    {% include "player_activities/official_responses.html" %}
+
     <h1>{{activity.name}}</h1>
 
     <p class="bio">
@@ -20,7 +23,6 @@
         {{activity.bio}}
     </p>
     
-    {% include "player_activities/official_responses.html" %}
     {% include "player_activities/attachments.html" %}
 
     {% if not activity.mission.is_expired and myComment %}

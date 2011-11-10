@@ -11,10 +11,10 @@
     {% endblocktrans %}
 </div>
 {% endif %}
+{% include "player_activities/official_responses.html" %}
 <h1>{{activity.name}}</h1>
 <h3>{{activity.question|safe}}</h3>
 
-    {% include "player_activities/official_responses.html" %}
     {% include "player_activities/attachments.html" %}
 
     {% if not activity.mission.is_expired and myComment %}
