@@ -47,7 +47,6 @@ urlpatterns += patterns('',
     (r'^admin/', include(admin.site.urls)),
     # generic content redirect, used for comments and notifications
     url(r'^gr/(\d+)/(.+)/$', 'django.contrib.contenttypes.views.shortcut', name='generic_redirect'),
-    (r'^stream/', include('actstream.urls')),
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:
