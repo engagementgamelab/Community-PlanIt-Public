@@ -364,7 +364,7 @@ def add_response_as_comment(sender, **kwargs):
         )
         obj.comments.add(comment)
 
-        stream_utils.action.send(actor=user, verb='activity_official_response_created', target=obj.activity, action_object=obj, description='Official response created')
+        stream_utils.action.send(actor=user, verb='activity_official_response_created', target=obj.activity, action_object=obj, description='official response created')
 
     else:
         Comment.objects.filter(object_id=obj.pk).update(message=obj.response)

@@ -7,7 +7,7 @@
         <ul class="comment_list">
 
             {% for comment in comments.all %}
-                {% with extra_message=activity.title show_user=false%}
+                {% with extra_message=activity.title %}
                 {% include "comments/comment.html" %}
                 {% endwith %}
             {% empty %}

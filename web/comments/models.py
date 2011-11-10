@@ -37,7 +37,7 @@ class Comment(models.Model):
 
     @property
     def display_user(self):
-        return not self.content_object.__class__.__name__ in ['PlayerActivityOfficialResponse', 'MapOfficialResponse', 'EmpathyOfficialResponse']
+        return not self.content_object.__class__.__name__ in ['PlayerActivityOfficialResponse', 'MapOfficialResponse', 'EmpathyOfficialResponse', 'ChallengeOfficialResponse']
 
     def __unicode__(self):
         if self.message:

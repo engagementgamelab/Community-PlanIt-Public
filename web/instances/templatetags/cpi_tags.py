@@ -134,7 +134,6 @@ def format_action(context):
             "Admin created a response to [challenge name] created by [user name].
     """
     action = context.get('action')
-    print action
     if not action:
         return ""
 
@@ -145,10 +144,12 @@ def format_action(context):
 
     if action.action_object:
         obj = action.action_object
-        if obj.__class__.__name__ in \
-                                ['PlayerActivityOfficialResponse', 
-                                'MapOfficialResponse', 
-                                'EmpathyOfficialResponse']:
+        klass = obj.__class__.__name__
+        if  klass in \
+                        ['PlayerActivityOfficialResponse', 
+                         'MapOfficialResponse', 
+                         'EmpathyOfficialResponse',
+                        ]:
 
             target_url = '<a href="%s">%s</a>' % (obj.activity.get_absolute_url(), 
                                                   obj.activity.stream_action_title)
@@ -156,6 +157,17 @@ def format_action(context):
             return "%s %s to %s" % ( actor_format,
                                      action.get_verb_display(),
                                      target_url,
+            )
+
+        elif klass in ['ChallengeOfficialResponse',]:
+            challenge_creator = '<a href="%s">%s</a>' %( reverse('accounts_profile', args=(obj.challenge.user.pk,)),
+                                                         obj.challenge.user.get_profile().screen_name)
+            target_url = '<a href="%s">%s</a>' % (obj.get_absolute_url(),
+                                                  obj.stream_action_title)
+            return "%s %s %s created by %s" % ( actor_format, 
+                                                action.get_verb_display(), 
+                                                target_url,
+                                                challenge_creator,
             )
 
         if obj.__class__.__name__ in \
@@ -168,7 +180,3 @@ def format_action(context):
             )
 
     return ""
-
-    #action obj: <a href="{{ action_object.get_absolute_url }}">{{ action_object.stream_action_title }}</a>
-    #target: <a href="{{ target.get_absolute_url }}">{{ target.stream_action_title }}</a>
-

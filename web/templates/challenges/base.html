@@ -7,6 +7,26 @@
 {% endblock %}
 
 {% block main %}
+
+
+{% if challenge.challengeofficialresponse %}
+<h2> {{ instance.title }}'s {% trans "Response" %} </h2>
+
+{% with comments=challenge.challengeofficialresponse.comments %}
+    <div class="comments embedded">
+        <ul class="comment_list">
+            {% for comment in comments.all %}
+                {% with extra_message=challenge.name %}
+                {% include "comments/comment.html" %}
+                {% endwith %}
+            {% empty %}
+            <li class="comment">No comments found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endwith %}
+{% endif %}
+
 {% if challenge.user.get_profile %}
 {% url accounts_profile challenge.user.pk as creator_profile_url %}
 <h3>{% blocktrans with creator=challenge.user.get_profile.screen_name %}Created by <a href="{{creator_profile_url}}">{{creator}}</a>{% endblocktrans %}</h3>

@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 def challenge(request, id, template='challenges/base.html'):
     try:
         challenge = Challenge.objects.select_related().get(pk=id)
-    except PlayerChallenge.DoesNotExist:
+    except Challenge.DoesNotExist:
         return Http404("Challenge could not be found")
 
     try:

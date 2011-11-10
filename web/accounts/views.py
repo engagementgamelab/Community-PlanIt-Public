@@ -367,11 +367,11 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     #else:
     #log = Activity.objects.filter(instance=instance, type='official_response').order_by('-date')[:9]
     if not instance.is_expired():
-        stream = Action.objects.filter()
+        stream = Action.objects.all()
     else:
         stream = Action.objects.filter(verb='activity_official_response_created')
 
-    stream = stream.order_by('datetime')
+    stream = stream.order_by('-datetime')
 
     activities = PlayerActivity.objects.none()
 

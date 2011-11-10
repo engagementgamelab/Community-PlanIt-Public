@@ -2,8 +2,11 @@ import datetime
 from stream import utils as stream_utils
 from gmapsfield.fields import GoogleMapsField
 
+from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -91,8 +94,32 @@ stream_utils.register_action_object(Challenge)
 stream_utils.register_target(Challenge)
 
 
+class ChallengeOfficialResponse(models.Model):
+    challenge = models.OneToOneField(Challenge, unique=True)
+    response = models.TextField(max_length=500, blank=True, default='')
+    comments = generic.GenericRelation(Comment)
+    date_added = models.DateTimeField(editable=False, auto_now_add=True)
+
+    def get_absolute_url(self):
+        return self.challenge.get_absolute_url()
+
+    def __unicode__(self):
+        return u"Official Response (%s) for <%s> " % (self.response[:10], self.challenge.name )
+
+    @property
+    def stream_action_title(self):
+        return self.response
+
+stream_utils.register_action_object(ChallengeOfficialResponse)
+
+
+
+class ChallengeOfficialResponseInline(admin.StackedInline):
+	model = ChallengeOfficialResponse
+
 class ChallengeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'screen_name')
+    inlines = [ChallengeOfficialResponseInline,]
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == 'attachments' and getattr(self, 'obj', None):
@@ -164,4 +191,25 @@ class PlayerChallenge(models.Model):
     class Meta:
     	unique_together = (('player', 'challenge'),)
 
+
+@receiver(post_save, sender=ChallengeOfficialResponse, dispatch_uid='web.challenges.models')
+def add_response_as_comment(sender, **kwargs):
+    created =  kwargs.get('created')
+    obj = kwargs.get('instance')
+    active_instance = Instance.objects.language(settings.LANGUAGE_CODE)[0]
+
+    user = User.objects.filter(is_superuser=True)[0]
+    if created:
+        comment = Comment.objects.create(
+                user = user,
+                message = obj.response,
+                object_id = obj.pk,
+                instance=active_instance,
+        )
+        obj.comments.add(comment)
+
+        stream_utils.action.send(actor=user, verb='activity_official_response_created', target=obj.challenge, action_object=obj, description='challenge official response created')
+
+    else:
+        Comment.objects.filter(object_id=obj.pk).update(message=obj.response)
 
