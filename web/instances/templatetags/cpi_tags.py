@@ -174,7 +174,7 @@ def format_action(context):
                                     ['Challenge', ]:
             target_url = '<a href="%s">%s</a>' % (obj.get_absolute_url(), 
                                                   obj.stream_action_title)
-            return "%s %s to %s" % ( actor_format, 
+            return "%s %s %s" % ( actor_format, 
                                      action.get_verb_display(), 
                                      target_url,
             )

@@ -191,6 +191,7 @@ class PlayerChallenge(models.Model):
     class Meta:
     	unique_together = (('player', 'challenge'),)
 
+stream_utils.register_target(PlayerChallenge)
 
 @receiver(post_save, sender=ChallengeOfficialResponse, dispatch_uid='web.challenges.models')
 def add_response_as_comment(sender, **kwargs):

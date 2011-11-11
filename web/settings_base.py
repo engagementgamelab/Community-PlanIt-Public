@@ -167,6 +167,7 @@ STREAM_VERBS = (
     ('challenge_declined','declined a challenge'),
     ('challenge_deleted','deleted a challenge'),
     ('challenge_commented','commented on a challenge'),
+    ('challenge_completed','completed a challenge'),
 
     ('activity_official_response_created', 'created a response'),
 
@@ -175,6 +176,7 @@ STREAM_VERBS = (
     ('spent', 'Token spent'),
     ('reclaimed', 'Token reclaimed'),
     ('replied', 'Replied with comment'),
+    ('liked', 'Liked a comment'),
     ('commented', 'Created a comment'),
 )
 

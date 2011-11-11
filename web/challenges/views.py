@@ -13,7 +13,6 @@ from challenges.forms import *
 from challenges.models import *
 from comments.forms import CommentForm
 from comments.models import Comment
-from reports.models import ActivityLogger
 from reports.actions import PointsAssigner
 #from responses.comment.forms import CommentAttachmentResponseForm
 from core.utils import _fake_latest
@@ -73,12 +72,8 @@ def challenge(request, id, template='challenges/base.html'):
                     file=request.FILES.get('picture'),
                     user=request.user,
                     instance=request.user.get_profile().instance)
-
-
                 #ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'completed', reverse('challenges:challenge', args=[id]), 'challenge')
-                stream_utils.action.send(request.user, 'challenge_completed', target=instance, action_object=challenge, 
-                                        description="A challenge was completed"
-                )
+                stream_utils.action.send(request.user, 'challenge_completed', target=instance, action_object=challenge, description="A challenge was completed")
             PointsAssigner().assign(request.user, 'challenge_completed')
 
             if pc.player != challenge.user:

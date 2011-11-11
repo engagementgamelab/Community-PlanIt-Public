@@ -1,4 +1,8 @@
+import os
 from datetime import datetime
+
+from stream.models import Action
+
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.db.models import Count
@@ -15,7 +19,7 @@ from django.db.models import Sum
 
 #from player_activity.models import *
 
-def render_to_excel(values_list, field_titles=[], filename='report'):
+def render_to_excel(values_list, field_titles=[], to_file=False, filename='report'):
     from datetime import datetime, date
     from django.http import HttpResponse
     import xlwt
@@ -54,6 +58,10 @@ def render_to_excel(values_list, field_titles=[], filename='report'):
 
     response = HttpResponse(mimetype='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename=%s.xls' % filename
+
+    if to_file:
+        book.save(filename)
+        return
     book.save(response)
     return response
 
@@ -260,21 +268,7 @@ def demographic(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect(reverse("admin:index"))
 
-    field_titles = (
-            'ID',
-            'stake',
-            'race',
-            'gender',
-            'education',
-            'income',
-            'living',
-            'affiliations',
-            'birth year',
-            'city/neighborhood',
-            'zip code',
-            'how discovered?',
-            'points',
-    )
+    field_titles = ( 'ID', 'stake', 'race', 'gender', 'education', 'income', 'living', 'affiliations', 'birth year', 'city/neighborhood', 'zip code', 'how discovered?', 'points',)
     values_list = []
     users = UserProfile.objects.exclude(user__is_superuser=True, user__is_staff=True)
     for profile in users:
@@ -302,53 +296,11 @@ def demographic(request):
 
 @login_required
 def demographic2(request):
-    """
-    UserID
-    Stake
-    Affiliation(s)
-    Preferred Language
-    Picture? (Y/N)
-    Race
-    Gender
-    Education
-    Income
-    Rent/Own
-    Neighborhood/Zip
-    Points
-    Priority 1 Tokens Spent
-    Priority 2 Tokens Spent
-    Priority 3 Tokens Spent
-    Priority 4 Tokens Spent
-    Priority 5 Tokens Spent
-    Priority 6 Tokens Spent
-    Priority 7 Tokens Spent
-    """
-
     if not request.user.is_superuser:
         return HttpResponseRedirect(reverse("admin:index"))
 
     field_titles = (
-            'ID',
-            'stake',
-            'affiliations',
-            'preferred language',
-            'picture',
-            'race',
-            'gender',
-            'education',
-            'income',
-            'rent/own',
-            'city/neighborhood',
-            'zip code',
-            'points',
-            'total tokens spent',
-            'School Environment and Safety', 
-            'Attendance', 
-            'Achievement Gaps', 
-            'Growth', 
-            'Proficiency ', 
-            'Family And Community Engagement', 
-            'Opportunities To Learn',
+            'ID', 'stake', 'affiliations', 'preferred language', 'picture', 'race', 'gender', 'education', 'income', 'rent/own', 'city/neighborhood', 'zip code', 'points', 'total tokens spent', 'School Environment and Safety', 'Attendance', 'Achievement Gaps', 'Growth', 'Proficiency ', 'Family And Community Engagement', 'Opportunities To Learn',
     )
     values_list = []
     users = UserProfile.objects.exclude(user__is_superuser=True, user__is_staff=True)
@@ -391,4 +343,61 @@ def demographic2(request):
     NOW = datetime.now()
     return render_to_excel(values_list, field_titles, filename=NOW.strftime('%Y-%m-%d-%H-%M-profile_stats'))
 
+
+@login_required
+def challenges_activity(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect(reverse("admin:index"))
+
+    return run_challenges_activity_report()
+
+
+def run_challenges_activity_report(to_file=False):
+
+    field_titles = (
+        'comment id', 'challenge title', 'timestamp', 'user', 'comment', 'likes'
+    )
+    values_list = []
+
+    def fetch_replies(comment):
+        for action in Action.objects.get_for_target(comment):
+            if action.verb != 'replied':
+                continue
+            reply = action.action_object
+            values_list.append(
+                    (
+                        reply.pk,
+                        "reply to comment #%s" % comment.pk,
+                        action.datetime.strftime('%Y-%m-%d %H:%M'),
+                        "%s (%s)" % (action.actor.get_profile().screen_name, action.actor.pk),
+                        reply.message,
+                        reply.likes.all().count(),
+                    )
+            )
+            fetch_replies(action.action_object)
+
+    for action in Action.objects.filter(verb='challenge_commented'):#.order_by('target_challenge__pk'):
+        challenge = action.target.challenge
+        comment = action.action_object
+        values_list.append(
+                (
+                    comment.pk,
+                    challenge.name,
+                    action.datetime.strftime('%Y-%m-%d %H:%M'),
+                    "%s (%s)" % (action.actor.get_profile().screen_name, action.actor.pk),
+                    comment.message,
+                    comment.likes.all().count(),
+                )
+        )
+        fetch_replies(comment)
+
+    print "%s comments" % len(values_list)
+    print len(connection.queries)
+
+    NOW = datetime.now()
+    filename = NOW.strftime('%Y-%m-%d-%H-%M-challenges-activity')
+    if to_file:
+        filename = os.path.join('/tmp', filename+'.xls')
+
+    return render_to_excel(values_list, field_titles, to_file, filename)
 

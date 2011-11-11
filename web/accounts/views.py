@@ -371,7 +371,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     else:
         stream = Action.objects.filter(verb='activity_official_response_created')
 
-    stream = stream.order_by('-datetime')
+    stream = stream.order_by('-datetime')[:10]
 
     activities = PlayerActivity.objects.none()
 
