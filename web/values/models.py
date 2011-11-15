@@ -23,6 +23,10 @@ class Value(TranslatableModel):
         message = models.CharField(max_length=60, verbose_name='Name'),
     )
 
+    @property
+    def stream_action_title(self):
+        return self.__unicode__()
+
     def __unicode__(self):
         return self.safe_translation_getter('message', '%s' % self.pk)
 

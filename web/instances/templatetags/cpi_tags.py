@@ -177,6 +177,23 @@ def format_action(context):
                                     target_url,
         )
 
+    elif klass == 'Value':
+        target_url = '<a href="%s">%s</a>' % (obj.get_absolute_url(), 
+                                                obj.message)
+        return "%s %s on %s" % ( actor_format, 
+                                    action.get_verb_display(), 
+                                    target_url,
+        )
+
+    elif klass == 'Comment':
+        target_url = '<a href="%s">%s</a>' % (obj.get_absolute_url(), 
+                                                obj.message)
+        return "%s %s %s %s" % ( actor_format, 
+                                    action.get_verb_display(), 
+                                    "on" if action.verb == 'commented' else "to",
+                                    target_url,
+        )
+
     elif  klass in \
                     ['PlayerActivity', 
                         'PlayerMapActivity', 
@@ -190,6 +207,12 @@ def format_action(context):
                                     action.get_verb_display(),
                                     target_url,
         )
-
+    elif action.verb == 'liked' and action.target.__class__.__name__ == 'Comment':
+        target_url = '<a href="%s">%s</a>' % (action.target.get_absolute_url(), 
+                                                action.target.message)
+        return "%s %s %s" % ( actor_format, 
+                                    action.get_verb_display(), 
+                                    target_url,
+        )
 
     return ""

@@ -174,12 +174,12 @@ STREAM_VERBS = (
     ('activity_replayed', 'replayed activity'),
     ('activity_completed', 'completed activity'),
 
-    ('token_spent', 'Token spent'),
-    ('token_reclaimed', 'token reclaimed'),
+    ('token_spent', 'spent token'),
+    ('token_reclaimed', 'reclaimed token'),
 
-    ('replied', 'replied with comment'),
+    ('replied', 'replied'),
     ('liked', 'liked a comment'),
-    ('commented', 'created a comment'),
+    ('commented', 'commented'),
 )
 
 
