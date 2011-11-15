@@ -40,11 +40,15 @@
             margin-top: 25px; margin-bottom: 25px; "></div>
             
         <h3>Activity Log</h3>
-        {% if log|length %}
+        {% if stream|length %}
         <ul class="listless listview feed">
-            {% for activity in log %}
-            <li class="listitem {{activity.type}}">
-                {% if activity.user.get_profile.avatar %}
+            {% for action in stream %}
+            <li class="listitem {{action.verb}}">
+
+                {% format_action %}
+
+                {% comment %}
+                {% if action.user.get_profile.avatar %}
                     <img class="avatar" src="{{MEDIA_URL}}/{{activity.user.get_profile.avatar}}">
                 {% else %}               
                     <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
@@ -56,7 +60,8 @@
                 {% else %}
                     {{activity.action}}
                 {% endif %}
-                <div class="timestamp fine">{{activity.date|date:"F j, Y, g:i a"}}</div>
+                {% endcomment %}
+                <div class="timestamp fine">{{action.datetime|date:"F j, Y, g:i a"}}</div>
             </li>
             {% endfor %}
         </ul>

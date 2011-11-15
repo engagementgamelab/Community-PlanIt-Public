@@ -271,7 +271,9 @@ def profile(request, id):
     profile = player.get_profile()
 
     instance = profile.instance
-    log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
+    #log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
+
+    stream = Action.objects.get_for_actor(player)
     comment_form = CommentForm(data=request.POST or None)
 
     if request.method == 'POST':        
@@ -337,7 +339,7 @@ def profile(request, id):
         'player': player,
         'comment_form': comment_form,
         'instance': instance,
-        'log': log,
+        'stream': stream,
         'player_spent': player_spent,
         'value_wrapper': value_wrapper,
     })))
