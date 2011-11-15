@@ -25,7 +25,7 @@ class Value(TranslatableModel):
 
     @property
     def stream_action_title(self):
-        return self.__unicode__()
+        return str(self.message)
 
     def __unicode__(self):
         return self.safe_translation_getter('message', '%s' % self.pk)
