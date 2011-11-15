@@ -1,21 +1,23 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from stream import utils as stream_utils
 
+from PIL import Image
+from nani.utils import get_translation
+
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.template import Context, RequestContext, loader
 from django.conf import settings
 
-from nani.utils import get_translation
 
-from web.accounts.models import UserProfile
-from web.reports.actions import PointsAssigner
-from web.answers.models import Answer
-from web.challenges.models import Challenge
-from web.comments.forms import *
-from web.comments.models import Comment
+from accounts.models import UserProfile
+from reports.actions import PointsAssigner
+from answers.models import Answer
+from challenges.models import Challenge
+from comments.forms import *
+from comments.models import Comment
 
-from PIL import Image
 from attachments.models import Attachment
 
 
@@ -56,6 +58,7 @@ def ajax_like(request, id):
             request.user.get_profile().screen_name, c.content_object
         )
         c.user.notifications.create(content_object=c, message=message)
+        stream_utils.action.send(request.user, 'liked', target=c, description="liked a comment")
     return HttpResponse(str(c.likes.all().count()))
 
 @login_required
@@ -153,10 +156,6 @@ def edit(request, id, lang_code=None):
         return HttpResponse(tmpl.render(RequestContext(request, {"comment": comment,
                                                                  "comment_form": comment_form }, 
                                                                  )))
-
-                                                                 
-
-    
 
 @login_required
 def remove_attachment(request, id, comment_id):

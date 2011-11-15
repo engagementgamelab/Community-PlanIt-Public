@@ -142,41 +142,54 @@ def format_action(context):
     else:
         actor_format = 'Admin'
 
-    if action.action_object:
-        obj = action.action_object
-        klass = obj.__class__.__name__
-        if  klass in \
-                        ['PlayerActivityOfficialResponse', 
-                         'MapOfficialResponse', 
-                         'EmpathyOfficialResponse',
-                        ]:
+    obj = action.action_object
+    klass = obj.__class__.__name__
+    if  klass in \
+                    ['PlayerActivityOfficialResponse', 
+                        'MapOfficialResponse', 
+                        'EmpathyOfficialResponse',
+                    ]:
 
-            target_url = '<a href="%s">%s</a>' % (obj.activity.get_absolute_url(), 
-                                                  obj.activity.stream_action_title)
+        target_url = '<a href="%s">%s</a>' % (obj.activity.get_absolute_url(), 
+                                                obj.activity.stream_action_title)
 
-            return "%s %s to %s" % ( actor_format,
-                                     action.get_verb_display(),
-                                     target_url,
-            )
+        return "%s %s to %s" % ( actor_format,
+                                    action.get_verb_display(),
+                                    target_url,
+        )
 
-        elif klass in ['ChallengeOfficialResponse',]:
-            challenge_creator = '<a href="%s">%s</a>' %( reverse('accounts_profile', args=(obj.challenge.user.pk,)),
-                                                         obj.challenge.user.get_profile().screen_name)
-            target_url = '<a href="%s">%s</a>' % (obj.get_absolute_url(),
-                                                  obj.stream_action_title)
-            return "%s %s %s created by %s" % ( actor_format, 
-                                                action.get_verb_display(), 
-                                                target_url,
-                                                challenge_creator,
-            )
+    elif klass == 'ChallengeOfficialResponse':
+        challenge_creator = '<a href="%s">%s</a>' %( reverse('accounts_profile', args=(obj.challenge.user.pk,)),
+                                                        obj.challenge.user.get_profile().screen_name)
+        target_url = '<a href="%s">%s</a>' % (obj.get_absolute_url(),
+                                                obj.stream_action_title)
+        return "%s %s %s created by %s" % ( actor_format, 
+                                            action.get_verb_display(), 
+                                            target_url,
+                                            challenge_creator,
+        )
 
-        if obj.__class__.__name__ in \
-                                    ['Challenge', ]:
-            target_url = '<a href="%s">%s</a>' % (obj.get_absolute_url(), 
-                                                  obj.stream_action_title)
-            return "%s %s %s" % ( actor_format, 
-                                     action.get_verb_display(), 
-                                     target_url,
-            )
+    elif klass == 'Challenge':
+        target_url = '<a href="%s">%s</a>' % (obj.get_absolute_url(), 
+                                                obj.stream_action_title)
+        return "%s %s %s" % ( actor_format, 
+                                    action.get_verb_display(), 
+                                    target_url,
+        )
+
+    elif  klass in \
+                    ['PlayerActivity', 
+                        'PlayerMapActivity', 
+                        'PlayerEmpathyActivity',
+                    ]:
+
+        target_url = '<a href="%s">%s</a>' % (action.action_object.get_activity_url(), 
+                                                action.action_object.stream_action_title)
+
+        return "%s %s %s" % ( actor_format,
+                                    action.get_verb_display(),
+                                    target_url,
+        )
+
 
     return ""

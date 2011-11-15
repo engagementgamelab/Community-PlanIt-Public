@@ -1,5 +1,7 @@
 from PIL import Image
 
+from stream import utils as stream_utils
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -66,7 +68,11 @@ def getComments(answers, ModelType, activity=None):
     return comments
 
 def log_activity_and_redirect(request, activity, message):
-    ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", message, activity.get_activity_url(), "activity")
+    #ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", message, activity.get_activity_url(), "activity")
+    stream_utils.action.send(request.user, 'activity_%s' % message, action_object=activity,
+                            description="%s activity" % message
+    )
+
     return HttpResponseRedirect(activity.get_overview_url())   
 
 

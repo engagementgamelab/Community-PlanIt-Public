@@ -161,23 +161,25 @@ PREFIX_DEFAULT_LOCALE = True
 #django-stream
 # see notes in web.reports.actions
 STREAM_VERBS = (
-    ('challenge_created','created a challenge'),
-    ('challenge_updated','updated a challenge'),
-    ('challenge_accepted','accepted a challenge'),
-    ('challenge_declined','declined a challenge'),
-    ('challenge_deleted','deleted a challenge'),
-    ('challenge_commented','commented on a challenge'),
-    ('challenge_completed','completed a challenge'),
+    ('challenge_created', 'created a challenge'),
+    ('challenge_updated', 'updated a challenge'),
+    ('challenge_accepted', 'accepted a challenge'),
+    ('challenge_declined', 'declined a challenge'),
+    ('challenge_deleted', 'deleted a challenge'),
+    ('challenge_commented', 'commented on a challenge'),
+    ('challenge_completed', 'completed a challenge'),
 
     ('activity_official_response_created', 'created a response'),
 
-    ('replayed', 'Activity replayed'),
-    ('completed', 'Activity completed'),
-    ('spent', 'Token spent'),
-    ('reclaimed', 'Token reclaimed'),
-    ('replied', 'Replied with comment'),
-    ('liked', 'Liked a comment'),
-    ('commented', 'Created a comment'),
+    ('activity_replayed', 'replayed activity'),
+    ('activity_completed', 'completed activity'),
+
+    ('token_spent', 'Token spent'),
+    ('token_reclaimed', 'token reclaimed'),
+
+    ('replied', 'replied with comment'),
+    ('liked', 'liked a comment'),
+    ('commented', 'created a comment'),
 )
 
 

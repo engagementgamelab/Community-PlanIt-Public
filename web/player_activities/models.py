@@ -102,6 +102,10 @@ class PlayerActivity(PlayerActivityBase):
     def get_replay_url(self):
         return reverse('activities:replay', args=(self.pk,))
 
+    @property
+    def stream_action_title(self):
+        return self.__unicode__()
+
     def __unicode__(self):
         s = self.safe_translation_getter('name', None)
         if s is None:
@@ -172,6 +176,10 @@ class PlayerMapActivity(PlayerActivityBase):
     def get_replay_url(self):
         return reverse('activities:map-replay', args=(self.pk,))
 
+    @property
+    def stream_action_title(self):
+        return self.__unicode__()
+
     def __unicode__(self):
         s = self.safe_translation_getter('name', None)
         if s is None:
@@ -227,6 +235,10 @@ class PlayerEmpathyActivity(PlayerActivityBase):
     @models.permalink
     def get_absolute_url(self):
         return ('activities:empathy-overview', (self.pk,))
+
+    @property
+    def stream_action_title(self):
+        return self.__unicode__()
 
     def __unicode__(self):
         s = self.safe_translation_getter('name', None)

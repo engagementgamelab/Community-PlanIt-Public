@@ -1,4 +1,4 @@
-from operator import itemgetter
+from PIL import Image
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -10,8 +10,6 @@ from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
-
-from PIL import Image
 
 from answers.models import *
 from comments.models import *
@@ -116,13 +114,20 @@ def _build_context(request, action, activity, user=None):
             ))
         official_response  = None
         if isinstance(activity, PlayerActivity):
-            official_response  = activity.playeractivityofficialresponse
+            try:
+                official_response  = activity.playeractivityofficialresponse
+            except PlayerActivityOfficialResponse.DoesNotExist:
+                pass
         elif isinstance(activity, PlayerMapActivity):
-            official_response  = activity.mapofficialresponse
+            try:
+                official_response  = activity.mapofficialresponse
+            except MapOfficialResponse.DoesNotExist:
+                pass
         elif isinstance(activity, PlayerEmpathyActivity):
-            official_response  = activity.empathyofficialresponse
-
-        print official_response
+            try:
+                official_response  = activity.empathyofficialresponse
+            except EmpathyOfficialResponse.DoesNotExist:
+                pass
 
         context.update(official_response=official_response)
 
@@ -250,7 +255,7 @@ def activity(request, activity_id, template=None, **kwargs):
                         )
                 else:
                     _update_errors()
-            elif request.POST["form"] == "multi_response":                
+            elif request.POST["form"] == "multi_response":
                 choices = _get_mc_choices(activity)
                 form = make_multi_form(choices)(request.POST)
                 if _is_form_valid():
@@ -281,11 +286,11 @@ def activity(request, activity_id, template=None, **kwargs):
                 else:
                     _update_errors()
             elif request.POST["form"] == "map":
-                form = MapForm(request.POST)                 
+                form = MapForm(request.POST)
                 if _is_form_valid():
                     map = form.cleaned_data["map"]
-                    try:                
-                        answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)                        
+                    try:
+                        answer = AnswerMap.objects.get(activity=activity, answerUser=request.user)
                     except AnswerMap.DoesNotExist:
                         answer = AnswerMap()
                         answer.activity = activity

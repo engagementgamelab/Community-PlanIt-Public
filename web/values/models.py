@@ -31,6 +31,7 @@ class Value(TranslatableModel):
         return ('values:detail', [str(self.id)])
 
 stream_utils.register_target(Value)
+stream_utils.register_action_object(Value)
 
 class PlayerValue(models.Model):
 

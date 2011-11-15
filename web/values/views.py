@@ -2,6 +2,8 @@ import datetime
 from operator import itemgetter
 import re
 
+from stream import utils as stream_utils
+
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -16,7 +18,7 @@ from accounts.models import UserProfile
 from attachments.models import Attachment
 from comments.forms import CommentForm
 from comments.models import Comment
-from reports.models import ActivityLogger
+#from reports.models import ActivityLogger
 from reports.actions import PointsAssigner
 from values.models import *
 
@@ -49,7 +51,6 @@ def all(request, template='values/all.html'):
         player_spent = player_spent,
     )
 
-    #import ipdb;ipdb.set_trace()
     return render_to_response(template, (RequestContext(request, context)))
 
 @login_required
@@ -90,7 +91,7 @@ def detail(request, id):
 
             PointsAssigner().assign(request.user, 'comment_created')
             log_url = reverse('values:detail', args=[id]) + '#comment-' + str(comment.pk)
-            ActivityLogger().log(request.user, request, 'to value: ' + value.message[:30], 'added comment', log_url, 'value')
+            #ActivityLogger().log(request.user, request, 'to value: ' + value.message[:30], 'added comment', log_url, 'value')
             return HttpResponseRedirect(reverse('values:detail', args=[id]))
 
     values = value.instance.values.language(get_language())
@@ -122,8 +123,9 @@ def spend(request, id):
         playervalue.save()
         profile.save()
         
-        log_url = reverse('values:detail', args=[id])
-        ActivityLogger().log(request.user, request, 'on value: ' + value.message[:30], 'spent token', log_url, 'value')
+        #log_url = reverse('values:detail', args=[id])
+        #ActivityLogger().log(request.user, request, 'on value: ' + value.message[:30], 'spent token', log_url, 'value')
+        stream_utils.action.send(request.user, 'token_spent', action_object=value, description="token spent")
     else:
         messages.error(request, 'No tokens available to spend')
     
@@ -149,8 +151,9 @@ def take(request, id):
         playervalue.save()
         profile.save()
     
-        log_url = reverse('values:detail', args=[id])
-        ActivityLogger().log(request.user, request, 'from value: ' + value.message[:30], 'reclaimed token', log_url, 'value')
+        #log_url = reverse('values:detail', args=[id])
+        #ActivityLogger().log(request.user, request, 'from value: ' + value.message[:30], 'reclaimed token', log_url, 'value')
+        stream_utils.action.send(request.user, 'token_reclaimed', action_object=value, description="token reclaimed")
     else:
         messages.info(request, 'No coins available to take')
         
