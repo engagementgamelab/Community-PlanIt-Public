@@ -5,11 +5,11 @@ import re
 import types
 import urllib
 import urlparse
-
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django import template
 from django.utils.html import fix_ampersands
+from django.utils.text import truncate_words
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, get_language
 
@@ -177,6 +177,29 @@ def format_action(context):
                                     target_url,
         )
 
+    elif klass == 'Value':
+        target_url = '<a href="%s">%s</a>' % (obj.get_absolute_url(), 
+                                                obj.message)
+        return "%s %s on %s" % ( actor_format, 
+                                    action.get_verb_display(), 
+                                    target_url,
+        )
+
+    elif klass == 'Comment' and action.verb == 'replied':
+        target_url = '<a href="%s">%s</a>' % (action.target.get_absolute_url(), 
+                                                truncate_words(action.target.message, 5))
+        return "%s %s to %s" % (actor_format, 
+                                action.get_verb_display(), 
+                                target_url,
+        )
+    elif klass == 'Comment':
+        target_url = '<a href="%s">%s</a>' % (action.target.get_absolute_url(), 
+                                                action.target.stream_action_title)
+        return "%s %s on %s" % ( actor_format, 
+                                action.get_verb_display(), 
+                                target_url,
+        )
+
     elif  klass in \
                     ['PlayerActivity', 
                         'PlayerMapActivity', 
@@ -190,6 +213,12 @@ def format_action(context):
                                     action.get_verb_display(),
                                     target_url,
         )
-
+    elif action.verb == 'liked' and action.target.__class__.__name__ == 'Comment':
+        target_url = '<a href="%s">%s</a>' % (action.target.get_absolute_url(), 
+                                                truncate_words(action.target.message, 5))
+        return "%s %s %s" % ( actor_format, 
+                                    action.get_verb_display(), 
+                                    target_url,
+        )
 
     return ""

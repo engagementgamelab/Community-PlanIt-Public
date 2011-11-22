@@ -10,7 +10,7 @@ DIRNAME = os.path.dirname(__file__)
 #
 # Standard Django settings
 #
-ADMIN_MEDIA_PREFIX = '/admin-media/'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 #admin_tools
 ADMIN_TOOLS_MEDIA_URL = '/static/'
@@ -117,12 +117,12 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 SITE_ID = 1
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.auth',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.core.context_processors.static',
-    'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.request',
 )
 
@@ -151,6 +151,8 @@ LOCALE_INDEPENDENT_PATHS = (
     re.compile('^/assets/'),
     re.compile('^/static/'),
     re.compile('^/gr/'),
+    re.compile('^/admin/'),
+    #re.compile('^/sentry/'),
     re.compile('^/admin-media/'),
     re.compile('^/status/cache/'),
     re.compile('^/favicon.ico$'),
@@ -174,12 +176,12 @@ STREAM_VERBS = (
     ('activity_replayed', 'replayed activity'),
     ('activity_completed', 'completed activity'),
 
-    ('token_spent', 'Token spent'),
-    ('token_reclaimed', 'token reclaimed'),
+    ('token_spent', 'spent token'),
+    ('token_reclaimed', 'reclaimed token'),
 
-    ('replied', 'replied with comment'),
+    ('replied', 'replied'),
     ('liked', 'liked a comment'),
-    ('commented', 'created a comment'),
+    ('commented', 'comment'),
 )
 
 

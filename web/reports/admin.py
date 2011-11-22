@@ -7,7 +7,7 @@ from admin_tools.utils import get_admin_site_name
 
 from reports.models import *
 
-admin.site.register(Activity)
+#admin.site.register(Activity)
 
 
 class ReportsMenu(Menu):

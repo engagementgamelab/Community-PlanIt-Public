@@ -271,7 +271,9 @@ def profile(request, id):
     profile = player.get_profile()
 
     instance = profile.instance
-    log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
+    #log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
+
+    stream = Action.objects.get_for_actor(player)
     comment_form = CommentForm(data=request.POST or None)
 
     if request.method == 'POST':        
@@ -337,7 +339,7 @@ def profile(request, id):
         'player': player,
         'comment_form': comment_form,
         'instance': instance,
-        'log': log,
+        'stream': stream,
         'player_spent': player_spent,
         'value_wrapper': value_wrapper,
     })))
@@ -366,24 +368,30 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     #    log = Activity.objects.filter(instance=instance).order_by('-date')[:9]
     #else:
     #log = Activity.objects.filter(instance=instance, type='official_response').order_by('-date')[:9]
+    STREAM_LENGTH = 10
     if not instance.is_expired():
-        #compile a list of exceptions
-        stream_kwargs = dict(
-                # - do not show comments
-                #action_object_comment__isnull=True
-                verb__in=[
-                    'challenge_completed',
-                    'challenge_created',
-                    'activity_completed',
-                    'activity_replayed',
-                    'activity_official_response_created',
-                    ]
-        )
+        stream_kwargs = {}
+        if request.user.is_superuser:
+            STREAM_LENGTH = 50
+        else:
+            #compile a list of exceptions
+            stream_kwargs.update(dict(
+                    # - do not show comments
+                    #action_object_comment__isnull=True
+                    verb__in=[
+                        'challenge_completed',
+                        'challenge_created',
+                        'activity_completed',
+                        'activity_replayed',
+                        'activity_official_response_created',
+                        'token_spent',
+                        ]
+            ))
         stream = Action.objects.filter(**stream_kwargs)
     else:
         stream = Action.objects.filter(verb='activity_official_response_created')
 
-    stream = stream.order_by('-datetime')[:10]
+    stream = stream.order_by('-datetime')[:STREAM_LENGTH]
 
     activities = PlayerActivity.objects.none()
 

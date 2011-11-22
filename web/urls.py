@@ -36,11 +36,14 @@ urlpatterns = patterns('web',
     (r'^activities/', include("player_activities.urls", namespace='activities', app_name='player_activities')),
 
     # Admin stuff
-    (r'^curator/', include('curator.urls')),
+    #(r'^curator/', include('curator.urls')),
     (r'^reports/', include('reports.urls', namespace='reports', app_name='reports')),
 )
 
+
+
 urlpatterns += patterns('',
+    url(r'^admin_tools/', include('admin_tools.urls')),
     (r'^admin/gmapsfield/admin/(?P<file>.*)$', 'gmapsfield.views.serve'),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     #(r'^admin/', include("admin.urls", namespace='admin')),
@@ -60,9 +63,4 @@ if 'sentry' in settings.INSTALLED_APPS:
 urlpatterns += patterns('core.memcached_status',
     url(r'^status/cache/$', 'view'),
 )
-
-
-
-
-
 

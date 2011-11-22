@@ -29,17 +29,21 @@ class Command(BaseCommand):
                 'challenge' : {
                         'created': ('challenge_created', 'a challenge was created'),
                         'completed': ('challenge_completed', 'a challenge was completed'),
-                }
+                },
                 'activity' : {
                         'completed': ('activity_completed', 'an activity was completed'),
                         'replayed': ('activity_replayed', 'an activity was replayed'),
-                }
+                },
                 'value' : {
-                        'token spent': ('token_spent', 'token was spent'),
-                        'token reclaimed': ('token_reclaimed', 'token was reclaimed'),
-                }
+                        'spent token': ('token_spent', 'token was spent'),
+                        'reclaimed token ': ('token_reclaimed', 'token was reclaimed'),
+                },
             }
-            for activity in Activity.objects.filter(type__in=['challenge', 'activity', 'value']):
+            for activity in Activity.objects.filter(type__in=[
+                                                        'challenge', 
+                                                        'activity', 
+                                                        'value'
+                                                ]):
                 if not (activity.data and activity.url):
                     print vars(activity)
                     continue
@@ -68,6 +72,7 @@ class Command(BaseCommand):
                     continue
 
                 verb, description = d.get(activity.type).get(activity.data, (None, None))
+                print verb
                 if verb and description:
                     Action.objects.create(
                         actor=activity.user,
@@ -144,10 +149,34 @@ class Command(BaseCommand):
                     for c in comment.comments.all():
                         register_reply(c, comment)
 
+        def register_value_comments():
+            for value in Value.objects.filter():
+                for comment in value.comments.all():
+                    Action.objects.create(
+                                actor=comment.user,
+                                verb='commented',
+                                action_object=comment, 
+                                target=value,
+                                datetime=comment.posted_date,
+                                description="comment on a value"
+                    )
+                    print "ran 'commented'"
+                    for u in comment.likes.all():
+                        Action.objects.create(
+                                actor=u,
+                                verb='liked',
+                                target=comment,
+                                datetime=comment.posted_date,
+                                description="liked a comment"
+                        )
+                        print "ran 'liked'"
+                    for c in comment.comments.all():
+                        register_reply(c, comment)
 
         register_main()
         register_challenge_comments()
         register_activity_comments()
+        register_value_comments()
 
 
 

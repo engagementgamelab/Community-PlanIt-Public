@@ -187,6 +187,9 @@ class PlayerChallenge(models.Model):
     def get_absolute_url(self):
         return ("challenges:challenge", [self.challenge.id,])
 
+    @property
+    def stream_action_title(self):
+        return self.challenge.stream_action_title
 
     class Meta:
     	unique_together = (('player', 'challenge'),)
