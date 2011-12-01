@@ -125,7 +125,7 @@ class PlayerActivity(PlayerActivityBase):
 
 class PlayerActivityOfficialResponse(models.Model):
     activity = models.OneToOneField(PlayerActivity, unique=True)
-    response = models.TextField(max_length=500, blank=True, default='')
+    response = models.TextField(max_length=2000, blank=True, default='')
     comments = generic.GenericRelation(Comment)
     date_added = models.DateTimeField(editable=False, auto_now_add=True)
 
@@ -195,7 +195,7 @@ class PlayerMapActivity(PlayerActivityBase):
 
 class MapOfficialResponse(models.Model):
     activity = models.OneToOneField(PlayerMapActivity, unique=True)
-    response = models.TextField(max_length=500, blank=True, default='')
+    response = models.TextField(max_length=2000, blank=True, default='')
     comments = generic.GenericRelation(Comment)
     date_added = models.DateTimeField(editable=False, auto_now_add=True)
 
@@ -268,7 +268,7 @@ class PlayerEmpathyActivity(PlayerActivityBase):
 
 class EmpathyOfficialResponse(models.Model):
     activity = models.OneToOneField(PlayerEmpathyActivity, unique=True)
-    response = models.TextField(max_length=500, blank=True, default='')
+    response = models.TextField(max_length=2000, blank=True, default='')
     comments = generic.GenericRelation(Comment)
     date_added = models.DateTimeField(editable=False, auto_now_add=True)
 
