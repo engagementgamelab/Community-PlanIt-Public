@@ -33,7 +33,7 @@ class Comment(models.Model):
     object_id      = models.TextField(_('object ID'), blank=True)
     content_object = generic.GenericForeignKey()
 
-    message = models.CharField(max_length=1000, blank=True, null=True)
+    message = models.CharField(max_length=2000, blank=True, null=True)
 
     @property
     def display_user(self):
