@@ -1,0 +1,12 @@
+#!/bin/bash
+
+deactivate
+export WORKON_HOME=/var/local/venv
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
+export VIRTUALENVWRAPPER_HOOK_DIR=$WORKON_HOME
+export VIRTUALENVWRAPPER_LOG_DIR=$WORKON_HOME
+source /usr/local/bin/virtualenvwrapper.sh
+
+workon cpi
+django celeryd --loglevel=INFO
+
