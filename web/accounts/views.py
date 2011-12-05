@@ -439,7 +439,7 @@ def admin_instance_email(request, instance_id=None):
         return
     instance = Instance.objects.untranslated()[0]
     email_form = AdminInstanceEmailForm()
-    tmpl = loader.get_template("admin/instance_email.html")
+    tmpl = loader.get_template("accounts/instance_email.html")
     return HttpResponse(tmpl.render(RequestContext(request, { 
              "form": email_form,
              "instance": instance,
@@ -468,7 +468,7 @@ def admin_sendemail(request):
             send_mail(subject, body, settings.NOREPLY_EMAIL, [up.user.email], fail_silently=False)
         return HttpResponseRedirect(reverse("home"))
 
-    tmpl = loader.get_template("admin/instance_email.html")
+    tmpl = loader.get_template("accounts/instance_email.html")
     return HttpResponse(tmpl.render(RequestContext(request, { 
              "form": form,
              "instance_value": instance,  

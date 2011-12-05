@@ -1,0 +1,55 @@
+{%extends "layouts/base.html"%}
+
+{%block section%}instances{%endblock%}
+{%block title%}Administration{%endblock%}
+{%block page_title%}{%endblock%}
+
+{%block main%}
+    <h2>Send an Email to {{instance.title}}</h2>
+    <form action="{% url accounts:admin-sendemail %}" method="post">
+        <input type="hidden" id="instance_id" name="instance_id" value="{{instance.id}}">
+        {%csrf_token%}
+        <div class="fieldWrapper">
+            {{ form.subject.errors }}
+            <label for="id_subject">Email Subject:</label>
+            {{form.subject}}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.email.errors }}
+            <label for="id_email">Email Message to Send:</label>
+            {{form.email}}
+        </div>
+        
+        <div id="preview_id"></div>
+        
+        <div>
+            <input type="submit" name="submit_btn" value="Submit" />
+            <input type="submit" name="submit_btn" value="Cancel" />
+        </div>
+    </form>
+{%endblock%}
+
+{%block body%}
+    <!--
+    <script>
+        /*
+        function instanceChange() {
+            if (document.getElementById("id_instances").value != "0")
+            {
+                document.getElementById("email_bnt").style.display = "";
+            }
+            if (document.getElementById("id_instances").value == "0")
+            {
+                document.getElementById("email_bnt").style.display = "none";
+            }
+        }
+        $(document).ready(function() {
+            if (document.getElementById("id_instances").value != "0")
+            {
+                document.getElementById("email_bnt").style.display = "";
+            }
+        });
+        */
+    </script>
+    -->
+{%endblock%}
