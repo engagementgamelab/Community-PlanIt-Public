@@ -142,6 +142,7 @@ class CPIUser(User):
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     instance = models.ForeignKey(Instance, blank=True, null=True, related_name='user_profiles')
+    instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='user_profiles_list')
 
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
