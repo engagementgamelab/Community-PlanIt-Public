@@ -6,7 +6,7 @@ CPI.sort_comments_by_activity = function(evt) {
     evt.preventDefault();
     evt.stopPropagation();
 
-    var comment_list = $('ul.comment_list', $(this).closest('.comments'));
+    var comment_list = $('ul.comment_list');
     comment_list.css('cursor', 'wait');
     comment_list.append($(CPI.mask));
     $('.mask', comment_list).fadeIn(200);
@@ -40,7 +40,7 @@ CPI.sort_comments_by_timestamp = function(evt) {
     evt.preventDefault();
     evt.stopPropagation();
 
-    var comment_list = $('ul.comment_list', $(this).closest('.comments'));
+    var comment_list = $('ul.comment_list');
     comment_list.css('cursor', 'wait');
     comment_list.append($(CPI.mask));
     $('.mask', comment_list).fadeIn(200);

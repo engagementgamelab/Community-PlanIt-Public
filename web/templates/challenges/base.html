@@ -96,24 +96,23 @@
 </div>
 {% endif %}
         
+    <div class="comments embedded">
+        <ul class="comment_list">
 {% for pc in challenge.player_challenges.completed %}
     {% if pc.comments.all %}
-    <div class="comments embedded">
-        <h2> {{pc.player.get_profile.screen_name}}'s {% trans "response" %} </h2>
         {% with instance=pc.challenge.instance comments=pc.comments %}
-        <ul class="comment_list">
             {% for comment in comments.all %}
                 {% include "comments/comment.html" %}
             {% empty %}
             <li class="comment">{% trans "No comments found." %}</li>
             {% endfor %}
-        </ul>
         {% endwith %}
-    </div>
     {% endif %}
 {% empty %}
-<p>{% trans "No one has completed this challenge." %}</p>
+<li>{% trans "No one has completed this challenge." %}</li>
 {% endfor %}
+        </ul>
+    </div>
 {% endif %}
 
 {% endblock %}

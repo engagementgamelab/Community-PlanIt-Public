@@ -1,5 +1,12 @@
 {% load attachment_tags i18n %}
 <li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
+    {% if comment.display_user %} 
+    {% if comment.user == request.user %}
+    <h2><a href="{% url accounts_profile comment.user.id %}">your</a> {% trans "response" %} </h2>
+    {% else %}
+    <h2><a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a>'s {% trans "response" %}</h2>
+    {% endif %}
+    {% endif %}
     <div class="likes">
         <div id="id_likes-count-{{ comment.pk }}" class="count">{{comment.likes.count}}</div>
         <div id="id_like-count-{{ comment.id }}">Like{{comment.likes.count|pluralize}}</div>
@@ -19,14 +26,6 @@
                     <a href="{% url comments:edit comment.id %}" title="click to edit this comment">edit</a>
                 {% endif %}
             </div>
-            {% if comment.display_user %} 
-            {% trans "From" %}
-            {% if comment.user == request.user %}
-            <a href="{% url accounts_profile comment.user.id %}">you</a>,
-            {% else %}
-            <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a>,
-            {% endif %}
-            {% endif %}
             {{comment.posted_date|date:"F j, Y"}}, {{comment.posted_date|date:"g:i a"}}
         </div>
         <div class="message">
