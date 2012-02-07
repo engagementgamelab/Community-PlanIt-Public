@@ -27,7 +27,6 @@ def determine_path(instance, filename):
 
 class UserProfileOptionBase(TranslatableModel):
     pos = models.IntegerField(blank=False, null=False)
-    instance = models.ForeignKey(Instance)
 
     class Meta:
         ordering = ('pos',)
@@ -138,24 +137,11 @@ class CPIUser(User):
             return "%s %s" % (self.first_name, self.last_name)
         return self.username
 
+class UserProfilePerInstance(models.Model):
+    user_profile = models.ForeignKey("UserProfile")
+    instance = models.ForeignKey(Instance)
 
-class UserProfile(models.Model):
-    user = models.ForeignKey(User, unique=True)
-    instance = models.ForeignKey(Instance, blank=True, null=True, related_name='user_profiles')
-    instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='user_profiles_list')
-
-    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
-    email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
-    receive_email = models.BooleanField(default=True)
-    city = models.CharField(max_length=128, blank=True, default='')
-    zip_code = models.CharField(max_length=10, blank=True, default='')
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
-    preferred_language = models.CharField(max_length=5, default='en-us')
-    affiliations = models.TextField(blank=True, null=True, default='')
-    affils = models.ManyToManyField(Affiliation)
-
-    # Additional profile fields
-    birth_year = models.IntegerField(blank=True, null=True, default=0)
     gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
     race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
     education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
@@ -163,6 +149,23 @@ class UserProfile(models.Model):
     living = models.ForeignKey(UserProfileLivingSituation, blank=True, null=True, default=None)
     how_discovered = models.ForeignKey(UserProfileHowDiscovered, blank=True, null=True, default=None)
     how_discovered_other = models.CharField(max_length=128, blank=True, default='')
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, unique=True)
+    instance = models.ForeignKey(Instance, blank=True, null=True, related_name='user_profiles')
+    instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='user_profiles_list', through=UserProfilePerInstance)
+
+    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
+    email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
+    receive_email = models.BooleanField(default=True)
+    city = models.CharField(max_length=128, blank=True, default='')
+    zip_code = models.CharField(max_length=10, blank=True, default='')
+    preferred_language = models.CharField(max_length=5, default='en-us')
+    affiliations = models.TextField(blank=True, null=True, default='')
+    affils = models.ManyToManyField(Affiliation)
+
+    # Additional profile fields
+    birth_year = models.IntegerField(blank=True, null=True, default=0)
 
     #
     # internal system records
@@ -226,6 +229,17 @@ class UserProfile(models.Model):
             return "%s %s" % (first, last)
 
         return self.user.username
+
+class UserProfileVariantsForInstance(models.Model):
+    instance = models.OneToOneField(Instance)
+    stake_variants = models.ManyToManyField(UserProfileStake, blank=True, null=True, default=None)
+    gender_variants = models.ManyToManyField(UserProfileGender, blank=True, null=True, default=None)
+    race_variants = models.ManyToManyField(UserProfileRace, blank=True, null=True, default=None)
+    education_variants = models.ManyToManyField(UserProfileEducation, blank=True, null=True, default=None)
+    income_variants = models.ManyToManyField(UserProfileIncome, blank=True, null=True, default=None)
+    living_variants = models.ManyToManyField(UserProfileLivingSituation, blank=True, null=True, default=None)
+    how_discovered_variants = models.ManyToManyField(UserProfileHowDiscovered, blank=True, null=True, default=None)
+
 
 # Custom hook for adding an anonymous username to the User model.
 def user_pre_save(instance, **kwargs):

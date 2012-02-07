@@ -5,7 +5,7 @@ from nani.admin import TranslatableAdmin
 from accounts.models import *
 
 class UserProfileOptionAdmin(TranslatableAdmin):
-    list_display = ('__str__', 'instance', 'pos', 'all_translations')
+    list_display = ('__str__', 'pos', 'all_translations')
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'instance',)
