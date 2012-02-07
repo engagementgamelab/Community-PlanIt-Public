@@ -4,6 +4,11 @@ from nani.admin import TranslatableAdmin, TranslatableTabularInline
 
 from web.instances.models import *
 
+from web.accounts.models import UserProfileVariantsForInstance
+
+class UserProfileVariantsForInstanceInline(admin.StackedInline):
+    model = UserProfileVariantsForInstance
+
 class AffiliationAdmin(admin.ModelAdmin):
     list_display = ('name',)
     ordering = ('name',)
@@ -12,7 +17,9 @@ class AffiliationAdmin(admin.ModelAdmin):
 class InstanceAdmin(TranslatableAdmin):
     list_display = ('title', 'start_date',)
     filter_horizontal = ('affiliations',)
-
+    inlines = [
+        UserProfileVariantsForInstanceInline,
+    ]
 class NotificationRequestAdmin(admin.ModelAdmin):
     list_display = ('email', 'instance')
 

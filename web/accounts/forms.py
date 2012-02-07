@@ -306,7 +306,7 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('email', 'first_name', 'last_name', 'preferred_language',
-                  'receive_email', 'stake', 'affiliations')
+                  'receive_email', 'affiliations')
 
     def clean_stake(self):
         try:
