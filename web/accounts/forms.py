@@ -94,27 +94,27 @@ class RegisterFormTwo(forms.Form):
         super(RegisterFormTwo, self).__init__(*args, **kwargs)
         self.community = community
 
-        all_stakes = UserProfileStake.objects.untranslated().filter(instance=self.community).order_by("pos")
+        all_stakes = self.community.user_profile_variants.stake_variants.all().order_by("pos")
         stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
         self.fields['stake'] = forms.ChoiceField(label=_(u'Stake in the community'), required=False, choices=stakes)
 
-        all_genders = UserProfileGender.objects.untranslated().filter(instance=self.community).order_by("pos")
+        all_genders = self.community.user_profile_variants.gender_variants.all().order_by("pos")
         genders = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'gender')) for x in all_genders]
         self.fields['gender'] = forms.ChoiceField(label=_(u'Gender'), required=False, choices=genders)
 
-        all_races = UserProfileRace.objects.untranslated().filter(instance=self.community).order_by("pos")
+        all_races = self.community.user_profile_variants.race_variants.all().order_by("pos")
         races = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'race')) for x in all_races]
         self.fields['race'] = forms.ChoiceField(label=_(u'Race/Ethnicity'), required=False, choices=races)
 
-        all_educations = UserProfileEducation.objects.untranslated().filter(instance=self.community).order_by("pos")
+        all_educations = self.community.user_profile_variants.education_variants.all().order_by("pos")
         educations = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'education')) for x in all_educations]
         self.fields['education'] = forms.ChoiceField(label=_(u'Education'), required=False, choices=educations)
 
-        all_incomes = UserProfileIncome.objects.untranslated().filter(instance=self.community).order_by("pos")
+        all_incomes = self.community.user_profile_variants.income_variants.all().order_by("pos")
         incomes = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'income')) for x in all_incomes]
         self.fields['income'] = forms.ChoiceField(label=_(u'Income'), required=False, choices=incomes)
         
-        all_livings = UserProfileLivingSituation.objects.untranslated().filter(instance=self.community).order_by("pos")
+        all_livings = self.community.user_profile_variants.living_variants.all().order_by("pos")
         livings = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'situation')) for x in all_livings]
         self.fields['living'] = forms.ChoiceField(label=_(u'Living Situation'), required=False, choices=livings)
 
@@ -126,7 +126,7 @@ class RegisterFormTwo(forms.Form):
                label=_('Don\'t see your affiliation? Enter it here. Please place a comma between each affiliation.'),
                 widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
         
-        all_hows = UserProfileHowDiscovered.objects.untranslated().filter(instance=self.community).order_by("pos")
+        all_hows = self.community.user_profile_variants.how_discovered_variants.all().order_by("pos")
         hows = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'how')) for x in all_hows]
         self.fields['how_discovered'] = forms.ChoiceField(label=_(u'How did you hear about Community PlanIt?'), required=False, choices=hows)
 
@@ -289,9 +289,6 @@ class UserProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
-        all_stakes = UserProfileStake.objects.untranslated().filter(instance=self.instance.instance).order_by("pos")
-        stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
-        self.fields['stake'] = forms.ChoiceField(label=_(u'Stake'), required=False, choices=stakes)
 
         #TODO
         # need to include the user selected choices in the list

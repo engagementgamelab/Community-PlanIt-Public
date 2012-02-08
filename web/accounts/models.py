@@ -138,7 +138,7 @@ class CPIUser(User):
         return self.username
 
 class UserProfilePerInstance(models.Model):
-    user_profile = models.ForeignKey("UserProfile")
+    user_profile = models.ForeignKey("UserProfile", related_name='user_profiles_per_instance')
     instance = models.ForeignKey(Instance)
 
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
@@ -231,7 +231,7 @@ class UserProfile(models.Model):
         return self.user.username
 
 class UserProfileVariantsForInstance(models.Model):
-    instance = models.OneToOneField(Instance)
+    instance = models.OneToOneField(Instance, related_name='user_profile_variants')
     stake_variants = models.ManyToManyField(UserProfileStake, blank=True, null=True, default=None)
     gender_variants = models.ManyToManyField(UserProfileGender, blank=True, null=True, default=None)
     race_variants = models.ManyToManyField(UserProfileRace, blank=True, null=True, default=None)

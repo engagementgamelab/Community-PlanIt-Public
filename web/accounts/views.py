@@ -186,13 +186,6 @@ def edit(request):
     change_password_form = ChangePasswordForm()
     profile_form = UserProfileForm(instance=profile,
                                    initial={
-                                        'myInstance': profile.instance.id if profile.instance is not None else 0,
-                                        'education': profile.education.id if profile.education is not None else 0,
-                                        'income': profile.income.id if profile.income is not None else 0,
-                                        'living': profile.living.id if profile.living is not None else 0,
-                                        'gender': profile.gender.id if profile.gender is not None else 0,
-                                        'race': profile.race.id if profile.race is not None else 0,
-                                        'stake': profile.stake.id if profile.stake is not None else 0,
                                         'first_name': profile.user.first_name if profile.user.first_name is not None else "",
                                         'last_name': profile.user.last_name if profile.user.last_name is not None else "",
                                         'email': profile.email if profile.email is not None else "",
