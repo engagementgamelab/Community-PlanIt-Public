@@ -1,0 +1,1 @@
+[{"pk": 2, "model": "instances.city", "fields": {"domain": "boston", "name": "Boston", "site": 2}}, {"pk": 3, "model": "instances.city", "fields": {"domain": "detroit", "name": "Detroit", "site": 3}}]
