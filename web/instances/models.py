@@ -30,6 +30,9 @@ class City(models.Model):
     def __unicode__(self):
         return "%s at <%s>" %(self.name, self.domain)
 
+    class Meta:
+        verbose_name_plural = 'Cities'
+
 
 class Language(models.Model):
     code = models.CharField(max_length=10)
