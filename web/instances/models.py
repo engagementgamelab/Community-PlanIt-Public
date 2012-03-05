@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 
 from dateutil.relativedelta import relativedelta
 from gmapsfield.fields import GoogleMapsField
@@ -19,8 +20,17 @@ from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
 __all__ = (
-    'Language', 'Instance', 'PointsAssignment', 'NotificationRequest', 'Affiliation',
+    'City', 'Language', 'Instance', 'PointsAssignment', 'NotificationRequest', 'Affiliation',
 )
+
+
+class City(models.Model):
+    name = models.CharField(max_length=100)
+    domain = models.CharField(max_length=30)
+    site = models.ForeignKey(Site)
+
+    def __unicode__(self):
+        return "%s at <%s>" %(self.name, self.domain)
 
 
 class Language(models.Model):
@@ -61,7 +71,6 @@ class InstanceManager(TranslationManager):
 class Instance(TranslatableModel):
     slug = models.SlugField()
     title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
-    city = models.CharField(max_length=255)
     state = models.CharField(max_length=2)
     start_date = models.DateTimeField()
     location = GoogleMapsField()
@@ -69,6 +78,7 @@ class Instance(TranslatableModel):
     languages = models.ManyToManyField(Language)
     affiliations = models.ManyToManyField(Affiliation)
     days_for_mission = models.IntegerField(default=7)
+    for_city = models.ForeignKey(City, null=True, related_name='instances')
 
     translations = TranslatedFields(
         description = models.TextField(),
