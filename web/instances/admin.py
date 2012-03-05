@@ -9,10 +9,10 @@ from web.accounts.models import UserProfileVariantsForInstance
 class UserProfileVariantsForInstanceInline(admin.StackedInline):
     model = UserProfileVariantsForInstance
 
-class AffiliationAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+class CityAdmin(admin.ModelAdmin):
+    list_display = ('name','domain',)
     ordering = ('name',)
-    search_fields = ('name',)
+    search_fields = ('name', 'domain')
 
 class InstanceAdmin(TranslatableAdmin):
     list_display = ('title', 'start_date',)
@@ -29,7 +29,8 @@ class PointsAssignmentAdmin(admin.ModelAdmin):
 # Register to admin sites
 admin.site.register(Instance, InstanceAdmin)
 admin.site.register(Language)
-admin.site.register(Affiliation, AffiliationAdmin)
+#admin.site.register(Affiliation, AffiliationAdmin)
+admin.site.register(City, CityAdmin)
 admin.site.register(NotificationRequest, NotificationRequestAdmin)
 #admin.site.register(PointsAssignmentAction)
 admin.site.register(PointsAssignment, PointsAssignmentAdmin)
