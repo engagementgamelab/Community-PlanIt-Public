@@ -89,6 +89,7 @@ INSTALLED_APPS = (
 
 LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/'
+SESSION_COOKIE_DOMAIN = '.communityplanit.org'
 MANAGERS = ADMINS
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
