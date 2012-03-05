@@ -154,6 +154,9 @@ class UserProfilePerInstance(models.Model):
     def __unicode__(self):
         return "%s %s" % (self.instance.title, self.user_profile.user.get_full_name())
 
+    class Meta:
+        unique_together = ('user_profile', 'instance',)
+
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='user_profiles_list', through=UserProfilePerInstance)
