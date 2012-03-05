@@ -178,3 +178,10 @@ Working with the development branch is as simple as:
 
     # Remote
     $ git pull github development
+
+# instances city migration does not create this column for some reason
+# run raw sql
+#alter table instances_instance add column "for_city_id" integer REFERENCES "instances_city" ("id") DEFERRABLE INITIALLY DEFERRED
+# auth_permission table needs to resize the max_length of the `name` column
+#UPDATE pg_attribute SET atttypmod = 255+4 WHERE attrelid = 'document_document'::regclass AND attname = 'file';
+

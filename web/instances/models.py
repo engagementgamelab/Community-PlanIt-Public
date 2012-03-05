@@ -9,7 +9,6 @@ from django.utils.safestring import mark_safe
 
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 
 from dateutil.relativedelta import relativedelta
 from gmapsfield.fields import GoogleMapsField
@@ -27,7 +26,6 @@ __all__ = (
 class City(models.Model):
     name = models.CharField(max_length=100)
     domain = models.CharField(max_length=30)
-    site = models.ForeignKey(Site)
 
     def __unicode__(self):
         return "%s at <%s>" %(self.name, self.domain)
@@ -67,6 +65,21 @@ class InstanceManager(TranslationManager):
     def active(self):
         now = datetime.datetime.now()
         return self.filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
+
+    def latest_for_city_domain(self, domain):
+        #looks like `latest` qs method is broken in django-nani
+        #applying a workaround for now.
+        #TODO fix
+        from core.utils import _fake_latest
+        now = datetime.datetime.now()
+        kwargs = dict(
+                for_city__domain=domain,
+                start_date__lte=now,
+                missions__end_date__gte=now,
+        )
+        qs = self.filter(**kwargs)
+        return _fake_latest(Instance, qs)
+
 
 class Instance(TranslatableModel):
     slug = models.SlugField()

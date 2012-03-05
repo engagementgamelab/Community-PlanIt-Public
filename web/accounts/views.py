@@ -24,6 +24,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import get_current_site
+from django.contrib.sites.models import RequestSite
 
 from PIL import Image
 
@@ -51,7 +52,7 @@ def login(request, template_name='registration/login.html',
     redirect_to = request.REQUEST.get(redirect_field_name, '')
 
     if request.method == "POST":
-        form = authentication_form(data=request.POST)
+        form = authentication_form(request, data=request.POST)
         if form.is_valid():
             netloc = urlparse.urlparse(redirect_to)[1]
 
@@ -191,7 +192,7 @@ def edit(request):
                                         'email': profile.email if profile.email is not None else "",
                                         'birth_year': profile.birth_year if profile.birth_year is not None else "",
                                         'preferred_language': profile.preferred_language,
-                                        'affiliations': profile.affils.values_list('pk', flat=True), 
+                                        #'affiliations': profile.affils.values_list('pk', flat=True), 
                                     }
     )
     if request.method == 'POST':
@@ -342,15 +343,10 @@ def dashboard(request, template_name='accounts/dashboard.html'):
 
     instance = None
 
-    prof = request.user.get_profile()
-    if prof.instance:
-        instance = prof.instance
-    elif request.user.is_staff or request.user.is_superuser:
-        #looks like `latest` qs method is broken in django-nani
-        #applying a workaround for now.
-        #TODO fix
-        #instance = Instance.objects.latest()
-        instance = _fake_latest(Instance, Instance.objects.all())#.active())
+    user_profile = request.user.get_profile()
+    #domain = RequestSite(request)
+    #inst = Instance.objects.get(for_city__domain=domain)
+    instance = Instance.objects.get(pk=request.session.get('instance'))
 
     page = request.GET.get('page', 1)
 
@@ -368,6 +364,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
             STREAM_LENGTH = 50
         else:
             #compile a list of exceptions
+            users_for_instance =  UserProfilePerInstance.objects.filter(instance=instance).values_list('user_profile__user__pk', flat=True)
             stream_kwargs.update(dict(
                     # - do not show comments
                     #action_object_comment__isnull=True
@@ -378,7 +375,8 @@ def dashboard(request, template_name='accounts/dashboard.html'):
                         'activity_replayed',
                         'activity_official_response_created',
                         'token_spent',
-                        ]
+                    ],
+                    actor_user__pk__in=users_for_instance,
             ))
         stream = Action.objects.filter(**stream_kwargs)
     else:
@@ -407,11 +405,11 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     activities_page = paginator.page(page)
 
     affboard = []
-    for a in Affiliation.objects.filter(instance=instance):
-        points = a.userprofile_set.all().aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
-        affboard.append((points, a))
-    affboard.sort()
-    affboard.reverse()
+    #for a in Affiliation.objects.filter(instance=instance):
+    #   points = a.userprofile_set.all().aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
+    #   affboard.append((points, a))
+    #ffboard.sort()
+    #ffboard.reverse()
 
     context = dict(
         stream = stream,
@@ -419,7 +417,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
         activities_page = activities_page,
         completed = completed,
         challenges = challenges,
-        leaderboard = UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20],
+        leaderboard = [], #UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20],
         instance = instance,
         affiliations_leaderboard = affboard[:20],
     )

@@ -14,6 +14,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.formtools.wizard import FormWizard
 
+from django.contrib.sites.models import RequestSite
+
 from accounts.models import *
 from instances.models import Instance
 
@@ -98,25 +100,32 @@ class RegisterFormTwo(forms.Form):
         stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
         self.fields['stake'] = forms.ChoiceField(label=_(u'Stake in the community'), required=False, choices=stakes)
 
-        all_genders = self.community.user_profile_variants.gender_variants.all().order_by("pos")
+        all_genders = UserProfileGender.objects.untranslated().all().order_by("pos")
         genders = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'gender')) for x in all_genders]
         self.fields['gender'] = forms.ChoiceField(label=_(u'Gender'), required=False, choices=genders)
 
-        all_races = self.community.user_profile_variants.race_variants.all().order_by("pos")
+        all_races = UserProfileRace.objects.untranslated().all().order_by("pos")
         races = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'race')) for x in all_races]
         self.fields['race'] = forms.ChoiceField(label=_(u'Race/Ethnicity'), required=False, choices=races)
 
-        all_educations = self.community.user_profile_variants.education_variants.all().order_by("pos")
+        all_educations = UserProfileEducation.objects.untranslated().all().order_by("pos")
         educations = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'education')) for x in all_educations]
         self.fields['education'] = forms.ChoiceField(label=_(u'Education'), required=False, choices=educations)
 
-        all_incomes = self.community.user_profile_variants.income_variants.all().order_by("pos")
+        all_incomes = UserProfileIncome.objects.untranslated().all().order_by("pos")
         incomes = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'income')) for x in all_incomes]
         self.fields['income'] = forms.ChoiceField(label=_(u'Income'), required=False, choices=incomes)
         
-        all_livings = self.community.user_profile_variants.living_variants.all().order_by("pos")
+        all_livings = UserProfileLivingSituation.objects.untranslated().all().order_by("pos")
         livings = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'situation')) for x in all_livings]
         self.fields['living'] = forms.ChoiceField(label=_(u'Living Situation'), required=False, choices=livings)
+
+
+        all_hows = UserProfileHowDiscovered.objects.untranslated().all().order_by("pos")
+        hows = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'how')) for x in all_hows]
+        self.fields['how_discovered'] = forms.ChoiceField(label=_(u'How did you hear about Community PlanIt?'), required=False, choices=hows)
+
+        self.fields['how_discovered_other'] = forms.CharField(required=False, label=_('If the way you learned about us is not listed, please tell us'))
 
 
         affiliations = Affiliation.objects.filter(instance=self.community).order_by("name").values_list('pk', 'name')
@@ -126,11 +135,6 @@ class RegisterFormTwo(forms.Form):
                label=_('Don\'t see your affiliation? Enter it here. Please place a comma between each affiliation.'),
                 widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
         
-        all_hows = self.community.user_profile_variants.how_discovered_variants.all().order_by("pos")
-        hows = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'how')) for x in all_hows]
-        self.fields['how_discovered'] = forms.ChoiceField(label=_(u'How did you hear about Community PlanIt?'), required=False, choices=hows)
-
-        self.fields['how_discovered_other'] = forms.CharField(required=False, label=_('If the way you learned about us is not listed, please tell us'))
 
     def clean_gender(self):
         try:
@@ -199,7 +203,7 @@ class RegistrationWizard(FormWizard):
 
         profile = player.get_profile()
         profile.email = form_one.cleaned_data.get('email')
-        profile.instance = self.community
+        #profile.instance = self.community
         profile.preferred_language = form_one.cleaned_data['preferred_language']
         birth_year = form_one.cleaned_data.get('birth_year')
         if birth_year:
@@ -211,28 +215,38 @@ class RegistrationWizard(FormWizard):
         profile.gender = form_two.cleaned_data.get('gender')
         profile.income = form_two.cleaned_data.get('income')
         profile.living = form_two.cleaned_data.get('living')
-        profile.affils = form_two.cleaned_data.get('affiliations')
-        aff_other = form_two.cleaned_data.get('affiliations_other')
-        if aff_other != '':
-            for a in aff_other.split(','):
-                aff, created = Affiliation.objects.get_or_create(name=a.strip())
-                aff.save()
-                profile.affils.add(aff)
 
         profile.race = form_two.cleaned_data.get('race')
-        profile.stake = form_two.cleaned_data.get('stake')
         profile.how_discovered = form_two.cleaned_data.get('how_discovered')
         profile.how_discovered_other = form_two.cleaned_data.get('how_discovered_other')
 
         profile.save()
-        
+
+        user_profile_per_instance = UserProfilePerInstance(
+                                        user_profile=profile,
+                                        instance=self.community,
+                )
+        user_profile_per_instance.save()
+
+        user_profile_per_instance.affils = form_two.cleaned_data.get('affiliations')
+        user_profile_per_instance.stake = form_two.cleaned_data.get('stake')
+
+
+        aff_other = form_two.cleaned_data.get('affiliations_other')
+        if aff_other != '':
+            for a in aff_other.split(','):
+                aff, created = Affiliation.objects.get_or_create(name=a.strip())
+                if created:
+                    aff.save()
+                user_profile_per_instance.affils.add(aff)
+        user_profile_per_instance.save()
+
         tmpl = loader.get_template('accounts/email/welcome.html')
-        context = { 'instance': profile.instance }
+        context = { 'instance': self.community }
         body = tmpl.render(RequestContext(request, context))
-        
         send_mail(ugettext('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
         messages.success(request, _("Thanks for signing up!"))
-        
+        request.session['instance'] = self.community
         return HttpResponseRedirect(reverse('accounts:dashboard'))
 
     def get_form(self, step, data=None):
@@ -292,18 +306,20 @@ class UserProfileForm(forms.ModelForm):
 
         #TODO
         # need to include the user selected choices in the list
-        affil_choices = Affiliation.objects.filter(instance=self.instance.instance).order_by("name").values_list('pk', 'name')
+        #affil_choices = Affiliation.objects.filter(instance=self.instance.instance).order_by("name").values_list('pk', 'name')
 
-        self.fields['affiliations'] = forms.MultipleChoiceField(label=_(u'Affiliations'), help_text=_('Right Click (or control and click on a Mac) to select more than one affiliation'), required=False, choices=affil_choices)
+        #self.fields['affils'] = forms.MultipleChoiceField(label=_(u'Affiliations'), help_text=_('Right Click (or control and click on a Mac) to select more than one affiliation'), required=False, choices=affil_choices)
 
-        self.fields['affiliations_other'] = forms.CharField(required=False, 
-               label=_('Don\'t see your affiliation? Enter it here. Please place a comma between each affiliation.'),
-                widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
+        #self.fields['affiliations_other'] = forms.CharField(required=False, 
+        #       label=_('Don\'t see your affiliation? Enter it here. Please place a comma between each affiliation.'),
+        #        widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
 
     class Meta:
         model = UserProfile
         fields = ('email', 'first_name', 'last_name', 'preferred_language',
-                  'receive_email', 'affiliations')
+                  'receive_email', 
+                  #'affils'
+            )
 
     def clean_stake(self):
         try:
@@ -317,9 +333,17 @@ class AccountAuthenticationForm(AuthenticationForm):
     Base class for authenticating users. Extend this to get a form that accepts
     username/password logins.
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request=None, *args, **kwargs):
+        self.request = request
+        self.site = RequestSite(self.request)
         super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
         self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)        
+
+    def clean(self, *args, **kwargs):
+        super(AccountAuthenticationForm, self).clean(*args, **kwargs)
+        #import ipdb;ipdb.set_trace()
+        print "invalid"
+        raise forms.ValidationError(_("You have not registered for this instance."))
 
 class AdminInstanceEmailForm(forms.Form):
     subject = forms.CharField()

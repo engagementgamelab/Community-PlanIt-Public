@@ -11,10 +11,13 @@ from web.instances.models import Instance
 
 def index(request):
     # Show index page
+    #import ipdb;ipdb.set_trace()
+
     if not request.user.is_authenticated():
-        context = { 'active_instances': Instance.objects.active(), }
-        return render_to_response('index.html', context, context_instance=RequestContext(request)
-        )
+
+        context = {}    #{ 'active_instances': Instance.objects.active(), }
+        return render_to_response('index.html', context, context_instance=RequestContext(request))
+
     return dashboard(request)
 
 @never_cache

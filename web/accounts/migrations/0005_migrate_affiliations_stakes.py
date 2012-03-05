@@ -1,121 +1,31 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
 
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        
-        # Adding model 'UserProfilePerInstance'
-        db.create_table('accounts_userprofileperinstance', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user_profile', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.UserProfile'])),
-            ('instance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['instances.Instance'])),
-            ('stake', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileStake'], null=True, blank=True)),
-            ('gender', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileGender'], null=True, blank=True)),
-            ('race', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileRace'], null=True, blank=True)),
-            ('education', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileEducation'], null=True, blank=True)),
-            ('income', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileIncome'], null=True, blank=True)),
-            ('living', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileLivingSituation'], null=True, blank=True)),
-            ('how_discovered', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileHowDiscovered'], null=True, blank=True)),
-            ('how_discovered_other', self.gf('django.db.models.fields.CharField')(default='', max_length=128, blank=True)),
-        ))
-        db.send_create_signal('accounts', ['UserProfilePerInstance'])
+        "Write your forwards methods here."
+        for obj in orm.UserProfile.objects.all():
+            if obj.instance:
+                userprofile_per_instance = orm.UserProfilePerInstance()
+                userprofile_per_instance.user_profile=obj
+                userprofile_per_instance.instance=obj.instance
+                userprofile_per_instance.affiliations=obj.affils
+                userprofile_per_instance.stake=obj.stake
+                userprofile_per_instance.save()
 
-        # Adding model 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('instance', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['instances.Instance'], unique=True)),
-        ))
-        db.send_create_signal('accounts', ['UserProfileVariantsForInstance'])
-
-        # Adding M2M table for field stake_variants on 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance_stake_variants', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofilevariantsforinstance', models.ForeignKey(orm['accounts.userprofilevariantsforinstance'], null=False)),
-            ('userprofilestake', models.ForeignKey(orm['accounts.userprofilestake'], null=False))
-        ))
-        db.create_unique('accounts_userprofilevariantsforinstance_stake_variants', ['userprofilevariantsforinstance_id', 'userprofilestake_id'])
-
-        # Adding M2M table for field gender_variants on 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance_gender_variants', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofilevariantsforinstance', models.ForeignKey(orm['accounts.userprofilevariantsforinstance'], null=False)),
-            ('userprofilegender', models.ForeignKey(orm['accounts.userprofilegender'], null=False))
-        ))
-        db.create_unique('accounts_userprofilevariantsforinstance_gender_variants', ['userprofilevariantsforinstance_id', 'userprofilegender_id'])
-
-        # Adding M2M table for field race_variants on 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance_race_variants', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofilevariantsforinstance', models.ForeignKey(orm['accounts.userprofilevariantsforinstance'], null=False)),
-            ('userprofilerace', models.ForeignKey(orm['accounts.userprofilerace'], null=False))
-        ))
-        db.create_unique('accounts_userprofilevariantsforinstance_race_variants', ['userprofilevariantsforinstance_id', 'userprofilerace_id'])
-
-        # Adding M2M table for field education_variants on 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance_education_variants', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofilevariantsforinstance', models.ForeignKey(orm['accounts.userprofilevariantsforinstance'], null=False)),
-            ('userprofileeducation', models.ForeignKey(orm['accounts.userprofileeducation'], null=False))
-        ))
-        db.create_unique('accounts_userprofilevariantsforinstance_education_variants', ['userprofilevariantsforinstance_id', 'userprofileeducation_id'])
-
-        # Adding M2M table for field income_variants on 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance_income_variants', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofilevariantsforinstance', models.ForeignKey(orm['accounts.userprofilevariantsforinstance'], null=False)),
-            ('userprofileincome', models.ForeignKey(orm['accounts.userprofileincome'], null=False))
-        ))
-        db.create_unique('accounts_userprofilevariantsforinstance_income_variants', ['userprofilevariantsforinstance_id', 'userprofileincome_id'])
-
-        # Adding M2M table for field living_variants on 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance_living_variants', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofilevariantsforinstance', models.ForeignKey(orm['accounts.userprofilevariantsforinstance'], null=False)),
-            ('userprofilelivingsituation', models.ForeignKey(orm['accounts.userprofilelivingsituation'], null=False))
-        ))
-        db.create_unique('accounts_userprofilevariantsforinstance_living_variants', ['userprofilevariantsforinstance_id', 'userprofilelivingsituation_id'])
-
-        # Adding M2M table for field how_discovered_variants on 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance_how_discovered_variants', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofilevariantsforinstance', models.ForeignKey(orm['accounts.userprofilevariantsforinstance'], null=False)),
-            ('userprofilehowdiscovered', models.ForeignKey(orm['accounts.userprofilehowdiscovered'], null=False))
-        ))
-        db.create_unique('accounts_userprofilevariantsforinstance_how_discovered_variants', ['userprofilevariantsforinstance_id', 'userprofilehowdiscovered_id'])
+        for inst in orm['instances.Instance'].objects.all():
+            o = orm.UserProfileVariantsForInstance(instance = inst)
+            o.save()
+            o.stake_variants.add(*list(orm.UserProfileStake.objects.all()))
+            #o.affiliation_variants.add(*list(orm.Affiliations.objects.all()))
 
 
     def backwards(self, orm):
-        
-        # Deleting model 'UserProfilePerInstance'
-        db.delete_table('accounts_userprofileperinstance')
-
-        # Deleting model 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance')
-
-        # Removing M2M table for field stake_variants on 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance_stake_variants')
-
-        # Removing M2M table for field gender_variants on 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance_gender_variants')
-
-        # Removing M2M table for field race_variants on 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance_race_variants')
-
-        # Removing M2M table for field education_variants on 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance_education_variants')
-
-        # Removing M2M table for field income_variants on 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance_income_variants')
-
-        # Removing M2M table for field living_variants on 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance_living_variants')
-
-        # Removing M2M table for field how_discovered_variants on 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance_how_discovered_variants')
+        "Write your backwards methods here."
 
 
     models = {
@@ -159,7 +69,6 @@ class Migration(SchemaMigration):
         'accounts.userprofileeducation': {
             'Meta': {'ordering': "('pos',)", 'object_name': 'UserProfileEducation'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
             'pos': ('django.db.models.fields.IntegerField', [], {})
         },
         'accounts.userprofileeducationtranslation': {
@@ -172,7 +81,6 @@ class Migration(SchemaMigration):
         'accounts.userprofilegender': {
             'Meta': {'ordering': "('pos',)", 'object_name': 'UserProfileGender'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
             'pos': ('django.db.models.fields.IntegerField', [], {})
         },
         'accounts.userprofilegendertranslation': {
@@ -185,7 +93,6 @@ class Migration(SchemaMigration):
         'accounts.userprofilehowdiscovered': {
             'Meta': {'ordering': "('pos',)", 'object_name': 'UserProfileHowDiscovered'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
             'pos': ('django.db.models.fields.IntegerField', [], {})
         },
         'accounts.userprofilehowdiscoveredtranslation': {
@@ -198,7 +105,6 @@ class Migration(SchemaMigration):
         'accounts.userprofileincome': {
             'Meta': {'ordering': "('pos',)", 'object_name': 'UserProfileIncome'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
             'pos': ('django.db.models.fields.IntegerField', [], {})
         },
         'accounts.userprofileincometranslation': {
@@ -211,7 +117,6 @@ class Migration(SchemaMigration):
         'accounts.userprofilelivingsituation': {
             'Meta': {'ordering': "('pos',)", 'object_name': 'UserProfileLivingSituation'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
             'pos': ('django.db.models.fields.IntegerField', [], {})
         },
         'accounts.userprofilelivingsituationtranslation': {
@@ -223,22 +128,15 @@ class Migration(SchemaMigration):
         },
         'accounts.userprofileperinstance': {
             'Meta': {'object_name': 'UserProfilePerInstance'},
-            'education': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileEducation']", 'null': 'True', 'blank': 'True'}),
-            'gender': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileGender']", 'null': 'True', 'blank': 'True'}),
-            'how_discovered': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileHowDiscovered']", 'null': 'True', 'blank': 'True'}),
-            'how_discovered_other': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '128', 'blank': 'True'}),
+            'affils': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['instances.Affiliation']", 'symmetrical': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'income': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileIncome']", 'null': 'True', 'blank': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
-            'living': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileLivingSituation']", 'null': 'True', 'blank': 'True'}),
-            'race': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileRace']", 'null': 'True', 'blank': 'True'}),
             'stake': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileStake']", 'null': 'True', 'blank': 'True'}),
-            'user_profile': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['accounts.UserProfile']"})
+            'user_profile': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'user_profiles_per_instance'", 'to': "orm['accounts.UserProfile']"})
         },
         'accounts.userprofilerace': {
             'Meta': {'ordering': "('pos',)", 'object_name': 'UserProfileRace'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
             'pos': ('django.db.models.fields.IntegerField', [], {})
         },
         'accounts.userprofileracetranslation': {
@@ -251,7 +149,6 @@ class Migration(SchemaMigration):
         'accounts.userprofilestake': {
             'Meta': {'ordering': "('pos',)", 'object_name': 'UserProfileStake'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
             'pos': ('django.db.models.fields.IntegerField', [], {})
         },
         'accounts.userprofilestaketranslation': {
@@ -263,14 +160,9 @@ class Migration(SchemaMigration):
         },
         'accounts.userprofilevariantsforinstance': {
             'Meta': {'object_name': 'UserProfileVariantsForInstance'},
-            'education_variants': ('django.db.models.fields.related.ManyToManyField', [], {'default': 'None', 'to': "orm['accounts.UserProfileEducation']", 'null': 'True', 'symmetrical': 'False', 'blank': 'True'}),
-            'gender_variants': ('django.db.models.fields.related.ManyToManyField', [], {'default': 'None', 'to': "orm['accounts.UserProfileGender']", 'null': 'True', 'symmetrical': 'False', 'blank': 'True'}),
-            'how_discovered_variants': ('django.db.models.fields.related.ManyToManyField', [], {'default': 'None', 'to': "orm['accounts.UserProfileHowDiscovered']", 'null': 'True', 'symmetrical': 'False', 'blank': 'True'}),
+            'affiliation_variants': ('django.db.models.fields.related.ManyToManyField', [], {'default': 'None', 'to': "orm['instances.Affiliation']", 'null': 'True', 'symmetrical': 'False', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'income_variants': ('django.db.models.fields.related.ManyToManyField', [], {'default': 'None', 'to': "orm['accounts.UserProfileIncome']", 'null': 'True', 'symmetrical': 'False', 'blank': 'True'}),
-            'instance': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['instances.Instance']", 'unique': 'True'}),
-            'living_variants': ('django.db.models.fields.related.ManyToManyField', [], {'default': 'None', 'to': "orm['accounts.UserProfileLivingSituation']", 'null': 'True', 'symmetrical': 'False', 'blank': 'True'}),
-            'race_variants': ('django.db.models.fields.related.ManyToManyField', [], {'default': 'None', 'to': "orm['accounts.UserProfileRace']", 'null': 'True', 'symmetrical': 'False', 'blank': 'True'}),
+            'instance': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'user_profile_variants'", 'unique': 'True', 'to': "orm['instances.Instance']"}),
             'stake_variants': ('django.db.models.fields.related.ManyToManyField', [], {'default': 'None', 'to': "orm['accounts.UserProfileStake']", 'null': 'True', 'symmetrical': 'False', 'blank': 'True'})
         },
         'attachments.attachment': {
@@ -342,12 +234,19 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'})
         },
+        'instances.city': {
+            'Meta': {'object_name': 'City'},
+            'domain': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['sites.Site']"})
+        },
         'instances.instance': {
             'Meta': {'object_name': 'Instance'},
             'affiliations': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['instances.Affiliation']", 'symmetrical': 'False'}),
-            'city': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'curators': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'}),
             'days_for_mission': ('django.db.models.fields.IntegerField', [], {'default': '7'}),
+            'for_city': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'instances'", 'null': 'True', 'to': "orm['instances.City']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'languages': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['instances.Language']", 'symmetrical': 'False'}),
             'location': ('gmapsfield.fields.GoogleMapsField', [], {}),
@@ -361,6 +260,12 @@ class Migration(SchemaMigration):
             'code': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        'sites.site': {
+            'Meta': {'ordering': "('domain',)", 'object_name': 'Site', 'db_table': "'django_site'"},
+            'domain': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         }
     }
 

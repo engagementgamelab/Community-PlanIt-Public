@@ -137,22 +137,25 @@ class CPIUser(User):
             return "%s %s" % (self.first_name, self.last_name)
         return self.username
 
+class UserProfilePerInstanceManager(models.Manager):
+
+    def latest_instance_by_profile(self, user_profile, domain):
+        return Instance.objects.filter(user_profile=user_profile).latest_for_city_domain(domain)
+
 class UserProfilePerInstance(models.Model):
     user_profile = models.ForeignKey("UserProfile", related_name='user_profiles_per_instance')
     instance = models.ForeignKey(Instance)
 
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
-    gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
-    race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
-    education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
-    income = models.ForeignKey(UserProfileIncome, blank=True, null=True, default=None)
-    living = models.ForeignKey(UserProfileLivingSituation, blank=True, null=True, default=None)
-    how_discovered = models.ForeignKey(UserProfileHowDiscovered, blank=True, null=True, default=None)
-    how_discovered_other = models.CharField(max_length=128, blank=True, default='')
+    affils = models.ManyToManyField(Affiliation)
+
+    objects = UserProfilePerInstanceManager()
+
+    def __unicode__(self):
+        return "%s %s" % (self.instance.title, self.user_profile.user.get_full_name())
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
-    instance = models.ForeignKey(Instance, blank=True, null=True, related_name='user_profiles')
     instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='user_profiles_list', through=UserProfilePerInstance)
 
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
@@ -161,8 +164,14 @@ class UserProfile(models.Model):
     city = models.CharField(max_length=128, blank=True, default='')
     zip_code = models.CharField(max_length=10, blank=True, default='')
     preferred_language = models.CharField(max_length=5, default='en-us')
-    affiliations = models.TextField(blank=True, null=True, default='')
-    affils = models.ManyToManyField(Affiliation)
+
+    gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
+    race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
+    education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
+    income = models.ForeignKey(UserProfileIncome, blank=True, null=True, default=None)
+    living = models.ForeignKey(UserProfileLivingSituation, blank=True, null=True, default=None)
+    how_discovered = models.ForeignKey(UserProfileHowDiscovered, blank=True, null=True, default=None)
+    how_discovered_other = models.CharField(max_length=128, blank=True, default='')
 
     # Additional profile fields
     birth_year = models.IntegerField(blank=True, null=True, default=0)
@@ -233,13 +242,7 @@ class UserProfile(models.Model):
 class UserProfileVariantsForInstance(models.Model):
     instance = models.OneToOneField(Instance, related_name='user_profile_variants')
     stake_variants = models.ManyToManyField(UserProfileStake, blank=True, null=True, default=None)
-    gender_variants = models.ManyToManyField(UserProfileGender, blank=True, null=True, default=None)
-    race_variants = models.ManyToManyField(UserProfileRace, blank=True, null=True, default=None)
-    education_variants = models.ManyToManyField(UserProfileEducation, blank=True, null=True, default=None)
-    income_variants = models.ManyToManyField(UserProfileIncome, blank=True, null=True, default=None)
-    living_variants = models.ManyToManyField(UserProfileLivingSituation, blank=True, null=True, default=None)
-    how_discovered_variants = models.ManyToManyField(UserProfileHowDiscovered, blank=True, null=True, default=None)
-
+    affiliation_variants = models.ManyToManyField(Affiliation, blank=True, null=True, default=None)
 
 # Custom hook for adding an anonymous username to the User model.
 def user_pre_save(instance, **kwargs):
