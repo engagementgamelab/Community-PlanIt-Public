@@ -5,7 +5,6 @@ from django.template.defaultfilters import slugify
 from django.db import models
 from django.contrib import admin
 
-from nani.admin import TranslatableAdmin
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
 
@@ -97,9 +96,5 @@ class Mission(TranslatableModel):
         return self.title
 
 stream_utils.register_target(Mission)
-
-class MissionAdmin(TranslatableAdmin):
-    list_display = ('title', 'instance', 'start_date', 'end_date')
-    #readonly_fields = ('start_date', 'end_date',)
 
 
