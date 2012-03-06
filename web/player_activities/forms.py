@@ -1,14 +1,15 @@
 from django import forms
-from django.contrib.auth.models import User
-from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 from django.utils import simplejson
+from django.utils.translation import ugettext as _
+from gmapsfield.fields import *
+
 from instances.models import Instance
-from player_activities.models import PlayerActivity
+from player_activities.models import PlayerActivity, MultiChoiceActivity
 from answers.models import *
 
-from gmapsfield.fields import *
 
 def make_answer_form():
     class AnswerForm(forms.Form):
@@ -56,4 +57,17 @@ class MapForm(forms.Form):
         if len(mapDict["markers"]) == 0:
             raise forms.ValidationError("Please select a point on the map")
         return map
+
+class PlayerActivityForm(forms.ModelForm):
+    name = forms.CharField(required=True, max_length=255, label=_("Name"))
+    question = forms.CharField(required=True, max_length=1000, label=_("Question"))
+    class Meta:
+        model = PlayerActivity
+        exclude = ('creationUser', 'mission', 'type', 'points', 'attachment',)
+        
+class PlayerActivityMultiChoiceForm(forms.ModelForm):
+    value = forms.CharField(required=True, max_length=255, label=_("Value"))
+    class Meta:
+        model = MultiChoiceActivity
+        exclude = ('activity',)
 
