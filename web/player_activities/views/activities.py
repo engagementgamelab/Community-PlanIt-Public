@@ -5,11 +5,12 @@ from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
+from django.contrib.formtools.wizard import FormWizard
 
 from answers.models import *
 from comments.models import *
@@ -376,3 +377,16 @@ def activity(request, activity_id, template=None, **kwargs):
         template= "".join([template, "_", action, ".html"])
 
     return render_to_response(template, RequestContext(request, context))
+
+
+class NewActivityWizard(FormWizard):
+    def done(self, request, form_list):
+        return render(request, 'player_activities/new_activity_base.html', {
+            'form_data': [form.cleaned_data for form in form_list],
+        })
+        #return HttpResponseRedirect('/')    
+
+    def get_template(self, step):
+        return 'player_activities/new_activity_base.html'
+
+

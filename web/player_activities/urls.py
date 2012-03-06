@@ -1,9 +1,14 @@
 from django.conf.urls.defaults import *
+from player_activities.forms import PlayerActivityForm, PlayerActivityMultiChoiceForm
+from player_activities.views.activities import NewActivityWizard
 
 urlpatterns = patterns('player_activities.views',
     # Need to import all URLs from activities
     #url(r"^$", "index", name="all"),    
     
+    url(r"^new/$", 
+                        NewActivityWizard([PlayerActivityForm, PlayerActivityMultiChoiceForm]), 
+                        name = "new"),
     url(r"^(?P<activity_id>\d+)/$", 
                         "activities.activity", 
                         dict(
