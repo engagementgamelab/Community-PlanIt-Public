@@ -38,9 +38,9 @@ class RegisterFormOne(forms.Form):
     def __init__(self, *args, **kwargs):
         super(RegisterFormOne, self).__init__(*args, **kwargs)
 
-        #all_instances = Instance.objects.active().language(get_language())
-        #instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in all_instances]
-        #self.fields['instance_id'] = forms.ChoiceField(label=_(u'Community'), required=False, choices=instances)
+        all_instances = Instance.objects.active().language(get_language())
+        instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in all_instances]
+        self.fields['instance_id'] = forms.ChoiceField(label=_(u'Community'), required=False, choices=instances)
 
         self.fields['accepted_terms'] = forms.BooleanField(
             required=True,
@@ -246,7 +246,15 @@ class RegistrationWizard(FormWizard):
         body = tmpl.render(RequestContext(request, context))
         send_mail(ugettext('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
         messages.success(request, _("Thanks for signing up!"))
-        return HttpResponseRedirect(reverse('accounts:dashboard'))
+        return HttpResponseRedirect(
+                        "".join(
+                                [
+                                    self.community.get_absolute_url(ssl=not(settings.DEBUG)),
+                                    reverse('accounts:dashboard')
+                                ]
+
+
+        ))
 
 
     def get_form(self, step, data=None):
