@@ -25,7 +25,7 @@ __all__ = (
 
 class City(models.Model):
     name = models.CharField(max_length=100)
-    domain = models.CharField(max_length=30)
+    domain = models.CharField(max_length=100)
 
     def __unicode__(self):
         return "%s at <%s>" %(self.name, self.domain)
