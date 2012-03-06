@@ -28,17 +28,17 @@ from django.contrib.sites.models import RequestSite
 
 from PIL import Image
 
-from accounts.forms import *
-from accounts.models import Notification, UserProfile
-from answers.models import Answer
-from challenges.models import Challenge, PlayerChallenge
-from comments.forms import CommentForm
-from instances.models import Instance
-from missions.models import Mission
-from player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
-from reports.models import Activity
-from values.models import *
-from core.utils import _fake_latest
+from web.accounts.forms import *
+from web.accounts.models import Notification, UserProfile
+from web.answers.models import Answer
+from web.challenges.models import Challenge, PlayerChallenge
+from web.comments.forms import CommentForm
+from web.instances.models import Instance
+from web.missions.models import Mission
+from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
+from web.reports.models import Activity
+from web.values.models import *
+from web.core.utils import _fake_latest
 #from web.decorators import protect_domain
 
 @csrf_protect

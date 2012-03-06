@@ -4,7 +4,7 @@ from django.views.generic.simple import direct_to_template
 
 from django.contrib import admin
 
-from instances.models import Instance
+from web.instances.models import Instance
 
 # Setup admin
 admin.autodiscover()

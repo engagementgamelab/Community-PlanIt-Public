@@ -17,10 +17,10 @@ from django.contrib.contenttypes.models import ContentType
 
 from nani.models import TranslatableModel, TranslatedFields
 
-from comments.models import Comment
-from accounts.models import *
-from challenges.models import *
-from instances.models import Instance, Affiliation
+from web.comments.models import Comment
+from web.accounts.models import *
+from web.challenges.models import *
+from web.instances.models import Instance, Affiliation
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.user.id) +'/'+ filename

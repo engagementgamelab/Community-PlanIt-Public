@@ -16,10 +16,10 @@ from django.contrib.formtools.wizard import FormWizard
 
 from django.contrib.sites.models import RequestSite
 
-from accounts.models import *
-from instances.models import Instance, City
+from web.accounts.models import *
+from web.instances.models import Instance, City
 
-from core.utils import get_translation_with_fallback
+from web.core.utils import get_translation_with_fallback
 
 class RegisterFormOne(forms.Form):
 
