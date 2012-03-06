@@ -138,9 +138,10 @@ class CPIUser(User):
         return self.username
 
 class UserProfilePerInstanceManager(models.Manager):
+	pass
 
-    def latest_instance_by_profile(self, user_profile, domain):
-        return Instance.objects.filter(user_profile=user_profile).latest_for_city_domain(domain)
+    #def latest_instance_by_profile(self, user_profile, domain):
+    #    return self.objects.filter(user_profile=user_profile).latest_for_city_domain(domain)
 
 class UserProfilePerInstance(models.Model):
     user_profile = models.ForeignKey("UserProfile", related_name='user_profiles_per_instance')
@@ -199,6 +200,12 @@ class UserProfile(models.Model):
 
     def __unicode__(self):
         return self.screen_name +"'s profile"
+
+    @property
+    def active_instance(self):
+        profiles_per_instance = UserProfilePerInstance.objects.filter(user_profile=self)
+        if profiles_per_instance.count():
+            return profiles_per_instance[0].instance
 
     @property
     def affiliations_csv(self):

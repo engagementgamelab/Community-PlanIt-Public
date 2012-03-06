@@ -15,18 +15,21 @@
 
 {%block main%}
     <div class="pad">
-        <form action="" method="post">
+        <form action="{% url accounts:login %}" method="post">{%csrf_token%}
             {%if form.errors%}
             <p class="error">{% trans "Sorry, that's not a valid email address or password." %}</p>
-
-                <p>{% trans "Not a member? " %}<a href="{% url instances:instances %}">{% trans "Find your community and sign up now!" %}</a></p>
+            <p>{% trans "Not a member? " %}<a href="{% url instances:instances %}">{% trans "Find your community and sign up now!" %}</a></p>
             {%endif%}
-            {%csrf_token%}
             <label for="email">{% trans "Email address:" %}</label>
             {{form.username}}
             <br>
             <label for="password">{% trans "Password:" %}</label>
             {{form.password}}
+
+            {% if form.instance %}
+            <label for="instance">{% trans "Community:" %}</label>
+            {{form.instance}}
+            {% endif %}
 
             <br><br>
             <input type="submit" class="button submit" value="Login">

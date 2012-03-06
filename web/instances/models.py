@@ -108,6 +108,11 @@ class Instance(TranslatableModel):
     def __unicode__(self):
         return self.title
 
+    def get_absolute_url(self, ssl=True):
+        if ssl == True:
+            return "".join(['https://', self.for_city.domain])
+        return "".join(['http://', self.for_city.domain])
+
     @property
     def stream_action_title(self):
         return self.title

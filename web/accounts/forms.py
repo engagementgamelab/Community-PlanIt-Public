@@ -17,7 +17,7 @@ from django.contrib.formtools.wizard import FormWizard
 from django.contrib.sites.models import RequestSite
 
 from accounts.models import *
-from instances.models import Instance
+from instances.models import Instance, City
 
 from core.utils import get_translation_with_fallback
 
@@ -38,9 +38,9 @@ class RegisterFormOne(forms.Form):
     def __init__(self, *args, **kwargs):
         super(RegisterFormOne, self).__init__(*args, **kwargs)
 
-        all_instances = Instance.objects.active().language(get_language())
-        instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in all_instances]
-        self.fields['instance_id'] = forms.ChoiceField(label=_(u'Community'), required=False, choices=instances)
+        #all_instances = Instance.objects.active().language(get_language())
+        #instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in all_instances]
+        #self.fields['instance_id'] = forms.ChoiceField(label=_(u'Community'), required=False, choices=instances)
 
         self.fields['accepted_terms'] = forms.BooleanField(
             required=True,
@@ -246,8 +246,8 @@ class RegistrationWizard(FormWizard):
         body = tmpl.render(RequestContext(request, context))
         send_mail(ugettext('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
         messages.success(request, _("Thanks for signing up!"))
-        request.session['instance'] = self.community
         return HttpResponseRedirect(reverse('accounts:dashboard'))
+
 
     def get_form(self, step, data=None):
         if step == 0 and data:
@@ -334,16 +334,31 @@ class AccountAuthenticationForm(AuthenticationForm):
     username/password logins.
     """
     def __init__(self, request=None, *args, **kwargs):
-        self.request = request
-        self.site = RequestSite(self.request)
+        self.site = RequestSite(request)
+        self.user = request.user
         super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
         self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)        
 
+        if not City.objects.filter(domain=self.site):
+            self.fields['instance'] = forms.ModelChoiceField(Instance.objects.active())
+
     def clean(self, *args, **kwargs):
         super(AccountAuthenticationForm, self).clean(*args, **kwargs)
-        #import ipdb;ipdb.set_trace()
-        print "invalid"
-        raise forms.ValidationError(_("You have not registered for this instance."))
+        instance=None
+        try:
+            instance = self.cleaned_data.get('instance') or Instance.objects.latest_for_city_domain(self.site)
+        except:
+            raise forms.ValidationError(_("invalid instance."))
+
+        try:
+            UserProfilePerInstance.objects.get(
+                        instance=instance, 
+                        user_profile__user__email=self.cleaned_data['username']
+            )
+        except UserProfilePerInstance.DoesNotExist:
+            raise forms.ValidationError(_("You have not registered for this instance."))
+
+        return self.cleaned_data
 
 class AdminInstanceEmailForm(forms.Form):
     subject = forms.CharField()

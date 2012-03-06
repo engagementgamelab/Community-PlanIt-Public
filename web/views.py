@@ -4,20 +4,19 @@ from django.shortcuts import render_to_response
 from django.template import loader, Context, RequestContext
 from django.views.decorators.cache import never_cache
 
-from django.contrib.sites.models import Site
+from django.contrib.sites.models import Site, RequestSite
 
 from web.accounts.views import dashboard
+from web.accounts.forms import AccountAuthenticationForm
 from web.instances.models import Instance
 
-def index(request):
+def index(request, authentication_form=AccountAuthenticationForm):
     # Show index page
-    #import ipdb;ipdb.set_trace()
-
     if not request.user.is_authenticated():
 
-        context = {}    #{ 'active_instances': Instance.objects.active(), }
+        form = authentication_form(request)
+        context = {'form': form}
         return render_to_response('index.html', context, context_instance=RequestContext(request))
-
     return dashboard(request)
 
 @never_cache

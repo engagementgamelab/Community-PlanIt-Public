@@ -39,6 +39,7 @@ from player_activities.models import PlayerActivity, PlayerEmpathyActivity, Play
 from reports.models import Activity
 from values.models import *
 from core.utils import _fake_latest
+#from web.decorators import protect_domain
 
 @csrf_protect
 @never_cache
@@ -77,9 +78,20 @@ def login(request, template_name='registration/login.html',
 
             if lang in dict(settings.LANGUAGES).keys():
                 spath = strip_path(redirect_to)[1]
-                return HttpResponseRedirect(locale_path(spath, lang))
+                return HttpResponseRedirect(
+                        "".join(
+                                [
+                                    up.active_instance.get_absolute_url(ssl=not(settings.DEBUG)),
+                                    locale_path(spath, lang)
+                                ]
+                ))
 
-            return HttpResponseRedirect(redirect_to)
+            return HttpResponseRedirect(
+                    "".join([
+                                up.active_instance.get_absolute_url(ssl=not(settings.DEBUG)), 
+                                redirect_to
+                            ]
+            ))
     else:
         form = authentication_form(request)
 
@@ -339,14 +351,14 @@ def profile(request, id):
     })))
 
 @login_required
+#@protect_domain
 def dashboard(request, template_name='accounts/dashboard.html'):
 
     instance = None
 
     user_profile = request.user.get_profile()
-    #domain = RequestSite(request)
-    #inst = Instance.objects.get(for_city__domain=domain)
-    instance = Instance.objects.get(pk=request.session.get('instance'))
+    domain = RequestSite(request)
+    instance = Instance.objects.get(for_city__domain=domain)
 
     page = request.GET.get('page', 1)
 

@@ -79,16 +79,23 @@
 {% endif %}
 <h3>{% trans "Have an account?" %}</h3>
 <div class="inner-content">
-    <form method="POST" action="{% url accounts:login %}">
-        {%csrf_token%}
+    <form method="POST" action="{% url accounts:login %}"> {%csrf_token%}
         <input type="hidden" name="next" value="{% url accounts:dashboard %}" />
         <input type="hidden" name="locale" value="es" />
-        <label for="username">email address</label>
-        <input type="email" name="username">
-        <label for="password">password</label>
-        <input type="password" name="password">
+
+        <label for="username">{% trans "email address"%}</label>
+            {{form.username}}
+
+            <label for="password">{% trans "password" %}</label>
+            {{form.password}}
+
+            {% if form.instance %}
+            <label for="instance">{% trans "community:" %}</label>
+            {{form.instance}}
+            {% endif %}
         <br>
-        <button class="button">{% trans "Login" %}</button> <a class="right" href="{% url accounts:forgot %}">{% trans "Forgot password" %}</a>
+        <button class="button">{% trans "Login" %}</button> 
+        <a class="right" href="{% url accounts:forgot %}">{% trans "Forgot password" %}</a>
     </form>
 </div>
 {%endblock%}
