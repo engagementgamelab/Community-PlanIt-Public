@@ -37,7 +37,7 @@
 </head>
 
 {% with request.user as user %}
-{% with latest_for_city_domain as current_instance %}
+{% with instance as current_instance %}
 
 <body class="page {% block section %}default{% endblock %}{% if user.is_authenticated %} loggedin{% endif %} {% block extra_body_class %}{% endblock %}">
     <div class="wrapper">
