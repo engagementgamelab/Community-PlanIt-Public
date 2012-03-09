@@ -66,27 +66,21 @@ class SelectNewActivityForm(forms.Form):
     #)
     name = forms.CharField(required=True, max_length=255, label=_("Name"))
     question = forms.CharField(required=True, max_length=1000, label=_("Question"))
-    activity_type = forms.ChoiceField(
+    type = forms.ChoiceField(
                 choices=PlayerActivityType.objects.filter(
                         type__in=['open_ended', 'multi_response']
                         ).values_list('type', 'displayType')
     )
 
-class MultiResponseForm(forms.ModelForm):
+class MultiResponseForm(forms.Form):
 
-    value_one = forms.CharField(required=True, max_length=255, label=_("Value One"))
-    value_two = forms.CharField(required=True, max_length=255, label=_("Value Two"))
-    value_three = forms.CharField(required=True, max_length=255, label=_("Value Three"))
-    value_four = forms.CharField(required=True, max_length=255, label=_("Value Four"))
-    value_five = forms.CharField(required=True, max_length=255, label=_("Value Five"))
+    answ1 = forms.CharField(required=True, max_length=255, label=_("Answer One"))
+    answ2 = forms.CharField(required=True, max_length=255, label=_("Answer Two"))
+    answ3 = forms.CharField(required=True, max_length=255, label=_("Answer Three"))
+    answ4 = forms.CharField(required=True, max_length=255, label=_("Answer Four"))
+    answ5 = forms.CharField(required=True, max_length=255, label=_("Answer Five"))
 
     class Meta:
-        model = MultiChoiceActivity
         exclude = ('activity',)
 
-#class OpenEndedForm(forms.ModelForm):
-
-#    class Meta:
-#        model = PlayerActivity
-#        exclude = ('name', 'question', 'creationUser', 'type', 'points', 'attachment',)
 
