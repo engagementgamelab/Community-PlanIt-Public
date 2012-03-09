@@ -8,6 +8,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
+        # Adding model 'City'
+        db.create_table('instances_city', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('domain', self.gf('django.db.models.fields.CharField')(max_length=100)),
+        ))
+        db.send_create_signal('instances', ['City'])
+
         # Adding model 'Language'
         db.create_table('instances_language', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -15,6 +23,15 @@ class Migration(SchemaMigration):
             ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
         ))
         db.send_create_signal('instances', ['Language'])
+
+        # Adding model 'Affiliation'
+        db.create_table('instances_affiliation', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('code', self.gf('django.db.models.fields.CharField')(default='', max_length=10, blank=True)),
+        ))
+        db.send_create_signal('instances', ['Affiliation'])
 
         # Adding model 'InstanceTranslation'
         db.create_table('instances_instancetranslation', (
@@ -33,11 +50,11 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50, db_index=True)),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('city', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('state', self.gf('django.db.models.fields.CharField')(max_length=2)),
             ('start_date', self.gf('django.db.models.fields.DateTimeField')()),
             ('location', self.gf('gmapsfield.fields.GoogleMapsField')()),
             ('days_for_mission', self.gf('django.db.models.fields.IntegerField')(default=7)),
+            ('for_city', self.gf('django.db.models.fields.related.ForeignKey')(related_name='instances', null=True, to=orm['instances.City'])),
         ))
         db.send_create_signal('instances', ['Instance'])
 
@@ -56,6 +73,14 @@ class Migration(SchemaMigration):
             ('language', models.ForeignKey(orm['instances.language'], null=False))
         ))
         db.create_unique('instances_instance_languages', ['instance_id', 'language_id'])
+
+        # Adding M2M table for field affiliations on 'Instance'
+        db.create_table('instances_instance_affiliations', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('instance', models.ForeignKey(orm['instances.instance'], null=False)),
+            ('affiliation', models.ForeignKey(orm['instances.affiliation'], null=False))
+        ))
+        db.create_unique('instances_instance_affiliations', ['instance_id', 'affiliation_id'])
 
         # Adding model 'PointsAssignmentAction'
         db.create_table('instances_pointsassignmentaction', (
@@ -93,8 +118,14 @@ class Migration(SchemaMigration):
         # Removing unique constraint on 'InstanceTranslation', fields ['language_code', 'master']
         db.delete_unique('instances_instancetranslation', ['language_code', 'master_id'])
 
+        # Deleting model 'City'
+        db.delete_table('instances_city')
+
         # Deleting model 'Language'
         db.delete_table('instances_language')
+
+        # Deleting model 'Affiliation'
+        db.delete_table('instances_affiliation')
 
         # Deleting model 'InstanceTranslation'
         db.delete_table('instances_instancetranslation')
@@ -107,6 +138,9 @@ class Migration(SchemaMigration):
 
         # Removing M2M table for field languages on 'Instance'
         db.delete_table('instances_instance_languages')
+
+        # Removing M2M table for field affiliations on 'Instance'
+        db.delete_table('instances_instance_affiliations')
 
         # Deleting model 'PointsAssignmentAction'
         db.delete_table('instances_pointsassignmentaction')
@@ -155,11 +189,25 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        'instances.affiliation': {
+            'Meta': {'object_name': 'Affiliation'},
+            'code': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'})
+        },
+        'instances.city': {
+            'Meta': {'object_name': 'City'},
+            'domain': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
         'instances.instance': {
             'Meta': {'object_name': 'Instance'},
-            'city': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'affiliations': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['instances.Affiliation']", 'symmetrical': 'False'}),
             'curators': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'}),
             'days_for_mission': ('django.db.models.fields.IntegerField', [], {'default': '7'}),
+            'for_city': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'instances'", 'null': 'True', 'to': "orm['instances.City']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'languages': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['instances.Language']", 'symmetrical': 'False'}),
             'location': ('gmapsfield.fields.GoogleMapsField', [], {}),
