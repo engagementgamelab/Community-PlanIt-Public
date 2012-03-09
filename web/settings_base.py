@@ -84,6 +84,7 @@ INSTALLED_APPS = (
     #'dilla',
     'rosetta',
     'django_extensions',
+    'template_repl',
     'south',
 )
 

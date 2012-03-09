@@ -1,6 +1,10 @@
+from nani.utils import get_translation
+
 from django.conf import settings
 from django.utils.translation import get_language
-from nani.utils import get_translation
+from django.contrib.sites.models import RequestSite
+
+from instances.models import Instance
 
 def _fake_latest(model, qs):
     if model and qs:
@@ -17,3 +21,10 @@ def get_translation_with_fallback(obj, attr):
             return "---"
     return getattr(obj, attr)
 
+def instance_from_request(request):
+    user_profile = request.user.get_profile()
+    domain = RequestSite(request)
+    try:
+        return Instance.objects.get(for_city__domain=domain)
+    except Instance.DoesNotExist:
+        return

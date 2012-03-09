@@ -19,3 +19,11 @@ admin.site.register(UserProfileIncome, UserProfileOptionAdmin)
 admin.site.register(UserProfileLivingSituation, UserProfileOptionAdmin)
 admin.site.register(UserProfileRace, UserProfileOptionAdmin)
 admin.site.register(UserProfileStake, UserProfileOptionAdmin)
+
+
+class UserProfilePerInstanceAdmin(admin.ModelAdmin):
+    list_display = ('__str__', )
+    list_filter = ('instance',)
+
+admin.site.register(UserProfilePerInstance, UserProfilePerInstanceAdmin)
+

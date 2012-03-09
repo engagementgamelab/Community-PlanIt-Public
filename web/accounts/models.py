@@ -153,7 +153,7 @@ class UserProfilePerInstance(models.Model):
     objects = UserProfilePerInstanceManager()
 
     def __unicode__(self):
-        return "%s %s" % (self.instance.title, self.user_profile.user.get_full_name())
+        return "'%s <%s>' for: %s" % (self.user_profile.user.get_full_name(), self.user_profile.email, self.instance.title, )
 
     class Meta:
         unique_together = ('user_profile', 'instance',)
