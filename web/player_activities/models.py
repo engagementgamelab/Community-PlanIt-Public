@@ -118,7 +118,8 @@ class PlayerActivity(PlayerActivityBase):
         return self.__unicode__()
 
     def save(self, *args, **kwargs):
-        self.createDate = datetime.datetime.now()
+        if not self.createDate:
+            self.createDate = datetime.datetime.now()
         super(PlayerActivity, self).save(*args, **kwargs)
 
 
@@ -188,7 +189,9 @@ class PlayerMapActivity(PlayerActivityBase):
         return s
 
     def save(self, *args, **kwargs):
-        self.createDate = datetime.datetime.now()
+        if not self.createDate:
+            self.createDate = datetime.datetime.now()
+
         self.type = PlayerActivityType.objects.get(type="map")
         super(PlayerMapActivity, self).save(*args, **kwargs)
 
@@ -261,7 +264,9 @@ class PlayerEmpathyActivity(PlayerActivityBase):
         return reverse('activities:empathy-replay', args=(self.pk,))
 
     def save(self, *args, **kwargs):
-        self.createDate = datetime.datetime.now()
+        if not self.createDate:
+            self.createDate = datetime.datetime.now()
+
         self.type = PlayerActivityType.objects.get(type="empathy")
         super(PlayerEmpathyActivity, self).save(*args, **kwargs)
 

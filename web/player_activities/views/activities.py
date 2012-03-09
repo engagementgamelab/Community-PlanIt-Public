@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.formtools.wizard import FormWizard
 
 from answers.models import *
+from missions.models import Mission
 from comments.models import *
 from comments.forms import *
 from player_activities.forms import *
@@ -385,19 +386,37 @@ class NewActivityWizard(FormWizard):
         #import ipdb;ipdb.set_trace()
 
         form_one = form_list[0]
+
+        create_kwargs =dict( 
+                mission=Mission.objects.all()[0],
+                creationUser=request.user,
+                type=PlayerActivityType.objects.get(
+                        type=form_one.cleaned_data.get('type')
+                ),
+                question=form_one.cleaned_data.get('question', ''),
+                name = form_one.cleaned_data.get('name', ''),
+        )
+        activity, created = PlayerActivity.objects.create(**create_kwargs)
         if len(form_list) == 2:
             form_two = form_list[1]
+            for f in  form_two.cleaned_data.keys():
+                mc, created = MultiChoiceActivity.objects.create(
+                        value=form_two.cleaned_data.get(f, ''),
+                        activity=activity
+                )
+                print created, mc
 
         return render(request, 'player_activities/new_activity_thanks.html', {
             'form_data': [form.cleaned_data for form in form_list],
         })
 
     def process_step(self, request, form, step):
-        if form.cleaned_data.get('activity_type') == 'multi_response':
+        if form.cleaned_data.get('type') == 'multi_response':
             self.form_list = [
                 SelectNewActivityForm,
                 MultiResponseForm,
             ]
+        print self.form_list
 
     def get_template(self, step):
         if step == 0:
