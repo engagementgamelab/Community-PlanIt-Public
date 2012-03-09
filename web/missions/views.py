@@ -4,7 +4,6 @@ from operator import attrgetter
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
-from django.utils.translation import get_language
 
 from django.contrib.auth.decorators import login_required
 
