@@ -9,7 +9,7 @@ class UserProfileOptionAdmin(TranslatableAdmin):
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('__str__', )
-    search_fields = ('affiliations',)
+    search_fields = ('email',)
 
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(UserProfileEducation, UserProfileOptionAdmin)

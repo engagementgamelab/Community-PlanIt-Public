@@ -380,13 +380,29 @@ def activity(request, activity_id, template=None, **kwargs):
 
 
 class NewActivityWizard(FormWizard):
+
     def done(self, request, form_list):
-        return render(request, 'player_activities/new_activity_base.html', {
+        #import ipdb;ipdb.set_trace()
+
+        form_one = form_list[0]
+        if len(form_list) == 2:
+            form_two = form_list[1]
+
+        return render(request, 'player_activities/new_activity_thanks.html', {
             'form_data': [form.cleaned_data for form in form_list],
         })
-        #return HttpResponseRedirect('/')    
+
+    def process_step(self, request, form, step):
+        if form.cleaned_data.get('activity_type') == 'multi_response':
+            self.form_list = [
+                SelectNewActivityForm,
+                MultiResponseForm,
+            ]
 
     def get_template(self, step):
-        return 'player_activities/new_activity_base.html'
+        if step == 0:
+            return 'player_activities/new_activity_base.html'
+        if step == 1:
+            return 'player_activities/new_activity_multi.html'
 
 

@@ -7,7 +7,8 @@ from django.utils.translation import ugettext as _
 from gmapsfield.fields import *
 
 from instances.models import Instance
-from player_activities.models import PlayerActivity, MultiChoiceActivity
+from missions.models import Mission
+from player_activities.models import PlayerActivity, PlayerActivityType, MultiChoiceActivity
 from answers.models import *
 
 
@@ -58,16 +59,34 @@ class MapForm(forms.Form):
             raise forms.ValidationError("Please select a point on the map")
         return map
 
-class PlayerActivityForm(forms.ModelForm):
+class SelectNewActivityForm(forms.Form):
+
+    #mission = forms.ModelChoiceField(
+    #            queryset=Mission.objects.filter()
+    #)
     name = forms.CharField(required=True, max_length=255, label=_("Name"))
     question = forms.CharField(required=True, max_length=1000, label=_("Question"))
-    class Meta:
-        model = PlayerActivity
-        exclude = ('creationUser', 'mission', 'type', 'points', 'attachment',)
-        
-class PlayerActivityMultiChoiceForm(forms.ModelForm):
-    value = forms.CharField(required=True, max_length=255, label=_("Value"))
+    activity_type = forms.ChoiceField(
+                choices=PlayerActivityType.objects.filter(
+                        type__in=['open_ended', 'multi_response']
+                        ).values_list('type', 'displayType')
+    )
+
+class MultiResponseForm(forms.ModelForm):
+
+    value_one = forms.CharField(required=True, max_length=255, label=_("Value One"))
+    value_two = forms.CharField(required=True, max_length=255, label=_("Value Two"))
+    value_three = forms.CharField(required=True, max_length=255, label=_("Value Three"))
+    value_four = forms.CharField(required=True, max_length=255, label=_("Value Four"))
+    value_five = forms.CharField(required=True, max_length=255, label=_("Value Five"))
+
     class Meta:
         model = MultiChoiceActivity
         exclude = ('activity',)
+
+#class OpenEndedForm(forms.ModelForm):
+
+#    class Meta:
+#        model = PlayerActivity
+#        exclude = ('name', 'question', 'creationUser', 'type', 'points', 'attachment',)
 

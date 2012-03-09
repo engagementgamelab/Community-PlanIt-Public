@@ -1,15 +1,30 @@
 {%extends "player_activities/base.html"%}
 
-{%block title%}{{ block.super }} Multi Response.{%endblock%}
+{%block title%}{{ block.super }} Create your own activity.{%endblock%}
 
 {%block main%}
 <p>Step {{ step }} of {{ step_count }}</p>
 <form action="." method="post">{% csrf_token %}
-<table>
-{{ form }}
-</table>
-<input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
-{{ previous_fields|safe }}
-<input type="submit">
+    {{ form.errors }}
+    <div class="fieldWrapper">
+        {{ form.name.errors }}
+        <label for="id_name">Name:</label>
+        {{ form.name }}
+    </div>
+
+    <div class="fieldWrapper">
+        {{ form.question.errors }}
+        <label for="id_question">Question:</label>
+        {{ form.question }}
+    </div>
+
+    <div class="fieldWrapper">
+        <label for="id_types">Type</label>
+            {{ form.activity_type }}
+    </div>
+
+    <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
+    {{ previous_fields|safe }}
+    <input type="submit">
 </form>
 {%endblock%}

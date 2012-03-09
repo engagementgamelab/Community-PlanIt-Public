@@ -169,6 +169,8 @@ class UserProfile(models.Model):
     zip_code = models.CharField(max_length=10, blank=True, default='')
     preferred_language = models.CharField(max_length=5, default='en-us')
 
+    # Additional profile fields
+    birth_year = models.IntegerField(blank=True, null=True, default=0)
     gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
     race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
     education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
@@ -176,9 +178,6 @@ class UserProfile(models.Model):
     living = models.ForeignKey(UserProfileLivingSituation, blank=True, null=True, default=None)
     how_discovered = models.ForeignKey(UserProfileHowDiscovered, blank=True, null=True, default=None)
     how_discovered_other = models.CharField(max_length=128, blank=True, default='')
-
-    # Additional profile fields
-    birth_year = models.IntegerField(blank=True, null=True, default=0)
 
     #
     # internal system records
@@ -199,7 +198,7 @@ class UserProfile(models.Model):
         verbose_name_plural = "User Profiles"
 
     def __unicode__(self):
-        return self.screen_name +"'s profile"
+        return "%s's profile <%s>" % (self.screen_name, self.user.email)
 
     @property
     def active_instance(self):

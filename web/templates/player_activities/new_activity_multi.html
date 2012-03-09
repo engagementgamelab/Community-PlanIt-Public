@@ -1,0 +1,42 @@
+{%extends "player_activities/base.html"%}
+
+{%block title%}{{ block.super }} Multi Response.{%endblock%}
+
+{%block main%}
+<p>Step {{ step }} of {{ step_coSubmitunt }}</p>
+<p>Input possible answers to your multi response question<p/>
+
+<form action="." method="post">{% csrf_token %}
+
+    {{ form.errors }}
+
+    <div class="fieldWrapper">
+        <label for="id_types">{{ form.value_one.label}}</label>
+            {{ form.value_one }}
+    </div>
+
+    <div class="fieldWrapper">
+        <label for="id_types">{{ form.value_two.label}}</label>
+            {{ form.value_two }}
+    </div>
+
+    <div class="fieldWrapper">
+        <label for="id_types">{{ form.value_three.label}}</label>
+            {{ form.value_three }}
+    </div>
+
+    <div class="fieldWrapper">
+        <label for="id_types">{{ form.value_four.label}}</label>
+            {{ form.value_four }}
+    </div>
+
+    <div class="fieldWrapper">
+        <label for="id_types">{{ form.value_five.label}}</label>
+            {{ form.value_five }}
+    </div>
+
+    <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
+    {{ previous_fields|safe }}
+    <input type="submit" name="Submit">
+</form>
+{%endblock%}

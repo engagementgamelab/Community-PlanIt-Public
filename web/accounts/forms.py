@@ -343,6 +343,7 @@ class AccountAuthenticationForm(AuthenticationForm):
     """
     def __init__(self, request=None, *args, **kwargs):
         self.site = RequestSite(request)
+        print self.site.domain
         self.user = request.user
         super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
         self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)        

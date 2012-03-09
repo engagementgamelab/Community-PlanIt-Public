@@ -8,105 +8,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding model 'UserProfilePerInstance'
-        db.create_table('accounts_userprofileperinstance', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user_profile', self.gf('django.db.models.fields.related.ForeignKey')(related_name='user_profiles_per_instance', to=orm['accounts.UserProfile'])),
-            ('instance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['instances.Instance'])),
-            ('stake', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['accounts.UserProfileStake'], null=True, blank=True)),
-        ))
-        db.send_create_signal('accounts', ['UserProfilePerInstance'])
-
-        # Adding M2M table for field affils on 'UserProfilePerInstance'
-        db.create_table('accounts_userprofileperinstance_affils', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofileperinstance', models.ForeignKey(orm['accounts.userprofileperinstance'], null=False)),
-            ('affiliation', models.ForeignKey(orm['instances.affiliation'], null=False))
-        ))
-        db.create_unique('accounts_userprofileperinstance_affils', ['userprofileperinstance_id', 'affiliation_id'])
-
-        # Adding model 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('instance', self.gf('django.db.models.fields.related.OneToOneField')(related_name='user_profile_variants', unique=True, to=orm['instances.Instance'])),
-        ))
-        db.send_create_signal('accounts', ['UserProfileVariantsForInstance'])
-
-        # Adding M2M table for field stake_variants on 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance_stake_variants', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofilevariantsforinstance', models.ForeignKey(orm['accounts.userprofilevariantsforinstance'], null=False)),
-            ('userprofilestake', models.ForeignKey(orm['accounts.userprofilestake'], null=False))
-        ))
-        db.create_unique('accounts_userprofilevariantsforinstance_stake_variants', ['userprofilevariantsforinstance_id', 'userprofilestake_id'])
-
-        # Adding M2M table for field affiliation_variants on 'UserProfileVariantsForInstance'
-        db.create_table('accounts_userprofilevariantsforinstance_affiliation_variants', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofilevariantsforinstance', models.ForeignKey(orm['accounts.userprofilevariantsforinstance'], null=False)),
-            ('affiliation', models.ForeignKey(orm['instances.affiliation'], null=False))
-        ))
-        db.create_unique('accounts_userprofilevariantsforinstance_affiliation_variants', ['userprofilevariantsforinstance_id', 'affiliation_id'])
-
-        # Deleting field 'UserProfileGender.instance'
-        #db.delete_column('accounts_userprofilegender', 'instance_id')
-
-        # Deleting field 'UserProfileLivingSituation.instance'
-        #db.delete_column('accounts_userprofilelivingsituation', 'instance_id')
-
-        # Deleting field 'UserProfileRace.instance'
-        #db.delete_column('accounts_userprofilerace', 'instance_id')
-
-        # Deleting field 'UserProfileEducation.instance'
-        #db.delete_column('accounts_userprofileeducation', 'instance_id')
-
-        # Deleting field 'UserProfileIncome.instance'
-        #db.delete_column('accounts_userprofileincome', 'instance_id')
-
-        # Deleting field 'UserProfileStake.instance'
-        #db.delete_column('accounts_userprofilestake', 'instance_id')
-
-        # Deleting field 'UserProfileHowDiscovered.instance'
-        #db.delete_column('accounts_userprofilehowdiscovered', 'instance_id')
+        # Adding unique constraint on 'UserProfilePerInstance', fields ['instance', 'user_profile']
+        db.create_unique('accounts_userprofileperinstance', ['instance_id', 'user_profile_id'])
 
 
     def backwards(self, orm):
         
-        # Deleting model 'UserProfilePerInstance'
-        db.delete_table('accounts_userprofileperinstance')
-
-        # Removing M2M table for field affils on 'UserProfilePerInstance'
-        db.delete_table('accounts_userprofileperinstance_affils')
-
-        # Deleting model 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance')
-
-        # Removing M2M table for field stake_variants on 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance_stake_variants')
-
-        # Removing M2M table for field affiliation_variants on 'UserProfileVariantsForInstance'
-        db.delete_table('accounts_userprofilevariantsforinstance_affiliation_variants')
-
-        # User chose to not deal with backwards NULL issues for 'UserProfileGender.instance'
-        raise RuntimeError("Cannot reverse this migration. 'UserProfileGender.instance' and its values cannot be restored.")
-
-        # User chose to not deal with backwards NULL issues for 'UserProfileLivingSituation.instance'
-        raise RuntimeError("Cannot reverse this migration. 'UserProfileLivingSituation.instance' and its values cannot be restored.")
-
-        # User chose to not deal with backwards NULL issues for 'UserProfileRace.instance'
-        raise RuntimeError("Cannot reverse this migration. 'UserProfileRace.instance' and its values cannot be restored.")
-
-        # User chose to not deal with backwards NULL issues for 'UserProfileEducation.instance'
-        raise RuntimeError("Cannot reverse this migration. 'UserProfileEducation.instance' and its values cannot be restored.")
-
-        # User chose to not deal with backwards NULL issues for 'UserProfileIncome.instance'
-        raise RuntimeError("Cannot reverse this migration. 'UserProfileIncome.instance' and its values cannot be restored.")
-
-        # User chose to not deal with backwards NULL issues for 'UserProfileStake.instance'
-        raise RuntimeError("Cannot reverse this migration. 'UserProfileStake.instance' and its values cannot be restored.")
-
-        # User chose to not deal with backwards NULL issues for 'UserProfileHowDiscovered.instance'
-        raise RuntimeError("Cannot reverse this migration. 'UserProfileHowDiscovered.instance' and its values cannot be restored.")
+        # Removing unique constraint on 'UserProfilePerInstance', fields ['instance', 'user_profile']
+        db.delete_unique('accounts_userprofileperinstance', ['instance_id', 'user_profile_id'])
 
 
     models = {
@@ -122,8 +31,6 @@ class Migration(SchemaMigration):
         },
         'accounts.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
-            'affiliations': ('django.db.models.fields.TextField', [], {'default': "''", 'null': 'True', 'blank': 'True'}),
-            'affils': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['instances.Affiliation']", 'symmetrical': 'False'}),
             'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'birth_year': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
             'city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '128', 'blank': 'True'}),
@@ -136,13 +43,11 @@ class Migration(SchemaMigration):
             'how_discovered_other': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '128', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'income': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileIncome']", 'null': 'True', 'blank': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'user_profiles'", 'null': 'True', 'to': "orm['instances.Instance']"}),
             'instances': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'user_profiles_list'", 'to': "orm['instances.Instance']", 'through': "orm['accounts.UserProfilePerInstance']", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
             'living': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileLivingSituation']", 'null': 'True', 'blank': 'True'}),
             'preferred_language': ('django.db.models.fields.CharField', [], {'default': "'en-us'", 'max_length': '5'}),
             'race': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileRace']", 'null': 'True', 'blank': 'True'}),
             'receive_email': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'stake': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['accounts.UserProfileStake']", 'null': 'True', 'blank': 'True'}),
             'totalPoints': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'unique': 'True'}),
             'zip_code': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10', 'blank': 'True'})
@@ -208,7 +113,7 @@ class Migration(SchemaMigration):
             'situation': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
         'accounts.userprofileperinstance': {
-            'Meta': {'object_name': 'UserProfilePerInstance'},
+            'Meta': {'unique_together': "(('user_profile', 'instance'),)", 'object_name': 'UserProfilePerInstance'},
             'affils': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['instances.Affiliation']", 'symmetrical': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']"}),
@@ -317,10 +222,9 @@ class Migration(SchemaMigration):
         },
         'instances.city': {
             'Meta': {'object_name': 'City'},
-            'domain': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
+            'domain': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['sites.Site']"})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'instances.instance': {
             'Meta': {'object_name': 'Instance'},
@@ -341,12 +245,6 @@ class Migration(SchemaMigration):
             'code': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'sites.site': {
-            'Meta': {'ordering': "('domain',)", 'object_name': 'Site', 'db_table': "'django_site'"},
-            'domain': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         }
     }
 
