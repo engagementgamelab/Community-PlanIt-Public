@@ -382,32 +382,35 @@ def activity(request, activity_id, template=None, **kwargs):
 
 class NewActivityWizard(FormWizard):
 
+    def parse_params(self, request, *args, **kwargs):
+        self.mission_slug = kwargs.get('mission_slug', '')
+
     def done(self, request, form_list):
-        #import ipdb;ipdb.set_trace()
 
         form_one = form_list[0]
 
+        type = PlayerActivityType.objects.get( type=form_one.cleaned_data.get('type'))
+        mission = Mission.objects.get(slug=self.mission_slug)
+        q = form_one.cleaned_data.get('question', '')
         create_kwargs =dict( 
-                mission=Mission.objects.all()[0],
+                mission=mission,
                 creationUser=request.user,
-                type=PlayerActivityType.objects.get(
-                        type=form_one.cleaned_data.get('type')
-                ),
-                question=form_one.cleaned_data.get('question', ''),
+                type=type,
+                question=q,
                 name = form_one.cleaned_data.get('name', ''),
         )
-        activity, created = PlayerActivity.objects.create(**create_kwargs)
+        new_activity = PlayerActivity.objects.create(**create_kwargs)
         if len(form_list) == 2:
             form_two = form_list[1]
             for f in  form_two.cleaned_data.keys():
-                mc, created = MultiChoiceActivity.objects.create(
+                mc = MultiChoiceActivity.objects.create(
                         value=form_two.cleaned_data.get(f, ''),
-                        activity=activity
+                        activity=new_activity,
                 )
-                print created, mc
+                print  mc
 
         return render(request, 'player_activities/new_activity_thanks.html', {
-            'form_data': [form.cleaned_data for form in form_list],
+            'mission_slug':self.mission_slug,
         })
 
     def process_step(self, request, form, step):

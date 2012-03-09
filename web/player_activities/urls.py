@@ -5,7 +5,7 @@ from player_activities.views.activities import NewActivityWizard
 urlpatterns = patterns('player_activities.views',
     # Need to import all URLs from activities
     #url(r"^$", "index", name="all"),
-    url(r"^new/$",
+    url(r"^(?P<mission_slug>[-\w]+)/new/$",
         NewActivityWizard([SelectNewActivityForm,]),
         name = "new"),
     url(r"^(?P<activity_id>\d+)/$",

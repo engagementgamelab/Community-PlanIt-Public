@@ -74,11 +74,11 @@ class SelectNewActivityForm(forms.Form):
 
 class MultiResponseForm(forms.Form):
 
-    answ1 = forms.CharField(required=True, max_length=255, label=_("Answer One"))
-    answ2 = forms.CharField(required=True, max_length=255, label=_("Answer Two"))
-    answ3 = forms.CharField(required=True, max_length=255, label=_("Answer Three"))
-    answ4 = forms.CharField(required=True, max_length=255, label=_("Answer Four"))
-    answ5 = forms.CharField(required=True, max_length=255, label=_("Answer Five"))
+    answ1 = forms.CharField(required=True, max_length=255, label=_("Answer a)"))
+    answ2 = forms.CharField(required=True, max_length=255, label=_("Answer b)"))
+    answ3 = forms.CharField(required=True, max_length=255, label=_("Answer c)"))
+    answ4 = forms.CharField(required=True, max_length=255, label=_("Answer d)"))
+    answ5 = forms.CharField(required=True, max_length=255, label=_("Answer e)"))
 
     class Meta:
         exclude = ('activity',)

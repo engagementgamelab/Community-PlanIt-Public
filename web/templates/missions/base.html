@@ -51,6 +51,7 @@
 {% else %}
     {% trans "Activities" %}:
 {% endif %}</h3>
+<div><a href="{% url activities:new mission.slug %}">create a new activity</a></div>
 <table class="activities">
     <tbody>
     {% for activity in activities %}
