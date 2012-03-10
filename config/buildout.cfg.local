@@ -1,0 +1,40 @@
+[buildout]
+
+extends=Community-PlanIt/config/buildout_base.cfg
+
+project_name=Community-PlanIt
+buildout_root_dir = /var/local/
+venv_dir = ${buildout:buildout_root_dir}/venv
+venv_name = cpi-pk
+download_cache_dir = ${buildout:buildout_root_dir}buildout
+eggs-directory=${buildout:download_cache_dir}/eggs
+download-cache = ${buildout:download_cache_dir}/cache
+
+uwsgi_port=3031
+
+eggs += 
+       ipdb
+       ipython
+       django_extensions
+       django-debug-toolbar
+       django-devserver
+       line_profiler
+       indexer
+       django-paging
+       django-template-repl
+
+[uwsgi]
+recipe=shaunsephton.recipe.uwsgi
+uid=www-data
+home=${buildout:venv_dir}${buildout:venv_name}/${buildout:project_name}/web
+extra-paths=${buildout:venv_dir}${buildout:venv_name}/${buildout:project_name}/web
+pythonpath=${buildout:venv_dir}${buildout:venv_name}/${buildout:project_name}/web
+module=wsgi
+socket=127.0.0.1:${buildout:uwsgi_port}
+master=True
+eggs=${buildout:eggs}
+
+
+
+
+
