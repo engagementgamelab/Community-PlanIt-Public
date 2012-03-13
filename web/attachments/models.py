@@ -38,6 +38,8 @@ class Attachment(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, editable=False)
     instance = models.ForeignKey(Instance, blank=True, null=True, editable=False)
 
+    is_slideshow = models.BooleanField(verbose_name=_("Display as part of a Slideshow"), default=False)
+
     # we try to validate URLs, but it's expensive -- you don't want to 
     # check every comment attachment when loading a page with a discussion --
     # so we cache the results of each check and update attachment status with a
