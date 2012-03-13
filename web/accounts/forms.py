@@ -349,7 +349,7 @@ class AccountAuthenticationForm(AuthenticationForm):
         self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)        
         print Instance.objects.active().language(get_language())
 
-        if City.objects.filter(domain=self.site):
+        if not City.objects.filter(domain=self.site):
             self.fields['instance'] = forms.ModelChoiceField(Instance.objects.active().language(get_language()))
 
     def clean(self, *args, **kwargs):
