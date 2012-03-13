@@ -9,9 +9,8 @@ def instance_from_request(request):
         instance = Instance.objects.get(for_city__domain=domain)
     except Instance.DoesNotExist:
         pass
-    print "inst from req: ", instance.title
     return {
-            'current_instance' : instance,
+            'instance' : instance,
     }
 
 

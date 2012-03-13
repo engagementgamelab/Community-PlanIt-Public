@@ -56,8 +56,12 @@ def all(request, template="missions/all.html", extra_context={}):
     # {{ current_instance.missions.active  }} does not work.
     # although using it here works fine. go figure nani.
     current_instance = instance_from_request(request)
-    context = {"current_instance": "current_instance",
-            'active_missions': current_instance.missions.active()}
+    context = dict(
+            instance= "current_instance",
+            active_missions= current_instance.missions.active(),
+            active_future= current_instance.missions.future(),
+            active_past= current_instance.missions.past(),
+    )
     if extra_context.keys():
         context.update(extra_context)
     return render_to_response(template, RequestContext(request, context))
