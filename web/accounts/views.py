@@ -41,6 +41,10 @@ from web.values.models import *
 from web.core.utils import _fake_latest
 #from web.decorators import protect_domain
 
+import logging
+
+log = logging.getLogger(__name__)
+
 @csrf_protect
 @never_cache
 def login(request, template_name='registration/login.html',
@@ -68,12 +72,14 @@ def login(request, template_name='registration/login.html',
 
             # Okay, security checks complete. Log the user in.
             auth_login(request, form.get_user())
+            user = form.get_user()
+            log.debug('logged in: %s <%s>' % (str(user), user.email))
 
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
 
-            user = form.get_user()
             up = user.get_profile()
+            log.debug('logged in profile: %s' % str(up))
             lang = up.preferred_language
 
             if lang in dict(settings.LANGUAGES).keys():
@@ -92,6 +98,9 @@ def login(request, template_name='registration/login.html',
                                 redirect_to
                             ]
             ))
+        else:
+            log.debug('form invalid %s' % form.errors)
+
     else:
         form = authentication_form(request)
 

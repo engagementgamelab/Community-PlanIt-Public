@@ -16,7 +16,7 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 ADMIN_TOOLS_MEDIA_URL = '/static/'
 ADMIN_TOOLS_MENU = 'web.reports.admin.ReportsMenu'
 
-ADMINS = ( ('Benedict Holland', 'sheepskin505@gmail.com'), )
+ADMINS = ( ('philip.kalinsky', 'eloquentbits.com'), )
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 AUTHENTICATION_BACKENDS = ( 'web.accounts.backends.EmailBackend', )
 DATE_FORMAT = '%m/%d/%Y'
@@ -245,18 +245,45 @@ GMAP_JQUERY = '/assets/3pty/js/jquery-1.4.4.min.js'
 # more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
     'handlers': {
+        'default': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(ROOTDIR, '../../log/cpi.log'),
+            'maxBytes': 1024*1024*5, # 5 MB
+            'backupCount': 5,
+            'formatter':'standard',
+        },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'request_handler': {
+                'class':'django.utils.log.NullHandler',
+        },
+
     },
     'loggers': {
+        '': {
+            'handlers': ['default'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
+        },
+        'django.db.backends': { # Stop SQL debug from logging to main logger
+            'handlers': ['request_handler'],
+            'level': 'DEBUG',
+            'propagate': False
         },
     }
 }
