@@ -42,7 +42,6 @@ from web.core.utils import _fake_latest
 #from web.decorators import protect_domain
 
 import logging
-
 log = logging.getLogger(__name__)
 
 @csrf_protect
