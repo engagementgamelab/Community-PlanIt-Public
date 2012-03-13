@@ -125,7 +125,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.request',
-    #'web.context_processors.instance_from_request',
+    'web.context_processors.instance_from_request',
 )
 
 TIME_ZONE = 'America/New_York'
