@@ -347,8 +347,9 @@ class AccountAuthenticationForm(AuthenticationForm):
         self.user = request.user
         super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
         self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)        
+        print Instance.objects.active().language(get_language())
 
-        if not City.objects.filter(domain=self.site):
+        if City.objects.filter(domain=self.site):
             self.fields['instance'] = forms.ModelChoiceField(Instance.objects.active().language(get_language()))
 
     def clean(self, *args, **kwargs):
@@ -362,7 +363,7 @@ class AccountAuthenticationForm(AuthenticationForm):
         try:
             UserProfilePerInstance.objects.get(
                         instance=instance, 
-                        user_profile__user__email=self.cleaned_data['username']
+                        user_profile__user__email=self.cleaned_data.get('username', '')
             )
         except UserProfilePerInstance.DoesNotExist:
             raise forms.ValidationError(_("You have not registered for this instance."))
