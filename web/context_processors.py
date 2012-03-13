@@ -14,7 +14,13 @@ def instance_from_request(request):
             instance = Instance.objects.get(for_city__domain=domain)
         except Instance.DoesNotExist:
             pass
-    log.debug('domain: %s, user: %s,  current_instance: %s' % (domain.domain, str(request.user), str(instance)))
+
+    if domain is not None:
+        domain_name = domain.domain
+    else:
+        domain_name='-none-'
+
+    log.debug('domain: %s, user: %s,  current_instance: %s' % (domain_name, str(request.user), str(instance)))
     return {
             'instance' : instance,
     }
