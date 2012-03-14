@@ -2,8 +2,8 @@ from web.attachments.models import *
 from django.contrib import admin
 
 class AttachmentAdmin(admin.ModelAdmin):
-    list_display = ('file', 'type', 'user', 'instance')
-    list_filter = ('type', 'instance')
+    list_display = ('file', 'user', 'instance')
+    list_filter = ('att_type', 'instance')
 
     def queryset(self, request):
         qs = super(AttachmentAdmin, self).queryset(request)
