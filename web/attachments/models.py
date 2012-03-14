@@ -35,7 +35,7 @@ class Attachment(models.Model):
     att_type = models.IntegerField("Attachment Type", choices=ATTACHMENT_TYPES, blank=True, null=True)
     flagged = models.IntegerField(default=0)
     user = models.ForeignKey(User, blank=True, null=True, editable=False)
-    instance = models.ForeignKey(Instance, blank=True, null=True, editable=False)
+    instance = models.ForeignKey(Instance, blank=True, null=True)
 
     is_slideshow = models.BooleanField(verbose_name=_("Display as part of a Slideshow"), default=False)
 
