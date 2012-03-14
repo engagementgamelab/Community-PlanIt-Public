@@ -9,9 +9,9 @@ log = logging.getLogger(__name__)
 
 def instance_from_request(request):
     instance = None
-    if request.user.is_authenticated():
+    if request and request.user.is_authenticated():
         instance = utils_instance_from_request(request)
-    log.debug('city %s, user: %s,  current_instance: %s' % (instance.for_city.domain, str(request.user), str(instance)))
+        log.debug('city %s, user: %s,  current_instance: %s' % (instance.for_city.domain, str(request.user), str(instance)))
     return { 'instance' : instance, }
 
 
