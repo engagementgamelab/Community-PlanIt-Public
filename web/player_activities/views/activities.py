@@ -24,6 +24,9 @@ from reports.actions import *
 
 from django.db.models import get_model
 
+import logging
+log = logging.getLogger(__name__)
+
 def _build_context(request, action, activity, user=None):
 
     context = {}
@@ -385,6 +388,19 @@ class NewActivityWizard(FormWizard):
     def parse_params(self, request, *args, **kwargs):
         self.mission_slug = kwargs.get('mission_slug', '')
 
+    def process_step(self, request, form, step):
+        if form.cleaned_data.get('type') == 'multi_response':
+            self.form_list = [
+                SelectNewActivityForm,
+                MultiResponseForm,
+            ]
+
+    def get_template(self, step):
+        log.debug("new activity wizard step %s" % step)
+        t = { 0: 'player_activities/new_activity_base.html',
+              1: 'player_activities/new_activity_multi.html', }
+        return t.get(step)
+
     def done(self, request, form_list):
 
         form_one = form_list[0]
@@ -413,18 +429,5 @@ class NewActivityWizard(FormWizard):
             'mission_slug':self.mission_slug,
         })
 
-    def process_step(self, request, form, step):
-        if form.cleaned_data.get('type') == 'multi_response':
-            self.form_list = [
-                SelectNewActivityForm,
-                MultiResponseForm,
-            ]
-        print self.form_list
-
-    def get_template(self, step):
-        if step == 0:
-            return 'player_activities/new_activity_base.html'
-        if step == 1:
-            return 'player_activities/new_activity_multi.html'
 
 

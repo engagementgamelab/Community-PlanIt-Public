@@ -21,6 +21,10 @@ from web.instances.models import Instance, City
 
 from web.core.utils import get_translation_with_fallback
 
+import logging
+
+log = logging.getLogger(__name__)
+
 class RegisterFormOne(forms.Form):
 
     first_name = forms.CharField(required=True, max_length=30, label=_("First Name"))
@@ -343,11 +347,10 @@ class AccountAuthenticationForm(AuthenticationForm):
     """
     def __init__(self, request=None, *args, **kwargs):
         self.site = RequestSite(request)
-        print self.site.domain
+        log.debug("login form to %s" %(self.site.domain))
         self.user = request.user
         super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
         self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)        
-        print Instance.objects.active().language(get_language())
 
         if not City.objects.filter(domain=self.site):
             self.fields['instance'] = forms.ModelChoiceField(Instance.objects.active().language(get_language()))

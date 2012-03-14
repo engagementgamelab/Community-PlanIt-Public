@@ -38,7 +38,7 @@ from web.missions.models import Mission
 from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
 from web.reports.models import Activity
 from web.values.models import *
-from web.core.utils import _fake_latest
+from web.core.utils import _fake_latest, instance_from_request
 #from web.decorators import protect_domain
 
 import logging
@@ -283,8 +283,7 @@ def edit(request):
 def profile(request, id):
     player = get_object_or_404(User, id=id)
     profile = player.get_profile()
-
-    instance = profile.instance
+    instance = instance_from_request(request)
     #log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
 
     stream = Action.objects.get_for_actor(player)
@@ -329,7 +328,7 @@ def profile(request, id):
             return HttpResponseRedirect(reverse('accounts_profile', args=[id]))
 
 
-    values = Value.objects.filter(instance=profile.instance)
+    values = Value.objects.filter(instance=instance)
     community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
 
     value_wrapper = []
