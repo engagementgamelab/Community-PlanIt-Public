@@ -13,6 +13,7 @@ from comments.forms import *
 from comments.models import Comment
 from player_activities.models import PlayerActivity
 from reports.models import ActivityLogger
+from core.utils import instance_from_request
 
 def _get_activity(pk, model_klass):
     trans_model = model_klass.objects.translations_model()
@@ -25,13 +26,16 @@ def _get_activity(pk, model_klass):
             raise model_klass.DoesNotExist("activity translation could not be located. fallback does not exist.")
 
 def comment_fun(answer, request, form=None, message=''):
+
+    current_instance = instance_from_request(request)
+
     if form is not None:
         message = form.cleaned_data['message']
     comment = answer.comments.create(
         content_object=answer,
         message=message,
         user=request.user,
-        instance=request.user.get_profile().instance,
+        instance=current_instance,
     )
 
     if request.POST.has_key('video-url'):
@@ -41,7 +45,7 @@ def comment_fun(answer, request, form=None, message=''):
                     url=request.POST.get('video-url'),
                     type='video',
                     user=request.user,
-                    instance=request.user.get_profile().instance)
+                    instance=current_instance)
     
     if request.FILES.has_key('picture'):
         file = request.FILES.get('picture')
@@ -51,7 +55,7 @@ def comment_fun(answer, request, form=None, message=''):
         comment.attachment.create(
             file=request.FILES.get('picture'),
             user=request.user,
-            instance=request.user.get_profile().instance)
+            instance=current_instance)
 
 def getComments(answers, ModelType, activity=None):
     comments = None
