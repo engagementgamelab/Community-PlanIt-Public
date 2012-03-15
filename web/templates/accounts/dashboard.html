@@ -113,6 +113,7 @@
         
         <div class="feed">
             <h3>{% trans "Latest Events" %}</h3>
+            {% comment %}
             <table>
             <tbody>
             {% for action in stream %}
@@ -125,6 +126,7 @@
             {% endfor %}
             </tbody>
             </table>
+            {% endcomment %}
 
             {% if not instance.is_expired %}
                 <p><a href="{% url instances:instance instance.slug %}" class="right button">View more community news</a> </p>

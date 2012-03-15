@@ -68,7 +68,7 @@ def crowd(request, id, template='crowds/base.html'):
                     user=request.user,
                     instance=request.user.get_profile().instance)
                 #ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'completed', reverse('challenges:challenge', args=[id]), 'challenge')
-                stream_utils.action.send(request.user, 'challenge_completed', target=instance, action_object=challenge, description="A challenge was completed")
+                #stream_utils.action.send(request.user, 'challenge_completed', target=instance, action_object=challenge, description="A challenge was completed")
             PointsAssigner().assign(request.user, 'challenge_completed')
 
             if pc.player != challenge.user:
@@ -247,7 +247,7 @@ def comment(request, id):
 
             PointsAssigner().assign(request.user, 'comment_created')
             #ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name[:30], 'added comment', reverse('challenges:challenge', args=[id]), 'challenge')
-            stream_utils.action.send(request.user, 'challenge_commented', target=challenge, action_object=c, 
+            #stream_utils.action.send(request.user, 'challenge_commented', target=challenge, action_object=c, 
                                     description="Commented on a challenge"
             )
 
