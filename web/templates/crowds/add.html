@@ -1,0 +1,81 @@
+{% extends "layouts/base.html" %}
+{% load i18n %}
+
+{% block section %}challenges{% endblock %}
+
+{% block title %}Create Challenge{% endblock %}
+{% block page_title %}
+    <h2 id="page_title">{% trans "Create Challenge" %}</h2>
+{% endblock %}
+
+{% block main %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
+
+        <div class="fieldWrapper">
+            {{form.name.label_tag}}
+            {{form.name}}
+            {{form.name.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.description.label_tag}}
+            <div class="help">
+                {{form.description.help_text}}
+            </div>
+            {{form.description}}
+            <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div>
+            {{form.description.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.map.label_tag}}
+            {{form.map}}
+            {{form.map.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.start_date.label_tag}}
+            {{form.start_date}}
+            {{form.start_date.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.end_date.label_tag}}
+            {{form.end_date}}
+            {{form.end_date.errors}}
+        </div>
+
+        <div class="controls">
+            <input type="submit" class="button submit" value="{% trans "Create Challenge" %}">
+        </div>
+    </form>
+{% endblock %}
+    
+{% block body %}
+    <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="/admin/gmapsfield/admin/admin.js"></script>
+    <script src="{{MEDIA_URL}}3pty/js/date.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        jQuery(function($) {
+            $(".add-map, .remove-map").remove();
+
+            $("#id_end_date_0").datepicker();
+            $("#id_end_date_1").timepicker({
+                hourGrid: 6,
+                minuteGrid: 15,
+                ampm: true,
+                timeFormat: "hh:mm TT"
+            });
+
+            $("#id_start_date_0").datepicker();
+            $("#id_start_date_1").timepicker({
+                hourGrid: 6,
+                minuteGrid: 15,
+            	ampm: true,
+                timeFormat: "hh:mm TT"
+            });
+        });
+    </script>
+{% endblock %}

@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     'answers',
     'attachments',
     'challenges',
+    'crowds',
     'comments',
     'core',
     'curator',
@@ -171,6 +172,8 @@ STREAM_VERBS = (
     ('challenge_deleted', 'deleted a challenge'),
     ('challenge_commented', 'commented on a challenge'),
     ('challenge_completed', 'completed a challenge'),
+
+    ('crowd_created', 'create a crowd'),
 
     ('activity_official_response_created', 'created a response'),
 

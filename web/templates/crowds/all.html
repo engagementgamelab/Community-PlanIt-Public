@@ -1,0 +1,114 @@
+{% extends "layouts/base.html" %}
+{% load game_extras i18n %}
+
+{% block title %}{% trans "Challenges" %}{% endblock %}
+{% block page_title %}
+<h2 id="page_title">{% trans "Available Challenges" %}</h2>
+{% endblock %}
+
+{% block section %}challenges{% endblock %}
+{% block extra_body_class %}rightsidebar{% endblock %}
+
+{% block rightsidebar %}
+{% if not instance.is_expired %}
+    <div class="sectionbutton">
+        <a href="{% url challenges:add %}" class="button">{% trans "Create a Challenge" %}</a>
+    </div>
+
+    <div class="section">
+        <h2>{% trans "Completed challenges" %}</h2>
+        <div class="challenges">
+            <table>
+                <tbody>
+                {% for challenge in request.user.player_challenges.completed %}
+                    <tr class="{% cycle "odd" "even" %}">
+                        <td>
+                            <a href="{% url challenges:challenge challenge.challenge.pk %}">{{challenge.challenge.name}}</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr class="odd">
+                        <td>{% trans "No completed challenges found" %}.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>{% trans "Past Challenges" %}</h2>
+        <div class="challenges">
+            <table>
+                <tbody>
+                {% for challenge in instance.challenges.past %}
+                    <tr class="{% cycle "odd" "even" %}">
+                        <td>
+                            <a href="{% url challenges:challenge challenge.pk %}">{{challenge.name}}</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr class="odd">
+                        <td>{% trans "No past challenges found" %}.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block main %}
+    {% get_points challenge_completed as challenge_completed_points %}
+    <ul class="challenge_list">
+
+    {% if not instance.is_expired %}
+
+        {% for challenge in new_challenges %}
+        <li class="challenge">
+            <a href="{% url challenges:challenge challenge.pk %}">
+                {{challenge.name}}<span>{{challenge_completed_points}} {% trans "points" %}</span>
+                {% if challenge.start_date or challenge.end_date %}
+                <br/>
+                <span class="dates">{{challenge.start_date|date:"m/d/Y"}} through {{challenge.end_date|date:"m/d/Y"}}</span>
+                {% endif %}
+            </a>
+        </li>
+        {% empty %}
+        <li>
+        {% trans "There are no active challenges" %}. <a href="{% url challenges:add %}" class="button">{% trans "Create one!" %}</a>
+        </li>
+        {% endfor %}
+
+    {% else %}
+
+        {% for challenge in instance.challenges.all %}
+        <li class="challenge">
+            <a href="{% url challenges:challenge challenge.pk %}">
+                {{challenge.name}}<span>{{challenge_completed_points}} {% trans "points" %}</span>
+                {% if challenge.start_date or challenge.end_date %}
+                <br/>
+                <span class="dates">{{challenge.start_date|date:"m/d/Y"}} through {{challenge.end_date|date:"m/d/Y"}}</span>
+                {% endif %}
+            </a>
+        </li>
+        {% empty %}
+        <li>
+        {% trans "There are no active challenges" %}. <a href="{% url challenges:add %}" class="button">{% trans "Create one!" %}</a>
+        </li>
+        {% endfor %}
+
+    {% endif %}
+    </ul>
+
+{% comment %}
+{% else %}
+<h2>{{instance}} {% trans "has ended" %}.</h2>
+    <div class="gridview listless">
+        {% trans "You may not add or accept new challenges" %}.
+    </div>
+{% endcomment %}
+
+
+{% endblock %}

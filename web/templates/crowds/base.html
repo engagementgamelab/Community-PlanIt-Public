@@ -1,0 +1,122 @@
+{% extends "layouts/base.html" %}
+{% load gmap attachment_tags cpi_tags i18n %}
+{% block section %}challenges{% endblock %}
+{% block title %}{% trans "Challenge" %}{% endblock %}
+{% block page_title %}
+<h2 id="page_title">{{challenge.name}}</h2>
+{% endblock %}
+
+{% block main %}
+
+
+{% if challenge.challengeofficialresponse %}
+<h2> {{ instance.title }}'s {% trans "Response" %} </h2>
+
+{% with comments=challenge.challengeofficialresponse.comments %}
+    <div class="comments embedded">
+        <ul class="comment_list">
+            {% for comment in comments.all %}
+                {% with extra_message=challenge.name %}
+                {% include "comments/comment.html" %}
+                {% endwith %}
+            {% empty %}
+            <li class="comment">No comments found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endwith %}
+{% endif %}
+
+{% if challenge.user.get_profile %}
+{% url accounts_profile challenge.user.pk as creator_profile_url %}
+<h3>{% blocktrans with creator=challenge.user.get_profile.screen_name %}Created by <a href="{{creator_profile_url}}">{{creator}}</a>{% endblocktrans %}</h3>
+{% endif %}
+
+<p>{{ challenge.description }}</p>
+
+<div>
+{% if not challenge.is_active %}
+    {% if challenge.is_expired %}
+        {% trans "This challenge has expired." %}
+    {% else %}
+        {% trans "This challenge has not yet started." %}
+    {% endif %}
+{% endif %}
+</div>
+
+{{ challenge.map|show }}
+
+{% if challenge.is_active and not player_challenge.completed  and not instance.is_expired %}
+    <p>{% trans "Provide evidence to complete this challenge:" %}</p>
+
+    <form class="response" enctype="multipart/form-data" action="{% url challenges:challenge challenge.pk %}" method="POST">{% csrf_token %}
+
+        {{response_form.errors}}
+
+        <div class="attachments">
+            <div class="controls">
+                {% blocktrans %}
+                Include <a id="add-video" href="#add-video" class="add-video button small">Video</a> or <a id="add-picture" href="#add-picture" class="add-picture button small">Picture</a>
+                {% endblocktrans %}
+            </div>
+            <div class="add-video form">
+                <label id="video-url_label" for="video-url">{% trans "Paste the link to your video below. For Vimeo, it should look like http://vimeo.com/VIDEOID. For YouTube, it should look like http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID." %}</label>
+                <textarea name="video-url" type="text" maxlength="255"></textarea>
+                <div class="controls">
+                    <button class="button small add">{% trans "add" %}</button>
+                    <button type="reset" class="button small reset">{% trans "remove" %}</button>
+                </div>
+            </div>
+            <div class="add-picture form">
+                <label for="picture">{% trans "Picture (max size 5MB)" %}:</label> <input name="picture" type="file">
+                <div class="controls">
+                    <button class="button small add">{% trans "add" %}</button>
+                    <button type="reset" class="button small reset">{% trans "remove" %}</button>
+                </div>
+            </div>
+            <div class="notification"></div>
+        </div>
+        {{response_form.message}}
+        <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div>
+        <button type="submit" class="button submit right">{% trans "Submit response" %}</button>
+        <div style="clear: both;"></div>
+    </form>
+{% endif %}
+
+{% if challenge.is_started %}
+<h2>{% trans "Responses" %}</h2>
+
+{% if challenge.player_challenges.completed %}
+<div class="comments embedded">
+     <h2>            
+         <div class="controls right">
+             Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+         </div>
+    </h2>
+</div>
+{% endif %}
+        
+    <div class="comments embedded">
+        <ul class="comment_list">
+{% for pc in challenge.player_challenges.completed %}
+    {% if pc.comments.all %}
+        {% with instance=pc.challenge.instance comments=pc.comments %}
+            {% for comment in comments.all %}
+                {% include "comments/comment.html" %}
+            {% empty %}
+            <li class="comment">{% trans "No comments found." %}</li>
+            {% endfor %}
+        {% endwith %}
+    {% endif %}
+{% empty %}
+<li>{% trans "No one has completed this challenge." %}</li>
+{% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block body %} 
+    {% gmap_includes %} 
+{% endblock %}
