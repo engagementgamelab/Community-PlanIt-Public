@@ -15,7 +15,7 @@ from comments.forms import CommentForm
 from comments.models import Comment
 from reports.actions import PointsAssigner
 #from responses.comment.forms import CommentAttachmentResponseForm
-from core.utils import _fake_latest
+from core.utils import _fake_latest, instance_from_request
 
 from PIL import Image
 
@@ -139,17 +139,16 @@ def decline(request, id):
 
 @login_required
 def add(request):
-
-    instance = request.user.get_profile().instance
-    if instance.is_expired():
+    current_instance = instance_from_request(request)
+    if current_instance.is_expired():
         return HttpResponseRedirect(reverse('challenges:index'))
 
     if request.method == 'POST':
-        form = AddChallenge(instance, request.POST)
+        form = AddChallenge(current_instance, request.POST)
         if form.is_valid():
             map = None
             if (request.POST.get('map', None) == None or request.POST.get('map', None) == "None"):
-                map = instance.location
+                map = current_instance.location
             else:
                 map = form.cleaned_data['map']
 
@@ -160,25 +159,25 @@ def add(request):
                 start_date = form.cleaned_data['start_date'],
                 end_date = form.cleaned_data['end_date'],
 
-                instance = instance,
+                instance = current_instance,
                 user = request.user,
             )
             challenge.save()
 
             PointsAssigner().assign(request.user, 'challenge_created')
             #ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'created', reverse('challenges:challenge', args=[challenge.id]), 'challenge')
-            stream_utils.action.send(request.user, 'challenge_created', target=instance, action_object=challenge, 
+            stream_utils.action.send(request.user, 'challenge_created', target=current_instance, action_object=challenge, 
                                      description="A challenge was created"
             )
             return HttpResponseRedirect(reverse('challenges:index'))
     else:
-        form = AddChallenge(instance)
+        form = AddChallenge(current_instance)
 
-    location = instance.location
+    location = current_instance.location
     
     tmpl = loader.get_template('challenges/add.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
-        'instance': instance,
+        'instance': current_instance,
         'form': form,
         'location': location.coordinates,
     },
@@ -286,22 +285,11 @@ def comment(request, id):
 
 @login_required
 def all(request):
-    instance = None
-
-    profile = request.user.get_profile()
-    if profile.instance:
-        instance = profile.instance
-    elif request.user.is_staff or request.user.is_superuser:
-
-        #instance = Instance.objects.active().latest()
-        instance = Instance.objects.untranslated().latest()
-
-    new_challenges = instance.challenges.available(request.user)
-
+    current_instance = instance_from_request(request)
+    new_challenges = current_instance.challenges.available(request.user)
     tmpl = loader.get_template('challenges/all.html')
-
     return HttpResponse(tmpl.render(RequestContext(request, {
-        'instance': instance,
+        'instance': current_instance,
         'new_challenges': new_challenges,
     }, 
     )))
