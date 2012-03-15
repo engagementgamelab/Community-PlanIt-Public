@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 from gmapsfield.fields import GoogleMapsField
 
 from instances.models import Instance
-from challenges.models import PlayerChallenge
 
 def list_submodels(parent):
     _models = []
@@ -18,37 +17,18 @@ def list_submodels(parent):
             _models.append( (model.__module__, model._meta.verbose_name) )
     return _models
 
-# Ability for players to create challenges
-class AddChallenge(forms.Form):
+# Ability for players to create crowds
+class CrowdForm(forms.Form):
     map = GoogleMapsField().formfield(label=_('Location'))
     name = forms.CharField(label=_("Name"), max_length=255)
-    description = forms.CharField(label=_("Description"), help_text=_('Describe what people have to do to complete the challenge'), widget=forms.Textarea(attrs={'rows': 6, 'cols': 60}))
+    description = forms.CharField(label=_("Description"), help_text=_('What do you want to accomplish?'), widget=forms.Textarea(attrs={'rows': 6, 'cols': 60}))
     start_date = forms.SplitDateTimeField(required=False,
                                           input_time_formats=('%I:%M %p', '%H:%M'),
-                                          label=_("Challenge Start Date/Time (optional)"),
+                                          label=_("When? (time of event)"),
                                          )
-    end_date = forms.SplitDateTimeField(required=False,
-                                        input_time_formats=('%I:%M %p', '%H:%M'),
-                                        label=_("Challenge End Date/Time (optional)"),
-                                       )
+    confirmation_code = forms.CharField(label=_("Confirmation Code"), max_length=255)
 
     def __init__(self, instance, *args, **kwargs):
         super(AddChallenge, self).__init__(*args, **kwargs)
 
-    def clean_end_date(self):
-        end_date = self.cleaned_data.get('end_date')
-        start_date = self.cleaned_data.get('start_date')
-        if end_date and start_date:
-            # Ensure end date is in the present or the future
-            if self.cleaned_data.get('end_date') < datetime.datetime.now():
-                raise forms.ValidationError(_("Please enter an end date not in the past."))
-            if self.cleaned_data.get('end_date') < self.cleaned_data.get('start_date'):
-                raise forms.ValidationError(_("Please enter an end date after the start date."))
-        return self.cleaned_data.get('end_date')
-
-class PlayerChallengeForm(forms.ModelForm):
-    message = forms.CharField(widget=forms.Textarea)
-    class Meta:
-        model = PlayerChallenge
-        exclude = ('player', 'challenge',)
 
