@@ -247,8 +247,7 @@ def comment(request, id):
 
             PointsAssigner().assign(request.user, 'comment_created')
             #ActivityLogger().log(request.user, request, 'to a challenge: ' + challenge.name[:30], 'added comment', reverse('challenges:challenge', args=[id]), 'challenge')
-            #stream_utils.action.send(request.user, 'challenge_commented', target=challenge, action_object=c, 
-                                    description="Commented on a challenge"
+            #stream_utils.action.send(request.user, 'challenge_commented', target=challenge, action_object=c, description="Commented on a challenge"
             )
 
             if request.user != challenge.user:
