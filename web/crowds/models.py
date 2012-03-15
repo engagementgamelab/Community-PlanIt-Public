@@ -1,19 +1,18 @@
+import os.path
 import datetime
+
 from stream import utils as stream_utils
 from gmapsfield.fields import GoogleMapsField
 
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from django.dispatch import receiver
-from django.db.models.signals import post_save
-
 from django.contrib import admin
-from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
 from attachments.models import Attachment
 from comments.models import Comment
+from accounts.models import CPIUser
 from instances.models import Instance
 from responses.comment.models import CommentResponse
 
@@ -45,8 +44,8 @@ class Crowd(models.Model):
     flagged = models.BooleanField(default=0, editable=False)
 
     instance = models.ForeignKey(Instance, related_name='crowds')
-    creator = models.ForeignKey(User, editable=False, related_name='my_created_crowds')
-    participants = models.ManyToManyField(User, blank=True, related_name='my_participating_crowds')
+    creator = models.ForeignKey(CPIUser, related_name='my_created_crowds')
+    participants = models.ManyToManyField(CPIUser, blank=True, related_name='my_participating_crowds')
     attachments = models.ManyToManyField(Attachment, blank=True)
     comments = generic.GenericRelation(Comment)
 

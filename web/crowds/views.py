@@ -135,15 +135,17 @@ def decline(request, id):
 @login_required
 def rally(request):
     current_instance = instance_from_request(request)
+    current_instance_location = current_instance.location
+
     if current_instance.is_expired():
-        return HttpResponseRedirect(reverse('challenges:index'))
+        return HttpResponseRedirect(reverse('crowds:index'))
 
     if request.method == 'POST':
-        form = AddChallenge(current_instance, request.POST)
+        form = CrowdForm(request.POST)
         if form.is_valid():
             map = None
             if (request.POST.get('map', None) == None or request.POST.get('map', None) == "None"):
-                map = current_instance.location
+                map = current_instance_location
             else:
                 map = form.cleaned_data['map']
 
@@ -166,18 +168,15 @@ def rally(request):
             )
             return HttpResponseRedirect(reverse('challenges:index'))
     else:
-        form = AddChallenge(current_instance)
+        form = CrowdForm()
 
-    location = current_instance.location
-    
-    tmpl = loader.get_template('challenges/add.html')
-    return HttpResponse(tmpl.render(RequestContext(request, {
-        'instance': current_instance,
-        'form': form,
-        'location': location.coordinates,
-    },
-    #[ip]
-    )))
+    return render(request, 'crowds/add.html', 
+        dict(location = current_instance_location,
+             crowds = current_instance.crowds.all(),
+             form = form,)
+    )
+
+
 
 @login_required
 def delete(request, id):
@@ -280,9 +279,15 @@ def comment(request, id):
 
 @login_required
 def all(request):
-    return render(request, 'crowds/all.html', {
-        dict(current_instance = instance_from_request(request),
-             crowds = current_instance.crowds.all())
-    })
+
+    current_instance = instance_from_request(request)
+
+    return render(request, 'crowds/all.html', 
+        dict(current_instance = current_instance,
+             crowds = current_instance.crowds.all(),
+             upcoming = current_instance.crowds.active(),
+             past = current_instance.crowds.past(),
+        )
+    )
 
 

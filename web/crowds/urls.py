@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 from django.contrib.auth.views import login, logout
 
 urlpatterns = patterns('web.crowds.views',
+
     # Accept
     url(r'^(?P<id>\d+)/accept/$', 'accept', name='accept'),
     # Decline
@@ -14,6 +15,7 @@ urlpatterns = patterns('web.crowds.views',
     url(r'^remove/$', 'delete', name='delete'),
     #Submit Response
     #url(r'^(?P<id>\d+)/$', 'challenge', name='challenge'),
+
     # Show all
     url(r'^$', 'all', name='index'),
 )
