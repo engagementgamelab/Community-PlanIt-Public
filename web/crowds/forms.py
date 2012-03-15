@@ -11,21 +11,25 @@ from crowds.models import Crowd
 
 # Ability for players to create crowds
 class CrowdForm(forms.ModelForm):
-    """
+
     map = GoogleMapsField().formfield(label=_('Location'))
-    name = forms.CharField(label=_("Name"), max_length=255)
-    description = forms.CharField(label=_("Description"), help_text=_('What do you want to accomplish?'), widget=forms.Textarea(attrs={'rows': 6, 'cols': 60}))
     start_date = forms.SplitDateTimeField(required=False,
                                           input_time_formats=('%I:%M %p', '%H:%M'),
                                           label=_("When? (time of event)"),
                                          )
-    confirmation_code = forms.CharField(label=_("Confirmation Code"), max_length=255)
+    end_date = forms.SplitDateTimeField(required=False,
+                                          input_time_formats=('%I:%M %p', '%H:%M'),
+                                          label=_("Till When? (end time of event)"),
+                                         )
 
-    def __init__(self, instance, *args, **kwargs):
-        super(AddChallenge, self).__init__(*args, **kwargs)
-	"""
+    def __init__(self, *args, **kwargs):
+        #import ipdb;ipdb.set_trace()
+        #self.fields['description'].help_text=_('What do you want to accomplish?')
+        super(CrowdForm, self).__init__(*args, **kwargs)
+
 
     class Meta:
         model = Crowd
+        exclude = ('instance', 'participants', 'creator', 'flagged', 'attachments', 'comments',)
 
 

@@ -28,9 +28,9 @@ class Migration(SchemaMigration):
         db.create_table('crowds_crowd_participants', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             ('crowd', models.ForeignKey(orm['crowds.crowd'], null=False)),
-            ('cpiuser', models.ForeignKey(orm['accounts.cpiuser'], null=False))
+            ('user', models.ForeignKey(orm['auth.user'], null=False))
         ))
-        db.create_unique('crowds_crowd_participants', ['crowd_id', 'cpiuser_id'])
+        db.create_unique('crowds_crowd_participants', ['crowd_id', 'user_id'])
 
         # Adding M2M table for field attachments on 'Crowd'
         db.create_table('crowds_crowd_attachments', (
@@ -54,9 +54,6 @@ class Migration(SchemaMigration):
 
 
     models = {
-        'accounts.cpiuser': {
-            'Meta': {'object_name': 'CPIUser', 'db_table': "'auth_user'", '_ormbases': ['auth.User'], 'proxy': 'True'}
-        },
         'attachments.attachment': {
             'Meta': {'object_name': 'Attachment'},
             'att_type': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),

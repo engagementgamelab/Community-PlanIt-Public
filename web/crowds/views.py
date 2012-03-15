@@ -93,44 +93,35 @@ def crowd(request, id, template='crowds/base.html'):
     return render_to_response(template, data, context_instance=RequestContext(request))
 
 @login_required
-def accept(request, id):
+def join_crowd(request, id):
 
-    instance = request.user.get_profile().instance
-    if instance.is_expired():
-        return HttpResponseRedirect(reverse('challenges:index'))
+    current_instance = instance_from_request(request)
+    if current_instance.is_expired():
+        return HttpResponseRedirect(reverse('crowds:index'))
 
-    challenge = Challenge.objects.get(id=id)
-    pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-    #ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'accepted', reverse('challenges:challenge', args=[id]), 'challenge')
-    stream_utils.action.send(request.user, 'challenge_accepted', target=instance, action_object=challenge, 
-                            description="A challenge was accepted"
-    )
+    crowd = Crowd.objects.get(id=id)
+    crowd.participants.add(request.user)
 
-    pc.completed = False
-    pc.accepted = True
-    pc.save()
-
-    return HttpResponseRedirect(reverse('challenges:challenge', args=[id]))
+    #stream_utils.action.send(request.user, 'crowd_joined', target=current_instance, action_object=crowd, 
+    #                        description="A challenge was accepted"
+    #)
+    return HttpResponseRedirect(reverse('crowds:index'))
 
 @login_required
-def decline(request, id):
-    instance = request.user.get_profile().instance
-    if instance.is_expired():
-        return HttpResponseRedirect(reverse('challenges:index'))
+def leave_crowd(request, id):
+    current_instance = instance_from_request(request)
+    if current_instance.is_expired():
+        return HttpResponseRedirect(reverse('crowds:index'))
 
-    challenge = get_object_or_404(Challenge, id=id)
+    crowd = Crowd.objects.get(id=id)
+    crowd.participants.remove(request.user)
 
-    pc, created = PlayerChallenge.objects.get_or_create(player=request.user, challenge=challenge)
-    #ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'declined', reverse('challenges:challenge', args=[id]), 'challenge')
-    stream_utils.action.send(request.user, 'challenge_declined', target=instance, action_object=challenge, 
-                            description="A challenge was declined"
-    )
-    
-    pc.declined = True
-    pc.accepted = False
-    pc.save()
-        
-    return HttpResponseRedirect(reverse('challenges:challenge'))
+    #stream_utils.action.send(request.user, 'crowd_joined', target=current_instance, action_object=crowd, 
+    #                        description="A challenge was accepted"
+    #)
+    return HttpResponseRedirect(reverse('crowds:index'))
+
+
 
 @login_required
 def rally(request):
@@ -143,35 +134,29 @@ def rally(request):
     if request.method == 'POST':
         form = CrowdForm(request.POST)
         if form.is_valid():
-            map = None
-            if (request.POST.get('map', None) == None or request.POST.get('map', None) == "None"):
-                map = current_instance_location
-            else:
-                map = form.cleaned_data['map']
+            #map = None
+            #if (request.POST.get('map', None) == None or request.POST.get('map', None) == "None"):
+            #    map = current_instance_location
+            #else:
+            #    map = form.cleaned_data['map']
 
-            challenge = Challenge(
-                map = map,
-                name = form.cleaned_data['name'],
-                description = form.cleaned_data['description'],
-                start_date = form.cleaned_data['start_date'],
-                end_date = form.cleaned_data['end_date'],
+            crowd = form.save(commit=False)
+            crowd.instance = current_instance
+            crowd.creator = request.user
+            crowd.save()
 
-                instance = current_instance,
-                user = request.user,
-            )
-            challenge.save()
-
-            PointsAssigner().assign(request.user, 'challenge_created')
+            #PointsAssigner().assign(request.user, 'challenge_created')
             #ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'created', reverse('challenges:challenge', args=[challenge.id]), 'challenge')
-            stream_utils.action.send(request.user, 'challenge_created', target=current_instance, action_object=challenge, 
-                                     description="A challenge was created"
-            )
-            return HttpResponseRedirect(reverse('challenges:index'))
+            #stream_utils.action.send(request.user, 'challenge_created', target=current_instance, action_object=challenge, 
+            #                         description="A challenge was created"
+            #)
+            return HttpResponseRedirect(reverse('crowds:index'))
+
     else:
         form = CrowdForm()
 
     return render(request, 'crowds/add.html', 
-        dict(location = current_instance_location,
+        dict(location = current_instance_location.coordinates,
              crowds = current_instance.crowds.all(),
              form = form,)
     )
@@ -284,8 +269,7 @@ def all(request):
 
     return render(request, 'crowds/all.html', 
         dict(current_instance = current_instance,
-             crowds = current_instance.crowds.all(),
-             upcoming = current_instance.crowds.active(),
+             upcoming = Crowd.objects.upcoming().filter(instance=current_instance),
              past = current_instance.crowds.past(),
         )
     )
