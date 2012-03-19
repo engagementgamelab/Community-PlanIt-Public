@@ -1,3 +1,4 @@
+import os.path
 import datetime
 
 from stream import utils as stream_utils
@@ -22,10 +23,14 @@ __all__ = (
     'City', 'Language', 'Instance', 'PointsAssignment', 'NotificationRequest', 'Affiliation',
 )
 
+def determine_path(instance, filename):
+    return os.path.join('uploads/cities/', str(instance.domain), filename)
 
 class City(models.Model):
     name = models.CharField(max_length=100)
     domain = models.CharField(max_length=100)
+    description = models.TextField(null=False, blank=True, default='')
+    image = models.ImageField(upload_to=determine_path, null=True, blank=True)
 
     def __unicode__(self):
         return "%s at <%s>" %(self.name, self.domain)
