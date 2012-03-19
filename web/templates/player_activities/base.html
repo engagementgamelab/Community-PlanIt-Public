@@ -40,33 +40,32 @@
 {% block aside %}{% endblock %}
 
 {% block body %}   
-
     <script>
-        jQuery(function($) {
-            $("#id_activity-btn-submit").live("click", function(event){
-                event.preventDefault();
-                $.ajax({
-                        type: "POST",
-                        url: "{% if view_action == 'replay' %} {{ activity.get_replay_url }} {% else %} {{ activity.get_activity_url }} {% endif %}",
-                        data: $('#id_activity-form').serialize(),
-                        success: function(data, textStatus) {
-                            var $data = $(data);
-                            var has_errors = $(data).find(".errorlist");
+    jQuery(function($) {
+        $("#id_activity-btn-submit").live("click", function(event){
+            event.preventDefault();
+            $.ajax({
+                    type: "POST",
+                    url: "{% if view_action == 'replay' %} {{ activity.get_replay_url }} {% else %} {{ activity.get_activity_url }} {% endif %}",
+                    data: $('#id_activity-form').serialize(),
+                    success: function(data, textStatus) {
+                        var $data = $(data);
+                        var has_errors = $(data).find(".errorlist");
 
-                            if (has_errors.length > 0){
-                                $('#content').html($data.find('#content'));
-                            }
-                            else {
-                                window.location='{{ activity.get_overview_url }}';
-                            }
-                        },
-                        error: function(data){                                        
-                            $('#content').html(data.responseText);
+                        if (has_errors.length > 0){
+                            $('#content').html($data.find('#content'));
                         }
-                });
+                        else {
+                            window.location='{{ activity.get_overview_url }}';
+                        }
+                    },
+                    error: function(data){                                        
+                        $('#content').html(data.responseText);
+                    }
             });
+        });
 
-        });    
-        $('#id_response').limit('1000','#charsLeft');
+    });    
+    $('#id_response').limit('1000','#charsLeft');
     </script>
 {% endblock %}

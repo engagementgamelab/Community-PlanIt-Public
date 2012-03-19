@@ -394,12 +394,24 @@ class NewActivityWizard(FormWizard):
                 SelectNewActivityForm,
                 MultiResponseForm,
             ]
+        elif form.cleaned_data.get('type') == 'map':
+            self.form_list = [
+                SelectNewActivityForm,
+                MapForm,
+            ]
 
     def get_template(self, step):
         log.debug("new activity wizard step %s" % step)
-        t = { 0: 'player_activities/new_activity_base.html',
-              1: 'player_activities/new_activity_multi.html', }
-        return t.get(step)
+        #import ipdb;ipdb.set_trace()
+        if len(self.form_list) > 1:
+            if self.form_list[1] == MultiResponseForm:
+                print 'multi map'
+                return 'player_activities/new_activity_multi.html'
+            elif self.form_list[1] == MapForm:
+                print 'map'
+                return 'player_activities/new_activity_map.html'
+        print 'open ended'
+        return 'player_activities/new_activity_base.html'
 
     def done(self, request, form_list):
 

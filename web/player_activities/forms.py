@@ -68,7 +68,7 @@ class SelectNewActivityForm(forms.Form):
     question = forms.CharField(required=True, max_length=1000, label=_("Question"))
     type = forms.ChoiceField(
                 choices=PlayerActivityType.objects.filter(
-                        type__in=['open_ended', 'multi_response']
+                        type__in=['open_ended', 'multi_response', 'map']
                         ).values_list('type', 'displayType')
     )
 
