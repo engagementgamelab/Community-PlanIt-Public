@@ -399,6 +399,20 @@ class NewActivityWizard(FormWizard):
                 SelectNewActivityForm,
                 MapForm,
             ]
+            mission = Mission.objects.get(slug=self.mission_slug)
+            init_coords = []
+            map = mission.instance.location
+            markers = simplejson.loads("%s" % map)["markers"]
+            x = 0
+            for coor in markers if markers != None else []:
+                coor = coor["coordinates"]
+                init_coords.append( [x, coor[0], coor[1]] )
+                x = x + 1
+            self.extra_context.update(dict(
+                init_coords = init_coords,
+                map = map,
+            ))
+            import ipdb;ipdb.set_trace()
 
     def get_template(self, step):
         log.debug("new activity wizard step %s" % step)
