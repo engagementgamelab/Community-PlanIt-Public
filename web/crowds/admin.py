@@ -2,7 +2,8 @@ from crowds.models import *
 from django.contrib import admin
 
 class CrowdAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'screen_name')
+    list_display = ('__str__', 'creator', 'instance')
+    list_filter = ('instance', 'start_date')
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == 'attachments' and getattr(self, 'obj', None):
@@ -19,9 +20,6 @@ class CrowdAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         self.obj = obj 
         return super(CrowdAdmin, self).get_form(request, obj, **kwargs)
-
-    def screen_name(self, obj):
-        return obj.user.get_profile() and obj.user.get_profile().screen_name or obj.user.username
 
 admin.site.register(Crowd, CrowdAdmin)
 #admin.site.register(PlayerChallenge)

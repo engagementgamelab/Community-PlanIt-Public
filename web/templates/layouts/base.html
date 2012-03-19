@@ -49,7 +49,7 @@
                 {% if user.is_authenticated and current_instance.is_started or user.is_superuser%}
                     <li><div class="home"><a href="{% url accounts:dashboard %}"><span>{% trans "Home" %}</span></a></div></li>
                     <li><div class="missions"><a href="{% url missions:index %}"><span>{% trans "Missions" %}</span></a></div></li>
-                    <li><div class="challenges"><a href="{% url challenges:index %}"><span>{% trans "Challenges" %}</span></a></div></li>
+                    <li><div class="challenges"><a href="{% url crowds:index %}"><span>{% trans "Crowds" %}</span></a></div></li>
                     <li><div class="values"><a href="{% url values:index %}"><span>{% trans "Token Depot" %}</span></a></div></li>
                     {% if user.is_superuser or user.is_staff or user in current_instance.curators.all %}
                         <li><div class="admin"><a href="{% url accounts:admin-instance-email %}"><span>send mail</span></a></div></li>

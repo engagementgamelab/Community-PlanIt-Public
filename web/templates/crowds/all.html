@@ -1,34 +1,35 @@
 {% extends "layouts/base.html" %}
 {% load game_extras i18n %}
 
-{% block title %}{% trans "Challenges" %}{% endblock %}
+{% block title %}{% trans "Crowds" %}{% endblock %}
 {% block page_title %}
-<h2 id="page_title">{% trans "Available Challenges" %}</h2>
+<h2 id="page_title">{% trans "Available Crowds" %}</h2>
 {% endblock %}
 
 {% block section %}challenges{% endblock %}
 {% block extra_body_class %}rightsidebar{% endblock %}
 
 {% block rightsidebar %}
-{% if not instance.is_expired %}
+{% comment %}
+{% if not current_instance.is_expired %}
     <div class="sectionbutton">
-        <a href="{% url challenges:add %}" class="button">{% trans "Create a Challenge" %}</a>
+        <a href="{% url crowds:rally %}" class="button">{% trans "Rally a Crowd" %}</a>
     </div>
 
     <div class="section">
-        <h2>{% trans "Completed challenges" %}</h2>
+        <h2>{% trans "Upcoming Crowds" %}</h2>
         <div class="challenges">
             <table>
                 <tbody>
-                {% for challenge in request.user.player_challenges.completed %}
+                {% for crowd in completed_crowds %}
                     <tr class="{% cycle "odd" "even" %}">
                         <td>
-                            <a href="{% url challenges:challenge challenge.challenge.pk %}">{{challenge.challenge.name}}</a>
+                            <a href="{% url crowds:crowd challenge.pk %}">{{crowd.name}}</a>
                         </td>
                     </tr>
                 {% empty %}
                     <tr class="odd">
-                        <td>{% trans "No completed challenges found" %}.</td>
+                        <td>{% trans "No completed crowds found" %}.</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -37,19 +38,19 @@
     </div>
 
     <div class="section">
-        <h2>{% trans "Past Challenges" %}</h2>
+        <h2>{% trans "Past Crowds" %}</h2>
         <div class="challenges">
             <table>
                 <tbody>
-                {% for challenge in instance.challenges.past %}
+                {% for crowd in past_crowds %}
                     <tr class="{% cycle "odd" "even" %}">
                         <td>
-                            <a href="{% url challenges:challenge challenge.pk %}">{{challenge.name}}</a>
+                            <a href="{% url crowds:crowd challenge.pk %}">{{crowd.name}}</a>
                         </td>
                     </tr>
                 {% empty %}
                     <tr class="odd">
-                        <td>{% trans "No past challenges found" %}.</td>
+                        <td>{% trans "No past crowds found" %}.</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -57,58 +58,48 @@
         </div>
     </div>
 {% endif %}
+{% endcomment %}
 {% endblock %}
 
 {% block main %}
-    {% get_points challenge_completed as challenge_completed_points %}
     <ul class="challenge_list">
 
-    {% if not instance.is_expired %}
-
-        {% for challenge in new_challenges %}
+        {% for crowd in upcoming %}
         <li class="challenge">
-            <a href="{% url challenges:challenge challenge.pk %}">
-                {{challenge.name}}<span>{{challenge_completed_points}} {% trans "points" %}</span>
-                {% if challenge.start_date or challenge.end_date %}
+            <!--a href="{# url crowds:crowd crowd.pk #}"-->
+                {{ crowd.name}}<span>&nbsp;&nbsp;&nbsp;&nbsp;{{ crowd.participants.all.count }} {% trans "Participants" %}</span>
                 <br/>
-                <span class="dates">{{challenge.start_date|date:"m/d/Y"}} through {{challenge.end_date|date:"m/d/Y"}}</span>
+                <span> created by {{ crowd.creator.get_profile.screen_name }}</span>
+                {% if crowd.start_date %} <br/> 
+                    <span class="dates">{{ crowd.start_date|date:"m/d/Y"}}</span> <br/>
                 {% endif %}
-            </a>
+            <!--/a-->
+                {% if not request.user in crowd.participants.all %}
+                    <a href="{% url crowds:join crowd.pk %}" class="button">{% trans "Join this Crowd!" %}</a>
+                {% else %}
+                    <a href="{% url crowds:leave crowd.pk %}" class="button">{% trans "Leave this Crowd!" %}</a>
+                {% endif %}
         </li>
         {% empty %}
         <li>
-        {% trans "There are no active challenges" %}. <a href="{% url challenges:add %}" class="button">{% trans "Create one!" %}</a>
+        {% trans "There are no active crowds" %}. <a href="{% url crowds:rally %}" class="button">{% trans "Rally a Crowd!" %}</a>
         </li>
         {% endfor %}
 
-    {% else %}
 
-        {% for challenge in instance.challenges.all %}
+        {% for crowd in past %}
         <li class="challenge">
-            <a href="{% url challenges:challenge challenge.pk %}">
-                {{challenge.name}}<span>{{challenge_completed_points}} {% trans "points" %}</span>
-                {% if challenge.start_date or challenge.end_date %}
-                <br/>
-                <span class="dates">{{challenge.start_date|date:"m/d/Y"}} through {{challenge.end_date|date:"m/d/Y"}}</span>
-                {% endif %}
-            </a>
+            <!--a href="{# url crowds:crowd crowd.pk #}"-->
+                {{ crowd.name}}<span>{{ crowd.participants.all.count }} {% trans "Participants" %}</span>
+                {% if crowd.start_date %} <br/> <span class="dates">{{ crowd.start_date|date:"m/d/Y"}}</span> {% endif %}
+            <!--/a-->
         </li>
         {% empty %}
         <li>
-        {% trans "There are no active challenges" %}. <a href="{% url challenges:add %}" class="button">{% trans "Create one!" %}</a>
+        {% trans "There are no past crowds" %}. <a href="{% url crowds:rally %}" class="button">{% trans "Rally a Crowd!" %}</a>
         </li>
         {% endfor %}
 
-    {% endif %}
     </ul>
-
-{% comment %}
-{% else %}
-<h2>{{instance}} {% trans "has ended" %}.</h2>
-    <div class="gridview listless">
-        {% trans "You may not add or accept new challenges" %}.
-    </div>
-{% endcomment %}
-
 
 {% endblock %}
