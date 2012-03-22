@@ -26,7 +26,7 @@ class EmailBackend(ModelBackend):
                 # with their generated hash username.  To deter foul play, limiting access
                 # to only those with proper credentials.                
                 user = User.objects.get(username=username)
-                if not user.is_staff or not user.is_superuser:
+                if not user.is_staff and not user.is_superuser:
                     return None
             except User.DoesNotExist:
                 return None
