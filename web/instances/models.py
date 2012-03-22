@@ -97,7 +97,6 @@ class Instance(TranslatableModel):
     location = GoogleMapsField()
     curators = models.ManyToManyField(User)
     languages = models.ManyToManyField(Language)
-    affiliations = models.ManyToManyField(Affiliation)
     days_for_mission = models.IntegerField(default=7)
     for_city = models.ForeignKey(City, null=True, related_name='instances')
 
