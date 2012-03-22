@@ -352,7 +352,7 @@ class AccountAuthenticationForm(AuthenticationForm):
         self.site = RequestSite(request)
         log.debug("login form to %s" %(self.site.domain))
         if not City.objects.filter(domain=self.site):
-            self.fields['instance'] = forms.ModelChoiceField(Instance.objects.active().language(get_language()))
+            self.fields['instance'] = forms.ModelChoiceField(Instance.objects.all().language(get_language()))
 
     def clean(self, *args, **kwargs):
         #import ipdb;ipdb.set_trace()
