@@ -345,21 +345,21 @@ class AccountAuthenticationForm(AuthenticationForm):
     Base class for authenticating users. Extend this to get a form that accepts
     username/password logins.
     """
-    def __init__(self, request=None, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
+        super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
+        self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)
+
         self.site = RequestSite(request)
         log.debug("login form to %s" %(self.site.domain))
-        self.user = request.user
-        super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
-        self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)        
-
         if not City.objects.filter(domain=self.site):
             self.fields['instance'] = forms.ModelChoiceField(Instance.objects.active().language(get_language()))
 
     def clean(self, *args, **kwargs):
+        #import ipdb;ipdb.set_trace()
         super(AccountAuthenticationForm, self).clean(*args, **kwargs)
         instance=None
         try:
-            instance = self.cleaned_data.get('instance') or Instance.objects.latest_for_city_domain(self.site)
+            instance = self.cleaned_data.get('instance') or Instance.objects.filter(for_city__domain=self.site)
         except:
             raise forms.ValidationError(_("invalid instance."))
 
