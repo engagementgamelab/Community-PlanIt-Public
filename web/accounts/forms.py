@@ -42,7 +42,7 @@ class RegisterFormOne(forms.Form):
     def __init__(self, *args, **kwargs):
         super(RegisterFormOne, self).__init__(*args, **kwargs)
 
-        all_instances = Instance.objects.active().language(get_language())
+        all_instances = Instance.objects.all().language(get_language())
         instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in all_instances]
         self.fields['instance_id'] = forms.ChoiceField(label=_(u'Community'), required=False, choices=instances)
 
