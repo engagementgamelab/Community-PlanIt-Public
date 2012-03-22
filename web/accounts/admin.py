@@ -12,14 +12,6 @@ class UserProfileAdmin(admin.ModelAdmin):
     search_fields = ('email',)
 
 admin.site.register(UserProfile, UserProfileAdmin)
-admin.site.register(UserProfileEducation, UserProfileOptionAdmin)
-admin.site.register(UserProfileGender, UserProfileOptionAdmin)
-admin.site.register(UserProfileHowDiscovered, UserProfileOptionAdmin)
-admin.site.register(UserProfileIncome, UserProfileOptionAdmin)
-admin.site.register(UserProfileLivingSituation, UserProfileOptionAdmin)
-admin.site.register(UserProfileRace, UserProfileOptionAdmin)
-admin.site.register(UserProfileStake, UserProfileOptionAdmin)
-
 
 class UserProfilePerInstanceAdmin(admin.ModelAdmin):
     list_display = ('__str__', )
