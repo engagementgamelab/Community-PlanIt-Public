@@ -74,9 +74,9 @@
 {% endblock main %}
 
 {% block rightsidebar %}
-{% if instance_mgr.active.count %}
+{# if instance_mgr.active.count #}
 <h3>{% trans "New Player?" %} <a href="{% url accounts:register %}" class="button">{% trans "Sign Up" %}</a></h3>
-{% endif %}
+{# endif #}
 <h3>{% trans "Have an account?" %}</h3>
 <div class="inner-content">
     <form method="POST" action="{% url accounts:login %}"> {%csrf_token%}
