@@ -3,11 +3,12 @@ import datetime
 from django.contrib import auth
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render_to_response
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import Context, RequestContext, loader
 from django.utils.translation import ugettext as _
 from django.db.models import Sum
+from django.utils.translation import get_language
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -38,7 +39,7 @@ def region(request, slug):
                 notification_request.instance = community
                 notification_request.save()
             messages.success(request, _("We'll let you know when {0} is active. Thanks for your interest!").format(community))
-            return HttpResponseRedirect(reverse('instances'))
+            return redirect(reverse('instances'))
     else:
         notification_form = NotificationRequestForm(community)
 
@@ -60,17 +61,22 @@ def region(request, slug):
         #'log': log,
         'attachments': attachments,
     }
-    return render_to_response('instances/base.html', data, context_instance=RequestContext(request))
+    return render(request, 'instances/base.html', data)
 
 def all(request):
-    mgr = Instance.objects
-    now = datetime.datetime.now()
+    kwargs=dict(
+            for_city__domain=request.current_site.domain,
+    )
+    active = Instance.objects.active().filter(**kwargs)
+    future = Instance.objects.future().filter(**kwargs)
+    past = Instance.objects.past().filter(**kwargs)
 
     context = {
-        'mgr': mgr,
-        'now': now,
+        'active': active,
+        'future': future,
+        'past': past,
     }
-    return render_to_response('instances/all.html', context, context_instance=RequestContext(request))
+    return render(request, 'instances/all.html', context)
 
 
 
@@ -93,7 +99,7 @@ def affiliation(request, instance_slug, affiliation_slug, template='affiliations
         'affiliations_leaderboard': _get_affiliations_leaderboard(),    
         'affiliation_points': affiliation_points,
     }
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
 
 def _get_affiliations_leaderboard():
@@ -117,5 +123,5 @@ def affiliations_all(request, slug, template='affiliations/all.html'):
             'instance': instance, 
             'affiliations': instance.affiliations.all().order_by('name')
     }
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    return render(request, template, context)
 
