@@ -2,8 +2,8 @@ from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.db import transaction
-from django.http import HttpResponseRedirect
 from django.template import Context, RequestContext, loader
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language, ugettext, ugettext_lazy as _
@@ -251,16 +251,20 @@ class RegistrationWizard(FormWizard):
         body = tmpl.render(RequestContext(request, context))
         send_mail(ugettext('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
         messages.success(request, _("Thanks for signing up!"))
-        return HttpResponseRedirect(
+
+
+        # set the game we are logging the user into
+        #
+        request.session['current_game_slug'] = self.community.slug
+        return redirect(
                         "".join(
                                 [
                                     self.community.get_absolute_url(ssl=not(settings.DEBUG)),
                                     reverse('accounts:dashboard')
                                 ]
-
-
-        ))
-
+                            ),
+                        permanent=True,
+        )
 
     def get_form(self, step, data=None):
         if step == 0 and data:
