@@ -14,7 +14,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.formtools.wizard import FormWizard
 
-from django.contrib.sites.models import RequestSite
+#from django.contrib.sites.models import RequestSite
 
 from web.accounts.models import *
 from web.instances.models import Instance, City
@@ -132,9 +132,10 @@ class RegisterFormTwo(forms.Form):
         self.fields['how_discovered_other'] = forms.CharField(required=False, label=_('If the way you learned about us is not listed, please tell us'))
 
 
-        affiliations = Affiliation.objects.filter(instance=self.community).order_by("name").values_list('pk', 'name')
-        self.fields['affiliations'] = forms.MultipleChoiceField(label=_(u'Affiliation'), required=False, choices=affiliations)
-
+        affiliations = self.community.user_profile_variants.affiliation_variants.all().order_by('pk', "name").values_list('pk', 'name')
+        self.fields['affiliations'] = forms.MultipleChoiceField(
+                                    label=_(u'Affiliation'), required=False, choices=affiliations
+        )
         self.fields['affiliations_other'] = forms.CharField(required=False, 
                label=_('Don\'t see your affiliation? Enter it here. Please place a comma between each affiliation.'),
                 widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
@@ -347,25 +348,22 @@ class AccountAuthenticationForm(AuthenticationForm):
     """
     def __init__(self, request, *args, **kwargs):
         super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
+        if not request:
+            raise RuntimeError("request obj is missing")
         self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)
 
-        self.site = RequestSite(request)
-        log.debug("login form to %s" %(self.site.domain))
-        if not City.objects.filter(domain=self.site):
-            self.fields['instance'] = forms.ModelChoiceField(Instance.objects.all().language(get_language()))
+        games_for_domain = Instance.objects.for_city(request.current_site.domain)
+
+        if games_for_domain.count():
+            self.fields['instance'] = forms.ModelChoiceField(queryset=games_for_domain)
+        else:
+            self.fields['instance'] = forms.ModelChoiceField(queryset=Instance.objects.all())
 
     def clean(self, *args, **kwargs):
-        #import ipdb;ipdb.set_trace()
         super(AccountAuthenticationForm, self).clean(*args, **kwargs)
-        instance=None
-        try:
-            instance = self.cleaned_data.get('instance') or Instance.objects.filter(for_city__domain=self.site)
-        except:
-            raise forms.ValidationError(_("invalid instance."))
-
         try:
             UserProfilePerInstance.objects.get(
-                        instance=instance, 
+                        instance=self.cleaned_data.get('instance'),
                         user_profile__user__email=self.cleaned_data.get('username', '')
             )
         except UserProfilePerInstance.DoesNotExist:

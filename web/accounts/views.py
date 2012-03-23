@@ -10,8 +10,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum
-from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseServerError
-from django.shortcuts import get_object_or_404, render_to_response
+from django.http import HttpResponse, Http404, HttpResponseServerError
+from django.shortcuts import get_object_or_404, render, redirect
 from django.template import Context, RequestContext, loader
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _, get_language
@@ -24,7 +24,6 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import get_current_site
-from django.contrib.sites.models import RequestSite
 
 from PIL import Image
 
@@ -39,7 +38,6 @@ from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, 
 from web.reports.models import Activity
 from web.values.models import *
 from web.core.utils import _fake_latest, instance_from_request
-#from web.decorators import protect_domain
 
 import logging
 log = logging.getLogger(__name__)
@@ -77,28 +75,35 @@ def login(request, template_name='registration/login.html',
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
 
-            up = user.get_profile()
-            log.debug('logged in profile: %s' % str(up))
-            lang = up.preferred_language
+            lang = user.get_profile().preferred_language
+            # set the game we are logging the user into
+            #
+            current_game = form.cleaned_data.get('instance')
+            request.session['current_game_slug'] = current_game.slug
 
             if lang in dict(settings.LANGUAGES).keys():
                 spath = strip_path(redirect_to)[1]
-                return HttpResponseRedirect(
+                return redirect(
                         "".join(
                                 [
-                                    up.active_instance.get_absolute_url(ssl=not(settings.DEBUG)),
+                                    current_game.get_absolute_url(ssl=not(settings.DEBUG)),
                                     locale_path(spath, lang)
                                 ]
-                ))
+                        ),
+                        permantent=True,
+                )
 
-            return HttpResponseRedirect(
+            return redirect(
                     "".join([
-                                up.active_instance.get_absolute_url(ssl=not(settings.DEBUG)), 
+                                current_game.get_absolute_url(ssl=not(settings.DEBUG)), 
                                 redirect_to
                             ]
-            ))
+                    ),
+                        permantent=True,
+            )
         else:
             log.debug('form invalid %s' % form.errors)
+            print('form invalid %s' % form.errors)
 
     else:
         form = authentication_form(request)
@@ -114,12 +119,7 @@ def login(request, template_name='registration/login.html',
         'site_name': current_site.name,
     }
     context.update(extra_context or {})
-    return render_to_response(template_name, 
-                              context,
-                              context_instance=RequestContext(
-                                    request, current_app=current_app
-                              )
-    )
+    return render(render, template_name, context)
 
 
 
@@ -168,11 +168,7 @@ def notifications(request):
         notification.read = True
         notification.save()
 
-    return render_to_response(
-        'accounts/notifications.html',
-        data,
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'accounts/notifications.html', data)
 
 # Forgot your password
 def forgot(request):
@@ -184,7 +180,7 @@ def forgot(request):
         send_mail(_('Password Changed'), _('Your temporary password is: %(password)s') % { 'password': password }, settings.NOREPLY_EMAIL, [email])
         messages.success(request, _('A temporary password has been sent to your email address.'))
 
-        return HttpResponseRedirect(reverse('accounts:login'))
+        return redirect(reverse('accounts:login'))
 
     # If not valid, show normal form
     form = validate_and_generate(ForgotForm, request, valid)
@@ -202,7 +198,7 @@ def edit(request):
     try:
         profile = request.user.get_profile()
     except:
-        return Http404
+        raise Http404("could not locate a user profile")
 
     change_password_form = ChangePasswordForm()
     profile_form = UserProfileForm(instance=profile,
@@ -270,7 +266,7 @@ def edit(request):
                 profile.save()
                 profile_form.save()
 
-                return HttpResponseRedirect(reverse('accounts:dashboard'))
+                return redirect(reverse('accounts:dashboard'))
 
     tmpl = loader.get_template('accounts/profile_edit.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
@@ -325,7 +321,7 @@ def profile(request, id):
                     user=request.user,
                     instance=instance
                 )
-            return HttpResponseRedirect(reverse('accounts_profile', args=[id]))
+            return redirect(reverse('accounts_profile', args=[id]))
 
 
     values = Value.objects.filter(instance=instance)
@@ -358,14 +354,13 @@ def profile(request, id):
     })))
 
 @login_required
-#@protect_domain
 def dashboard(request, template_name='accounts/dashboard.html'):
-
-    instance = None
-
-    user_profile = request.user.get_profile()
-    domain = RequestSite(request)
-    instance = Instance.objects.get(for_city__domain=domain)
+    # expecting the current game to be 
+    # set by middleware
+    if hasattr(request, 'current_game'):
+        instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
 
     page = request.GET.get('page', 1)
 
@@ -440,7 +435,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
         instance = instance,
         affiliations_leaderboard = affboard[:20],
     )
-    return render_to_response(template_name, context, context_instance=RequestContext(request))
+    return render(request, template_name, context)
 
 
 @login_required
@@ -476,7 +471,7 @@ def admin_sendemail(request):
         ups = UserProfile.objects.filter(instance=instance, receive_email=True)
         for up in ups:
             send_mail(subject, body, settings.NOREPLY_EMAIL, [up.user.email], fail_silently=False)
-        return HttpResponseRedirect(reverse("home"))
+        return redirect(reverse("home"))
 
     tmpl = loader.get_template("accounts/instance_email.html")
     return HttpResponse(tmpl.render(RequestContext(request, { 

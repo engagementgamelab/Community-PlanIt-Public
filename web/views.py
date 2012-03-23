@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseServerError
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import loader, Context, RequestContext
 from django.views.decorators.cache import never_cache
 
-from django.contrib.sites.models import Site, RequestSite
+from django.contrib.sites.models import Site
 
 from web.accounts.views import dashboard
 from web.accounts.forms import AccountAuthenticationForm
@@ -13,10 +13,9 @@ from web.instances.models import Instance
 def index(request, authentication_form=AccountAuthenticationForm):
     # Show index page
     if not request.user.is_authenticated():
-
         form = authentication_form(request)
         context = {'form': form}
-        return render_to_response('index.html', context, context_instance=RequestContext(request))
+        return render(request, 'index.html', context)
     return dashboard(request)
 
 @never_cache

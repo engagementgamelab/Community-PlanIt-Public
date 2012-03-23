@@ -2,7 +2,7 @@ import datetime
 from operator import attrgetter
 
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
 
 from django.contrib.auth.decorators import login_required
@@ -13,11 +13,16 @@ from comments.models import Comment
 from instances.models import Instance
 from missions.models import *
 from player_activities.models import *
-from core.utils import instance_from_request
 
 @login_required
 def fetch(request, slug, template='missions/base.html'):
-    current_instance = instance_from_request(request)
+    # expecting the current game to be 
+    # set by middleware
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
     mission = get_object_or_404(Mission, slug=slug, instance=current_instance)
 
     activities = []
@@ -45,7 +50,7 @@ def fetch(request, slug, template='missions/base.html'):
         mission_completed = len(activities) == len(completed),
         next_mission = next_mission,
     )
-    return render_to_response(template, RequestContext(request, context))
+    return render(request, template, context)
     
 @login_required
 def all(request, template="missions/all.html", extra_context={}):
@@ -55,7 +60,15 @@ def all(request, template="missions/all.html", extra_context={}):
     # does not set the context correctly in the template, 
     # {{ current_instance.missions.active  }} does not work.
     # although using it here works fine. go figure nani.
-    current_instance = instance_from_request(request)
+
+    # expecting the current game to be 
+    # set by middleware
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
+
     context = dict(
             instance= "current_instance",
             active_missions= current_instance.missions.active(),
@@ -64,4 +77,4 @@ def all(request, template="missions/all.html", extra_context={}):
     )
     if extra_context.keys():
         context.update(extra_context)
-    return render_to_response(template, RequestContext(request, context))
+    return render(request, template, context)

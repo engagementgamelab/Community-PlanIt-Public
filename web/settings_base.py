@@ -104,6 +104,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    'web.middleware.CurrentDomainMiddleware',
 )
 
 NOREPLY_EMAIL = 'noreply@communityplanit.org'
@@ -126,12 +127,23 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.request',
-    'web.context_processors.instance_from_request',
 )
 
 TIME_ZONE = 'America/New_York'
 USE_I18N = True
 USE_L10N = True
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'cache_utils.group_backend.CacheClass',
+        #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+        'KEY_PREFIX': 'cpi',
+        'TIMEOUT': 300,
+        'VERSION': 1,
+    }
+}
 
 # Localization
 LANGUAGE_CODE = 'en-us'

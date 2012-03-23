@@ -42,22 +42,22 @@ def region(request, slug):
     else:
         notification_form = NotificationRequestForm(community)
 
-    userProfiles = UserProfile.objects.filter(instance=community)
-    users = []
-    for userProfile in userProfiles:
-        users.append(userProfile.user)
-    leaderboard = []
-    for userProfile in userProfiles.order_by("-totalPoints"):
-        leaderboard.append(userProfile.user)
-    log = Activity.objects.filter(instance=community).order_by('-date')[:100]
+    #userProfiles = UserProfile.objects.filter(instance=community)
+    #users = []
+    #for userProfile in userProfiles:
+    #    users.append(userProfile.user)
+    #leaderboard = []
+    #for userProfile in userProfiles.order_by("-totalPoints"):
+    #    leaderboard.append(userProfile.user)
+    #log = Activity.objects.filter(instance=community).order_by('-date')[:100]
     attachments = Attachment.objects.filter(instance=community).exclude(file='')
 
     data = {
         'notification_form': notification_form,
         'community': community,
-        'users': users,
-        'leaderboard': leaderboard,
-        'log': log,
+        #'users': users,
+        #'leaderboard': leaderboard,
+        #'log': log,
         'attachments': attachments,
     }
     return render_to_response('instances/base.html', data, context_instance=RequestContext(request))

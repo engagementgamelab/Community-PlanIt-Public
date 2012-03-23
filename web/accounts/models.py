@@ -200,11 +200,11 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return "%s's profile <%s>" % (self.screen_name, self.user.email)
 
-    @property
-    def active_instance(self):
-        profiles_per_instance = UserProfilePerInstance.objects.filter(user_profile=self)
-        if profiles_per_instance.count():
-            return profiles_per_instance[0].instance
+    #@property
+    #def active_instance(self):
+    #    profiles_per_instance = UserProfilePerInstance.objects.filter(user_profile=self)
+    #    if profiles_per_instance.count():
+    #        return profiles_per_instance[0].instance
 
     @property
     def affiliations_csv(self):
