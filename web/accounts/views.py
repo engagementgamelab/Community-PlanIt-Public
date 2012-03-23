@@ -119,7 +119,7 @@ def login(request, template_name='registration/login.html',
         'site_name': current_site.name,
     }
     context.update(extra_context or {})
-    return render(render, template_name, context)
+    return render(request, template_name, context)
 
 
 
