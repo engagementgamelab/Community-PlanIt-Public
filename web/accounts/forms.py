@@ -53,14 +53,25 @@ class RegisterFormOne(forms.Form):
             )
         )
 
-    def clean_email(self):
-        """Ensure that a user has not already registered an account with that email address."""
+    #def clean_email(self):
+    #    """Ensure that a user has not already registered an account with that email address."""
+    #    email = self.cleaned_data['email']
+    #    if (User.objects.filter(email=email).count() != 0):
+    #        raise forms.ValidationError(_('Account already exists, please use a different email address.'))
+    #    else:
+    #        return email
+
+    def clean_instance_id(self):
+        """Ensure that a user has not already registered an account with that email address and that game."""
+        instance_id = self.cleaned_data['instance_id']
         email = self.cleaned_data['email']
-        if (User.objects.filter(email=email).count() != 0):
-            raise forms.ValidationError(_('Account already exists, please use a different email address.'))
+        if UserProfilePerInstance.objects.filter(
+                user_profile__email=email, instance__pk=instance_id
+            ).count() != 0:
+            raise forms.ValidationError(_('Account already exists for this game, please use a different email address.'))
         else:
-            return email
-    
+            return instance
+
     def clean_first_name(self):
         first_name = self.cleaned_data['first_name']
         if (len(first_name.strip()) == 0):
@@ -198,7 +209,10 @@ class RegistrationWizard(FormWizard):
         email = form_one.cleaned_data.get('email')
         password = form_one.cleaned_data.get('password')
 
-        player = User.objects.create(email=email,first_name=first_name, last_name=last_name, is_active=True)
+        player, created = User.objects.get_or_create(email=email)
+        first_name=first_name
+        last_name=last_name
+        is_active=True
         player.set_password(password)
         player.save()
 

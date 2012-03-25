@@ -357,6 +357,7 @@ def profile(request, id):
 def dashboard(request, template_name='accounts/dashboard.html'):
     # expecting the current game to be 
     # set by middleware
+
     if hasattr(request, 'current_game'):
         instance = request.current_game
     else:
