@@ -18,6 +18,8 @@ def index(request, authentication_form=AccountAuthenticationForm):
         context = {
             'form': form,
             'cities': City.objects.all(),
+            'instances': Instance.objects.active(),
+            'instances_past': Instance.objects.past(),
         }
         return render_to_response('index.html', context, context_instance=RequestContext(request))
     return dashboard(request)

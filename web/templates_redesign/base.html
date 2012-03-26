@@ -6,15 +6,27 @@
     
     {% block css %}
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.4.1/build/cssreset/cssreset-min.css">
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/styles.css">    
     {% endblock %}
 </head>
 
 <body>
 {% block body %}
-    {% block content %}
+    
+    <div id="body-container">
+        <div id="header">
+            <div id="logo-container">
+                <img src="" width="150" height="100" />
+            </div>
+            <div id="login-container">
+                <a href="{% url accounts:login %}">Log In</a> or <a href="{% url accounts:register %}">Sign Up</a>
+            </div>
+        </div>
+        {% block content %}
     
     
-    {% endblock %}
+        {% endblock %}
+    </div>
 {% endblock %}
 </body>
 </html>
