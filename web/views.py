@@ -8,14 +8,17 @@ from django.contrib.sites.models import Site, RequestSite
 
 from web.accounts.views import dashboard
 from web.accounts.forms import AccountAuthenticationForm
-from web.instances.models import Instance
+from web.instances.models import Instance, City
 
 def index(request, authentication_form=AccountAuthenticationForm):
     # Show index page
     if not request.user.is_authenticated():
-
+        
         form = authentication_form(request)
-        context = {'form': form}
+        context = {
+            'form': form,
+            'cities': City.objects.all(),
+        }
         return render_to_response('index.html', context, context_instance=RequestContext(request))
     return dashboard(request)
 
