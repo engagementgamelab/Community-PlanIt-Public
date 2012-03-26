@@ -70,7 +70,7 @@ class RegisterFormOne(forms.Form):
             ).count() != 0:
             raise forms.ValidationError(_('Account already exists for this game, please use a different email address.'))
         else:
-            return instance
+            return instance_id
 
     def clean_first_name(self):
         first_name = self.cleaned_data['first_name']
