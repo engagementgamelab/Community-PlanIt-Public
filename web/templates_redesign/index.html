@@ -1,0 +1,71 @@
+{%extends "base.html"%}
+{% load i18n %}
+
+{% block title %}{% trans "Welcome" %}{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <style>
+        h1 {
+            font-size: 2em;
+        }
+        
+        h2 {
+            font-size: 1.5em;
+        }
+        
+        h3 {
+            font-size: 1em;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <a href="{% url accounts:register %}">Sign Up</a>
+    <a href="{% url accounts:login %}">Log In</a>
+</div>
+
+<h1>Community PlanIt is an engagement game that gives you the power to plan your community's future</h1>
+
+<h2>How It Works:</h2>
+<ol>
+    <li>Join your Community</li>
+    <li>Explore the Issues</li>
+    <li>Map the Future</li>
+</ol>
+
+<!-- Games per City -->
+<div>
+    <ul>
+        {% for city in cities %}
+        <li>
+            {{ city.name }}
+            <ul>
+                <li>
+                    {% for instance in city.instances.all %}
+                    {{ instance }}
+                    {{ instance.start_date|date:"M j" }} - {{ instance.end_date|date:"M j" }}
+                    {% endfor %}
+                </li>
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+<!-- Cities -->
+<div>
+    <h2>Cities</h2>
+    <ul>
+        {% for city in cities %}
+            <li>{{ city.name }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+<div>Bring Community PlanIt to your community</div>
+{% endblock %}
