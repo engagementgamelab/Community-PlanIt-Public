@@ -2,9 +2,9 @@ import os.path
 import datetime
 
 from stream import utils as stream_utils
+from cache_utils.decorators import cached
 
 from django.db import models
-from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
 
@@ -26,11 +26,19 @@ __all__ = (
 def determine_path(instance, filename):
     return os.path.join('uploads/cities/', str(instance.domain), filename)
 
+class CityManager(models.Manager):
+	pass
+
+    #def city_by_domain(self):
+    #    return City.objects.
+
 class City(models.Model):
     name = models.CharField(max_length=100)
     domain = models.CharField(max_length=100)
     description = models.TextField(null=False, blank=True, default='')
     image = models.ImageField(upload_to=determine_path, null=True, blank=True)
+
+    objects = CityManager()
 
     def __unicode__(self):
         return "%s at <%s>" %(self.name, self.domain)
@@ -73,6 +81,10 @@ class InstanceManager(TranslationManager):
     def active(self):
         now = datetime.datetime.now()
         return self.filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
+
+    #@cached(60*60*24, 'instances')
+    def for_city(self, domain):
+        return self.filter(for_city__domain=domain)
 
     def latest_for_city_domain(self, domain):
         #looks like `latest` qs method is broken in django-nani

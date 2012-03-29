@@ -22,7 +22,7 @@ def get_translation_with_fallback(obj, attr):
     return getattr(obj, attr)
 
 def instance_from_request(request):
-    user_profile = request.user.get_profile()
+    #user_profile = request.user.get_profile()
     domain = RequestSite(request)
     try:
         return Instance.objects.get(for_city__domain=domain)

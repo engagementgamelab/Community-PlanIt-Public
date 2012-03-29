@@ -9,10 +9,10 @@
 {% endblock %}
 
 {% block main %}
-{% if mgr.active.count %}
+{% if active.count %}
 <h3>{% trans "Active" %}</h3>
     <ul class="communities">
-        {% for instance in mgr.active %}
+        {% for instance in active %}
         <li>
             <h3>
                 <a href="{% url instances:instance instance.slug %}">{{instance}}</a>
@@ -26,10 +26,10 @@
     </ul>
 {% endif %}
 
-{% if mgr.future.count %}
+{% if future.count %}
 <h3>{% trans "Future" %}</h3>
     <ul class="communities">
-        {% for instance in mgr.future %}
+        {% for instance in future %}
         <li>
             <h3>
                 <a href="{% url instances:instance instance.slug %}">{{instance}}</a>
@@ -40,10 +40,10 @@
     </ul>
 {% endif %}
 
-{% if mgr.past.count %}
+{% if past.count %}
 <h3>{% trans "Past" %}</h3>
     <ul class="communities">
-        {% for instance in mgr.past %}
+        {% for instance in past %}
         <li>
             <h3>
                 <a href="{% url instances:instance instance.slug %}">{{instance}}</a>

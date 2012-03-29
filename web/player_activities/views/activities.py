@@ -412,7 +412,7 @@ class NewActivityWizard(FormWizard):
                 init_coords = init_coords,
                 map = map,
             ))
-            import ipdb;ipdb.set_trace()
+            #import ipdb;ipdb.set_trace()
 
     def get_template(self, step):
         log.debug("new activity wizard step %s" % step)

@@ -10,8 +10,11 @@ class UserProfileOptionAdmin(TranslatableAdmin):
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('__str__', )
     search_fields = ('email',)
-
 admin.site.register(UserProfile, UserProfileAdmin)
+
+class UserProfileStakeAdmin(TranslatableAdmin):
+    list_display = ('__str__', )
+admin.site.register(UserProfileStake, UserProfileStakeAdmin)
 
 class UserProfilePerInstanceAdmin(admin.ModelAdmin):
     list_display = ('__str__', )

@@ -15,8 +15,6 @@ from comments.forms import CommentForm
 from comments.models import Comment
 from reports.actions import PointsAssigner
 #from responses.comment.forms import CommentAttachmentResponseForm
-from core.utils import _fake_latest, instance_from_request
-
 from PIL import Image
 
 import logging
@@ -24,12 +22,16 @@ log = logging.getLogger(__name__)
 
 @login_required
 def crowd(request, id, template='crowds/base.html'):
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
     try:
         crowd = Crowd.objects.select_related().get(pk=id)
     except Crowd.DoesNotExist:
         return Http404("Crowd could not be found")
 
-    current_instance = instance_from_request(request)
     if request.method == 'POST':
 
         if current_instance.is_expired():
@@ -95,7 +97,11 @@ def crowd(request, id, template='crowds/base.html'):
 @login_required
 def join_crowd(request, id):
 
-    current_instance = instance_from_request(request)
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
     if current_instance.is_expired():
         return HttpResponseRedirect(reverse('crowds:index'))
 
@@ -109,7 +115,13 @@ def join_crowd(request, id):
 
 @login_required
 def leave_crowd(request, id):
-    current_instance = instance_from_request(request)
+
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
+
     if current_instance.is_expired():
         return HttpResponseRedirect(reverse('crowds:index'))
 
@@ -125,7 +137,12 @@ def leave_crowd(request, id):
 
 @login_required
 def rally(request):
-    current_instance = instance_from_request(request)
+
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
     current_instance_location = current_instance.location
 
     if current_instance.is_expired():
@@ -264,7 +281,10 @@ def comment(request, id):
 @login_required
 def all(request):
 
-    current_instance = instance_from_request(request)
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
 
     return render(request, 'crowds/all.html', 
         dict(current_instance = current_instance,

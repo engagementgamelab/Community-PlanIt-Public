@@ -2,8 +2,8 @@ from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.db import transaction
-from django.http import HttpResponseRedirect
 from django.template import Context, RequestContext, loader
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language, ugettext, ugettext_lazy as _
@@ -14,7 +14,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.formtools.wizard import FormWizard
 
-from django.contrib.sites.models import RequestSite
+#from django.contrib.sites.models import RequestSite
 
 from web.accounts.models import *
 from web.instances.models import Instance, City
@@ -42,7 +42,7 @@ class RegisterFormOne(forms.Form):
     def __init__(self, *args, **kwargs):
         super(RegisterFormOne, self).__init__(*args, **kwargs)
 
-        all_instances = Instance.objects.active().language(get_language())
+        all_instances = Instance.objects.all().language(get_language())
         instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in all_instances]
         self.fields['instance_id'] = forms.ChoiceField(label=_(u'Community'), required=False, choices=instances)
 
@@ -53,14 +53,25 @@ class RegisterFormOne(forms.Form):
             )
         )
 
-    def clean_email(self):
-        """Ensure that a user has not already registered an account with that email address."""
+    #def clean_email(self):
+    #    """Ensure that a user has not already registered an account with that email address."""
+    #    email = self.cleaned_data['email']
+    #    if (User.objects.filter(email=email).count() != 0):
+    #        raise forms.ValidationError(_('Account already exists, please use a different email address.'))
+    #    else:
+    #        return email
+
+    def clean_instance_id(self):
+        """Ensure that a user has not already registered an account with that email address and that game."""
+        instance_id = self.cleaned_data['instance_id']
         email = self.cleaned_data['email']
-        if (User.objects.filter(email=email).count() != 0):
-            raise forms.ValidationError(_('Account already exists, please use a different email address.'))
+        if UserProfilePerInstance.objects.filter(
+                user_profile__email=email, instance__pk=instance_id
+            ).count() != 0:
+            raise forms.ValidationError(_('Account already exists for this game, please use a different email address.'))
         else:
-            return email
-    
+            return instance_id
+
     def clean_first_name(self):
         first_name = self.cleaned_data['first_name']
         if (len(first_name.strip()) == 0):
@@ -132,9 +143,10 @@ class RegisterFormTwo(forms.Form):
         self.fields['how_discovered_other'] = forms.CharField(required=False, label=_('If the way you learned about us is not listed, please tell us'))
 
 
-        affiliations = Affiliation.objects.filter(instance=self.community).order_by("name").values_list('pk', 'name')
-        self.fields['affiliations'] = forms.MultipleChoiceField(label=_(u'Affiliation'), required=False, choices=affiliations)
-
+        affiliations = self.community.user_profile_variants.affiliation_variants.all().order_by('pk', "name").values_list('pk', 'name')
+        self.fields['affiliations'] = forms.MultipleChoiceField(
+                                    label=_(u'Affiliation'), required=False, choices=affiliations
+        )
         self.fields['affiliations_other'] = forms.CharField(required=False, 
                label=_('Don\'t see your affiliation? Enter it here. Please place a comma between each affiliation.'),
                 widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
@@ -197,7 +209,10 @@ class RegistrationWizard(FormWizard):
         email = form_one.cleaned_data.get('email')
         password = form_one.cleaned_data.get('password')
 
-        player = User.objects.create(email=email,first_name=first_name, last_name=last_name, is_active=True)
+        player, created = User.objects.get_or_create(email=email)
+        first_name=first_name
+        last_name=last_name
+        is_active=True
         player.set_password(password)
         player.save()
 
@@ -250,16 +265,20 @@ class RegistrationWizard(FormWizard):
         body = tmpl.render(RequestContext(request, context))
         send_mail(ugettext('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
         messages.success(request, _("Thanks for signing up!"))
-        return HttpResponseRedirect(
+
+
+        # set the game we are logging the user into
+        #
+        request.session['current_game_slug'] = self.community.slug
+        return redirect(
                         "".join(
                                 [
                                     self.community.get_absolute_url(ssl=not(settings.DEBUG)),
                                     reverse('accounts:dashboard')
                                 ]
-
-
-        ))
-
+                            ),
+                        permanent=True,
+        )
 
     def get_form(self, step, data=None):
         if step == 0 and data:
@@ -347,25 +366,22 @@ class AccountAuthenticationForm(AuthenticationForm):
     """
     def __init__(self, request, *args, **kwargs):
         super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
+        if not request:
+            raise RuntimeError("request obj is missing")
         self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)
 
-        self.site = RequestSite(request)
-        log.debug("login form to %s" %(self.site.domain))
-        if not City.objects.filter(domain=self.site):
-            self.fields['instance'] = forms.ModelChoiceField(Instance.objects.active().language(get_language()))
+        games_for_domain = Instance.objects.for_city(request.current_site.domain)
+
+        if games_for_domain.count():
+            self.fields['instance'] = forms.ModelChoiceField(queryset=games_for_domain)
+        else:
+            self.fields['instance'] = forms.ModelChoiceField(queryset=Instance.objects.all())
 
     def clean(self, *args, **kwargs):
-        #import ipdb;ipdb.set_trace()
         super(AccountAuthenticationForm, self).clean(*args, **kwargs)
-        instance=None
-        try:
-            instance = self.cleaned_data.get('instance') or Instance.objects.filter(for_city__domain=self.site)
-        except:
-            raise forms.ValidationError(_("invalid instance."))
-
         try:
             UserProfilePerInstance.objects.get(
-                        instance=instance, 
+                        instance=self.cleaned_data.get('instance'),
                         user_profile__user__email=self.cleaned_data.get('username', '')
             )
         except UserProfilePerInstance.DoesNotExist:
