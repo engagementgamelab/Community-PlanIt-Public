@@ -60,18 +60,34 @@ h3 {
     overflow: hidden;
 }
 
-    .walkthrough-media-container {
-        float: left;
-        width: 360px;
-        height: 240px;
-        margin: 0px 20px;
-        border: 1px solid gray;
-    }
+#walkthrough {
     
-    .walkthrough-content-container {
-        float: left;
+}
+
+    #walkthrough li {
+        display: block;
+        position: relative;
+        overflow: hidden;
     }
+
+        .walkthrough-media {
+            float: left;
+            width: 360px;
+            height: 240px;
+            margin: 0px 20px;
+            border: 1px solid gray;
+        }
     
+        .walkthrough-content-container {
+            float: left;
+            width: 400px;
+        }
+    
+        .walkthrough-next {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+        }
 #games-container {
     float: left;
     width: 600px;
@@ -87,13 +103,34 @@ h3 {
 }
 
     #bringtoyourcommunity-container {
-        margin: 20px 0px;
-        background: #00e5b8;
-        -webkit-border-radius: 5px;
-        -moz-border-radius: 5px;
-        border-radius: 5px;
     }
 
+        #bringtoyourcommunity-container a {
+            display: block;
+            margin: 20px 0px;
+            padding: 10px;
+            background: #2da57c;
+            text-decoration: none;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+/* Footer */
+#footer {}
+    
+    #footer > div {
+        float: left;
+        width: 240px;
+        text-align: center;
+        color: #fff;
+    }
+    
+    #footer h1 {
+        font-size: 1em;
+        font-weight: normal;
+    }
 
 /* Utility Classes */
 .clearfix {

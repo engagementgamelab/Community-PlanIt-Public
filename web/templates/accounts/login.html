@@ -17,6 +17,7 @@
     <div class="pad">
         <form action="{% url accounts:login %}" method="post">{%csrf_token%}
             {%if form.errors%}
+            {{ form.errors }}
             <p class="error">{% trans "Sorry, that's not a valid email address or password." %}</p>
             <p>{% trans "Not a member? " %}<a href="{% url instances:instances %}">{% trans "Find your community and sign up now!" %}</a></p>
             {%endif%}

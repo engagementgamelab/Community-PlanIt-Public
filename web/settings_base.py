@@ -31,7 +31,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 TEMPLATE_DIRS = (
-    os.path.join(ROOTDIR, 'templates_redesign'),
+    # os.path.join(ROOTDIR, 'templates_redesign'),
     os.path.join(ROOTDIR, 'templates')
 )
 

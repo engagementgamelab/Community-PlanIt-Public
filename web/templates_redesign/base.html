@@ -16,7 +16,7 @@
     <div id="body-container">
         <div id="header">
             <div id="logo-container">
-                <img src="" width="150" height="100" />
+                <a href="{% url home %}"><img src="" width="150" height="100" /></a>
             </div>
             <div id="login-container">
                 <a href="{% url accounts:login %}">Log In</a> or <a href="{% url accounts:register %}">Sign Up</a>
@@ -26,6 +26,28 @@
     
     
         {% endblock %}
+        <div id="footer">
+            <div>
+                <h1>Created by:</h1>
+                <img src="{{ MEDIA_URL }}img/logo-egl.png">
+            </div>
+            <div>
+                <h1>Supported by:</h1>
+                <img src="{{ MEDIA_URL }}img/logo-knightfoundation.png">
+            </div>
+            <div>
+                <h1>Share alike:</h1>
+                <img src="{{ MEDIA_URL }}img/logo-copyleft.png">
+            </div>
+            <div>
+                <ul>
+                    <li><a href="{% url about %}">About</a></li>
+                    <li><a href="{% url contact %}">Contact</a></li>
+                    <li><a href="{% url privacy %}">Privacy Policy</a></li>
+                    <li><a href="{% url terms %}">Terms of Use</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 {% endblock %}
 </body>
