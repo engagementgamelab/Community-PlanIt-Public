@@ -10,24 +10,36 @@
 {% block extra_head %}
 <script>
     $(function(){
-      $("#walkthrough-container").slides({
-          next: 'walkthrough-next',
-          generatePagination: false
-      });
+        $("#walkthrough").slides({
+            next: 'walkthrough-next',
+            generatePagination: false
+        });
+              
+        $("#games-list-current").slides({
+            effect: 'fade',
+            generatePagination: false,
+            paginationClass: 'games-list-nav'
+        });
+
+        $("#games-list-past").slides({
+            effect: 'fade',
+            generatePagination: false,
+            paginationClass: 'games-list-nav'
+        });
     });
 </script>
 {% endblock %}
 
 {% block content %}
 <div>
-    <div id="walkthrough-container">
-        <div id="walkthrough" class="slides_container">
+    <div id="walkthrough" class="ribbon">
+        <div id="walkthrough-container" class="slides_container">
             <div>
                 <img class="walkthrough-media" src="{{ STATIC_URL }}img/walkthrough-intro.jpg" />
                 <div class="walkthrough-content-container">
                     <h1>Community PlanIt is an engagement game that gives you the power to plan your community's future</h1>
                 </div>
-                <a class="walkthrough-next" href="">What you do</a>
+                <a class="walkthrough-next" href=""></a>
                 <div class="clearfix"></div>
             </div>
             <div>
@@ -36,7 +48,7 @@
                     <h1>1. Join your community</h1>
                     <p>Come together in a tight network of community members of all ages and backgrounds to learn about, discuss, and rally others around the local planning issues facing your community.</p>
                 </div>
-                <a class="walkthrough-next" href="">next</a>
+                <a class="walkthrough-next"></a>
             </div>
             <div>
                 <img class="walkthrough-media" src="{{ STATIC_URL }}img/walkthrough-explore.jpg" />
@@ -44,7 +56,7 @@
                     <h1>2. Explore your issues</h1>
                     <p>Provide feedback to planners, debate the issues, and pose your own questions and calls for action over the course of a 3-6 week game. Each game is composed of a series of missions based on the main themes and concerns of the planning going on in your community.</p>
                 </div>
-                <a class="walkthrough-next" href="">next</a>
+                <a class="walkthrough-next"></a>
             </div>
             <div>
                 <img class="walkthrough-media" src="{{ STATIC_URL }}img/walkthrough-map.jpg" />
@@ -52,44 +64,72 @@
                     <h1>3. Map the future</h1>
                     <p>When you accomplish a mission, you earn the ability to unite with others and map the planning priories that you believe are most important for your community's future. All players will then be invited to a face-to-face meeting where they will come together with planners and decision-makers to discuss the results of the game.</p>
                 </div>
-                <a class="walkthrough-next" href="">next</a>
+                <a class="walkthrough-next"></a>
             </div>
         </div>
     </div>
 
     <!-- Games per City -->
     <div id="games-container">
-        <div>
-            <h2><a href="#">Games</a></h2>
-            <h2><a href="#">Past Games</a></h2>
+        <div id="games-filter">
+            <a href="#">Games</a>
+            <a href="#">Past Games</a>
         </div>
-        <div>
-            <h2>Games</h2>
-            {% for instance in instances %}
+        
+        <!-- Current Games -->
+        <div id="games-list-current" class="games-list">
+            <ul class="games-list-nav">
+                {% for instance in instances %}
+                <li>
+                    <a>
+                        <h3>{{ instance.title }}</h3>
+                        <p>
+                            {{ instance.for_city.name }} &bull; 
+                            {% if instance.is_started %}
+                                Right Now!
+                            {% else %}
+                                {{ instance.start_date|date:"M j" }} - {{ instance.end_date|date:"M j" }}
+                            {% endif %}
+                            
+                        </p>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="games-list-detail slides_container">
+                {% for instance in instances %}
                 <div>
-                    <h3>{{ instance.title }}</h3>
-                    <p>
-                        {{ instance.for_city.name }} &bull; 
-                        {% if instance.is_started %}
-                            Right Now!
-                        {% else %}
-                            {{ instance.start_date|date:"M j" }} - {{ instance.end_date|date:"M j" }}
-                        {% endif %}
-                    </p>
-                    <p><a href="">Sign up for this game</a></p>
-                    {{ instance.description }}
+                    <img class="games-list-detail-img" src="">
+                    {{ instance.description|truncatewords:20 }}
+                    <a href="">Sign up for this game</a>
                 </div>
-            {% endfor %}
-            
-            <br /><br />
-            
-            <h2>Past Games</h2>
-            {% for instance in instances_past %}
-                <h3>{{ instance.title }}</h3>
-                <p>{{ instance.for_city.name }} &bull; Ended on {{ instance.end_date|date:"M j" }}</p>
-                <p>{{ instance.description }}</p>
-                <br /><br />
-            {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <br clear="all" /><br /><br />
+        
+        <!-- Past Games -->
+        <div id="games-list-past" class="games-list">
+            <ul class="games-list-nav">
+                {% for instance in instances_past %}
+                <li>
+                    <a>
+                        <h3>{{ instance.title }}</h3>
+                        <p>{{ instance.for_city.name }} &bull; Ended on {{ instance.end_date|date:"M j" }}</p>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="games-list-detail slides_container">
+                {% for instance in instances_past %}
+                <div>
+                    
+                    <img class="games-list-detail-img" src="">
+                    {{ instance.description|truncatewords:20 }}
+                </div>
+                {% endfor %}
+            </div>
         </div>
         
     </div>
