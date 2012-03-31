@@ -31,7 +31,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 TEMPLATE_DIRS = (
-    # os.path.join(ROOTDIR, 'templates_redesign'),
+    os.path.join(ROOTDIR, 'templates_redesign'),
     os.path.join(ROOTDIR, 'templates')
 )
 
@@ -50,7 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
-
+    'django.contrib.staticfiles',
     'accounts',
     'answers',
     'attachments',
@@ -93,8 +93,26 @@ LOGIN_REDIRECT_URL = '/'
 SESSION_COOKIE_DOMAIN = '.communityplanit.org'
 MANAGERS = ADMINS
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
 MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
 MEDIA_URL = '/assets/'
+
+STATIC_ROOT = os.path.join(DIRNAME, 'static_collected')
+STATIC_URL = '/static/'
+
+# Additional locations of static files
+STATICFILES_DIRS = (
+    os.path.join(DIRNAME, 'static'),
+)
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
 
 MIDDLEWARE_CLASSES = (
     'localeurl.middleware.LocaleURLMiddleware',

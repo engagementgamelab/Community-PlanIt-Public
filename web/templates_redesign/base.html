@@ -16,7 +16,7 @@
     <div id="body-container">
         <div id="header">
             <div id="logo-container">
-                <a href="{% url home %}"><img src="" width="150" height="100" /></a>
+                <a href="{% url home %}"><img src="{{ MEDIA_URL }}img/logo-4.png" width="150" height="100" /></a>
             </div>
             <div id="login-container">
                 <a href="{% url accounts:login %}">Log In</a> or <a href="{% url accounts:register %}">Sign Up</a>

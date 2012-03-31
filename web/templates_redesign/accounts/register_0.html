@@ -5,10 +5,6 @@
 
 {% block title %}{% trans "Registration" %}{% endblock %}
 
-{% block page_title %}
-<h2 id="page_title">{% blocktrans %}Registration: Step {{step}} of {{step_count}}{% endblocktrans %}</h2>
-{% endblock %}
-
 {% block content %}
     {% if form.errors or form.non_field_errors or wizard_error %}
     <div id="form_errors" class="error">
@@ -17,87 +13,90 @@
         {{wizard_error}}
     </div>
     {% endif %}
-    <h1>Log In</h1>
+    
+    <div id="registration-container">
+        <h1>Log In</h1>
     
     
-    <h1>Sign Up</h1>
-    <form action="" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="{{step_field}}" value="{{step0}}"/>
-        {{previous_fields|safe}}
+        <h1>Sign Up</h1>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="{{step_field}}" value="{{step0}}"/>
+            {{previous_fields|safe}}
         
-            <p>
-            {{form.first_name.label_tag}}
-            {{form.first_name}}
-            {{form.first_name.errors}}
-            </p>
+                <p>
+                {{form.first_name.label_tag}}
+                {{form.first_name}}
+                {{form.first_name.errors}}
+                </p>
             
-            <p>
-            {{form.last_name.label_tag}}
-            {{form.last_name}}
-            {{form.last_name.errors}}
-            </p>
+                <p>
+                {{form.last_name.label_tag}}
+                {{form.last_name}}
+                {{form.last_name.errors}}
+                </p>
             
-            <p>
-            {{form.email.label_tag}}
-            {{form.email}}
-            {{form.email.errors}}
-            </p>
+                <p>
+                {{form.email.label_tag}}
+                {{form.email}}
+                {{form.email.errors}}
+                </p>
             
-            <p>
-            {{form.password.label_tag}}
-            {{form.password}}
-            {{form.password.errors}}
-            </p>
+                <p>
+                {{form.password.label_tag}}
+                {{form.password}}
+                {{form.password.errors}}
+                </p>
             
-            <p>
-            {{form.password_again.label_tag}}
-            {{form.password_again}}
-            {{form.password_again.errors}}
-            </p>
+                <p>
+                {{form.password_again.label_tag}}
+                {{form.password_again}}
+                {{form.password_again.errors}}
+                </p>
             
-            <p>
-            {{form.instance_id.label_tag}}
-            {{form.instance_id}}
-            {{form.instance_id.errors}}
-            </p>
+                <p>
+                {{form.instance_id.label_tag}}
+                {{form.instance_id}}
+                {{form.instance_id.errors}}
+                </p>
             
-            <p>
-            {{form.preferred_language.label_tag}}
-            {{form.preferred_language}}
-            {{form.preferred_language.errors}}
-            </p>
+                <p>
+                {{form.preferred_language.label_tag}}
+                {{form.preferred_language}}
+                {{form.preferred_language.errors}}
+                </p>
             
-            <p>
-            {{form.city.label_tag}}
-            {{form.city}}
-            {{form.city.errors}}
-            </p>
+                <p>
+                {{form.city.label_tag}}
+                {{form.city}}
+                {{form.city.errors}}
+                </p>
             
-            <p>
-            {{form.zip_code.label_tag}}
-            {{form.zip_code}}
-            {{form.zip_code.errors}}
-            </p>
+                <p>
+                {{form.zip_code.label_tag}}
+                {{form.zip_code}}
+                {{form.zip_code.errors}}
+                </p>
             
-            <p>
-            {{form.birth_year.label_tag}}
-            {{form.birth_year}}
-            {{form.birth_year.errors}}
-            </p>
+                <p>
+                {{form.birth_year.label_tag}}
+                {{form.birth_year}}
+                {{form.birth_year.errors}}
+                </p>
             
-            <p>
-            {{form.accepted_terms.label_tag}}
-            {{form.accepted_terms}}
-            {{form.accepted_terms.errors}}
-            </p>
+                <p>
+                {{form.accepted_terms.label_tag}}
+                {{form.accepted_terms}}
+                {{form.accepted_terms.errors}}
+                </p>
             
-        <div class="clear">
-            {% if step == step_count %}
-            <input class="button submit" type="submit" value="Register">
-            {% else %}
-            <input class="button submit" type="submit" value="Continue">
-            {% endif %}
-        </div>
-    </form>
+            <div class="clear">
+                {% if step == step_count %}
+                <input class="button submit" type="submit" value="Register">
+                {% else %}
+                <input class="button submit" type="submit" value="Continue">
+                {% endif %}
+            </div>
+        </form>
+    </div>
 {% endblock %}

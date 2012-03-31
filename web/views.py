@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseServerError
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.template import loader, Context, RequestContext
 from django.views.decorators.cache import never_cache
 

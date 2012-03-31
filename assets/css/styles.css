@@ -52,7 +52,8 @@ h3 {
         border-top-right-radius: 5px;
     }
     
-#walkthrough-container {
+#walkthrough-container,
+#registration-container {
     position: relative;
     left: -20px;
     width: 1000px;
