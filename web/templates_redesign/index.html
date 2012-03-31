@@ -7,44 +7,54 @@
     {{ block.super }}
 {% endblock %}
 
+{% block extra_head %}
+<script>
+    $(function(){
+      $("#walkthrough-container").slides({
+          next: 'walkthrough-next',
+          generatePagination: false
+      });
+    });
+</script>
+{% endblock %}
+
 {% block content %}
 <div>
     <div id="walkthrough-container">
-        <ul id="walkthrough">
-            <li>
-                <img class="walkthrough-media"></img>
+        <div id="walkthrough" class="slides_container">
+            <div>
+                <img class="walkthrough-media" src="{{ STATIC_URL }}img/walkthrough-intro.jpg" />
                 <div class="walkthrough-content-container">
                     <h1>Community PlanIt is an engagement game that gives you the power to plan your community's future</h1>
-                    
                 </div>
                 <a class="walkthrough-next" href="">What you do</a>
-            </li>
-            <li>
-                <img class="walkthrough-media"></img>
+                <div class="clearfix"></div>
+            </div>
+            <div>
+                <img class="walkthrough-media" src="{{ STATIC_URL }}img/walkthrough-join.jpg" />
                 <div class="walkthrough-content-container">
                     <h1>1. Join your community</h1>
                     <p>Come together in a tight network of community members of all ages and backgrounds to learn about, discuss, and rally others around the local planning issues facing your community.</p>
                 </div>
-                <a class="walkthrough-next" href=""></a>
-            </li>
-            <li>
-                <img class="walkthrough-media"></img>
+                <a class="walkthrough-next" href="">next</a>
+            </div>
+            <div>
+                <img class="walkthrough-media" src="{{ STATIC_URL }}img/walkthrough-explore.jpg" />
                 <div class="walkthrough-content-container">
                     <h1>2. Explore your issues</h1>
                     <p>Provide feedback to planners, debate the issues, and pose your own questions and calls for action over the course of a 3-6 week game. Each game is composed of a series of missions based on the main themes and concerns of the planning going on in your community.</p>
                 </div>
-                <a class="walkthrough-next" href=""></a>
-            </li>
-            <li>
-                <img class="walkthrough-media"></img>
+                <a class="walkthrough-next" href="">next</a>
+            </div>
+            <div>
+                <img class="walkthrough-media" src="{{ STATIC_URL }}img/walkthrough-map.jpg" />
                 <div class="walkthrough-content-container">
                     <h1>3. Map the future</h1>
                     <p>When you accomplish a mission, you earn the ability to unite with others and map the planning priories that you believe are most important for your community's future. All players will then be invited to a face-to-face meeting where they will come together with planners and decision-makers to discuss the results of the game.</p>
                 </div>
-                <a class="walkthrough-next" href=""></a>
-            </li>
-        </ul>
-        
+                <a class="walkthrough-next" href="">next</a>
+            </div>
+        </div>
     </div>
 
     <!-- Games per City -->

@@ -5,8 +5,16 @@
     <title>{% block title %}{% endblock %} | Community PlanIt</title>
     
     {% block css %}
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.4.1/build/cssreset/cssreset-min.css">
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styles.css">    
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.4.1/build/cssreset/cssreset-min.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styles.css">    
+    {% endblock %}
+    
+    {% block js %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script src="{{ STATIC_URL }}js/slides.jquery.js"></script>
+    {% endblock %}
+    
+    {% block extra_head %}
     {% endblock %}
 </head>
 
@@ -29,15 +37,15 @@
         <div id="footer">
             <div>
                 <h1>Created by:</h1>
-                <img src="{{ MEDIA_URL }}img/logo-egl.png">
+                <img src="{{ STATIC_URL }}img/logo-egl.png">
             </div>
             <div>
                 <h1>Supported by:</h1>
-                <img src="{{ MEDIA_URL }}img/logo-knightfoundation.png">
+                <img src="{{ STATIC_URL }}img/logo-knightfoundation.png">
             </div>
             <div>
                 <h1>Share alike:</h1>
-                <img src="{{ MEDIA_URL }}img/logo-copyleft.png">
+                <img src="{{ STATIC_URL }}img/logo-copyleft.png">
             </div>
             <div>
                 <ul>
