@@ -2,19 +2,7 @@
 
 html, body {
     background: #3d4fff;
-    font: 16px "Trebuchet MS";
-}
-
-h1 {
-    font-size: 2em;
-}
-
-h2 {
-    font-size: 1.5em;
-}
-
-h3 {
-    font-size: 1em;
+    font: 14px "Trebuchet MS";
 }
 
 #page-container {
@@ -53,11 +41,23 @@ h3 {
         border-top-right-radius: 5px;
     }
 
-#content-container {
-    padding-bottom: 90px;
+#content {
+    padding-bottom: 40px;
 }
 
+/* Columns */
+.column-full {
+    width: 960px;
+}
 
+.column-half {
+    float: left;
+    width: 480px;
+}
+
+    .column-container {
+        margin: 0px 30px;
+    }
 /* Ribbon */
 
 .ribbon {
@@ -274,6 +274,14 @@ h3 {
     }
 
 /* Utility Classes */
+.bold {
+    font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
+}
+
 .clearfix {
     clear: both;
 }

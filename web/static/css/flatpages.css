@@ -1,0 +1,28 @@
+/* Flatpages specific styles... in templates, these are called "static" */
+
+#content {
+    margin: 20px 0px;
+}
+    
+    #content h1 {
+        font-size: 2em;
+        margin: 10px 0px;
+    }
+    
+    #content h2 {
+        font-size: 1.2em;
+        margin: 20px 0px;
+    }
+    
+    #content p {
+        margin: 10px 0px;
+    }
+    
+    #content ul {
+        padding-left: 20px;
+    }
+    
+        #content li {
+            list-style: disc;
+            margin: 5px 0px 5px 20px;
+        }
