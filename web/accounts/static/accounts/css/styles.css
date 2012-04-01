@@ -1,0 +1,11 @@
+/* Accounts App-specific Styles */
+
+#registration-container {
+    background: #00E5B8;
+    overflow: hidden;
+}
+
+    #registration-container > div.column {
+        float: left;
+        width: 400px;
+    }

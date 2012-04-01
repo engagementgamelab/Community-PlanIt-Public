@@ -17,7 +17,7 @@ h3 {
     font-size: 1em;
 }
 
-#body-container {
+#page-container {
     width: 960px;
     margin: 20px auto;
     background: white;
@@ -30,6 +30,7 @@ h3 {
     position: relative;
     height: 150px;
 }
+
     #logo-container {
         position: absolute;
         left: 20px;
@@ -51,6 +52,11 @@ h3 {
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
     }
+
+#content-container {
+    padding-bottom: 90px;
+}
+
 
 /* Ribbon */
 
@@ -131,17 +137,24 @@ h3 {
         
         
 /* Games */
-#games-container {
+#games {
     float: left;
     width: 640px;
     margin: 0px 20px;
     background: white;
 }
 
-    #games-filter {
+    #games > .slides_container {
+        width: 640px;
+        height: 600px;
     }
     
-        #games-filter a {
+    .games-filter {
+    }
+        .games-filter li {
+            display: inline-block;
+        }
+        .games-filter a {
             display: inline-block;
             padding: 20px;
             border: 1px dotted #ddd;
@@ -163,29 +176,40 @@ h3 {
             .games-list-nav > li > a {
                 display: block;
                 padding: 15px 10px;
+                text-decoration: none;
                 cursor: pointer;
+                color: inherit;
             }
-
+            
             .games-list-nav > li > a:hover,
             .games-list-nav > li.current > a {
                 background-color: #e4f2ed;
             }
-        
-        .games-list-detail {
+            
+            .games-list-nav h3 {
+                font-size: 1.2em;
+            }
+            
+            .games-list-nav p {
+                font-size: 0.75em;
+            }
+            
+        .games-list-details {
             float: left;
             width: 440px;
             background: #e4f2ed;
         }
     
-            .games-list-detail > div {
+            .games-list-details > div {
                 display: block;
+                width: 440px;
                 margin: 20px;
             }
             
                 .games-list-details > div > div {
-                    width: 440px;
+                    width: 400px;
                 }
-                .games-list-detail .games-list-detail-img {
+                .games-list-details .games-list-detail-img {
                     width: 400px;
                     height: 300px;
                 }
@@ -214,9 +238,11 @@ h3 {
 
 /* Footer */
 #footer {
+    width: 960px;
+    margin: 20px auto;
 }
     
-    #footer > div {
+    #footer > div.column {
         float: left;
         width: 240px;
         text-align: center;
