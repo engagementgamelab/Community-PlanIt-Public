@@ -312,8 +312,8 @@ class MultiChoiceActivity(TranslatableModel):
         return self.multi_choice_answers.filter(answerUser=answerUser).count() > 0
 
     class Meta:
-        verbose_name = 'Multiple Choice Activity'
-        verbose_name_plural = 'Multiple Choice Activities'
+        verbose_name = 'An Available Answer to a Single/Multiple Choice Activity'
+        verbose_name_plural = 'Available Answers to Single/Multiple Choice Activities'
 
     def __unicode__(self):
         s = self.safe_translation_getter('value', None)
