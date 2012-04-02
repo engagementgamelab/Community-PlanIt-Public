@@ -34,6 +34,7 @@ class PlayerActivityAdmin(TranslatableAdmin):
 
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
+    list_filter = ('mission', 'type')
     inlines = [EmpathyOfficialResponseInline,]
 
 class MultiChoiceActivityAdmin(TranslatableAdmin):

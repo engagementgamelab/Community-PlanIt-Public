@@ -6,6 +6,7 @@ import logging
 
 ROOTDIR = os.path.dirname(os.path.realpath(__file__))
 DIRNAME = os.path.dirname(__file__)
+PARENT_DIR = os.path.dirname(os.path.abspath(DIRNAME))
 
 #
 # Standard Django settings
@@ -15,6 +16,36 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 #admin_tools
 ADMIN_TOOLS_MEDIA_URL = '/static/'
 ADMIN_TOOLS_MENU = 'web.reports.admin.ReportsMenu'
+
+MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
+MEDIA_URL = '/assets/'
+
+# Absolute path to the directory static files should be collected to.
+# Don't put anything in this directory yourself; store your static files
+# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Example: "/home/media/media.lawrence.com/static/"
+STATIC_ROOT = os.path.join(PARENT_DIR, 'static')
+
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = '/static/'
+
+# Additional locations of static files
+STATICFILES_DIRS = (
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+
+)
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder',
+)
 
 ADMINS = ( ('philip.kalinsky', 'eloquentbits.com'), )
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
@@ -49,6 +80,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.staticfiles',
 
     'accounts',
     'answers',
@@ -92,8 +124,6 @@ LOGIN_REDIRECT_URL = '/'
 SESSION_COOKIE_DOMAIN = '.communityplanit.org'
 MANAGERS = ADMINS
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
-MEDIA_URL = '/assets/'
 
 MIDDLEWARE_CLASSES = (
     'localeurl.middleware.LocaleURLMiddleware',
@@ -121,7 +151,7 @@ SITE_ID = 1
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.auth',
+    'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
