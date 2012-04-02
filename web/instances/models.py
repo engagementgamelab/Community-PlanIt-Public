@@ -81,10 +81,21 @@ class InstanceManager(TranslationManager):
     def active(self):
         now = datetime.datetime.now()
         return self.filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
-
+        
     #@cached(60*60*24, 'instances')
     def for_city(self, domain):
         return self.filter(for_city__domain=domain)
+    
+    def past_for_city(self, domain):
+        now = datetime.datetime.now()
+        return self.filter(for_city__domain=domain).exclude(missions__end_date__gte=now).order_by('start_date')
+        
+    def future_for_city(self, domain):
+        return self.filter(for_city__domain=domain).filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
+
+    def active_for_city(self, domain):
+        now = datetime.datetime.now()
+        return self.filter(for_city__domain=domain).filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
 
     def latest_for_city_domain(self, domain):
         #looks like `latest` qs method is broken in django-nani

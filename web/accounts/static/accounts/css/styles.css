@@ -5,7 +5,39 @@
     overflow: hidden;
 }
 
-    #registration-container > div.column {
-        float: left;
-        width: 400px;
+    #registration-container > div {
+        margin: 20px inherit;
+    }
+    
+
+/* Registration Form */
+.accounts-form {
+    
+}
+    
+    .accounts-form p {
+        margin: 10px 0px;
+    }
+    
+    .accounts-form label {
+        display: block;
+        margin: 3px 0px;
+        font-size: 0.75em;
+    }
+
+    .accounts-form input[type='text'], 
+    .accounts-form input[type='password'] {
+        width: 250px;
+        padding: 5px 8px;
+        border: 0px;
+        border-radius: 3px;
+    }
+    
+    .accounts-form input[type='submit'] {
+        padding: 8px 10px;
+        border: 0px;
+        background: blue;
+        font-size: 0.8em;
+        text-transform: uppercase;
+        color: #fff;
     }

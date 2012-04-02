@@ -1,13 +1,29 @@
 /* Base Stylesheet for Spring2012 Redesign */
 
 html, body {
-    background: #3d4fff;
+    background: url('../img/bg.jpg') repeat #f6f6f6;
     font: 14px "Trebuchet MS";
 }
 
+a {
+    text-decoration: none;
+    color: #007dff;
+}
+
+#top-nav {
+    width: 960px;
+    margin: 10px auto;
+    text-align: right;
+}
+
+    #top-nav li {
+        display: inline-block;
+    }
+
+
 #page-container {
     width: 960px;
-    margin: 20px auto;
+    margin: 0px auto;
     background: white;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
@@ -21,24 +37,29 @@ html, body {
 
     #logo-container {
         position: absolute;
-        left: 20px;
-        top: 20px;
+        top: 25px;
+        left: 50px;
+    }
+    
+    #header-intro {
+        position: absolute;
+        top: 40px;
+        left: 200px;
+        width: 400px;
+        font-weight: bold;
+        margin: 0px 50px;
+        font-size: 1.5em;
+        color: #00e5b8;
     }
     
     #login-container {
-        display: inline-block;
         position: absolute;
-        right: 20px;
-        bottom: 0px;
+        top: 65px;
+        right: 50px;
         background: #00e5b8;
         padding: 5px 15px;
         color: white;
-        -webkit-border-top-left-radius: 5px;
-        -webkit-border-top-right-radius: 5px;
-        -moz-border-radius-topleft: 5px;
-        -moz-border-radius-topright: 5px;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+        border-radius: 5px;
     }
 
 #content {
@@ -58,40 +79,66 @@ html, body {
     .column-container {
         margin: 0px 30px;
     }
+    
 /* Ribbon */
 
 .ribbon {
     position: relative;
     margin: 0 -20px 20px -20px;
     padding: 0px 0;
-    background: #efefef;
+    background: #e0f0e9;
     text-shadow: 0 1px rgba(0,0,0,.1);
     box-shadow: 0 2px 4px rgba(0,0,0,.1);
 }
 
-    .ribbon:before, .ribbon:after
-       {
-           content: '';
-           position: absolute;
-           border-style: solid;
-           border-color: transparent;
-           bottom: -20px;
-       }
+    .ribbon:before, .ribbon:after {
+        content: '';
+        position: absolute;
+        border-style: solid;
+        border-color: transparent;
+        bottom: -20px;
+    }
 
    .ribbon:before
    {
        border-width: 0 20px 20px 0;
-       border-right-color: #666;
+       border-right-color: #00e5b8;
        left: 0;
    }
 
    .ribbon:after
    {
        border-width: 0 0 20px 20px;
-       border-left-color: #666;
+       border-left-color: #00e5b8;
        right: 0;
    }
 
+/* Siebar-Nav */
+#sidebar-nav {
+    position: relative;
+    float: right;
+    margin: 0 -20px 20px 0px;
+    width: 150px;
+    background: #ddd;
+}
+
+    #sidebar-nav:after {
+        content: '';
+        position: absolute;
+        border-style: solid;
+        border-color: transparent;
+        bottom: -20px;
+        border-width: 0 0 20px 20px;
+        border-left-color: #00e5b8;
+        right: 0;
+    }
+    
+    #sidebar-nav li {
+        padding-top: 50px;
+        text-align: center;
+        border-bottom: 1px solid white;
+    }
+    
 /* Walkthrough */
 
 #walkthrough {}
@@ -153,14 +200,28 @@ html, body {
     }
         .games-filter li {
             display: inline-block;
+            vertical-align: middle;
         }
         .games-filter a {
+            width: 100px;
             display: inline-block;
             padding: 20px;
+            text-align: center;
             border: 1px dotted #ddd;
+            cursor: pointer;
         }
 
+        
+        .games-filter a.active {
+            font-size: 1.2em;
+        }
+        
+    .games-filter-container {
+    }
+
     .games-list {
+        top: 0px;
+        left: 0px;
         clear: both;
     }
     
@@ -246,7 +307,7 @@ html, body {
         float: left;
         width: 240px;
         text-align: center;
-        color: #fff;
+        color: #333;
     }
     
     #footer h1 {
@@ -266,11 +327,9 @@ html, body {
             
     #footer a {
         text-decoration: none;
-        color: #fff;
     }
     
     #footer a:hover {
-        color: #eee;
     }
 
 /* Utility Classes */

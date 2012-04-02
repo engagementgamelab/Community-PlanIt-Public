@@ -14,24 +14,31 @@
             next: 'walkthrough-next',
             generatePagination: false
         });
-
+        
         $("#games-list-current").slides({
             effect: 'fade',
             generatePagination: false,
             paginationClass: 'games-list-nav'
         });
-
+        
         $("#games-list-past").slides({
             effect: 'fade',
             generatePagination: false,
             paginationClass: 'games-list-nav'
         });
-
-        // $("#games").slides({
-        //     effect: 'fade',
-        //     generatePagination: false,
-        //     paginationClass: 'games-filter'
-        // });                      
+        
+        $('.games-list').hide();
+        
+        $(".games-filter a").click(function(){
+            $this = $(this);
+            $(".games-filter a").removeClass('active');
+            $this.addClass('active');
+            $('.games-list').hide();
+            $('#'+$this.attr('data-target')).show();
+        })
+        
+        $(".games-filter a").first().click();
+        
     });
 </script>
 {% endblock %}
@@ -43,7 +50,7 @@
             <div>
                 <img class="walkthrough-media" src="{{ STATIC_URL }}img/walkthrough-intro.jpg" />
                 <div class="walkthrough-content-container">
-                    <h1>Community PlanIt is an engagement game that gives you the power to plan your community's future</h1>
+                    <h1>Community PlanIt is an engagement game that gives you the power to plan your community's future.</h1>
                 </div>
                 <a class="walkthrough-next" href=""></a>
                 <div class="clearfix"></div>
@@ -78,14 +85,14 @@
     <!-- Games per City -->
     <div id="games">
         <ul class="games-filter">
-            <li><a>Games</a></li>
-            <li><a>Past Games</a></li>
+            <li><a data-target='games-list-current'>Games</a></li>
+            <li><a data-target='games-list-past'>Past Games</a></li>
         </ul>
-        <div class="slides_container">
+        <div class="games-filter-container">
             <!-- Current Games -->
             <div id="games-list-current" class="games-list">
                 <ul class="games-list-nav">
-                    {% for instance in instances_future %}
+                    {% for instance in instances_active %}
                     <li>
                         <a>
                             <h3>{{ instance.title }}</h3>
@@ -96,14 +103,13 @@
                                 {% else %}
                                     {{ instance.start_date|date:"M j" }} - {{ instance.end_date|date:"M j" }}
                                 {% endif %}
-                            
                             </p>
                         </a>
                     </li>
                     {% endfor %}
                 </ul>
                 <div class="games-list-details slides_container">
-                    {% for instance in instances_future %}
+                    {% for instance in instances_active %}
                     <div>
                         <img class="games-list-detail-img" src="">
                         <p>{{ instance.description|truncatewords:20 }}</p>

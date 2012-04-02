@@ -1,0 +1,31 @@
+{% extends "accounts/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Login" %}{% endblock %}
+
+{% block content %}
+<div>
+    <div id="registration-container">
+        <div class="column-half">
+            <div class="column-container">
+                <h1>Log In</h1>
+                {% csrf_token %}
+                <form class="accounts-form" action="{% url accounts:login %}" method="post">
+                    {% csrf_token %}
+        
+                    {{ form.as_p}}
+            
+                    <div class="clear">
+                        <input class="button submit" type="submit" value="Get back to playing!">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="column-half">
+            <div class="column-container">
+                <h1>Sign Up</h>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

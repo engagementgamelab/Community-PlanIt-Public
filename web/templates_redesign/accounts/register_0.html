@@ -1,6 +1,8 @@
 {% extends "accounts/base.html" %}
 {% load i18n %}
 
+{% block title %}{% trans "Registration" %}{% endblock %}
+
 {% block content %}
 <div>
     {% if form.errors or form.non_field_errors or wizard_error %}
@@ -12,25 +14,29 @@
     {% endif %}
     
     <div id="registration-container">
-        <div class="column">
-            <h1>Log In</h1>
-            {% csrf_token %}
-        </div>
-        <div class="column">
-            <h1>Sign Up</h1>
-            <form action="" method="post">
+        <div class="column-half">
+            <div class="column-container">
+                <h1>Log In</h1>
                 {% csrf_token %}
+            </div>
+        </div>
+        <div class="column-half">
+            <div class="column-container">
+                <h1>Sign Up</h1>
+                <form class="accounts-form" action="" method="post">
+                    {% csrf_token %}
         
-                {{ form.as_p}}
+                    {{ form.as_p}}
             
-                <div class="clear">
-                    {% if step == step_count %}
-                    <input class="button submit" type="submit" value="Register">
-                    {% else %}
-                    <input class="button submit" type="submit" value="Continue">
-                    {% endif %}
-                </div>
-            </form>
+                    <div class="clear">
+                        {% if step == step_count %}
+                        <input class="button submit" type="submit" value="Register">
+                        {% else %}
+                        <input class="button submit" type="submit" value="Start Playing!">
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
