@@ -11,15 +11,21 @@ from web.accounts.views import dashboard
 from web.accounts.forms import AccountAuthenticationForm
 from web.instances.models import Instance, City
 
-def index(request, authentication_form=AccountAuthenticationForm):
+def index(request, authentication_form=AccountAuthenticationForm, template='index.html'):
     
     domain = request.current_site.domain
     try:
+        # City exists, send them to city page
         current_city = City.objects.get(domain=domain)
+        # current_city = City.objects.latest('pk')
         instances_active = Instance.objects.active_for_city(domain=domain)
         instances_future = Instance.objects.future_for_city(domain=domain)
         instances_past = Instance.objects.past_for_city(domain=domain)
+        template = 'city.html'
+        
+        
     except ObjectDoesNotExist:
+        # No city, 
         current_city = None
         instances_active = Instance.objects.active()
         instances_future = Instance.objects.future()
@@ -36,7 +42,7 @@ def index(request, authentication_form=AccountAuthenticationForm):
             'instances_future': instances_future,
             'instances_past': instances_past,
         }
-        return render_to_response('index.html', context, context_instance=RequestContext(request))
+        return render_to_response(template, context, context_instance=RequestContext(request))
 
     return dashboard(request)
 

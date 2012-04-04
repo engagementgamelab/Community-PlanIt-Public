@@ -5,6 +5,7 @@
 
 {% block css %}
     {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/citypages.css"> 
 {% endblock %}
 
 {% block extra_head %}
@@ -43,8 +44,11 @@
 </script>
 {% endblock %}
 
+{% block body_id %}public-home{% endblock %}
+
 {% block content %}
 <div class="column-full">
+    {% block walkthrough %}
     <div id="walkthrough" class="ribbon">
         <div id="walkthrough-container" class="slides_container">
             <div>
@@ -81,7 +85,9 @@
             </div>
         </div>
     </div>
+    {% endblock %}
 
+    {% block games %}
     <!-- Games per City -->
     <div id="games">
         <ul class="games-filter">
@@ -141,7 +147,9 @@
             </div>
         </div>
     </div>
+    {% endblock %}
     
+    {% block cities_nav%}
     <!-- Cities -->
     <div id="cities-container">
         <h2>Metro Areas</h2>
@@ -152,7 +160,7 @@
         </ul>
         <div id="bringtoyourcommunity-container"><a href="">Bring Community PlanIt to you</a></div>
     </div>
-    
+    {% endblock %}
     <div class="clearfix">
 </div>
 {% endblock %}

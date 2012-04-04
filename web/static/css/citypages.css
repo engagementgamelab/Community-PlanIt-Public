@@ -1,0 +1,192 @@
+/* Specific stylesheet for elements in the public Home page and City pages */ 
+
+/* Header Extras */
+#header-extras-container {}
+
+    
+    #header-extras-cityname {
+        width: 200px;
+        line-height: 150px; /* should be the same as #header-extras-container */
+        display: inline-block;
+        font-weight: bold;
+        font-size: 2.25em;
+        text-align: center;
+        vertical-align: middle;
+        color: #80beff;
+    }
+    
+    #header-extras-citydescription {
+        width: 250px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    
+    #header-extras-cityimage {
+        width: 230px;
+        height: 124px;
+        margin: 0px 10px;
+        display: inline-block;
+        text-align: right;
+        vertical-align: middle;
+        border: 1px solid #ddd;
+    }
+
+/* Walkthrough */
+#walkthrough {}
+
+    #walkthrough .slides_container {
+        width: 1000px;
+        height: 259px;
+        padding: 10px 0px;
+    }
+
+        #walkthrough .slides_container > div {
+            width: 1000px;
+            height: 259px;
+            display: block;
+        }
+
+        .walkthrough-media {
+            display: inline-block;
+            vertical-align: middle;
+            width: 450px;
+            height: 259px;
+            margin: 0px 20px;
+            /* border: 1px solid #ddd; */
+        }
+
+        .walkthrough-content-container {
+            display: inline-block;
+            vertical-align: middle;
+            width: 460px;
+            margin: 0px 20px;
+        }
+
+        .walkthrough-next {
+            display: inline-block;
+            position: absolute;
+            right: 50px;
+            bottom: 20px;
+            width: 25px;
+            height: 25px;
+            background: url('../img/btn-next.png');
+            cursor: pointer;
+        }
+        
+/* 
+   Games 
+   Index pages and city pages have slightly different setup 
+*/
+#games {
+    float: left;
+    width: 640px;
+    margin: 0px 20px;
+    background: white;
+}
+
+    #games > .slides_container {
+        width: 640px;
+        height: 600px;
+    }
+    
+    .games-filter {
+    }
+        .games-filter li {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .games-filter a {
+            width: 100px;
+            display: inline-block;
+            padding: 20px;
+            text-align: center;
+            border: 1px dotted #ddd;
+            cursor: pointer;
+        }
+
+        
+        .games-filter a.active {
+            font-size: 1.2em;
+        }
+        
+    .games-filter-container {
+    }
+
+    .games-list {
+        top: 0px;
+        left: 0px;
+        clear: both;
+    }
+    
+        .games-list-nav {
+            float: left;
+            width: 200px;
+        }
+        
+            .games-list-nav li+li {
+                border-top: 2px dotted #e4f2ed;
+            }
+                
+            .games-list-nav > li > a {
+                display: block;
+                padding: 15px 10px;
+                text-decoration: none;
+                cursor: pointer;
+                color: inherit;
+            }
+            
+            .games-list-nav > li > a:hover,
+            .games-list-nav > li.current > a {
+                background-color: #e4f2ed;
+            }
+            
+            .games-list-nav h3 {
+                font-size: 1.2em;
+            }
+            
+            .games-list-nav p {
+                font-size: 0.75em;
+            }
+            
+        .games-list-details {
+            float: left;
+            width: 440px;
+            background: #e4f2ed;
+        }
+    
+            .games-list-details > div {
+                display: block;
+                width: 440px;
+                margin: 20px;
+            }
+            
+                .games-list-details > div > div {
+                    width: 400px;
+                }
+                .games-list-details .games-list-detail-img {
+                    width: 400px;
+                    height: 300px;
+                }
+
+/* Cities Navigation */
+#cities-container {
+    float: left;
+    width: 240px;
+    margin: 0px 20px;
+    background: white;
+}
+
+    #bringtoyourcommunity-container {
+    }
+
+        #bringtoyourcommunity-container a {
+            display: block;
+            margin: 20px 0px;
+            padding: 10px;
+            background: #2da57c;
+            text-decoration: none;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            color: #fff;
+        }
