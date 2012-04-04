@@ -10,7 +10,7 @@
     <div id="header-extras-container">
         <div id="header-extras-cityname">{{ current_city.name }}</div>
         <div id="header-extras-citydescription">{{ current_city.description }}</div>
-        <div id="header-extras-cityimage">{{ current_city.image }}</div>
+        <div id="header-extras-cityimage"><img src="{{ MEDIA_URL }}{{ current_city.image }}" /></div>
     </div>
 </div>
 {% endblock %}

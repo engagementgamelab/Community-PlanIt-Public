@@ -77,17 +77,29 @@
    Games 
    Index pages and city pages have slightly different setup 
 */
-#games {
-    float: left;
+#public-city #games {
+    width: 920px;
+}
+#public-index #games {
     width: 640px;
-    margin: 0px 20px;
-    background: white;
 }
 
-    #games > .slides_container {
+    #public-index #games > .slides_container {
         width: 640px;
         height: 600px;
     }
+
+    #public-city #games > .slides_container {
+        width: 920px;
+        height: 600px;
+    }
+
+.games {
+    float: left;
+    margin: 0px 20px;
+    background: white;
+/*    border: 1px solid black;*/
+}
     
     .games-filter {
     }
@@ -148,23 +160,45 @@
                 font-size: 0.75em;
             }
             
-        .games-list-details {
+        #public-index .games-list-details {
             float: left;
             width: 440px;
             background: #e4f2ed;
         }
     
-            .games-list-details > div {
+            #public-index .games-list-details > div {
                 display: block;
                 width: 440px;
                 margin: 20px;
             }
             
-                .games-list-details > div > div {
+                #public-index .games-list-details > div > div {
                     width: 400px;
                 }
-                .games-list-details .games-list-detail-img {
+                
+                #public-index .games-list-details .games-list-detail-img {
                     width: 400px;
+                    height: 300px;
+                }
+
+        #public-city .games-list-details {
+            float: left;
+            width: 720px;
+            background: #e4f2ed;
+        }
+
+            #public-city .games-list-details > div {
+                display: block;
+                width: 720px;
+                margin: 20px;
+            }
+
+                #public-city .games-list-details > div > div {
+                    width: 680x;
+                }
+
+                #public-city .games-list-details .games-list-detail-img {
+                    width: 680px;
                     height: 300px;
                 }
 

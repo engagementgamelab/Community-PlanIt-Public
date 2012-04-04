@@ -17,12 +17,12 @@ def index(request, authentication_form=AccountAuthenticationForm, template='inde
     try:
         # City exists, send them to city page
         current_city = City.objects.get(domain=domain)
-        # current_city = City.objects.latest('pk')
+        # current_city = City.objects.get(pk=2)
+        # domain = 'boston.communityplanit.local'
         instances_active = Instance.objects.active_for_city(domain=domain)
         instances_future = Instance.objects.future_for_city(domain=domain)
         instances_past = Instance.objects.past_for_city(domain=domain)
         template = 'city.html'
-        
         
     except ObjectDoesNotExist:
         # No city, 
