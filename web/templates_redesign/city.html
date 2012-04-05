@@ -20,7 +20,7 @@
 
 {% block cities_nav %}{% endblock %}
 
-{% block games %}
+{% block games_extras %}
     {% if not user.is_authenticated %}
     <div id="login-container">
         <a href="{% url accounts:login %}">Log In</a> or <a href="{% url accounts:register %}">Sign Up</a>
