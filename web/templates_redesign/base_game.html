@@ -1,27 +1,76 @@
 {% extends 'base.html' %}
 
-{% block content %}
-    
+{% block body_class %}private{% endblock %}
+
+{% block header %}
+<div id="header">
+    <div id="logo-container">
+        <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="80" height="51"/></a>
+    </div>
     <div>
         <h1>Mission Control</h1>
-        <div>1</div>
-        <div>2</div>
-        <div>3</div>
-        <div>4</div>
-        <div>5</div>
-        <div>status bar</div>
+        <ul id="nav-missions">
+            {# for mission in missions #}
+            <li>
+                <a href="">
+                    <div class="nav-missions-number">1</div>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <div class="nav-missions-number">2</div>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <div class="nav-missions-number">3</div>
+                    <div class="nav-missions-endsin">
+                        <p class="nav-missions-endsin-label">Ends in<p>
+                        <p class="nav-missions-endsin-time">4 days</p>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <div class="nav-missions-number">4</div>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <div class="nav-missions-number">5</div>
+                </a>
+            </li>
+        </ul>
+        <div id="mission-progress-container">
+            <div id="mission-progress-total">
+                <div id="mission-progress-marker"></div>
+                <div id="mission-progress-individual">250</div>
+            </div>
+        </div>
     </div>
-    <div>
-        asdf
+    <div id="mission-map"></div>
+</div>
+{% endblock header %}
+
+
+{% block content %}
+<div class="column-full">
+    <div class="column-body">
+    {% block game_content %}
+        
+    {% endblock %}
     </div>
+    
     <div id="sidebar-nav">
         <ul>
+            <li><a href="{% url accounts_profile request.user.id %}">{{ request.user.first_name }} {{ request.user.last_name }}</a></li>
             <li><a href="" id="sidebar-nav-expert">Become an Expert</a></li>
-            <li><a href="" id="sidebar-nav-crowds">Get Together!</a></li>
+            <li><a href="{% url crowds:index %}" id="sidebar-nav-crowds">Get Together!</a></li>
             <li><a href="" id="sidebar-nav-news">What's Happening</a></li>
             <li><a href="" id="sidebar-nav-players">Find Players</a></li>
             <li><a href="" id="sidebar-nav-standings">Check the Standings</a></li>
         </ul>
     </div>
     <div class="clearfix"></div>
+</div>
 {% endblock %}

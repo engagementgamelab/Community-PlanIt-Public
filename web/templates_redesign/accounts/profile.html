@@ -1,0 +1,157 @@
+{% extends "base_game.html" %}
+{% load i18n %}
+{% load i18n cpi_tags %}
+
+{% block title %}{% trans "Dashboard" %}{% endblock %}
+
+{% block game_content %}
+<div>
+    Edit your profile
+    <hr class="thick" />
+    
+        <h1>Profile</h1>
+        {% if request.user == player %}
+            <a class="button" href="{% url accounts:profile_edit %}">Edit Profile</a>
+        {% endif %}
+    <p class="highlighted">
+        {% if player.get_profile.avatar %}
+            <img class="left avatar-large" src="{{MEDIA_URL}}/{{player.get_profile.avatar}}">
+        {% else %}
+            <img class="left avatar-large" src="{{MEDIA_URL}}/img/avatar-blank.jpg">
+        {% endif %} 
+        <!--Lives in East Boston, works in Fort Point and Plays in Fort Point.-->
+        <span style="font-size: 1em">{% trans "Points" %}: {{player.get_profile.totalPoints}}</span><br>
+        <span style="font-size: 1em">{% trans "Community Stake" %}: 
+            {% if player.get_profile.stake %}
+            {{ player.get_profile.stake|trans_fallback:"stake"}}
+            {% endif %}
+        </span><br>
+        {% if player.get_profile.affils.all %}
+        <span style="font-size: 1em">{% trans "Affiliated With" %}: 
+            {% for aff in player.get_profile.affils.all %} 
+                <a class="highlight" href="{% url instances:affiliation player.get_profile.instance.slug  aff.slug %}">{{ aff.name }}</a>
+            {% endfor %}
+        </span>
+        {% endif %}
+    </p>    
+    <hr class="clear">
+    <div class="twothird">
+        <h3>{% trans "Token spending" %}</h3>
+        <div id="userPie" class="graph" style="width:350px;height:300px; margin-right:auto; 
+            margin-top: 25px; margin-bottom: 25px; "></div>
+            
+        <h3>Activity Log</h3>
+        
+        {# {% if stream|length %} #}
+        {# <ul class="listless listview feed"> #}
+        {#     {% for action in stream %} #}
+        {#     <li class="listitem {{action.verb}}"> #}
+        {#  #}
+        {#         {% format_action %} #}
+        {#  #}
+        {#         {% comment %} #}
+        {#         {% if action.user.get_profile.avatar %} #}
+        {#             <img class="avatar" src="{{MEDIA_URL}}/{{activity.user.get_profile.avatar}}"> #}
+        {#         {% else %}                #}
+        {#             <img class="avatar" src="{{MEDIA_URL}}/img/avatar-blank.jpg"> #}
+        {#         {% endif %}  #}
+        {#         <a href="{% url accounts_profile activity.user.id %}">{{activity.user.get_profile.screen_name}}</a> #}
+        {#         {{activity.data}}  #}
+        {#         {% if activity.get_url %} #}
+        {#             <a href="{{activity.get_url}}">{{activity.action}}</a> #}
+        {#         {% else %} #}
+        {#             {{activity.action}} #}
+        {#         {% endif %} #}
+        {#         {% endcomment %} #}
+        {#         <div class="timestamp fine">{{action.datetime|date:"F j, Y, g:i a"}}</div> #}
+        {#     </li> #}
+        {#     {% endfor %} #}
+        {# </ul> #}
+        {# {%else%} #}
+        {# {{player.get_profile.screen_name}} {% trans "has created no activities." %}    #}
+        {# {%endif%} #}
+    </div>
+    
+    <div style="clear: both; padding: 1em 0;">
+        {% with comments=player.get_profile.comments comment_heading=comment_heading|default:"Comments" %}
+        <div class="comments">
+            {% if not comment_form.just_one_form %}
+                {% include "comments/comments.html" %}
+            {% else %}
+            <h2>{% blocktrans %}{{comment_heading}}{% endblocktrans %}</h2>
+            {% endif %}
+            {% if instance.is_active %}
+            <h3>{% blocktrans with player=player.get_profile.screen_name %}Share your thoughts with {{player}} &#8212; leave a comment below{% endblocktrans %}</h3>
+                <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
+                    {% include "comments/duplicate.html" %}
+                    <button type="submit" class="button right">Add Comment</button>
+                </form>
+            {% else %}
+            <p>This community is no longer active.</p>
+            {% endif %}
+        </div>
+        {% endwith %}
+        <div style="clear: both;"></div>
+    </div>
+
+<script type="text/javascript">
+    $(function () {
+        var globalData = [];
+        var i = 0;
+        
+        var userData = [];
+        i = 0;
+        {% if player_spent == 0 %}
+        userData[i] = { label: "No tokens spent yet.", data: 1 }
+        i++;
+        {% else %}
+            {% for wrapper in value_wrapper %}
+                userData[i] = { label: "{{ wrapper.value.message }}", data: {{ wrapper.player_coins }} }
+                i++;
+            {% endfor %}
+        {% endif %}
+         
+        $.plot($("#userPie"), userData, {
+            series: { 
+                pie: { 
+                    show: true,
+                    radius: 1,
+                    stroke: {
+                        color: '#FFECD8',
+                        width: 2
+                    },
+                    label: {
+                        show: true,
+                        radius: 1/2,
+                        radius: .55,
+                        formatter: function(label, series) {
+                            var output = '<div class="pielabel">' + label;
+                            if (series.percent < 100) {
+                                output += '<br/><strong>'+Math.round(series.percent)+'%</strong></div>';
+                            }
+                            return output;
+                        },
+                        threshold: 0.1
+                    }
+                }
+            },
+            colors: [
+                '#3D76A0',
+                '#669933',
+                '#8DDEDB',
+                '#FB9C8F',
+                '#D89BE5',
+                '#F0CB48'
+            ],
+            legend: { 
+                show: false
+            }
+        });
+    });
+    
+</script>
+    
+    
+    
+</div>
+{% endblock %}

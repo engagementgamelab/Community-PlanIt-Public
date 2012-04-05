@@ -1,0 +1,99 @@
+{% extends 'crowds/base.html' %}
+{% load game_extras i18n %}
+
+{% block game_content %}
+<div>
+    <h1>Get Together!</h1>
+    <p>Create or attend a Get Together. It allows you to interact face to face with the people who are also helping to build your community's future.</p>
+    
+    <form action="" method="POST"> {% csrf_token %}
+        <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
+
+        <div class="fieldWrapper">
+            {{form.name.label_tag}}
+            {{form.name}}
+            {{form.name.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.description.label_tag}}
+            <div class="help">
+                {{form.description.help_text}}
+            </div>
+            {{form.description}}
+            <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div>
+            {{form.description.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.map.label_tag}}
+            {{form.map}}
+            {{form.map.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.start_date.label_tag}}
+            {{form.start_date}}
+            {{form.start_date.errors}}
+        </div>
+
+        <div class="fieldWrapper">
+            {{form.end_date.label_tag}}
+            {{form.end_date}}
+            {{form.end_date.errors}}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.confirmation_code.label_tag }}
+            {{ form.confirmation_code }}
+            {{ form.confirmation_code.errors }}
+        </div>
+
+        <div class="controls">
+            <input type="submit" class="button submit" value="{% trans "Rally a Crowd" %}">
+        </div>
+    </form>
+    
+    
+    
+    <ul class="challenge_list">
+
+        {% for crowd in upcoming %}
+        <li class="challenge">
+            <!--a href="{# url crowds:crowd crowd.pk #}"-->
+                {{ crowd.name}}<span>&nbsp;&nbsp;&nbsp;&nbsp;{{ crowd.participants.all.count }} {% trans "Participants" %}</span>
+                <br/>
+                <span> created by {{ crowd.creator.get_profile.screen_name }}</span>
+                {% if crowd.start_date %} <br/> 
+                    <span class="dates">{{ crowd.start_date|date:"m/d/Y"}}</span> <br/>
+                {% endif %}
+            <!--/a-->
+                {% if not request.user in crowd.participants.all %}
+                    <a href="{% url crowds:join crowd.pk %}" class="button">{% trans "Join this Crowd!" %}</a>
+                {% else %}
+                    <a href="{% url crowds:leave crowd.pk %}" class="button">{% trans "Leave this Crowd!" %}</a>
+                {% endif %}
+        </li>
+        {% empty %}
+        <li>
+        {% trans "There are no active crowds" %}. <a href="{% url crowds:rally %}" class="button">{% trans "Rally a Crowd!" %}</a>
+        </li>
+        {% endfor %}
+
+
+        {% for crowd in past %}
+        <li class="challenge">
+            <!--a href="{# url crowds:crowd crowd.pk #}"-->
+                {{ crowd.name}}<span>{{ crowd.participants.all.count }} {% trans "Participants" %}</span>
+                {% if crowd.start_date %} <br/> <span class="dates">{{ crowd.start_date|date:"m/d/Y"}}</span> {% endif %}
+            <!--/a-->
+        </li>
+        {% empty %}
+        <li>
+        {% trans "There are no past crowds" %}. <a href="{% url crowds:rally %}" class="button">{% trans "Rally a Crowd!" %}</a>
+        </li>
+        {% endfor %}
+
+    </ul>
+    
+</div>
+{% endblock %}
