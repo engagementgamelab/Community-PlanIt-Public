@@ -138,10 +138,42 @@ a {
     }
     
     #sidebar-nav li {
-        padding-top: 50px;
-        text-align: center;
-        border-bottom: 1px solid white;
+        background: url('../img/bg-nav-arrow.png') no-repeat 10px center;
+        border-bottom: 1px solid #fff;
     }
+
+    #sidebar-nav li:hover {
+        background-color: #fff;
+    }
+        #sidebar-nav a {
+            display: block;
+            padding-top: 70px;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+    
+    
+            #sidebar-nav-expert {
+                background: url('../img/icon-nav-expert.png') no-repeat center 20px;
+            }
+        
+            #sidebar-nav-crowds {
+                background: url('../img/icon-nav-crowds.png') no-repeat center 25px;
+            }
+        
+            #sidebar-nav-news {
+                background: url('../img/icon-nav-news.png') no-repeat center 25px;
+            }
+        
+            #sidebar-nav-players {
+                background: url('../img/icon-nav-players.png') no-repeat center 25px;
+            }
+        
+            #sidebar-nav-standings {
+                background: url('../img/icon-nav-standings.png') no-repeat center 18px;
+            }
+        
+        
 
 /* Footer */
 #footer {
