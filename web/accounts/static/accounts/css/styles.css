@@ -41,3 +41,24 @@
         text-transform: uppercase;
         color: #fff;
     }
+    
+/* Account Profile Specific Styles */
+#profile-edit-btn {
+    font-size: 0.4em;
+}
+#profile-player {}
+    
+    .profile-detail {
+        min-height: 75px;
+    }
+
+#profile-notifications {
+    margin: 20px 0px;
+}
+    
+/* Account Edit Profile Specific Styles */
+#profile-editform-container {
+  margin-right: 20px;
+  padding: 20px 0px 30px 0px;
+  background: #00e5b8;
+}

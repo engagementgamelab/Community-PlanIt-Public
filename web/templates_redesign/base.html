@@ -31,6 +31,7 @@
     
     {% block page %}
     {% block header %}
+    <!-- HEADER -->
     <div id="header">
         <div id="logo-container">
             <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="150" height="97" /></a>
@@ -45,16 +46,18 @@
         </div>
     </div>
     {% endblock header %}
-    <div id="page-container">
-        
+    
+    <div id="page-container">    
         <div id="content">
-            <!-- Content -->
+            <!-- CONTENT -->
             {% block content %}{% endblock %}
         </div>
     </div>
     {% endblock %}
     
+    
     {% block footer %}
+    <!-- FOOTER -->
     <div id="footer">
         <div class="column">
             <h1>Created by:</h1>

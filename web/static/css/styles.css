@@ -36,6 +36,8 @@ a {
     border-radius: 5px;
 }
 
+/* Header */
+/* Most of #header styles are overridden for .public pages in citystyles.css */
 #header {
     position: relative;
     width: 960px;
@@ -74,29 +76,59 @@ a {
             text-transform: uppercase;
             padding: 8px 15px;
         }
-        
-#content {
-    padding-bottom: 40px;
-}
 
 /* Columns */
 .column-full {
-    width: 960px;
+    width: 100%;
 }
 
 .column-half {
     float: left;
-    width: 480px;
+    width: 50%;
 }
 
-    .column-container {
-        margin: 0px 30px;
+.column-third {
+    float: left;
+    width: 33%;
+}
+
+.column-twothird {
+    float: left;
+    width: 67%;
+}
+
+    .column-container { /* user this inside any .column-* to add margins */
+        margin: 0px 20px;
     }
 
-.column-body{
+#column-body {
     float: left;
-    width: 800px;
+    width: 820px;
 }   
+
+
+/* Shared Content Styles */       
+#content {
+    padding-bottom: 40px;
+}
+
+    #content h1 {
+        margin: 15px 0px;
+        font-size: 2.5em;
+    }
+    
+    #content h2 {
+        margin: 10px 0px;
+        font-size: 2em;
+    }
+    
+    #content h3 {
+        font-size: 1em;
+        font-weight: bold;
+        color: #a7a9ac;
+    }
+    
+
 /* Ribbon */
 
 .ribbon {
@@ -135,7 +167,7 @@ a {
     position: relative;
     float: right;
     margin: 0 -20px 20px 0px;
-    width: 150px;
+    width: 140px;
     background: #ddd;
 }
 
@@ -158,6 +190,12 @@ a {
     #sidebar-nav li:hover {
         background-color: #fff;
     }
+    
+    /* the profile nav is different */
+    #sidebar-nav li.sidebar-nav-profile {
+        background-image: none;
+    }
+
         #sidebar-nav a {
             display: block;
             padding-top: 70px;
@@ -165,7 +203,31 @@ a {
             text-align: center;
         }
     
-    
+
+            #sidebar-nav-profile {
+                padding-top: 10px !important;
+            }
+            
+                #sidebar-nav-profile div {
+                    margin-left: -5px;
+                    margin-bottom: 10px;
+                    overflow: hidden;
+                }
+            
+                    #sidebar-nav-profile-notifications {
+                        float: left;
+                        width: 12px;
+                        height: 12px;
+                        line-height: 12px;
+                        background: #2d3542;
+                        padding: 5px;
+                        color: #fff;
+                    }
+                
+                    #sidebar-nav-profile-avatar {
+                        float: left;
+                    }
+
             #sidebar-nav-expert {
                 background: url('../img/icon-nav-expert.png') no-repeat center 20px;
             }
@@ -242,6 +304,9 @@ hr.thick {
     background: #000;
 }
 
+.color-green {
+    
+}
 
 
 
