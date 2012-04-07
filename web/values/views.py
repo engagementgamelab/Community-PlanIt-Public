@@ -26,7 +26,12 @@ from PIL import Image
 
 @login_required
 def all(request, template='values/all.html'):
-    values = Value.objects.untranslated().filter(instance=request.user.get_profile().instance)
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+    
+    values = Value.objects.untranslated().filter(instance=current_instance)
     community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
     
     value_wrapper = []
