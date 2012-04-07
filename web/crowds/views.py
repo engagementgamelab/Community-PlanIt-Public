@@ -288,8 +288,8 @@ def all(request):
 
     return render(request, 'crowds/all.html', 
         dict(current_instance = current_instance,
-             upcoming = Crowd.objects.upcoming().filter(instance=current_instance),
-             past = current_instance.crowds.past(),
+             upcoming = Crowd.objects.upcoming().filter(instance=current_instance).order_by('-start_date'),
+             past = current_instance.crowds.past().order_by('-start_date'),
         )
     )
 

@@ -6,12 +6,15 @@
     
     {% block css %}
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.4.1/build/cssreset/cssreset-min.css">
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styles.css">    
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styles.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/ui-lightness/jquery-ui-1.8.9.custom.css">
     {% endblock %}
     
     {% block js %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script src="{{ STATIC_URL }}js/slides.jquery.js"></script>
+        <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
+        <script src="{{ STATIC_URL }}js/jquery-ui-timepicker-addon.js"></script>
     {% endblock %}
     
     {% block extra_head %}

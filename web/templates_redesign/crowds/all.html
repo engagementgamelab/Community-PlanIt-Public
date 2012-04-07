@@ -13,76 +13,45 @@
         </div>
     {% endblock %}
     
-    <hr class="thick" />
     
-    <div>
-        <h2>May 30, 2012</h2>
-        <div class="crowds-event">
-            <div class="crowds-event-time">12:28am</div>
-            <div class="crowds-event-name">Lorem ipsum dolor sit amet.</div>
-        </div>
-        
-        <div class="crowds-event">
-            <div class="crowds-event-time">12:28am</div>
-            <div class="crowds-event-name">Lorem ipsum dolor sit amet.</div>
-        </div>
-    </div>
-    
-    <hr class="thick" />
-    
-    <div>
-        <h2>May 30, 2012</h2>
-        <div class="crowds-event">
-            <div class="crowds-event-time">12:28am</div>
-            <div class="crowds-event-name">Lorem ipsum dolor sit amet.</div>
-        </div>
-        
-        <div class="crowds-event">
-            <div class="crowds-event-time">12:28am</div>
-            <div class="crowds-event-name">Lorem ipsum dolor sit amet.</div>
-        </div>
-    </div>
-    
-    
-    
-    <br /><br /><br /><br />
-    
-    <ul class="challenge_list">
         {% for crowd in upcoming %}
-        <li class="challenge">
-            <!--a href="{# url crowds:crowd crowd.pk #}"-->
-                {{ crowd.name}}<span>&nbsp;&nbsp;&nbsp;&nbsp;{{ crowd.participants.all.count }} {% trans "Participants" %}</span>
-                <br/>
-                <span> created by {{ crowd.creator.get_profile.screen_name }}</span>
-                {% if crowd.start_date %} <br/> 
-                    <span class="dates">{{ crowd.start_date|date:"m/d/Y"}}</span> <br/>
-                {% endif %}
-            <!--/a-->
-                {% if not request.user in crowd.participants.all %}
-                    <a href="{% url crowds:join crowd.pk %}" class="button">{% trans "Join this Crowd!" %}</a>
-                {% else %}
-                    <a href="{% url crowds:leave crowd.pk %}" class="button">{% trans "Leave this Crowd!" %}</a>
-                {% endif %}
-        </li>
+            {% ifchanged %}
+                <hr class="thick" />
+                <h2>{{ crowd.start_date|date:"m/d/Y"}}</h2>
+            
+            {% endifchanged %}
+            <div class="crowds-event">
+                <div class="crowds-event-time">
+                    {% if crowd.start_date %}
+                        {{ crowd.start_date|time:"g:i A" }}
+                    {% endif %}
+                </div>
+                <div class="crowds-event-name">{{ crowd.name}} ({{ crowd.participants.all.count }} {% trans "Participants" %})</div>
+            </div>
         {% empty %}
-        <li>
-        {% trans "There are no active crowds" %}.
-        </li>
+            {% trans "There are no active crowds" %}
         {% endfor %}
 
 
         {% for crowd in past %}
-        <li class="challenge">
-            <!--a href="{# url crowds:crowd crowd.pk #}"-->
-                {{ crowd.name}}<span>{{ crowd.participants.all.count }} {% trans "Participants" %}</span>
-                {% if crowd.start_date %} <br/> <span class="dates">{{ crowd.start_date|date:"m/d/Y"}}</span> {% endif %}
-            <!--/a-->
-        </li>
+            {% ifchanged %}
+                <hr class="thick" />
+                <h2>{{ crowd.start_date|date:"m/d/Y"}}</h2>
+            
+            {% endifchanged %}
+            <div class="crowds-event">
+                <div class="crowds-event-time">
+                    {% if crowd.start_date %}
+                        {{ crowd.start_date|time:"g:i A" }}
+                    {% endif %}
+                </div>
+                <div class="crowds-event-name">{{ crowd.name}} ({{ crowd.participants.all.count }} {% trans "Participants" %})</div>
+            </div>
         {% empty %}
-        <li>
-        {% trans "There are no past crowds" %}.
-        </li>
+            {% trans "There are no past crowds" %}
         {% endfor %}
+        
+        <hr class="thick" />
 
     </ul>
     </div>

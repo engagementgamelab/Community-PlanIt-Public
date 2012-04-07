@@ -1,6 +1,36 @@
 {% extends 'crowds/all.html' %}
 {% load game_extras i18n %}
 
+{% block js %}
+    {{ block.super }}
+    <script src="https://maps.google.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+    <script type="text/javascript" src="/admin/gmapsfield/admin/admin.js"></script>
+    <script src="{{ STATIC_URL }}js/date.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        $(document).ready(function(){
+            $(".add-map, .remove-map").remove();
+            
+            $("#id_start_date_0").datepicker();
+            $("#id_start_date_1").timepicker({
+                hourGrid: 6,
+                minuteGrid: 15,
+                ampm: true,
+                timeFormat: "hh:mm TT"
+            });
+            
+            $("#id_end_date_0").datepicker();
+            $("#id_end_date_1").timepicker({
+                hourGrid: 6,
+                minuteGrid: 15,
+                ampm: true,
+                timeFormat: "hh:mm TT"
+            });
+            
+        });
+    </script>
+{% endblock %}
+
+
 {% block crowds_add %}
 <div class="tabbutton">
     <a href="{% url crowds:index %}" class="button">{% trans "- Create a Get Together!" %}</a>
