@@ -1,0 +1,55 @@
+/* Crowds App Specific Styles */
+#crowds-addform {
+    padding: 20px 10px;
+    background: #00e5b8;
+}
+
+    #crowds-addform label {
+        display: block;
+        margin: 3px 0px;
+        font-size: 0.75em;
+    }
+    
+    #crowds-addform input[type='text'], 
+    #crowds-addform textarea {
+        padding: 5px 8px;
+        border: 0px;
+        border-radius: 3px;
+    }
+    
+        #crowds-addform #id_name {
+            width: 80%;
+        }
+        
+        #crowds-addform #id_description {
+            width: 80%;
+        }
+        
+        #crowds-addform #id_confirmation_code {
+            width: 80%;
+        }
+        
+    #crowds-addform input[type='submit'] {
+        margin: 20px 0px;
+        padding: 8px 10px;
+        border: 0px;
+        background: #007dff;
+        font-size: 0.8em;
+        text-transform: uppercase;
+        color: #fff;
+    }
+    
+.crowds-event {
+    background: #e3f1ea;
+    padding: 10px;
+    margin: 10px 0px;
+}
+
+    .crowds-event-time {
+        width: 100px;
+        display: inline-block;
+    }
+    
+    .crowds-event-name {
+        display: inline-block;
+    }

@@ -435,6 +435,9 @@ def dashboard(request, template_name='accounts/dashboard.html'):
         leaderboard = [], #UserProfile.objects.filter(instance=instance).order_by('-totalPoints')[:20],
         instance = instance,
         affiliations_leaderboard = affboard[:20],
+        active_missions= instance.missions.active(),
+        active_future= instance.missions.future(),
+        active_past= instance.missions.past(),
     )
     return render(request, template_name, context)
 

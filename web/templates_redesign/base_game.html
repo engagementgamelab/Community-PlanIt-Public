@@ -50,10 +50,16 @@
     </div>
     <div id="mission-map"></div>
 </div>
+
 {% endblock header %}
 
 
+
 {% block content %}
+<div id="header-instance">
+    <h1><a href="{# link back to current mission#}">{{ instance }}</a></h1>
+</div>
+
 <div class="column-full">
     <div id="column-body">
     {% block game_content %}

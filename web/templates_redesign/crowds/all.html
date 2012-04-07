@@ -2,12 +2,52 @@
 {% load game_extras i18n %}
 
 {% block game_content %}
-<div>
+<div class="column-full">
+    <div class="column-container">
     <h1>Get Together!</h1>
-    <p>Create or attend a Get Together. It allows you to interact face to face with the people who are also helping to build your community's future.</p>
+    <p class="instructions">Create or attend a Get Together. It allows you to interact face to face with the people who are also helping to build your community's future.</p>
+    
+    {% block crowds_add %}
+        <div class="tabbutton">
+            <a href="{% url crowds:rally %}" class="button">{% trans "+ Create a Get Together!" %}</a>
+        </div>
+    {% endblock %}
+    
+    <hr class="thick" />
+    
+    <div>
+        <h2>May 30, 2012</h2>
+        <div class="crowds-event">
+            <div class="crowds-event-time">12:28am</div>
+            <div class="crowds-event-name">Lorem ipsum dolor sit amet.</div>
+        </div>
+        
+        <div class="crowds-event">
+            <div class="crowds-event-time">12:28am</div>
+            <div class="crowds-event-name">Lorem ipsum dolor sit amet.</div>
+        </div>
+    </div>
+    
+    <hr class="thick" />
+    
+    <div>
+        <h2>May 30, 2012</h2>
+        <div class="crowds-event">
+            <div class="crowds-event-time">12:28am</div>
+            <div class="crowds-event-name">Lorem ipsum dolor sit amet.</div>
+        </div>
+        
+        <div class="crowds-event">
+            <div class="crowds-event-time">12:28am</div>
+            <div class="crowds-event-name">Lorem ipsum dolor sit amet.</div>
+        </div>
+    </div>
+    
+    
+    
+    <br /><br /><br /><br />
     
     <ul class="challenge_list">
-
         {% for crowd in upcoming %}
         <li class="challenge">
             <!--a href="{# url crowds:crowd crowd.pk #}"-->
@@ -26,7 +66,7 @@
         </li>
         {% empty %}
         <li>
-        {% trans "There are no active crowds" %}. <a href="{% url crowds:rally %}" class="button">{% trans "Rally a Crowd!" %}</a>
+        {% trans "There are no active crowds" %}.
         </li>
         {% endfor %}
 
@@ -40,11 +80,11 @@
         </li>
         {% empty %}
         <li>
-        {% trans "There are no past crowds" %}. <a href="{% url crowds:rally %}" class="button">{% trans "Rally a Crowd!" %}</a>
+        {% trans "There are no past crowds" %}.
         </li>
         {% endfor %}
 
     </ul>
-    
+    </div>
 </div>
 {% endblock %}
