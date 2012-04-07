@@ -125,12 +125,9 @@ LOGIN_REDIRECT_URL = '/'
 SESSION_COOKIE_DOMAIN = '.communityplanit.org'
 MANAGERS = ADMINS
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-<<<<<<< HEAD
 
 MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
 MEDIA_URL = '/assets/'
-=======
->>>>>>> origin/master
 
 STATIC_ROOT = os.path.join(DIRNAME, 'static_collected')
 STATIC_URL = '/static/'
