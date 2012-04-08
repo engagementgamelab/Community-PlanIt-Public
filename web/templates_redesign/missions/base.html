@@ -1,0 +1,75 @@
+{% extends "base_game.html" %}
+{% load attachment_tags gmap i18n game_extras cpi_tags %}
+
+{% block title %}{% trans "Mission" %}{% endblock %}
+
+{% block game_content %}
+<div>
+    <div class="column-container">
+        <h1>Instance Name</h1>
+    </div>
+    
+    <div class="column-twothird">
+        <div class="column-container">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+    </div>
+    <div class="column-third">
+        <div class="column-container">
+            <img src="" width="200" height="150">
+        </div>
+    </div>
+    
+    <div class="tabbutton"><a href="{% url activities:new mission.slug %}">create a new activity</a></div>
+    <hr class="thick clearfix" />
+    
+    {% if activities and mission.is_active %}
+        {% trans "You've completed" %} {{ completed|length }}/{{ activities|length }} {% trans "activities" %}:
+    {% else %}
+        {% trans "Activities" %}:
+    {% endif %}</h3>
+    <div></div>
+    <table class="activities">
+        <tbody>
+        {% for activity in activities %}
+            <tr class="{% cycle 'odd' 'even' %}">
+
+                {% if mission.is_expired %}
+                    <td colspan="3" class="{{activity.type.type}}_activity">
+                        <a href="{{ activity.get_overview_url }}">{{ activity|trans_fallback:"name" }}</a>
+                    </td>
+                {% else %}
+                    {% if mission.is_future %}
+                            <td colspan="3" class="{{activity.type.type}}_activity">{{ activity|trans_fallback:"name" }}</td>
+                    {% else %}
+                        {% if activity in completed %}
+                            <td class="{{activity.type.type}}_activity">
+                                <a href="{{ activity.get_activity_url }}">{{ activity|trans_fallback:"name" }}</a>
+                            </td>
+                            <td>{{ activity.getPoints }} {% trans "pts" %}</td> 
+                            <td class="final">
+                                <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a>
+                            </td>
+                        {% else %}
+                            <td class="{{activity.type.type}}_activity">
+                                <a href="{{ activity.get_activity_url }}">{{activity|trans_fallback:"name"}}</a>
+                            </td>
+                            <td>{{ activity.getPoints }} pts</td> 
+                            <td class="final">
+                                <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a>
+                            </td>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+            </tr>
+                {% empty %}
+            <tr>
+                <td colspan="2">{% trans "No activities found" %}.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}
