@@ -41,7 +41,6 @@
         {% endif %}
         
         {% for activity in activities %}
-
             {% if mission.is_expired %}
                 <div class="activity {{activity.type.type}}">
                     <a href="{{ activity.get_overview_url }}">
@@ -51,29 +50,25 @@
                 </div>
             {% else %}
                 {% if mission.is_future %}
-                        <td colspan="3" class="{{activity.type.type}}_activity">{{ activity|trans_fallback:"name" }}</td>
+                    {{ activity|trans_fallback:"name" }}
                 {% else %}
                     {% if activity in completed %}
-                        <td class="{{activity.type.type}}_activity">
-                            <a href="{{ activity.get_activity_url }}">{{ activity|trans_fallback:"name" }}</a>
-                        </td>
-                        <td>{{ activity.getPoints }} {% trans "pts" %}</td> 
-                        <td class="final">
-                            <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/check.png" alt="completed"></a>
-                        </td>
+                    <div class="activity {{activity.type.type}}">
+                        <a href="{{ activity.get_activity_url }}">
+                            {{ activity|trans_fallback:"name" }}
+                            {{ activity.getPoints }} (completed)
+                        </a>
+                    </div>
                     {% else %}
-                        <td class="{{activity.type.type}}_activity">
-                            <a href="{{ activity.get_activity_url }}">{{activity|trans_fallback:"name"}}</a>
-                        </td>
-                        <td>{{ activity.getPoints }} pts</td> 
-                        <td class="final">
-                            <a href="{{ activity.get_activity_url }}"><img src="{{MEDIA_URL}}img/go.png" alt="try it!"></a>
-                        </td>
+                    <div class="activity {{activity.type.type}}">
+                        <a href="{{ activity.get_activity_url }}">
+                            {{ activity|trans_fallback:"name" }}
+                            {{ activity.getPoints }}
+                        </a>
+                    </div>
                     {% endif %}
                 {% endif %}
             {% endif %}
-
-
         {% empty %}
             {% trans "There are currently no activities for this mission. Check back later." %}
         {% endfor %}
