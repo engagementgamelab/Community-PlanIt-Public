@@ -1,0 +1,68 @@
+{% extends "player_activities/base.html" %}
+{% load gmap attachment_tags i18n %}
+{% block title %}{{ activity.name }}: Empathy Question Overview{% endblock %}
+
+{% block game_content %}
+<div>
+    <div class="column-container">
+        <hr class="thick" />
+        
+        {% if myAnswer %}
+            <div class="suggestion">
+                <a class="back button" href="{{activity.mission.get_absolute_url}}"><img src="{{MEDIA_URL}}img/icons/arrow-back.png"> {% trans "Return to mission" %}</a>
+                {% blocktrans with mission_url=activity.mission.get_absolute_url %}
+                Thanks for completing this activity. When you're ready for more, visit the <a href="{{mission_url}}">mission page</a>.
+                {% endblocktrans %}
+            </div>
+        {% endif %}
+
+        {% include "player_activities/official_responses.html" %}
+
+        <h1>{{activity.name}}</h1>
+
+        <p class="bio">
+            {% if activity.avatar %}
+                <img class="avatar left" src="{{MEDIA_URL}}/{{activity.avatar}}">
+            {% endif %}
+            {{activity.bio}}
+        </p>
+    
+        {% include "player_activities/attachments.html" %}
+
+        {% if not activity.mission.is_expired and myComment %}
+        <div>
+            <h3>{% trans "You answered:" %}</h3>
+            <blockquote class="highlight">{{ myComment.message }}</span></blockquote>
+            <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:empathy-replay activity.id %}' ">
+        </div>
+        {% endif %}
+    
+        {% if is_completed or activity.is_past %}
+        {% if answers %}
+        <div class="comments embedded clear">
+            <h2>
+                {% trans "Responses" %}
+                <div class="controls right">
+                    Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+                </div>
+            </h2>
+            <ul class="comment_list">
+            {% for answer in answers %}
+            {% with instance=activity.mission.instance %}
+                {% for comment in answer.comments.select_related.all reversed %}
+                    {% with extra_message=answer.selected.value %}
+                    {% include "comments/comment.html" %}
+                    {% endwith %}
+                {% endfor %}
+            {% endwith %}
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% else %}
+            <h2>{% trans "Complete the activity to see everyone's responses" %}</h2>
+        {% endif %}
+    </div>
+</div>
+    
+{% endblock %}

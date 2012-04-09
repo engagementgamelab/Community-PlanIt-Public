@@ -1,0 +1,121 @@
+{% extends "player_activities/base.html" %}
+{% load gmap attachment_tags i18n %}
+{% block title %}{{activity.name}}: Response Overview{% endblock %}
+
+{% block game_content %}
+<div>
+    <div class="column-container">
+        <hr class="thick" />
+        
+        {% if myAnswer %}
+            <div class="suggestion">
+                <a class="back button" href="{{activity.mission.get_absolute_url}}"><img src="{{MEDIA_URL}}img/icons/arrow-back.png"> {% trans "Return to mission" %}</a>
+                {% blocktrans with mission_url=activity.mission.get_absolute_url %}
+                Thanks for completing this activity. When you're ready for more, visit the <a href="{{mission_url}}">mission page</a>.
+                {% endblocktrans %}
+            </div>
+        {% endif %}
+    
+        {% include "player_activities/official_responses.html" %}
+        <h1>{{activity.name}} ({{ activity.points }})</h1>
+        <p>{{activity.question|safe}} </p>
+
+        {% include "player_activities/attachments.html" %}
+            {% if not activity.mission.is_expired %}
+            <div>
+                {% if myAnswer %}
+                <h3>{% trans "You answered:" %} <span class="highlight">{{myAnswer.selected.value}}</span></h3>
+                <input class="button" type="button" value="{% trans "Replay" %}" onClick="window.location='{% url activities:replay activity.id %}' ">
+                {% endif %}
+                {% if myComment %}
+                <input class="button" type="button" value="{% trans "See Your Answer" %}" onClick="window.location='#comment-{{myComment.id}}' ">
+                {% endif %}
+            </div>
+            {% endif %}
+    
+        {% if is_completed or activity.is_past %}
+            <h2>{% trans "Response Summary" %}</h2>
+            <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; 
+                margin-top: 25px; margin-bottom: 25px; "></div>
+            {% if answers.count %}
+            <div class="comments embedded">
+                <h2>
+                    {% trans "Responses" %}
+                    <div class="controls right">
+                        Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+                    </div>
+                </h2>
+                <ul class="comment_list">
+                {% for answer in answers %}
+                {% with instance=activity.mission.instance comments=answer.comments %}
+                    {% for comment in comments.all reversed %}
+                        {% with extra_message=answer.selected.value %}
+                        {% include "comments/comment.html" %}
+                        {% endwith %}
+                    {% empty %}
+                    <li class="comment">No comments found.</li>
+                    {% endfor %}
+                {% endwith %}
+                {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <h2>{% trans "No responses submitted" %}</h2>
+            {% endif %}
+        {% else %}
+            <h2>{% trans "Complete the activity to see everyone's responses" %}</h2>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{# {% block body %}    #}
+{# <script type="text/javascript"> #}
+{#     $(function () { #}
+{#         try { #}
+{#          #}
+{#         var answerData = new Array(0); #}
+{#         {% if answers %} #}
+{#             {% for choice in choices %} #}
+{#                 answerData.push({label: "{{choice.value}}", data: {{choice.singleresponse_answers.count}} }); #}
+{#             {% endfor %} #}
+{#         {% else %} #}
+{#             answerData.push({label: "No answers yet.", data: 1}); #}
+{#         {% endif %} #}
+{#          #}
+{#         $.plot($("#choicePie"), answerData, { #}
+{#             series: {  #}
+{#                 pie: {  #}
+{#                     show: true, #}
+{#                     radius: 1, #}
+{#                     stroke: { #}
+{#                         color: '#FFECD8', #}
+{#                         width: 2 #}
+{#                     }, #}
+{#                     label: { #}
+{#                         show: true, #}
+{#                         radius: 1/2, #}
+{#                         formatter: function(label, series) { #}
+{#                             var output = '<div class="pielabel">' + label; #}
+{#                             if (series.percent < 100) { #}
+{#                                 output += '<br/><strong>'+Math.round(series.percent)+'%</strong></div>'; #}
+{#                             } #}
+{#                             return output; #}
+{#                         }, #}
+{#                         threshold: 0.1 #}
+{#                     } #}
+{#                 } #}
+{#             }, #}
+{#             legend: {  #}
+{#                 show: false #}
+{#             } #}
+{#         }); #}
+{#          #}
+{#         } catch (err) { #}
+{#             alert(err); #}
+{#         } #}
+{#     }); #}
+{#      #}
+{# </script>     #}
+{# {% endblock body %}    #}
+
