@@ -170,6 +170,7 @@ a {
 
 .private #header {
    background: url('../img/bg-private-header.png') no-repeat;
+   height: auto;
 }
 
    .private #logo-container {
@@ -191,8 +192,9 @@ a {
 
 
 #header-instance {
-   margin: 10px 20px;
-   background: #fff;
+    padding: 10px 20px;
+    background: #fff;
+    overflow: hidden;
 }
     
     #header-instance h1 {
@@ -203,43 +205,60 @@ a {
 
 /* Missions Navigation */
 #nav-missions {
-   overflow: hidden;
+    overflow: hidden;
 }
-   #nav-missions li {
-       float: left;
-   }
+    #nav-missions li {
+        position: relative;
+        float: left;
+    }
 
-   #nav-missions a {
-       display: inline-block;
+    #nav-missions a {
+        display: inline-block;
 /*       border: 1px solid #ddd;*/
-       background: #f2f7c7;
+        height: 60px;
+        padding-right: 13px;
+        background: #F2F7C7 url('../img/bg-nav-missions-divider.png') no-repeat right center;
    }
+   
+   #nav-missions li:last-child a {
+       padding-right: 0px;
+       background: #f2f7c7;
+  }
+      
+   #nav-missions .nav-missions-end-arrow {
+       position: absolute;
+       top: 0px;
+       right: -13px;
+       width: 13px;
+       height: 60px;
+       background: url('../img/bg-nav-missions-divider_end.png') no-repeat right center;
+  }
 
-       #nav-missions a > div {
-           display: inline-block;
-           vertical-align: middle;
-       }
+        #nav-missions a > div {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        .nav-missions-number {
+            font-size: 2em;
+            font-weight: bold;
+            padding: 13px 30px;
+        }
 
-       .nav-missions-number {
-           font-size: 2em;
-           font-weight: bold;
-           padding: 5px 20px;
-       }
+        .nav-missions-endsin {
+            border-left: 1px solid #ddd;
+            padding: 0px 10px;
+            color: #000;
+        }
 
-       .nav-missions-endsin {
-           border-left: 1px solid #ddd;
-           padding: 0px 10px;
-           color: #000;
-       }
+            .nav-missions-endsin .nav-missions-endsin-label {
+                font-size: 0.8em;
+            }
 
-           .nav-missions-endsin .nav-missions-endsin-label {
-               font-size: 0.8em;
-           }
-
-           .nav-missions-endsin .nav-missions-endsin-time {
-               font-size: 1.2em;
-               font-weight: bold;
-           }
+            .nav-missions-endsin .nav-missions-endsin-time {
+                font-size: 1.2em;
+                font-weight: bold;
+            }
 
 /* Mission Progress Bar*/
 #mission-map {
@@ -263,7 +282,7 @@ a {
        width: 650px;
        height: 40px;
        margin-left: 20px;
-       background: #f2f7ed; /* Old browsers */
+       background: #f2f7ed url('../img/bg-mission-progress-ticks.png') repeat-x center center; /* Old browsers */
        background: -moz-linear-gradient(left,  #f2f7ed 0%, #f7ff5d 100%); /* FF3.6+ */
        background: -webkit-gradient(linear, left top, right top, color-stop(0%,#f2f7ed), color-stop(100%,#f7ff5d)); /* Chrome,Safari4+ */
        background: -webkit-linear-gradient(left,  #f2f7ed 0%,#f7ff5d 100%); /* Chrome10+,Safari5.1+ */
@@ -276,7 +295,7 @@ a {
    #mission-progress-individual {
        width: 20%;
        height: 100%;
-       background: #7beed0;
+       background: #7beed0 url('../img/bg-mission-progress-ticks.png') repeat-x center center;
        font-size: 1.5em;
        line-height: 50px;
        text-align: right;
@@ -289,7 +308,7 @@ a {
        left: 500px;
        width: 25px;
        height: 49px;
-       background: url('../img/icon-progress-marker.png') no-repeat;
+       background: url('../img/icon-mission-progress-marker.png') no-repeat;
    }
    
    
@@ -432,7 +451,7 @@ hr.thick {
     height: 10px;
     margin: 0px;
     border: 0px;
-    background: #000;
+    background: #2d3542;
 }
 
 .color-green {}
@@ -448,6 +467,7 @@ hr.thick {
     }
     
 p.instructions {
+    margin: 10px 0px;
     color: #777;
     width: 500px;
     font-size: 0.9em;

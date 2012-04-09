@@ -1,0 +1,88 @@
+/* Missions-specific Styles */
+
+#btn-challenges {
+    float: left;
+}
+
+    #btn-challenges a {
+        display: block;
+        padding: 15px 20px;
+        background: #2d3542;
+        color: #fff;
+    }
+
+#btn-player-challenges {
+    float: right;
+}
+
+    #btn-player-challenges a {
+        display: block;
+        padding: 15px 20px 15px 40px;
+        background: url('../img/icon-player-challenges.png') no-repeat 10px center;
+    }
+    
+    #btn-player-challenges a:hover {
+        background: #2d3542 url('../img/icon-player-challenges_over.png') no-repeat 10px center;
+        color: #fff;
+    }
+
+
+#mission-video-container {
+    width: 230px;
+    height: 150px;
+}
+
+.activity {
+}
+
+    .activity a {
+        display: block;
+        margin: 5px 0px;
+        padding: 10px 10px 10px 50px;
+        background: #e3f1ea;
+    }
+
+    .activity.open_ended a {
+        background: #e3f1ea url('../img/icon-open_ended.png') no-repeat 10px center;
+    }
+    
+        .activity.open_ended a:hover {
+            background-image: url('../img/icon-open_ended_over.png');
+        }
+    
+    .activity.map a {
+        background: #e3f1ea url('../img/icon-map.png') no-repeat 10px center;
+    }
+    
+        .activity.map a:hover {
+            background-image: url('../img/icon-map_over.png');
+        }
+    
+    .activity.single_response a {
+        background: #e3f1ea url('../img/icon-single_response.png') no-repeat 10px center;
+    }
+    
+        .activity.single_response a:hover {
+            background-image: url('../img/icon-single_response_over.png');
+        }
+        
+    .activity.multi_response a {
+        background: #e3f1ea url('../img/icon-multi_response.png') no-repeat 10px center;
+    }
+        
+        .activity.multi_response a:hover {
+            background-image: url('../img/icon-multi_response_over.png');
+        }
+    
+    .activity.empathy a {
+        background: #e3f1ea url('../img/icon-empathy.png') no-repeat 10px center;
+    }
+        
+        .activity.empathy a:hover {
+            background-image: url('../img/icon-empathy_over.png');
+        }
+
+    .activity a:hover {
+        background-color: #007dff !important;
+        color: #fff;
+    }

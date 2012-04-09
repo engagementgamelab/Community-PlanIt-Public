@@ -10,36 +10,23 @@
     <div>
         <h1>Mission Control</h1>
         <ul id="nav-missions">
-            {# for mission in missions #}
+            {% for mission in request.current_game.missions.all %}
             <li>
-                <a href="">
-                    <div class="nav-missions-number">1</div>
+                <a href="{% url missions:mission mission.slug %}" title="{{mission.title}}">
+                    <div class="nav-missions-number">{{ forloop.counter }}</div>
                 </a>
+                {% if forloop.last %}<div class="nav-missions-end-arrow"></div>{% endif %}
             </li>
-            <li>
-                <a href="">
-                    <div class="nav-missions-number">2</div>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <div class="nav-missions-number">3</div>
-                    <div class="nav-missions-endsin">
-                        <p class="nav-missions-endsin-label">Ends in<p>
-                        <p class="nav-missions-endsin-time">4 days</p>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <div class="nav-missions-number">4</div>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <div class="nav-missions-number">5</div>
-                </a>
-            </li>
+            {# <li> #}
+            {#     <a href=""> #}
+            {#         <div class="nav-missions-number">3</div> #}
+            {#         <div class="nav-missions-endsin"> #}
+            {#             <p class="nav-missions-endsin-label">Ends in<p> #}
+            {#             <p class="nav-missions-endsin-time">4 days</p> #}
+            {#         </div> #}
+            {#     </a> #}
+            {# </li> #}
+            {% endfor %}
         </ul>
         <div id="mission-progress-container">
             <div id="mission-progress-total">
@@ -57,7 +44,7 @@
 
 {% block content %}
 <div id="header-instance">
-    <h1><a href="{# link back to current mission#}">{{ instance }}</a></h1>
+    <h1><a href="{# should link back to current mission #}">{{ request.current_game }}</a></h1>
 </div>
 
 <div class="column-full">
