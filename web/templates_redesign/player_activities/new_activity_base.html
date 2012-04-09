@@ -1,0 +1,82 @@
+{% extends "player_activities/base.html" %}
+{% load attachment_tags gmap i18n game_extras cpi_tags %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}missions/css/styles.css">
+{% endblock %}
+
+{% block title %}{% trans "Mission" %}{% endblock %}
+
+{% block game_content %}
+<div>
+    <div class="column-container">
+        <h1>{# mission.title #}</h1>
+    </div>
+    <div id="mission-intro">
+        <div class="column-twothird">
+            <div class="column-container">
+                <p>{# mission.description #}</p>
+            </div>
+        </div>
+        <div class="column-third">
+            <div class="column-container">
+                <div id="mission-video-container">{# embed_video mission.video #}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="column-container">
+        <div id="btn-challenges" class="clearfix"><a href="{% url missions:mission mission_slug %}">Challenges</a></div>
+        <div id="btn-player-challenges"><a class="active">You Pose the Challenges</a></div>
+        <hr class="thick clearfix" />
+    </div>
+    
+    <div class="column-container">
+        <p class="instructions">{% trans "Response to questions that your community has posed, or ask one of your own. Adding to the dialogue will help make sure that everyones voice is heard." %}</p>
+        
+        <div class="tabbutton">
+            <a href="">- Ask a Question</a>
+        </div>
+        {# {% if activities and mission.is_active %} #}
+        {#     {% trans "You have completed" %} {{ completed|length }}/{{ activities|length }} {% trans "activities" %}: #}
+        {# {% else %} #}
+        {#     {% trans "Activities" %}: #}
+        {# {% endif %} #}
+        {#  #}
+        {# {% for activity in activities %} #}
+        {#     {% if mission.is_expired %} #}
+        {#         <div class="activity {{activity.type.type}}"> #}
+        {#             <a href="{{ activity.get_overview_url }}"> #}
+        {#                 {{ activity|trans_fallback:"name" }} #}
+        {#                 {{ activity.getPoints }} #}
+        {#             </a> #}
+        {#         </div> #}
+        {#     {% else %} #}
+        {#         {% if mission.is_future %} #}
+        {#             {{ activity|trans_fallback:"name" }} #}
+        {#         {% else %} #}
+        {#             {% if activity in completed %} #}
+        {#             <div class="activity {{activity.type.type}}"> #}
+        {#                 <a href="{{ activity.get_activity_url }}"> #}
+        {#                     {{ activity|trans_fallback:"name" }} #}
+        {#                     {{ activity.getPoints }} (completed) #}
+        {#                 </a> #}
+        {#             </div> #}
+        {#             {% else %} #}
+        {#             <div class="activity {{activity.type.type}}"> #}
+        {#                 <a href="{{ activity.get_activity_url }}"> #}
+        {#                     {{ activity|trans_fallback:"name" }} #}
+        {#                     {{ activity.getPoints }} #}
+        {#                 </a> #}
+        {#             </div> #}
+        {#             {% endif %} #}
+        {#         {% endif %} #}
+        {#     {% endif %} #}
+        {# {% empty %} #}
+        {#     {% trans "There are currently no activities for this mission. Check back later." %} #}
+        {# {% endfor %} #}
+    </div>
+
+</div>
+{% endblock %}

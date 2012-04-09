@@ -1,10 +1,20 @@
 /* Missions-specific Styles */
+#mission-intro {
+    overflow: hidden;
+    margin: 20px 0px;
+}
 
 #btn-challenges {
     float: left;
 }
 
     #btn-challenges a {
+        display: block;
+        padding: 15px 20px;
+    }
+    
+    #btn-challenges a:hover,
+    #btn-challenges a.active {
         display: block;
         padding: 15px 20px;
         background: #2d3542;
@@ -21,7 +31,8 @@
         background: url('../img/icon-player-challenges.png') no-repeat 10px center;
     }
     
-    #btn-player-challenges a:hover {
+    #btn-player-challenges a:hover,
+    #btn-player-challenges a.active {
         background: #2d3542 url('../img/icon-player-challenges_over.png') no-repeat 10px center;
         color: #fff;
     }
@@ -33,12 +44,13 @@
 }
 
 .activity {
+    position: relative;
 }
 
     .activity a {
         display: block;
         margin: 5px 0px;
-        padding: 10px 10px 10px 50px;
+        padding: 12px 10px 12px 50px;
         background: #e3f1ea;
     }
 
@@ -86,3 +98,22 @@
         background-color: #007dff !important;
         color: #fff;
     }
+    
+    .mission-activity-points {
+        position: absolute;
+        right: 100px;
+        top: 5px;
+        width: 30px;
+        height: 30px;
+        font-size: 0.8em;
+        font-weight: bold;
+        line-height: 33px;
+        text-align: center;
+        color: #fff;
+        background: url('../img/bg-mission-activities-points.png') no-repeat center center;
+    }
+    
+        .activity a:hover .mission-activity-points {
+            background: url('../img/bg-mission-activities-points_over.png') no-repeat center center;
+            color: #00e7c5;
+        }
