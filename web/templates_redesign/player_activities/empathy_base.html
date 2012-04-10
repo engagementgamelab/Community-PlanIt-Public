@@ -1,0 +1,34 @@
+{% extends "player_activities/base.html" %}
+{% load i18n %}
+{% block title %}{{ block.super }} Empathy Response. {% endblock %}
+
+{% block game_content %}
+    {{ block.super }}
+    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">{% csrf_token %}
+        <input type="hidden" name="form" value="empathy">
+
+        <h1>{{activity.name}}</h1>
+
+        <p class="bio">
+            {% if activity.avatar %}
+                <img class="left avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
+            {% endif %}
+            {{activity.bio}}
+        </p>
+        
+        <p> Complete the activity to see everyone's responses.  </p>
+        <h3 class="clear">{{activity.question|safe}}</h3>
+
+        {% include "player_activities/attachments.html" %}
+         
+        <h3>{% trans "Enter your response (required)" %}</h3>
+        {{ form.response }}
+        <h4>You have <span id="charsLeft"></span> chars left.</h4>
+        
+        {% block comment %}{% endblock %}
+        <div class="controls">
+            <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
+        </div>
+    </form>
+{% endblock %}
+

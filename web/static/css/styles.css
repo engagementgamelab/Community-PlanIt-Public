@@ -72,13 +72,15 @@ a {
         }
 
         
-        #login-container {
+        #login-container,
+        .login-container {
             display: inline-block;
             vertical-align: middle;
             background: #f7ff59;
             text-transform: uppercase;
             padding: 8px 15px;
         }
+        
 
 /* Columns */
 .column-full {

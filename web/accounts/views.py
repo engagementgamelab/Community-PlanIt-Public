@@ -355,6 +355,7 @@ def profile(request, id):
 
 @login_required
 def dashboard(request, template_name='accounts/dashboard.html'):
+# def dashboard(request, template_name='city.html'):
     # expecting the current game to be 
     # set by middleware
 

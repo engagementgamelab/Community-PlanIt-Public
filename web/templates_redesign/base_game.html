@@ -3,81 +3,54 @@
 {% block body_class %}private{% endblock %}
 
 {% block header %}
-<div id="header">
-    <div id="logo-container">
-        <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="80" height="51"/></a>
-    </div>
-    <div>
-        <h1>Mission Control</h1>
-        <ul id="nav-missions">
-            {% for mission in request.current_game.missions.all %}
-            <li>
-                <a href="{% url missions:mission mission.slug %}" title="{{mission.title}}">
-                    <div class="nav-missions-number">{{ forloop.counter }}</div>
-                </a>
-                {% if forloop.last %}<div class="nav-missions-end-arrow"></div>{% endif %}
-            </li>
-            {# <li> #}
-            {#     <a href=""> #}
-            {#         <div class="nav-missions-number">3</div> #}
-            {#         <div class="nav-missions-endsin"> #}
-            {#             <p class="nav-missions-endsin-label">Ends in<p> #}
-            {#             <p class="nav-missions-endsin-time">4 days</p> #}
-            {#         </div> #}
-            {#     </a> #}
-            {# </li> #}
-            {% endfor %}
-        </ul>
-        <div id="mission-progress-container">
-            <div id="mission-progress-total">
-                <div id="mission-progress-marker"></div>
-                <div id="mission-progress-individual">250</div>
+    <div id="header">
+        <div id="logo-container">
+            <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="80" height="51"/></a>
+        </div>
+        <div>
+            <h1>Mission Control</h1>
+            <ul id="nav-missions">
+                {% for mission in request.current_game.missions.all %}
+                <li>
+                    <a href="{% url missions:mission mission.slug %}" title="{{mission.title}}">
+                        <div class="nav-missions-number">{{ forloop.counter }}</div>
+                    </a>
+                    {% if forloop.last %}<div class="nav-missions-end-arrow"></div>{% endif %}
+                </li>
+                {# <li> #}
+                {#     <a href=""> #}
+                {#         <div class="nav-missions-number">3</div> #}
+                {#         <div class="nav-missions-endsin"> #}
+                {#             <p class="nav-missions-endsin-label">Ends in<p> #}
+                {#             <p class="nav-missions-endsin-time">4 days</p> #}
+                {#         </div> #}
+                {#     </a> #}
+                {# </li> #}
+                {% endfor %}
+            </ul>
+            <div id="mission-progress-container">
+                <div id="mission-progress-total">
+                    <div id="mission-progress-marker"></div>
+                    <div id="mission-progress-individual">250</div>
+                </div>
             </div>
         </div>
+        <div id="mission-map"></div>
     </div>
-    <div id="mission-map"></div>
-</div>
-
 {% endblock header %}
 
-
-
 {% block content %}
-<div id="header-instance">
-    <h1><a href="{# should link back to current mission #}">{{ request.current_game }}</a></h1>
-</div>
+    <div id="header-instance">
+        <h1><a href="{# should link back to current mission #}">{{ request.current_game }}</a></h1>
+    </div>
 
-<div class="column-full">
-    <div id="column-body">
-    {% block game_content %}
+    <div class="column-full">
+        <div id="column-body">
+            {% block game_content %}
         
-    {% endblock %}
-    </div>
+            {% endblock %}
+        </div>
     
-    <div id="sidebar-nav">
-        <ul>
-            <li class="sidebar-nav-profile">
-                <a id="sidebar-nav-profile" href="{% url accounts_profile request.user.id %}">
-                    <div>
-                        <p id="sidebar-nav-profile-notifications">0</p>
-                        {% if request.user.get_profile.avatar %}
-                            <img id="sidebar-nav-profile-avatar" src="{{ MEDIA_URL }}/{{ request.user.get_profile.avatar }}" width="64" height="64" />
-                        {% else %}
-                            <img id="sidebar-nav-profile-avatar" src="{{ STATIC_URL }}/img/avatar-blank.png" width="64" height="64" />
-                        {% endif %}
-                        {# if user has badges... #}
-                        <img src="{{ STATIC_URL }}img/badge-blank.png">
-                    </div>
-                    {{ request.user.first_name }} {{ request.user.last_name }}
-                </a>
-            </li>
-            <li><a href="" id="sidebar-nav-expert">Become an Expert</a></li>
-            <li><a href="{% url crowds:index %}" id="sidebar-nav-crowds">Get Together!</a></li>
-            <li><a href="" id="sidebar-nav-news">What's Happening</a></li>
-            <li><a href="" id="sidebar-nav-players">Find Players</a></li>
-            <li><a href="" id="sidebar-nav-standings">Check the Standings</a></li>
-        </ul>
+        {% include '_game_nav.html' %}
     </div>
-    <div class="clearfix"></div>
-</div>
 {% endblock %}

@@ -1,0 +1,32 @@
+<div id="sidebar-nav">
+    <ul>
+        <li class="sidebar-nav-profile">
+            <a id="sidebar-nav-profile" href="{% url accounts_profile request.user.id %}">
+                <div>
+                    <p id="sidebar-nav-profile-notifications">0</p>
+                    {% if request.user.get_profile.avatar %}
+                        <img id="sidebar-nav-profile-avatar" src="{{ MEDIA_URL }}/{{ request.user.get_profile.avatar }}" width="64" height="64" />
+                    {% else %}
+                        <img id="sidebar-nav-profile-avatar" src="{{ STATIC_URL }}/img/avatar-blank.png" width="64" height="64" />
+                    {% endif %}
+                    {# if user has badges... #}
+                    <img src="{{ STATIC_URL }}img/badge-blank.png">
+                </div>
+                {{ request.user.first_name }} {{ request.user.last_name }}
+            </a>
+        </li>
+        {# should link to resource center of city if not into an instance, should link to resource center of instance if logged into an instance #}
+        <li><a href="" id="sidebar-nav-expert">Become an Expert</a></li>
+        
+        
+        <li><a href="{% url crowds:index %}" id="sidebar-nav-crowds">Get Together!</a></li>
+        
+        {# should not show if not logged into an instance #}
+        <li><a href="" id="sidebar-nav-news">What's Happening</a></li>
+        
+        <li><a href="" id="sidebar-nav-players">Find Players</a></li>
+        
+        {# should not show if not logged into an instance #}
+        <li><a href="" id="sidebar-nav-standings">Check the Standings</a></li>
+    </ul>
+</div>

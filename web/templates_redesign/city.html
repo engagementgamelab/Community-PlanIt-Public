@@ -1,30 +1,60 @@
-{% extends "index.html"%}
+{% extends 'base_city.html' %}
 
-{% block body_id %}public-city{% endblock %}
-
-{% block header %}
-<div id="header">
-    <div id="logo-container">
-        <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="150" height="100" /></a>
-    </div>
-    <div id="header-extras-container">
-        <div id="header-extras-cityname">{{ current_city.name }}</div>
-        <div id="header-extras-citydescription">{{ current_city.description }}</div>
-        <div id="header-extras-cityimage"><img src="{{ MEDIA_URL }}{{ current_city.image }}" /></div>
-    </div>
-</div>
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/citypages.css"> 
 {% endblock %}
 
+{% block extra_head %}
+<script>
+    $(function(){
+        $("#walkthrough").slides({
+            next: 'walkthrough-next',
+            generatePagination: false
+        });
+        
+        $("#games-list-current").slides({
+            effect: 'fade',
+            generatePagination: false,
+            paginationClass: 'games-list-nav'
+        });
+        
+        $("#games-list-past").slides({
+            effect: 'fade',
+            generatePagination: false,
+            paginationClass: 'games-list-nav'
+        });
+        
+        $('.games-list').hide();
+        
+        $(".games-filter a").click(function(){
+            $this = $(this);
+            $(".games-filter a").removeClass('active');
+            $this.addClass('active');
+            $('.games-list').hide();
+            $('#'+$this.attr('data-target')).show();
+        })
+        
+        $(".games-filter a").first().click();
+        
+    });
+</script>
+{% endblock %}
 
-{% block walkthrough %}{% endblock %}
+{% block body_id %}{% if user.is_authenticated %}private-city{% else %}public-city{% endif %}{% endblock %}
 
-{% block cities_nav %}{% endblock %}
-
-{% block games_extras %}
-    {% if not user.is_authenticated %}
-    <div id="login-container">
-        <a href="{% url accounts:login %}">Log In</a> or <a href="{% url accounts:register %}">Sign Up</a>
-    </div>
+{% block content %}
+    {% include '_games_per_city.html' %}
+    
+    
+    {% if user.is_authenticated %}
+        {% include '_game_nav.html' %}
+    {% else %}
+    
+        <div id="login-container">
+            <a href="{% url accounts:login %}">Sign In</a>
+        </div>
+    
     {% endif %}
-    {{ block.super }}
+    
 {% endblock %}

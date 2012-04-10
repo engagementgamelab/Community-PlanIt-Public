@@ -43,8 +43,17 @@ def index(request, authentication_form=AccountAuthenticationForm, template='inde
             'instances_past': instances_past,
         }
         return render_to_response(template, context, context_instance=RequestContext(request))
-
-    return dashboard(request)
+    
+    context = {
+        'current_city': current_city,
+        'cities': City.objects.all(),
+        'instances_active': instances_active,
+        'instances_future': instances_future,
+        'instances_past': instances_past,
+    }
+        
+    # return dashboard(request)
+    return render_to_response('city.html', context, context_instance=RequestContext(request))
 
 @never_cache
 def server_error(request, template_name='500.html'):

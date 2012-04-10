@@ -2,7 +2,6 @@
 
 /* Header Extras */
 #header-extras-container {}
-
     
     #header-extras-cityname {
         width: 200px;
@@ -97,22 +96,15 @@ hr.rainbow {
         
 /* 
    Games 
-   Index pages and city pages have slightly different setup 
 */
-#public-city #games {
-    width: 920px;
-}
+
+
 #public-index #games {
     width: 640px;
 }
 
     #public-index #games > .slides_container {
         width: 640px;
-        height: 600px;
-    }
-
-    #public-city #games > .slides_container {
-        width: 920px;
         height: 600px;
     }
 
@@ -130,7 +122,7 @@ hr.rainbow {
     
         .games-filter li {
             display: inline-block;
-            vertical-align: middle;
+            vertical-align: bottom;
         }
         
         .games-filter a {
@@ -138,15 +130,25 @@ hr.rainbow {
             display: inline-block;
             padding: 20px;
             text-align: center;
-            border: 1px dotted #ddd;
+/*            border: 1px dotted #ddd;*/
+/*            background: #2D3542;*/
             cursor: pointer;
         }
-
         
-        .games-filter a.active {
+        .games-filter a.active,
+        .games-filter a:hover {
+            background: #2D3542;
+            color: #fff;
+        }
+        
+        .games-filter a.active{
             font-size: 1.2em;
         }
         
+    .games hr.thick {
+        margin-bottom: 10px;
+    }
+    
     #games-countdown {
         display: inline-block;
         vertical-align: bottom;
@@ -228,7 +230,17 @@ hr.rainbow {
                 .games-list-details .games-list-detail-description {
                     margin: 10px 0px;
                 }
+/* Public - city pages have slightly different setup... */
 
+/*#public-city #games {
+    width: 920px;
+}
+
+    #public-city #games > .slides_container {
+        width: 920px;
+        height: 600px;
+    }
+                    
         #public-city .games-list-details {
             float: left;
             width: 720px;
@@ -249,6 +261,44 @@ hr.rainbow {
 
                 #public-city .games-list-details .games-list-detail-img {
                     width: 680px;
+                    height: 300px;
+                }*/
+
+/* Private - city (logged-in) pages again have a slightly different setup... sigh... */
+
+#public-city #games,
+#private-city #games {
+    width: 780px;
+}
+
+    #public-city #games > .slides_container,
+    #private-city #games > .slides_container {
+        width: 780px;
+        height: 600px;
+    }
+    
+        #public-city .games-list-details,
+        #private-city .games-list-details {
+            float: left;
+            width: 580px;
+            background: #e4f2ed;
+        }
+        
+            #public-city .games-list-details > div,
+            #private-city .games-list-details > div {
+                display: block;
+                width: 580px;
+                margin: 20px;
+            }
+            
+                #private-city .games-list-details > div > div,
+                #private-city .games-list-details > div > div {
+                    width: 540px;
+                }
+                
+                #public-city .games-list-details .games-list-detail-img,
+                #private-city .games-list-details .games-list-detail-img {
+                    width: 540px;
                     height: 300px;
                 }
 

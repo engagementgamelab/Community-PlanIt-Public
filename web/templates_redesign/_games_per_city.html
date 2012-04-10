@@ -1,0 +1,71 @@
+<!-- Games per City -->
+<div id="games" class="games">
+    <ul class="games-filter">
+        <li><a data-target='games-list-current'>Games</a></li>
+        <li><a data-target='games-list-past'>Past Games</a></li>
+    </ul>
+    <hr class="thick" />
+    {% block games_extras %}{% endblock %}
+    <div class="games-filter-container">
+        <!-- Current Games -->
+        <div id="games-list-current" class="games-list">
+            <ul class="games-list-nav">
+                {% for instance in instances_active %}
+                <li>
+                    <a>
+                        <h3>{{ instance.title }}</h3>
+                        <p>
+                            {{ instance.for_city.name }} &bull; 
+                            {% if instance.is_started %}
+                                Right Now!
+                            {% else %}
+                                {{ instance.start_date|date:"M j" }} - {{ instance.end_date|date:"M j" }}
+                            {% endif %}
+                            
+                            You are signed up for this game
+                        </p>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="games-list-details slides_container">
+                {% for instance in instances_active %}
+                <div>
+                    <img class="games-list-detail-img" src="">
+                    <p class="games-list-detail-description">{{ instance.description|truncatewords:20 }}</p>
+                    <div class="login-container">
+                        {% if user.is_authenticated %}
+                            {# Sign up for Instance #}
+                            <a href="{% url accounts:register %}">Sign up for this game</a>
+                        {% else %}
+                            {# Authenticate, and then sign up for Instance #}
+                            <a href="{% url accounts:register %}">Register/Signin and then sign up for this game</a>                        
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Past Games -->
+        <div id="games-list-past" class="games-list">
+            <ul class="games-list-nav">
+                {% for instance in instances_past %}
+                <li>
+                    <a>
+                        <h3>{{ instance.title }}</h3>
+                        <p>{{ instance.for_city.name }} &bull; Ended on {{ instance.end_date|date:"M j" }}</p>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="games-list-details slides_container">
+                {% for instance in instances_past %}
+                <div>
+                    <img class="games-list-detail-img" src="">
+                    <p class="games-list-detail-description">{{ instance.description|truncatewords:20 }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

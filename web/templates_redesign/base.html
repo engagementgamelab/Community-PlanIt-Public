@@ -27,62 +27,67 @@
     <div id="top-nav">
         <ul>
             <li><a href="">How to Play</a></li>
-            {% if user.is_authenticated %}<li><a href="{% url accounts:logout %}">Log Out</a></li>{% endif %}
+            {% if user.is_authenticated %}
+                <li><a href="{% url accounts:logout %}">Log Out</a></li>
+            {% else %}
+                <li><a href="{% url accounts:login %}">Log In</a></li>
+            {% endif %}
         </ul>
     </div>
     {% endblock %}
     
     {% block page %}
-    {% block header %}
-    <!-- HEADER -->
-    <div id="header">
-        <div id="logo-container">
-            <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="150" height="97" /></a>
-        </div>
-        <div id="header-extras-container">
-            <div id="header-extras-intro">Community PlanIt is an engagement game that gives you the power to plan your community's future.</div>
-            {% if not user.is_authenticated %}
-            <div id="login-container">
-                <a href="{% url accounts:login %}">Log In</a> or <a href="{% url accounts:register %}">Sign Up</a>
+        {% block header %}
+            <!-- HEADER -->
+            <div id="header">
+                <div id="logo-container">
+                    <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="150" height="97" /></a>
+                </div>
+                <div id="header-extras-container">
+                    <div id="header-extras-intro">Community PlanIt is an engagement game that gives you the power to plan your community's future.</div>
+                    {% if not user.is_authenticated %}
+                    <div id="login-container">
+                        <a href="{% url accounts:login %}">Log In</a> or <a href="{% url accounts:register %}">Sign Up</a>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
-            {% endif %}
-        </div>
-    </div>
-    {% endblock header %}
+        {% endblock header %}
     
-    <div id="page-container">    
-        <div id="content">
+        <div id="page-container">
             <!-- CONTENT -->
-            {% block content %}{% endblock %}
+            <div id="content">
+                {% block content %}{% endblock %}
+            </div>
+            <br class="clearfix" />
         </div>
-    </div>
     {% endblock %}
     
     
     {% block footer %}
-    <!-- FOOTER -->
-    <div id="footer">
-        <div class="column">
-            <h1>Created by:</h1>
-            <a href=""><img src="{{ STATIC_URL }}img/logo-egl.png"></a>
+        <!-- FOOTER -->
+        <div id="footer">
+            <div class="column">
+                <h1>Created by:</h1>
+                <a href=""><img src="{{ STATIC_URL }}img/logo-egl.png"></a>
+            </div>
+            <div class="column">
+                <h1>Supported by:</h1>
+                <a href=""><img src="{{ STATIC_URL }}img/logo-knightfoundation.png"></a>
+            </div>
+            <div class="column">
+                <h1>Share alike:</h1>
+                <img src="{{ STATIC_URL }}img/logo-copyleft.png">
+            </div>
+            <div class="column">
+                <ul>
+                    <li><a href="{% url about %}">About</a></li>
+                    <li><a href="{% url contact %}">Contact</a></li>
+                    <li><a href="{% url privacy %}">Privacy Policy</a></li>
+                    <li><a href="{% url terms %}">Terms of Use</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="column">
-            <h1>Supported by:</h1>
-            <a href=""><img src="{{ STATIC_URL }}img/logo-knightfoundation.png"></a>
-        </div>
-        <div class="column">
-            <h1>Share alike:</h1>
-            <img src="{{ STATIC_URL }}img/logo-copyleft.png">
-        </div>
-        <div class="column">
-            <ul>
-                <li><a href="{% url about %}">About</a></li>
-                <li><a href="{% url contact %}">Contact</a></li>
-                <li><a href="{% url privacy %}">Privacy Policy</a></li>
-                <li><a href="{% url terms %}">Terms of Use</a></li>
-            </ul>
-        </div>
-    </div>
     {% endblock %}
 </body>
 {% endblock %}
