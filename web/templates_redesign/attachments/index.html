@@ -1,0 +1,12 @@
+{% extends 'attachments/base.html' %}
+{% load game_extras i18n %}
+
+{% block game_content %}
+<div>
+    <div class="column-container">
+        {% for attachment in attachments %}
+            <div>({{ attachment.get_att_type_display }}) {{ attachment.url }}</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

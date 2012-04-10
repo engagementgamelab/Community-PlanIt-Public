@@ -11,7 +11,7 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum
 from django.http import HttpResponse, Http404, HttpResponseServerError
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render, redirect, render_to_response
 from django.template import Context, RequestContext, loader
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
@@ -274,6 +274,12 @@ def edit(request):
         'change_password_form': change_password_form,
         'user': request.user,
     })))
+
+def all(request, template='accounts/all.html'):
+    response = {
+        'accounts': User.objects.all(),
+    }
+    return render_to_response(template, response, context_instance=RequestContext(request))
 
 @login_required
 def profile(request, id):

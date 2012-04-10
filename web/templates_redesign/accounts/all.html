@@ -1,0 +1,32 @@
+{% extends 'accounts/base_game.html' %}
+{% load i18n %}
+{% load i18n cpi_tags %}
+
+{% block title %}{% trans "Find Players" %}{% endblock %}
+
+{% block game_content %}
+<div>
+    <div class="column-container">
+        <a href="#">Find Players</a>
+        <a href="#">Affiliations</a>
+        <hr class="thick" />
+        
+        <h3>Recently Joined</h3>
+        
+    </div>
+    
+    {% for account in accounts %}
+        <a href="{% url accounts_profile account.id %}">
+        <div class="profile-container">
+            {% if account.get_profile.avatar %}
+                <img src="{{ MEDIA_URL }}{{ account.get_profile.avatar }}" width="164" height="164" />
+            {% else %}
+                <img id="sidebar-nav-profile-avatar" src="{{ STATIC_URL }}/img/avatar-blank.png" width="164" height="164" />
+            {% endif %}
+            <div>{{ account.get_profile.screen_name }}</div>
+            <div>{# tagline #}</div>
+        </div>
+        </a>
+    {% endfor %}
+</div>
+{% endblock %}

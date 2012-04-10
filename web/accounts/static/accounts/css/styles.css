@@ -62,3 +62,26 @@
   padding: 20px 0px 30px 0px;
   background: #00e5b8;
 }
+
+
+/* Account ProfileSSSSS Specific Styles */
+
+.profile-container {
+    width: 164px;
+    float: left;
+    margin: 20px 20px;
+    background: #e5f0ea;
+    overflow: hidden;
+}
+
+    .profile-container img{
+        display: block;
+        width: 164px;
+        height: 164px;
+        margin: 0px;
+    }
+    
+    .profile-container div {
+        margin: 15px 10px;
+        color: black;
+    }

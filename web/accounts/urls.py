@@ -6,6 +6,7 @@ from accounts.views import login
 from accounts.forms import AccountAuthenticationForm, RegisterFormOne, RegisterFormTwo, RegistrationWizard
 
 urlpatterns = patterns('',
+    url(r'^$', 'web.accounts.views.all', name='all'),
     url(r'^dashboard/', 'web.views.index', name='dashboard'),
     url(r'^notifications/$', 'web.accounts.views.notifications', name='notifications'),
     url(r'^profile/edit/', 'web.accounts.views.edit', name='profile_edit'),
