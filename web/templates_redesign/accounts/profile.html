@@ -82,7 +82,13 @@
             <h3>Notifications</h3>
         
             {# Notifications Here #}
-
+            <p class="profile-detail">
+            {% for notification in request.user.notifications.all %}
+            
+            {% empty %}
+                You have no notifications right now.
+            {% endfor %}
+            </p>
         </div>
     </div>
     <div id="profile-badges" class="column-twothird">

@@ -360,6 +360,10 @@ a {
                 padding-top: 10px !important;
             }
             
+                .section-profile #sidebar-nav-profile {
+                    background: #fff;
+                }
+                
                 #sidebar-nav-profile div {
                     margin-left: -5px;
                     margin-bottom: 10px;
@@ -379,26 +383,49 @@ a {
                     #sidebar-nav-profile-avatar {
                         float: left;
                     }
-
+                    
+                    
+                
             #sidebar-nav-expert {
                 background: url('../img/icon-nav-expert.png') no-repeat center 20px;
             }
-        
+            
+                .section-expert #sidebar-nav-expert {
+                    background: #fff url('../img/icon-nav-expert_over.png') no-repeat center 20px;
+                }
+            
+            
             #sidebar-nav-crowds {
                 background: url('../img/icon-nav-crowds.png') no-repeat center 25px;
             }
         
+                .section-crowds #sidebar-nav-crowds {
+                    background: #fff url('../img/icon-nav-crowds_over.png') no-repeat center 20px;
+                }
+
             #sidebar-nav-news {
                 background: url('../img/icon-nav-news.png') no-repeat center 25px;
             }
+            
+                .section-stream #sidebar-nav-news {
+                    background: #fff url('../img/icon-nav-news_over.png') no-repeat center 20px;
+                }
         
             #sidebar-nav-players {
                 background: url('../img/icon-nav-players.png') no-repeat center 25px;
             }
+            
+                .section-players #sidebar-nav-players {
+                    background: #fff url('../img/icon-nav-players_over.png') no-repeat center 25px;
+                }
         
             #sidebar-nav-standings {
                 background: url('../img/icon-nav-standings.png') no-repeat center 18px;
             }
+            
+                .section-leaderboard #sidebar-nav-standings {
+                    background: #fff url('../img/icon-nav-standings_over.png') no-repeat center 18px;
+                }
         
         
 
