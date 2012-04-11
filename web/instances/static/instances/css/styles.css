@@ -1,0 +1,81 @@
+/* Instances Specific Styles */
+
+/* Leaderboard Specific Styles */
+#leaderboard {}
+    
+    .leaderboard-standings {
+        padding: 8px;
+        margin: 5px 0px;
+        background: #eff2f2;
+        overflow: hidden;
+    }
+
+        .leaderboard-standings-rank {
+            float: left;
+            width: 20px;
+            text-align: right;
+        }
+        
+        .leaderboard-standings-name {
+            margin: 0px 20px;
+            float: left;
+        }
+        
+        .leaderboard-standings-points {
+            float: right;
+            text-align: right;
+        }
+    
+
+    .leaderboard-container .leaderboard-standings:nth-child(1) {
+        background: #f7ff59;
+    }
+    
+    .leaderboard-container .leaderboard-standings:nth-child(2) {
+        background: #f2f7c7;
+    }
+    
+    .leaderboard-container .leaderboard-standings:nth-child(3) {
+        background: #f2f7ed;
+    }
+    
+#stream {
+    background: #eff2f2;
+}
+    
+    #stream-filters {
+        margin: 20px 0px;
+    }
+    
+        #stream-filters label {
+            display: inline-block;
+            width: 100px;
+        }
+        
+        #stream-filters-stake {
+            width: 150px;
+        }
+        
+        #stream-filters-affiliation {
+            width: 150px;
+            margin-left: 50px;
+        }
+    
+    .stream-container {
+        margin: 20px 0px;
+    }
+    .stream-event {
+        overflow: hidden;
+        margin: 10px 0px;
+    }
+        
+        .stream-event-time {
+            float: left;
+            width: 100px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .stream-event-action {
+            float: left;
+        }

@@ -1,0 +1,101 @@
+{% extends 'instances/base.html' %}
+{% load i18n %}
+{% load i18n cpi_tags %}
+
+{% block title %}{% trans "Find Players" %}{% endblock %}
+
+{% block body_id %}leaderboard{% endblock %}
+
+{% block game_content %}
+<div>
+    <div class="column-container">
+        <div class="btn-tab left"><a class="active">Check the Standings</a></div>
+        <hr class="thick clearfix" />
+        
+        <br /><br />
+    </div>
+
+    <div class="column-half">
+        <div class="column-container">
+            <div class="leaderboard-standings">
+                <div class="leaderboard-standings-rank">1</div>
+                <div class="leaderboard-standings-name"><a href="">{{ request.user.get_profile.screen_name }}</a></div>
+                <div class="leaderboard-standings-points">12</div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <br /><br />
+
+    <div class="column-half clearfix">
+        <div class="column-container">
+            <h2>Individuals</h2>
+            <div id="leaderboard-players" class="leaderboard-container">
+                {# TODO: for leaderboard in players_leaderboard #}
+                <div class="leaderboard-standings">
+                    <div class="leaderboard-standings-rank">1</div>
+                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
+                    <div class="leaderboard-standings-points">12</div>
+                </div>
+            
+                <div class="leaderboard-standings">
+                    <div class="leaderboard-standings-rank">1</div>
+                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
+                    <div class="leaderboard-standings-points">12</div>
+                </div>
+            
+                <div class="leaderboard-standings">
+                    <div class="leaderboard-standings-rank">1</div>
+                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
+                    <div class="leaderboard-standings-points">12</div>
+                </div>
+            
+                <div class="leaderboard-standings">
+                    <div class="leaderboard-standings-rank">1</div>
+                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
+                    <div class="leaderboard-standings-points">12</div>
+                </div>
+            
+                <div class="leaderboard-standings">
+                    <div class="leaderboard-standings-rank">1</div>
+                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
+                    <div class="leaderboard-standings-points">12</div>
+                </div>
+            
+                <div class="leaderboard-standings">
+                    <div class="leaderboard-standings-rank">1</div>
+                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
+                    <div class="leaderboard-standings-points">12</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column-half">
+        <div class="column-container">
+            <h2>Affiliations</h2>
+            
+            {# TODO: for leaderboard in affiliations_leaderboard #}
+            <div id="leaderboard-affiliations" class="leaderboard-container">
+                <div class="leaderboard-standings">
+                    <div class="leaderboard-standings-rank">1</div>
+                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
+                    <div class="leaderboard-standings-points">12</div>
+                </div>
+            
+                <div class="leaderboard-standings">
+                    <div class="leaderboard-standings-rank">1</div>
+                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
+                    <div class="leaderboard-standings-points">12</div>
+                </div>
+            
+                <div class="leaderboard-standings">
+                    <div class="leaderboard-standings-rank">1</div>
+                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
+                    <div class="leaderboard-standings-points">12</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

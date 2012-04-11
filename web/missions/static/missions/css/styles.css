@@ -4,29 +4,11 @@
     margin: 20px 0px;
 }
 
-#btn-challenges {
-    float: left;
-}
-
-    #btn-challenges a {
-        display: block;
-        padding: 15px 20px;
-    }
-    
-    #btn-challenges a:hover,
-    #btn-challenges a.active {
-        display: block;
-        padding: 15px 20px;
-        background: #2d3542;
-        color: #fff;
-    }
-
 #btn-player-challenges {
-    float: right;
+
 }
 
     #btn-player-challenges a {
-        display: block;
         padding: 15px 20px 15px 40px;
         background: url('../img/icon-player-challenges.png') no-repeat 10px center;
     }
@@ -34,7 +16,6 @@
     #btn-player-challenges a:hover,
     #btn-player-challenges a.active {
         background: #2d3542 url('../img/icon-player-challenges_over.png') no-repeat 10px center;
-        color: #fff;
     }
 
 

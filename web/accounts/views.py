@@ -277,7 +277,7 @@ def edit(request):
 
 def all(request, template='accounts/all.html'):
     response = {
-        'accounts': User.objects.all(),
+        'accounts': User.objects.all()[:25],
     }
     return render_to_response(template, response, context_instance=RequestContext(request))
 
@@ -287,6 +287,7 @@ def profile(request, id):
     profile = player.get_profile()
     instance = instance_from_request(request)
     #log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
+
 
     stream = Action.objects.get_for_actor(player)
     comment_form = CommentForm(data=request.POST or None)

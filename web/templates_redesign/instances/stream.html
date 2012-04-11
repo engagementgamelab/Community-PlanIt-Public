@@ -1,0 +1,80 @@
+{% extends 'instances/base.html' %}
+{% load i18n %}
+{% load i18n cpi_tags %}
+
+{% block title %}{% trans "Find Players" %}{% endblock %}
+
+{% block body_id %}stream{% endblock %}
+{% block game_content %}
+<div>
+    <div class="column-container">
+        <div class="btn-tab left"><a class="active">What's Happening</a></div>
+        <hr class="thick clearfix" />
+        
+        <div id="stream-filters">
+            <label>Filter by:</label>
+            <select id="stream-filters-stake">
+                {# TODO: for stakes in stakes_for_this_instance #}
+                <option>Stake</option>
+            </select>
+            <select id="stream-filters-affiliation">
+                {# TODO: for affilitation in affiliations_for_this_instance #}
+                 <option>Affiliation</option>
+             </select>
+         </div>
+        
+        <h2>May 30, 2012</h2>
+        <div class="stream-container">
+            {# TODO: for event in stream-events #}
+            <div class="stream-event">
+                <div class="stream-event-time">11:07am</div>
+                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+            </div>
+            <div class="stream-event">
+                <div class="stream-event-time">10:07am</div>
+                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+            </div>
+            <div class="stream-event">
+                <div class="stream-event-time">9:07am</div>
+                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+            </div>
+            <div class="stream-event">
+                <div class="stream-event-time">8:07am</div>
+                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+            </div>
+            <div class="stream-event">
+                <div class="stream-event-time">7:07am</div>
+                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+            </div>
+        </div>
+    
+        <h2>May 3, 2012</h2>
+        <div class="stream-container">
+            <div class="stream-event">
+                <div class="stream-event-time">11:07am</div>
+                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+            </div>
+            <div class="stream-event">
+                <div class="stream-event-time">10:07am</div>
+                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+            </div>
+            <div class="stream-event">
+                <div class="stream-event-time">9:07am</div>
+                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+            </div>
+            <div class="stream-event">
+                <div class="stream-event-time">8:07am</div>
+                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+            </div>
+            <div class="stream-event">
+                <div class="stream-event-time">7:07am</div>
+                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+            </div>
+        </div>
+        
+    </div>
+
+    
+
+</div>
+{% endblock %}

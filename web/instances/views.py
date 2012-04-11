@@ -78,7 +78,20 @@ def all(request):
     }
     return render(request, 'instances/all.html', context)
 
+@login_required
+def stream(request, template='instances/stream.html'):
 
+    response = {}
+
+    return render(request, template, response)
+
+@login_required
+def leaderboard(request, template='instances/leaderboard.html'):
+
+    response = {}
+        # 'affiliations_leaderboard': _get_affiliations_leaderboard(), 
+
+    return render(request, template, response)
 
 @login_required
 def affiliation(request, instance_slug, affiliation_slug, template='affiliations/base.html'):
