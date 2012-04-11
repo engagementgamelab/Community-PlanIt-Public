@@ -66,11 +66,37 @@
 
 /* Account ProfileSSSSS Specific Styles */
 
+/*  
+    profile-filters are about the same as #stream-filters on the static/isntances/css/styles.css... 
+    but let's keep them separate since they're mainly width/margin-specific 
+*/
+#profile-filters {
+    margin: 20px 0px;
+}
+
+    #profile-filters label {
+        display: inline-block;
+        width: 100px;
+    }
+    
+    #profile-filters-stake {
+        width: 150px;
+    }
+    
+    #profile-filters-affiliation {
+        width: 150px;
+        margin-left: 25px;
+    }
+    
+    #profile-filters-apply {
+        margin-left: 25px;
+    }
+    
 .profile-container {
     width: 164px;
     float: left;
     margin: 20px 20px;
-    background: #e5f0ea;
+    background: #e5f0ea url('../../../../static/img/bg-pagefold.png') no-repeat right bottom;
     overflow: hidden;
 }
 
@@ -81,8 +107,16 @@
         margin: 0px;
     }
     
-    .profile-container div {
-        margin: 15px 10px;
+    .profile-container .profile-screenname {
+        padding: 8px 10px;
+        background: #f3f7ed;
+        font-weight: bold;
+        color: #323843;
+    }
+    
+    .profile-container .profile-tagline {
+        margin: 10px 10px;
+        font-style: italic;
         color: black;
     }
 

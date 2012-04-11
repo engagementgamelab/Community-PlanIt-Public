@@ -43,6 +43,11 @@
     background: #eff2f2;
 }
     
+    /*  
+        stream-filters are about the same as #profile-filters on the static/accounts/css/styles.css... 
+        but let's keep them separate since they're mainly width/margin-specific 
+    */
+    
     #stream-filters {
         margin: 20px 0px;
     }
@@ -58,7 +63,11 @@
         
         #stream-filters-affiliation {
             width: 150px;
-            margin-left: 50px;
+            margin-left: 25px;
+        }
+        
+        #stream-filters-apply {
+            margin-left: 25px;
         }
     
     .stream-container {

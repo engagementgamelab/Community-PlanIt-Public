@@ -35,8 +35,13 @@
         border: 0px;
         background: #007dff;
         font-size: 0.8em;
+        font-weight: bold;
         text-transform: uppercase;
         color: #fff;
+        cursor: pointer;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
     }
     
 .crowds-event {

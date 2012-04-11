@@ -11,6 +11,20 @@
         <div class="btn-tab right"><a href="#">Affiliations</a></div>
         <hr class="thick clearfix" />
         
+        
+        <div id="profile-filters">
+            <label>Filter by:</label>
+            <select id="profile-filters-stake">
+                {# TODO: for stakes in stakes_for_this_instance #}
+                <option>Stake</option>
+            </select>
+            <select id="profile-filters-affiliation">
+                {# TODO: for affilitation in affiliations_for_this_instance #}
+                <option>Affiliation</option>
+            </select>
+            <input id="profile-filters-apply" class="btn-blue" type="submit" value="Apply" />
+         </div>
+        
         <h3>Recently Joined</h3>
         
     </div>
@@ -21,10 +35,10 @@
             {% if account.get_profile.avatar %}
                 <img src="{{ MEDIA_URL }}{{ account.get_profile.avatar }}" width="164" height="164" />
             {% else %}
-                <img id="sidebar-nav-profile-avatar" src="{{ STATIC_URL }}/img/avatar-blank.png" width="164" height="164" />
+                <img src="{{ STATIC_URL }}/img/avatar-blank.png" width="164" height="164" />
             {% endif %}
-            <div>{{ account.get_profile.screen_name }}</div>
-            <div>{# tagline #}</div>
+            <div class="profile-screenname">{{ account.get_profile.screen_name }}</div>
+            <div class="profile-tagline">Lorem ipsum dolor sit amet. {# TODO: tagling #}</div>
         </div>
         </a>
     {% endfor %}
