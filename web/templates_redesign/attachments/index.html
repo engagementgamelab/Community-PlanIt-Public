@@ -4,9 +4,69 @@
 {% block game_content %}
 <div>
     <div class="column-container">
-        {% for attachment in attachments %}
-            <div>({{ attachment.get_att_type_display }}) {{ attachment.url }}</div>
-        {% endfor %}
+        <h1>Become an Expert</h1>
+    </div> 
+    
+    <div class="resource">
+        <p class="resource-title"><a href="">Resource Title</a></p>
+        <img class="resource-thumbnail" src="" width="164" height="100" />
+        <div class="resource-extras">
+            <div class="resource-type resource-type-document"></div>
+            <a href="" class="resource-download"></a>
+        </div>
     </div>
+
+    <div class="resource">
+        <p class="resource-title"><a href="">Resource Title</a></p>
+        <img class="resource-thumbnail" src="" width="164" height="100" />
+        <div class="resource-extras">
+            <div class="resource-type resource-type-document"></div>
+        <a href="" class="resource-download"></a>
+        </div>
+    </div>
+
+    <div class="resource">
+        <p class="resource-title"><a href="">Resource Title</a></p>
+        <img class="resource-thumbnail" src="" width="164" height="100" />
+        <div class="resource-extras">
+            <div class="resource-type resource-type-video"></div>
+            <a href="" class="resource-download"></a>
+        </div>
+    </div>
+    
+    <div class="resource">
+        <p class="resource-title"><a href="">Resource Title</a></p>
+        <img class="resource-thumbnail" src="" width="164" height="100" />
+        <div class="resource-extras">
+            <div class="resource-type resource-type-document"></div>
+            <a href="" class="resource-download"></a>
+        </div>
+    </div>
+    
+    <div class="resource">
+        <p class="resource-title"><a href="">Resource Title</a></p>
+        <img class="resource-thumbnail" src="" width="164" height="100" />
+        <div class="resource-extras">
+            <div class="resource-type resource-type-video"></div>
+            <a href="" class="resource-download"></a>
+        </div>
+    </div>
+    
+    <div class="resource">
+        <p class="resource-title"><a href="">Resource Title</a></p>
+        <img class="resource-thumbnail" src="" width="164" height="100" />
+        <div class="resource-extras">
+            <div class="resource-type resource-type-link"></div>
+            <a href="" class="resource-download"></a>
+        </div>
+    </div>
+    
+    <br class="clearfix" />
+    {# {% for attachment in attachments %} #}
+    {#     <div> #}
+    {#         ({{ attachment.get_att_type_display }}) {{ attachment.url }} #}
+    {#     </div> #}
+    {# {% endfor %} #}
+
 </div>
 {% endblock %}

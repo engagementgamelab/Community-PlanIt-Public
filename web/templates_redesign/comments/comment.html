@@ -1,0 +1,139 @@
+{% load attachment_tags i18n %}
+<li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
+    {% if comment.display_user %} 
+        <div class="comment-header">
+            <img class="comment-avatar" src="{{comment.user.avatar}}" width="48" height="48"/>
+            <div class="comment-header-text">
+                {% if comment.user == request.user %}
+                    <p class="comment-author"><a href="{% url accounts_profile comment.user.id %}">your</a> {% trans "response" %} </p>
+                {% else %}
+                    <p class="comment-author">{% trans "From" %} <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a></p>
+                {% endif %}    
+                <p class="comment-postdate">{{comment.posted_date|date:"N j, Y"}}, {{comment.posted_date|date:"g:i a"}}</p>
+            </div>
+        </div>
+    {% endif %}
+    {# <div class="likes"> #}
+    {#     <div id="id_likes-count-{{ comment.pk }}" class="count">{{comment.likes.count}}</div> #}
+    {#     <div id="id_like-count-{{ comment.id }}">Like{{comment.likes.count|pluralize}}</div> #}
+    {#     {% if comment.user != request.user and comment.instance.is_active  or comment.is_official_response %} #}
+    {#     <div id="id_like-{{ comment.id }}" class="button" title="click to say you like this">Like</div> #}
+    {#         {% comment %} href="{% url comments:like comment.id %}" {% endcomment %} #}
+    {#     {% endif %} #}
+    {# </div> #}
+    
+    <div class="main">
+        <div class="meta">
+            <div class="right">
+                {% if not comment.hidden and comment.user != user and comment.instance.is_active or comment.is_official_response %}
+                    <a href="{% url flags:add "comment" comment.id %}" title="click to flag this comment for review"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
+                {% endif %}
+                {% if not comment.hidden and comment.user == request.user %}
+                    <a href="{% url comments:edit comment.id %}" title="click to edit this comment">edit</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <br class="clearfix" />
+        <div class="comment-message">
+            {% if comment.hidden %}
+                <div class="notice">This content has been flagged by the community and hidden by the administrator.</div>
+            {% else %}
+                {% if extra_message %}<div class="extra">{{extra_message|linebreaksbr}}</div>{% endif %}
+                {{comment.message|linebreaksbr}}
+            {% endif %}
+        </div>
+        
+        {% if not comment.hidden %}
+            <div class="attachments">
+            {% for attachment in comment.attachment.all %}
+                {% if attachment.is_valid %}
+                <div>
+                    {% if attachment.type == 'video' %}
+                    {% embed_video attachment.url %}
+                    {% else %}
+                    <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="notice">This content is currently unavailable.</div>
+                {% endif %}
+            {% endfor %}
+            </div>
+            <div class="controls">
+                {% if comment.instance.is_active  or comment.is_official_response %}
+                <div class="actions">
+                        {% if comment.comments.count %}
+                        <a class="togglereplies" href="#replies-{{comment.pk}}">
+                            <img class="closed" src="{{MEDIA_URL}}img/icons/plus.png" alt=""/>
+                            <img class="open" src="{{MEDIA_URL}}img/icons/minus.png" alt=""/>
+                        </a>
+                        <span>{{comment.comments.count}} repl{{ comment.comments.count|pluralize:"y,ies" }}</span>
+                        {% endif %}
+                        <a class="small button reply" href="#reply-{{comment.id}}">reply</a>
+                </div>
+                <div class="reply-modal">
+                    <form enctype="multipart/form-data" method="POST" action="{% url comments:reply comment.id %}">
+                        {% csrf_token %}
+                        <textarea name="message" class="comment_message" cols="40" rows="6" id="message-{{comment.id}}"></textarea>
+                        <button type="submit" class="button small submit">save reply</button>
+                        <button type="reset" class="button small cancel">cancel</button>
+                        <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div>
+                    </form>
+                    {# <script type="text/javascript">  #}
+                    {#  #}
+                    {#     $.fn.extend({   #}
+                    {#         limit: function(limit,element) { #}
+                    {#             var interval, f; #}
+                    {#             var self = $(this); #}
+                    {#             $(this).focus(function(){ #}
+                    {#                 interval = window.setInterval(substring,100); #}
+                    {#             }); #}
+                    {#             $(this).blur(function(){ #}
+                    {#                 clearInterval(interval); #}
+                    {#                 substring(); #}
+                    {#             }); #}
+                    {#             substringFunction = "function substring(){ var val = $(self).val(); if (val) {var length = val.length;if(length > limit){$(self).val($(self).val().substring(0,limit));}}"; #}
+                    {#             if(typeof element != 'undefined') #}
+                    {#                 substringFunction += "if($(element).html() != limit-length){$(element).html((limit-length<=0)?'0':limit-length);}" #}
+                    {#             substringFunction += "}"; #}
+                    {#             eval(substringFunction); #}
+                    {#             substring(); #}
+                    {#          #}
+                    {#         }  #}
+                    {#     });  #}
+                    {#  #}
+                    {#     var type_count = function(evt) { #}
+                    {#         var comment_form = $(this.form); #}
+                    {#         var val = this.value.replace(/\r?\n/g, 'xx'); #}
+                    {#         var len = Math.max(0, 1000 - val.length); #}
+                    {#         comment_form.find('.count').text(len); #}
+                    {#         if (len < 1) { #}
+                    {#             comment_form.find('.counter').addClass('limited'); #}
+                    {#             if (!(evt.ctrlKey || evt.which < 48 && evt.which !== 9 && evt.which !== 13)) { #}
+                    {#                 return false; #}
+                    {#             } #}
+                    {#         } #}
+                    {#         comment_form.find('.counter').removeClass('limited'); #}
+                    {#     } #}
+                    {#     $('textarea#message-{{ comment.pk }}').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change(); #}
+                    {#     $('textarea#message-{{ comment.pk }}').limit('1000','#charsLeft'); #}
+                    {# </script> #}
+                </div>
+                {% endif %}
+            </div>
+        {% endif %}
+        {% if comment.comments.all %}
+            <div id="replies-{{comment.pk}}" class="replies">
+                <ul class="nested">
+                    {% for comment in comment.comments.all %}
+                        {% with filename="comments/comment.html" extra_message=None %}
+                          {% include filename %}
+                        {% endwith %}
+                    {% endfor %}
+                </ul>
+                <div style="clear:both"></div>
+            </div>
+        {% endif %}
+    </div>
+</li>
