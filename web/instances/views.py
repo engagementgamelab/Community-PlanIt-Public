@@ -146,8 +146,9 @@ def affiliations_all(request, slug, template='affiliations/all.html'):
 def ajax_load_games_by_city(request, for_city_id):
 
     def load_options(obj_response, for_city_id):
-        games_for_city = Instance.objects.filter(for_city__pk=for_city_id).language(get_language())
-        games = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_city]
+        #games_for_city = Instance.objects.filter(for_city__pk=for_city_id).language(get_language())
+        #games = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_city]
+        games = Instance.objects.filter(for_city__pk=for_city_id).values_list('pk', 'title').distinct().order_by('title')
         out = ""
         for id, title in games:
             out+='<option value="%s">%s</option>' %(id, title)
