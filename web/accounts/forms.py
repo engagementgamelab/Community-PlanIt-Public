@@ -1,3 +1,4 @@
+from sijax import Sijax
 from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
@@ -12,8 +13,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.contrib.formtools.wizard import FormWizard
-
+#from django.contrib.formtools.wizard import FormWizard
+from django.views.generic.base import TemplateResponseMixin
+from django.contrib.formtools.wizard.views import SessionWizardView
 #from django.contrib.sites.models import RequestSite
 
 from web.accounts.models import *
@@ -32,26 +34,26 @@ class RegisterFormOne(forms.Form):
     email = forms.EmailField(required=True, label=_("Email"))
     password = forms.CharField(required=True, label=_("Password"), widget=forms.PasswordInput(render_value=False))
     password_again = forms.CharField(required=True, label=_("Password Again"), widget=forms.PasswordInput(render_value=False))
-    preferred_language = forms.ChoiceField(label=_("Preferred Language"), choices=settings.LANGUAGES)
 
-    birth_year = forms.IntegerField(label=_('Year you were born'), required=False)
-
-    city = forms.CharField(max_length=128, label=_('Your neighborhood, town or city'))
-    zip_code = forms.CharField(max_length=10, label=_('Your ZIP code'))
+    #birth_year = forms.IntegerField(label=_('Year you were born'), required=False)
+    #zip_code = forms.CharField(max_length=10, label=_('Your ZIP code'))
 
     def __init__(self, *args, **kwargs):
         super(RegisterFormOne, self).__init__(*args, **kwargs)
+        cities = City.objects.values_list('pk', 'name')
+        self.fields['city'] = forms.ChoiceField(label=_('Choose your city'), choices=cities)
 
-        all_instances = Instance.objects.all().language(get_language())
-        instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in all_instances]
-        self.fields['instance_id'] = forms.ChoiceField(label=_(u'Community'), required=False, choices=instances)
+        games_for_first_city = Instance.objects.filter(for_city__pk=cities[0][0]).language(get_language())
+        instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_first_city]
+        self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
+        self.fields['preferred_language'] = forms.ChoiceField(label=_("Preferred Language"), choices=settings.LANGUAGES)
 
-        self.fields['accepted_terms'] = forms.BooleanField(
-            required=True,
-            label=mark_safe(
-                _('Confirm that you have read and agree to the <a target="_blank" href="%(terms)s">Terms of Use</a>.') % {'terms': reverse('terms')}
-            )
-        )
+        #self.fields['accepted_terms'] = forms.BooleanField(
+        #    required=True,
+        #    label=mark_safe(
+        #        _('Confirm that you have read and agree to the <a target="_blank" href="%(terms)s">Terms of Use</a>.') % {'terms': reverse('terms')}
+        #    )
+        #)
 
     #def clean_email(self):
     #    """Ensure that a user has not already registered an account with that email address."""
@@ -61,16 +63,16 @@ class RegisterFormOne(forms.Form):
     #    else:
     #        return email
 
-    def clean_instance_id(self):
+    def clean_instance(self):
         """Ensure that a user has not already registered an account with that email address and that game."""
-        instance_id = self.cleaned_data['instance_id']
+        instance = self.cleaned_data['instance']
         email = self.cleaned_data['email']
         if UserProfilePerInstance.objects.filter(
-                user_profile__email=email, instance__pk=instance_id
+                user_profile__email=email, instance__pk=instance
             ).count() != 0:
             raise forms.ValidationError(_('Account already exists for this game, please use a different email address.'))
         else:
-            return instance_id
+            return instance
 
     def clean_first_name(self):
         first_name = self.cleaned_data['first_name']
@@ -105,6 +107,7 @@ class RegisterFormOne(forms.Form):
 class RegisterFormTwo(forms.Form):
 
     def __init__(self, *args, **kwargs):
+
         community = None
         if 'community' in kwargs:
             community = kwargs.pop('community')
@@ -195,8 +198,8 @@ class RegisterFormTwo(forms.Form):
             return None
 
 
-class RegistrationWizard(FormWizard):
-    community = None
+class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
+    #community = None
     __name__ = 'RegistrationWizard'
 
     @transaction.commit_on_success
@@ -280,23 +283,45 @@ class RegistrationWizard(FormWizard):
                         permanent=True,
         )
 
-    def get_form(self, step, data=None):
+    def get_context_data(self, form, **kwargs):
+        context = super(RegistrationWizard, self).get_context_data(form, **kwargs)
+        #import ipdb;ipdb.set_trace()
+        self.template_name = 'accounts/register_%s.html' % self.steps.current
+        if self.steps.current == '0':
+            load_games_sijax = Sijax()
+            load_games_uri = reverse('instances:load-games-sijax', args=(1,))
+            load_games_sijax.set_request_uri(load_games_uri)
+            load_games_sijax_js = load_games_sijax.get_js()
+            print load_games_sijax_js 
+            context.update(
+                    dict(
+                        load_games_sijax_js = load_games_sijax_js,
+                    )
+            )
+        return context
+    """
+    def get_form(self, step=None, data=None, files=None):
+        form = super(RegistrationWizard, self).get_form(step, data, files)
+
         if step == 0 and data:
             instance_id = data.get('0-instance_id')
-            self.community = Instance.objects.get(id=instance_id)
-
-        if step == 1:
-            form = self.form_list[step](data,
-                                        community=self.community,
-                                        prefix=self.prefix_for_step(step),
-                                        initial=self.initial.get(step, None)
-                                       )
+            form.community = Instance.objects.get(id=instance_id)
             return form
 
-        return self.form_list[step](data, prefix=self.prefix_for_step(step), initial=self.initial.get(step, None))
+        #if step == 1:
+        #    return current_form_cls(
+        #                            data,
+        #                            community=self.community,
+        #                            prefix=self.prefix_for_step(step),
+        #                            initial=self.initial.get(step, None)
+        #                            )
+        #return current_form_cls(
+        #                        data,
+        #                        prefix=self.prefix_for_step(step),
+        #                        initial=self.initial.get(step, None)
+        #                       )
 
-    def get_template(self, step):
-        return 'accounts/register_%s.html' % step
+    """
 
 class ForgotForm(forms.Form):
     email = forms.EmailField()

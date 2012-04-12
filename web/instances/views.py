@@ -1,11 +1,14 @@
 import datetime
 
+from sijax import Sijax
+
 from django.contrib import auth
-from django.core.mail import send_mail
+from django.views.decorators.csrf import ensure_csrf_cookie
+#from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template import Context, RequestContext, loader
+#from django.template import Context, RequestContext, loader
 from django.utils.translation import ugettext as _
 from django.db.models import Sum
 from django.utils.translation import get_language
@@ -22,6 +25,7 @@ from instances.forms import NotificationRequestForm
 from instances.models import *
 from missions.models import *
 from reports.models import Activity 
+from core.utils import get_translation_with_fallback
 
 #TODO: this does not fail nicely, it should 
 def region(request, slug):
@@ -138,3 +142,26 @@ def affiliations_all(request, slug, template='affiliations/all.html'):
     }
     return render(request, template, context)
 
+#@ensure_csrf_cookie
+def load_games_sijax(request, for_city_id):
+
+    def load_games(obj_response, for_city_id):
+        games_for_city = Instance.objects.filter(for_city__pk=for_city_id).language(get_language())
+        games = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_city]
+        out = ""
+        for id, title in games:
+            out+='<option value="%s">%s</option>' %(id, title)
+        print out
+        #self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
+        obj_response.html('#id_0-instance', out)
+
+    instance = Sijax()
+    instance.set_data(request.POST)
+    load_games_uri = reverse('instances:load-games-sijax', args=(for_city_id,))
+    instance.set_request_uri(load_games_uri)
+    instance.register_callback('load_games_by_city', load_games)
+    if instance.is_sijax_request:
+        return instance.process_request()
+    print "not sijax. sorry."
+
+    return  HttpResponse("")

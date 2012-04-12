@@ -3,6 +3,32 @@
 
 {% block title %}{% trans "Registration" %}{% endblock %}
 
+
+{% block extra_head %}
+    <script src="{{ STATIC_URL }}js/sijax.js"></script>
+    <script type="text/javascript">
+
+
+    $(document).ready(function(){
+
+        {% include "js/ajax_csrf.html" %}
+        {# load_games_sijax_js|safe #}
+
+        $('#id_0-city').change(function(){
+
+            Sijax.setRequestUri("/communities/ajax/load-games-sijax/3/");
+            Sijax.request('load_games_by_city', [3,])
+            //var option = $('<option></option>').attr("value", "option value").text("Text");
+            //$("#id_0-instance").empty().append(option);
+
+        });
+
+    });
+
+    </script>
+
+{% endblock extra_head %}
+
 {% block content %}
 <div>
     {% if form.errors or form.non_field_errors or wizard_error %}
@@ -23,10 +49,17 @@
         <div class="column-half">
             <div class="column-container">
                 <h1>Sign Up</h1>
-                <form class="accounts-form" action="" method="post">
-                    {% csrf_token %}
-        
-                    {{ form.as_p}}
+                <form class="accounts-form" action="" method="post"> {% csrf_token %}
+                    {{ wizard.management_form }}
+                    {% if wizard.form.forms %}
+                        {{ wizard.form.management_form }}
+                        {% for form in wizard.form.forms %}
+                            {{ form }}
+                        {% endfor %}
+                    {% else %}
+                        {{ wizard.form }}
+                    {% endif %}
+
             
                     <div class="clear">
                         {% if step == step_count %}

@@ -24,7 +24,7 @@ MEDIA_URL = '/assets/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(PARENT_DIR, 'static')
+#STATIC_ROOT = os.path.join(PARENT_DIR, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -212,6 +212,7 @@ LANGUAGES = (
 LOCALE_INDEPENDENT_PATHS = (
     #re.compile('^/$'),
     re.compile('^/ajax/'),
+    re.compile('^.*/ajax/'),
     re.compile('^/comments/'),
     re.compile('^/__debug__/'),
     re.compile('^/assets/'),

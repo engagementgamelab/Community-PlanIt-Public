@@ -16,7 +16,7 @@ class CityAdmin(admin.ModelAdmin):
     search_fields = ('name', 'domain')
 
 class InstanceAdmin(TranslatableAdmin):
-    list_display = ('title', 'start_date',)
+    list_display = ('title', 'start_date', 'for_city',)
     filter_horizontal = ('curators', 'languages',)
     inlines = [
         UserProfileVariantsForInstanceInline,

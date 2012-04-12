@@ -5,12 +5,12 @@ from web.instances.models import Instance
 class CurrentDomainMiddleware(object):
 
     def process_request(self, request):
+        if not request.is_ajax():
+            request.current_site = RequestSite(request)
 
-        request.current_site = RequestSite(request)
-
-        if request.session.has_key('current_game_slug') and \
-                not hasattr(request, 'current_game'):
-            request.current_game = Instance.objects.language(get_language()).get(
-                        slug=request.session.get('current_game_slug')
-            )
+            if request.session.has_key('current_game_slug') and \
+                    not hasattr(request, 'current_game'):
+                request.current_game = Instance.objects.language(get_language()).get(
+                            slug=request.session.get('current_game_slug')
+                )
         return None

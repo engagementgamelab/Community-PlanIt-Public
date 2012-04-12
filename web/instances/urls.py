@@ -10,6 +10,7 @@ urlpatterns = patterns('instances.views',
     url(r'^$', 'all', name='instances'),
     url(r'^(?P<slug>[-\w]+)/affiliations/$', 'affiliations_all', name='affiliations'),
     url(r'^(?P<instance_slug>[-\w]+)/affiliations/(?P<affiliation_slug>[-\w]+)/$', 'affiliation', name='affiliation'),
+    url(r"^ajax/load-games-sijax/(?P<for_city_id>\d+)/$", "load_games_sijax", name="load-games-sijax"),
 
 
 )
