@@ -178,6 +178,7 @@ class UserProfile(models.Model):
     living = models.ForeignKey(UserProfileLivingSituation, blank=True, null=True, default=None)
     how_discovered = models.ForeignKey(UserProfileHowDiscovered, blank=True, null=True, default=None)
     how_discovered_other = models.CharField(max_length=128, blank=True, default='')
+    tagline = models.CharField(max_length=255, blank=True, default='')
 
     #
     # internal system records

@@ -14,7 +14,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 #from django.contrib.formtools.wizard import FormWizard
-from django.views.generic.base import TemplateResponseMixin
+#from django.views.generic.base import TemplateResponseMixin
 from django.contrib.formtools.wizard.views import SessionWizardView
 #from django.contrib.sites.models import RequestSite
 
@@ -154,6 +154,8 @@ class RegisterFormTwo(forms.Form):
 
         self.fields['how_discovered_other'] = forms.CharField(required=False, label=_('If the way you learned about us is not listed, please tell us'))
 
+        self.fields['tagline'] = forms.CharField(required=False, label=_('Give yourself a tagline'))
+
 
     def clean_gender(self):
         try:
@@ -198,7 +200,7 @@ class RegisterFormTwo(forms.Form):
             return None
 
 
-class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
+class RegistrationWizard(SessionWizardView):
     __name__ = 'RegistrationWizard'
 
     def dispatch(self, request, *args, **kwargs):
@@ -283,6 +285,7 @@ class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
         profile.race = form_two.cleaned_data.get('race')
         profile.how_discovered = form_two.cleaned_data.get('how_discovered')
         profile.how_discovered_other = form_two.cleaned_data.get('how_discovered_other')
+        profile.tagline = form_two.cleaned_data.get('tagline')
 
         profile.save()
 
