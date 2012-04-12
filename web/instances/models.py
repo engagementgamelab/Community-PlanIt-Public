@@ -2,7 +2,7 @@ import os.path
 import datetime
 
 from stream import utils as stream_utils
-from cache_utils.decorators import cached
+#from cache_utils.decorators import cached
 
 from django.db import models
 from django.template.defaultfilters import slugify
