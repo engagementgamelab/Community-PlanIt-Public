@@ -2,7 +2,7 @@
 <div id="games" class="games">
     <ul class="games-filter">
         <li><a data-target='games-list-current'>Games</a></li>
-        <li><a data-target='games-list-past'>Past Games</a></li>
+        {% if instances_past %}<li><a data-target='games-list-past'>Past Games</a></li>{% endif %}
     </ul>
     <hr class="thick" />
     {% block games_extras %}{% endblock %}

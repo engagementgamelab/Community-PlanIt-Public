@@ -1,33 +1,40 @@
 /* Specific stylesheet for elements in the public Home page and City pages */ 
 
 /* Header Extras */
-#header-extras-container {}
+#header-extras-container {
+}
     
     #header-extras-cityname {
-        width: 200px;
-        line-height: 150px; /* should be the same as #header-extras-container */
+        width: 220px;
+        line-height: 1em; /* should be the same as #header-extras-container */
         display: inline-block;
+        margin: 20px 10px;
         font-weight: bold;
         font-size: 2.25em;
         text-align: center;
         vertical-align: middle;
         color: #80beff;
+/*        border: 1px solid black;*/
     }
     
     #header-extras-citydescription {
-        width: 250px;
         display: inline-block;
+        width: 220px;
+        margin: 20px 10px;
         vertical-align: middle;
+        text-align: left;
+/*        border: 1px solid black;*/
     }
     
     #header-extras-cityimage {
         width: 230px;
         height: 124px;
-        margin: 0px 10px;
+        margin: 20px 20px 20px 10px;
         display: inline-block;
         text-align: right;
         vertical-align: middle;
         border: 1px solid #ddd;
+/*        border: 1px solid black;*/
     }
 
 /* Walkthrough */
@@ -79,15 +86,15 @@ hr.rainbow {
         .walkthrough-content-container {
             display: inline-block;
             vertical-align: middle;
-            width: 460px;
+            width: 400px;
             margin: 0px 20px;
         }
 
         .walkthrough-next {
             display: inline-block;
             position: absolute;
-            right: 50px;
-            bottom: 20px;
+            right: -25px;
+            top: 110px;
             width: 25px;
             height: 25px;
             background: url('../img/btn-next.png');

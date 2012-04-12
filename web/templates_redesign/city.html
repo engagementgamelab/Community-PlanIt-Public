@@ -44,6 +44,10 @@
 {% block body_id %}{% if user.is_authenticated %}private-city{% else %}public-city{% endif %}{% endblock %}
 
 {% block content %}
+    
+    <hr class="rainbow" />
+    
+    <br />
     {% include '_games_per_city.html' %}
     
     

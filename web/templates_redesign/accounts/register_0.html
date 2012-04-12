@@ -51,7 +51,7 @@
                 <form class="accounts-form" id="id_login-form" action="{% url accounts:login %}" method="post"> {% csrf_token %}
                     {{ form.as_p}}
                     <div class="clear">
-                        <input class="button submit" id="id_login-form-submit" type="submit" value="Get back to playing!">
+                        <input class="btn-blue submit" id="id_login-form-submit" type="submit" value="Get back to playing!">
                     </div>
                 </form>
             </div>
@@ -64,18 +64,18 @@
                     {% if wizard.form.forms %}
                         {{ wizard.form.management_form }}
                         {% for form in wizard.form.forms %}
-                            {{ form }}
+                            {{ form.as_p }}
                         {% endfor %}
                     {% else %}
-                        {{ wizard.form }}
+                        {{ wizard.form.as_p }}
                     {% endif %}
 
             
                     <div class="clear">
                         {% if step == step_count %}
-                        <input class="button submit" type="submit" value="Register">
+                        <input class="btn-blue submit" type="submit" value="Register">
                         {% else %}
-                        <input class="button submit" type="submit" value="Start Playing!">
+                        <input class="btn-blue submit" type="submit" value="Start Playing!">
                         {% endif %}
                     </div>
                 </form>
