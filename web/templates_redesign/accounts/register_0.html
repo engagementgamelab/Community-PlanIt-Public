@@ -15,9 +15,9 @@
         {# load_games_sijax_js|safe #}
 
         $('#id_0-city').change(function(){
-
-            Sijax.setRequestUri("/communities/ajax/load-games-sijax/3/");
-            Sijax.request('load_games_by_city', [3,])
+            city_id = $('#id_0-city').val()
+            Sijax.setRequestUri("/communities/ajax/load-games-sijax/"+city_id+"/");
+            Sijax.request('load_games_by_city', [city_id,])
             //var option = $('<option></option>').attr("value", "option value").text("Text");
             //$("#id_0-instance").empty().append(option);
 

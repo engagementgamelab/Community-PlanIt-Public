@@ -151,8 +151,6 @@ def load_games_sijax(request, for_city_id):
         out = ""
         for id, title in games:
             out+='<option value="%s">%s</option>' %(id, title)
-        print out
-        #self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
         obj_response.html('#id_0-instance', out)
 
     instance = Sijax()
@@ -161,7 +159,6 @@ def load_games_sijax(request, for_city_id):
     instance.set_request_uri(load_games_uri)
     instance.register_callback('load_games_by_city', load_games)
     if instance.is_sijax_request:
-        return instance.process_request()
-    print "not sijax. sorry."
-
-    return  HttpResponse("")
+        return HttpResponse(instance.process_request())
+    else:
+        return HttpResponse("")
