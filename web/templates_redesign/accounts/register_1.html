@@ -14,13 +14,34 @@
 </div>
 {% endif %}
 <div id="registration-container">
-    <form class="accounts-form" action="" method="post">
+    <form class="accounts-form" action="" method="post"> {% csrf_token %}
+
+        {{ wizard.management_form }}
+        {% if wizard.form.forms %}
+            {{ wizard.form.management_form }}
+            {% for form in wizard.form.forms %}
+                {{ form }}
+            {% endfor %}
+        {% else %}
+            {{ wizard.form }}
+        {% endif %}
+
+
+        <div class="clear">
+            {% if step == step_count %}
+            <input class="button submit" type="submit" value="Register">
+            {% else %}
+            <input class="button submit" type="submit" value="Start Playing!">
+            {% endif %}
+        </div>
+
+
+        {% comment %}
         <input type="hidden" name="{{step_field}}" value="{{step0}}"/>
         {{previous_fields|safe}}
         
         <div class="column-half">
             <div class="column-container">
-                {% csrf_token %}
                 <p>
                     {{form.stake.label_tag}}
                     {{form.stake}}
@@ -99,6 +120,7 @@
             <input class="button submit" type="submit" value="Continue">
             {% endif %}
         </div>
+        {% endcomment %}
     </form>
 </div>
 {% endblock %}

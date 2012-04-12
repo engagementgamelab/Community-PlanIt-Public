@@ -12,15 +12,11 @@
     $(document).ready(function(){
 
         {% include "js/ajax_csrf.html" %}
-        {# load_games_sijax_js|safe #}
 
         $('#id_0-city').change(function(){
             city_id = $('#id_0-city').val()
-            Sijax.setRequestUri("/communities/ajax/load-games-sijax/"+city_id+"/");
+            Sijax.setRequestUri("/communities/ajax/load-games-by-city/"+city_id+"/");
             Sijax.request('load_games_by_city', [city_id,])
-            //var option = $('<option></option>').attr("value", "option value").text("Text");
-            //$("#id_0-instance").empty().append(option);
-
         });
 
         $("input[id='id_login-form-submit']").click(function(e){

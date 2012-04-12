@@ -65,6 +65,7 @@ class RegisterFormOne(forms.Form):
 
     def clean_instance(self):
         """Ensure that a user has not already registered an account with that email address and that game."""
+        print self.cleaned_data
         instance = self.cleaned_data['instance']
         email = self.cleaned_data['email']
         if UserProfilePerInstance.objects.filter(
@@ -107,14 +108,14 @@ class RegisterFormOne(forms.Form):
 class RegisterFormTwo(forms.Form):
 
     def __init__(self, *args, **kwargs):
-
-        community = None
-        if 'community' in kwargs:
-            community = kwargs.pop('community')
+        print kwargs
+        chosen_game = None
+        if 'chosen_game' in kwargs:
+            chosen_game = kwargs.pop('chosen_game')
         super(RegisterFormTwo, self).__init__(*args, **kwargs)
-        self.community = community
+        self.chosen_game = chosen_game
 
-        all_stakes = self.community.user_profile_variants.stake_variants.all().order_by("pos")
+        all_stakes = self.chosen_game.user_profile_variants.stake_variants.all().order_by("pos")
         stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
         self.fields['stake'] = forms.ChoiceField(label=_(u'Stake in the community'), required=False, choices=stakes)
 
@@ -146,7 +147,7 @@ class RegisterFormTwo(forms.Form):
         self.fields['how_discovered_other'] = forms.CharField(required=False, label=_('If the way you learned about us is not listed, please tell us'))
 
 
-        affiliations = self.community.user_profile_variants.affiliation_variants.all().order_by('pk', "name").values_list('pk', 'name')
+        affiliations = self.chosen_game.user_profile_variants.affiliation_variants.all().order_by('pk', "name").values_list('pk', 'name')
         self.fields['affiliations'] = forms.MultipleChoiceField(
                                     label=_(u'Affiliation'), required=False, choices=affiliations
         )
@@ -207,6 +208,39 @@ class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
         if self.request.user.is_authenticated():
             return redirect(reverse('accounts:dashboard'), permanent=True)
         return response
+
+    def get_form_kwargs(self, step=None):
+        if step == '1':
+            #import ipdb;ipdb.set_trace()
+            #TODO is there another way to get
+            #TODO to the data of the previous steps data
+            chosen_game_id = self.storage.data.get('step_data')['0']['0-instance'][0]
+            chosen_game = Instance.objects.get(id=chosen_game_id)
+            print "signing up for: ", chosen_game
+            return {'chosen_game' : chosen_game}
+        return {}
+
+    def get_context_data(self, form, **kwargs):
+        context = super(RegistrationWizard, self).get_context_data(form, **kwargs)
+
+        self.template_name = 'accounts/register_%s.html' % self.steps.current
+        if self.steps.current == '0':
+            load_games_sijax = Sijax()
+            load_games_uri = reverse('instances:ajax-load-games-by-city', args=(1,))
+            load_games_sijax.set_request_uri(load_games_uri)
+
+            login_sijax = Sijax()
+            login_sijax.set_request_uri(reverse('accounts:login-ajax'))
+            self.request.session.set_test_cookie()
+
+            context.update(
+                    dict(
+                        load_games_sijax_js = load_games_sijax.get_js(),
+                        login_sijax_js = login_sijax.get_js(),
+                        form = AccountAuthenticationForm(self.request),
+                    )
+            )
+        return context
 
     @transaction.commit_on_success
     def done(self, request, form_list):
@@ -289,50 +323,6 @@ class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
                         permanent=True,
         )
 
-    def get_context_data(self, form, **kwargs):
-        context = super(RegistrationWizard, self).get_context_data(form, **kwargs)
-
-        self.template_name = 'accounts/register_%s.html' % self.steps.current
-        if self.steps.current == '0':
-            load_games_sijax = Sijax()
-            load_games_uri = reverse('instances:load-games-sijax', args=(1,))
-            load_games_sijax.set_request_uri(load_games_uri)
-
-            login_sijax = Sijax()
-            login_sijax.set_request_uri(reverse('accounts:login-ajax'))
-            self.request.session.set_test_cookie()
-
-            context.update(
-                    dict(
-                        load_games_sijax_js = load_games_sijax.get_js(),
-                        login_sijax_js = login_sijax.get_js(),
-                        form = AccountAuthenticationForm(self.request),
-                    )
-            )
-        return context
-    """
-    def get_form(self, step=None, data=None, files=None):
-        form = super(RegistrationWizard, self).get_form(step, data, files)
-
-        if step == 0 and data:
-            instance_id = data.get('0-instance_id')
-            form.community = Instance.objects.get(id=instance_id)
-            return form
-
-        #if step == 1:
-        #    return current_form_cls(
-        #                            data,
-        #                            community=self.community,
-        #                            prefix=self.prefix_for_step(step),
-        #                            initial=self.initial.get(step, None)
-        #                            )
-        #return current_form_cls(
-        #                        data,
-        #                        prefix=self.prefix_for_step(step),
-        #                        initial=self.initial.get(step, None)
-        #                       )
-
-    """
 
 class ForgotForm(forms.Form):
     email = forms.EmailField()

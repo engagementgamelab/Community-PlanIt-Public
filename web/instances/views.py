@@ -143,7 +143,7 @@ def affiliations_all(request, slug, template='affiliations/all.html'):
     return render(request, template, context)
 
 #@ensure_csrf_cookie
-def load_games_sijax(request, for_city_id):
+def ajax_load_games_by_city(request, for_city_id):
 
     def load_options(obj_response, for_city_id):
         games_for_city = Instance.objects.filter(for_city__pk=for_city_id).language(get_language())
@@ -155,7 +155,7 @@ def load_games_sijax(request, for_city_id):
 
     instance = Sijax()
     instance.set_data(request.POST)
-    load_games_uri = reverse('instances:load-games-sijax', args=(for_city_id,))
+    load_games_uri = reverse('instances:ajax-load-games-by-city', args=(for_city_id,))
     instance.set_request_uri(load_games_uri)
     instance.register_callback('load_games_by_city', load_options)
     if instance.is_sijax_request:
