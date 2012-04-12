@@ -23,6 +23,14 @@
 
         });
 
+        $("input[id='id_login-form-submit']").click(function(e){
+            e.preventDefault();
+            {{ login_sijax_js|safe }}
+            var form_data = Sijax.getFormValues('#id_login-form');
+            Sijax.request('login_process', [form_data]);
+        });
+
+
     });
 
     </script>
@@ -43,7 +51,13 @@
         <div class="column-half">
             <div class="column-container">
                 <h1>Log In</h1>
-                {% csrf_token %}
+                <span id="id_form-errors" style="color:red;"></span>
+                <form class="accounts-form" id="id_login-form" action="{% url accounts:login %}" method="post"> {% csrf_token %}
+                    {{ form.as_p}}
+                    <div class="clear">
+                        <input class="button submit" id="id_login-form-submit" type="submit" value="Get back to playing!">
+                    </div>
+                </form>
             </div>
         </div>
         <div class="column-half">

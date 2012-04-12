@@ -44,7 +44,66 @@ log = logging.getLogger(__name__)
 
 @csrf_protect
 @never_cache
-def login(request, template_name='registration/login.html',
+def login_ajax(request, authentication_form=AuthenticationForm):
+
+    def login_process(obj_response, form_data):
+        form = authentication_form(request, data=form_data)
+        if form.is_valid():
+            redirect_to = settings.LOGIN_REDIRECT_URL
+
+            # Okay, security checks complete. Log the user in.
+            auth_login(request, form.get_user())
+            user = form.get_user()
+            log.debug('logged in: %s <%s>' % (str(user), user.email))
+
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
+
+            lang = user.get_profile().preferred_language
+            # set the game we are logging the user into
+            #
+            current_game = form.cleaned_data.get('instance')
+            request.session['current_game_slug'] = current_game.slug
+
+            obj_response.html("#id_form-errors", 'login success.')
+
+            #if lang in dict(settings.LANGUAGES).keys():
+            #    spath = strip_path(redirect_to)[1]
+            #    return redirect(
+            #            "".join(
+            #                    [
+            #                        current_game.get_absolute_url(ssl=not(settings.DEBUG)),
+            #                        locale_path(spath, lang)
+            #                    ]
+            #            ),
+            #            permantent=True,
+            #    )
+
+            #return redirect(
+            #        "".join([
+            #                    current_game.get_absolute_url(ssl=not(settings.DEBUG)), 
+            #                    redirect_to
+            #                ]
+            #        ),
+            #            permantent=True,
+            #)
+        else:
+            log.debug('form invalid %s' % form.errors)
+            print('form invalid %s' % form.errors)
+            obj_response.html("#id_form-errors", form.errors)
+
+    instance = Sijax()
+    instance.set_data(request.POST)
+    instance.set_request_uri(reverse('accounts:login-ajax'))
+    instance.register_callback('login_process', login_process)
+    if instance.is_sijax_request:
+        return HttpResponse(instance.process_request())
+    return HttpResponse("")
+
+
+@csrf_protect
+@never_cache
+def login_bak(request, template_name='registration/login.html',
           redirect_field_name=REDIRECT_FIELD_NAME,
           authentication_form=AuthenticationForm,
           current_app=None, extra_context=None):

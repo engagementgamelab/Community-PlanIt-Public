@@ -19,6 +19,7 @@ admin.site.register(UserProfileStake, UserProfileStakeAdmin)
 class UserProfilePerInstanceAdmin(admin.ModelAdmin):
     list_display = ('__str__', )
     list_filter = ('instance',)
+    search_fields = ('user_profile__email',)
 
 admin.site.register(UserProfilePerInstance, UserProfilePerInstanceAdmin)
 

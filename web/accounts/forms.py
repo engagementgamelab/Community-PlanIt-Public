@@ -285,17 +285,21 @@ class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
 
     def get_context_data(self, form, **kwargs):
         context = super(RegistrationWizard, self).get_context_data(form, **kwargs)
-        #import ipdb;ipdb.set_trace()
         self.template_name = 'accounts/register_%s.html' % self.steps.current
         if self.steps.current == '0':
             load_games_sijax = Sijax()
             load_games_uri = reverse('instances:load-games-sijax', args=(1,))
             load_games_sijax.set_request_uri(load_games_uri)
-            load_games_sijax_js = load_games_sijax.get_js()
-            print load_games_sijax_js 
+
+            login_sijax = Sijax()
+            login_sijax.set_request_uri(reverse('accounts:login-ajax'))
+            self.request.session.set_test_cookie()
+
             context.update(
                     dict(
-                        load_games_sijax_js = load_games_sijax_js,
+                        load_games_sijax_js = load_games_sijax.get_js(),
+                        login_sijax_js = login_sijax.get_js(),
+                        form = AccountAuthenticationForm(self.request),
                     )
             )
         return context
@@ -395,12 +399,12 @@ class AccountAuthenticationForm(AuthenticationForm):
             raise RuntimeError("request obj is missing")
         self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)
 
-        games_for_domain = Instance.objects.for_city(request.current_site.domain)
+        #games_for_domain = Instance.objects.for_city(request.current_site.domain)
 
-        if games_for_domain.count():
-            self.fields['instance'] = forms.ModelChoiceField(queryset=games_for_domain)
-        else:
-            self.fields['instance'] = forms.ModelChoiceField(queryset=Instance.objects.all())
+        #if games_for_domain.count():
+        #    self.fields['instance'] = forms.ModelChoiceField(queryset=games_for_domain)
+        #else:
+        self.fields['instance'] = forms.ModelChoiceField(queryset=Instance.objects.all())
 
     def clean(self, *args, **kwargs):
         super(AccountAuthenticationForm, self).clean(*args, **kwargs)
