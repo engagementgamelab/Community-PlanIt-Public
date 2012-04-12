@@ -5,3 +5,5 @@
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}accounts/css/styles.css">    
 {% endblock %}
+
+{% block body_class %}{{ block.super }} section-profile{% endblock %}

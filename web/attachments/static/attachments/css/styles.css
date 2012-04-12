@@ -1,0 +1,51 @@
+/* Attachments App Specific Styles, mainly Resource Center */
+
+.resource {
+    float: left;
+    width: 164px;
+    margin: 20px;
+/*    background: #e3f1ea;*/
+    background: #e5f0ea url('../../../../static/img/bg-pagefold.png') no-repeat right bottom;
+    overflow: hidden;
+}
+
+    .resource-title {
+        margin: 8px 10px;
+    }
+    
+    .resource-thumbnail {
+        width: 164px;
+        height: 140px;
+    }
+    
+    .resource-type {
+        float: left;
+        width: 36px;
+        height: 36px;
+        margin: 12px 10px;
+/*        border: 1px solid gray;*/
+    }
+    
+        .resource-type-document {
+            background: url('../img/icon-resources-document.png');
+        }
+        
+        .resource-type-link {
+            background: url('../img/icon-resources-link.png');
+        }
+        
+        .resource-type-video {
+            background: url('../img/icon-resources-video.png');
+        }
+        
+    .resource-download {
+        float: right;
+        width: 36px;
+        height: 36px;
+        margin: 12px 10px;
+        background: url('../img/icon-resources-download.png');
+    }
+    
+        .resource-download:hover {
+            background: url('../img/icon-resources-download.png') -36px;
+        }

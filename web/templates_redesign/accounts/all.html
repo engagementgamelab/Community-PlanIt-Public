@@ -4,11 +4,13 @@
 
 {% block title %}{% trans "Find Players" %}{% endblock %}
 
+{% block body_class %}{{ block.super }} section-players{% endblock %}
 {% block game_content %}
 <div>
     <div class="column-container">
         <div class="btn-tab left"><a class="active">Find Players</a></div>
         <div class="btn-tab right"><a href="#">Affiliations</a></div>
+        
         <hr class="thick clearfix" />
         
         

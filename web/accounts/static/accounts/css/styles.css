@@ -46,16 +46,14 @@
 #profile-edit-btn {
     font-size: 0.4em;
 }
+
 #profile-player {}
     
     .profile-detail {
+        margin: 10px 0px;
         min-height: 75px;
     }
 
-#profile-notifications {
-    margin: 20px 0px;
-}
-    
 /* Account Edit Profile Specific Styles */
 #profile-editform-container {
   margin-right: 20px;

@@ -1,0 +1,18 @@
+{% load i18n %}
+{% with comment_heading=comment_heading|default:"Comments" %}
+{# <h3> #}
+{#     {% blocktrans %}{{comment_heading}}{% endblocktrans %} #}
+{#     {% if comments.count %} #}
+{#     <div class="controls right"> #}
+{#         Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a> #}
+{#     </div> #}
+{#     {% endif %} #}
+{# </h3> #}
+<ul class="comment_list">
+    {% for comment in comments.all reversed %}
+        {% include "comments/comment.html" %}
+    {% empty %}
+    <li class="comment">No comments found.</li>
+    {% endfor %}
+</ul>
+{% endwith %}

@@ -4,6 +4,11 @@
 
 {% block title %}{% trans "Profile" %}{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}comments/css/styles.css">  
+{% endblock %}
+
 {% block game_content %}
 <div>
     <div class="column-container">
@@ -30,20 +35,7 @@
                     <!-- Your Games -->
                     <h3>Your Games</h3>
                     <p class="profile-detail">{# Games #}</p>
-                    <!-- Stake -->
-                    <h3>Community Stake</h3>
-                    <p class="profile-detail">
-                        {% if player.get_profile.stake %}
-                            {{ player.get_profile.stake|trans_fallback:"stake"}}
-                        {% endif %}
-                    </p>
-                    <!-- Tagline -->
-                    <h3>Tagline</h3>
-                    <p class="profile-detail">{# Stake #}</p>
-                </div>
-            </div>
-            <div class="column-half">
-                <div class="column-container">
+
                     <!-- Affiliations -->
                     <h3>Affiliations<h3>
                     <p class="profile-detail">
@@ -53,17 +45,30 @@
                         {% endfor %}
                     {% endif %}
                     </p>
-                
+
+                    <!-- Tagline -->
+                    <h3>Tagline</h3>
+                    <p class="profile-detail">
+                        {% if player.get_profile.stake %}
+                        {{ player.get_profile.stake|trans_fallback:"stake"}}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="column-half">
+                <div class="column-container">
                     <!-- Total Game Points -->
                     <h3>Total Game Points</h3>
                     <p class="profile-detail">
                         {{player.get_profile.totalPoints}}
                     </p>
 
-                    <!-- Badges -->
-                    <h3>Badges Earned</h3>
+                    <!-- Stake -->
+                    <h3>Community Stake</h3>
                     <p class="profile-detail">
-                        {# Badges #}
+                        {% if player.get_profile.stake %}
+                            {{ player.get_profile.stake|trans_fallback:"stake"}}
+                        {% endif %}
                     </p>
                 </div>
             </div>
@@ -72,14 +77,29 @@
     <br class="clearfix" />
     
     
-    <div id="profile-notifications" class="column-half">
+    <div id="profile-notifications" class="column-third">
         <div class="column-container">
-            <hr class="thick" />
-            <h2>Notifications</h2>
+            <h3>Notifications</h3>
         
             {# Notifications Here #}
-        
-            <hr class="thick" />
+            <p class="profile-detail">
+            {% for notification in request.user.notifications.all %}
+            
+            {% empty %}
+                You have no notifications right now.
+            {% endfor %}
+            </p>
+        </div>
+    </div>
+    <div id="profile-badges" class="column-twothird">
+        <div class="column-container">
+            <!-- Badges -->
+            <h3>Badges Earned</h3>
+            <p class="profile-detail">
+                {# TODO: Badges #}
+                {# if empty #}
+                You do not have any badges! Earn your first badge by completing your profile here.
+            </p>
         </div>
     </div>
     <br class="clearfix" />
@@ -87,22 +107,22 @@
     
     <div class="column-full">
         <div class="column-container">
-            <h2>Player Messages</h2>
+            <h3>Community Messages</h3>
             {% with comments=player.get_profile.comments comment_heading=comment_heading|default:"Comments" %}
             <div class="comments">
                 {% if not comment_form.just_one_form %}
                     {% include "comments/comments.html" %}
                 {% else %}
-                <h2>{% blocktrans %}{{comment_heading}}{% endblocktrans %}</h2>
+                    <h2>{% blocktrans %}{{comment_heading}}{% endblocktrans %}</h2>
                 {% endif %}
                 {% if instance.is_active %}
-                <h3>{% blocktrans with player=player.get_profile.screen_name %}Share your thoughts with {{player}} &#8212; leave a comment below{% endblocktrans %}</h3>
+                    <h3>{% blocktrans with player=player.get_profile.screen_name %}Share your thoughts with {{player}} &#8212; leave a comment below{% endblocktrans %}</h3>
                     <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
                         {% include "comments/duplicate.html" %}
                         <button type="submit" class="button right">Add Comment</button>
                     </form>
                 {% else %}
-                <p>This community is no longer active.</p>
+                    {# <p>This community is no longer active.</p> #}
                 {% endif %}
             </div>
             {% endwith %}
