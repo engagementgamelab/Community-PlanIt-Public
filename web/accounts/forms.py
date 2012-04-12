@@ -202,6 +202,12 @@ class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
     #community = None
     __name__ = 'RegistrationWizard'
 
+    def dispatch(self, request, *args, **kwargs):
+        response = super(RegistrationWizard, self).dispatch(request, *args, **kwargs)
+        if self.request.user.is_authenticated():
+            return redirect(reverse('accounts:dashboard'), permanent=True)
+        return response
+
     @transaction.commit_on_success
     def done(self, request, form_list):
         form_one = form_list[0]
@@ -285,6 +291,7 @@ class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
 
     def get_context_data(self, form, **kwargs):
         context = super(RegistrationWizard, self).get_context_data(form, **kwargs)
+
         self.template_name = 'accounts/register_%s.html' % self.steps.current
         if self.steps.current == '0':
             load_games_sijax = Sijax()

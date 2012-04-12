@@ -17,8 +17,14 @@ urlpatterns = patterns('',
                                             ]
                                 ), name='register'),
     url(r'^forgot/$', 'web.accounts.views.forgot', name='forgot'),
-    url(r'^login/$', login, {'template_name': 'accounts/login.html',
-                            'authentication_form': AccountAuthenticationForm}, name='login'),
+    #url(r'^login/$', login, {'template_name': 'accounts/login.html',
+    #                        'authentication_form': AccountAuthenticationForm}, name='login'),
+    url(r'^login/$', RegistrationWizard.as_view(
+                                            [
+                                                RegisterFormOne,
+                                                RegisterFormTwo
+                                            ]
+                                ), name='login'),
 
     url(r'^ajax/login/$', 'web.accounts.views.login_ajax', 
                             {'authentication_form': AccountAuthenticationForm},

@@ -50,8 +50,6 @@ def login_ajax(request, authentication_form=AuthenticationForm):
         form = authentication_form(request, data=form_data)
         if form.is_valid():
             redirect_to = settings.LOGIN_REDIRECT_URL
-
-            # Okay, security checks complete. Log the user in.
             auth_login(request, form.get_user())
             user = form.get_user()
             log.debug('logged in: %s <%s>' % (str(user), user.email))
@@ -65,28 +63,25 @@ def login_ajax(request, authentication_form=AuthenticationForm):
             current_game = form.cleaned_data.get('instance')
             request.session['current_game_slug'] = current_game.slug
 
-            obj_response.html("#id_form-errors", 'login success.')
+            #obj_response.html("#id_form-errors", 'login success.')
+            if lang in dict(settings.LANGUAGES).keys():
+                spath = strip_path(redirect_to)[1]
+                return obj_response.redirect(
+                        "".join(
+                                [
+                                    current_game.get_absolute_url(ssl=not(settings.DEBUG)),
+                                    locale_path(spath, lang)
+                                ]
+                        ),
+                )
 
-            #if lang in dict(settings.LANGUAGES).keys():
-            #    spath = strip_path(redirect_to)[1]
-            #    return redirect(
-            #            "".join(
-            #                    [
-            #                        current_game.get_absolute_url(ssl=not(settings.DEBUG)),
-            #                        locale_path(spath, lang)
-            #                    ]
-            #            ),
-            #            permantent=True,
-            #    )
-
-            #return redirect(
-            #        "".join([
-            #                    current_game.get_absolute_url(ssl=not(settings.DEBUG)), 
-            #                    redirect_to
-            #                ]
-            #        ),
-            #            permantent=True,
-            #)
+            return obj_response.redirect(
+                    "".join([
+                                current_game.get_absolute_url(ssl=not(settings.DEBUG)), 
+                                redirect_to
+                            ]
+                    ),
+            )
         else:
             log.debug('form invalid %s' % form.errors)
             print('form invalid %s' % form.errors)
@@ -103,7 +98,7 @@ def login_ajax(request, authentication_form=AuthenticationForm):
 
 @csrf_protect
 @never_cache
-def login_bak(request, template_name='registration/login.html',
+def login(request, template_name='registration/login.html',
           redirect_field_name=REDIRECT_FIELD_NAME,
           authentication_form=AuthenticationForm,
           current_app=None, extra_context=None):
@@ -424,6 +419,8 @@ def dashboard(request, template_name='accounts/dashboard.html'):
 # def dashboard(request, template_name='city.html'):
     # expecting the current game to be 
     # set by middleware
+
+    log.debug("dashboard: auth? %s " % request.user.is_authenticated())
 
     if hasattr(request, 'current_game'):
         instance = request.current_game
