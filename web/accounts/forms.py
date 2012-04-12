@@ -35,9 +35,6 @@ class RegisterFormOne(forms.Form):
     password = forms.CharField(required=True, label=_("Password"), widget=forms.PasswordInput(render_value=False))
     password_again = forms.CharField(required=True, label=_("Password Again"), widget=forms.PasswordInput(render_value=False))
 
-    #birth_year = forms.IntegerField(label=_('Year you were born'), required=False)
-    #zip_code = forms.CharField(max_length=10, label=_('Your ZIP code'))
-
     def __init__(self, *args, **kwargs):
         super(RegisterFormOne, self).__init__(*args, **kwargs)
         cities = City.objects.values_list('pk', 'name')
@@ -65,7 +62,6 @@ class RegisterFormOne(forms.Form):
 
     def clean_instance(self):
         """Ensure that a user has not already registered an account with that email address and that game."""
-        print self.cleaned_data
         instance = self.cleaned_data['instance']
         email = self.cleaned_data['email']
         if UserProfilePerInstance.objects.filter(
@@ -119,6 +115,19 @@ class RegisterFormTwo(forms.Form):
         stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
         self.fields['stake'] = forms.ChoiceField(label=_(u'Stake in the community'), required=False, choices=stakes)
 
+        affiliations = self.chosen_game.user_profile_variants.affiliation_variants.all().order_by('pk', "name").values_list('pk', 'name')
+        self.fields['affiliations'] = forms.MultipleChoiceField(
+                                    label=_(u'Affiliation'), required=False, choices=affiliations
+        )
+        self.fields['affiliations_other'] = forms.CharField(required=False, 
+               label=_('Don\'t see your affiliation? Enter it here. Please place a comma between each affiliation.'),
+                widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
+        
+
+        self.fields['birth_year'] = forms.IntegerField(label=_('Year you were born'), required=False)
+        self.fields['zip_code'] = forms.CharField(max_length=10, label=_('Your ZIP code'))
+
+
         all_genders = UserProfileGender.objects.untranslated().all().order_by("pos")
         genders = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'gender')) for x in all_genders]
         self.fields['gender'] = forms.ChoiceField(label=_(u'Gender'), required=False, choices=genders)
@@ -139,22 +148,12 @@ class RegisterFormTwo(forms.Form):
         livings = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'situation')) for x in all_livings]
         self.fields['living'] = forms.ChoiceField(label=_(u'Living Situation'), required=False, choices=livings)
 
-
         all_hows = UserProfileHowDiscovered.objects.untranslated().all().order_by("pos")
         hows = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'how')) for x in all_hows]
         self.fields['how_discovered'] = forms.ChoiceField(label=_(u'How did you hear about Community PlanIt?'), required=False, choices=hows)
 
         self.fields['how_discovered_other'] = forms.CharField(required=False, label=_('If the way you learned about us is not listed, please tell us'))
 
-
-        affiliations = self.chosen_game.user_profile_variants.affiliation_variants.all().order_by('pk', "name").values_list('pk', 'name')
-        self.fields['affiliations'] = forms.MultipleChoiceField(
-                                    label=_(u'Affiliation'), required=False, choices=affiliations
-        )
-        self.fields['affiliations_other'] = forms.CharField(required=False, 
-               label=_('Don\'t see your affiliation? Enter it here. Please place a comma between each affiliation.'),
-                widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
-        
 
     def clean_gender(self):
         try:
@@ -200,7 +199,6 @@ class RegisterFormTwo(forms.Form):
 
 
 class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
-    #community = None
     __name__ = 'RegistrationWizard'
 
     def dispatch(self, request, *args, **kwargs):
@@ -243,9 +241,13 @@ class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
         return context
 
     @transaction.commit_on_success
-    def done(self, request, form_list):
+    def done(self, form_list):
         form_one = form_list[0]
         form_two = form_list[1]
+
+        game_id = form_one.cleaned_data.get('instance')
+        print "game: ", game_id
+        game = Instance.objects.get(id=game_id)
 
         first_name = form_one.cleaned_data.get('first_name')
         last_name = form_one.cleaned_data.get('last_name')
@@ -260,19 +262,19 @@ class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
         player.save()
 
         player = authenticate(username=email, password=password)
-        login(request, player)
+        login(self.request, player)
         player.save()
 
         profile = player.get_profile()
         profile.email = form_one.cleaned_data.get('email')
         #profile.instance = self.community
         profile.preferred_language = form_one.cleaned_data['preferred_language']
-        birth_year = form_one.cleaned_data.get('birth_year')
+        profile.city = form_one.cleaned_data.get('city')
+
+        birth_year = form_two.cleaned_data.get('birth_year')
         if birth_year:
             profile.birth_year = birth_year
-        profile.city = form_one.cleaned_data.get('city')
-        profile.zip_code = form_one.cleaned_data.get('zip_code')
-
+        profile.zip_code = form_two.cleaned_data.get('zip_code')
         profile.education = form_two.cleaned_data.get('education')
         profile.gender = form_two.cleaned_data.get('gender')
         profile.income = form_two.cleaned_data.get('income')
@@ -286,7 +288,7 @@ class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
 
         user_profile_per_instance = UserProfilePerInstance(
                                         user_profile=profile,
-                                        instance=self.community,
+                                        instance=game,
                 )
         user_profile_per_instance.save()
 
@@ -304,19 +306,19 @@ class RegistrationWizard(SessionWizardView, TemplateResponseMixin):
         user_profile_per_instance.save()
 
         tmpl = loader.get_template('accounts/email/welcome.html')
-        context = { 'instance': self.community }
-        body = tmpl.render(RequestContext(request, context))
+        context = { 'instance': game }
+        body = tmpl.render(RequestContext(self.request, context))
         send_mail(ugettext('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [email], fail_silently=False)
-        messages.success(request, _("Thanks for signing up!"))
+        messages.success(self.request, _("Thanks for signing up!"))
 
 
         # set the game we are logging the user into
         #
-        request.session['current_game_slug'] = self.community.slug
+        self.request.session['current_game_slug'] = game.slug
         return redirect(
                         "".join(
                                 [
-                                    self.community.get_absolute_url(ssl=not(settings.DEBUG)),
+                                    game.get_absolute_url(ssl=not(settings.DEBUG)),
                                     reverse('accounts:dashboard')
                                 ]
                             ),
