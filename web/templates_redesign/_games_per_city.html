@@ -21,8 +21,11 @@
                             {% else %}
                                 {{ instance.start_date|date:"M j" }} - {{ instance.end_date|date:"M j" }}
                             {% endif %}
-                            
-                            You are signed up for this game
+                            {% if instance in request.user.get_profile.instances.all %}
+                                <div class="games-list-signedup">
+                                    You're signed up!
+                                </div>
+                            {% endif %}
                         </p>
                     </a>
                 </li>
@@ -36,7 +39,12 @@
                     <div class="login-container">
                         {% if user.is_authenticated %}
                             {# Sign up for Instance #}
-                            <a href="{% url accounts:register %}">Sign up for this game</a>
+                            {% if instance in request.user.get_profile.instances.all %}
+                                {# TODO Go only if started! #}
+                                <a href="">Go to game</a>
+                            {% else %}
+                                <a href="{% url accounts:register %}">Sign up for this game</a>
+                            {% endif %}
                         {% else %}
                             {# Authenticate, and then sign up for Instance #}
                             <a href="{% url accounts:register %}">Register/Signin and then sign up for this game</a>                        

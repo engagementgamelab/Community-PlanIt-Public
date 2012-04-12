@@ -46,7 +46,7 @@
     <div id="registration-container">
         <div class="column-half">
             <div class="column-container">
-                <h1>Log In</h1>
+                <h1>Sign In</h1>
                 <span id="id_form-errors" style="color:red;"></span>
                 <form class="accounts-form" id="id_login-form" action="{% url accounts:login %}" method="post"> {% csrf_token %}
                     {{ form.as_p}}
