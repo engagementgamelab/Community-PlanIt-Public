@@ -28,9 +28,9 @@
         <ul>
             <li><a href="">How to Play</a></li>
             {% if user.is_authenticated %}
-                <li><a href="{% url accounts:logout %}">Log Out</a></li>
+                <li><a href="{% url accounts:logout %}">Sign Out</a></li>
             {% else %}
-                <li><a href="{% url accounts:login %}">Log In</a></li>
+                <li><a href="{% url accounts:login %}">Sign In</a></li>
             {% endif %}
         </ul>
     </div>
@@ -41,7 +41,7 @@
             <!-- HEADER -->
             <div id="header">
                 <div id="logo-container">
-                    <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="150" height="97" /></a>
+                    <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="150" height="100" /></a>
                 </div>
                 <div id="header-extras-container">
                     <div id="header-extras-intro">Play the game. Plan the future.</div>

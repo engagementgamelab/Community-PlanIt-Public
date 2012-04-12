@@ -181,6 +181,33 @@ hr.rainbow {
         clear: both;
     }
     
+        .games-list-signedup {
+            position: relative;
+            left: -15px;
+            display: inline-block;
+            padding: 5px 20px;
+            font-size: 0.8em;
+            background: #ff5036;
+            color: #fff;
+            text-shadow: 0 1px rgba(0,0,0,.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        
+         .games-list-signedup:before{
+             content: '';
+             position: absolute;
+             border-style: solid;
+             border-color: transparent;
+             bottom: -5px;
+         }
+
+        .games-list-signedup:before
+        {
+            border-width: 0 5px 5px 0;
+            border-right-color: #e26521;
+            left: 0;
+        }
+        
         .games-list-nav {
             float: left;
             width: 200px;
