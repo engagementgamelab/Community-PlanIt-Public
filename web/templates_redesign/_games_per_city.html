@@ -39,7 +39,7 @@
                             {% if instance.is_started %}
                                 This shouldn't have started yet...
                             {% else %}
-                                {{ instance.start_date|date:"M j" }} - {{ instance.end_date|date:"M j" }}
+                                Starts on {{ instance.start_date|date:"M j" }}
                             {% endif %}
                             {% if instance in request.user.get_profile.instances.all %}
                                 <div class="games-list-signedup">
@@ -57,7 +57,7 @@
                     {% if instance in instances_future %}
                     <div class="games-list-detail-countdown">
                         <div>{{ instance.time_until_start}}</div>
-                        <div>THis shouldn't show</div>
+                        <div>This shouldn't show</div>
                     </div>
                     {% endif %}
                     <img class="games-list-detail-img" src="{{ instance.slideshow. }}">{{ instance.get_slideshow_attachment }}
