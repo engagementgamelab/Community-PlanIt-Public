@@ -30,9 +30,56 @@
                     </a>
                 </li>
                 {% endfor %}
+                {% for instance in instances_future %}
+                <li>
+                    <a>
+                        <h3>{{ instance.title }}</h3>
+                        <p>
+                            {{ instance.for_city.name }} &bull; 
+                            {% if instance.is_started %}
+                                This shouldn't have started yet...
+                            {% else %}
+                                {{ instance.start_date|date:"M j" }} - {{ instance.end_date|date:"M j" }}
+                            {% endif %}
+                            {% if instance in request.user.get_profile.instances.all %}
+                                <div class="games-list-signedup">
+                                    You're signed up!
+                                </div>
+                            {% endif %}
+                        </p>
+                    </a>
+                </li>
+                {% endfor %}
             </ul>
             <div class="games-list-details slides_container">
                 {% for instance in instances_active %}
+                <div>
+                    {% if instance in instances_future %}
+                    <div class="games-list-detail-countdown">
+                        <div>{{ instance.time_until_start}}</div>
+                        <div>THis shouldn't show</div>
+                    </div>
+                    {% endif %}
+                    <img class="games-list-detail-img" src="{{ instance.slideshow. }}">{{ instance.get_slideshow_attachment }}
+                    <p class="games-list-detail-description">{{ instance.description|truncatewords:20 }}</p>
+                    <div id="games-list-detail-signup" class="btn-arrow">
+                        {% if user.is_authenticated %}
+                            {# Sign up for Instance #}
+                            {% if instance in request.user.get_profile.instances.all %}
+                                {# TODO: Go only if started! #}
+                                <a href="">Go to game!</a>
+                            {% else %}
+                                <a href="{% url accounts:register %}">Sign up for this game!</a>
+                            {% endif %}
+                        {% else %}
+                            {# Authenticate, and then sign up for Instance #}
+                            <a href="{% url accounts:register %}">Sign up for this game!</a>                        
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% for instance in isntances_future %}
                 <div>
                     {% if instance in instances_future %}
                     <div class="games-list-detail-countdown">
@@ -60,6 +107,8 @@
                 {% endfor %}
             </div>
         </div>
+        
+        
         <!-- Past Games -->
         <div id="games-list-past" class="games-list">
             <ul class="games-list-nav">
