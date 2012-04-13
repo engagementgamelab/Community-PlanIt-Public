@@ -63,14 +63,19 @@
         padding: 10px 8px;
     }
     
-#accounts-form-step2-instructions {
-    margin: 20px 0px;
-}
+    #accounts-form-step2-instructions {
+        margin: 20px 0px;
+    }
     
-#accounts-form-avatar-disclaimer {
-    font-size: 0.8em;
-    color: #666;
-}    
+    #accounts-form-avatar-disclaimer {
+        font-size: 0.8em;
+        color: #666;
+    }   
+
+    #accounts-form-step2-submit {
+        float: right;
+        margin-right: 38px;
+    }
     
 /* Account Profile Specific Styles */
 #profile-edit-btn {
