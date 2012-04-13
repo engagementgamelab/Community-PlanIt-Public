@@ -68,11 +68,15 @@ hr.rainbow {
         
         #walkthrough h1 {
             margin: 10px 0px;
-            font-size: 2.5em;
+            font-family: 'Enriqueta', serif;
+            font-size: 2em;
+            font-weight: bold;
+            
         }
         
         #walkthrough p {
             margin: 10px 20px 10px 0px;
+            line-height: 1.3em;
         }
         .walkthrough-media {
             display: inline-block;
@@ -100,6 +104,10 @@ hr.rainbow {
             background: url('../img/btn-next.png');
             cursor: pointer;
         }
+        
+            .walkthrough-next:hover {
+                background-position: 25px;
+            }
         
 /* 
    Games 
