@@ -22,7 +22,7 @@ def index(request, authentication_form=AccountAuthenticationForm, template='inde
         instances_active = Instance.objects.active_for_city(domain=domain)
         instances_future = Instance.objects.future_for_city(domain=domain)
         instances_past = Instance.objects.past_for_city(domain=domain)
-        instances_current = Instances.objects.current_for_city(domain=domain)
+        instances_current = Instance.objects.current_for_city(domain=domain)
         # print instances_current
         template = 'city.html'
         
