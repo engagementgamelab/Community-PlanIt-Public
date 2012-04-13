@@ -22,6 +22,8 @@ def index(request, authentication_form=AccountAuthenticationForm, template='inde
         instances_active = Instance.objects.active_for_city(domain=domain)
         instances_future = Instance.objects.future_for_city(domain=domain)
         instances_past = Instance.objects.past_for_city(domain=domain)
+        instances_current = Instances.objects.current_for_city(domain=domain)
+        # print instances_current
         template = 'city.html'
         
     except ObjectDoesNotExist:
@@ -30,7 +32,8 @@ def index(request, authentication_form=AccountAuthenticationForm, template='inde
         instances_active = Instance.objects.active()
         instances_future = Instance.objects.future()
         instances_past = Instance.objects.past()
-        
+        instances_current = Instance.objects.current()
+        print instances_current
     if not request.user.is_authenticated():
 
         form = authentication_form(request)
@@ -41,6 +44,7 @@ def index(request, authentication_form=AccountAuthenticationForm, template='inde
             'instances_active': instances_active,
             'instances_future': instances_future,
             'instances_past': instances_past,
+            'instances_current': instances_current,
         }
         return render_to_response(template, context, context_instance=RequestContext(request))
     
@@ -50,6 +54,7 @@ def index(request, authentication_form=AccountAuthenticationForm, template='inde
         'instances_active': instances_active,
         'instances_future': instances_future,
         'instances_past': instances_past,
+        'instances_current': instances_current,
     }
         
     # return dashboard(request)
