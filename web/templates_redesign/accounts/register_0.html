@@ -45,8 +45,8 @@
     
     <div id="registration-container">
         <div class="column-half">
-            <div class="column-container">
-                <h1>Sign In</h1>
+            <div class="column-container-40">
+                <h2>Sign In</h2>
                 <span id="id_form-errors" style="color:red;"></span>
                 <form class="accounts-form" id="id_login-form" action="{% url accounts:login %}" method="post"> {% csrf_token %}
                     {{ form.as_p}}
@@ -57,8 +57,8 @@
             </div>
         </div>
         <div class="column-half">
-            <div class="column-container">
-                <h1>Sign Up</h1>
+            <div class="column-container-40">
+                <h2>Sign Up</h2>
                 <form class="accounts-form" action="" method="post"> {% csrf_token %}
                     {{ wizard.management_form }}
                     {% if wizard.form.forms %}

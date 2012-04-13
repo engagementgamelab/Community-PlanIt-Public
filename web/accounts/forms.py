@@ -117,22 +117,25 @@ class RegisterFormTwo(forms.Form):
         self.fields['stake'] = forms.ChoiceField(label=_(u'Stake in the community'), required=False, choices=stakes)
 
         affiliations = self.chosen_game.user_profile_variants.affiliation_variants.all().order_by('pk', "name").values_list('pk', 'name')
-        self.fields['affiliations'] = forms.MultipleChoiceField(
-                                    label=_(u'Affiliation'), required=False, choices=affiliations
+        # self.fields['affiliations'] = forms.MultipleChoiceField(
+        #     label=_(u'Affiliation'), required=False, choices=affiliations
+        # )
+        self.fields['affiliations'] = forms.ChoiceField(
+            label=_(u'Affiliation'), required=False, choices=affiliations,
         )
         self.fields['affiliations_other'] = forms.CharField(required=False, 
-               label=_('Don\'t see your affiliation? Enter it here. Please place a comma between each affiliation.'),
-                widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
+               label=_("Don't see your affiliation? Enter it here. Please place a comma between each affiliation."))
         
 
-        self.fields['birth_year'] = forms.IntegerField(label=_('Year you were born'), required=False)
+        self.fields['birth_year'] = forms.IntegerField(
+            label=_('Year you were born'),
+            required=False)
         self.fields['zip_code'] = forms.CharField(max_length=10, label=_('Your ZIP code'))
 
 
         all_genders = UserProfileGender.objects.untranslated().all().order_by("pos")
         genders = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'gender')) for x in all_genders]
         self.fields['gender'] = forms.ChoiceField(label=_(u'Gender'), required=False, choices=genders)
-
         all_races = UserProfileRace.objects.untranslated().all().order_by("pos")
         races = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'race')) for x in all_races]
         self.fields['race'] = forms.ChoiceField(label=_(u'Race/Ethnicity'), required=False, choices=races)
@@ -153,9 +156,15 @@ class RegisterFormTwo(forms.Form):
         hows = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'how')) for x in all_hows]
         self.fields['how_discovered'] = forms.ChoiceField(label=_(u'How did you hear about Community PlanIt?'), required=False, choices=hows)
 
-        self.fields['how_discovered_other'] = forms.CharField(required=False, label=_('If the way you learned about us is not listed, please tell us'))
+        self.fields['how_discovered_other'] = forms.CharField(
+            required=False, 
+            label=_('If other, please tell us how you learned about Community PlanIt'),
+            widget=forms.Textarea())
 
-        self.fields['tagline'] = forms.CharField(required=False, label=_('Give yourself a tagline'))
+        self.fields['tagline'] = forms.CharField(
+            required=False, 
+            label=_('Give yourself a tagline'),
+            widget=forms.Textarea(attrs={"placeholder": "I'm here to..."}))
 
 
     def clean_gender(self):

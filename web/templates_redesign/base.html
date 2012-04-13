@@ -45,11 +45,13 @@
                 </div>
                 <div id="header-extras-container">
                     <div id="header-extras-intro">Play the game. Plan the future.</div>
+                    <div id="header-extras-login">
                     {% if not user.is_authenticated %}
                     <div id="login-container">
                         <a href="{% url accounts:login %}">Sign In</a>
                     </div>
                     {% endif %}
+                    </div>
                 </div>
             </div>
         {% endblock header %}

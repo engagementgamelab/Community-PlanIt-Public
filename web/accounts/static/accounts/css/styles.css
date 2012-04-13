@@ -6,32 +6,71 @@
 }
 
     #registration-container > div {
-        margin: 20px inherit;
+        margin: 30px 0px;
     }
     
 
 /* Registration Form */
 .accounts-form {
-    
 }
     
     .accounts-form p {
         margin: 10px 0px;
     }
     
+        .accounts-form span.private {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
+            left: -20px;
+            width: 13px;
+            height: 17px;
+            margin: 0px -13px 0px 0px;
+            background: url('../../../../static/img/icon-private.png') no-repeat;
+        }
     .accounts-form label {
         display: block;
+        width: 220px;
         margin: 3px 0px;
         font-size: 0.75em;
     }
 
     .accounts-form input[type='text'], 
     .accounts-form input[type='password'] {
-        width: 250px;
-        padding: 10px 8px;
+        display: inline-block;
+        vertical-align: middle;
+        width: 220px;
+        padding: 8px 5px;
         border: 0px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
         border-radius: 3px;
     }
+    
+    .accounts-form textarea {
+        width: 220px;
+        height: 100px;
+        padding: 8px 5px;
+        border: 0px;
+        resize: none;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+    .accounts-form select {
+        width: 220px;
+        padding: 10px 8px;
+    }
+    
+#accounts-form-step2-instructions {
+    margin: 20px 0px;
+}
+    
+#accounts-form-avatar-disclaimer {
+    font-size: 0.8em;
+    color: #666;
+}    
     
 /* Account Profile Specific Styles */
 #profile-edit-btn {
