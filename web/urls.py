@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.defaults import include, patterns, url
 from django.views.generic.simple import direct_to_template
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from django.contrib import admin
 
@@ -67,3 +68,4 @@ urlpatterns += patterns('core.memcached_status',
     url(r'^status/cache/$', 'view'),
 )
 
+urlpatterns += staticfiles_urlpatterns()

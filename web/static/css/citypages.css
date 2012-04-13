@@ -208,6 +208,7 @@ hr.rainbow {
             left: 0;
         }
         
+        /* Games list Navigation (left) */
         .games-list-nav {
             float: left;
             width: 200px;
@@ -239,13 +240,25 @@ hr.rainbow {
                 margin: 10px 0px;
                 font-size: 0.75em;
             }
-            
+        
+        /* Public games list details */
         #public-index .games-list-details {
+            position: relative;
             float: left;
             width: 440px;
             background: #e0f0e9;
         }
-    
+            .games-list-detail-countdown {
+                position: absolute;
+                right: 0px;
+                top: -75px;
+                width: 200px;
+                height: 75px;
+                text-align: center;
+                background: #e0f0e9;
+                border-left: 10px solid white;
+            }
+            
             #public-index .games-list-details > div {
                 display: block;
                 width: 440px;
@@ -261,9 +274,11 @@ hr.rainbow {
                     height: 300px;
                 }
 
-                .games-list-details .games-list-detail-description {
-                    margin: 10px 0px;
+                #public-index .games-list-details .games-list-detail-description {
+                    margin: 20px 0px;
+                    width: 400px;
                 }
+                
 /* Public - city pages have slightly different setup... */
 
 /*#public-city #games {
@@ -313,6 +328,7 @@ hr.rainbow {
     
         #public-city .games-list-details,
         #private-city .games-list-details {
+            position: relative;
             float: left;
             width: 580px;
             background: #e4f2ed;
@@ -336,6 +352,11 @@ hr.rainbow {
                     height: 300px;
                 }
 
+                #public-city .games-list-details .games-list-detail-description {
+                    margin: 20px 0px;
+                    width: 540px;
+                }
+                
 /* Cities Navigation */
 #cities-container {
     float: left;
@@ -353,15 +374,29 @@ hr.rainbow {
     }
 
     #bringtoyourcommunity-container {
+        position: relative;
     }
 
         #bringtoyourcommunity-container a {
             display: block;
             width: 150px;
+            height: 36px;
             margin: 20px 0px;
             padding: 15px 20px 10px 40px;
             background: #f7ff59;
             text-decoration: none;
             text-transform: uppercase;
             color: #4d4d4d;
+        }
+        
+        #bringtoyourcommunity-container a:after{
+            position: absolute;
+            right: -12px;
+            top: 0px;
+            content: "";
+            width: 0px;
+            height: 0px;
+            border: 30px solid transparent;
+            border-left-color: #f7ff59;
+            border-left-width: 12px;
         }

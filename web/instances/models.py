@@ -168,6 +168,9 @@ class Instance(TranslatableModel):
             return last_mission.end_date
         return None
     
+    def time_until_start(self):
+        return self.start_date - datetime.datetime.now()
+    
     def is_active(self):
         return self in Instance.objects.active()
 

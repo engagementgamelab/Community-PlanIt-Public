@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{% if current_city %}{{ current_city }}{% else %}Welcome{% endif %}{% endblock %}
+{% block title %}{% if current_city %}{{ current_city.name }}{% else %}Welcome{% endif %}{% endblock %}
 {% block body_class %}public{% endblock %}
 
 {% block header %}
