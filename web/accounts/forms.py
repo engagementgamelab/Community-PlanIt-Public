@@ -146,7 +146,7 @@ class RegisterFormTwo(forms.Form):
 
         all_incomes = UserProfileIncome.objects.untranslated().all().order_by("pos")
         incomes = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'income')) for x in all_incomes]
-        self.fields['income'] = forms.ChoiceField(label=_(u'Income'), required=False, choices=incomes)
+        self.fields['income'] = forms.ChoiceField(label=_(u'Household Income'), required=False, choices=incomes)
         
         all_livings = UserProfileLivingSituation.objects.untranslated().all().order_by("pos")
         livings = [(0, '------')] + [(x.pk, get_translation_with_fallback(x, 'situation')) for x in all_livings]

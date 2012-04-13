@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,11 +45,11 @@
                     <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="150" height="100" /></a>
                 </div>
                 <div id="header-extras-container">
-                    <div id="header-extras-intro">Play the game. Plan the future.</div>
+                    <div id="header-extras-intro">{% trans "Play the game. Plan the future." %}</div>
                     <div id="header-extras-login">
                     {% if not user.is_authenticated %}
-                    <div id="login-container">
-                        <a href="{% url accounts:login %}">Sign In</a>
+                    <div id="login-container" class="btn-arrow">
+                        <a href="{% url accounts:login %}">{% trans "Sign In" %}</a>
                     </div>
                     {% endif %}
                     </div>

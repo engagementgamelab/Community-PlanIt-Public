@@ -81,14 +81,14 @@ a {
             text-align: center;
         }
         
-        #login-container,
+/*        #login-container,
         .login-container {
             display: inline-block;
             vertical-align: middle;
             background: #f7ff59;
             text-transform: uppercase;
             padding: 8px 15px;
-        }
+        }*/
         
 
 /* Columns */
@@ -517,6 +517,7 @@ p.instructions {
     font-size: 0.9em;
 }
 
+/* Blue buttons are used primarily for form submission */
 .btn-blue {
     margin: 20px 0px;
     padding: 8px 10px;
@@ -532,7 +533,53 @@ p.instructions {
     border-radius: 5px;
 }
 
-/* Tab Buttons are used as page navigations... refer to design :\ */
+/* Arrow button are yellow... refer to design :-\ */
+.btn-arrow {
+    display: inline-block;
+    position: relative;
+    margin-left: 1em;
+}
+
+    .btn-arrow a {
+        display: inline-block;
+        text-decoration: none;
+        text-transform: uppercase;
+        color: #4d4d4d;
+        vertical-align: middle;
+        background: #f7ff59;
+        text-transform: uppercase;
+        line-height: 1em;
+        padding: 0.5em 0.5em;
+    }
+    
+        /* css polygons */
+        .btn-arrow a:before {
+            position: absolute;
+            left: -0.8em; /* just the padding */
+            top: 0px;
+            content: "";
+            width: 0px;
+            height: 0px;
+            border: 0.8em solid transparent;
+            border-top-color: #f7ff59;
+            border-top-width: 1em;
+            border-bottom-color: #f7ff59;
+            border-bottom-width: 1em;
+        }
+        
+        .btn-arrow a:after {
+            position: absolute;
+            right: -1.8em; /* padding + border-left-width */
+            top: 0px;
+            content: "";
+            width: 0px;
+            height: 0px;
+            border: 1em solid transparent;
+            border-left-color: #f7ff59;
+            border-left-width: 0.8em;
+        }
+
+/* Tab Buttons are used as page navigations... refer to design :-\ */
 .btn-tab {
 }
     
@@ -556,3 +603,4 @@ p.instructions {
         background: #2d3542;
         color: #fff;
     }
+    
