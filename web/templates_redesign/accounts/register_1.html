@@ -14,8 +14,15 @@
 </div>
 {% endif %}
 <div id="registration-container">
-    <form class="accounts-form" action="" method="post"> {% csrf_token %}
-
+    <div class="column-container">
+        
+        <div class="column-container-40">
+        <h2>Welcome Yuan Ma</h2>
+        <p id="accounts-form-step2-instructions">Just one more thing... Help us get a fuller picture of who you are by providing some information about yourself. The information marked private <img src="{{ STATIC_URL }}img/icon-private.png" /> will not be shared publicly or with any third parties. Check out our <a href="{% url privacy %}" target="new">Privacy Policy</a> and <a href="{% url terms %}" target="new">Terms of Use</a> for more information.</p>
+        </div>
+        
+        <form class="accounts-form" action="" method="post"> {% csrf_token %}
+        
         {{ wizard.management_form }}
         {% if wizard.form.forms %}
             {{ wizard.form.management_form }}
@@ -23,104 +30,68 @@
                 {{ form }}
             {% endfor %}
         {% else %}
-            {{ wizard.form }}
+            {# {{ wizard.form }} #}
+            {% with wizard.form as form %}
+                <input type="hidden" name="{{step_field}}" value="{{step0}}"/>
+                {{previous_fields|safe}}
+                <div class="column-third">
+                    <div class="column-container-40">
+                        <img src="{{ STATIC_URL }}img/avatar-blank.png" width="220" height="220">
+                        
+                        <p>Upload an image to use as your avatar</p>
+                        
+                        <input type="file" />
+                    
+                        <p id="accounts-form-avatar-disclaimer">By uploading a file you certify that you have the right to distribute this picture and that it does not violate the <a href="{% url terms %}"  target="new">Terms of Use</a>.</p>
+                    </div>
+                </div>
+                <div class="column-third">
+                    <div class="column-container">
+                        <p>{{form.stake.label_tag}} {{form.stake}}  {{form.stake.errors}}</p>
+                        
+                        <p>{{ form.affiliations.label_tag }} {{ form.affiliations }} {{ form.affiliations.errors }}</p>
+                        
+                        <p>{{ form.affiliations_other.label_tag }} {{ form.affiliations_other }} {{ form.affiliations_other.errors }}</p>
+                        
+                        <p>{{form.tagline.label_tag}} {{form.tagline}} {{form.tagline.errors}}</p>
+                        
+                        <p>{{form.birth_year.label_tag}} <span class="private"></span>{{form.birth_year}} {{form.birth_year.errors}}</p>
+                        
+                        <p>{{form.zip_code.label_tag}} <span class="private"></span>{{form.zip_code}} {{form.zip_code.errors}}</p>
+                        
+                    </div>
+                </div>
+                <div class="column-third">
+                    <div class="column-container">
+                        
+                        <p>{{ form.race.label_tag }} <span class="private"></span>{{ form.race }}{{ form.race.errors }}</p>
+                        
+                        <p>{{form.gender.label_tag}} <span class="private"></span>{{form.gender}} {{form.gender.errors}}</p>
+
+                        <p>{{ form.education.label_tag }} <span class="private"></span>{{ form.education }} {{ form.education.errors }}</p>
+
+                        <p>{{ form.income.label_tag }} <span class="private"></span>{{ form.income }} {{ form.income.errors }}</p>
+
+                        <p>{{ form.living.label_tag }} <span class="private"></span>{{ form.living }} {{ form.living.errors }}</p>
+                        
+                        <p>{{ form.how_discovered.label_tag }} <span class="private"></span>{{ form.how_discovered }} {{ form.how_discovered.errors }}</p>            
+
+                        <p>{{ form.how_discovered_other.label_tag }} {{ form.how_discovered_other }} {{ form.how_discovered_other.errors }}</p>
+                    </div>
+                </div>
+            {% endwith %}
         {% endif %}
 
-
-        <div class="clear">
+        <div class="column-container-40 clearfix">
             {% if step == step_count %}
-            <input class="button submit" type="submit" value="Register">
+            <input id="accounts-form-step2-submit" class="btn-blue submit" type="submit" value="Save and Start Playing">
             {% else %}
-            <input class="button submit" type="submit" value="Start Playing!">
+            <input id="accounts-form-step2-submit" class="btn-blue submit" type="submit" value="Save and Start Playing">
             {% endif %}
         </div>
 
-
-        {% comment %}
-        <input type="hidden" name="{{step_field}}" value="{{step0}}"/>
-        {{previous_fields|safe}}
+    </div>
         
-        <div class="column-half">
-            <div class="column-container">
-                <p>
-                    {{form.stake.label_tag}}
-                    {{form.stake}}
-                    {{form.stake.errors}}
-                </p>
-            
-                <p>
-                    {{form.gender.label_tag}}
-                    {{form.gender}}
-                    {{form.gender.errors}}
-                </p>
-            
-                <p>
-                    {{form.race.label_tag}}
-                    {{form.race}}
-                    {{form.race.errors}}
-                </p>
-            
-                <p>
-                    {{form.education.label_tag}}
-                    {{form.education}}
-                    {{form.education.errors}}
-                </p>
-            
-                <p>
-                    {{form.income.label_tag}}
-                    {{form.income}}
-                    {{form.income.errors}}
-                </p>
-            
-                <p>
-                    {{form.living.label_tag}}
-                    {{form.living}}
-                    {{form.living.errors}}
-                </p>
-            
-                <p>
-                    {{ form.affiliations.label_tag }}
-                    {{ form.affiliations }}
-                    <p>Right Click (or command and click on a Mac) to select more than one affiliation</p>
-                    {{ form.affiliations.errors }}
-                </p>
-            
-                <p>
-                    {{ form.affiliations_other.label_tag }}
-                    {{ form.affiliations_other }}
-                    {{ form.affiliations_other.errors }}
-                </p>
-            </div>
-        </div>
-        <div class="column-half">
-            <div class="column-container">
-                <p>
-                    {{form.how_discovered.label_tag}}
-                    {{form.how_discovered}}
-                    {{form.how_discovered.errors}}
-                </p>
-            
-                <p>
-                    {{form.how_discovered_other.label_tag}}
-                    {{form.how_discovered_other}}
-                    {{form.how_discovered_other.errors}}
-                </p>
-            </div>
-        </div>
-        
-        
-        {{form.accepted_terms.label_tag}}
-        {{form.accepted_terms}}
-        {{form.accepted_terms.errors}}
-
-        <div class="column-full">
-            {% if step == step_count %}
-            <input class="button submit" type="submit" value="Register">
-            {% else %}
-            <input class="button submit" type="submit" value="Continue">
-            {% endif %}
-        </div>
-        {% endcomment %}
     </form>
 </div>
 {% endblock %}

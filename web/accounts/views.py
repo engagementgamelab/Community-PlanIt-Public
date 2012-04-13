@@ -330,7 +330,7 @@ def edit(request):
     })))
 
 def all(request, template='accounts/all.html'):
-    response = {
+    context = {
         'accounts': User.objects.all()[:25],
     }
     return render(request, template, context)

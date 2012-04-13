@@ -34,7 +34,7 @@
             <div class="games-list-details slides_container">
                 {% for instance in instances_active %}
                 <div>
-                    <img class="games-list-detail-img" src="">
+                    <img class="games-list-detail-img" src="{{ instance.slideshow.all }}">{{ instance.slideshow.all }}
                     <p class="games-list-detail-description">{{ instance.description|truncatewords:20 }}</p>
                     <div class="login-container">
                         {% if user.is_authenticated %}

@@ -22,6 +22,7 @@ urlpatterns = patterns('web',
     url(r'^contact/', direct_to_template, { 'template': 'static/contact.html', 'extra_context': { 'instances': Instance.objects.all } }, name='contact'),
     url(r'^privacy/', direct_to_template, { 'template': 'static/privacy.html', 'extra_context': { 'instances': Instance.objects.all } }, name='privacy'),
     url(r'^terms/', direct_to_template, { 'template': 'static/terms.html', 'extra_context': { 'instances': Instance.objects.all } }, name='terms'),
+    url(r'^how-to-play/', direct_to_template, { 'template': 'static/howtoplay.html', 'extra_context': { 'instances': Instance.objects.all } }, name='howtoplay'),
 
     url(r'^player/(?P<id>\d+)/$', 'accounts.views.profile', name='accounts_profile'),
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),
