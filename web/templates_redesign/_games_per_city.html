@@ -39,12 +39,12 @@
             <div class="games-list-details slides_container">
                 {% for instance in instances_current %}
                 <div>
-                    {% if not instance.is_started %}
-                    <div class="games-list-detail-countdown">
-                        <div>{{ instance.time_until_start}}</div>
-                        <div>Til Game Launch!</div>
-                    </div>
-                    {% endif %}
+                    {# {% if not instance.is_started %} #}
+                    {# <div class="games-list-detail-countdown"> #}
+                    {#     <div>{{ instance.time_until_start}}</div> #}
+                    {#     <div>Til Game Launch!</div> #}
+                    {# </div> #}
+                    {# {% endif %} #}
                     <img class="games-list-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}" />
                     <p class="games-list-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
                     <div id="games-list-detail-signup" class="btn-arrow">

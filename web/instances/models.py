@@ -208,7 +208,7 @@ class Instance(TranslatableModel):
 
     def get_slideshow_attachment(self):
         attachments = self.attachment_set.all()
-        return attachments.filter(is_slideshow=True)[0]
+        return attachments.filter(is_slideshow=True)[0] if attachments.filter(is_slideshow=True) else None
         
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]
