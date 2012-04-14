@@ -267,9 +267,9 @@ class RegistrationWizard(SessionWizardView):
         password = form_one.cleaned_data.get('password')
 
         player, created = User.objects.get_or_create(email=email)
-        first_name=first_name
-        last_name=last_name
-        is_active=True
+        player.first_name=first_name
+        player.last_name=last_name
+        player.is_active=True
         player.set_password(password)
         player.save()
 
