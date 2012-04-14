@@ -24,6 +24,7 @@ urlpatterns = patterns('web',
     url(r'^privacy/', direct_to_template, { 'template': 'static/privacy.html', 'extra_context': { 'instances': Instance.objects.all } }, name='privacy'),
     url(r'^terms/', direct_to_template, { 'template': 'static/terms.html', 'extra_context': { 'instances': Instance.objects.all } }, name='terms'),
     url(r'^how-to-play/', direct_to_template, { 'template': 'static/howtoplay.html', 'extra_context': { 'instances': Instance.objects.all } }, name='howtoplay'),
+    url(r'^quincy/', direct_to_template, { 'template': 'static/quincy_post_signup.html', 'extra_context': { 'instances': Instance.objects.all } }, name='quincy'),
 
     url(r'^player/(?P<id>\d+)/$', 'accounts.views.profile', name='accounts_profile'),
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),

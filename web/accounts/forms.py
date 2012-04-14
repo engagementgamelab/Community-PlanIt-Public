@@ -328,6 +328,7 @@ class RegistrationWizard(SessionWizardView):
         # set the game we are logging the user into
         #
         self.request.session['current_game_slug'] = game.slug
+        
         return redirect(
                         "".join(
                                 [

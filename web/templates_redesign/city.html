@@ -3,6 +3,7 @@
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/citypages.css"> 
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/quincy.css">
 {% endblock %}
 
 {% block extra_head %}
@@ -44,20 +45,22 @@
 {% block body_id %}{% if user.is_authenticated %}private-city{% else %}public-city{% endif %}{% endblock %}
 
 {% block content %}
-    
-    <hr class="rainbow" />
-    
-    <br />
-    {% include '_games_per_city.html' %}
-    
-    
-    {% if user.is_authenticated %}
-        {% include '_game_nav.html' %}
+    {# TODO: TEMPORARY FOR THE QUINCY LAUNCH, REMOVE!! #}
+    {% if request.session.current_game_slug = 'north-quincy-wollaston-neighborhoods-on-the-move' %}
+        {% include 'static/quincy_post_signup.html' %}
     {% else %}
-    
-        <div id="login-container" class="btn-arrow">
-            <a href="{% url accounts:login %}">Sign In</a>
-        </div>
+
+        <hr class="rainbow" />
+        <br />
+        {% include '_games_per_city.html' %}
+            
+        {% if user.is_authenticated %}
+            {% include '_game_nav.html' %}
+        {% else %}
+            <div id="login-container" class="btn-arrow">
+                <a href="{% url accounts:login %}">Sign In</a>
+            </div>
+        {% endif %}
     
     {% endif %}
     

@@ -16,9 +16,6 @@ def determine_path(instance, filename):
 
 ATTACHMENT_VALIDITY_CHECK_INTERVAL = 3600
 
-class AttachmentSlideshowManager(models.Manager):
-    def get_query_set(self):
-        return super(AttachmentSlideshowManager, self).get_query_set().filter(is_slideshow=True)
         
 class Attachment(models.Model):
 
@@ -42,8 +39,6 @@ class Attachment(models.Model):
     instance = models.ForeignKey(Instance, blank=True, null=True)
 
     is_slideshow = models.BooleanField(verbose_name=_("Display as part of a Slideshow"), default=False)
-
-    slideshow = AttachmentSlideshowManager()
 
     # we try to validate URLs, but it's expensive -- you don't want to 
     # check every comment attachment when loading a page with a discussion --

@@ -1,12 +1,11 @@
 /* Flatpages specific styles... in templates, these are called "static" */
 
 #content {
-    margin: 20px 0px;
 }
     
     #content h1 {
         font-size: 2em;
-        margin: 10px 0px;
+        padding: 10px 0px;
     }
     
     #content h2 {
@@ -15,7 +14,7 @@
     }
     
     #content p {
-        margin: 10px 0px;
+        margin: 20px 0px;
     }
     
     #content ul {

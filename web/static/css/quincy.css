@@ -1,0 +1,21 @@
+#quincy {
+    text-align: center;
+}
+    #quincy .blue {
+        color: #007DFF;
+    }
+    
+    #quincy p {
+        margin: 20px;
+        color: #666;
+    }
+    
+    #quincy-date {
+        font-size: 1.5em;
+        color: #007DFF;
+    }
+    
+    #quincy-flickr {
+        margin: 20px;
+        text-align: center;
+    }
