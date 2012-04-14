@@ -45,7 +45,7 @@
                         <div>Til Game Launch!</div>
                     </div>
                     {% endif %}
-                    <img class="games-list-detail-img" src="{{ instance.slideshow.get_slideshow_attachment }}">{# instance.get_slideshow_attachment #}
+                    <img class="games-list-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}" />
                     <p class="games-list-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
                     <div id="games-list-detail-signup" class="btn-arrow">
                         {% if user.is_authenticated %}
@@ -83,7 +83,7 @@
                 {% for instance in instances_past %}
                 <div>
                     <img class="games-list-detail-img" src="">
-                    <p class="games-list-detail-description">{{ instance.description|truncatewords:20 }}</p>
+                    <p class="games-list-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
                 </div>
                 {% endfor %}
             </div>
