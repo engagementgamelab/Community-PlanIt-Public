@@ -42,8 +42,9 @@ class RegisterFormOne(forms.Form):
 
         #games_for_first_city = Instance.objects.filter(for_city__pk=cities[0][0]).language(get_language())
         #instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_first_city]
-        instances = Instance.objects.filter(for_city__pk=cities[0][0]).values_list('pk', 'title').distinct().order_by('title')
-        self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
+        instances = Instance.objects.filter(for_city__pk=cities[1][0]).values_list('pk', 'title').distinct().order_by('title')
+        # instances = Instance.objects.values_list('pk', 'title').distinct().order_by('title')
+	self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
         self.fields['preferred_language'] = forms.ChoiceField(label=_("Preferred Language"), choices=settings.LANGUAGES)
 
         #self.fields['accepted_terms'] = forms.BooleanField(
