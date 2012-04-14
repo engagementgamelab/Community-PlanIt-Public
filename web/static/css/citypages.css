@@ -360,7 +360,8 @@ hr.rainbow {
                     height: 300px;
                 }
 
-                #public-city .games-list-details .games-list-detail-description {
+                #public-city .games-list-details .games-list-detail-description
+                #private-city .games-list-details .games-list-detail-description {
                     margin: 20px 0px;
                     width: 540px;
                 }
