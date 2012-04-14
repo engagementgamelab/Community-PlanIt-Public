@@ -206,7 +206,10 @@ class Instance(TranslatableModel):
         for m in  self.missions.all().distinct().order_by('date_created'):
             starton = _reset_fields(m, starton) + relativedelta(seconds=+1)
 
-
+    def get_slideshow_attachment(self):
+        attachments = self.attachment_set.all()
+        return attachments.filter(is_slideshow=True)[0]
+        
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]
         super(Instance,self).save()

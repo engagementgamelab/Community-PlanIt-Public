@@ -33,7 +33,7 @@ def index(request, authentication_form=AccountAuthenticationForm, template='inde
         instances_future = Instance.objects.future()
         instances_past = Instance.objects.past()
         instances_current = Instance.objects.current()
-        print instances_current
+        # print instances_current
     if not request.user.is_authenticated():
 
         form = authentication_form(request)

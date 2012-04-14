@@ -4,24 +4,28 @@
         <li><a data-target='games-list-current'>Games</a></li>
         {% if instances_past %}<li><a data-target='games-list-past'>Past Games</a></li>{% endif %}
     </ul>
+    
     <hr class="thick" />
     {% block games_extras %}{% endblock %}
     <div class="games-filter-container">
         <!-- Current Games -->
         <div id="games-list-current" class="games-list">
-            {{ instances_current }}
             <ul class="games-list-nav">
                 {% for instance in instances_current %}
                 <li>
                     <a>
-                        <h3>{{ instance.title }} {{ instance.id }}</h3>
+                        <h3>{{ instance.title }}</h3>
                         <p>
+                            {# Current Game #}
                             {{ instance.for_city.name }} &bull; 
-                            {% if instance.is_started %}
+                            {% if instance.is_active %}
+                                {# Active games happening right now #}
                                 Happening right now!
                             {% else %}
-                                {{ instance.start_date|date:"M j" }} - {{ instance.end_date|date:"M j" }}
+                                {# Future games #}
+                                Starts on {{ instance.start_date|date:"M j" }}
                             {% endif %}
+                            {# If you're signed up for this current game #}
                             {% if instance in request.user.get_profile.instances.all %}
                                 <div class="games-list-signedup">
                                     You're signed up!
@@ -35,25 +39,25 @@
             <div class="games-list-details slides_container">
                 {% for instance in instances_current %}
                 <div>
-                    {% if instance in instances_future %}
+                    {% if not instance.is_started %}
                     <div class="games-list-detail-countdown">
                         <div>{{ instance.time_until_start}}</div>
-                        <div>This shouldn't show</div>
+                        <div>Til Game Launch!</div>
                     </div>
                     {% endif %}
-                    <img class="games-list-detail-img" src="{{ instance.slideshow. }}">{{ instance.get_slideshow_attachment }}
-                    <p class="games-list-detail-description">{{ instance.description|truncatewords:20 }}</p>
+                    <img class="games-list-detail-img" src="{{ instance.slideshow.get_slideshow_attachment }}">{# instance.get_slideshow_attachment #}
+                    <p class="games-list-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
                     <div id="games-list-detail-signup" class="btn-arrow">
                         {% if user.is_authenticated %}
                             {# Sign up for Instance #}
                             {% if instance in request.user.get_profile.instances.all %}
-                                {# TODO: Go only if started! #}
-                                <a href="">Go to game!</a>
+                                {# TODO: Go to this game if started! #}
+                                <a href="{{ instance.mission_set.0.slug }}">Go to game!</a>
                             {% else %}
                                 <a href="{% url accounts:register %}">Sign up for this game!</a>
                             {% endif %}
                         {% else %}
-                            {# Authenticate, and then sign up for Instance #}
+                            {# Authenticate, and then sign up for this instance #}
                             <a href="{% url accounts:register %}">Sign up for this game!</a>                        
                         {% endif %}
                     </div>
