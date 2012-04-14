@@ -275,6 +275,7 @@ hr.rainbow {
             
                 #public-index .games-list-details > div > div {
                     width: 400px;
+                    text-align: center;
                 }
                 
                 #public-index .games-list-details .games-list-detail-img {
@@ -285,6 +286,7 @@ hr.rainbow {
                 #public-index .games-list-details .games-list-detail-description {
                     margin: 20px 0px;
                     width: 400px;
+                    text-align: left;
                 }
                 
 /* Public - city pages have slightly different setup... */
@@ -352,6 +354,7 @@ hr.rainbow {
                 #private-city .games-list-details > div > div,
                 #private-city .games-list-details > div > div {
                     width: 540px;
+                    text-align: center;
                 }
                 
                 #public-city .games-list-details .games-list-detail-img,
@@ -360,10 +363,11 @@ hr.rainbow {
                     height: 300px;
                 }
 
-                #public-city .games-list-details .games-list-detail-description
+                #public-city .games-list-details .games-list-detail-description,
                 #private-city .games-list-details .games-list-detail-description {
                     margin: 20px 0px;
                     width: 540px;
+                    text-align: left;
                 }
                 
 /* Cities Navigation */

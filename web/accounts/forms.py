@@ -409,14 +409,14 @@ class AccountAuthenticationForm(AuthenticationForm):
         super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
         if not request:
             raise RuntimeError("request obj is missing")
-        self.fields['username'] = forms.CharField(label=_("Username"), max_length=300)
+        self.fields['username'] = forms.CharField(label=_("Email"), max_length=300)
 
         #games_for_domain = Instance.objects.for_city(request.current_site.domain)
 
         #if games_for_domain.count():
         #    self.fields['instance'] = forms.ModelChoiceField(queryset=games_for_domain)
         #else:
-        self.fields['instance'] = forms.ModelChoiceField(queryset=Instance.objects.all())
+        self.fields['instance'] = forms.ModelChoiceField(label=_("Select your game"), queryset=Instance.objects.all())
 
     def clean(self, *args, **kwargs):
         super(AccountAuthenticationForm, self).clean(*args, **kwargs)
