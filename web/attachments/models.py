@@ -1,5 +1,5 @@
 import datetime
-import magic
+#import magic
 
 from django.db import models
 
