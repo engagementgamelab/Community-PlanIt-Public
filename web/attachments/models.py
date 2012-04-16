@@ -1,5 +1,4 @@
 import datetime
-import magic
 
 from django.db import models
 
@@ -7,7 +6,6 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-from PIL import Image
 
 from web.instances.models import Instance
 
