@@ -2,7 +2,7 @@
 
 {%block title%}{{ block.super }} Multi Response.{%endblock%}
 
-{%block main%}
+{%block game_content%}
 <p> Complete the activity to see everyone's responses.  </p>
     <form id="id_activity-form" action="" method="post">{% csrf_token %}
         <input type="hidden" name="form" value="multi_response">
@@ -16,8 +16,9 @@
             {% endfor %}
             </ul>
         </div>
-        
+        {% if activity.comment_required %}
         {% block comment %}{% endblock %}
+        {% endif %}
         <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
     </form>
 {%endblock%}

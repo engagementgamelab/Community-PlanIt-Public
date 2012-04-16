@@ -50,7 +50,8 @@ class PlayerActivityBase(TranslatableModel):
     createDate = models.DateTimeField(editable=False)
     points = models.IntegerField(blank=True, null=True, default=None)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
-    comments = generic.GenericRelation(Comment)    
+    comments = generic.GenericRelation(Comment)
+    comment_required = models.BooleanField('comment required', default=True)
 
     def getPoints(self):
         if self.points == None:
