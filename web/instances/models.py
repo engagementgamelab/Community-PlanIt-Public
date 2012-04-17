@@ -133,6 +133,9 @@ class Instance(TranslatableModel):
     days_for_mission = models.IntegerField(default=7)
     for_city = models.ForeignKey(City, null=True, related_name='instances')
 
+    # prevent the game from being visible on the site
+    is_disabled = models.BooleanField(default=False)
+
     translations = TranslatedFields(
         description = models.TextField(),
         #meta = {'get_latest_by': 'start_date'}
@@ -182,7 +185,7 @@ class Instance(TranslatableModel):
         return self.start_date - datetime.datetime.now()
     
     def is_active(self):
-        return self in Instance.objects.active()
+        return self in Instance.objects.exclude(is_disabled=False).active()
 
     def is_expired(self):
         return self in Instance.objects.past()
