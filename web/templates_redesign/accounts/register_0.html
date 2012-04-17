@@ -19,6 +19,12 @@
             Sijax.request('load_games_by_city', [city_id,])
         });
 
+        $('#id_0-instance').change(function(){
+            game_id = $('#id_0-instance').val()
+            Sijax.setRequestUri("/communities/ajax/load-languages-by-game/"+game_id+"/");
+            Sijax.request('load_languages_by_game', [game_id,])
+        });
+
         $("input[id='id_login-form-submit']").click(function(e){
             e.preventDefault();
             {{ login_sijax_js|safe }}

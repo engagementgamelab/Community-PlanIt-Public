@@ -50,12 +50,16 @@ class RegisterFormOne(forms.Form):
             #instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_first_city]
             instances = Instance.objects.filter(for_city__pk=cities[1][0]).values_list('pk', 'title').distinct().order_by('title')
             self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
+            self.fields['preferred_language'] = forms.ChoiceField(label=_("Preferred Language"), choices=settings.LANGUAGES)
         else:
             self.fields['city'] = forms.CharField(widget=forms.HiddenInput(), initial=current_city.pk)
             games = Instance.objects.exclude(is_disabled=True).filter(for_city=current_city).values_list('pk', 'title') #.distinct().order_by('title')
             self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=games)
+            first_game = Instance.objects.get(pk=games[0][0])
+            self.fields['preferred_language'] = forms.ChoiceField(label=_("Preferred Language"), 
+                                                    choices=first_game.languages.values_list('pk', 'name')
+            )
 
-        self.fields['preferred_language'] = forms.ChoiceField(label=_("Preferred Language"), choices=settings.LANGUAGES)
 
         #self.fields['accepted_terms'] = forms.BooleanField(
         #    required=True,

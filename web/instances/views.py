@@ -156,9 +156,28 @@ def ajax_load_games_by_city(request, for_city_id):
 
     instance = Sijax()
     instance.set_data(request.POST)
-    load_games_uri = reverse('instances:ajax-load-games-by-city', args=(for_city_id,))
-    instance.set_request_uri(load_games_uri)
+    uri = reverse('instances:ajax-load-games-by-city', args=(for_city_id,))
+    instance.set_request_uri(uri)
     instance.register_callback('load_games_by_city', load_options)
+    if instance.is_sijax_request:
+        return HttpResponse(instance.process_request())
+    return HttpResponse("")
+
+def ajax_load_languages_by_game(request, instance_id):
+
+    def load_options(obj_response, instance_id):
+        game = Instance.objects.get(pk=instance_id)
+        langs = game.languages.values_list('pk', 'name').distinct().order_by('name')
+        out = ""
+        for id, name in langs:
+            out+='<option value="%s">%s</option>' %(id, name)
+        obj_response.html('#id_0-preferred_language', out)
+
+    instance = Sijax()
+    instance.set_data(request.POST)
+    uri = reverse('instances:ajax-load-languages-by-game', args=(instance_id,))
+    instance.set_request_uri(uri)
+    instance.register_callback('load_languages_by_game', load_options)
     if instance.is_sijax_request:
         return HttpResponse(instance.process_request())
     return HttpResponse("")
