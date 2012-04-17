@@ -232,6 +232,8 @@ def activity(request, activity_id, template=None, **kwargs):
         if action == 'replay':
             return is_valid
         if comment_form:
+            if not activity.comment_required:
+                comment_form.fields['message'].required = False
             return is_valid and comment_form.is_valid()
         return is_valid
 
@@ -379,7 +381,6 @@ def activity(request, activity_id, template=None, **kwargs):
         template = template + "_response.html"
     elif action in ['replay', 'overview']:
         template= "".join([template, "_", action, ".html"])
-
     return render_to_response(template, RequestContext(request, context))
 
 

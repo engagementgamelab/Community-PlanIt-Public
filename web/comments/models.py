@@ -47,7 +47,7 @@ class Comment(models.Model):
         if self.message:
             return self.message
         else:
-            return self.pk
+            return str(self.pk)
 
     def save(self, *args, **kwargs):
         if len(self.message) > 1000:

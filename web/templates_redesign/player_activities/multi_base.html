@@ -16,9 +16,7 @@
             {% endfor %}
             </ul>
         </div>
-        {% if activity.comment_required %}
         {% block comment %}{% endblock %}
-        {% endif %}
         <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
     </form>
 {%endblock%}
