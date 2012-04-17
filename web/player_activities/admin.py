@@ -39,7 +39,7 @@ class PlayerEmpathyActivityAdmin(TranslatableAdmin):
 
 class MultiChoiceActivityAdmin(TranslatableAdmin):
     list_display = ('activity', 'activity_type', 'activity_points', 'mission_title', 'all_translations')
-    list_filter = ('activity__type', )
+    list_filter = ('activity__type', 'trivia_correct_answer')
 
 class PlayerMapActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
