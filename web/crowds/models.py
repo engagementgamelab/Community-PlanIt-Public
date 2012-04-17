@@ -76,6 +76,6 @@ class Crowd(models.Model):
     def __unicode__(self):
         return self.name
 
-stream_utils.register_action_object(Crowd)
-stream_utils.register_target(Crowd)
+#stream_utils.register_action_object(Crowd)
+#stream_utils.register_target(Crowd)
 
