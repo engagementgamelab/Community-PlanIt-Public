@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin.options import ModelAdmin
 
-from nani.admin import TranslatableAdmin
+from nani.admin import TranslatableAdmin, TranslatableStackedInline
 
 from web.player_activities.models import (
     PlayerActivity,
@@ -26,11 +26,15 @@ class EmpathyOfficialResponseInline(admin.StackedInline):
 class PlayerActivityTypeAdmin(ModelAdmin):
     list_display = ('type', 'defaultPoints',)
 
+
+class MultiChoiceActivityInline(TranslatableStackedInline):
+	model = MultiChoiceActivity
+
 class PlayerActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
     list_filter = ('type', 'mission__instance', 'mission')
     ordering = ('mission', 'type',)
-    inlines = [PlayerActivityOfficialResponseInline,]
+    inlines = [PlayerActivityOfficialResponseInline, MultiChoiceActivityInline,]
 
 class PlayerEmpathyActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
@@ -44,6 +48,7 @@ class MultiChoiceActivityAdmin(TranslatableAdmin):
 class PlayerMapActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
     inlines = [MapOfficialResponseInline,]
+
 
 admin.site.register(PlayerActivity, PlayerActivityAdmin)
 admin.site.register(PlayerActivityType, PlayerActivityTypeAdmin)
