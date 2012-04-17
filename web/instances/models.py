@@ -80,12 +80,12 @@ class InstanceManager(TranslationManager):
 
     def active(self):
         now = datetime.datetime.now()
-        return self.exclude(is_disabled=False).filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
+        return self.exclude(is_disabled=True).filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
     
     def current(self):
         # basically, active and future 
         now = datetime.datetime.now()
-        return self.filter(missions__end_date__gte=now).order_by('start_date').distinct()
+        return self.exclude(is_disabled=True).filter(missions__end_date__gte=now).order_by('start_date').distinct()
         
     #@cached(60*60*24, 'instances')
     def for_city(self, domain):
@@ -133,13 +133,15 @@ class Instance(TranslatableModel):
     days_for_mission = models.IntegerField(default=7)
     for_city = models.ForeignKey(City, null=True, related_name='instances')
 
-    # prevent the game from being visible on the site
-    is_disabled = models.BooleanField(default=False)
 
     translations = TranslatedFields(
         description = models.TextField(),
         #meta = {'get_latest_by': 'start_date'}
     )
+
+    # prevent the game from being visible on the site
+    is_disabled = models.BooleanField(default=False, verbose_name="Disable the game from being visible on the site")
+
     objects = InstanceManager()
 
     class Meta:
