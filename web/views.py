@@ -29,8 +29,6 @@ def index(request, authentication_form=AccountAuthenticationForm, template='inde
         current_city = current_city,
         cities = City.objects.all(),
     )
-    print Instance.objects.current(for_city=current_city)
-
     if not request.user.is_authenticated():
         context.update({
             'form': authentication_form(request),

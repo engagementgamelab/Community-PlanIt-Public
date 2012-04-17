@@ -7,6 +7,7 @@ from stream import utils as stream_utils
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
+from django.utils.translation import get_language
 
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -79,29 +80,28 @@ class InstanceManager(TranslationManager):
         return self.exclude(is_disabled=True)
 
     def past(self, for_city=None):
-        filter_kwargs = {}
+        qs = self.language(get_language()).exclude(is_disabled=True)
         if for_city:
-            filter_kwargs.update({ 'for_city':for_city, })
-        exclude_kwargs=dict(
-                missions__end_date__gte=self.now
-        )
-        return self.common_excludes().filter(*filter_kwargs).exclude(**exclude_kwargs)
+            qs = qs.filter(for_city=for_city)
+        return qs.exclude(missions__end_date__gte=self.now)
 
     def future(self, for_city=None):
-        filter_kwargs = { 'start_date__gt':self.now, }
+        qs = self.language(get_language()).exclude(is_disabled=True)
+        qs = qs.filter(start_date__gt=self.now)
         if for_city:
-            filter_kwargs.update({ 'for_city':for_city, })
-        return self.common_excludes().filter(**filter_kwargs)
+            qs = qs.filter(for_city=for_city,)
+        return qs
 
     def active(self, for_city=None):
-        return self.common_excludes().filter(start_date__lte=self.now)
+        qs = self.language(get_language()).exclude(is_disabled=True)
+        return qs.filter(start_date__lte=self.now).language(get_language())
 
     def current(self, for_city=None):
         # basically, active and future
-        filter_kwargs = { 'missions__end_date__gte':self.now, }
+        qs = self.language(get_language()).exclude(is_disabled=True)
         if for_city:
-            filter_kwargs.update({ 'for_city':for_city, })
-        return self.common_excludes().filter(**filter_kwargs)
+            qs = qs.filter(for_city=for_city,)
+        return qs.filter(missions__end_date__gte=self.now)
 
     #@cached(60*60*24, 'instances')
     #def for_city(self, domain):
