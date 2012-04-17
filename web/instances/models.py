@@ -73,10 +73,10 @@ class InstanceManager(TranslationManager):
 
     def past(self):
         now = datetime.datetime.now()
-        return self.exclude(missions__end_date__gte=now).order_by('start_date')
+        return self.exclude(is_disabled=True, missions__end_date__gte=now).order_by('start_date')
 
     def future(self):
-        return self.filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
+        return self.exclude(is_disabled=True).filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
 
     def active(self):
         now = datetime.datetime.now()
