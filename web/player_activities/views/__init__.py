@@ -13,7 +13,7 @@ from comments.forms import *
 from comments.models import Comment
 from player_activities.models import PlayerActivity
 from reports.models import ActivityLogger
-from core.utils import instance_from_request
+#from core.utils import instance_from_request
 
 def _get_activity(pk, model_klass):
     trans_model = model_klass.objects.translations_model()
@@ -27,7 +27,11 @@ def _get_activity(pk, model_klass):
 
 def comment_fun(answer, request, form=None, message=''):
 
-    current_instance = instance_from_request(request)
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
 
     if form is not None:
         message = form.cleaned_data['message']
@@ -57,6 +61,20 @@ def comment_fun(answer, request, form=None, message=''):
             user=request.user,
             instance=current_instance)
 
+def log_activity_and_redirect(request, activity, message):
+
+	# FIXME
+    # Enable this after fixing the activity submissions
+
+    #stream_utils.action.send(request.user, 'activity_%s' % message, action_object=activity,
+    #                        description="%s activity" % message
+    #)
+
+    return HttpResponseRedirect(activity.get_overview_url())   
+
+
+# NOT USED
+"""
 def getComments(answers, ModelType, activity=None):
     comments = None
     if activity:
@@ -70,13 +88,5 @@ def getComments(answers, ModelType, activity=None):
         else:
             comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
     return comments
-
-def log_activity_and_redirect(request, activity, message):
-    #ActivityLogger().log(request.user, request, "the activity: " + activity.name[:30] + "...", message, activity.get_activity_url(), "activity")
-    stream_utils.action.send(request.user, 'activity_%s' % message, action_object=activity,
-                            description="%s activity" % message
-    )
-
-    return HttpResponseRedirect(activity.get_overview_url())   
-
+"""
 
