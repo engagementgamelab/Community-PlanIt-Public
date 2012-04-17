@@ -80,7 +80,7 @@ class InstanceManager(TranslationManager):
 
     def active(self):
         now = datetime.datetime.now()
-        return self.filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
+        return self.exclude(is_disabled=False).filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
     
     def current(self):
         # basically, active and future 
@@ -185,7 +185,7 @@ class Instance(TranslatableModel):
         return self.start_date - datetime.datetime.now()
     
     def is_active(self):
-        return self in Instance.objects.exclude(is_disabled=False).active()
+        return self in Instance.objects.active()
 
     def is_expired(self):
         return self in Instance.objects.past()
