@@ -305,6 +305,11 @@ class MultiChoiceActivity(TranslatableModel):
     """
     activity = models.ForeignKey(PlayerActivity, related_name='answer_choices')
 
+    # this field signifies that the multi-response question is of type
+    # `Trivia`. 
+    # 
+    trivia_correct_answer = models.BooleanField(default=False, verbose_name="The correct answer to a trivia question")
+
     translations = TranslatedFields(
         value = models.CharField(max_length=255),
     )
@@ -314,8 +319,7 @@ class MultiChoiceActivity(TranslatableModel):
 
     class Meta:
         verbose_name = 'An Available Answer to a Single/Multiple Choice Activity'
-        verbose_name_plural = 'Available Answers to Single/Multiple Choice Activities'
-
+        verbose_name_plural = 'Available Answers to Single/Multiple Choice Activities' 
     def __unicode__(self):
         s = self.safe_translation_getter('value', None)
         if s is None:
