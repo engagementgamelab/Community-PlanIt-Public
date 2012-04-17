@@ -31,7 +31,10 @@ class AnswerMapAdmin(admin.ModelAdmin):
 admin.site.register(AnswerMap, AnswerMapAdmin)
 
 class AnswerMultiChoiceAdmin(admin.ModelAdmin):
+
     list_display = ('__str__', 'activity', 'user_name')
+    list_filter = ('option__activity__mission', 'option__activity__mission__instance',)
+    search_fields = ('option__activity__name', )
 
     def activity(self, obj):
         return unicode(obj.option.activity.name)
