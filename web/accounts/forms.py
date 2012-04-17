@@ -36,15 +36,25 @@ class RegisterFormOne(forms.Form):
     password_again = forms.CharField(required=True, label=_("Password Again"), widget=forms.PasswordInput(render_value=False))
 
     def __init__(self, *args, **kwargs):
+        domain = None
+        if 'domain' in kwargs:
+            self.domain = kwargs.pop('domain')
         super(RegisterFormOne, self).__init__(*args, **kwargs)
-        cities = City.objects.values_list('pk', 'name')
-        self.fields['city'] = forms.ChoiceField(label=_('Choose your city'), choices=cities)
 
-        #games_for_first_city = Instance.objects.filter(for_city__pk=cities[0][0]).language(get_language())
-        #instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_first_city]
-        instances = Instance.objects.filter(for_city__pk=cities[1][0]).values_list('pk', 'title').distinct().order_by('title')
-        # instances = Instance.objects.values_list('pk', 'title').distinct().order_by('title')
-	self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
+        try:
+            current_city = City.objects.get(domain=self.domain)
+        except City.DoesNotExist:
+            cities = City.objects.values_list('pk', 'name')
+            self.fields['city'] = forms.ChoiceField(label=_('Choose your city'), choices=cities)
+            #games_for_first_city = Instance.objects.filter(for_city__pk=cities[0][0]).language(get_language())
+            #instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_first_city]
+            instances = Instance.objects.filter(for_city__pk=cities[1][0]).values_list('pk', 'title').distinct().order_by('title')
+            self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
+        else:
+            self.fields['city'] = forms.CharField(widget=forms.HiddenInput(), initial=current_city.pk)
+            games = Instance.objects.exclude(is_disabled=True).filter(for_city=current_city).values_list('pk', 'title') #.distinct().order_by('title')
+            self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=games)
+
         self.fields['preferred_language'] = forms.ChoiceField(label=_("Preferred Language"), choices=settings.LANGUAGES)
 
         #self.fields['accepted_terms'] = forms.BooleanField(
@@ -62,16 +72,15 @@ class RegisterFormOne(forms.Form):
     #    else:
     #        return email
 
-    def clean_instance(self):
+    def clean(self):
         """Ensure that a user has not already registered an account with that email address and that game."""
-        instance = self.cleaned_data['instance']
-        email = self.cleaned_data['email']
         if UserProfilePerInstance.objects.filter(
-                user_profile__email=email, instance__pk=instance
-            ).count() != 0:
+                    user_profile__email=self.cleaned_data['email'], 
+                    instance__pk=self.cleaned_data['instance']
+                    ).count() != 0:
             raise forms.ValidationError(_('Account already exists for this game, please use a different email address.'))
         else:
-            return instance
+            return self.cleaned_data
 
     def clean_first_name(self):
         first_name = self.cleaned_data['first_name']
@@ -106,7 +115,6 @@ class RegisterFormOne(forms.Form):
 class RegisterFormTwo(forms.Form):
 
     def __init__(self, *args, **kwargs):
-        print kwargs
         chosen_game = None
         if 'chosen_game' in kwargs:
             chosen_game = kwargs.pop('chosen_game')
@@ -128,9 +136,7 @@ class RegisterFormTwo(forms.Form):
                label=_("Don't see your affiliation? Enter it here. Please place a comma between each affiliation."))
         
 
-        self.fields['birth_year'] = forms.IntegerField(
-            label=_('Year you were born'),
-            required=False)
+        self.fields['birth_year'] = forms.IntegerField( label=_('Year you were born'), required=False)
         self.fields['zip_code'] = forms.CharField(max_length=10, label=_('Your ZIP code'))
 
 
@@ -220,15 +226,20 @@ class RegistrationWizard(SessionWizardView):
             return redirect(reverse('accounts:dashboard'), permanent=True)
         return response
 
+    #def get_form(self, step=None, data=None, files=None):
+    #    data = {'request': self.request}
+    #    form = super(RegistrationWizard, self).get_form(step, data, files)
+    #    return form
+
     def get_form_kwargs(self, step=None):
         if step == '1':
-            #import ipdb;ipdb.set_trace()
             #TODO is there another way to get
             #TODO to the data of the previous steps data
             chosen_game_id = self.storage.data.get('step_data')['0']['0-instance'][0]
             chosen_game = Instance.objects.get(id=chosen_game_id)
-            print "signing up for: ", chosen_game
             return {'chosen_game' : chosen_game}
+        if step == '0':
+            return {'domain' : self.request.current_site.domain}
         return {}
 
     def get_context_data(self, form, **kwargs):
