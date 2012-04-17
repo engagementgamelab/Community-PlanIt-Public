@@ -71,52 +71,51 @@ class Affiliation(models.Model):
 
 class InstanceManager(TranslationManager):
 
-    def past(self):
-        now = datetime.datetime.now()
-        return self.exclude(is_disabled=True, missions__end_date__gte=now).order_by('start_date')
+    def __init__(self, *args, **kwargs):
+        super(InstanceManager, self).__init__(*args, **kwargs)
+        self.now = datetime.datetime.now()
 
-    def future(self):
-        return self.exclude(is_disabled=True).filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
+    def common_excludes(self):
+        return self.exclude(is_disabled=True)
 
-    def active(self):
-        now = datetime.datetime.now()
-        return self.exclude(is_disabled=True).filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
-    
-    def current(self):
-        # basically, active and future 
-        now = datetime.datetime.now()
-        return self.exclude(is_disabled=True).filter(missions__end_date__gte=now).order_by('start_date').distinct()
-        
+    def past(self, for_city=None):
+        filter_kwargs = {}
+        if for_city:
+            filter_kwargs.update({ 'for_city':for_city, })
+        exclude_kwargs=dict(
+                missions__end_date__gte=self.now
+        )
+        return self.common_excludes().filter(*filter_kwargs).exclude(**exclude_kwargs)
+
+    def future(self, for_city=None):
+        filter_kwargs = { 'start_date__gt':self.now, }
+        if for_city:
+            filter_kwargs.update({ 'for_city':for_city, })
+        return self.common_excludes().filter(**filter_kwargs)
+
+    def active(self, for_city=None):
+        return self.common_excludes().filter(start_date__lte=self.now)
+
+    def current(self, for_city=None):
+        # basically, active and future
+        filter_kwargs = { 'missions__end_date__gte':self.now, }
+        if for_city:
+            filter_kwargs.update({ 'for_city':for_city, })
+        return self.common_excludes().filter(**filter_kwargs)
+
     #@cached(60*60*24, 'instances')
-    def for_city(self, domain):
-        return self.filter(for_city__domain=domain)
-    
-    def past_for_city(self, domain):
-        now = datetime.datetime.now()
-        return self.exclude(is_disabled=True).filter(for_city__domain=domain).exclude(missions__end_date__gte=now).order_by('start_date')
-        
-    def future_for_city(self, domain):
-        return self.exclude(is_disabled=True).filter(for_city__domain=domain).filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
-
-    def active_for_city(self, domain):
-        now = datetime.datetime.now()
-        return self.exclude(is_disabled=True).filter(for_city__domain=domain).filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
-
-    def current_for_city(self, domain):
-        now = datetime.datetime.now()
-        return self.exclude(is_disabled=True).filter(for_city__domain=domain).filter(missions__end_date__gte=now).order_by('start_date').distinct()
-        
+    #def for_city(self, domain):
+    #    return self.filter(for_city__domain=domain)
 
     def latest_for_city_domain(self, domain):
         #looks like `latest` qs method is broken in django-nani
         #applying a workaround for now.
         #TODO fix
         from core.utils import _fake_latest
-        now = datetime.datetime.now()
         kwargs = dict(
                 for_city__domain=domain,
-                start_date__lte=now,
-                missions__end_date__gte=now,
+                start_date__lte=self.now,
+                missions__end_date__gte=self.now,
         )
         qs = self.filter(**kwargs)
         return _fake_latest(Instance, qs)
@@ -146,7 +145,8 @@ class Instance(TranslatableModel):
 
     class Meta:
         get_latest_by = 'start_date'
-        
+        ordering = ('start_date',)
+
     def __unicode__(self):
         return self.title
 
