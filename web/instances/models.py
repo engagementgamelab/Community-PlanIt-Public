@@ -93,18 +93,18 @@ class InstanceManager(TranslationManager):
     
     def past_for_city(self, domain):
         now = datetime.datetime.now()
-        return self.filter(for_city__domain=domain).exclude(missions__end_date__gte=now).order_by('start_date')
+        return self.exclude(is_disabled=True).filter(for_city__domain=domain).exclude(missions__end_date__gte=now).order_by('start_date')
         
     def future_for_city(self, domain):
-        return self.filter(for_city__domain=domain).filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
+        return self.exclude(is_disabled=True).filter(for_city__domain=domain).filter(start_date__gt=datetime.datetime.now()).order_by('start_date')
 
     def active_for_city(self, domain):
         now = datetime.datetime.now()
-        return self.filter(for_city__domain=domain).filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
+        return self.exclude(is_disabled=True).filter(for_city__domain=domain).filter(start_date__lte=now, missions__end_date__gte=now).order_by('start_date').distinct()
 
     def current_for_city(self, domain):
         now = datetime.datetime.now()
-        return self.filter(for_city__domain=domain).filter(missions__end_date__gte=now).order_by('start_date').distinct()
+        return self.exclude(is_disabled=True).filter(for_city__domain=domain).filter(missions__end_date__gte=now).order_by('start_date').distinct()
         
 
     def latest_for_city_domain(self, domain):
