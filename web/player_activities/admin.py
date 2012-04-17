@@ -28,7 +28,7 @@ class PlayerActivityTypeAdmin(ModelAdmin):
 
 class PlayerActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
-    list_filter = ('mission', 'type')
+    list_filter = ('type', 'mission__instance', 'mission')
     ordering = ('mission', 'type',)
     inlines = [PlayerActivityOfficialResponseInline,]
 
