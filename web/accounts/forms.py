@@ -19,7 +19,7 @@ from django.contrib.formtools.wizard.views import SessionWizardView
 #from django.contrib.sites.models import RequestSite
 
 from web.accounts.models import *
-from web.instances.models import Instance, City
+from web.instances.models import Instance, City, Language
 
 from web.core.utils import get_translation_with_fallback
 
@@ -50,15 +50,15 @@ class RegisterFormOne(forms.Form):
             #instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_first_city]
             instances = Instance.objects.filter(for_city__pk=cities[1][0]).values_list('pk', 'title').distinct().order_by('title')
             self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
-            self.fields['preferred_language'] = forms.ChoiceField(label=_("Preferred Language"), choices=settings.LANGUAGES)
         else:
             self.fields['city'] = forms.CharField(widget=forms.HiddenInput(), initial=current_city.pk)
             games = Instance.objects.exclude(is_disabled=True).filter(for_city=current_city).values_list('pk', 'title') #.distinct().order_by('title')
             self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=games)
-            first_game = Instance.objects.get(pk=games[0][0])
-            self.fields['preferred_language'] = forms.ChoiceField(label=_("Preferred Language"), 
-                                                    choices=first_game.languages.values_list('pk', 'name')
-            )
+
+        self.fields['preferred_language'] = forms.ModelChoiceField(required=True, 
+                                                            label=_("Preferred Language"), 
+                                                            queryset=Language.objects.all()
+        )
 
 
         #self.fields['accepted_terms'] = forms.BooleanField(
@@ -85,6 +85,12 @@ class RegisterFormOne(forms.Form):
             raise forms.ValidationError(_('Account already exists for this game, please use a different email address.'))
         else:
             return self.cleaned_data
+
+    def clean_preferred_language(self):
+        #self.fields['preferred_language']
+        lang = self.cleaned_data['preferred_language']
+        print lang
+        return lang
 
     def clean_first_name(self):
         first_name = self.cleaned_data['first_name']
