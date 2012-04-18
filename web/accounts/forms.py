@@ -70,7 +70,6 @@ class RegisterFormOne(forms.Form):
 
     def clean(self):
         """Ensure that a user has not already registered an account with that email address and that game."""
-        print self.cleaned_data.items()
         if ('email', 'instance') in self.cleaned_data.items():
             if UserProfilePerInstance.objects.filter(
                         user_profile__email=self.cleaned_data['email'], 
@@ -93,10 +92,17 @@ class RegisterFormTwo(forms.Form):
             chosen_game = kwargs.pop('chosen_game')
         super(RegisterFormTwo, self).__init__(*args, **kwargs)
         self.chosen_game = chosen_game
+        print self.chosen_game
+        print self.chosen_game.user_profile_variants.stake_variants.all()
 
-        all_stakes = self.chosen_game.user_profile_variants.stake_variants.all().order_by("pos")
-        stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
-        self.fields['stake'] = forms.ChoiceField(label=_(u'Stake in the community'), required=False, choices=stakes)
+        #all_stakes = self.chosen_game.user_profile_variants.stake_variants.all().order_by("pos")
+        #stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
+        #self.fields['stake'] = forms.ChoiceField(label=_(u'Stake in the community'), required=False, choices=stakes)
+        self.fields['stakes'] = forms.ModelMultipleChoiceField(
+                                    label=_(u'Stake in the community'),
+                                    required=False,
+                                    queryset=self.chosen_game.user_profile_variants.stake_variants.all().order_by("pos")
+        )
 
         affiliations = self.chosen_game.user_profile_variants.affiliation_variants.all().order_by('pk', "name").values_list('pk', 'name')
         # self.fields['affiliations'] = forms.MultipleChoiceField(
@@ -183,11 +189,11 @@ class RegisterFormTwo(forms.Form):
         except UserProfileRace.DoesNotExist:
             return None
     
-    def clean_stake(self):
-        try:
-            return UserProfileStake.objects.get(pk=self.cleaned_data['stake'])
-        except UserProfileStake.DoesNotExist:
-            return None
+    #def clean_stakes(self):
+    #    try:
+    #        return UserProfileStake.objects.get(pk=self.cleaned_data['stake'])
+    #    except UserProfileStake.DoesNotExist:
+    #        return None
 
 
 class RegistrationWizard(SessionWizardView):
@@ -242,9 +248,7 @@ class RegistrationWizard(SessionWizardView):
         form_one = form_list[0]
         form_two = form_list[1]
 
-        game_id = form_one.cleaned_data.get('instance')
-        print "game: ", game_id
-        game = Instance.objects.get(id=game_id)
+        game = form_one.cleaned_data.get('instance')
 
         first_name = form_one.cleaned_data.get('first_name')
         last_name = form_one.cleaned_data.get('last_name')
@@ -291,7 +295,7 @@ class RegistrationWizard(SessionWizardView):
         user_profile_per_instance.save()
 
         user_profile_per_instance.affils = form_two.cleaned_data.get('affiliations')
-        user_profile_per_instance.stake = form_two.cleaned_data.get('stake')
+        user_profile_per_instance.stakes = form_two.cleaned_data.get('stakes')
 
 
         aff_other = form_two.cleaned_data.get('affiliations_other')
