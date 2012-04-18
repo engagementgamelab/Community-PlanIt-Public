@@ -215,6 +215,7 @@ LANGUAGES = (
 LOCALE_INDEPENDENT_PATHS = (
     #re.compile('^/$'),
     re.compile('^/ajax/'),
+    re.compile('^/ajax_select/'),
     re.compile('^.*/ajax/'),
     re.compile('^/comments/'),
     re.compile('^/__debug__/'),
@@ -265,7 +266,6 @@ REPORTS_RECIPIENTS = (
 # used in autocompletion
 AJAX_LOOKUP_CHANNELS = {
     'affiliations': ('accounts.lookups', 'AffiliationsLookup'),
-    'stakes': ('accounts.lookups', 'StakesLookup'),
 }
 
 # django-celery
