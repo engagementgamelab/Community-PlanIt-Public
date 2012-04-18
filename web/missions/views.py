@@ -34,8 +34,9 @@ def fetch(request, slug, template='missions/base.html'):
     completed = []
     for activity in activities:
         if activity.is_completed(request.user):
+            count = activity.completed_user_count
             completed.append(activity)
-    
+
     next_mission = None
     my_missions = Mission.objects.filter(instance=current_instance).exclude(slug=slug).order_by('-start_date')
     if my_missions.count() > 0:
