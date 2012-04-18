@@ -149,12 +149,12 @@ def _build_context(request, action, activity, user=None):
         elif (activity.type.type == "multi_response"):
             choices = _get_mc_choices(activity)
             form = make_multi_form(choices)
-        elif (activity.type.type == "map"):            
+        elif (activity.type.type == "map"):
             form = MapForm()
             init_coords = []
-            x = 0            
+            x = 0
             answer = AnswerMap.objects.filter(activity=activity, answerUser=user)
-            if answer.count():                
+            if answer.count():
                 map = answer[0].map
                 markers = simplejson.loads("%s" % map)["markers"]
                 x = 0
@@ -177,14 +177,11 @@ def _build_context(request, action, activity, user=None):
         context['is_completed'] = True
     return context
 
-
 def _get_mcqs(activity):
     return MultiChoiceActivity.objects.language(get_language()).filter(activity=activity).order_by('id')
 
-
 def _get_mc_choices(activity):
     return _get_mcqs(activity).values_list('pk', 'value')
-
 
 def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
@@ -267,14 +264,14 @@ def activity(request, activity_id, template=None, **kwargs):
                 form = make_multi_form(choices)(request.POST)
                 if _is_form_valid():
                     #this gets very very messy....
-                    
+
                     choice_ids =  _get_mc_choice_ids(activity)
 
                     #cleans out all of the choices that the user selected from the check boxes
                     for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=choice_ids)):
                         amc.comments.clear()
                     AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=choice_ids)).delete()
-                    first_found = False 
+                    first_found = False
                     for key in request.POST.keys():
                         if key.find("response_") >= 0:
                             new_answer = AnswerMultiChoice()
@@ -289,7 +286,7 @@ def activity(request, activity_id, template=None, **kwargs):
                             #Yes it's a hack, only make a comment for the first response
                             if not first_found:
                                 answer = new_answer
-                                first_found = True                    
+                                first_found = True
                 else:
                     _update_errors()
             elif request.POST["form"] == "map":

@@ -71,6 +71,20 @@ class PlayerActivityBase(TranslatableModel):
                         return True
         return False
 
+    @property
+    def completed_user_count(self):
+        if self.type.type == 'multi_response':
+            #users = AnswerMultiChoice.objects.filter(option__activity=self).valus_list('user').distinct()
+            #print users
+            #return len(users)
+            return 0
+        #else:
+        #    for answer_klass_name in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse', 'AnswerOpenEnded']:
+        #        related_name = answer_klass_name.replace('Answer', '').lower() + '_answers'
+        #        if hasattr(self, related_name):
+        #            if getattr(self, related_name).filter(answerUser=answerUser).count():
+        #                return True
+
     def is_past(self):
         return self.mission.end_date < datetime.datetime.now()
 
