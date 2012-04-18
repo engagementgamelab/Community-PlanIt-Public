@@ -8,19 +8,25 @@
     <script src="{{ STATIC_URL }}js/sijax.js"></script>
     <script type="text/javascript">
 
+    city_change_callback = function (commandsArray) {
+        Sijax.processCommands(commandsArray);
+        $('#id_0-instance').change();
+    }
 
     $(document).ready(function(){
 
         {% include "js/ajax_csrf.html" %}
 
         $('#id_0-city').change(function(){
-            city_id = $('#id_0-city').val()
+            city_id = $('#id_0-city').val();
             Sijax.setRequestUri("/communities/ajax/load-games-by-city/"+city_id+"/");
-            Sijax.request('load_games_by_city', [city_id,]);
+            Sijax.request('load_games_by_city', [city_id,], {"success": city_change_callback});
         });
 
+//function(){Sijax.processCommands(); alert('!');
+
         $('#id_0-instance').change(function(){
-            game_id = $('#id_0-instance').val()
+            game_id = $('#id_0-instance').val();
             Sijax.setRequestUri("/communities/ajax/load-languages-by-game/"+game_id+"/");
             Sijax.request('load_languages_by_game', [game_id,]);
         });
