@@ -41,20 +41,20 @@ class RegisterFormOne(forms.Form):
             self.domain = kwargs.pop('domain')
         super(RegisterFormOne, self).__init__(*args, **kwargs)
 
+        instances = ()
         try:
             current_city = City.objects.get(domain=self.domain)
+            self.fields['city'] = forms.CharField(widget=forms.HiddenInput(), initial=current_city.pk)
+            instances = Instance.objects.exclude(is_disabled=True).filter(for_city=current_city).values_list('pk', 'title') #.distinct().order_by('title')
         except City.DoesNotExist:
             cities = City.objects.values_list('pk', 'name')
             self.fields['city'] = forms.ChoiceField(label=_('Choose your city'), choices=cities)
             #games_for_first_city = Instance.objects.filter(for_city__pk=cities[0][0]).language(get_language())
             #instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_first_city]
-            instances = Instance.objects.filter(for_city__pk=cities[1][0]).values_list('pk', 'title').distinct().order_by('title')
-            self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
-        else:
-            self.fields['city'] = forms.CharField(widget=forms.HiddenInput(), initial=current_city.pk)
-            games = Instance.objects.exclude(is_disabled=True).filter(for_city=current_city).values_list('pk', 'title') #.distinct().order_by('title')
-            self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=games)
+            instances = Instance.objects.filter(for_city__pk=cities[0][0]).values_list('pk', 'title').distinct().order_by('title')
 
+#        self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
+        self.fields['instance'] = forms.ModelChoiceField(label=_(u'Select your game'), required=False, queryset=Instance.objects.all())
         self.fields['preferred_language'] = forms.ModelChoiceField(required=True, 
                                                             label=_("Preferred Language"), 
                                                             queryset=Language.objects.all()
@@ -68,59 +68,22 @@ class RegisterFormOne(forms.Form):
         #    )
         #)
 
-    #def clean_email(self):
-    #    """Ensure that a user has not already registered an account with that email address."""
-    #    email = self.cleaned_data['email']
-    #    if (User.objects.filter(email=email).count() != 0):
-    #        raise forms.ValidationError(_('Account already exists, please use a different email address.'))
-    #    else:
-    #        return email
-
     def clean(self):
         """Ensure that a user has not already registered an account with that email address and that game."""
-        if UserProfilePerInstance.objects.filter(
-                    user_profile__email=self.cleaned_data['email'], 
-                    instance__pk=self.cleaned_data['instance']
-                    ).count() != 0:
-            raise forms.ValidationError(_('Account already exists for this game, please use a different email address.'))
-        else:
-            return self.cleaned_data
+        print self.cleaned_data.items()
+        if ('email', 'instance') in self.cleaned_data.items():
+            if UserProfilePerInstance.objects.filter(
+                        user_profile__email=self.cleaned_data['email'], 
+                        instance__pk=self.cleaned_data['instance']
+                        ).count() != 0:
+                raise forms.ValidationError(_('Account already exists for this game, please use a different email address.'))
+        return self.cleaned_data
 
-    def clean_preferred_language(self):
-        #self.fields['preferred_language']
-        lang = self.cleaned_data['preferred_language']
-        print lang
-        return lang
-
-    def clean_first_name(self):
-        first_name = self.cleaned_data['first_name']
-        if (len(first_name.strip()) == 0):
-            raise forms.ValidationError(_('Please provide your first name.'))
-        else:
-            return first_name
-
-    def clean_last_name(self):
-        last_name = self.cleaned_data['last_name']
-        if (len(last_name.strip()) == 0):
-            raise forms.ValidationError(_('Please provide your last name.'))
-        else:
-            return last_name
-
-    def clean_password(self):
-        password = self.cleaned_data['password']
-        if (len(password.strip()) == 0):
-            raise forms.ValidationError(_('Please provide a password.'))
-        else:
-            return password
-    
     def clean_password_again(self):
         password_again = self.cleaned_data['password_again']
-        if (len(password_again.strip()) == 0):
-            raise forms.ValidationError(_('Please type the password again.'))
         if (password_again != self.cleaned_data['password']):
             raise forms.ValidationError(_('The passwords do not match.'))
-        else:
-            return password_again
+        return password_again
     
 class RegisterFormTwo(forms.Form):
 
