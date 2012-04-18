@@ -146,9 +146,12 @@ class UserProfilePerInstanceManager(models.Manager):
 class UserProfilePerInstance(models.Model):
     user_profile = models.ForeignKey("UserProfile", related_name='user_profiles_per_instance')
     instance = models.ForeignKey(Instance)
-
+    
+    # to be removed
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
-    affils = models.ManyToManyField(Affiliation)
+
+    stakes = models.ManyToManyField(UserProfileStake, blank=True, null=True, related_name='stakes')
+    affils = models.ManyToManyField(Affiliation, blank=True, null=True, related_name='affiliations')
 
     objects = UserProfilePerInstanceManager()
 
