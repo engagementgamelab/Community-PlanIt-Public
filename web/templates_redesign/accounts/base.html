@@ -1,8 +1,16 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block js %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/jquery.autocomplete.js"></script>
+    <script src="{{ STATIC_URL }}ajax_select/js/ajax_select.js"></script>
+{% endblock %}
+
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}accounts/css/styles.css">    
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}ajax_select/iconic.css">    
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.autocomplete.css">
 {% endblock %}
 
