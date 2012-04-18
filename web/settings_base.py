@@ -115,6 +115,8 @@ INSTALLED_APPS = (
     'nani',
     #'dilla',
     'rosetta',
+    # django-ajax-selects
+    'ajax_select',
     'django_extensions',
     'template_repl',
     'south',
@@ -258,6 +260,13 @@ REPORTS_RECIPIENTS = (
         'eric_gordon@emerson.edu',
         'philip.kalinsky@eloquentbits.com',
 )
+
+# ajax_select
+# used in autocompletion
+AJAX_LOOKUP_CHANNELS = {
+    'affiliations': ('accounts.lookups', 'AffiliationsLookup'),
+    'stakes': ('accounts.lookups', 'StakesLookup'),
+}
 
 # django-celery
 import djcelery
