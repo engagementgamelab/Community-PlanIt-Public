@@ -53,7 +53,10 @@ class Language(models.Model):
     name = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return "%s <%s>" %(self.name, self.code)
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
 
 
 class Affiliation(models.Model):
