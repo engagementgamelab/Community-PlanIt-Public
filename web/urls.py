@@ -65,6 +65,12 @@ if 'sentry' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^sentry/$', include('sentry.web.urls')),
     )
+
+if 'ajax_select' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        (r'^ajax_select/', include('ajax_select.urls')),
+    )
+
 urlpatterns += patterns('core.memcached_status',
     url(r'^status/cache/$', 'view'),
 )

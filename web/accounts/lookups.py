@@ -1,6 +1,6 @@
 from .models import UserProfileStake
 
-class StakesLookup(object):
+class AffiliationsLookup(object):
 
     def get_query(self, q, request):
         """ return a query set."""
