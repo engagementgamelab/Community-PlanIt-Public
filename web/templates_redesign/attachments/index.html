@@ -5,22 +5,31 @@
 
 {% regroup attachments by instance as game_list %}
 <div>
-{% for game in game_list %}
+{% for attachments_regrouped in game_list %}
     <div class="column-container">
-        <h1> {{ game.grouper }} </h1>
+        <h1> {{ attachments_regrouped.grouper }} </h1>
         <!--h1>Become an Expert</h1-->
     </div> 
 
-    {% for item in game.list %}
+    {% for item in attachments_regrouped.list %}
     <div class="resource">
         <p class="resource-title"><a href="">{{ item.title }}</a></p>
         <img class="resource-thumbnail" src="" width="164" height="100" />
         <div class="resource-extras">
             <div class="resource-type resource-type-{{ item.resource_type }}"></div>
+            {% if item.resource_type == 'video' or item.resource_type == 'image' %}
+                {% if game %}
+                <a href="{% url attachments:game-attachment game.slug item.pk %}" class="resource-download"></a>
+                {% else %}
+                <a href="{% url attachments:attachment item.pk %}" class="resource-download"></a>
+                {% endif%}
+            {% else %}
             <a href="" class="resource-download"></a>
+            {% endif%}
         </div>
     </div>
     {% endfor %}
+    {% comment %}
     <div class="resource">
         <p class="resource-title"><a href="">Resource Title</a></p>
         <img class="resource-thumbnail" src="" width="164" height="100" />
@@ -29,6 +38,7 @@
             <a href="" class="resource-download"></a>
         </div>
     </div>
+    {% endcomment %}
     
     <br class="clearfix" />
 
