@@ -11,11 +11,17 @@
         <!--h1>Become an Expert</h1-->
     </div> 
 
+<<<<<<< HEAD
     {% for item in attachments_regrouped.list %}
     <div class="resource">
+=======
+    {% for item in game.list %}
+    <div class="resource resource-type-{{ item.resource_type }}">
+>>>>>>> 3853fc97546fc9d599437a32460bbc07199c2cf2
         <p class="resource-title"><a href="">{{ item.title }}</a></p>
-        <img class="resource-thumbnail" src="" width="164" height="100" />
+        <div class="resource-thumbnail">{% if item.thumbnail %}<img src="{{ MEDIA_URL }}{{ item.thumbnail }}" width="164" height="100" />{% endif %}</div>
         <div class="resource-extras">
+<<<<<<< HEAD
             <div class="resource-type resource-type-{{ item.resource_type }}"></div>
             {% if item.resource_type == 'video' or item.resource_type == 'image' %}
                 {% if game %}
@@ -24,11 +30,15 @@
                 <a href="{% url attachments:attachment item.pk %}" class="resource-download"></a>
                 {% endif%}
             {% else %}
+=======
+            <div class="resource-icon"></div>
+>>>>>>> 3853fc97546fc9d599437a32460bbc07199c2cf2
             <a href="" class="resource-download"></a>
             {% endif%}
         </div>
     </div>
     {% endfor %}
+<<<<<<< HEAD
     {% comment %}
     <div class="resource">
         <p class="resource-title"><a href="">Resource Title</a></p>
@@ -42,6 +52,8 @@
     
     <br class="clearfix" />
 
+=======
+>>>>>>> 3853fc97546fc9d599437a32460bbc07199c2cf2
 {% endfor %}
 
 </div>

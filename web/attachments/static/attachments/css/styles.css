@@ -15,10 +15,26 @@
     
     .resource-thumbnail {
         width: 164px;
-        height: 140px;
+        height: 100px;
     }
     
-    .resource-type {
+        .resource-type-document .resource-thumbnail {
+            background: #99ebe0;
+        }
+
+        .resource-type-link .resource-thumbnail {
+            background: #058080;
+        }
+
+        .resource-type-video .resource-thumbnail {
+            background: #4ebc89;
+        }
+        
+        .resource-type-image .resource-thumbnail {
+            background: #d7df23;
+        }
+        
+    .resource-icon {
         float: left;
         width: 36px;
         height: 36px;
@@ -26,16 +42,20 @@
 /*        border: 1px solid gray;*/
     }
     
-        .resource-type-document {
+        .resource-type-document .resource-icon {
             background: url('../img/icon-resources-document.png');
         }
-        
-        .resource-type-link {
+
+        .resource-type-link .resource-icon {
             background: url('../img/icon-resources-link.png');
         }
-        
-        .resource-type-video {
+
+        .resource-type-video .resource-icon {
             background: url('../img/icon-resources-video.png');
+        }
+        
+        .resource-type-image .resource-icon {
+            background: url('../img/icon-resources-image.png');
         }
         
     .resource-download {
