@@ -6,7 +6,7 @@
 {% regroup attachments by instance as game_list %}
 <div>
 {% for game in game_list %}
-    <div class="column-container">
+    <div class="column-container clearfix">
         <h1> {{ game.grouper }} </h1>
         <!--h1>Become an Expert</h1-->
     </div> 
