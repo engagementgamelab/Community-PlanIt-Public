@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _
 from web.instances.models import Instance
 
 def determine_path(instance, filename):
-    return 'uploads/'+ str(instance.user.id) +'/'+ filename
+    return 'uploads/'+ str(instance.user.id) +'/'+ 'thumb_'+filename
 
 ATTACHMENT_VALIDITY_CHECK_INTERVAL = 3600
 
@@ -33,6 +33,7 @@ class Attachment(models.Model):
 
     title = models.CharField(max_length=255, blank=True, default='')
     file = models.FileField(upload_to=determine_path, blank=True, null=True)
+    thumbnail = models.FileField(help_text="Thumb 164x100", upload_to=determine_path, blank=True, null=True)
     url = models.CharField(max_length=255, blank=True, null=True, editable=False)
     att_type = models.IntegerField("Attachment Type", choices=ATTACHMENT_TYPES, blank=True, null=True)
     flagged = models.IntegerField(default=0)
