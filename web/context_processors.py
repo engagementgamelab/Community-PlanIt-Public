@@ -15,3 +15,8 @@ log = logging.getLogger(__name__)
 #    return { 'instance' : instance, }
 
 
+from django.contrib.sites.models import Site
+def site(request):
+    return {
+        'top_level_domain': Site.objects.get_current()
+    }
