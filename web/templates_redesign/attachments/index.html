@@ -14,7 +14,7 @@
     {% for item in game.list %}
     <div class="resource resource-type-{{ item.resource_type }}">
         <p class="resource-title"><a href="">{{ item.title }}</a></p>
-        <div class="resource-thumbnail">{% if item.thumbnail %}<img src="{{ item.thumbnail }}" width="164" height="100" />{% endif %}</div>
+        <div class="resource-thumbnail">{% if item.thumbnail %}<img src="{{ MEDIA_URL }}{{ item.thumbnail }}" width="164" height="100" />{% endif %}</div>
         <div class="resource-extras">
             <div class="resource-icon"></div>
             <a href="" class="resource-download"></a>
