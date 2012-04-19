@@ -199,11 +199,11 @@ class RegisterFormTwo(forms.Form):
 class RegistrationWizard(SessionWizardView):
     __name__ = 'RegistrationWizard'
 
-    def dispatch(self, request, *args, **kwargs):
-        response = super(RegistrationWizard, self).dispatch(request, *args, **kwargs)
-        if self.request.user.is_authenticated():
-            return redirect(reverse('accounts:dashboard'), permanent=True)
-        return response
+    #def dispatch(self, request, *args, **kwargs):
+    #    response = super(RegistrationWizard, self).dispatch(request, *args, **kwargs)
+    #    if self.request.user.is_authenticated():
+    #        return redirect(reverse('accounts:dashboard'), permanent=True)
+    #    return response
 
     #def get_form(self, step=None, data=None, files=None):
     #    data = {'request': self.request}
@@ -317,13 +317,16 @@ class RegistrationWizard(SessionWizardView):
         # set the game we are logging the user into
         #
         self.request.session['current_game_slug'] = game.slug
-        
+
+        print game.slug
+
+        if game.slug == 'noquwo-neighborhoods-on-the-move':
+        	page = reverse('quincy')
+        else:
+            page = reverse('accounts:dashboard')
         return redirect(
-                        "".join(
-                                [
-                                    game.get_absolute_url(ssl=not(settings.DEBUG)),
-                                    reverse('accounts:dashboard')
-                                ]
+                        ''.join(
+                                [ game.get_absolute_url(ssl=not(settings.DEBUG)), page ]
                             ),
                         permanent=True,
         )
