@@ -28,7 +28,7 @@ urlpatterns = patterns('web',
 
     url(r'^player/(?P<id>\d+)/$', 'accounts.views.profile', name='accounts_profile'),
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),
-    (r'^attachments/', include('attachments.urls', namespace='attachments', app_name='attachments')),
+    (r'^resource-center/', include('attachments.urls', namespace='attachments', app_name='attachments')),
     (r'^comments/', include('comments.urls', namespace='comments', app_name='comments')),
     (r'^missions/', include('missions.urls', namespace='missions', app_name='missions')),
     (r'^communities/', include('instances.urls', namespace='instances', app_name='instances')),

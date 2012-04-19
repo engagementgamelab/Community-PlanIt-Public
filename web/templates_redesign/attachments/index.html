@@ -2,71 +2,40 @@
 {% load game_extras i18n %}
 
 {% block game_content %}
+
+{% regroup attachments by instance as game_list %}
 <div>
+{% for game in game_list %}
     <div class="column-container">
-        <h1>Become an Expert</h1>
+        <h1> {{ game.grouper }} </h1>
+        <!--h1>Become an Expert</h1-->
     </div> 
-    
-    <div class="resource">
-        <p class="resource-title"><a href="">Resource Title</a></p>
-        <img class="resource-thumbnail" src="" width="164" height="100" />
-        <div class="resource-extras">
-            <div class="resource-type resource-type-document"></div>
-            <a href="" class="resource-download"></a>
-        </div>
-    </div>
 
+    {% for item in game.list %}
+    <div class="resource">
+        <p class="resource-title"><a href="">{{ item.title }}</a></p>
+        <img class="resource-thumbnail" src="" width="164" height="100" />
+        <div class="resource-extras">
+            <div class="resource-type resource-type-{{ item.resource_type }}"></div>
+            <a href="" class="resource-download"></a>
+        </div>
+    </div>
+    {% endfor %}
     <div class="resource">
         <p class="resource-title"><a href="">Resource Title</a></p>
         <img class="resource-thumbnail" src="" width="164" height="100" />
         <div class="resource-extras">
             <div class="resource-type resource-type-document"></div>
-        <a href="" class="resource-download"></a>
-        </div>
-    </div>
-
-    <div class="resource">
-        <p class="resource-title"><a href="">Resource Title</a></p>
-        <img class="resource-thumbnail" src="" width="164" height="100" />
-        <div class="resource-extras">
-            <div class="resource-type resource-type-video"></div>
-            <a href="" class="resource-download"></a>
-        </div>
-    </div>
-    
-    <div class="resource">
-        <p class="resource-title"><a href="">Resource Title</a></p>
-        <img class="resource-thumbnail" src="" width="164" height="100" />
-        <div class="resource-extras">
-            <div class="resource-type resource-type-document"></div>
-            <a href="" class="resource-download"></a>
-        </div>
-    </div>
-    
-    <div class="resource">
-        <p class="resource-title"><a href="">Resource Title</a></p>
-        <img class="resource-thumbnail" src="" width="164" height="100" />
-        <div class="resource-extras">
-            <div class="resource-type resource-type-video"></div>
-            <a href="" class="resource-download"></a>
-        </div>
-    </div>
-    
-    <div class="resource">
-        <p class="resource-title"><a href="">Resource Title</a></p>
-        <img class="resource-thumbnail" src="" width="164" height="100" />
-        <div class="resource-extras">
-            <div class="resource-type resource-type-link"></div>
             <a href="" class="resource-download"></a>
         </div>
     </div>
     
     <br class="clearfix" />
-    {# {% for attachment in attachments %} #}
-    {#     <div> #}
-    {#         ({{ attachment.get_att_type_display }}) {{ attachment.url }} #}
-    {#     </div> #}
-    {# {% endfor %} #}
+
+{% endfor %}
 
 </div>
 {% endblock %}
+
+
+
