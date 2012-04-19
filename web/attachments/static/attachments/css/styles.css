@@ -54,6 +54,10 @@
             background: url('../img/icon-resources-video.png');
         }
         
+        .resource-type-image .resource-icon {
+            background: url('../img/icon-resources-image.png');
+        }
+        
     .resource-download {
         float: right;
         width: 36px;
