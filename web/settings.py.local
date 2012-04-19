@@ -1,0 +1,51 @@
+from settings_base import *
+
+DEBUG=True
+TEMPLATE_DEBUG=DEBUG
+
+ADMINS = (
+    ('Philip Kalinsky', 'philip.kalinsky@eloquentbits.com'),
+)
+
+DATABASES = {
+	        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'HOST': 'localhost',
+            'NAME': 'cpi',
+            'USER': 'web',
+            'PASSWORD': 'web'
+            }
+}
+
+
+CACHES = {
+	        'default': {
+	        	        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+	        	            }
+            }
+
+# serving under different url b/c /static/ taken up by previous
+# version...
+# STATIC_URL = '/static_files/'
+
+MANAGERS = ADMINS
+
+SECRET_KEY = 'iol25!hat#)!)3ocy$#v=upt0%+nca&c&-5381afj*$gugj*mf'
+
+INSTALLED_APPS += ('debug_toolbar',)
+MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+#debug-toolbar
+DEBUG_TOOLBAR_PANELS = (
+    'debug_toolbar.panels.version.VersionDebugPanel',
+    'debug_toolbar.panels.timer.TimerDebugPanel',
+    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+    'debug_toolbar.panels.headers.HeaderDebugPanel',
+    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+    'debug_toolbar.panels.template.TemplateDebugPanel',
+    'debug_toolbar.panels.sql.SQLDebugPanel',
+    'debug_toolbar.panels.signals.SignalDebugPanel',
+    'debug_toolbar.panels.logger.LoggingPanel',
+)
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS' : False,
+}
