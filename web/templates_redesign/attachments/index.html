@@ -8,7 +8,6 @@
 {% for attachments_regrouped in game_list %}
     <div class="column-container clearfix">
         <h1> {{ attachments_regrouped.grouper }} </h1>
-        <!--h1>Become an Expert</h1-->
     </div> 
 
     {% for item in attachments_regrouped.list %}
@@ -17,6 +16,7 @@
         <div class="resource-thumbnail">{% if item.thumbnail %}<img src="{{ MEDIA_URL }}{{ item.thumbnail }}" width="164" height="100" />{% endif %}</div>
         <div class="resource-extras">
             <div class="resource-type resource-type-{{ item.resource_type }}"></div>
+            <div class="resource-icon"></div>
             {% if item.resource_type == 'video' or item.resource_type == 'image' %}
                 {% if game %}
                 <a href="{% url attachments:game-attachment game.slug item.pk %}" class="resource-download"></a>
@@ -24,7 +24,6 @@
                 <a href="{% url attachments:attachment item.pk %}" class="resource-download"></a>
                 {% endif%}
             {% else %}
-                <div class="resource-icon"></div>
                 <a href="" class="resource-download"></a>
             {% endif%}
         </div>
