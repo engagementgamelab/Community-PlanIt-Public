@@ -409,7 +409,7 @@ class AccountAuthenticationForm(AuthenticationForm):
         #if games_for_domain.count():
         #    self.fields['instance'] = forms.ModelChoiceField(queryset=games_for_domain)
         #else:
-        self.fields['instance'] = forms.ModelChoiceField(label=_("Select your game"), queryset=Instance.objects.all())
+        self.fields['instance'] = forms.ModelChoiceField(label=_("Select your game"), queryset=Instance.objects.exclude('is_disabled'=True))
 
     def clean(self, *args, **kwargs):
         super(AccountAuthenticationForm, self).clean(*args, **kwargs)
