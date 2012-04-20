@@ -111,6 +111,15 @@ a {
     width: 67%;
 }
 
+.column-onequarter {
+    float: left;
+    width: 25%;
+}
+
+.column-threequarter {
+    float: left;
+    width: 75%;
+}
     .column-container { /* user this inside any .column-* to add margins */
         margin: 0px 20px;
     }

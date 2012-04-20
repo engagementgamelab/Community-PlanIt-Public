@@ -95,6 +95,25 @@ def crowd(request, id, template='crowds/base.html'):
     return render_to_response(template, data, context_instance=RequestContext(request))
 
 @login_required
+def view_crowd(request, id, template='crowds/crowd.html'):
+
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
+    if current_instance.is_expired():
+        return HttpResponseRedirect(reverse('crowds:index'))
+
+    crowd = Crowd.objects.get(id=id)
+    
+    context = {
+        'crowd': crowd,
+    }
+    
+    return render(request, template, context)
+
+@login_required
 def join_crowd(request, id):
 
     if hasattr(request, 'current_game'):
@@ -111,7 +130,7 @@ def join_crowd(request, id):
     #stream_utils.action.send(request.user, 'crowd_joined', target=current_instance, action_object=crowd, 
     #                        description="A challenge was accepted"
     #)
-    return HttpResponseRedirect(reverse('crowds:index'))
+    return HttpResponseRedirect(reverse('crowds:view', args=[id]))
 
 @login_required
 def leave_crowd(request, id):
@@ -131,7 +150,7 @@ def leave_crowd(request, id):
     #stream_utils.action.send(request.user, 'crowd_joined', target=current_instance, action_object=crowd, 
     #                        description="A challenge was accepted"
     #)
-    return HttpResponseRedirect(reverse('crowds:index'))
+    return HttpResponseRedirect(reverse('crowds:view', args=[id]))
 
 
 

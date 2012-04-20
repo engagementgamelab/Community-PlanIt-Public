@@ -21,17 +21,13 @@
             
             {% endifchanged %}
             <div class="crowds-event">
-                <div class="crowds-event-time">
-                    {% if crowd.start_date %}
-                        {{ crowd.start_date|time:"g:i A" }}
-                    {% endif %}
-                </div>
-                <div class="crowds-event-name">{{ crowd.name}} ({{ crowd.participants.all.count }} {% trans "Participants" %})</div>
-                {% if not request.user in crowd.participants.all %}
-                    <a href="{% url crowds:join crowd.pk %}" class="button">{% trans "Join this Crowd!" %}</a>
-                {% else %}
-                    <a href="{% url crowds:leave crowd.pk %}" class="button">{% trans "Leave this Crowd!" %}</a>
-                {% endif %}
+                <a href="{% url crowds:view crowd.pk %}">
+                
+                <div class="crowds-event-name">{{ crowd.name}} ({{ crowd.participants.all.count }} {% trans "players attending" %})</div>
+                
+                {{ crowd.start_date|time:"g:i A" }} - {{ crowd.end_date|time:"g:i A" }}
+                
+                </a>
             </div>
         {% empty %}
             {% trans "There are no crowds" %}

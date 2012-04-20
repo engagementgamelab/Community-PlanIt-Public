@@ -1,0 +1,42 @@
+{% extends 'crowds/base.html' %}
+{% load game_extras gmap attachment_tags cpi_tags i18n %}
+
+{% block game_content %}
+<div class="column-full">
+    <div class="column-container">
+        <div><a href="{% url crowds:index %}">Back to Get Togethers!</a></div>
+
+        <h1>{{ crowd.name }}</h1>        
+        <h3>{{ crowd.start_date }} - {{ crowd.end_date }}</h3>
+    </div>
+</div>
+<div class="column-threequarter">
+    <div class="column-container">
+        <div>
+            {{ crowd.map|show }}
+        </div>
+        <div>
+            {{ crowd.description }}
+        </div>
+        
+        <div>
+            <h3>{{ crowd.participants.count }} {% trans "total participants" %}</h3>
+        </div>
+    </div>
+</div>
+<div class="column-onequarter">
+    <div class="column-container">
+        {% if not request.user in crowd.participants.all %}
+            <a href="{% url crowds:join crowd.pk %}" class="button">{% trans "Join" %}</a>
+        {% else %}
+            You're going
+            <p>{% trans "Can't make it?" %}</p>
+            <a href="{% url crowds:leave crowd.pk %}" class="button">{% trans "Unjoin" %}</a>
+        {% endif %}
+    </div>
+</div>    
+        
+
+{% gmap_includes %}
+
+{% endblock %}
