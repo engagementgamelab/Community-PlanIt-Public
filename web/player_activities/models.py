@@ -23,9 +23,6 @@ __all__ = (
     'PlayerMapActivity', 
     'PlayerEmpathyActivity', 
     'MultiChoiceActivity', 
-    'PlayerActivityOfficialResponse',
-    'MapOfficialResponse',
-    'EmpathyOfficialResponse',
 )
 
 def determine_path(instance, filename):
@@ -138,32 +135,6 @@ class PlayerActivity(PlayerActivityBase):
         super(PlayerActivity, self).save(*args, **kwargs)
 
 
-
-class PlayerActivityOfficialResponse(models.Model):
-    activity = models.OneToOneField(PlayerActivity, unique=True)
-    response = models.TextField(max_length=2000, blank=True, default='')
-    comments = generic.GenericRelation(Comment)
-    date_added = models.DateTimeField(editable=False, auto_now_add=True)
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('activities:overview', (self.activity.pk,))
-
-    def __unicode__(self):
-        return u"Official Response (%s) for <%s> " % (self.response[:10], self.activity.mission.title )
-
-    @property
-    def stream_action_title(self):
-        return self.response
-
-    @property
-    def instance(self):
-        return self.activity.mission.instance
-
-    @property
-    def mission(self):
-        return self.activity.mission
-
 class PlayerMapActivity(PlayerActivityBase):
     maxNumMarkers = models.IntegerField(default=5)
     #django-nani complains that no translated fields exist on a sublclass of TraslatableModel
@@ -209,32 +180,6 @@ class PlayerMapActivity(PlayerActivityBase):
 
         self.type = PlayerActivityType.objects.get(type="map")
         super(PlayerMapActivity, self).save(*args, **kwargs)
-
-
-class MapOfficialResponse(models.Model):
-    activity = models.OneToOneField(PlayerMapActivity, unique=True)
-    response = models.TextField(max_length=2000, blank=True, default='')
-    comments = generic.GenericRelation(Comment)
-    date_added = models.DateTimeField(editable=False, auto_now_add=True)
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('activities:map-overview', (self.activity.pk,))
-
-    def __unicode__(self):
-        return "Official Response (%s) for <%s> " % (self.response[:10], self.activity.mission.title )
-
-    @property
-    def stream_action_title(self):
-        return self.response
-
-    @property
-    def instance(self):
-        return self.activity.mission.instance
-
-    @property
-    def mission(self):
-        return self.activity.mission
 
 
 class PlayerEmpathyActivity(PlayerActivityBase):
@@ -284,32 +229,6 @@ class PlayerEmpathyActivity(PlayerActivityBase):
 
         self.type = PlayerActivityType.objects.get(type="empathy")
         super(PlayerEmpathyActivity, self).save(*args, **kwargs)
-
-
-class EmpathyOfficialResponse(models.Model):
-    activity = models.OneToOneField(PlayerEmpathyActivity, unique=True)
-    response = models.TextField(max_length=2000, blank=True, default='')
-    comments = generic.GenericRelation(Comment)
-    date_added = models.DateTimeField(editable=False, auto_now_add=True)
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('activities:empathy-overview', (self.activity.pk,))
-
-    def __unicode__(self):
-        return u"Official Response (%s) for <%s> " % (self.response[:10], self.activity.mission.title )
-
-    @property
-    def stream_action_title(self):
-        return self.response
-
-    @property
-    def instance(self):
-        return self.activity.mission.instance
-
-    @property
-    def mission(self):
-        return self.activity.mission
 
 
 class MultiChoiceActivity(TranslatableModel):
@@ -371,37 +290,9 @@ stream_utils.register_target(PlayerMapActivity)
 stream_utils.register_action_object(PlayerEmpathyActivity)
 stream_utils.register_target(PlayerEmpathyActivity)
 
-stream_utils.register_action_object(PlayerActivityOfficialResponse)
-stream_utils.register_action_object(MapOfficialResponse)
-stream_utils.register_action_object(EmpathyOfficialResponse)
-
 @receiver(pre_delete, sender=PlayerActivity, dispatch_uid='web.playeractivities.models')
 @receiver(pre_delete, sender=PlayerMapActivity, dispatch_uid='web.playeractivities.models')
 @receiver(pre_delete, sender=PlayerEmpathyActivity, dispatch_uid='web.playeractivities.models')
 def remove_url_from_news_feeds(sender, **kwargs):     
     instance = kwargs['instance']
     Activity.objects.filter(url=instance.get_activity_url()).update(url='')
-
-@receiver(post_save, sender=PlayerActivityOfficialResponse, dispatch_uid='web.playeractivities.models')
-@receiver(post_save, sender=MapOfficialResponse, dispatch_uid='web.playeractivities.models')
-@receiver(post_save, sender=EmpathyOfficialResponse, dispatch_uid='web.playeractivities.models')
-def add_response_as_comment(sender, **kwargs):
-    created =  kwargs.get('created')
-    obj = kwargs.get('instance')
-    active_instance = Instance.objects.language(settings.LANGUAGE_CODE)[0]
-
-    user = User.objects.filter(is_superuser=True)[0]
-    if created:
-        comment = Comment.objects.create(
-                user = user,
-                message = obj.response,
-                object_id = obj.pk,
-                instance=active_instance,
-        )
-        obj.comments.add(comment)
-
-        stream_utils.action.send(actor=user, verb='activity_official_response_created', target=obj.activity, action_object=obj, description='official response created')
-
-    else:
-        Comment.objects.filter(object_id=obj.pk).update(message=obj.response)
-
