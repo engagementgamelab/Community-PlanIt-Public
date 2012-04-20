@@ -45,8 +45,6 @@ urlpatterns = patterns('web',
     (r'^reports/', include('reports.urls', namespace='reports', app_name='reports')),
 )
 
-
-
 urlpatterns += patterns('',
     url(r'^admin_tools/', include('admin_tools.urls')),
     (r'^admin/gmapsfield/admin/(?P<file>.*)$', 'gmapsfield.views.serve'),
@@ -57,22 +55,26 @@ urlpatterns += patterns('',
     url(r'^gr/(\d+)/(.+)/$', 'django.contrib.contenttypes.views.shortcut', name='generic_redirect'),
 )
 
-if 'rosetta' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^rosetta/$', include('rosetta.urls')),
-    )
-if 'sentry' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^sentry/$', include('sentry.web.urls')),
-    )
+#if 'rosetta' in settings.INSTALLED_APPS:
+#    urlpatterns += patterns('',
+#        url(r'^rosetta/$', include('rosetta.urls')),
+#    )
+
+urlpatterns += patterns('rosetta.views',
+   url(r'^rosetta/$', 'home', name='rosetta-home'),
+   url(r'^rosetta/pick/$', 'list_languages', name='rosetta-pick-file'), 
+    url(r'^rosetta/download/$', 'download_file', name='rosetta-download-file'),
+    url(r'^rosetta/select/(?P<langid>[\w\-]+)/(?P<idx>\d+)/$', 'lang_sel', name='rosetta-language-selection'),
+)
+
 
 if 'ajax_select' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         (r'^ajax_select/', include('ajax_select.urls')),
     )
 
-urlpatterns += patterns('core.memcached_status',
-    url(r'^status/cache/$', 'view'),
-)
+#urlpatterns += patterns('core.memcached_status',
+#    url(r'^status/cache/$', 'view'),
+#)
 
 urlpatterns += staticfiles_urlpatterns()
