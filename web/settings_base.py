@@ -212,6 +212,10 @@ LANGUAGES = (
   ('zh-cn', ugettext(u'Chinese')),
   ('ht', ugettext(u'Haitian Creole')),
 )
+#django-rosetta
+ROSETTA_UWSGI_AUTO_RELOAD = True
+ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS = True
+
 #django-localeurl
 LOCALE_INDEPENDENT_PATHS = (
     #re.compile('^/$'),
