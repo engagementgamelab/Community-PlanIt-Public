@@ -526,8 +526,16 @@ p.instructions {
     font-size: 0.9em;
 }
 
+.btn-back {
+    float: right;
+    padding-left: 15px;
+    background: url('../img/btn-back.png') no-repeat left center;
+}
+
+
 /* Blue buttons are used primarily for form submission */
 .btn-blue {
+    display: inline-block;
     margin: 20px 0px;
     padding: 8px 10px;
     border: 0px;

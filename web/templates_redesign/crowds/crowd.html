@@ -4,15 +4,15 @@
 {% block game_content %}
 <div class="column-full">
     <div class="column-container">
-        <div><a href="{% url crowds:index %}">Back to Get Togethers!</a></div>
+        <div><a href="{% url crowds:index %}" class="btn-back">Back to Get Togethers!</a></div>
 
         <h1>{{ crowd.name }}</h1>        
-        <h3>{{ crowd.start_date }} - {{ crowd.end_date }}</h3>
+        <h4>{{ crowd.start_date }} - {{ crowd.end_date }}</h4>
     </div>
 </div>
 <div class="column-threequarter">
     <div class="column-container">
-        <div>
+        <div >
             {{ crowd.map|show }}
         </div>
         <div>
@@ -31,8 +31,16 @@
         {% else %}
             You're going
             <p>{% trans "Can't make it?" %}</p>
-            <a href="{% url crowds:leave crowd.pk %}" class="button">{% trans "Unjoin" %}</a>
+            <a href="{% url crowds:leave crowd.pk %}" class="btn-blue">{% trans "Unjoin" %}</a>
         {% endif %}
+        
+        <div>
+            <ul>
+                {% for participant in crowd.participants.all %}
+                <li>{{ participant.get_profile.screen_name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>    
         

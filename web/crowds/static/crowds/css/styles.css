@@ -45,16 +45,45 @@
     }
     
 .crowds-event {
+    display: block;
+    overflow: hidden;
     background: #e3f1ea;
     padding: 10px;
     margin: 10px 0px;
+    color: #2D3542;
 }
 
-    .crowds-event-time {
-        width: 100px;
-        display: inline-block;
+    .crowds-event:hover {
+        background: #d9ebe2;
     }
     
     .crowds-event-name {
-        display: inline-block;
+        float: left;
+        margin: 0px 5px;
+        font-weight: bold;
     }
+    
+    .crowds-event-attending {
+        float: left;
+        width: 20px;
+        height: 15px;
+        margin: 0px 5px;    
+        background: url('../img/icon-attending.png') no-repeat;
+    }
+    
+    .crowds-event-participants {
+        float: left;
+        margin: 0px 5px;
+        font-style: italic;
+        color: #999;
+    }
+    
+    .crowds-event-time {
+        float: right;
+        display: inline-block;
+        margin: 0px 5px;    
+    }
+
+#crowds-view {}
+    
+    
