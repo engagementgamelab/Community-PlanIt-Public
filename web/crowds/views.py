@@ -102,8 +102,8 @@ def view_crowd(request, id, template='crowds/crowd.html'):
     else:
         raise Http404("could not locate a valid game")
 
-    if current_instance.is_expired():
-        return HttpResponseRedirect(reverse('crowds:index'))
+    # if current_instance.is_expired():
+    #     return HttpResponseRedirect(reverse('crowds:index'))
 
     crowd = Crowd.objects.get(id=id)
     
@@ -121,8 +121,8 @@ def join_crowd(request, id):
     else:
         raise Http404("could not locate a valid game")
 
-    if current_instance.is_expired():
-        return HttpResponseRedirect(reverse('crowds:index'))
+    # if current_instance.is_expired():
+    #     return HttpResponseRedirect(reverse('crowds:index'))
 
     crowd = Crowd.objects.get(id=id)
     crowd.participants.add(request.user)
@@ -141,8 +141,8 @@ def leave_crowd(request, id):
         raise Http404("could not locate a valid game")
 
 
-    if current_instance.is_expired():
-        return HttpResponseRedirect(reverse('crowds:index'))
+    # if current_instance.is_expired():
+    #     return HttpResponseRedirect(reverse('crowds:index'))
 
     crowd = Crowd.objects.get(id=id)
     crowd.participants.remove(request.user)
@@ -164,8 +164,8 @@ def rally(request):
 
     current_instance_location = current_instance.location
 
-    if current_instance.is_expired():
-        return HttpResponseRedirect(reverse('crowds:index'))
+    # if current_instance.is_expired():
+    #     return HttpResponseRedirect(reverse('crowds:index'))
 
     if request.method == 'POST':
         form = CrowdForm(request.POST)
