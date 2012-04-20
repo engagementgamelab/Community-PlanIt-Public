@@ -1,0 +1,34 @@
+{% extends 'attachments/base.html' %}
+{% load game_extras attachment_tags i18n %}
+
+{% block game_content %}
+
+<div>
+    <div class="column-container">
+        <h1>Become an Expert</h1>
+        {% if game %}
+        <h1> {{ game.title }} </h1>
+        {% endif %}
+    </div> 
+
+    <div class="resource">
+        <div class="resource-extras">
+            {% if attachment.resource_type == 'video' %}
+                <div id="mission-video-container">{% embed_video attachment.url %}</div>
+            {% endif %}
+
+            {% if attachment.resource_type == 'image' %}
+            <div><img src="{{ attachment.file.url }}" title=""/></div>
+            {% endif %}
+
+            
+        </div>
+    </div>
+    
+    <br class="clearfix" />
+
+</div>
+{% endblock %}
+
+
+

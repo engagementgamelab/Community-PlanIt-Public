@@ -15,18 +15,22 @@
                 {{ request.user.get_profile.screen_name }}
             </a>
         </li>
-        {# should link to resource center of city if not into an instance, should link to resource center of instance if logged into an instance #}
+        {% if in_game %}
+        <li><a href="{% url attachments:index %}{{ request.session.current_game_slug }}" id="sidebar-nav-expert">Become an Expert</a></li>
+        {% else %}
         <li><a href="{% url attachments:index %}" id="sidebar-nav-expert">Become an Expert</a></li>
-        
+        {% endif %}
         
         <li><a href="{% url crowds:index %}" id="sidebar-nav-crowds">Get Together!</a></li>
         
-        {# should not show if not logged into an instance #}
-        <li><a href="{% url instances:stream %}" id="sidebar-nav-news">What's Happening</a></li>
+        {% if in_game %}
+            <li><a href="{% url instances:stream %}" id="sidebar-nav-news">What's Happening</a></li>
+        {% endif %}
         
         <li><a href="{% url accounts:all %}" id="sidebar-nav-players">Find Players</a></li>
         
-        {# should not show if not logged into an instance #}
-        <li><a href="{% url instances:leaderboard %}" id="sidebar-nav-standings">Check the Standings</a></li>
+        {% if in_game %}
+            <li><a href="{% url instances:leaderboard %}" id="sidebar-nav-standings">Check the Standings</a></li>
+        {% endif %}
     </ul>
 </div>

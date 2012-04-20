@@ -34,7 +34,7 @@ class Attachment(models.Model):
     title = models.CharField(max_length=255, blank=True, default='')
     file = models.FileField(upload_to=determine_path, blank=True, null=True)
     thumbnail = models.FileField(help_text="Thumb 164x100", upload_to=determine_path, blank=True, null=True)
-    url = models.CharField(max_length=255, blank=True, null=True, editable=False)
+    url = models.CharField(max_length=255, blank=True, null=True)
     att_type = models.IntegerField("Attachment Type", choices=ATTACHMENT_TYPES, blank=True, null=True)
     flagged = models.IntegerField(default=0)
     user = models.ForeignKey(User, blank=True, null=True, editable=False)
@@ -47,8 +47,8 @@ class Attachment(models.Model):
     # check every comment attachment when loading a page with a discussion --
     # so we cache the results of each check and update attachment status with a
     # task run under supervisor
-    is_valid = models.BooleanField(default=False)
-    last_validity_check = models.DateTimeField(default=datetime.datetime.now)
+    is_valid = models.BooleanField(default=False, editable=False)
+    last_validity_check = models.DateTimeField(default=datetime.datetime.now, editable=False)
 
     @property 
     def resource_type(self):

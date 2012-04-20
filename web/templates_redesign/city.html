@@ -1,11 +1,5 @@
 {% extends 'base_city.html' %}
 
-{% block css %}
-    {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/citypages.css"> 
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/quincy.css">
-{% endblock %}
-
 {% block extra_head %}
 <script>
     $(function(){
@@ -45,13 +39,13 @@
 {% block body_id %}{% if user.is_authenticated %}private-city{% else %}public-city{% endif %}{% endblock %}
 
 {% block content %}
+    <hr class="rainbow" />            
+    <br />
     {# TODO: TEMPORARY FOR THE QUINCY LAUNCH, REMOVE!! #}
     {% if request.session.current_game_slug = 'north-quincy-wollaston-neighborhoods-on-the-move' %}
         {% include 'static/quincy_post_signup.html' %}
     {% else %}
 
-        <hr class="rainbow" />
-        <br />
         {% include '_games_per_city.html' %}
             
         {% if user.is_authenticated %}
