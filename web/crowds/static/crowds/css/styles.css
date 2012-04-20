@@ -43,47 +43,84 @@
         -moz-border-radius: 5px;
         border-radius: 5px;
     }
-    
-.crowds-event {
-    display: block;
-    overflow: hidden;
-    background: #e3f1ea;
-    padding: 10px;
-    margin: 10px 0px;
-    color: #2D3542;
-}
 
-    .crowds-event:hover {
-        background: #d9ebe2;
+#crowds-index {}
+
+    .crowds-event {
+        display: block;
+        overflow: hidden;
+        background: #e3f1ea;
+        padding: 10px;
+        margin: 10px 0px;
+        color: #2D3542;
     }
+
+        .crowds-event:hover {
+            background: #d9ebe2;
+        }
     
-    .crowds-event-name {
-        float: left;
-        margin: 0px 5px;
-        font-weight: bold;
-    }
+        .crowds-event-name {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0px 5px;
+            font-weight: bold;
+        }
     
-    .crowds-event-attending {
-        float: left;
-        width: 20px;
-        height: 15px;
-        margin: 0px 5px;    
-        background: url('../img/icon-attending.png') no-repeat;
-    }
+        .crowds-event-attending {
+            display: inline-block;
+            vertical-align: middle;
+            width: 20px;
+            height: 15px;
+            margin: 0px 5px;    
+            background: url('../img/icon-attending.png') no-repeat;
+        }
     
-    .crowds-event-participants {
-        float: left;
-        margin: 0px 5px;
-        font-style: italic;
-        color: #999;
-    }
+        .crowds-event-participants {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0px 5px;
+            font-style: italic;
+            color: #999;
+        }
     
-    .crowds-event-time {
-        float: right;
-        display: inline-block;
-        margin: 0px 5px;    
-    }
+        .crowds-event-time {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0px 5px;    
+        }
 
 #crowds-view {}
     
+    #crowds-view h3 {
+        margin: 0px;
+    }
+
+    #crowds-view-map-container {
+        display: inline-block;
+        vertical-align: bottom;
+        width: 300px;
+        height: 200px;
+        margin: 20px 0px;
+        border: 2px solid #ddd;
+    }
     
+        #crowds-view-map-container > div {
+            width: 300px !important;
+            height: 200px !important;
+        }
+        
+    #crowds-view-address {
+        display: inline-block;
+        vertical-align: bottom;
+        margin: 40px 20px;
+    }
+    
+    
+    #crowds-view-youareattending {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    
+    #crowds-view-participants {
+        margin: 10px;
+    }

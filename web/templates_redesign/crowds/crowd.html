@@ -1,43 +1,46 @@
 {% extends 'crowds/base.html' %}
 {% load game_extras gmap attachment_tags cpi_tags i18n %}
 
+{% block body_id %}crowds-view{% endblock %}
+
 {% block game_content %}
 <div class="column-full">
     <div class="column-container">
         <div><a href="{% url crowds:index %}" class="btn-back">Back to Get Togethers!</a></div>
 
         <h1>{{ crowd.name }}</h1>        
-        <h4>{{ crowd.start_date }} - {{ crowd.end_date }}</h4>
+        <h3>{{ crowd.start_date }} - {{ crowd.end_date }}</h3>
     </div>
 </div>
 <div class="column-threequarter">
     <div class="column-container">
-        <div >
+        <div id="crowds-view-map-container">
             {{ crowd.map|show }}
+        </div>
+        <div id="crowds-view-address">
+            {# TODO #}
+            Address
         </div>
         <div>
             {{ crowd.description }}
-        </div>
-        
-        <div>
-            <h3>{{ crowd.participants.count }} {% trans "total participants" %}</h3>
         </div>
     </div>
 </div>
 <div class="column-onequarter">
     <div class="column-container">
         {% if not request.user in crowd.participants.all %}
-            <a href="{% url crowds:join crowd.pk %}" class="button">{% trans "Join" %}</a>
+            <a href="{% url crowds:join crowd.pk %}" class="btn-blue">{% trans "Join" %}</a>
         {% else %}
-            You're going
-            <p>{% trans "Can't make it?" %}</p>
-            <a href="{% url crowds:leave crowd.pk %}" class="btn-blue">{% trans "Unjoin" %}</a>
+            <div class="crowds-event-attending"></div><div id="crowds-view-youareattending">{% trans "Joined! You're going" %}</div>
+            
+            <div>{% trans "Can't make it?" %} <a href="{% url crowds:leave crowd.pk %}" class="btn-blue">{% trans "Unjoin" %}</a></div>
         {% endif %}
         
         <div>
-            <ul>
+            <h3>{{ crowd.participants.count }} {% trans "Total Participants" %}</h3>
+            <ul id="crowds-view-participants">
                 {% for participant in crowd.participants.all %}
-                <li>{{ participant.get_profile.screen_name }}</li>
+                <li><a href="{% url accounts_profile participant.id %}">{{ participant.get_profile.screen_name }}</a></li>
                 {% endfor %}
             </ul>
         </div>

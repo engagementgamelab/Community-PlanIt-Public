@@ -141,15 +141,20 @@ a {
 
     #content h1 {
         padding: 15px 0px;
-        font-size: 2.5em;
+        font-family: 'Enriqueta', serif;
+        font-size: 2em;
+        font-weight: bold;
     }
     
     #content h2 {
         margin: 10px 0px;
-        font-size: 2em;
+        font-family: 'Enriqueta', serif;
+        font-size: 1.5em;
+        font-weight: bold;
     }
     
     #content h3 {
+        font-family: 'Enriqueta', serif;
         font-size: 1em;
         font-weight: bold;
         color: #a7a9ac;
@@ -342,7 +347,7 @@ a {
     float: right;
     margin: 0 -20px 20px 0px;
     width: 140px;
-    background: #ddd;
+    background: #f2f7ed;
 }
 
     #sidebar-nav:after {
@@ -533,7 +538,7 @@ p.instructions {
 }
 
 
-/* Blue buttons are used primarily for form submission */
+/* Blue Buttons... */
 .btn-blue {
     display: inline-block;
     margin: 20px 0px;
@@ -544,6 +549,23 @@ p.instructions {
     font-weight: bold;
     text-transform: uppercase;
     color: #fff;
+    cursor: pointer;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+/* Yellow Buttons...  */
+.btn-yellow {
+    display: inline-block;
+    margin: 20px 0px;
+    padding: 8px 10px;
+    border: 0px;
+    background: #f7ff59;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #2D3542;
     cursor: pointer;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
