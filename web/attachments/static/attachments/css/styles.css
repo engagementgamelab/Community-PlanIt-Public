@@ -63,9 +63,21 @@
         width: 36px;
         height: 36px;
         margin: 12px 10px;
-        background: url('../img/icon-resources-download.png');
+        background: url('../img/icon-resources-download.png') 0px 0px;
     }
     
         .resource-download:hover {
-            background: url('../img/icon-resources-download.png') -36px;
+            background: url('../img/icon-resources-download.png') -36px 0px;
         }
+    
+        .resource-type-link .resource-download,
+        .resource-type-video .resource-download,
+        .resource-type-image .resource-download {
+            background: url('../img/icon-resources-go.png') 0px 0px;
+        }
+        
+            .resource-type-link .resource-download:hover,
+            .resource-type-video .resource-download:hover,
+            .resource-type-image .resource-download:hover {
+                background: url('../img/icon-resources-go.png') -36px 0px;
+            }
