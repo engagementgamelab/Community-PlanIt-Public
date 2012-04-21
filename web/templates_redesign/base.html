@@ -90,25 +90,23 @@
         <!-- FOOTER -->
         <div id="footer">
             <div class="column">
-                <h1>Created by:</h1>
-                <a href=""><img src="{{ STATIC_URL }}img/logo-egl.png"></a>
+                <div class="footer-label">Created by:</div> 
+                <div><a href=""><img src="{{ STATIC_URL }}img/logo-egl.png"></a></div>
+            </div><div class="column">
+                <div class="footer-label">Supported by:</div>
+                <div><a href=""><img src="{{ STATIC_URL }}img/logo-knightfoundation.png"></a></div>
+            </div><div class="column">
+                <div class="footer-label">Share Alike</div>
+                <div><img src="{{ STATIC_URL }}img/logo-copyleft.png"></div>
             </div>
-            <div class="column">
-                <h1>Supported by:</h1>
-                <a href=""><img src="{{ STATIC_URL }}img/logo-knightfoundation.png"></a>
-            </div>
-            <div class="column">
-                <h1>Share alike:</h1>
-                <img src="{{ STATIC_URL }}img/logo-copyleft.png">
-            </div>
-            <div class="column">
-                <ul>
-                    <li><a href="{% url about %}">About</a></li>
-                    <li><a href="{% url contact %}">Contact</a></li>
-                    <li><a href="{% url privacy %}">Privacy Policy</a></li>
-                    <li><a href="{% url terms %}">Terms of Use</a></li>
-                </ul>
-            </div>
+        </div>
+        <div id="subfooter">
+        <ul>
+            <li><a href="{% url about %}">About</a></li>
+            <li><a href="{% url contact %}">Contact</a></li>
+            <li><a href="{% url privacy %}">Privacy Policy</a></li>
+            <li><a href="{% url terms %}">Terms of Use</a></li>
+        </ul>
         </div>
     {% endblock %}
 </body>

@@ -455,40 +455,69 @@ a {
                 }
         
         
-
 /* Footer */
 #footer {
     width: 960px;
-    margin: 20px auto;
+    margin: 0px auto;
+    background: url('../img/bg-private-header.png') no-repeat bottom left; /* not using the top right of this bg image */
+    overflow: hidden;
+    -webkit-border-bottom-right-radius: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+    -moz-border-radius-bottomright: 10px;
+    -moz-border-radius-bottomleft: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
-    
-    #footer > div.column {
-        float: left;
-        width: 240px;
+
+    #footer div.column {
+        display: inline-block;
+        vertical-align: middle;
+        width: 260px;
+        margin: 10px 30px;
         text-align: center;
         color: #333;
     }
-    
-    #footer h1 {
-        font-size: 0.9em;
-        margin: 25px 0px;
-        font-weight: normal;
-    }
-    
-    #footer ul {
-        font-size: 0.9em;
-        margin: 25px 0px;
-        font-weight: normal;
-    }
-        #footer ul li{
-            margin: 5px 0px;
+
+        #footer .column > div {
+            display: inline-block;
+            vertical-align: middle;
         }
-            
-    #footer a {
-        text-decoration: none;
+
+        #footer .column .footer-label {
+            font-style: italic;
+        }
+
+        #footer .column:last-child {
+            text-align: right;
+        }
+
+#subfooter {
+   width: 960px;
+   margin: 5px auto 20px auto;
+   text-align: center;
+}
+
+    #subfooter li {
+        display: inline-block;
     }
-    
-    #footer a:hover {}
+
+        #subfooter li:before {
+            content: '\2022';
+            margin: 0px 8px;
+        }
+
+        #subfooter li:first-child:before {
+            content: ' ';
+            margin: 0px 0px;
+        }
+
+        #subfooter li a {
+            color: #969aa0;
+        }
+            #subfooter li a:hover {
+                color: #2d3542;
+            }
+
 
 /* Utility Classes */
 
