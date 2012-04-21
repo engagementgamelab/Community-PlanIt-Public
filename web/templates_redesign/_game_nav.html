@@ -1,7 +1,7 @@
 <div id="sidebar-nav">
     <ul>
         <li class="sidebar-nav-profile">
-            <a id="sidebar-nav-profile" href="{% url accounts_profile request.user.id %}">
+            <a id="sidebar-nav-profile" href="{% url accounts:player_profile request.user.id %}">
                 <div>
                     <p id="sidebar-nav-profile-notifications">0</p>
                     {% if request.user.get_profile.avatar %}
