@@ -410,7 +410,7 @@ class AccountAuthenticationForm(AuthenticationForm):
         #else:
 
         queryset=Instance.objects.exclude(is_disabled=True)
-        if request.current_city is not None:
+        if hasattr(request, 'current_city') and request.current_city is not None:
             queryset = queryset.filter(for_city=request.current_city)
         self.fields['instance'] = forms.ModelChoiceField(label=_("Select your game"), queryset=queryset)
 
