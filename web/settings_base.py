@@ -226,6 +226,7 @@ LOCALE_INDEPENDENT_PATHS = (
     re.compile('^/comments/'),
     re.compile('^/__debug__/'),
     re.compile('^/assets/'),
+    re.compile('^/accounts/logout/'),
     re.compile('^/static/'),
     re.compile('^/gr/'),
     re.compile('^/admin/'),
