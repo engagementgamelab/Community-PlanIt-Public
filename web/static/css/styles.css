@@ -461,6 +461,7 @@ a {
     margin: 0px auto;
     background: url('../img/bg-private-header.png') no-repeat bottom left; /* not using the top right of this bg image */
     overflow: hidden;
+    font-size: 0.8em;
     -webkit-border-bottom-right-radius: 10px;
     -webkit-border-bottom-left-radius: 10px;
     -moz-border-radius-bottomright: 10px;
@@ -472,9 +473,8 @@ a {
     #footer div.column {
         display: inline-block;
         vertical-align: middle;
-        width: 260px;
-        margin: 10px 30px;
-        text-align: center;
+        margin: 10px 0px;
+        margin-left: 30px;
         color: #333;
     }
 
@@ -484,10 +484,13 @@ a {
         }
 
         #footer .column .footer-label {
+            margin: 5px;
             font-style: italic;
         }
 
         #footer .column:last-child {
+            width: 200px;
+            margin-left: 110px;
             text-align: right;
         }
 
