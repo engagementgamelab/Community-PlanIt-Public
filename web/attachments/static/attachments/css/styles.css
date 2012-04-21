@@ -90,6 +90,7 @@
     #resource > .resource-type-image {
         margin: 50px auto;
         width: 700px;
+        text-align: center;
     }
     
         #resource > .resource-type-image img{
