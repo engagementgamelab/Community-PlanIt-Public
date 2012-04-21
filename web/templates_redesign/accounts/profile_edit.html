@@ -9,11 +9,11 @@
     <div class="column-container">
         <h1>Profile</h1>
     </div>
-    <form enctype="multipart/form-data" action="" method="post">
         <div id="profile-editform-container">
             <div class="column-container">
                 <h2>{{ request.user.first_name }} {{ request.user.last_name }}</h2>
             </div>
+            <form enctype="multipart/form-data" action="" method="post">
             <div class="column-third">
                 <div class="column-container">
                     {%if user.get_profile.avatar%}
@@ -58,46 +58,30 @@
                         {{ profile_form.preferred_language.label_tag }}
                         {{ profile_form.preferred_language }}
                         {{ profile_form.preferred_language.errors }}
-                    </p>    
-                    <p>
-                        {{ profile_form.stake.label_tag }}
-                        {{ profile_form.stake }}
-                        {{ profile_form.stake.errors }}
-                    </p>    
-                    <p>
-                        {{ profile_form.affiliations.label_tag }}
-                        {{ profile_form.affiliations.help_text }}
-                        {{ profile_form.affiliations }}
-                        {{ profile_form.affiliations.errors }}
-                    </p>
-                    <p>
-                        {{ profile_form.affiliations_other.label_tag }}
-                        {{ profile_form.affiliations_other.help_text }}
-                        {{ profile_form.affiliations_other }}
-                        {{ profile_form.affiliations_other.errors }}
-                    </p>
-                    
+                    </p>                        
+                    <input type="submit" class="button submit" value="Update Profile" />
                 </div>
+                </form>            
+                <form action="" method="post">
+                <div class="column-container">
+                    <input type="hidden" name="form" value="change_password">
+                    {%csrf_token%}
+                    <p>
+                        {%if change_password_form.errors%}
+                        {{change_password_form.errors}}
+                        {%endif%}
+                        {{change_password_form.password}}
+                        {{change_password_form.confirm}}
+                    </p>
+                    <input type="submit" class="button submit" value="Change Password" />
+                </div>
+                </form>
             </div>
             <br class="clearfix" />
         </div>
         <div class="column-full">
             <div class="column-container">
-                <input type="submit" class="button submit" value="Update Profile" />
             </div>
         </div>
-    </form>            
-    <form action="" method="post">
-        <input type="hidden" name="form" value="change_password">
-        {%csrf_token%}
-        <p>
-            {%if change_password_form.errors%}
-            {{change_password_form.errors}}
-            {%endif%}
-            {{change_password_form.password}}
-            {{change_password_form.confirm}}
-        </p>
-        <input type="submit" class="button submit" value="Change Password" />
-    </form>
 </div>
 {% endblock %}
