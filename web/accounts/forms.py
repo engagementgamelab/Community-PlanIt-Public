@@ -364,11 +364,11 @@ class UserProfileForm(forms.ModelForm):
     email = forms.CharField(max_length=250, required=True, label=_('Email'))
     receive_email = forms.BooleanField(required=False, label=_('Should we send you notifications and news via email?'))
     preferred_language = forms.ChoiceField(choices=[(l[0], _(l[1])) for l in settings.LANGUAGES], label=_('Preferred Language'))
-    avatar = forms.ImageField(required=False)
+#    avatar = forms.ImageField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
-
+        self.fields['email'].widget.attrs['readonly'] = True
         #TODO
         # need to include the user selected choices in the list
         #affil_choices = Affiliation.objects.filter(instance=self.instance.instance).order_by("name").values_list('pk', 'name')
@@ -382,15 +382,14 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('email', 'first_name', 'last_name', 'preferred_language',
-                  'receive_email', 
-                  #'affils'
+                  'receive_email', 'avatar',
             )
 
-    def clean_stake(self):
-        try:
-            return UserProfileStake.objects.get(pk=self.cleaned_data['stake'])
-        except UserProfileStake.DoesNotExist:
-            return None
+#    def clean_stake(self):
+#        try:
+#            return UserProfileStake.objects.get(pk=self.cleaned_data['stake'])
+#        except UserProfileStake.DoesNotExist:
+#            return None
     
 
 class AccountAuthenticationForm(AuthenticationForm):

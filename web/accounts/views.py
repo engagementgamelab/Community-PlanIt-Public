@@ -280,6 +280,7 @@ def edit(request):
             # User profile form updated, not change password
             profile_form = UserProfileForm(data=request.POST, files=request.FILES, instance=profile)
             if profile_form.is_valid():
+                profile = profile_form.save()
                 #changing birth year (needed because of the int)
                 #This fails with the birth_year being blank and python can not convert
                 #a '' to an int
@@ -305,20 +306,19 @@ def edit(request):
                     profile.user.last_name = profile_form.cleaned_data['last_name']
 
 
-                profile.affils = profile_form.cleaned_data.get('affiliations')
-                aff_other = profile_form.cleaned_data.get('affiliations_other')
-                if aff_other != '':
-                    for a in aff_other.split(','):
-                        aff, created = Affiliation.objects.get_or_create(name=a.strip())
-                        aff.save()
-                        profile.affils.add(aff)
+#                profile.affils = profile_form.cleaned_data.get('affiliations')
+#                aff_other = profile_form.cleaned_data.get('affiliations_other')
+#                if aff_other != '':
+#                    for a in aff_other.split(','):
+#                        aff, created = Affiliation.objects.get_or_create(name=a.strip())
+#                        aff.save()
+#                        profile.affils.add(aff)
 
+#                if request.FILES.get('avatar', None) != None:
+#                    profile.avatar = request.FILES['avatar']
                 profile.user.save()
-
-                if request.FILES.get('avatar', None) != None:
-                    profile.avatar = request.FILES['avatar']
                 profile.save()
-                profile_form.save()
+                
 
                 return redirect(reverse('accounts:dashboard'))
 
