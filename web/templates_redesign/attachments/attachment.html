@@ -6,7 +6,7 @@
 <div>
     <div class="column-container">
         <div><a href="{% url attachments:index %}" class="btn-back">View All</a></div>
-        <h1>Become an Expert</h1>
+        <h1>{{ attachment.title}}</h1>
         {% if game %}
         <h1> {{ game.title }} </h1>
         {% endif %}
