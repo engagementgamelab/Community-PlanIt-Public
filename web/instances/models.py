@@ -86,25 +86,25 @@ class InstanceManager(TranslationManager):
         qs = self.language(get_language()).exclude(is_disabled=True)
         if for_city:
             qs = qs.filter(for_city=for_city)
-        return qs.exclude(missions__end_date__gte=self.now)
+        return qs.exclude(missions__end_date__gte=self.now).distinct()
 
     def future(self, for_city=None):
         qs = self.language(get_language()).exclude(is_disabled=True)
         qs = qs.filter(start_date__gt=self.now)
         if for_city:
             qs = qs.filter(for_city=for_city,)
-        return qs
+        return qs.distinct()
 
     def active(self, for_city=None):
         qs = self.language(get_language()).exclude(is_disabled=True)
-        return qs.filter(start_date__lte=self.now).language(get_language())
+        return qs.filter(start_date__lte=self.now).language(get_language()).distinct()
 
     def current(self, for_city=None):
         # basically, active and future
         qs = self.language(get_language()).exclude(is_disabled=True)
         if for_city:
-            qs = qs.filter(for_city=for_city,)
-        return qs.filter(missions__end_date__gte=self.now)
+            qs = qs.filter(for_city=for_city)
+        return qs.filter(missions__end_date__gte=self.now).distinct()
 
     #@cached(60*60*24, 'instances')
     #def for_city(self, domain):
