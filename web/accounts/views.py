@@ -37,7 +37,6 @@ from web.missions.models import Mission
 from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
 from web.reports.models import Activity
 from web.values.models import *
-from web.core.utils import _fake_latest, instance_from_request
 
 import logging
 log = logging.getLogger(__name__)
@@ -339,7 +338,7 @@ def all(request, template='accounts/all.html'):
 def profile(request, id):
     player = get_object_or_404(User, id=id)
     profile = player.get_profile()
-    instance = instance_from_request(request)
+    current_game = request.current_game
     #log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
 
 
@@ -351,7 +350,7 @@ def profile(request, id):
             comment = profile.comments.create(
                 content_object=profile,                 
                 user=request.user,
-                instance=instance,
+                instance=current_game,
                 message = u'%s' % comment_form.cleaned_data['message']
             ) 
             comment.save()
@@ -370,7 +369,7 @@ def profile(request, id):
                         url=url,
                         type='video',
                         user=request.user,
-                        instance=instance
+                        instance=current_game
                     )
             if request.FILES.has_key('picture'):
                 file = request.FILES.get('picture')
@@ -380,12 +379,12 @@ def profile(request, id):
                 comment.attachment.create(
                     file=request.FILES.get('picture'),
                     user=request.user,
-                    instance=instance
+                    instance=current_game
                 )
             return redirect(reverse('accounts_profile', args=[id]))
 
 
-    values = Value.objects.filter(instance=instance)
+    values = Value.objects.filter(instance=current_game)
     community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
 
     value_wrapper = []
@@ -408,7 +407,7 @@ def profile(request, id):
     return HttpResponse(tmpl.render(RequestContext(request, {
         'player': player,
         'comment_form': comment_form,
-        'instance': instance,
+        'instance': current_game,
         'stream': stream,
         'player_spent': player_spent,
         'value_wrapper': value_wrapper,
