@@ -12,6 +12,7 @@ from web.instances.models import Instance, City
 def index(request, authentication_form=AccountAuthenticationForm, template='index.html'):
 
     domain = request.current_site.domain
+    print domain
     try:
         current_city = City.objects.get(domain=domain)
     except City.DoesNotExist:
@@ -33,8 +34,7 @@ def index(request, authentication_form=AccountAuthenticationForm, template='inde
         context.update({
             'form': authentication_form(request),
         })
-        return render(request, template, context)
-    return render(request, 'city.html', context)
+    return render(request, template, context)
 
 @never_cache
 def server_error(request, template_name='500.html'):
