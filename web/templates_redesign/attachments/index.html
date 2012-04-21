@@ -14,20 +14,37 @@
         </div>
 
         {% for item in attachments_regrouped.list %}
-            <div class="resource resource-type-{{ item.resource_type }}">
-                <p class="resource-title"><a href="">{{ item.title }}</a></p>
-                <div class="resource-thumbnail">{% if item.thumbnail %}<img src="{{ MEDIA_URL }}{{ item.thumbnail }}" width="164" height="100" />{% endif %}</div>
-                <div class="resource-extras">
-                    <div class="resource-type resource-type-{{ item.resource_type }}"></div>
-                    <div class="resource-icon"></div>
+            <div class="resources resources-type-{{ item.resource_type }}">
+                <p class="resources-title">
                     {% if item.resource_type == 'video' or item.resource_type == 'image' %}
                         {% if game %}
-                        <a href="{% url attachments:game-attachment game.slug item.pk %}" class="resource-download"></a>
+                        <a href="{% url attachments:game-attachment game.slug item.pk %}" >{{ item.title }}</a>
                         {% else %}
-                        <a href="{% url attachments:attachment item.pk %}" class="resource-download"></a>
+                        <a href="{% url attachments:attachment item.pk %}">{{ item.title }}</a>
                         {% endif%}
-                    {% else %}
-                        <a href="" class="resource-download"></a>
+                    {% elif item.resource_type == 'link' %}
+                        {# open resource in a new window #}
+                        <a href="{% firstof item.url '#' %}" target="_new">{{ item.title }}</a>
+                    {% elif item.resource_type == 'document' %}
+                        <a href="{{ item.file.url }}" target="_new" >{{ item.title }}</a>
+                    {% endif%}
+                </p>
+                <div class="resources-thumbnail">{% if item.thumbnail %}<img src="{{ MEDIA_URL }}{{ item.thumbnail }}" width="164" height="100" />{% endif %}</div>
+                <div class="resources-extras">
+                    <div class="resources-type resource-type-{{ item.resource_type }}"></div>
+                    <div class="resources-icon"></div>
+                    
+                    {% if item.resource_type == 'video' or item.resource_type == 'image' %}
+                        {% if game %}
+                        <a href="{% url attachments:game-attachment game.slug item.pk %}" class="resources-download"></a>
+                        {% else %}
+                        <a href="{% url attachments:attachment item.pk %}" class="resources-download"></a>
+                        {% endif%}
+                    {% elif item.resource_type == 'link' %}
+                        {# open resource in a new window #}
+                        <a href="{% firstof item.url '#' %}" target="_new" class="resources-download"></a>
+                    {% elif item.resource_type == 'document' %}
+                        <a href="{{ item.file.url }}" target="_new" class="resources-download"></a>
                     {% endif%}
                 </div>
             </div>

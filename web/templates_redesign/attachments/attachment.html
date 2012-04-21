@@ -10,24 +10,19 @@
         {% if game %}
         <h1> {{ game.title }} </h1>
         {% endif %}
-    </div> 
-
-    <div class="resource">
-        <div class="resource-extras">
+        
+        <div id="resource">
             {% if attachment.resource_type == 'video' %}
-                <div id="mission-video-container">{% embed_video attachment.url %}</div>
+            <div class="resource-type-video">{% embed_video attachment.url %}</div>
             {% endif %}
 
             {% if attachment.resource_type == 'image' %}
-            <div><img src="{{ attachment.file.url }}" title=""/></div>
+            <div class="resource-type-image"><img src="{{ attachment.file.url }}" /></div>
             {% endif %}
 
             
         </div>
-    </div>
-    
-    <br class="clearfix" />
-
+    </div> 
 </div>
 {% endblock %}
 

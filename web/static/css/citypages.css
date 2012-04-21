@@ -256,16 +256,16 @@ hr.rainbow {
             width: 440px;
             background: #e0f0e9;
         }
-            .games-list-detail-countdown {
+/*            .games-list-detail-countdown {
                 position: absolute;
-                right: 0px;
-                top: -75px;
+                right: -20px;
+                top: -95px;
                 width: 200px;
                 height: 75px;
                 text-align: center;
                 background: #e0f0e9;
                 border-left: 10px solid white;
-            }
+            } */
             
             #public-index .games-list-details > div {
                 display: block;
