@@ -1,5 +1,6 @@
 {% load i18n %}
 
+
 {% for profile_per_instance in profiles_for_game %}
 {% with profile_per_instance as p %}
     <a href="{% url accounts:player_profile p.user_profile.user.id %}">
@@ -16,3 +17,6 @@
     </a>
 {% endwith %}
 {% endfor %}
+
+
+

@@ -341,6 +341,7 @@ def all(request, template='accounts/all.html'):
         'search_by_kw_form': SearchPlayersByKeywordsForm(request),
         'filter_by_variants_sijax_js' : filter_by_variants.get_js(),
         'search_by_kw_sijax_js': search_by_kw.get_js(),
+        'paginate_players_per_page' : settings.ENDLESS_PAGINATE_PLAYERS_PER_PAGE,
     }
     return render(request, template, context)
 

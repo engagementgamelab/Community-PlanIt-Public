@@ -107,6 +107,7 @@ INSTALLED_APPS = (
 
     # 3rd party
     'djcelery',
+    'endless_pagination',
     'stream',
     'django_mailer',
     'django_extensions',
@@ -274,6 +275,10 @@ REPORTS_RECIPIENTS = (
 AJAX_LOOKUP_CHANNELS = {
     'affiliations': ('accounts.lookups', 'AffiliationsLookup'),
 }
+
+#django_endless_pagination
+ENDLESS_PAGINATION_ADD_NOFOLLOW = True
+ENDLESS_PAGINATE_PLAYERS_PER_PAGE = 20
 
 # django-celery
 import djcelery
