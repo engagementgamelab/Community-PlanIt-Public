@@ -367,6 +367,12 @@ hr.rainbow {
                     width: 540px;
                     height: 300px;
                 }
+                
+                #public-city .games-list-details .games-list-detail-attachment,
+                #private-city .games-list-details .games-list-detail-attachment {
+                    width: 540px;
+                    height: 300px;
+                }
 
                 #public-city .games-list-details .games-list-detail-description,
                 #private-city .games-list-details .games-list-detail-description {
