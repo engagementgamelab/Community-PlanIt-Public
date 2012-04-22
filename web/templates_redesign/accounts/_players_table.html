@@ -12,7 +12,7 @@
         {% endif %}
         <div class="profile-screenname">{{ p.user_profile.screen_name }}</div>
         {# <div class="profile-screenname">{{ p.format_stakes }}</div> #}
-        <div class="profile-tagline">{{ p.user_profile.tagline }}</div>
+        <div class="profile-tagline">{{ p.user_profile.tagline|truncatechars:140 }}</div>
     </div>
     </a>
 {% endwith %}
