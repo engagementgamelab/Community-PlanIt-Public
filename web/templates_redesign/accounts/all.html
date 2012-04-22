@@ -64,6 +64,13 @@
         <h3>{% trans "Recently Joined" %}</h3>
         
     </div>
+
+    <span id="id_players-table">
+    {% include "accounts/_players_table.html" %}
+    </span>
+    
+    <br class="clearfix" />
+    
     {% paginate paginate_players_per_page profiles_for_game %}
     <div class="column-container">
         <table>
@@ -77,10 +84,7 @@
             </tr>
         </table> 
     </div>
-
-    <span id="id_players-table">
-    {% include "accounts/_players_table.html" %}
-    </span>
+    
 </div>
     
 {% endblock %}
