@@ -1,0 +1,34 @@
+{%extends "affiliations/base.html"%}
+
+{% load i18n %}
+{% load i18n cpi_tags %}
+
+{% block title %}{% trans "Affiliations" %}{% endblock %}
+
+{% block game_content %}
+<div>
+    <div class="column-container">
+        <h1><a class="nav-heading-tab" href="{% url accounts:all %}">Find Players</a> {% trans "Affiliations" %}</h1>
+        
+        <p class="instructions">{% trans "Affiliations are groups of players that have something in common, like a high school, a  department or a neighborhood. You can be part of as many affiliations as you like, and you  can even create your own." %}</p>
+        
+        
+        <div>
+            <div class="tabbutton">
+            <a class="button">+ Add an Affiliation</a>
+            </div>
+            <hr class="thick" />
+            {# SEARCH #}
+            <input id="profile-search" placeholder="{% trans 'Search for an affiliation' %}">
+            <input id="profile-search-apply" class="btn-blue" type="submit" value="Search" />
+         </div>
+        
+        <h3>{% trans "All Affiliations" %}</h3>
+        {% for affiliation in affiliations %}
+            <div><a href="{# this should probably link the find players with affiliations filtered? #}">{{ affiliation.name }}</a></div>
+        {% endfor %}
+    </div>
+    
+    
+</div>
+{% endblock %}

@@ -159,7 +159,11 @@ a {
         font-weight: bold;
         color: #a7a9ac;
     }
-    
+        
+        /* Weird stuff */
+        #content h1 .nav-heading-tab {
+            font-size: 0.6em;
+        }
 
 /* Ribbon */
 
