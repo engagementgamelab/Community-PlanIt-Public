@@ -150,6 +150,7 @@ class RegisterFormTwo(forms.Form):
 
         self.fields['tagline'] = forms.CharField(
             required=False, 
+            max_length=140,
             label=_('Give yourself a tagline'),
             widget=forms.Textarea(attrs={"placeholder": "I'm here to..."}))
 
