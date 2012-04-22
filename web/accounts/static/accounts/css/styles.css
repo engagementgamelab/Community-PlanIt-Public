@@ -147,7 +147,7 @@
     overflow: hidden;
 }
 
-    #id_players-table a:nth-child(4n+1) {
+    #id_players-table a:nth-child(4n+1) .profile-container{
         clear: left;
     }
     
