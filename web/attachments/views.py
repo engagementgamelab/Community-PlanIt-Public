@@ -10,7 +10,7 @@ def index(request, slug=None, template='attachments/index.html', extra_context={
         attachments = Attachment.objects.filter(instance=game, instance__is_disabled=False, is_resource_center=True)
         rc_scope_template_name = 'base_game.html'
     else:
-        attachments = Attachment.objects.filter(instance__is_disabled=False, is_resource_center=True)
+        attachments = Attachment.objects.filter(instance__for_city=request.current_city, instance__is_disabled=False, is_resource_center=True)
         rc_scope_template_name = 'base_game.html'
 
     context = dict(
