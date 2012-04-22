@@ -28,7 +28,7 @@
     </div>
     
     {% for account in accounts %}
-        <a href="{% url accounts_profile account.id %}">
+        <a href="{% url accounts:player_profile account.id %}">
         <div class="profile-container">
             {% if account.get_profile.avatar %}
                 <img src="{{ MEDIA_URL }}{{ account.get_profile.avatar }}" width="164" height="164" />

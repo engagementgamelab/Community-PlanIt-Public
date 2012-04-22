@@ -40,7 +40,7 @@
             <h3>{{ crowd.participants.count }} {% trans "Total Participants" %}</h3>
             <ul id="crowds-view-participants">
                 {% for participant in crowd.participants.all %}
-                <li><a href="{% url accounts_profile participant.id %}">{{ participant.get_profile.screen_name }}</a></li>
+                <li><a href="{% url accounts:player_profile participant.id %}">{{ participant.get_profile.screen_name }}</a></li>
                 {% endfor %}
             </ul>
         </div>
