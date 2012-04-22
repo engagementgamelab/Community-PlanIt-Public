@@ -2,208 +2,190 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-21 12:23-0400\n"
+"POT-Creation-Date: 2012-04-20 14:05-0400\n"
 "PO-Revision-Date: 2011-09-21 13:15\n"
 "Last-Translator:   <john@jkcl.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Translated-Using: django-rosetta 0.6.2\n"
 
-#: settings_base.py:134
+#: settings_base.py:210
 msgid "English"
 msgstr "Inglés"
 
-#: settings_base.py:135
-msgid "Haitian Creole"
-msgstr "Creole Haitiano"
-
-#: settings_base.py:136
+#: settings_base.py:211
 msgid "Spanish"
 msgstr "Español"
 
-#: accounts/forms.py:24 accounts/forms.py:265
+#: settings_base.py:212
+msgid "Chinese"
+msgstr ""
+
+#: settings_base.py:213
+msgid "Haitian Creole"
+msgstr "Creole Haitiano"
+
+#: accounts/forms.py:32 accounts/forms.py:362
 msgid "First Name"
 msgstr "Nombre"
 
-#: accounts/forms.py:25 accounts/forms.py:266
+#: accounts/forms.py:33 accounts/forms.py:363
 msgid "Last Name"
 msgstr "Apellido"
 
-#: accounts/forms.py:26 accounts/forms.py:267
+#: accounts/forms.py:34 accounts/forms.py:364 accounts/forms.py:405
 msgid "Email"
 msgstr "E-mail"
 
-#: accounts/forms.py:27 templates/accounts/profile_edit.html:81
+#: accounts/forms.py:35 templates/accounts/profile_edit.html:87
 msgid "Password"
 msgstr "Contraseña"
 
-#: accounts/forms.py:28
+#: accounts/forms.py:36
 msgid "Password Again"
 msgstr "Contraseña de nuevo"
 
-#: accounts/forms.py:29 accounts/forms.py:269
+#: accounts/forms.py:51
+msgid "Choose your city"
+msgstr ""
+
+#: accounts/forms.py:57 accounts/forms.py:412
+msgid "Select your game"
+msgstr ""
+
+#: accounts/forms.py:59 accounts/forms.py:366
 msgid "Preferred Language"
 msgstr "Idioma preferido"
 
-#: accounts/forms.py:31
-msgid "Year you were born"
-msgstr "Año en que nació"
-
-#: accounts/forms.py:33
-msgid "Your neighborhood, town or city"
-msgstr "Su barrio, pueblo o ciudad"
-
-#: accounts/forms.py:34
-msgid "Your ZIP code"
-msgstr "Su código postal"
-
-#: accounts/forms.py:41
-msgid "Community"
-msgstr "Comunidad"
-
-#: accounts/forms.py:46
-#, python-format
+#: accounts/forms.py:78
+#, fuzzy
 msgid ""
-"Confirm that you have read and agree to the <a target=\"_blank\" "
-"href=\"%(terms)s\">Terms of Use</a>."
-msgstr ""
-"Confirmar que ha leído y acepto los <a target=\"_blank\" "
-"href=\"%(terms)s\">Términos de Uso</a>."
-
-#: accounts/forms.py:54
-msgid "Account already exists, please use a different email address."
+"Account already exists for this game, please use a different email address."
 msgstr ""
 "Cuenta ya existe, por favor use una dirección de correo electrónico "
 "diferentes."
-
-#: accounts/forms.py:61
-msgid "Please provide your first name."
-msgstr "Por favor escriba su nombre de pila."
-
-#: accounts/forms.py:68
-msgid "Please provide your last name."
-msgstr "Por favor escriba su apellido."
-
-#: accounts/forms.py:75
-msgid "Please provide a password."
-msgstr "Por favor, ingrese su contraseña."
-
-#: accounts/forms.py:82
-msgid "Please type the password again."
-msgstr "Por favor, escriba la contraseña de nuevo."
 
 #: accounts/forms.py:84
 msgid "The passwords do not match."
 msgstr "Las contraseñas no coinciden."
 
-#: accounts/forms.py:99
+#: accounts/forms.py:102
 msgid "Stake in the community"
 msgstr "Participación en la comunidad"
 
-#: accounts/forms.py:103
+#: accounts/forms.py:112 templates/accounts/dashboard.html:169
+msgid "Affiliation"
+msgstr "Afiliación"
+
+#: accounts/forms.py:115
+msgid ""
+"Don't see your affiliation? Enter it here. Please place a comma between each "
+"affiliation."
+msgstr ""
+
+#: accounts/forms.py:118
+msgid "Year you were born"
+msgstr "Año en que nació"
+
+#: accounts/forms.py:119
+msgid "Your ZIP code"
+msgstr "Su código postal"
+
+#: accounts/forms.py:124
 msgid "Gender"
 msgstr "Género"
 
-#: accounts/forms.py:107
+#: accounts/forms.py:127
 msgid "Race/Ethnicity"
 msgstr "Raza / Etnia"
 
-#: accounts/forms.py:111
+#: accounts/forms.py:131
 msgid "Education"
 msgstr "Educación"
 
-#: accounts/forms.py:115
-msgid "Income"
-msgstr "Ingresos"
+#: accounts/forms.py:135
+msgid "Household Income"
+msgstr ""
 
-#: accounts/forms.py:119
+#: accounts/forms.py:139
 msgid "Living Situation"
 msgstr "La situación que viven"
 
-#: accounts/forms.py:123
+#: accounts/forms.py:143
 msgid "How did you hear about Community PlanIt?"
 msgstr "¿Cómo se enteró de la Comunidad PlanIt?"
 
-#: accounts/forms.py:125
-msgid "If the way you learned about us is not listed, please tell us"
-msgstr ""
-"Si la forma en que ha aprendido de nosotros no está en la lista, por "
-"favor díganos"
+#: accounts/forms.py:147
+#, fuzzy
+msgid "If other, please tell us how you learned about Community PlanIt"
+msgstr "¿Cómo se enteró de la Comunidad PlanIt?"
 
-#: accounts/forms.py:215
+#: accounts/forms.py:152
+msgid "Give yourself a tagline"
+msgstr ""
+
+#: accounts/forms.py:313
 msgid "Welcome to Community PlanIt!"
 msgstr "Bienvenido a la Comunidad PlanIt!"
 
-#: accounts/forms.py:216
+#: accounts/forms.py:314
 msgid "Thanks for signing up!"
 msgstr "¡Gracias por registrarte!"
 
-#: accounts/forms.py:248
+#: accounts/forms.py:345
 msgid "Email not found in our system"
 msgstr "Correo electrónico no se encuentra en nuestro sistema"
 
-#: accounts/forms.py:259
+#: accounts/forms.py:356
 msgid "Passwords must match"
 msgstr "Las contraseñas deben coincidir"
 
-#: accounts/forms.py:268
+#: accounts/forms.py:365
 msgid "Should we send you notifications and news via email?"
 msgstr ""
 "En caso de que le enviamos las notificaciones y noticias por correo "
 "electrónico?"
 
-#: accounts/forms.py:272
-msgid ""
-"Please place a comma between each affiliation (ie: YMCA, James Memorial"
-" Highschool, Gardening Club)."
-msgstr ""
-"Por favor, coloque una coma entre cada afiliación (es decir: YMCA, "
-"James Highschool Memorial, Club de Jardinería)."
+#: accounts/forms.py:422
+#, fuzzy
+msgid "You have not registered for this instance."
+msgstr "No hay valores creados sin embargo, para esta instancia"
 
-#: accounts/forms.py:280
-msgid "Stake"
-msgstr "Estaca"
-
-#: accounts/forms.py:301
-msgid "Username"
-msgstr "Nombre de usuario"
-
-#: accounts/models.py:144
+#: accounts/models.py:169
 msgid "e-mail address"
 msgstr "e-mail"
 
-#: accounts/models.py:268 comments/models.py:29
+#: accounts/models.py:305 comments/models.py:30
 msgid "content type"
 msgstr "tipo de contenido"
 
-#: accounts/models.py:271 comments/models.py:32
+#: accounts/models.py:308 comments/models.py:33
 msgid "object ID"
 msgstr "ID de objeto"
 
-#: accounts/views.py:163
+#: accounts/views.py:234
 msgid "Password Changed"
 msgstr "Contraseña cambiada"
 
-#: accounts/views.py:163
+#: accounts/views.py:234
 #, python-format
 msgid "Your temporary password is: %(password)s"
 msgstr "Su contraseña temporal: %(password)s "
 
-#: accounts/views.py:164
+#: accounts/views.py:235
 msgid "A temporary password has been sent to your email address."
 msgstr ""
-"Una contraseña temporal ha sido enviada a su dirección de correo "
-"electrónico."
+"Una contraseña temporal ha sido enviada a su dirección de correo electrónico."
 
 #: answers/models.py:43 answers/models.py:64 answers/models.py:74
 #: answers/models.py:84
@@ -211,16 +193,54 @@ msgstr ""
 msgid "an answer to %s"
 msgstr "una respuesta a %s"
 
+#: attachments/models.py:25
+#, fuzzy
+msgid "Picture"
+msgstr "Futuro"
+
+#: attachments/models.py:26
+msgid "Video"
+msgstr ""
+
+#: attachments/models.py:27
+msgid "Image"
+msgstr ""
+
+#: attachments/models.py:28
+msgid "Chart"
+msgstr ""
+
+#: attachments/models.py:29
+msgid "Graph"
+msgstr ""
+
+#: attachments/models.py:30
+msgid "Hyperlink"
+msgstr ""
+
+#: attachments/models.py:31
+#, fuzzy
+msgid "Document"
+msgstr "comentarios"
+
+#: attachments/models.py:43
+msgid "Display as part of a Slideshow"
+msgstr ""
+
+#: attachments/models.py:44
+msgid "Display as part of the Resource Center"
+msgstr ""
+
 #: attachments/util.py:39
 msgid "This video is currently unavailable."
 msgstr "Este vídeo no está disponible actualmente."
 
-#: challenges/forms.py:23
+#: challenges/forms.py:23 crowds/forms.py:15
 msgid "Location"
 msgstr "Ubicación"
 
-#: challenges/forms.py:24 templates/affiliations/base.html:33
-#: templates/affiliations/base.html:51
+#: challenges/forms.py:24 player_activities/forms.py:67
+#: templates/affiliations/base.html:32
 msgid "Name"
 msgstr "Nombre"
 
@@ -247,10 +267,18 @@ msgstr "Por favor, introduzca una fecha de finalización no en el pasado."
 #: challenges/forms.py:46
 msgid "Please enter an end date after the start date."
 msgstr ""
-"Por favor, introduzca una fecha de finalización después de la fecha de"
-" inicio."
+"Por favor, introduzca una fecha de finalización después de la fecha de "
+"inicio."
 
-#: instances/views.py:41
+#: crowds/forms.py:18
+msgid "When? (time of event)"
+msgstr ""
+
+#: crowds/forms.py:22
+msgid "Till When? (end time of event)"
+msgstr ""
+
+#: instances/views.py:45
 msgid "We'll let you know when {0} is active. Thanks for your interest!"
 msgstr "Le dejaremos saber cuando {0} está activo. Gracias por su interés!"
 
@@ -258,7 +286,48 @@ msgstr "Le dejaremos saber cuando {0} está activo. Gracias por su interés!"
 msgid "Community PlanIT Weekly Mission Update"
 msgstr "Comunidad PlanIT semanal Misión de actualización"
 
-#: templates/index.html:6
+#: player_activities/forms.py:68
+#, fuzzy
+msgid "Question"
+msgstr "Descripción"
+
+#: player_activities/forms.py:77
+msgid "Answer a)"
+msgstr ""
+
+#: player_activities/forms.py:78
+msgid "Answer b)"
+msgstr ""
+
+#: player_activities/forms.py:79
+msgid "Answer c)"
+msgstr ""
+
+#: player_activities/forms.py:80
+msgid "Answer d)"
+msgstr ""
+
+#: player_activities/forms.py:81
+msgid "Answer e)"
+msgstr ""
+
+#: reports/admin.py:19 templates/accounts/dashboard.html:7
+#: templates/accounts/profile.html:6
+#: templates_redesign/accounts/dashboard.html:4
+msgid "Dashboard"
+msgstr "Tablero de instrumentos"
+
+#: reports/admin.py:22
+#, fuzzy
+msgid "Applications"
+msgstr "Afiliaciones"
+
+#: reports/admin.py:26
+#, fuzzy
+msgid "Administration"
+msgstr "Registro"
+
+#: templates/index.html:6 templates_redesign/index.html:4
 msgid "Welcome"
 msgstr "Bienvenida"
 
@@ -269,8 +338,8 @@ msgstr "Comunidad PlanIT"
 #: templates/index.html:14
 msgid "Interested in playing? Click on a community below to find out more."
 msgstr ""
-"Interesado en jugar? Haga clic en una comunidad de abajo para obtener "
-"más información."
+"Interesado en jugar? Haga clic en una comunidad de abajo para obtener más "
+"información."
 
 #: templates/index.html:17
 msgid "Upcoming Communities"
@@ -298,11 +367,10 @@ msgstr "Un juego acerca de su comunidad."
 
 #: templates/index.html:74
 msgid ""
-"Voice opinions, earn coins, and spend them on your top community "
-"values!"
+"Voice opinions, earn coins, and spend them on your top community values!"
 msgstr ""
-"Sus opiniones, ganar monedas, y gastarlos en los valores de la "
-"comunidad arriba!"
+"Sus opiniones, ganar monedas, y gastarlos en los valores de la comunidad "
+"arriba!"
 
 #: templates/index.html:75
 msgid "See which"
@@ -316,11 +384,11 @@ msgstr "están jugando ahora, o aprender más"
 msgid "about us"
 msgstr "sobre nosotros"
 
-#: templates/index.html:80 templates/layouts/base.html:126
+#: templates/index.html:80 templates/layouts/base.html:140
 msgid "New Player?"
 msgstr "Jugador de nuevo?"
 
-#: templates/index.html:80 templates/layouts/base.html:126
+#: templates/index.html:80 templates/layouts/base.html:140
 msgid "Sign Up"
 msgstr "Regístrate"
 
@@ -328,20 +396,31 @@ msgstr "Regístrate"
 msgid "Have an account?"
 msgstr "¿Tienes una cuenta?"
 
-#: templates/index.html:93
+#: templates/index.html:88
+#, fuzzy
+msgid "email address"
+msgstr "e-mail"
+
+#: templates/index.html:91
+#, fuzzy
+msgid "password"
+msgstr "Contraseña"
+
+#: templates/index.html:95
+#, fuzzy
+msgid "community:"
+msgstr "Comunidad"
+
+#: templates/index.html:99 templates_redesign/accounts/login.html:4
 msgid "Login"
 msgstr "Login"
 
-#: templates/index.html:93 templates/accounts/forgot.html:6
+#: templates/index.html:100 templates/accounts/forgot.html:6
 #: templates/accounts/forgot.html.py:7
 msgid "Forgot password"
 msgstr "¿Olvidó su contraseña"
 
-#: templates/accounts/dashboard.html:7 templates/accounts/profile.html:6
-msgid "Dashboard"
-msgstr "Tablero de instrumentos"
-
-#: templates/accounts/dashboard.html:23 templates/missions/all.html:14
+#: templates/accounts/dashboard.html:23 templates/missions/all.html:12
 msgid "Current Mission"
 msgstr "Misión actual"
 
@@ -355,89 +434,61 @@ msgstr "Ver misión actual"
 
 #: templates/accounts/dashboard.html:42
 msgid ""
-"Your missions have ended for now. Great work!  Your community is better"
-" because of your efforts.  You'll be notified when a new mission "
-"starts."
+"Your missions have ended for now. Great work!  Your community is better "
+"because of your efforts.  You'll be notified when a new mission starts."
 msgstr ""
-"Sus misiones han terminado por ahora. ¡Buen trabajo! Su comunidad es "
-"mejor gracias a sus esfuerzos. Se le notificará cuando se inicia una "
-"nueva misión."
+"Sus misiones han terminado por ahora. ¡Buen trabajo! Su comunidad es mejor "
+"gracias a sus esfuerzos. Se le notificará cuando se inicia una nueva misión."
 
 #: templates/accounts/dashboard.html:47
 msgid ""
-" The mission has not yet started. You will be notified when the mission"
-" starts."
+" The mission has not yet started. You will be notified when the mission "
+"starts."
 msgstr ""
-"La misión aún no ha comenzado. Se le notificará cuando la misión "
-"comienza."
+"La misión aún no ha comenzado. Se le notificará cuando la misión comienza."
 
 #: templates/accounts/dashboard.html:50
 msgid "No missions created."
 msgstr "No hay misiones creadas."
 
-#: templates/accounts/dashboard.html:57 templates/challenges/all.html:6
+#: templates/accounts/dashboard.html:58 templates/challenges/all.html:6
 msgid "Available Challenges"
 msgstr "Desafíos disponibles"
 
-#: templates/accounts/dashboard.html:67
+#: templates/accounts/dashboard.html:68
 msgid "No active challenges found."
 msgstr "No desafíos activo que se encuentra."
 
-#: templates/accounts/dashboard.html:74 templates/challenges/add.html:8
-#: templates/challenges/add.html.py:50
+#: templates/accounts/dashboard.html:75 templates/challenges/add.html:8
+#: templates/challenges/add.html.py:51
 msgid "Create Challenge"
 msgstr "Crear Desafío"
 
-#: templates/accounts/dashboard.html:75
+#: templates/accounts/dashboard.html:76
 msgid "All Challenges"
 msgstr "Todos los desafíos"
 
-#: templates/accounts/dashboard.html:91
-msgid "ended on"
-msgstr "terminó el"
-
-#: templates/accounts/dashboard.html:91
-msgid "with"
-msgstr "con"
-
-#: templates/accounts/dashboard.html:93
-msgid "participant"
-msgstr "participante"
-
-#: templates/accounts/dashboard.html:107
-msgid "Thanks for playing!"
-msgstr "Gracias por jugar!"
-
-#: templates/accounts/dashboard.html:112
+#: templates/accounts/dashboard.html:116
 msgid "Latest Events"
 msgstr "Eventos más recientes"
 
-#: templates/accounts/dashboard.html:129
-msgid "No news found"
-msgstr "No hemos encontrado noticias"
-
-#: templates/accounts/dashboard.html:139
+#: templates/accounts/dashboard.html:138
 msgid "The community has not started yet. We will notify you once it has begun"
 msgstr ""
-"La comunidad aún no ha comenzado. Se le notificará una vez que ha "
-"comenzado"
+"La comunidad aún no ha comenzado. Se le notificará una vez que ha comenzado"
 
-#: templates/accounts/dashboard.html:153 templates/accounts/dashboard.html:175
+#: templates/accounts/dashboard.html:152 templates/accounts/dashboard.html:174
 msgid "Leader"
 msgstr "Líder"
 
-#: templates/accounts/dashboard.html:153 templates/accounts/dashboard.html:175
+#: templates/accounts/dashboard.html:152 templates/accounts/dashboard.html:174
 msgid "Board"
 msgstr "Bordo"
 
-#: templates/accounts/dashboard.html:170
-msgid "Affiliation"
-msgstr "Afiliación"
-
 #: templates/accounts/forgot.html:11
 msgid ""
-"Enter in your email address below and we'll send you a new password "
-"right away!"
+"Enter in your email address below and we'll send you a new password right "
+"away!"
 msgstr ""
 "Escriba su dirección de correo electrónico y le enviaremos una nueva "
 "contraseña de inmediato!"
@@ -452,11 +503,11 @@ msgstr "Su privacidad"
 
 #: templates/accounts/list.html:12
 msgid ""
-"We need your email address to confirm your identity. We will not sell "
-"your information."
+"We need your email address to confirm your identity. We will not sell your "
+"information."
 msgstr ""
-"Necesitamos su dirección de correo electrónico para confirmar su "
-"identidad. Nosotros no venderemos su información."
+"Necesitamos su dirección de correo electrónico para confirmar su identidad. "
+"Nosotros no venderemos su información."
 
 #: templates/accounts/list.html:24
 msgid "No players found."
@@ -474,11 +525,10 @@ msgstr "¿Olvidó su contraseña?"
 msgid "Reset password"
 msgstr "Restablecimiento de la contraseña"
 
-#: templates/accounts/login.html:20
+#: templates/accounts/login.html:21
 msgid "Sorry, that's not a valid email address or password."
 msgstr ""
-"Lo sentimos, no es una dirección válida de correo electrónico y "
-"contraseña."
+"Lo sentimos, no es una dirección válida de correo electrónico y contraseña."
 
 #: templates/accounts/login.html:22
 msgid "Not a member? "
@@ -488,15 +538,20 @@ msgstr "No es socio?"
 msgid "Find your community and sign up now!"
 msgstr "Encuentre su comunidad y regístrate ahora!"
 
-#: templates/accounts/login.html:25
+#: templates/accounts/login.html:24
 msgid "Email address:"
 msgstr "Dirección de correo electrónico:"
 
-#: templates/accounts/login.html:28 templates/admin/login.html:25
+#: templates/accounts/login.html:27 templates/admin.cpi/login.html:25
 msgid "Password:"
 msgstr "Contraseña:"
 
-#: templates/accounts/profile.html:22 templates/affiliations/base.html:34
+#: templates/accounts/login.html:31
+#, fuzzy
+msgid "Community:"
+msgstr "Comunidad"
+
+#: templates/accounts/profile.html:22 templates/affiliations/base.html:33
 #: templates/player_activities/all_activities_paginated.html:5
 msgid "Points"
 msgstr "Puntos"
@@ -513,23 +568,25 @@ msgstr "Afiliados a"
 msgid "Token spending"
 msgstr "El gasto de fichas"
 
-#: templates/accounts/profile.html:64
+#: templates/accounts/profile.html:70
 msgid "has created no activities."
 msgstr "ha creado ninguna actividad."
 
-#: templates/accounts/profile.html:74 templates/comments/comments.html:4
+#: templates/accounts/profile.html:80 templates/comments/comments.html:4
 #: templates/comments/post.html:7
-#: templates/player_activities/map_overview.html:29
+#: templates/player_activities/map_overview.html:37
+#: templates_redesign/accounts/profile.html:116
+#: templates_redesign/player_activities/map_overview.html:42
 #, python-format
 msgid "%(comment_heading)s"
 msgstr ""
 
-#: templates/accounts/profile.html:77
+#: templates/accounts/profile.html:83
+#: templates_redesign/accounts/profile.html:119
 #, python-format
 msgid "Share your thoughts with %(player)s &#8212; leave a comment below"
 msgstr ""
-"Compartir sus pensamientos con %(player)s  - dejar un comentario más "
-"abajo"
+"Compartir sus pensamientos con %(player)s  - dejar un comentario más abajo"
 
 #: templates/accounts/profile_edit.html:5
 #: templates/accounts/profile_edit.html:14
@@ -537,27 +594,30 @@ msgid "Update Your Profile"
 msgstr "Actualice su perfil"
 
 #: templates/accounts/profile_edit.html:11
+#: templates_redesign/accounts/profile_edit.html:35
 msgid "Please correct the errors below"
 msgstr "Por favor, corrija los errores a continuación"
 
-#: templates/accounts/profile_edit.html:58
+#: templates/accounts/profile_edit.html:64
 msgid "Your current avatar"
 msgstr "Tu avatar actual"
 
-#: templates/accounts/profile_edit.html:65
+#: templates/accounts/profile_edit.html:71
 msgid "New Avatar (leave empty to keep)"
 msgstr "Nuevo Avatar (dejar en blanco para mantener)"
 
-#: templates/accounts/profile_edit.html:74
+#: templates/accounts/profile_edit.html:80
 msgid "Change Your Password"
 msgstr "Cambie su contraseña"
 
-#: templates/accounts/profile_edit.html:83
+#: templates/accounts/profile_edit.html:89
 msgid "Password again to confirm"
 msgstr "Contraseña de nuevo para confirmar"
 
 #: templates/accounts/register_0.html:6 templates/accounts/register_1.html:6
 #: templates/accounts/register_base.html:6
+#: templates_redesign/accounts/register_0.html:4
+#: templates_redesign/accounts/register_1.html:6
 msgid "Registration"
 msgstr "Registro"
 
@@ -568,6 +628,8 @@ msgid "Registration: Step %(step)s of %(step_count)s"
 msgstr "Registro: Paso %(step)s de %(step_count)s "
 
 #: templates/accounts/register_0.html:15 templates/accounts/register_1.html:15
+#: templates_redesign/accounts/register_0.html:52
+#: templates_redesign/accounts/register_1.html:11
 msgid "Please correct the errors below."
 msgstr "Por favor, corrija los errores a continuación."
 
@@ -581,7 +643,8 @@ msgid ""
 "Before you register, you should read our privacy policy and terms of use.\n"
 msgstr ""
 "\n"
-"Antes de registrarse, usted debe leer nuestra política de privacidad y términos de uso.\n"
+"Antes de registrarse, usted debe leer nuestra política de privacidad y "
+"términos de uso.\n"
 
 #: templates/accounts/register_base.html:23
 msgid "View Privacy Policy"
@@ -596,6 +659,7 @@ msgid "Notifications"
 msgstr "Notificaciones"
 
 #: templates/accounts/email/notifications.html:17
+#: templates/accounts/email/notifications.txt:2
 #, python-format
 msgid "News from %(instance_title)s"
 msgstr "Noticias de %(instance_title)s "
@@ -605,155 +669,125 @@ msgid "See all your notifications here:"
 msgstr "Ver todas las notificaciones aquí:"
 
 #: templates/accounts/email/notifications.html:34
+#: templates/accounts/email/notifications.txt:12
 msgid "The Community PlanIt Team"
 msgstr "El equipo de Community PlanIt"
 
 #: templates/accounts/email/notifications.html:39
+#: templates/accounts/email/notifications.txt:13
 msgid ""
 "\n"
-"We sent this message because your Community PlanIt account is set to receive \n"
-"updates. If you want to stop receiving news from Community PlanIt, just edit \n"
+"We sent this message because your Community PlanIt account is set to "
+"receive \n"
+"updates. If you want to stop receiving news from Community PlanIt, just "
+"edit \n"
 "your profile:\n"
 msgstr ""
 "\n"
-"Hemos enviado este mensaje porque su cuenta de Planit Comunidad está configurado para recibir actualizaciones. Si desea dejar de recibir noticias de la Comunidad Planit, acaba de editar su perfil:\n"
+"Hemos enviado este mensaje porque su cuenta de Planit Comunidad está "
+"configurado para recibir actualizaciones. Si desea dejar de recibir noticias "
+"de la Comunidad Planit, acaba de editar su perfil:\n"
 
 #: templates/accounts/email/welcome.html:1
-#, python-format
 msgid ""
 "\n"
 "Hello!\n"
 "\n"
-"Thanks for registering for Community PlanIt ! We're glad you've decided to join\n"
-"us in helping to shape a vision for your community.\n"
+"Thanks for registering for Community PlanIt ! We're glad you've decided to "
+"join\n"
+"us in helping to shape a vision for your community. Keep your eyes peeled in "
+"the coming days for important information on your game. \n"
 "\n"
-"From %(start_date)s through %(end_date)s,\n"
-"we are using https://communityplanit.org/ as a way to engage stakeholders in\n"
-"long-range, city-wide planning as we think toward the future. The feedback we\n"
-"receive will be considered when making future policy decisions in the Boston\n"
-"Public Schools. Remember that you can sign on to participate as often as you\n"
-"like, from any place that has access to the Internet. We hope you will share\n"
-"your thoughts about BPS by completing all the activities, interacting with\n"
-"other users, and spending your in-game tokens on the issues that matter to you\n"
-"most.\n"
-"\n"
-"There will be an in-person meeting at English High on October 20th at 6pm.\n"
-"Come together with other players to devise a plan for moving forward.  And one\n"
-"more thing...a brand new Nook e-reader will be raffled off to one of the top\n"
-"fifty point earners.\n"
 "\n"
 "Happy planning!\n"
 "\n"
 "The Community PlanIt Team\n"
+"\n"
+"\n"
 msgstr ""
-"\n"
-"¡Hola!\n"
-"\n"
-"Gracias por registrarse para Community PlanIt! Nos alegra que haya decidido \n"
-"unirse a nosotros para ayudar a dar forma a una visión de su comunidad.\n"
-"\n"
-"Desde %(start_date)s través %(end_date)s, estamos usando \n"
-"https://communityplanit.org/ como una forma de involucrar a los interesados \n"
-"en el largo plazo, la planificación de toda la ciudad como pensamos hacia el \n"
-"futuro. La retroalimentación que recibimos se consideran al tomar decisiones \n"
-"futuras de política en las Escuelas Públicas de Boston. Recuerde que usted \n"
-"puede firmar para participar tantas veces como desee, desde cualquier lugar \n"
-"con acceso a Internet. Esperamos que usted comparta sus pensamientos acerca \n"
-"de BPS por completar todas las actividades, interactuar con otros usuarios, \n"
-"y el gasto de sus fichas en el juego de los temas que importan a la mayoría \n"
-"de ustedes. \n"
-"\n"
-"Habrá una reunión en persona en English High el 20 de octubre a las 6pm. Se \n"
-"reúnen con otros jugadores para diseñar un plan para seguir adelante. Y una \n"
-"cosa más ... un nuevo Rincón de los lectores electrónicos se sortearon a uno \n"
-"de los perceptores de punto de los cincuenta mejores.\n"
-"\n"
-"Planificación feliz!\n"
-"\n"
-"El equipo de Community PlanIt\n"
 
-#: templates/admin/base.html:31 templates/layouts/base.html:50
-#: templates/layouts/base.html.py:55
+#: templates/admin.cpi/base.html:31 templates/layouts/base.html:52
+#: templates/layouts/base.html.py:61
 msgid "Home"
 msgstr "Inicio"
 
-#: templates/admin/base.html:48
+#: templates/admin.cpi/base.html:48
 msgid "Welcome,"
 msgstr "Bienvenido,"
 
-#: templates/admin/base.html:58
+#: templates/admin.cpi/base.html:58
 msgid "Change password"
 msgstr "Cambiar la contraseña"
 
-#: templates/admin/base.html:65
+#: templates/admin.cpi/base.html:65
 msgid "Log out"
 msgstr "Salir"
 
-#: templates/admin/index.html:47
+#: templates/admin.cpi/index.html:47 templates/admin.cpi/original_list.txt:3
 #, python-format
 msgid "Models available in the %(name)s application."
 msgstr "Modelos disponibles en el %(name)s  de aplicación."
 
-#: templates/admin/index.html:48
+#: templates/admin.cpi/index.html:48 templates/admin.cpi/original_list.txt:4
 #, python-format
 msgid "%(name)s"
 msgstr ""
 
-#: templates/admin/index.html:58
+#: templates/admin.cpi/index.html:58 templates/admin.cpi/original_list.txt:14
 msgid "Add"
 msgstr "Añadir"
 
-#: templates/admin/index.html:64
+#: templates/admin.cpi/index.html:64 templates/admin.cpi/original_list.txt:20
 msgid "Change"
 msgstr "Cambio"
 
-#: templates/admin/index.html:74
+#: templates/admin.cpi/index.html:74
 msgid "You don't have permission to edit anything."
 msgstr "Usted no tiene permiso para hacer cualquier cosa."
 
-#: templates/admin/index.html:82
+#: templates/admin.cpi/index.html:82
 msgid "Recent Actions"
 msgstr "Acciones recientes"
 
-#: templates/admin/index.html:83
+#: templates/admin.cpi/index.html:83
 msgid "My Actions"
 msgstr "Mis acciones"
 
-#: templates/admin/index.html:87
+#: templates/admin.cpi/index.html:87
 msgid "None available"
 msgstr "No disponible"
 
-#: templates/admin/index.html:101
+#: templates/admin.cpi/index.html:101
 msgid "Unknown content"
 msgstr "Contenido desconocido"
 
-#: templates/admin/login.html:22
+#: templates/admin.cpi/login.html:22
 msgid "Username:"
 msgstr "Nombre de usuario:"
 
-#: templates/admin/login.html:29
+#: templates/admin.cpi/login.html:29
 msgid "Log in"
 msgstr "Acceder"
 
-#: templates/admin/nani/edit_inline/tabular.html:12
-#: templates/admin/nani/edit_inline/tabular.html:14
+#: templates/admin.cpi/nani/edit_inline/tabular.html:12
+#: templates/admin.cpi/nani/edit_inline/tabular.html:14
 msgid "Delete Translation"
 msgstr "Eliminar traducción"
 
-#: templates/admin/nani/edit_inline/tabular.html:25
+#: templates/admin.cpi/nani/edit_inline/tabular.html:25
 msgid "Delete?"
 msgstr "¿Borrar?"
 
-#: templates/admin/nani/edit_inline/tabular.html:38
+#: templates/admin.cpi/nani/edit_inline/tabular.html:38
 msgid "View on site"
 msgstr "Ver en el sitio"
 
-#: templates/admin/nani/edit_inline/tabular.html:123
+#: templates/admin.cpi/nani/edit_inline/tabular.html:123
 #, python-format
 msgid "Add another %(verbose_name)s"
 msgstr "Añade otra %(verbose_name)s "
 
-#: templates/admin/nani/edit_inline/tabular.html:126
+#: templates/admin.cpi/nani/edit_inline/tabular.html:126
 msgid "Remove"
 msgstr "Eliminar"
 
@@ -765,40 +799,43 @@ msgstr "Todas las afiliaciones"
 msgid "Affiliations"
 msgstr "Afiliaciones"
 
-#: templates/affiliations/base.html:12
-#, python-format
+#: templates/affiliations/base.html:11
+#, fuzzy, python-format
 msgid ""
 "\n"
-"            <span class=\"highlight\">%(player_count)s</span> player, who has scored <span class=\"highlight\">%(affiliation_points)s</span> points.\n"
-"            "
+"    <span class=\"highlight\">%(player_count)s</span> player, who has scored "
+"<span class=\"highlight\">%(affiliation_points)s</span> points.\n"
+"    "
 msgid_plural ""
 "\n"
-"            <span class=\"highlight\">%(player_count)s</span> players, who have scored a collective <span class=\"highlight\">%(affiliation_points)s</span> points.\n"
-"        "
+"    <span class=\"highlight\">%(player_count)s</span> players, who have "
+"scored a collective <span class=\"highlight\">%(affiliation_points)s</span> "
+"points.\n"
 msgstr[0] ""
 "\n"
-"<span class=\"highlight\">%(player_count)s</span> jugadores, que han anotado <span class=\"highlight\">%(affiliation_points)s</span> puntos."
+"<span class=\"highlight\">%(player_count)s</span> jugadores, que han anotado "
+"<span class=\"highlight\">%(affiliation_points)s</span> puntos."
 msgstr[1] ""
 "\n"
-"<span class=\"highlight\">%(player_count)s</span> jugador, que ha marcado <span class=\"highlight\">%(affiliation_points)s</span> puntos."
+"<span class=\"highlight\">%(player_count)s</span> jugador, que ha marcado "
+"<span class=\"highlight\">%(affiliation_points)s</span> puntos."
 
-#: templates/affiliations/base.html:30
+#: templates/affiliations/base.html:29
 msgid "Leaderboard"
 msgstr "La tabla de posiciones"
 
-#: templates/affiliations/base.html:32 templates/affiliations/base.html:50
+#: templates/affiliations/base.html:31
 msgid "Rank"
 msgstr "Rango"
 
-#: templates/affiliations/base.html:48
-msgid "Affiliation Leaderboard"
-msgstr "La tabla de posiciones"
+#: templates/challenges/add.html:28 templates/challenges/base.html:80
+#: templates/comments/comment.html:74 templates/crowds/add.html:27
+#: templates/crowds/base.html:61 templates_redesign/comments/comment.html:81
+#: templates_redesign/crowds/add.html:57
+msgid "characters left"
+msgstr "caracteres de la izquierda"
 
-#: templates/affiliations/base.html:63
-msgid "No affiliation found."
-msgstr "Sin afiliación encontrado."
-
-#: templates/challenges/all.html:4 templates/layouts/base.html:52
+#: templates/challenges/all.html:4
 msgid "Challenges"
 msgstr "Desafíos"
 
@@ -822,115 +859,157 @@ msgstr "Los desafíos del pasado"
 msgid "No past challenges found"
 msgstr "No encontró los desafíos del pasado"
 
-#: templates/challenges/all.html:69
+#: templates/challenges/all.html:71 templates/challenges/all.html.py:89
 msgid "points"
 msgstr "puntos"
 
-#: templates/challenges/all.html:78
+#: templates/challenges/all.html:80 templates/challenges/all.html.py:98
 msgid "There are no active challenges"
 msgstr "No hay activos desafíos"
 
-#: templates/challenges/all.html:78
+#: templates/challenges/all.html:80 templates/challenges/all.html.py:98
 msgid "Create one!"
 msgstr "Crear uno!"
 
-#: templates/challenges/all.html:83
-msgid "has ended"
-msgstr "ha terminado"
-
-#: templates/challenges/all.html:85
-msgid "You may not add or accept new challenges"
-msgstr "Usted no puede agregar o aceptar nuevos retos"
-
-#: templates/challenges/base.html:4
+#: templates/challenges/base.html:4 templates/crowds/base.html:4
 msgid "Challenge"
 msgstr "Desafío"
 
-#: templates/challenges/base.html:12
+#: templates/challenges/base.html:13
+#: templates/player_activities/official_responses.html:3
+#, fuzzy
+msgid "Response"
+msgstr "Respuestas"
+
+#: templates/challenges/base.html:32 templates/crowds/base.html:13
 #, python-format
 msgid "Created by <a href=\"%(creator_profile_url)s\">%(creator)s</a>"
 msgstr "Creado por <a href=\"%(creator_profile_url)s\">%(creator)s</a>"
 
-#: templates/challenges/base.html:20
+#: templates/challenges/base.html:40 templates/crowds/base.html:21
 msgid "This challenge has expired."
 msgstr "Este desafío ha expirado."
 
-#: templates/challenges/base.html:22
+#: templates/challenges/base.html:42 templates/crowds/base.html:23
 msgid "This challenge has not yet started."
 msgstr "Este desafío no ha comenzado todavía."
 
-#: templates/challenges/base.html:30
+#: templates/challenges/base.html:50 templates/crowds/base.html:31
 msgid "Provide evidence to complete this challenge:"
 msgstr "Proporcionar evidencia para completar este desafío:"
 
-#: templates/challenges/base.html:38
+#: templates/challenges/base.html:58 templates/crowds/base.html:39
 msgid ""
 "\n"
-"                Include <a id=\"add-video\" href=\"#add-video\" class=\"add-video button small\">Video</a> or <a id=\"add-picture\" href=\"#add-picture\" class=\"add-picture button small\">Picture</a>\n"
+"                Include <a id=\"add-video\" href=\"#add-video\" class=\"add-"
+"video button small\">Video</a> or <a id=\"add-picture\" href=\"#add-picture"
+"\" class=\"add-picture button small\">Picture</a>\n"
 "                "
 msgstr ""
 "\n"
-"Incluye <a id=\"add-video\" href=\"#add-video\" class=\"add-video button small\">vídeo</a> o <a id=\"add-picture\" href=\"#add-picture\" class=\"add-picture button small\">de imagen</a>"
+"Incluye <a id=\"add-video\" href=\"#add-video\" class=\"add-video button "
+"small\">vídeo</a> o <a id=\"add-picture\" href=\"#add-picture\" class=\"add-"
+"picture button small\">de imagen</a>"
 
-#: templates/challenges/base.html:43
+#: templates/challenges/base.html:63 templates/crowds/base.html:44
 msgid ""
-"Paste the link to your video below. For Vimeo, it should look like "
-"http://vimeo.com/VIDEOID. For YouTube, it should look like "
-"http://youtu.be/VIDEOID or http://www.youtube.com/watch?v=VIDEOID."
+"Paste the link to your video below. For Vimeo, it should look like http://"
+"vimeo.com/VIDEOID. For YouTube, it should look like http://youtu.be/VIDEOID "
+"or http://www.youtube.com/watch?v=VIDEOID."
 msgstr ""
-"Pegue el enlace a su vídeo a continuación. De Vimeo, que debe ser "
-"similar http://vimeo.com/VIDEOID. Para YouTube, que debe ser similar o"
-" http://youtu.be/VIDEOID http://www.youtube.com/watch?v=VIDEOID."
+"Pegue el enlace a su vídeo a continuación. De Vimeo, que debe ser similar "
+"http://vimeo.com/VIDEOID. Para YouTube, que debe ser similar o http://youtu."
+"be/VIDEOID http://www.youtube.com/watch?v=VIDEOID."
 
-#: templates/challenges/base.html:46 templates/challenges/base.html.py:53
+#: templates/challenges/base.html:66 templates/challenges/base.html.py:73
+#: templates/crowds/base.html:47 templates/crowds/base.html.py:54
 msgid "add"
 msgstr "añadir"
 
-#: templates/challenges/base.html:47 templates/challenges/base.html.py:54
+#: templates/challenges/base.html:67 templates/challenges/base.html.py:74
+#: templates/crowds/base.html:48 templates/crowds/base.html.py:55
 msgid "remove"
 msgstr "eliminar"
 
-#: templates/challenges/base.html:51
+#: templates/challenges/base.html:71 templates/crowds/base.html:52
 msgid "Picture (max size 5MB)"
 msgstr "Imagen (tamaño máximo de 5 MB)"
 
-#: templates/challenges/base.html:60
-msgid "characters left"
-msgstr "caracteres de la izquierda"
-
-#: templates/challenges/base.html:61
+#: templates/challenges/base.html:81 templates/crowds/base.html:62
 msgid "Submit response"
 msgstr "Enviar respuesta"
 
-#: templates/challenges/base.html:67
-#: templates/player_activities/empathy_overview.html:37
-#: templates/player_activities/multi_response_overview.html:34
-#: templates/player_activities/open_ended_overview.html:30
-#: templates/player_activities/single_response_overview.html:37
+#: templates/challenges/base.html:87 templates/crowds/base.html:68
+#: templates/player_activities/empathy_overview.html:40
+#: templates/player_activities/multi_response_overview.html:40
+#: templates/player_activities/open_ended_overview.html:31
+#: templates/player_activities/single_response_overview.html:39
+#: templates_redesign/player_activities/empathy_overview.html:44
+#: templates_redesign/player_activities/multi_response_overview.html:41
+#: templates_redesign/player_activities/open_ended_overview.html:36
+#: templates_redesign/player_activities/single_response_overview.html:43
 msgid "Responses"
 msgstr "Respuestas"
 
-#: templates/challenges/base.html:73
-msgid "response"
-msgstr "respuesta"
-
-#: templates/challenges/base.html:86
+#: templates/challenges/base.html:107 templates/crowds/base.html:88
 msgid "No comments found."
 msgstr "No se han encontrado comentarios."
 
-#: templates/challenges/base.html:94
+#: templates/challenges/base.html:112 templates/crowds/base.html:93
 msgid "No one has completed this challenge."
 msgstr "Nadie ha completado este reto."
 
-#: templates/comments/comment.html:24
-msgid "From"
-msgstr "De"
+#: templates/comments/comment.html:5 templates/comments/comment.html.py:7
+#: templates_redesign/comments/comment.html:8
+msgid "response"
+msgstr "respuesta"
 
 #: templates/comments/post.html:10
 msgid "Share your thoughts:"
 msgstr "Comparta sus ideas:"
 
-#: templates/instances/all.html:6 templates/layouts/base.html:56
+#: templates/crowds/add.html:8 templates/crowds/add.html.py:55
+#: templates_redesign/crowds/add.html:86
+msgid "Rally a Crowd"
+msgstr ""
+
+#: templates/crowds/all.html:4 templates/layouts/base.html:54
+msgid "Crowds"
+msgstr ""
+
+#: templates/crowds/all.html:6
+#, fuzzy
+msgid "Available Crowds"
+msgstr "Desafíos disponibles"
+
+#: templates/crowds/all.html:70 templates/crowds/all.html.py:93
+#, fuzzy
+msgid "Participants"
+msgstr "participante"
+
+#: templates/crowds/all.html:78
+msgid "Join this Crowd!"
+msgstr ""
+
+#: templates/crowds/all.html:80
+msgid "Leave this Crowd!"
+msgstr ""
+
+#: templates/crowds/all.html:85
+#, fuzzy
+msgid "There are no active crowds"
+msgstr "No hay activos desafíos"
+
+#: templates/crowds/all.html:85 templates/crowds/all.html.py:99
+msgid "Rally a Crowd!"
+msgstr ""
+
+#: templates/crowds/all.html:99
+#, fuzzy
+msgid "There are no past crowds"
+msgstr "No hay activos desafíos"
+
+#: templates/instances/all.html:6 templates/layouts/base.html:62
 msgid "Communities"
 msgstr "Comunidades"
 
@@ -962,123 +1041,116 @@ msgstr "Comienza"
 msgid "Past"
 msgstr "Pasado"
 
-#: templates/layouts/base.html:51 templates/missions/all.html:8
+#: templates/layouts/base.html:53 templates/missions/all.html:6
 msgid "Missions"
 msgstr "Misiones"
 
-#: templates/layouts/base.html:53 templates/values/all.html:5
+#: templates/layouts/base.html:55 templates/values/all.html:5
 msgid "Token Depot"
 msgstr "Depósito de Fichas"
 
-#: templates/layouts/base.html:57
-msgid "About"
-msgstr "Sobre"
-
-#: templates/layouts/base.html:58
-msgid "Contact"
-msgstr "Contacto"
-
-#: templates/layouts/base.html:81
+#: templates/layouts/base.html:59
 msgid "Logout"
 msgstr "Cerrar sesión"
 
-#: templates/missions/all.html:12
+#: templates/layouts/base.html:63 templates_redesign/static/about.html:4
+#: templates_redesign/static/faq.html:4
+msgid "About"
+msgstr "Sobre"
+
+#: templates/layouts/base.html:64 templates_redesign/static/contact.html:4
+msgid "Contact"
+msgstr "Contacto"
+
+#: templates/missions/all.html:10
 msgid "is not active at this time"
 msgstr "no está activa en este momento"
 
-#: templates/missions/all.html:32
+#: templates/missions/all.html:37
 msgid "There are no active missions at this time"
 msgstr "No hay misiones activas en este momento"
 
-#: templates/missions/all.html:36
+#: templates/missions/all.html:41
 msgid "Upcoming Missions"
 msgstr "Próximas misiones"
 
-#: templates/missions/all.html:48
+#: templates/missions/all.html:53
 msgid "There are no upcoming missions at this time."
 msgstr "No hay misiones futuras en este momento."
 
-#: templates/missions/all.html:52
+#: templates/missions/all.html:57
 msgid "Past Missions"
 msgstr "Misiones pasado"
 
-#: templates/missions/all.html:64
+#: templates/missions/all.html:69
 msgid "There are no past missions at this time."
 msgstr "No hay misiones anteriores en este momento."
 
-#: templates/missions/base.html:5
+#: templates/missions/base.html:5 templates_redesign/missions/base.html:9
+#: templates_redesign/player_activities/new_activity_base.html:9
 msgid "Mission"
 msgstr "Misión"
-
-#: templates/missions/base.html:12
-msgid "This mission has not yet started."
-msgstr "Esta misión aún no ha comenzado."
-
-#: templates/missions/base.html:12
-#, python-format
-msgid "Check back on %(start_date)s to join the conversation."
-msgstr "Vuelve en %(start_date)s para unirse a la conversación."
 
 #: templates/missions/base.html:16
 #, python-format
 msgid "This mission ended on %(end_date)s."
 msgstr "Esta misión finalizó el %(end_date)s."
 
-#: templates/missions/base.html:33
+#: templates/missions/base.html:36
 msgid "You completed all the activities in this mission."
 msgstr "Has completado todas las actividades en esta misión."
 
-#: templates/missions/base.html:34
+#: templates/missions/base.html:37
 msgid "Congratulations!"
 msgstr "¡Felicitaciones!"
 
-#: templates/missions/base.html:35
+#: templates/missions/base.html:38
 msgid ""
-"Now, you can look at the activities again to see what others have said,"
-" reply to and like comments, and create challenges."
+"Now, you can look at the activities again to see what others have said, "
+"reply to and like comments, and create challenges."
 msgstr ""
-"Ahora, se puede ver en las actividades de nuevo para ver lo que otros "
-"han dicho, responder y como comentarios, y crear problemas."
+"Ahora, se puede ver en las actividades de nuevo para ver lo que otros han "
+"dicho, responder y como comentarios, y crear problemas."
 
-#: templates/missions/base.html:37
+#: templates/missions/base.html:40
 msgid "Be sure to come back again on"
 msgstr "Asegúrese de volver de nuevo en"
 
-#: templates/missions/base.html:37
+#: templates/missions/base.html:40
 msgid "when the new mission starts."
 msgstr "cuando comienza la nueva misión."
 
-#: templates/missions/base.html:39
+#: templates/missions/base.html:42
 msgid "This is the last mission."
 msgstr "Esta es la última misión."
 
-#: templates/missions/base.html:40
+#: templates/missions/base.html:43
 msgid ""
-"Hope to see you at the town hall meeting to discuss what happened and "
-"plan for next steps."
+"Hope to see you at the town hall meeting to discuss what happened and plan "
+"for next steps."
 msgstr ""
-"Esperamos verle en la reunión en el ayuntamiento para hablar de lo "
-"ocurrido y planificar los próximos pasos."
+"Esperamos verle en la reunión en el ayuntamiento para hablar de lo ocurrido "
+"y planificar los próximos pasos."
 
-#: templates/missions/base.html:46
+#: templates/missions/base.html:50
 msgid "You've completed"
 msgstr "Usted ha terminado"
 
-#: templates/missions/base.html:46
+#: templates/missions/base.html:50
 msgid "activities"
 msgstr "las actividades"
 
-#: templates/missions/base.html:48
+#: templates/missions/base.html:52
 #: templates/player_activities/all_activities_paginated.html:5
 msgid "Activities"
 msgstr "Actividades"
 
-#: templates/missions/base.html:67
+#: templates/missions/base.html:72
 #: templates/player_activities/all_activities.html:10
 msgid "pts"
 msgstr "pts"
 
-#: templates/missions/base.html:86
+#: templates/missions/base.html:91
 #: templates/player_activities/all_activities.html:24
 msgid "No activities found"
 msgstr "No hay actividades que se encuentran"
@@ -1097,105 +1169,152 @@ msgstr "próximo"
 msgid "Activity"
 msgstr "Actividad"
 
-#: templates/player_activities/empathy_base.html:23
-#: templates/player_activities/open_base.html:14
+#: templates/player_activities/empathy_base.html:24
+#: templates/player_activities/open_base.html:15
+#: templates_redesign/player_activities/empathy_base.html:24
+#: templates_redesign/player_activities/open_base.html:15
 msgid "Enter your response (required)"
 msgstr "Ingrese su respuesta (requerido)"
 
 #: templates/player_activities/empathy_overview.html:8
 #: templates/player_activities/multi_response_overview.html:8
-#: templates/player_activities/open_ended_overview.html:8
 #: templates/player_activities/single_response_overview.html:8
+#: templates_redesign/player_activities/empathy_overview.html:12
+#: templates_redesign/player_activities/multi_response_overview.html:12
+#: templates_redesign/player_activities/single_response_overview.html:12
+#, fuzzy
+msgid "Return to mission"
+msgstr "Misión actual"
+
+#: templates/player_activities/empathy_overview.html:9
+#: templates/player_activities/multi_response_overview.html:9
+#: templates/player_activities/open_ended_overview.html:9
+#: templates/player_activities/single_response_overview.html:9
 #, python-format
 msgid ""
 "\n"
-"    Thanks for completing this activity. When you're ready for more, visit the <a href=\"%(mission_url)s\">mission page</a>.\n"
+"    Thanks for completing this activity. When you're ready for more, visit "
+"the <a href=\"%(mission_url)s\">mission page</a>.\n"
 "    "
 msgstr ""
 "\n"
-"Gracias por completar esta actividad. Cuando esté listo para realizar otra, visite la <a href=\"%(mission_url)s\">página de la misión</a> ."
+"Gracias por completar esta actividad. Cuando esté listo para realizar otra, "
+"visite la <a href=\"%(mission_url)s\">página de la misión</a> ."
 
-#: templates/player_activities/empathy_overview.html:28
-#: templates/player_activities/open_ended_overview.html:21
-#: templates/player_activities/single_response_overview.html:21
+#: templates/player_activities/empathy_overview.html:30
+#: templates/player_activities/open_ended_overview.html:22
+#: templates/player_activities/single_response_overview.html:23
+#: templates_redesign/player_activities/empathy_overview.html:34
+#: templates_redesign/player_activities/open_ended_overview.html:27
+#: templates_redesign/player_activities/single_response_overview.html:27
 msgid "You answered:"
 msgstr "Le respondió:"
 
-#: templates/player_activities/empathy_overview.html:30
-#: templates/player_activities/open_ended_overview.html:23
-#: templates/player_activities/single_response_overview.html:22
+#: templates/player_activities/empathy_overview.html:32
+#: templates/player_activities/open_ended_overview.html:24
+#: templates/player_activities/single_response_overview.html:24
+#: templates_redesign/player_activities/empathy_overview.html:36
+#: templates_redesign/player_activities/open_ended_overview.html:29
+#: templates_redesign/player_activities/single_response_overview.html:28
 msgid "Replay"
 msgstr "Repetición"
+
+#: templates/player_activities/empathy_overview.html:59
+#: templates/player_activities/map_overview.html:53
+#: templates/player_activities/multi_response_overview.html:64
+#: templates/player_activities/open_ended_overview.html:54
+#: templates/player_activities/single_response_overview.html:62
+#: templates_redesign/player_activities/empathy_overview.html:63
+#: templates_redesign/player_activities/map_overview.html:58
+#: templates_redesign/player_activities/multi_response_overview.html:65
+#: templates_redesign/player_activities/open_ended_overview.html:59
+#: templates_redesign/player_activities/single_response_overview.html:66
+msgid "Complete the activity to see everyone's responses"
+msgstr ""
 
 #: templates/player_activities/map_response.html:5
 #: templates/player_activities/single_response_response.html:5
 msgid "Add a comment"
 msgstr "Añadir un comentario"
 
-#: templates/player_activities/multi_response_overview.html:18
+#: templates/player_activities/multi_response_overview.html:23
+#: templates_redesign/player_activities/multi_response_overview.html:24
 msgid "Your answer:"
 msgstr "Su respuesta:"
 
-#: templates/player_activities/multi_response_overview.html:21
-#: templates/player_activities/single_response_overview.html:25
+#: templates/player_activities/multi_response_overview.html:26
+#: templates/player_activities/single_response_overview.html:27
+#: templates_redesign/player_activities/multi_response_overview.html:27
+#: templates_redesign/player_activities/single_response_overview.html:31
 msgid "See Your Answer"
 msgstr "Ver la respuesta"
 
-#: templates/player_activities/multi_response_overview.html:27
-#: templates/player_activities/single_response_overview.html:31
+#: templates/player_activities/multi_response_overview.html:33
+#: templates/player_activities/single_response_overview.html:33
+#: templates_redesign/player_activities/multi_response_overview.html:34
+#: templates_redesign/player_activities/single_response_overview.html:37
 msgid "Response Summary"
 msgstr "Resumen de la respuesta"
 
-#: templates/player_activities/multi_response_overview.html:54
+#: templates/player_activities/multi_response_overview.html:60
+#: templates_redesign/player_activities/multi_response_overview.html:61
 msgid "no responses have been submitted"
 msgstr "no respuestas se han presentado"
 
-#: templates/player_activities/open_ended_overview.html:52
-#: templates/player_activities/single_response_overview.html:57
+#: templates/player_activities/open_ended_overview.html:51
+#: templates/player_activities/single_response_overview.html:59
+#: templates_redesign/player_activities/open_ended_overview.html:56
+#: templates_redesign/player_activities/single_response_overview.html:63
 msgid "No responses submitted"
 msgstr "No hay respuestas presentadas"
 
 #: templates/static/contact.html:6 templates/static/contact.html.py:12
+#: templates_redesign/static/contact.html:9
 msgid "Contact Us"
 msgstr "Contáctenos"
 
-#: templates/static/contact.html:13
+#: templates/static/contact.html:13 templates_redesign/static/contact.html:10
 msgid ""
-"We would love to hear from you and answer any questions you have about "
-"the project!"
+"We would love to hear from you and answer any questions you have about the "
+"project!"
 msgstr ""
-"Nos encantaría saber de usted y responder a cualquier pregunta que "
-"tenga sobre el proyecto!"
+"Nos encantaría saber de usted y responder a cualquier pregunta que tenga "
+"sobre el proyecto!"
 
-#: templates/static/contact.html:14
-msgid ""
-"For comments or questions, please contact us at "
-"admin@communityplanit.org."
+#: templates/static/contact.html:14 templates_redesign/static/contact.html:11
+#, fuzzy
+msgid "For comments or questions, please contact us at"
 msgstr ""
 "Para comentarios o preguntas, por favor contacte con nosotros en "
 "admin@communityplanit.org."
 
-#: templates/static/contact.html:17
+#: templates/static/contact.html:17 templates_redesign/static/contact.html:17
 msgid "Follow Us"
 msgstr "Siga con nosotros"
 
 #: templates/static/contact.html:19
 msgid ""
 "\n"
-"    Learn more about the Engagement Game Lab at our <a href=\"http://engagementgamelab.org\">website</a>.\n"
+"    Learn more about the Engagement Game Lab at our <a href=\"http://"
+"engagementgamelab.org\">website</a>.\n"
 "    "
 msgstr ""
 "\n"
-"Obtenga más información sobre el Engagement Game Lab en nuestra <a href=\"http://engagementgamelab.org\">página web</a> ."
+"Obtenga más información sobre el Engagement Game Lab en nuestra <a href="
+"\"http://engagementgamelab.org\">página web</a> ."
 
 #: templates/static/contact.html:24
 msgid ""
 "\n"
-"    You can also follow us on <a href=\"http://twitter.com/communityplanit\">Twitter</a> and <a href=\"http://www.facebook.com/CommunityPlanIt\">Facebook</a>.\n"
+"    You can also follow us on <a href=\"http://twitter.com/communityplanit"
+"\">Twitter</a> and <a href=\"http://www.facebook.com/CommunityPlanIt"
+"\">Facebook</a>.\n"
 "    "
 msgstr ""
 "\n"
-"También puede seguir con nosotros en <a href=\"http://twitter.com/communityplanit\">Twitter</a> y <a href=\"http://www.facebook.com/CommunityPlanIt\">Facebook</a> ."
+"También puede seguir con nosotros en <a href=\"http://twitter.com/"
+"communityplanit\">Twitter</a> y <a href=\"http://www.facebook.com/"
+"CommunityPlanIt\">Facebook</a> ."
 
 #: templates/values/all.html:7
 msgid "Token"
@@ -1210,29 +1329,36 @@ msgstr "Depósito"
 msgid ""
 "\n"
 "            What should %(instance)s prioritize? Spend your tokens on the\n"
-"            values that matter to you and tell decision-makers what's important\n"
+"            values that matter to you and tell decision-makers what's "
+"important\n"
 "            to the community.\n"
 "            "
 msgstr ""
 "\n"
-"¿Qué debería %(instance)s priorizar? Pasar sus fichas en los valores que son importantes para usted y le dirá los tomadores de decisiones lo que es importante para la comunidad."
+"¿Qué debería %(instance)s priorizar? Pasar sus fichas en los valores que son "
+"importantes para usted y le dirá los tomadores de decisiones lo que es "
+"importante para la comunidad."
 
 #: templates/values/all.html:149
 #, python-format
 msgid ""
 "\n"
-"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</span> token to spend.\n"
+"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</"
+"span> token to spend.\n"
 "            "
 msgid_plural ""
 "\n"
-"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</span> tokens to spend.\n"
+"            You have <span style=\"font-weight: bold\">%(pretty_coins)s</"
+"span> tokens to spend.\n"
 "            "
 msgstr[0] ""
 "\n"
-"Usted tiene <span style=\"font-weight: bold\">%(pretty_coins)s</span> fichas para gastar."
+"Usted tiene <span style=\"font-weight: bold\">%(pretty_coins)s</span> fichas "
+"para gastar."
 msgstr[1] ""
 "\n"
-"Usted tiene <span style=\"font-weight: bold\">%(pretty_coins)s</span> ficha para gastar."
+"Usted tiene <span style=\"font-weight: bold\">%(pretty_coins)s</span> ficha "
+"para gastar."
 
 #: templates/values/all.html:162
 msgid "Your tokens <div class=\"spent\">earned:</div>"
@@ -1277,6 +1403,306 @@ msgstr "No hay fichas se han gastado."
 #: templates/values/all.html:261
 msgid "You haven't spent any tokens yet."
 msgstr "Que no han pasado todavía fichas."
+
+#: templates_redesign/base.html:50
+msgid "Play the game. Plan the future."
+msgstr ""
+
+#: templates_redesign/base.html:54
+#, fuzzy
+msgid "Sign In"
+msgstr "Regístrate"
+
+#: templates_redesign/accounts/all.html:5
+#: templates_redesign/accounts/all.html:11
+#: templates_redesign/instances/leaderboard.html:5
+#: templates_redesign/instances/stream.html:5
+#, fuzzy
+msgid "Find Players"
+msgstr "Jugador de nuevo?"
+
+#: templates_redesign/accounts/profile.html:5
+msgid "Profile"
+msgstr ""
+
+#: templates_redesign/accounts/profile_edit.html:5
+#, fuzzy
+msgid "Edit Profile"
+msgstr "Actualice su perfil"
+
+#: templates_redesign/attachments/index.html:9
+msgid "Become an Expert"
+msgstr ""
+
+#: templates_redesign/comments/comment.html:10
+msgid "From"
+msgstr "De"
+
+#: templates_redesign/crowds/add.html:36
+msgid "- Create a Get Together!"
+msgstr ""
+
+#: templates_redesign/crowds/all.html:14
+msgid "+ Create a Get Together!"
+msgstr ""
+
+#: templates_redesign/crowds/all.html:28
+msgid "players attending"
+msgstr ""
+
+#: templates_redesign/crowds/all.html:32
+#, fuzzy
+msgid "There are no crowds"
+msgstr "No hay activos desafíos"
+
+#: templates_redesign/crowds/crowd.html:32
+msgid "Join"
+msgstr ""
+
+#: templates_redesign/crowds/crowd.html:34
+msgid "Joined! You're going"
+msgstr ""
+
+#: templates_redesign/crowds/crowd.html:36
+msgid "Can't make it?"
+msgstr ""
+
+#: templates_redesign/crowds/crowd.html:36
+msgid "Unjoin"
+msgstr ""
+
+#: templates_redesign/crowds/crowd.html:40
+#, fuzzy
+msgid "Total Participants"
+msgstr "participante"
+
+#: templates_redesign/missions/base.html:36
+msgid ""
+"By answering challenge questions you are helping plan your community, and "
+"you are earning points that move you towards accomplishing the mission."
+msgstr ""
+
+#: templates_redesign/missions/base.html:39
+#, fuzzy
+msgid "You have completed"
+msgstr "Usted ha terminado"
+
+#: templates_redesign/missions/base.html:39
+#, fuzzy
+msgid "challenges"
+msgstr "Desafíos"
+
+#: templates_redesign/missions/base.html:75
+msgid "There are currently no activities for this mission. Check back later."
+msgstr ""
+
+#: templates_redesign/player_activities/empathy_overview.html:13
+#: templates_redesign/player_activities/multi_response_overview.html:13
+#: templates_redesign/player_activities/open_ended_overview.html:13
+#: templates_redesign/player_activities/single_response_overview.html:13
+#, fuzzy, python-format
+msgid ""
+"\n"
+"                Thanks for completing this activity. When you're ready for "
+"more, visit the <a href=\"%(mission_url)s\">mission page</a>.\n"
+"                "
+msgstr ""
+"\n"
+"Gracias por completar esta actividad. Cuando esté listo para realizar otra, "
+"visite la <a href=\"%(mission_url)s\">página de la misión</a> ."
+
+#: templates_redesign/player_activities/new_activity_base.html:36
+msgid ""
+"Response to questions that your community has posed, or ask one of your own. "
+"Adding to the dialogue will help make sure that everyones voice is heard."
+msgstr ""
+
+#: templates_redesign/static/contact.html:19
+#, fuzzy
+msgid ""
+"\n"
+"        Learn more about the Engagement Game Lab at our <a href=\"http://"
+"engagementgamelab.org\">website</a>.\n"
+"        "
+msgstr ""
+"\n"
+"Obtenga más información sobre el Engagement Game Lab en nuestra <a href="
+"\"http://engagementgamelab.org\">página web</a> ."
+
+#: templates_redesign/static/contact.html:24
+#, fuzzy
+msgid ""
+"\n"
+"        You can also follow us on <a href=\"http://twitter.com/"
+"communityplanit\">Twitter</a> and <a href=\"http://www.facebook.com/"
+"CommunityPlanIt\">Facebook</a>.\n"
+"        "
+msgstr ""
+"\n"
+"También puede seguir con nosotros en <a href=\"http://twitter.com/"
+"communityplanit\">Twitter</a> y <a href=\"http://www.facebook.com/"
+"CommunityPlanIt\">Facebook</a> ."
+
+#: templates_redesign/static/howtoplay.html:4
+msgid "How to Play"
+msgstr ""
+
+#: templates_redesign/static/privacy.html:4
+#, fuzzy
+msgid "Privacy"
+msgstr "Su privacidad"
+
+#: templates_redesign/static/terms.html:4
+msgid "Terms"
+msgstr ""
+
+#~ msgid "Your neighborhood, town or city"
+#~ msgstr "Su barrio, pueblo o ciudad"
+
+#~ msgid ""
+#~ "Confirm that you have read and agree to the <a target=\"_blank\" href="
+#~ "\"%(terms)s\">Terms of Use</a>."
+#~ msgstr ""
+#~ "Confirmar que ha leído y acepto los <a target=\"_blank\" href=\"%(terms)s"
+#~ "\">Términos de Uso</a>."
+
+#~ msgid "Please provide your first name."
+#~ msgstr "Por favor escriba su nombre de pila."
+
+#~ msgid "Please provide your last name."
+#~ msgstr "Por favor escriba su apellido."
+
+#~ msgid "Please provide a password."
+#~ msgstr "Por favor, ingrese su contraseña."
+
+#~ msgid "Please type the password again."
+#~ msgstr "Por favor, escriba la contraseña de nuevo."
+
+#~ msgid "Income"
+#~ msgstr "Ingresos"
+
+#~ msgid "If the way you learned about us is not listed, please tell us"
+#~ msgstr ""
+#~ "Si la forma en que ha aprendido de nosotros no está en la lista, por "
+#~ "favor díganos"
+
+#~ msgid ""
+#~ "Please place a comma between each affiliation (ie: YMCA, James Memorial "
+#~ "Highschool, Gardening Club)."
+#~ msgstr ""
+#~ "Por favor, coloque una coma entre cada afiliación (es decir: YMCA, James "
+#~ "Highschool Memorial, Club de Jardinería)."
+
+#~ msgid "Stake"
+#~ msgstr "Estaca"
+
+#~ msgid "Username"
+#~ msgstr "Nombre de usuario"
+
+#~ msgid "ended on"
+#~ msgstr "terminó el"
+
+#~ msgid "with"
+#~ msgstr "con"
+
+#~ msgid "Thanks for playing!"
+#~ msgstr "Gracias por jugar!"
+
+#~ msgid "No news found"
+#~ msgstr "No hemos encontrado noticias"
+
+#~ msgid ""
+#~ "\n"
+#~ "Hello!\n"
+#~ "\n"
+#~ "Thanks for registering for Community PlanIt ! We're glad you've decided "
+#~ "to join\n"
+#~ "us in helping to shape a vision for your community.\n"
+#~ "\n"
+#~ "From %(start_date)s through %(end_date)s,\n"
+#~ "we are using https://communityplanit.org/ as a way to engage stakeholders "
+#~ "in\n"
+#~ "long-range, city-wide planning as we think toward the future. The "
+#~ "feedback we\n"
+#~ "receive will be considered when making future policy decisions in the "
+#~ "Boston\n"
+#~ "Public Schools. Remember that you can sign on to participate as often as "
+#~ "you\n"
+#~ "like, from any place that has access to the Internet. We hope you will "
+#~ "share\n"
+#~ "your thoughts about BPS by completing all the activities, interacting "
+#~ "with\n"
+#~ "other users, and spending your in-game tokens on the issues that matter "
+#~ "to you\n"
+#~ "most.\n"
+#~ "\n"
+#~ "There will be an in-person meeting at English High on October 20th at "
+#~ "6pm.\n"
+#~ "Come together with other players to devise a plan for moving forward.  "
+#~ "And one\n"
+#~ "more thing...a brand new Nook e-reader will be raffled off to one of the "
+#~ "top\n"
+#~ "fifty point earners.\n"
+#~ "\n"
+#~ "Happy planning!\n"
+#~ "\n"
+#~ "The Community PlanIt Team\n"
+#~ msgstr ""
+#~ "\n"
+#~ "¡Hola!\n"
+#~ "\n"
+#~ "Gracias por registrarse para Community PlanIt! Nos alegra que haya "
+#~ "decidido \n"
+#~ "unirse a nosotros para ayudar a dar forma a una visión de su comunidad.\n"
+#~ "\n"
+#~ "Desde %(start_date)s través %(end_date)s, estamos usando \n"
+#~ "https://communityplanit.org/ como una forma de involucrar a los "
+#~ "interesados \n"
+#~ "en el largo plazo, la planificación de toda la ciudad como pensamos hacia "
+#~ "el \n"
+#~ "futuro. La retroalimentación que recibimos se consideran al tomar "
+#~ "decisiones \n"
+#~ "futuras de política en las Escuelas Públicas de Boston. Recuerde que "
+#~ "usted \n"
+#~ "puede firmar para participar tantas veces como desee, desde cualquier "
+#~ "lugar \n"
+#~ "con acceso a Internet. Esperamos que usted comparta sus pensamientos "
+#~ "acerca \n"
+#~ "de BPS por completar todas las actividades, interactuar con otros "
+#~ "usuarios, \n"
+#~ "y el gasto de sus fichas en el juego de los temas que importan a la "
+#~ "mayoría \n"
+#~ "de ustedes. \n"
+#~ "\n"
+#~ "Habrá una reunión en persona en English High el 20 de octubre a las 6pm. "
+#~ "Se \n"
+#~ "reúnen con otros jugadores para diseñar un plan para seguir adelante. Y "
+#~ "una \n"
+#~ "cosa más ... un nuevo Rincón de los lectores electrónicos se sortearon a "
+#~ "uno \n"
+#~ "de los perceptores de punto de los cincuenta mejores.\n"
+#~ "\n"
+#~ "Planificación feliz!\n"
+#~ "\n"
+#~ "El equipo de Community PlanIt\n"
+
+#~ msgid "Affiliation Leaderboard"
+#~ msgstr "La tabla de posiciones"
+
+#~ msgid "No affiliation found."
+#~ msgstr "Sin afiliación encontrado."
+
+#~ msgid "has ended"
+#~ msgstr "ha terminado"
+
+#~ msgid "You may not add or accept new challenges"
+#~ msgstr "Usted no puede agregar o aceptar nuevos retos"
+
+#~ msgid "This mission has not yet started."
+#~ msgstr "Esta misión aún no ha comenzado."
+
+#~ msgid "Check back on %(start_date)s to join the conversation."
+#~ msgstr "Vuelve en %(start_date)s para unirse a la conversación."
 
 #~ msgid "Created by %(creator)s"
 #~ msgstr "Creado por %(creator)s "

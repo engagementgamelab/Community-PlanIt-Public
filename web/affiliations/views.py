@@ -2,6 +2,7 @@ import datetime
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context, RequestContext, loader
+from django.shortcuts import render
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -55,8 +56,13 @@ def _get_affiliations_leaderboard():
 
 
 @login_required
-def all(request):
-    tmpl = loader.get_template('affiliations/all.html')
-    affiliations = _get_affiliations_leaderboard()               
-    return HttpResponse(tmpl.render(RequestContext(request, { 'affiliations': affiliations},))
-    )
+def all(request, template="affiliations/all.html"):
+    context = {
+        'affiliations': Affiliation.objects.all()
+    }
+    return render(request, template, context)
+
+    # tmpl = loader.get_template('affiliations/all.html')
+    # affiliations = _get_affiliations_leaderboard()               
+    # return HttpResponse(tmpl.render(RequestContext(request, { 'affiliations': affiliations},))
+    # )

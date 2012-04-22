@@ -35,26 +35,33 @@
 {% block game_content %}
 <div>
     <div class="column-container">
-        <h1>{% trans "Find Players" %}</h1>{# Affiliations #}
+        <h1>{% trans "Find Players" %} <a class="nav-heading-tab" href="{% url affiliations:affiliations %}">Affiliations</a></h1> 
 
-        <form action="." method="post" id="id_find-players-form">
-            <div id="profile-filters">
-                <label>Filter by:</label>
+        <div id="profile-filters">
+            <form action="." method="post" id="id_find-players-form">
+                <label>{% trans "Filter by:" %}</label>
+                {% comment %}
+                <select id="profile-filters-stake">
+                    {# TODO: for stakes in stakes_for_this_instance #}
+                    <option>Stake</option>
+                </select>
+                <select id="profile-filters-affiliation">
+                    {# TODO: for affilitation in affiliations_for_this_instance #}
+                    <option>Affiliation</option>
+                </select>
+                {% endcomment %}
                 {{ filter_by_variants_form.affiliations }}
                 {{ filter_by_variants_form.stakes }}
                 <input id="profile-filters-apply" class="btn-blue" type="submit" value="Apply" />
-            </div>
-        </form>
-
-        <form action="." method="post" id="id_search-by-kw-form">
-            <div id="profile-filters">
-                {{ search_by_kw_form.q }}
-                <input id="profile-search-apply" class="btn-blue" type="submit" value="Search" />
-            </div>
-        </form>
+            </form>
+            <form action="." method="post" id="id_search-by-kw-form">
+                    {# search_by_kw_form.q #}
+                    <input id="id_q" type="text" maxlength="50" name="q" placeholder="{% trans 'Search for a player' %}">
+                    <input id="profile-search-apply" class="btn-blue" type="submit" value="Search" />
+            </form>
+        </div>
         
-        
-        <h3>Recently Joined</h3>
+        <h3>{% trans "Recently Joined" %}</h3>
         
     </div>
 

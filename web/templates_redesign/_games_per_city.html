@@ -1,3 +1,4 @@
+{% load game_extras attachment_tags i18n %}
 <!-- Games per City -->
 <div id="games" class="games">
     <ul class="games-filter">
@@ -39,7 +40,14 @@
             <div class="games-list-details slides_container">
                 {% for instance in instances_current %}
                 <div>
-                    <img class="games-list-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}" />
+                    
+                    <div class="games-list-detail-attachment">
+                        {% if instance.get_slideshow_attachment.get_att_type_display == 'Video' %}
+                            {% embed_video instance.get_slideshow_attachment.url %}
+                        {% else %}
+                        <img class="games-list-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
+                        {% endif %}
+                    </div>
                     <p class="games-list-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
                     <div id="games-list-detail-signup" class="btn-arrow">
                         {% if user.is_authenticated %}
@@ -76,7 +84,13 @@
             <div class="games-list-details slides_container">
                 {% for instance in instances_past %}
                 <div>
-                    <img class="games-list-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
+                    <div class="games-list-detail-attachment">
+                        {% if instance.get_slideshow_attachment.get_att_type_display == 'Video' %}
+                            {% embed_video instance.get_slideshow_attachment.url %}
+                        {% else %}
+                        <img class="games-list-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
+                        {% endif %}
+                    </div>
                     <p class="games-list-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
                 </div>
                 {% endfor %}

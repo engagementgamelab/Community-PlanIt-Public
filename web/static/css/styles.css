@@ -1,7 +1,7 @@
 /* Base Stylesheet for Spring2012 Redesign */
 
 html, body {
-    background: url('../img/bg.jpg') repeat #f6f6f6;
+    background: url('../img/bg.png') repeat #fff;
     font: 14px "Trebuchet MS";
 }
 
@@ -159,7 +159,11 @@ a {
         font-weight: bold;
         color: #a7a9ac;
     }
-    
+        
+        /* Weird stuff */
+        #content h1 .nav-heading-tab {
+            font-size: 0.6em;
+        }
 
 /* Ribbon */
 
@@ -461,6 +465,7 @@ a {
     margin: 0px auto;
     background: url('../img/bg-private-header.png') no-repeat bottom left; /* not using the top right of this bg image */
     overflow: hidden;
+    font-size: 0.8em;
     -webkit-border-bottom-right-radius: 10px;
     -webkit-border-bottom-left-radius: 10px;
     -moz-border-radius-bottomright: 10px;
@@ -472,9 +477,8 @@ a {
     #footer div.column {
         display: inline-block;
         vertical-align: middle;
-        width: 260px;
-        margin: 10px 30px;
-        text-align: center;
+        margin: 10px 0px;
+        margin-left: 30px;
         color: #333;
     }
 
@@ -484,10 +488,13 @@ a {
         }
 
         #footer .column .footer-label {
+            margin: 5px;
             font-style: italic;
         }
 
         #footer .column:last-child {
+            width: 200px;
+            margin-left: 110px;
             text-align: right;
         }
 

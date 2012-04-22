@@ -282,6 +282,11 @@ hr.rainbow {
                     width: 400px;
                     height: 300px;
                 }
+                
+                #public-index .games-list-details .games-list-detail-attachment {
+                    width: 400px;
+                    height: 300px;
+                }
 
                 #public-index .games-list-details .games-list-detail-description {
                     margin: 20px 0px;
@@ -359,6 +364,12 @@ hr.rainbow {
                 
                 #public-city .games-list-details .games-list-detail-img,
                 #private-city .games-list-details .games-list-detail-img {
+                    width: 540px;
+                    height: 300px;
+                }
+                
+                #public-city .games-list-details .games-list-detail-attachment,
+                #private-city .games-list-details .games-list-detail-attachment {
                     width: 540px;
                     height: 300px;
                 }

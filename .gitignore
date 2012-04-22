@@ -8,6 +8,7 @@ assets/CACHE
 assets/uploads
 static_collected
 web/cpi.log
+web/locale/*
 web/settings.py
 data/
 data/staging

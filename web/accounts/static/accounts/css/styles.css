@@ -108,7 +108,7 @@
 
     #profile-filters label {
         display: inline-block;
-        width: 100px;
+        width: 75px;
     }
     
     #profile-filters-stake {
@@ -117,11 +117,22 @@
     
     #profile-filters-affiliation {
         width: 150px;
-        margin-left: 25px;
+        margin-left: 5px;
     }
     
     #profile-filters-apply {
-        margin-left: 25px;
+        margin-left: 10px;
+    }
+    
+    #profile-search {
+        border: 1px solid #ddd;
+        padding: 8px 5px;
+        margin-left: 75px;
+        width: 150px;
+    }
+    
+    #profile-search-apply {
+        margin-left: 10px;
     }
     
 .profile-container {
