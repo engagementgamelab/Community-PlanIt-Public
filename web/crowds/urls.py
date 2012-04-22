@@ -13,7 +13,7 @@ urlpatterns = patterns('web.crowds.views',
     url(r'^(?P<id>\d+)/comment/$', 'comment', name='comment'),
     
     # Add
-    url(r'^rally/$', 'rally', name='rally'),
+    url(r'^create/$', 'rally', name='rally'),
     url(r'^remove/$', 'delete', name='delete'),
     #Submit Response
     #url(r'^(?P<id>\d+)/$', 'challenge', name='challenge'),

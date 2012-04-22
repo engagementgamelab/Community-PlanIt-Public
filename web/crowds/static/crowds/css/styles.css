@@ -58,12 +58,30 @@
         .crowds-event:hover {
             background: #d9ebe2;
         }
+        
+        .crowds-event-left {
+            float: left;
+            width: 580px;
+        }
+        
+        .crowds-event-right {
+            float: right;
+            width: 160px;
+            text-align: right;
+        }
     
         .crowds-event-name {
             display: inline-block;
             vertical-align: middle;
             margin: 0px 5px;
             font-weight: bold;
+        }
+        
+        .crowds-event-creator {
+            margin: 0px 5px;
+            font-style: italic;
+            font-weight: normal;
+            color: #999;
         }
     
         .crowds-event-attending {

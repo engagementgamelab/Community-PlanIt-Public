@@ -147,7 +147,7 @@
     overflow: hidden;
 }
 
-    .profile-container:nth-child(4n+1) {
+    #id_players-table a:nth-child(4n+1) {
         clear: left;
     }
     
@@ -171,9 +171,14 @@
         color: black;
     }
 
+#profile-pagination {
+    text-align: center;
+}
 
+    #profile-pagination table {
+        margin: 0px auto;
+    }
 /* Leaderboards Specific Styles */
 
 #leaderboard {}
-    
     
