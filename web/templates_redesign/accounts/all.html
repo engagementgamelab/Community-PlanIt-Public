@@ -1,44 +1,66 @@
 {% extends 'accounts/base_game.html' %}
-{% load i18n %}
 {% load i18n cpi_tags %}
 
 {% block title %}{% trans "Find Players" %}{% endblock %}
 
 {% block body_class %}{{ block.super }} section-players{% endblock %}
+
+
+{% block extra_head %}
+    <script src="{{ STATIC_URL }}js/sijax.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+
+        {% include "js/ajax_csrf.html" %}
+
+
+        $("input[id='profile-filters-apply']").click(function(e){
+            e.preventDefault();
+            {{ filter_by_variants_sijax_js|safe }}
+            var form_data = Sijax.getFormValues('#id_find-players-form');
+            Sijax.request('search-by-variants', [form_data]);
+        });
+
+        $("input[id='profile-search-apply']").click(function(e){
+            e.preventDefault();
+            {{ search_by_kw_sijax_js|safe }}
+            var form_data = Sijax.getFormValues('#id_search-by-kw-form');
+            Sijax.request('search-by-kw', [form_data]);
+        });
+    });
+
+    </script>
+{% endblock extra_head %}
+
 {% block game_content %}
 <div>
     <div class="column-container">
         <h1>{% trans "Find Players" %}</h1>{# Affiliations #}
-            
-        <div id="profile-filters">
-            <label>Filter by:</label>
-            <select id="profile-filters-stake">
-                {# TODO: for stakes in stakes_for_this_instance #}
-                <option>Stake</option>
-            </select>
-            <select id="profile-filters-affiliation">
-                {# TODO: for affilitation in affiliations_for_this_instance #}
-                <option>Affiliation</option>
-            </select>
-            <input id="profile-filters-apply" class="btn-blue" type="submit" value="Apply" />
-         </div>
+
+        <form action="." method="post" id="id_find-players-form">
+            <div id="profile-filters">
+                <label>Filter by:</label>
+                {{ filter_by_variants_form.affiliations }}
+                {{ filter_by_variants_form.stakes }}
+                <input id="profile-filters-apply" class="btn-blue" type="submit" value="Apply" />
+            </div>
+        </form>
+
+        <form action="." method="post" id="id_search-by-kw-form">
+            <div id="profile-filters">
+                {{ search_by_kw_form.q }}
+                <input id="profile-search-apply" class="btn-blue" type="submit" value="Search" />
+            </div>
+        </form>
+        
         
         <h3>Recently Joined</h3>
         
     </div>
+
+    <span id="id_players-table">
+    {% include "accounts/_players_table.html" %}
+    </span>
     
-    {% for account in accounts %}
-        <a href="{% url accounts_profile account.id %}">
-        <div class="profile-container">
-            {% if account.get_profile.avatar %}
-                <img src="{{ MEDIA_URL }}{{ account.get_profile.avatar }}" width="164" height="164" />
-            {% else %}
-                <img src="{{ STATIC_URL }}/img/avatar-blank.png" width="164" height="164" />
-            {% endif %}
-            <div class="profile-screenname">{{ account.get_profile.screen_name }}</div>
-            <div class="profile-tagline">{{ account.get_profile.tagline }}</div>
-        </div>
-        </a>
-    {% endfor %}
 </div>
 {% endblock %}

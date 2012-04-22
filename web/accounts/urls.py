@@ -32,6 +32,14 @@ urlpatterns += patterns('accounts.views',
     url(r'^ajax/login/$', 'login_ajax', 
                             {'authentication_form': AccountAuthenticationForm},
                                 name='login-ajax'),
+    url(r'^ajax/filter-players-by-variants/$',
+            'ajax_filter_players_by_variants',
+            name='ajax-filter-players-by-variants'
+    ),
+    url(r'^ajax/search-players-by-kw/$',
+            'ajax_search_by_kw',
+            name='ajax-search-players-by-kw'
+    ),
 
     #url(r"^admin_instance_email/$", "admin_instance_email", name="admin-instance-email"),
     #url(r"^admin_sendemail/$", "admin_sendemail", name="admin-sendemail"),

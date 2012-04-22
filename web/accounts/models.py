@@ -7,6 +7,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import get_language
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
@@ -158,6 +159,10 @@ class UserProfilePerInstance(models.Model):
     def __unicode__(self):
         return "'%s <%s>' for: %s" % (self.user_profile.user.get_full_name(), self.user_profile.email, self.instance.title, )
 
+    @property
+    def format_stakes(self):
+        return ", ".join(self.stakes.language(get_language()).all().values_list('stake', flat=True))
+
     class Meta:
         unique_together = ('user_profile', 'instance',)
 
@@ -253,7 +258,7 @@ class UserProfile(models.Model):
         return self.user.username
 
 class UserProfileVariantsForInstance(models.Model):
-    instance = models.OneToOneField(Instance, related_name='user_profile_variants')
+    instance = models.OneToOneField(Instance, unique=True, related_name='user_profile_variants')
     stake_variants = models.ManyToManyField(UserProfileStake, blank=True, null=True, default=None)
     affiliation_variants = models.ManyToManyField(Affiliation, blank=True, null=True, default=None)
 

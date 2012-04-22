@@ -13,6 +13,7 @@ from django.db.models import Q, Sum
 from django.http import HttpResponse, Http404, HttpResponseServerError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template import Context, RequestContext, loader
+
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import never_cache
@@ -328,19 +329,91 @@ def edit(request):
         'user': request.user,
     })))
 
+@login_required
 def all(request, template='accounts/all.html'):
+    profiles_for_game =  UserProfilePerInstance.objects.filter(instance=request.current_game)
+    filter_by_variants = Sijax()
+    filter_by_variants.set_request_uri(reverse('accounts:ajax-filter-players-by-variants'))
+
+    search_by_kw = Sijax()
+    search_by_kw.set_request_uri(reverse('accounts:ajax-search-players-by-kw'))
+
     context = {
-        'accounts': User.objects.all()[:25],
+        'profiles_for_game': profiles_for_game,
+        'filter_by_variants_form' : FilterPlayersByVariantsForm(request),
+        'search_by_kw_form': SearchPlayersByKeywordsForm(request),
+        'filter_by_variants_sijax_js' : filter_by_variants.get_js(),
+        'search_by_kw_sijax_js': search_by_kw.get_js(),
     }
     return render(request, template, context)
 
+@never_cache
+def ajax_filter_players_by_variants(request):
+    def search(obj_response, form_data):
+        form = FilterPlayersByVariantsForm(request, data=form_data)
+        print 'data: ', form_data
+        if form.is_valid():
+            qs =  UserProfilePerInstance.objects.filter(instance=request.current_game)
+            if form_data.get('stakes') != '':
+                qs = qs.filter(stakes=int(form_data.get('stakes')))
+            if form_data.get('affiliations') != '':
+                qs = qs.filter(affils=int(form_data.get('affiliations')))
+            print "res: ", qs 
+            context = {
+                'profiles_for_game' : qs,
+                'MEDIA_URL' : settings.MEDIA_URL,
+                'STATIC_URL' : settings.STATIC_URL,
+            }
+            players_table = loader.render_to_string("accounts/_players_table.html", context).encode('utf-8')
+            obj_response.html('#id_players-table', players_table)
+        else:
+            log.debug('find players filter errors: %s', form.errors)
+
+    instance = Sijax()
+    instance.set_data(request.POST)
+    instance.set_request_uri(reverse('accounts:ajax-filter-players-by-variants'))
+    instance.register_callback('search-by-variants', search)
+    if instance.is_sijax_request:
+        return HttpResponse(instance.process_request())
+
+@never_cache
+def ajax_search_by_kw(request):
+    def search(obj_response, form_data):
+        form = SearchPlayersByKeywordsForm(request, data=form_data)
+        print 'data: ', form_data
+        if form.is_valid():
+            qs =  UserProfilePerInstance.objects.filter(instance=request.current_game)
+            if form_data.get('q') != '':
+                qs = qs.filter(
+                        Q(user_profile__user__first_name__icontains = form_data.get('q')) |
+                        Q(user_profile__user__last_name__icontains = form_data.get('q'))
+                )
+            print "res: ", qs 
+            context = {
+                'profiles_for_game' : qs,
+                'MEDIA_URL' : settings.MEDIA_URL,
+                'STATIC_URL' : settings.STATIC_URL,
+            }
+            players_table = loader.render_to_string("accounts/_players_table.html", context).encode('utf-8')
+            obj_response.html('#id_players-table', players_table)
+        else:
+            log.debug('find players filter errors: %s', form.errors)
+
+    instance = Sijax()
+    instance.set_data(request.POST)
+    instance.set_request_uri(reverse('accounts:ajax-search-players-by-kw'))
+    instance.register_callback('search-by-kw', search)
+    if instance.is_sijax_request:
+        return HttpResponse(instance.process_request())
+
+
+
 @login_required
-def profile(request, id):
+def profile(request, id, template_name="accounts/profile.html"):
     player = get_object_or_404(User, id=id)
     profile = player.get_profile()
     current_game = request.current_game
     #log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
-
 
     stream = Action.objects.get_for_actor(player)
     comment_form = CommentForm(data=request.POST or None)
@@ -401,17 +474,15 @@ def profile(request, id):
         else:
             value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': 0,
                                    'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
-
-    tmpl = loader.get_template('accounts/profile.html')
-
-    return HttpResponse(tmpl.render(RequestContext(request, {
+    context = {
         'player': player,
         'comment_form': comment_form,
         'instance': current_game,
         'stream': stream,
         'player_spent': player_spent,
         'value_wrapper': value_wrapper,
-    })))
+    }
+    return render(request, template_name, context)
 
 @login_required
 def dashboard(request, template_name='accounts/dashboard.html'):
@@ -504,7 +575,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     )
     return render(request, template_name, context)
 
-
+"""
 @login_required
 def admin_instance_email(request, instance_id=None):
     if not request.user.is_superuser:
@@ -547,3 +618,4 @@ def admin_sendemail(request):
              }, 
             #[ip]
             )))
+"""

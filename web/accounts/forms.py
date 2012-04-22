@@ -390,7 +390,28 @@ class UserProfileForm(forms.ModelForm):
 #            return UserProfileStake.objects.get(pk=self.cleaned_data['stake'])
 #        except UserProfileStake.DoesNotExist:
 #            return None
-    
+
+
+class FilterPlayersByVariantsForm(forms.Form):
+    def __init__(self, request, *args, **kwargs):
+        super(FilterPlayersByVariantsForm, self).__init__(*args, **kwargs)
+        if not request:
+            raise RuntimeError("request obj is missing")
+        qs = UserProfileVariantsForInstance.objects.get(instance=request.current_game)
+        stakes_qs = qs.stake_variants.language(get_language()).all().order_by('stake')
+        self.fields['stakes'] = forms.ModelChoiceField(label=_("Stakes"), required=False, queryset=stakes_qs, empty_label="Stakes")
+
+        affiliations_qs = qs.affiliation_variants.all().order_by('name')
+        self.fields['affiliations'] = forms.ModelChoiceField(label=_("Affiliations"), required=False, queryset=affiliations_qs, empty_label="Affiliations")
+
+
+class SearchPlayersByKeywordsForm(forms.Form):
+    def __init__(self, request, *args, **kwargs):
+        super(SearchPlayersByKeywordsForm, self).__init__(*args, **kwargs)
+        if not request:
+            raise RuntimeError("request obj is missing")
+        self.fields['q'] = forms.CharField(label=_("Keywords"), max_length=50)
+
 
 class AccountAuthenticationForm(AuthenticationForm):
     """
