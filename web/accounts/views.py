@@ -84,7 +84,6 @@ def login_ajax(request, authentication_form=AuthenticationForm):
             )
         else:
             log.debug('form invalid %s' % form.errors)
-            print('form invalid %s' % form.errors)
             obj_response.html("#id_form-errors", form.errors)
 
     instance = Sijax()
@@ -157,7 +156,6 @@ def login(request, template_name='registration/login.html',
             )
         else:
             log.debug('form invalid %s' % form.errors)
-            print('form invalid %s' % form.errors)
 
     else:
         form = authentication_form(request)
@@ -351,14 +349,12 @@ def all(request, template='accounts/all.html'):
 def ajax_filter_players_by_variants(request):
     def search(obj_response, form_data):
         form = FilterPlayersByVariantsForm(request, data=form_data)
-        print 'data: ', form_data
         if form.is_valid():
             qs =  UserProfilePerInstance.objects.filter(instance=request.current_game)
             if form_data.get('stakes') != '':
                 qs = qs.filter(stakes=int(form_data.get('stakes')))
             if form_data.get('affiliations') != '':
                 qs = qs.filter(affils=int(form_data.get('affiliations')))
-            print "res: ", qs 
             context = {
                 'profiles_for_game' : qs,
                 'MEDIA_URL' : settings.MEDIA_URL,
@@ -380,7 +376,6 @@ def ajax_filter_players_by_variants(request):
 def ajax_search_by_kw(request):
     def search(obj_response, form_data):
         form = SearchPlayersByKeywordsForm(request, data=form_data)
-        print 'data: ', form_data
         if form.is_valid():
             qs =  UserProfilePerInstance.objects.filter(instance=request.current_game)
             if form_data.get('q') != '':
@@ -388,7 +383,6 @@ def ajax_search_by_kw(request):
                         Q(user_profile__user__first_name__icontains = form_data.get('q')) |
                         Q(user_profile__user__last_name__icontains = form_data.get('q'))
                 )
-            print "res: ", qs 
             context = {
                 'profiles_for_game' : qs,
                 'MEDIA_URL' : settings.MEDIA_URL,
@@ -411,77 +405,29 @@ def ajax_search_by_kw(request):
 @login_required
 def profile(request, id, template_name="accounts/profile.html"):
     player = get_object_or_404(User, id=id)
-    profile = player.get_profile()
     current_game = request.current_game
-    #log = Activity.objects.filter(instance=instance, user=player).order_by('-date')[:6]    
-
     stream = Action.objects.get_for_actor(player)
-    comment_form = CommentForm(data=request.POST or None)
+    profile_per_instance = UserProfilePerInstance.objects.get(
+                user_profile = player.get_profile(),
+                instance = request.current_game,
+    )
 
-    if request.method == 'POST':        
-        if comment_form.is_valid():           
-            comment = profile.comments.create(
-                content_object=profile,                 
-                user=request.user,
-                instance=current_game,
-                message = u'%s' % comment_form.cleaned_data['message']
-            ) 
-            comment.save()
+    my_games = Instance.objects.exclude(is_disabled=True).filter(
+                    pk__in=
+                    UserProfilePerInstance.objects.filter(
+                            user_profile = player.get_profile()
+                    ).values_list('instance__pk', flat=True)
+    )
 
-            if request.user != player:
-                message = "%s commented on your profile" % (
-                    request.user.get_profile().screen_name
-                )
-                player.notifications.create(content_object=profile, message=message)
-
-            if request.POST.has_key('video-url'):
-                url = request.POST.get('video-url')
-                if url:
-                    comment.attachment.create(
-                        file=None,
-                        url=url,
-                        type='video',
-                        user=request.user,
-                        instance=current_game
-                    )
-            if request.FILES.has_key('picture'):
-                file = request.FILES.get('picture')
-                picture = Image.open(file)
-                if (file.name.rfind(".") -1):
-                    file.name = "%s.%s" % (file.name, picture.format.lower())
-                comment.attachment.create(
-                    file=request.FILES.get('picture'),
-                    user=request.user,
-                    instance=current_game
-                )
-            return redirect(reverse('accounts_profile', args=[id]))
-
-
-    values = Value.objects.filter(instance=current_game)
-    community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
-
-    value_wrapper = []
-    player_values = PlayerValue.objects.filter(user=player)
-
-    player_spent = player_values.aggregate(Sum('coins'))['coins__sum'] or 0
-
-    for value in values:
-        player_value = player_values.filter(value=value)
-        coins = float(value.coins)
-        if len(player_value) > 0:
-            value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
-                                  'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })
-        else:
-            value_wrapper.append({ 'value': value, 'coins': coins, 'player_coins': 0,
-                                   'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
     context = {
         'player': player,
-        'comment_form': comment_form,
-        'instance': current_game,
+        'profile_per_instance' : profile_per_instance,
         'stream': stream,
-        'player_spent': player_spent,
-        'value_wrapper': value_wrapper,
+        'affiliations': profile_per_instance.affils.all(),
+        'stakes': profile_per_instance.stakes.all(),
+        'my_games': my_games,
     }
+    print context
     return render(request, template_name, context)
 
 @login_required

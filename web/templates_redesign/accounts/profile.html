@@ -34,24 +34,25 @@
                 <div class="column-container">
                     <!-- Your Games -->
                     <h3>Your Games</h3>
-                    <p class="profile-detail">{# Games #}</p>
+                    <p class="profile-detail">
+                    {% for game in my_games %} 
+                        <a class="highlight" href="{% url instances:instance game.slug  %}">{{ game.title }}</a>
+                    {% endfor %}
+                    </p>
 
                     <!-- Affiliations -->
                     <h3>Affiliations<h3>
                     <p class="profile-detail">
-                    {% if player.get_profile.affils.all %}
-                        {% for aff in player.get_profile.affils.all %} 
-                            <a class="highlight" href="{% url instances:affiliation player.get_profile.instance.slug  aff.slug %}">{{ aff.name }}</a>
+                    {% if affiliations %}
+                        {% for aff in affiliations %} 
+                            <a class="highlight" href="{# url instances:affiliation player.get_profile.instance.slug  aff.slug #}">{{ aff.name }}</a>
                         {% endfor %}
                     {% endif %}
                     </p>
 
-                    <!-- Tagline -->
                     <h3>Tagline</h3>
                     <p class="profile-detail">
-                        {% if player.get_profile.stake %}
-                        {{ player.get_profile.stake|trans_fallback:"stake"}}
-                        {% endif %}
+                        {{ profile_per_instance.user_profile.tagline }}
                     </p>
                 </div>
             </div>
@@ -66,8 +67,8 @@
                     <!-- Stake -->
                     <h3>Community Stake</h3>
                     <p class="profile-detail">
-                        {% if player.get_profile.stake %}
-                            {{ player.get_profile.stake|trans_fallback:"stake"}}
+                        {% if stakes %}
+                        {{ profile_per_instance.format_stakes }}
                         {% endif %}
                     </p>
                 </div>
@@ -104,7 +105,7 @@
     </div>
     <br class="clearfix" />
     
-    
+    {% comment %} 
     <div class="column-full">
         <div class="column-container">
             <h3>Community Messages</h3>
@@ -128,6 +129,7 @@
             {% endwith %}
         </div>
     </div>
+    {% endcomment %} 
     
 
  
