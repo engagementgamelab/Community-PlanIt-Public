@@ -23,13 +23,20 @@
             
             {% endifchanged %}
             <a href="{% url crowds:view crowd.pk %}" class="crowds-event">
-                <div class="crowds-event-left">
+                <div class="crowds-event-avatar-container">
+                {% if request.user.get_profile.avatar %}
+                    <img src="{{ MEDIA_URL }}/{{ crowd.creator.get_profile.avatar }}" width="36" height="36" />
+                {% else %}
+                    <img src="{{ STATIC_URL }}/img/avatar-blank.png" width="36" height="36" />
+                {% endif %}
+                </div>
+                <div class="crowds-event-left-container">
                     <div class="crowds-event-name">{{ crowd.name}}</div>
                     {% if request.user in crowd.participants.all %}<div class="crowds-event-attending"></div>{% endif %}
                     <div class="crowds-event-participants">({{ crowd.participants.all.count }} {% trans "players attending" %})</div>
                     <div class="crowds-event-creator">{% trans "created by" %} {{ crowd.creator.get_profile.screen_name }}</div>
                 </div>
-                <div class="crowds-event-right">
+                <div class="crowds-event-right-container">
                     <div class="crowds-event-time">{{ crowd.start_date|time:"g:i A" }} - {{ crowd.end_date|time:"g:i A" }}</div>
                 </div>
             </a>

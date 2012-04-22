@@ -58,13 +58,22 @@
         .crowds-event:hover {
             background: #d9ebe2;
         }
-        
-        .crowds-event-left {
+
+        .crowds-event-avatar-container {
             float: left;
-            width: 580px;
+            width: 40px;
+        }
+            
+            .crowds-event-avatar-container img {
+                border: 1px solid #ddd;
+            }
+        
+        .crowds-event-left-container {
+            float: left;
+            width: 540px;
         }
         
-        .crowds-event-right {
+        .crowds-event-right-container {
             float: right;
             width: 160px;
             text-align: right;

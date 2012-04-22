@@ -6,10 +6,7 @@
 {% block game_content %}
 <div class="column-full">
     <div class="column-container">
-        <div><a href="{% url crowds:index %}" class="btn-back">{% trans "Back to Get Togethers!" %}</a></div>
-        
-        {{ crowd.creator.get_profile.screen_name }}
-        
+        <div><a href="{% url crowds:index %}" class="btn-back">{% trans "Back to Get Togethers!" %}</a></div>        
         <h1>{{ crowd.name }}</h1>        
         <h3>{{ crowd.start_date }} - {{ crowd.end_date }}</h3>
     </div>
