@@ -7,10 +7,10 @@ from web.instances.models import Instance
 def index(request, slug=None, template='attachments/index.html', extra_context={}):
     if slug:
         game = get_object_or_404(Instance, slug=slug)
-        attachments = Attachment.objects.filter(instance=game, is_resource_center=True)
+        attachments = Attachment.objects.filter(instance=game, instance__is_disabled=False, is_resource_center=True)
         rc_scope_template_name = 'base_game.html'
     else:
-        attachments = Attachment.objects.filter(is_resource_center=True)
+        attachments = Attachment.objects.filter(instance__is_disabled=False, is_resource_center=True)
         rc_scope_template_name = 'base_game.html'
 
     context = dict(

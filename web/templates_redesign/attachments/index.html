@@ -8,11 +8,13 @@
     <div class="column-container clearfix">
         <h1>{% trans "Become an Expert" %}</h1>
     </div>
+    
     {% for attachments_regrouped in game_list %}
         <div class="column-container clearfix">
             <h3>{{ attachments_regrouped.grouper }}</h3>
         </div>
-
+        
+        <div>
         {% for item in attachments_regrouped.list %}
             <div class="resources resources-type-{{ item.resource_type }}">
                 <p class="resources-title">
@@ -49,6 +51,7 @@
                 </div>
             </div>
         {% endfor %}
+        </div>
         <br class="clearfix" />
     {% endfor %}
 </div>

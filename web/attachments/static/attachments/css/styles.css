@@ -8,6 +8,9 @@
     background: #e5f0ea url('../../../../static/img/bg-pagefold.png') no-repeat right bottom;
     overflow: hidden;
 }
+    .resources:nth-child(4) {
+        clear: left;
+    }
 
     .resources-title {
         margin: 8px 10px;
