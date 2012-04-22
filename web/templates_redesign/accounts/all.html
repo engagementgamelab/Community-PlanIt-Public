@@ -11,7 +11,7 @@
         <h1>{% trans "Find Players" %}</h1>{# Affiliations #}
             
         <div id="profile-filters">
-            <label>Filter by:</label>
+            <label>{% trans "Filter by:" %}</label>
             <select id="profile-filters-stake">
                 {# TODO: for stakes in stakes_for_this_instance #}
                 <option>Stake</option>
@@ -21,9 +21,13 @@
                 <option>Affiliation</option>
             </select>
             <input id="profile-filters-apply" class="btn-blue" type="submit" value="Apply" />
+            
+            {# SEARCH #}
+            <input id="profile-search" placeholder="{% trans 'Search for a player' %}">
+            <input id="profile-search-apply" class="btn-blue" type="submit" value="Search" />
          </div>
         
-        <h3>Recently Joined</h3>
+        <h3>{% trans "Recently Joined" %}</h3>
         
     </div>
     
