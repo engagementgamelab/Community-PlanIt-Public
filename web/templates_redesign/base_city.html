@@ -61,7 +61,7 @@
             <div id="header-extras-container">
                 <div id="header-extras-cityname">{{ request.current_city.name }}</div>
                 <div id="header-extras-citydescription">{{ request.current_city.description }}</div>
-                {% if request.current_city.image %}<div id="header-extras-cityimage"><img src="{{ MEDIA_URL }}{{ request.current_city.image }}" width="230" height="124" /></div>{% endif %}
+                {% if request.current_city.image %}<div id="header-extras-cityimage"><a href="{% url home %}"><img src="{{ MEDIA_URL }}{{ request.current_city.image }}" width="230" height="124" /></a></div>{% endif %}
             </div>
         </div>
     {% endif %}
