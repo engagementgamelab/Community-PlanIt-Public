@@ -22,14 +22,17 @@ class CrowdForm(forms.ModelForm):
                                           label=_("Till When? (end time of event)"),
                                          )
 
-    def __init__(self, *args, **kwargs):
-        #import ipdb;ipdb.set_trace()
-        #self.fields['description'].help_text=_('What do you want to accomplish?')
-        super(CrowdForm, self).__init__(*args, **kwargs)
-
-
     class Meta:
         model = Crowd
-        exclude = ('instance', 'participants', 'creator', 'flagged', 'attachments', 'comments',)
+        exclude = ('instance', 'confirmation_code', 'participants', 'creator', 'flagged', 'attachments', 'comments',)
+
+    def clean(self):
+        cd = self.cleaned_data
+        print cd
+        if cd.get('start_date') > cd.get('end_date'):
+            self._errors['start_date'] = self.error_class([_("Start Time of Event must come before End Time of Event.")])
+            del cd['start_date']
+            #raise forms.ValidationError(_("Start Time of Event must come before End Time of Event."))
+        return cd
 
 
