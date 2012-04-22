@@ -3,6 +3,7 @@ from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.db import transaction
 from django.template import Context, RequestContext, loader
@@ -92,8 +93,8 @@ class RegisterFormTwo(forms.Form):
             chosen_game = kwargs.pop('chosen_game')
         super(RegisterFormTwo, self).__init__(*args, **kwargs)
         self.chosen_game = chosen_game
-        print self.chosen_game
-        print self.chosen_game.user_profile_variants.stake_variants.all()
+        #print self.chosen_game
+        #print self.chosen_game.user_profile_variants.stake_variants.all()
 
         #all_stakes = self.chosen_game.user_profile_variants.stake_variants.all().order_by("pos")
         #stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
@@ -397,12 +398,22 @@ class FilterPlayersByVariantsForm(forms.Form):
         super(FilterPlayersByVariantsForm, self).__init__(*args, **kwargs)
         if not request:
             raise RuntimeError("request obj is missing")
+        self.request = request
         qs = UserProfileVariantsForInstance.objects.get(instance=request.current_game)
         stakes_qs = qs.stake_variants.language(get_language()).all().order_by('stake')
         self.fields['stakes'] = forms.ModelChoiceField(label=_("Stakes"), required=False, queryset=stakes_qs, empty_label="Stakes")
 
         affiliations_qs = qs.affiliation_variants.all().order_by('name')
-        self.fields['affiliations'] = forms.ModelChoiceField(label=_("Affiliations"), required=False, queryset=affiliations_qs, empty_label="Affiliations")
+        self.fields['affiliation'] = forms.ModelChoiceField(label=_("Affiliations"), required=False, queryset=affiliations_qs, empty_label="Affiliations")
+
+    def search(self):
+        cd = self.cleaned_data
+        qs =  UserProfilePerInstance.objects.filter(instance=self.request.current_game)
+        if cd.get('stakes') is not None and cd.get('stakes') != '':
+            qs = qs.filter(stakes=cd.get('stakes'))
+        if cd.get('affiliation') is not None and cd.get('affiliation') != '':
+            qs = qs.filter(affils=cd.get('affiliation'))
+        return qs
 
 
 class SearchPlayersByKeywordsForm(forms.Form):
@@ -410,7 +421,20 @@ class SearchPlayersByKeywordsForm(forms.Form):
         super(SearchPlayersByKeywordsForm, self).__init__(*args, **kwargs)
         if not request:
             raise RuntimeError("request obj is missing")
+        self.request = request
         self.fields['q'] = forms.CharField(label=_("Keywords"), max_length=50)
+
+    def search(self):
+        qs =  UserProfilePerInstance.objects.filter(
+                            instance=self.request.current_game
+        )
+        cd = self.cleaned_data
+        if cd.get('q') != '':
+            qs = qs.filter(
+                    Q(user_profile__user__first_name__icontains = cd.get('q')) |
+                    Q(user_profile__user__last_name__icontains = cd.get('q'))
+            )
+        return qs
 
 
 class AccountAuthenticationForm(AuthenticationForm):

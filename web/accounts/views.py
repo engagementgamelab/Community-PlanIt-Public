@@ -9,7 +9,6 @@ from localeurl.utils import strip_path, locale_path
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
-from django.db.models import Q, Sum
 from django.http import HttpResponse, Http404, HttpResponseServerError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template import Context, RequestContext, loader
@@ -331,7 +330,7 @@ def edit(request):
 def all(request, template='accounts/all.html'):
     profiles_for_game =  UserProfilePerInstance.objects.filter(instance=request.current_game)
     filter_by_variants = Sijax()
-    filter_by_variants.set_request_uri(reverse('accounts:ajax-filter-players-by-variants'))
+    filter_by_variants.set_request_uri(reverse('accounts:ajax-filter-players-by-variant'))
 
     search_by_kw = Sijax()
     search_by_kw.set_request_uri(reverse('accounts:ajax-search-players-by-kw'))
@@ -345,18 +344,18 @@ def all(request, template='accounts/all.html'):
     }
     return render(request, template, context)
 
-@never_cache
-def ajax_filter_players_by_variants(request):
+def ajax_search(request, search_form, request_uri=None):
+
+    request_uri_for_form = {
+        FilterPlayersByVariantsForm: reverse('accounts:ajax-filter-players-by-variant'),
+        SearchPlayersByKeywordsForm: reverse('accounts:ajax-search-players-by-kw'),
+    }
+
     def search(obj_response, form_data):
-        form = FilterPlayersByVariantsForm(request, data=form_data)
+        form = search_form(request, data=form_data)
         if form.is_valid():
-            qs =  UserProfilePerInstance.objects.filter(instance=request.current_game)
-            if form_data.get('stakes') != '':
-                qs = qs.filter(stakes=int(form_data.get('stakes')))
-            if form_data.get('affiliations') != '':
-                qs = qs.filter(affils=int(form_data.get('affiliations')))
             context = {
-                'profiles_for_game' : qs,
+                'profiles_for_game' : form.search(),
                 'MEDIA_URL' : settings.MEDIA_URL,
                 'STATIC_URL' : settings.STATIC_URL,
             }
@@ -367,40 +366,10 @@ def ajax_filter_players_by_variants(request):
 
     instance = Sijax()
     instance.set_data(request.POST)
-    instance.set_request_uri(reverse('accounts:ajax-filter-players-by-variants'))
-    instance.register_callback('search-by-variants', search)
+    instance.set_request_uri(request_uri_for_form.get(search_form, ''))
+    instance.register_callback('search', search)
     if instance.is_sijax_request:
         return HttpResponse(instance.process_request())
-
-@never_cache
-def ajax_search_by_kw(request):
-    def search(obj_response, form_data):
-        form = SearchPlayersByKeywordsForm(request, data=form_data)
-        if form.is_valid():
-            qs =  UserProfilePerInstance.objects.filter(instance=request.current_game)
-            if form_data.get('q') != '':
-                qs = qs.filter(
-                        Q(user_profile__user__first_name__icontains = form_data.get('q')) |
-                        Q(user_profile__user__last_name__icontains = form_data.get('q'))
-                )
-            context = {
-                'profiles_for_game' : qs,
-                'MEDIA_URL' : settings.MEDIA_URL,
-                'STATIC_URL' : settings.STATIC_URL,
-            }
-            players_table = loader.render_to_string("accounts/_players_table.html", context).encode('utf-8')
-            obj_response.html('#id_players-table', players_table)
-        else:
-            log.debug('find players filter errors: %s', form.errors)
-
-    instance = Sijax()
-    instance.set_data(request.POST)
-    instance.set_request_uri(reverse('accounts:ajax-search-players-by-kw'))
-    instance.register_callback('search-by-kw', search)
-    if instance.is_sijax_request:
-        return HttpResponse(instance.process_request())
-
-
 
 @login_required
 def profile(request, id, template_name="accounts/profile.html"):

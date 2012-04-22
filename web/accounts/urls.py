@@ -2,7 +2,16 @@ from django.conf.urls.defaults import *
 
 from django.contrib.auth.views import logout
 
-from accounts.forms import AccountAuthenticationForm, RegisterFormOne, RegisterFormTwo, RegistrationWizard
+from .forms import (
+            AccountAuthenticationForm,
+            RegisterFormOne,
+            RegisterFormTwo,
+            RegistrationWizard,
+            FilterPlayersByVariantsForm,
+            SearchPlayersByKeywordsForm,
+)
+
+
 #from accounts.views import login
 
 urlpatterns = patterns('',
@@ -32,15 +41,16 @@ urlpatterns += patterns('accounts.views',
     url(r'^ajax/login/$', 'login_ajax', 
                             {'authentication_form': AccountAuthenticationForm},
                                 name='login-ajax'),
-    url(r'^ajax/filter-players-by-variants/$',
-            'ajax_filter_players_by_variants',
-            name='ajax-filter-players-by-variants'
-    ),
     url(r'^ajax/search-players-by-kw/$',
-            'ajax_search_by_kw',
+            'ajax_search',
+            {'search_form': SearchPlayersByKeywordsForm},
             name='ajax-search-players-by-kw'
     ),
-
+    url(r'^ajax/filter-players-by-variants/$',
+            'ajax_search',
+            {'search_form': FilterPlayersByVariantsForm},
+            name='ajax-filter-players-by-variant'
+    ),
     #url(r"^admin_instance_email/$", "admin_instance_email", name="admin-instance-email"),
     #url(r"^admin_sendemail/$", "admin_sendemail", name="admin-sendemail"),
 )

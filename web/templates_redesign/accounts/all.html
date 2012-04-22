@@ -18,14 +18,14 @@
             e.preventDefault();
             {{ filter_by_variants_sijax_js|safe }}
             var form_data = Sijax.getFormValues('#id_find-players-form');
-            Sijax.request('search-by-variants', [form_data]);
+            Sijax.request('search', [form_data]);
         });
 
         $("input[id='profile-search-apply']").click(function(e){
             e.preventDefault();
             {{ search_by_kw_sijax_js|safe }}
             var form_data = Sijax.getFormValues('#id_search-by-kw-form');
-            Sijax.request('search-by-kw', [form_data]);
+            Sijax.request('search', [form_data]);
         });
     });
 
@@ -50,7 +50,7 @@
                     <option>Affiliation</option>
                 </select>
                 {% endcomment %}
-                {{ filter_by_variants_form.affiliations }}
+                {{ filter_by_variants_form.affiliation }}
                 {{ filter_by_variants_form.stakes }}
                 <input id="profile-filters-apply" class="btn-blue" type="submit" value="Apply" />
             </form>
