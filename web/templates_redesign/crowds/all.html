@@ -23,9 +23,12 @@
             
             {% endifchanged %}
             <a href="{% url crowds:view crowd.pk %}" class="crowds-event">
+                
                 <div class="crowds-event-name">{{ crowd.name}}</div>
                 {% if request.user in crowd.participants.all %}<div class="crowds-event-attending"></div>{% endif %}
                 <div class="crowds-event-participants">{{ crowd.participants.all.count }} {% trans "players attending" %}</div>
+                
+                {# {{ crowd.creator.get_profile.screen_name }} #}
                 <div class="crowds-event-time">{{ crowd.start_date|time:"g:i A" }} - {{ crowd.end_date|time:"g:i A" }}</div>
             </a>
         {% empty %}

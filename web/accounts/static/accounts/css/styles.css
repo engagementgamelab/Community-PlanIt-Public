@@ -105,26 +105,29 @@
 #profile-filters {
     margin: 20px 0px;
 }
+    
+    #profile-filters form {
+        display: inline-block;
+    }
 
     #profile-filters label {
         display: inline-block;
         width: 75px;
     }
     
-    #profile-filters-stake {
-        width: 150px;
+    #id_stakes {
+        width: 125px;
+        margin-left: 5px;
     }
     
-    #profile-filters-affiliation {
-        width: 150px;
-        margin-left: 5px;
+    #id_affiliation {
+        width: 175px;
     }
     
     #profile-filters-apply {
         margin-left: 10px;
     }
     
-/*    #profile-search {*/
     #id_q {
         border: 1px solid #ddd;
         padding: 8px 5px;
@@ -144,6 +147,10 @@
     overflow: hidden;
 }
 
+    .profile-container:nth-child(4n+1) {
+        clear: left;
+    }
+    
     .profile-container img{
         display: block;
         width: 164px;
