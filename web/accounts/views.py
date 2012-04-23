@@ -48,7 +48,6 @@ def login_ajax(request, authentication_form=AuthenticationForm):
     def login_process(obj_response, form_data):
         form = authentication_form(request, data=form_data)
         if form.is_valid():
-            redirect_to = settings.LOGIN_REDIRECT_URL
             auth_login(request, form.get_user())
             user = form.get_user()
             log.debug('logged in: %s <%s>' % (str(user), user.email))
@@ -56,15 +55,14 @@ def login_ajax(request, authentication_form=AuthenticationForm):
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
 
-            lang = user.get_profile().preferred_language
             # set the game we are logging the user into
             #
             current_game = form.cleaned_data.get('instance')
             request.session['current_game_slug'] = current_game.slug
 
-            #obj_response.html("#id_form-errors", 'login success.')
+            lang = user.get_profile().preferred_language
             if lang in dict(settings.LANGUAGES).keys():
-                spath = strip_path(redirect_to)[1]
+                spath = strip_path(settings.LOGIN_REDIRECT_URL)[1]
                 return obj_response.redirect(
                         "".join(
                                 [
@@ -77,13 +75,16 @@ def login_ajax(request, authentication_form=AuthenticationForm):
             return obj_response.redirect(
                     "".join([
                                 current_game.get_absolute_url(ssl=not(settings.DEBUG)), 
-                                redirect_to
+                                settings.LOGIN_REDIRECT_URL
                             ]
                     ),
             )
         else:
             log.debug('form invalid %s' % form.errors)
-            obj_response.html("#id_form-errors", form.errors)
+            msg = ""
+            if form.errors.has_key('__all__'):
+                msg = form.errors.get('__all__')[0]
+            obj_response.html("div#id_login-form-errors", msg)
 
     instance = Sijax()
     instance.set_data(request.POST)

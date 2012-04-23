@@ -15,10 +15,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-#from django.contrib.formtools.wizard import FormWizard
-#from django.views.generic.base import TemplateResponseMixin
 from django.contrib.formtools.wizard.views import SessionWizardView
-#from django.contrib.sites.models import RequestSite
 
 from web.accounts.models import *
 from web.instances.models import Instance, City, Language
@@ -26,8 +23,8 @@ from web.instances.models import Instance, City, Language
 from web.core.utils import get_translation_with_fallback
 
 import logging
-
 log = logging.getLogger(__name__)
+
 
 class RegisterFormOne(forms.Form):
 
@@ -250,7 +247,6 @@ class RegistrationWizard(SessionWizardView):
 
         profile = player.get_profile()
         profile.email = form_one.cleaned_data.get('email')
-        #profile.instance = self.community
         profile.preferred_language = form_one.cleaned_data['preferred_language']
         profile.city = form_one.cleaned_data.get('city')
 

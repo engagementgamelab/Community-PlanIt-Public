@@ -59,7 +59,7 @@
         <div class="column-half">
             <div class="column-container-40">
                 <h2>Sign In</h2>
-                <span id="id_form-errors" style="color:red;"></span>
+                <div id="id_login-form-errors" style="color:red;"></div>
                 <form class="accounts-form" id="id_login-form" action="{% url accounts:login %}" method="post"> {% csrf_token %}
                     {{ form.as_p}}
                     <div class="clear">
