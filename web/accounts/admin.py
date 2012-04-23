@@ -13,8 +13,33 @@ class UserProfileAdmin(admin.ModelAdmin):
 admin.site.register(UserProfile, UserProfileAdmin)
 
 class UserProfileStakeAdmin(TranslatableAdmin):
-    list_display = ('__str__', )
+    list_display = ('__str__', 'pos')
 admin.site.register(UserProfileStake, UserProfileStakeAdmin)
+
+class UserProfileIncomeAdmin(TranslatableAdmin):
+    list_display = ('__str__', 'pos')
+admin.site.register(UserProfileIncome, UserProfileIncomeAdmin)
+
+class UserProfileGenderAdmin(TranslatableAdmin):
+    list_display = ('__str__', 'pos')
+admin.site.register(UserProfileGender, UserProfileGenderAdmin)
+
+class UserProfileEducationAdmin(TranslatableAdmin):
+    list_display = ('__str__', 'pos')
+admin.site.register(UserProfileEducation, UserProfileEducationAdmin)
+
+
+class UserProfileLivingSituationAdmin(TranslatableAdmin):
+    list_display = ('__str__', 'pos')
+admin.site.register(UserProfileLivingSituation, UserProfileLivingSituationAdmin)
+
+class UserProfileRaceAdmin(TranslatableAdmin):
+    list_display = ('__str__', 'pos')
+admin.site.register(UserProfileRace, UserProfileRaceAdmin)
+
+class UserProfileHowDiscoveredAdmin(TranslatableAdmin):
+    list_display = ('__str__', 'pos')
+admin.site.register(UserProfileHowDiscovered, UserProfileHowDiscoveredAdmin)
 
 class UserProfilePerInstanceAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'date_created',)
