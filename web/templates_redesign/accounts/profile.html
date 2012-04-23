@@ -77,11 +77,13 @@
             {% for notification in request.user.notifications.all %}
         
             {% empty %}
+            
                 {% if request.user == player %}
-                No one has commented on your profile yet. Check out Find Players to connect to friends or meet new ones!
-                <br /><br />
-                
-                <a href="{% url accounts:all %}" class="btn-forward">{% trans "Find players" %}</a>
+                    No one has commented on your profile yet. Check out Find Players to connect to friends or meet new ones!
+                    <br /><br />
+                    <a href="{% url accounts:all %}" class="btn-forward">{% trans "Find players" %}</a>
+                {% else %}
+                    There are no comments for this player's profile yet.
                 {% endif %}
             {% endfor %}
             </p>
@@ -100,7 +102,11 @@
                 <p class="profile-detail">
                     {# TODO: Badges #}
                     {# if empty #}
-                    {% trans "You haven't earned any badges yet!" %}
+                    {% if request.user == player %}
+                        {% trans "You haven't earned any badges yet!" %}
+                    {% else %}
+                        {% trans "This player has no badges yet" %}
+                    {% endif %}
                 </p>
 
 
