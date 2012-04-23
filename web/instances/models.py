@@ -130,7 +130,7 @@ class Instance(TranslatableModel):
     state = models.CharField(max_length=2)
     start_date = models.DateTimeField()
     location = GoogleMapsField()
-    curators = models.ManyToManyField(User)
+    curators = models.ManyToManyField(User, blank=True)
     languages = models.ManyToManyField(Language)
     days_for_mission = models.IntegerField(default=7)
     for_city = models.ForeignKey(City, null=True, related_name='instances')

@@ -21,7 +21,7 @@
         <p id="accounts-form-step2-instructions">Just one more thing... Help decision makers get a fuller picture of who you are by providing some information about yourself. The information marked private <img src="{{ STATIC_URL }}img/icon-private.png" /> will not be shared publicly or with any third parties. Check out our <a href="{% url privacy %}" target="new">Privacy Policy</a> and <a href="{% url terms %}" target="new">Terms of Use</a> for more information.</p>
         </div>
         
-        <form class="accounts-form" action="" method="post"> {% csrf_token %}
+        <form class="accounts-form" action="" method="post" enctype="multipart/form-data"> {% csrf_token %}
         
         {{ wizard.management_form }}
         {% if wizard.form.forms %}
@@ -37,10 +37,8 @@
                 <div class="column-third">
                     <div class="column-container-40">
                         <img src="{{ STATIC_URL }}img/avatar-blank.png" width="220" height="220">
-                        
                         <p>Upload an image to use as your avatar</p>
-                        
-                        <input type="file" />
+                        <p>{{ form.avatar }} {{ form.avatar.errors }}</p>
                     
                         <p id="accounts-form-avatar-disclaimer">By uploading a file you certify that you have the right to distribute this picture and that it does not violate the <a href="{% url terms %}"  target="new">Terms of Use</a>.</p>
                     </div>

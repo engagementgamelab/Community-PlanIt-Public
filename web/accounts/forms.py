@@ -3,6 +3,7 @@ from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.db import transaction
@@ -14,10 +15,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-#from django.contrib.formtools.wizard import FormWizard
-#from django.views.generic.base import TemplateResponseMixin
 from django.contrib.formtools.wizard.views import SessionWizardView
-#from django.contrib.sites.models import RequestSite
 
 from web.accounts.models import *
 from web.instances.models import Instance, City, Language
@@ -25,8 +23,8 @@ from web.instances.models import Instance, City, Language
 from web.core.utils import get_translation_with_fallback
 
 import logging
-
 log = logging.getLogger(__name__)
+
 
 class RegisterFormOne(forms.Form):
 
@@ -46,28 +44,14 @@ class RegisterFormOne(forms.Form):
         try:
             current_city = City.objects.get(domain=self.domain)
             self.fields['city'] = forms.CharField(widget=forms.HiddenInput(), initial=current_city.pk)
-            instances = Instance.objects.exclude(is_disabled=True).filter(for_city=current_city).values_list('pk', 'title') #.distinct().order_by('title')
         except City.DoesNotExist:
             cities = City.objects.values_list('pk', 'name')
             self.fields['city'] = forms.ChoiceField(label=_('Choose your city'), choices=cities)
-            #games_for_first_city = Instance.objects.filter(for_city__pk=cities[0][0]).language(get_language())
-            #instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_first_city]
-            instances = Instance.objects.filter(for_city__pk=cities[0][0]).values_list('pk', 'title').distinct().order_by('title')
-
-#        self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
-        self.fields['instance'] = forms.ModelChoiceField(label=_(u'Select your game'), required=False, queryset=Instance.objects.all())
+        self.fields['instance'] = forms.ModelChoiceField(label=_(u'Select your game'), required=False, queryset=Instance.objects.exclude(is_disabled=True).all())
         self.fields['preferred_language'] = forms.ModelChoiceField(required=True, 
                                                             label=_("Preferred Language"), 
                                                             queryset=Language.objects.all()
         )
-
-
-        #self.fields['accepted_terms'] = forms.BooleanField(
-        #    required=True,
-        #    label=mark_safe(
-        #        _('Confirm that you have read and agree to the <a target="_blank" href="%(terms)s">Terms of Use</a>.') % {'terms': reverse('terms')}
-        #    )
-        #)
 
     def clean(self):
         """Ensure that a user has not already registered an account with that email address and that game."""
@@ -93,28 +77,23 @@ class RegisterFormTwo(forms.Form):
             chosen_game = kwargs.pop('chosen_game')
         super(RegisterFormTwo, self).__init__(*args, **kwargs)
         self.chosen_game = chosen_game
-        #print self.chosen_game
-        #print self.chosen_game.user_profile_variants.stake_variants.all()
 
-        #all_stakes = self.chosen_game.user_profile_variants.stake_variants.all().order_by("pos")
-        #stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
-        #self.fields['stake'] = forms.ChoiceField(label=_(u'Stake in the community'), required=False, choices=stakes)
+
+
+        self.fields['avatar'] = forms.ImageField(required=False)
+
         self.fields['stakes'] = forms.ModelMultipleChoiceField(
                                     label=_(u'Stake in the community'),
                                     required=False,
                                     queryset=self.chosen_game.user_profile_variants.stake_variants.all().order_by("pos")
         )
-
-        affiliations = self.chosen_game.user_profile_variants.affiliation_variants.all().order_by('pk', "name").values_list('pk', 'name')
-        # self.fields['affiliations'] = forms.MultipleChoiceField(
-        #     label=_(u'Affiliation'), required=False, choices=affiliations
-        # )
-        self.fields['affiliations'] = forms.ChoiceField(
-            label=_(u'Affiliation'), required=False, choices=affiliations,
+        self.fields['affiliations'] = forms.ModelMultipleChoiceField(
+                                    label=_(u'Affiliations'),
+                                    required=False,
+                                    queryset=self.chosen_game.user_profile_variants.affiliation_variants.all().order_by("name")
         )
         self.fields['affiliations_other'] = forms.CharField(required=False, 
                label=_("Don't see your affiliation? Enter it here. Please place a comma between each affiliation."))
-        
 
         self.fields['birth_year'] = forms.IntegerField( label=_('Year you were born'), required=False)
         self.fields['zip_code'] = forms.CharField(max_length=10, label=_('Your ZIP code'))
@@ -190,12 +169,6 @@ class RegisterFormTwo(forms.Form):
             return UserProfileRace.objects.get(pk=self.cleaned_data['race'])
         except UserProfileRace.DoesNotExist:
             return None
-    
-    #def clean_stakes(self):
-    #    try:
-    #        return UserProfileStake.objects.get(pk=self.cleaned_data['stake'])
-    #    except UserProfileStake.DoesNotExist:
-    #        return None
 
 
 class RegistrationWizard(SessionWizardView):
@@ -211,6 +184,10 @@ class RegistrationWizard(SessionWizardView):
     #    data = {'request': self.request}
     #    form = super(RegistrationWizard, self).get_form(step, data, files)
     #    return form
+
+    def __init__(self, *args, **kwargs):
+        super(RegistrationWizard, self).__init__(*args, **kwargs)
+        self.file_storage = FileSystemStorage()
 
     def get_form_kwargs(self, step=None):
         if step == '1':
@@ -270,9 +247,10 @@ class RegistrationWizard(SessionWizardView):
 
         profile = player.get_profile()
         profile.email = form_one.cleaned_data.get('email')
-        #profile.instance = self.community
         profile.preferred_language = form_one.cleaned_data['preferred_language']
         profile.city = form_one.cleaned_data.get('city')
+
+        profile.avatar = form_two.cleaned_data.get('avatar')
 
         birth_year = form_two.cleaned_data.get('birth_year')
         if birth_year:
@@ -320,12 +298,11 @@ class RegistrationWizard(SessionWizardView):
         #
         self.request.session['current_game_slug'] = game.slug
 
-        print game.slug
-
         if game.slug == 'noquwo-neighborhoods-on-the-move':
-        	page = reverse('quincy')
+            page = reverse('quincy')
         else:
             page = reverse('accounts:dashboard')
+
         return redirect(
                         ''.join(
                                 [ game.get_absolute_url(ssl=not(settings.DEBUG)), page ]

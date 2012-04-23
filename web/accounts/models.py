@@ -1,3 +1,4 @@
+import os.path
 import datetime
 from uuid import uuid4 as uuid
 
@@ -22,9 +23,6 @@ from web.comments.models import Comment
 from web.accounts.models import *
 from web.challenges.models import *
 from web.instances.models import Instance, Affiliation
-
-def determine_path(instance, filename):
-    return 'uploads/'+ str(instance.user.id) +'/'+ filename
 
 class UserProfileOptionBase(TranslatableModel):
     pos = models.IntegerField(blank=False, null=False)
@@ -154,6 +152,8 @@ class UserProfilePerInstance(models.Model):
     stakes = models.ManyToManyField(UserProfileStake, blank=True, null=True, related_name='stakes')
     affils = models.ManyToManyField(Affiliation, blank=True, null=True, related_name='affiliations')
 
+    date_created = models.DateTimeField(auto_now_add=True)
+
     objects = UserProfilePerInstanceManager()
 
     def __unicode__(self):
@@ -165,6 +165,10 @@ class UserProfilePerInstance(models.Model):
 
     class Meta:
         unique_together = ('user_profile', 'instance',)
+        ordering = ('date_created', 'user_profile__user__last_name', )
+
+def determine_path(instance, filename):
+    return os.path.join('uploads', 'avatars', str(instance.user.id), filename)
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
