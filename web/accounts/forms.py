@@ -3,6 +3,7 @@ from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.db import transaction
@@ -79,28 +80,23 @@ class RegisterFormTwo(forms.Form):
             chosen_game = kwargs.pop('chosen_game')
         super(RegisterFormTwo, self).__init__(*args, **kwargs)
         self.chosen_game = chosen_game
-        #print self.chosen_game
-        #print self.chosen_game.user_profile_variants.stake_variants.all()
 
-        #all_stakes = self.chosen_game.user_profile_variants.stake_variants.all().order_by("pos")
-        #stakes = [(x.pk, get_translation_with_fallback(x, 'stake')) for x in all_stakes]
-        #self.fields['stake'] = forms.ChoiceField(label=_(u'Stake in the community'), required=False, choices=stakes)
+
+
+        self.fields['avatar'] = forms.ImageField(required=False)
+
         self.fields['stakes'] = forms.ModelMultipleChoiceField(
                                     label=_(u'Stake in the community'),
                                     required=False,
                                     queryset=self.chosen_game.user_profile_variants.stake_variants.all().order_by("pos")
         )
-
-        affiliations = self.chosen_game.user_profile_variants.affiliation_variants.all().order_by('pk', "name").values_list('pk', 'name')
-        # self.fields['affiliations'] = forms.MultipleChoiceField(
-        #     label=_(u'Affiliation'), required=False, choices=affiliations
-        # )
-        self.fields['affiliations'] = forms.ChoiceField(
-            label=_(u'Affiliation'), required=False, choices=affiliations,
+        self.fields['affiliations'] = forms.ModelMultipleChoiceField(
+                                    label=_(u'Affiliations'),
+                                    required=False,
+                                    queryset=self.chosen_game.user_profile_variants.affiliation_variants.all().order_by("name")
         )
         self.fields['affiliations_other'] = forms.CharField(required=False, 
                label=_("Don't see your affiliation? Enter it here. Please place a comma between each affiliation."))
-        
 
         self.fields['birth_year'] = forms.IntegerField( label=_('Year you were born'), required=False)
         self.fields['zip_code'] = forms.CharField(max_length=10, label=_('Your ZIP code'))
@@ -176,12 +172,6 @@ class RegisterFormTwo(forms.Form):
             return UserProfileRace.objects.get(pk=self.cleaned_data['race'])
         except UserProfileRace.DoesNotExist:
             return None
-    
-    #def clean_stakes(self):
-    #    try:
-    #        return UserProfileStake.objects.get(pk=self.cleaned_data['stake'])
-    #    except UserProfileStake.DoesNotExist:
-    #        return None
 
 
 class RegistrationWizard(SessionWizardView):
@@ -197,6 +187,10 @@ class RegistrationWizard(SessionWizardView):
     #    data = {'request': self.request}
     #    form = super(RegistrationWizard, self).get_form(step, data, files)
     #    return form
+
+    def __init__(self, *args, **kwargs):
+        super(RegistrationWizard, self).__init__(*args, **kwargs)
+        self.file_storage = FileSystemStorage()
 
     def get_form_kwargs(self, step=None):
         if step == '1':
@@ -260,6 +254,8 @@ class RegistrationWizard(SessionWizardView):
         profile.preferred_language = form_one.cleaned_data['preferred_language']
         profile.city = form_one.cleaned_data.get('city')
 
+        profile.avatar = form_two.cleaned_data.get('avatar')
+
         birth_year = form_two.cleaned_data.get('birth_year')
         if birth_year:
             profile.birth_year = birth_year
@@ -306,12 +302,11 @@ class RegistrationWizard(SessionWizardView):
         #
         self.request.session['current_game_slug'] = game.slug
 
-        print game.slug
-
         if game.slug == 'noquwo-neighborhoods-on-the-move':
-        	page = reverse('quincy')
+            page = reverse('quincy')
         else:
             page = reverse('accounts:dashboard')
+
         return redirect(
                         ''.join(
                                 [ game.get_absolute_url(ssl=not(settings.DEBUG)), page ]
