@@ -270,6 +270,8 @@ REPORTS_RECIPIENTS = (
         'philip.kalinsky@eloquentbits.com',
 )
 
+BRINGCPI_RECIPIENTS = ['eric_gordon@emerson.edu']
+
 # ajax_select
 # used in autocompletion
 AJAX_LOOKUP_CHANNELS = {

@@ -1,0 +1,47 @@
+{% extends 'index.html' %}
+
+{% load i18n cpi_tags %}
+
+
+{% block games %}
+
+<div id="games" class="games">
+    <div>
+        <a href="{% url home %}" class="btn-back">{% trans "Back to Games" %}</a>
+    </div>
+    <h1>{% trans "Bring Community PlanIt to You!" %}</h1>
+        
+
+    
+    <p class="instructions">{% trans "Is your city or metro area not listed? Do you have an idea for a Community PlanIt game in your community? Let us know! Provide your name, your role in your community, your email address and your idea for a Community PlanIt game." %}</p>
+    
+    <form id="bringcpi-form" method="POST" action="{% url bringcpi %}">
+        {% csrf_token %}
+        <p>
+            <label>{% trans "Name" %}</label>
+            {{ form.name }}
+            {{ form.name.errors }}
+        </p>
+        
+        <p>
+            <label>{% trans "Contact Email" %}</label>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </p>
+        
+        <p>
+            <label>{% trans "Role in Community" %}</label>
+            {{ form.role }}
+            {{ form.role.errors }}
+        </p>
+        
+        <p>
+            <label>{% trans "Message" %}</label>
+            {{ form.message }}
+            {{ form.message.errors }}
+        </p> 
+        <input type="submit" class="btn-blue" />
+    </form>
+</div>
+{% endblock %}
+
