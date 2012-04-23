@@ -42,7 +42,9 @@
         
         #crowds-addform #id_start_date_0, 
         #crowds-addform #id_end_date_0 {
+            position: relative;
             width: 100px;
+            margin-left: 25px;
         }
         
         #crowds-addform #id_start_date_1,

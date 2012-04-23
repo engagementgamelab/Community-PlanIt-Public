@@ -15,7 +15,7 @@
         
         <div>
             <div class="tabbutton">
-            <a class="button">+ Add an Affiliation</a>
+            <a class="button">+ Create an Affiliation</a>
             </div>
             <hr class="thick" />
             {# SEARCH #}
@@ -25,7 +25,7 @@
         
         <h3>{% trans "All Affiliations" %}</h3>
         {% for affiliation in affiliations %}
-            <div><a href="{# this should probably link the find players with affiliations filtered? #}">{{ affiliation.name }}</a></div>
+            <div><a href="{% url affiliations:affiliation affiliation.slug %}">{{ affiliation.name }}</a></div>
         {% endfor %}
     </div>
     

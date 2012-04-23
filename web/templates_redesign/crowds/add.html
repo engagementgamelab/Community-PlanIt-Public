@@ -78,14 +78,11 @@
                 </div>
             
                 <div class="column-half">
-                    <p>
-                    </p>
-                
-                    <p>
-                        {{form.start_date.label_tag}}
-                        {{form.start_date}}
-                        {{form.start_date.errors}}
-                    </p>
+                    <div>
+                        {{ form.start_date.label_tag }}
+                        {{ form.start_date }}
+                        {{ form.start_date.errors }}
+                    </div>
                     <p>
                         {{form.end_date.label_tag}}
                         {{form.end_date}}
