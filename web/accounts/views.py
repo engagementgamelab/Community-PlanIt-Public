@@ -329,7 +329,11 @@ def edit(request):
 
 @login_required
 def all(request, template='accounts/all.html'):
-    profiles_for_game =  UserProfilePerInstance.objects.filter(instance=request.current_game)
+    profiles_for_game =  UserProfilePerInstance.objects.filter(
+                                                            instance=request.current_game
+                                                        ).exclude(
+                                                                user_profile__user__is_active=False
+    )
     filter_by_variants = Sijax()
     filter_by_variants.set_request_uri(reverse('accounts:ajax-filter-players-by-variant'))
 
@@ -358,7 +362,6 @@ def ajax_search(request, search_form, request_uri=None):
         form = search_form(request, data=form_data)
         if form.is_valid():
             profiles_for_game = form.search()
-            print "search got %s players" % profiles_for_game.count()
             context = {
                 'profiles_for_game' : profiles_for_game,
                 'MEDIA_URL' : settings.MEDIA_URL,

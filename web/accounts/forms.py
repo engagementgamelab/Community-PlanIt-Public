@@ -391,7 +391,7 @@ class FilterPlayersByVariantsForm(forms.Form):
             qs = qs.filter(stakes=cd.get('stakes'))
         if cd.get('affiliation') is not None and cd.get('affiliation') != '':
             qs = qs.filter(affils=cd.get('affiliation'))
-        return qs
+        return qs.exclude(user_profile__user__is_active=False)
 
 
 class SearchPlayersByKeywordsForm(forms.Form):
@@ -412,7 +412,7 @@ class SearchPlayersByKeywordsForm(forms.Form):
                     Q(user_profile__user__first_name__icontains = cd.get('q')) |
                     Q(user_profile__user__last_name__icontains = cd.get('q'))
             )
-        return qs
+        return qs.exclude(user_profile__user__is_active=False)
 
 
 class AccountAuthenticationForm(AuthenticationForm):
