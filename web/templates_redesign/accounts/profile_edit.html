@@ -16,8 +16,8 @@
             <form enctype="multipart/form-data" action="" method="post">
             <div class="column-third">
                 <div class="column-container">
-                    {%if user.get_profile.avatar%}
-                        <img src="{{ MEDIA_URL }}{{ user.get_profile.avatar }}" width="200" height="200">
+                    {%if request.user.get_profile.avatar %}
+                        <img src="{{ MEDIA_URL }}{{ request.user.get_profile.avatar }}" width="200" height="200">
                     {%else%}
                         <img class="avatar-edit" src="{{ STATIC_URL }}img/avatar-blank.png" width="200" height="200">
                     {%endif%}
@@ -54,10 +54,27 @@
                         {{ profile_form.receive_email }}
                         {{ profile_form.receive_email.errors }}
                     </p>
+                    {% if profile_form.preferred_language %}
                     <p>    
                         {{ profile_form.preferred_language.label_tag }}
                         {{ profile_form.preferred_language }}
                         {{ profile_form.preferred_language.errors }}
+                    </p>                        
+                    {% endif %}
+                    <p>    
+                        {{ profile_form.birth_year.label_tag }}
+                        {{ profile_form.birth_year }}
+                        {{ profile_form.birth_year.errors }}
+                    </p>                        
+                    <p>    
+                        {{ profile_form.stakes.label_tag }}
+                        {{ profile_form.stakes }}
+                        {{ profile_form.stakes.errors }}
+                    </p>                        
+                    <p>    
+                        {{ profile_form.affiliations.label_tag }}
+                        {{ profile_form.affiliations }}
+                        {{ profile_form.affiliations.errors }}
                     </p>                        
                     <input type="submit" class="button submit" value="Update Profile" />
                 </div>
