@@ -5,7 +5,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from django.contrib import admin
 
-from web.instances.models import Instance
+from web.instances.models import Instance, City
 
 # Setup admin
 admin.autodiscover()
@@ -25,6 +25,9 @@ urlpatterns = patterns('web',
     url(r'^terms/', direct_to_template, { 'template': 'static/terms.html', 'extra_context': { 'instances': Instance.objects.all } }, name='terms'),
     url(r'^how-to-play/', direct_to_template, { 'template': 'static/howtoplay.html', 'extra_context': { 'instances': Instance.objects.all } }, name='howtoplay'),
     url(r'^quincy/', direct_to_template, { 'template': 'static/quincy_post_signup.html', 'extra_context': { 'instances': Instance.objects.all } }, name='quincy'),
+    url(r'^bring-cpi-to-you/$', 'views.bringcpi', name='bringcpi'),
+    url(r'^bring-cpi-to-you/thanks/', direct_to_template, { 'template': 'bringcpi_thanks.html', 'extra_context': { 'cities': City.objects.all } }, name='bringcpi-thanks'),
+
 
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),
     (r'^resource-center/', include('attachments.urls', namespace='attachments', app_name='attachments')),

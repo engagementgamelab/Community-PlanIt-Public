@@ -133,6 +133,7 @@ hr.rainbow {
     .games-filter {
         display: inline-block;
         width: 500px;
+        z-index: 99;
     }
     
         .games-filter li {
@@ -416,3 +417,54 @@ hr.rainbow {
             border-left-color: #f7ff59;
             border-left-width: 12px;
         }
+        
+/* Bring Community PlanIt to you */
+
+
+#bringcpi-form {
+    background: #00E5B8;
+    margin-left: -20px;
+    padding: 40px;
+}
+
+    #bringcpi-form label {
+        display: block;
+        width: 220px;
+        margin: 10px 0px 3px 0px;
+        font-size: 0.75em;
+    }
+    
+    #bringcpi-form input[type='text'] {
+        display: inline-block;
+        vertical-align: middle;
+        width: 220px;
+        padding: 8px 5px;
+        border: 0px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+
+    #bringcpi-form textarea {
+        width: 440px;
+        height: 100px;
+        padding: 8px 5px;
+        border: 0px;
+        resize: none;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+    
+    .errorlist {
+        font-size: 0.8em;
+        margin: 5px 0px;
+        color: red;
+    }
+
+
+
+
+
+
+

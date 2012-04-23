@@ -1,10 +1,13 @@
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader, Context
 from django.views.decorators.cache import never_cache
 from django.contrib.sites.models import Site
+from django import forms
+from django.core.mail import send_mail
 
+from web.settings import *
 from web.accounts.views import dashboard
 from web.accounts.forms import AccountAuthenticationForm
 from web.instances.models import Instance, City
@@ -30,6 +33,32 @@ def index(request, template='index.html'):
         current_city = current_city,
         cities = City.objects.all(),
     )
+    return render(request, template, context)
+
+class BringCpiForm(forms.Form):
+    name = forms.CharField(max_length=255)
+    email = forms.EmailField()
+    role = forms.CharField(max_length=255)
+    message = forms.CharField(widget=forms.Textarea)
+
+def bringcpi(request, template='bringcpi.html'):
+    if request.method == 'POST': 
+        form = BringCpiForm(request.POST)
+        if form.is_valid(): 
+            
+            message = 'From %s: <%s>\n%s\n%s' % (form.cleaned_data['name'], form.cleaned_data['email'], form.cleaned_data['role'], form.cleaned_data['message'])
+            
+            send_mail('Bring CommunityPlanIt to You submissions', message, settings.NOREPLY_EMAIL,
+                settings.BRINGCPI_RECIPIENTS, fail_silently=False)
+                
+            return HttpResponseRedirect('/bring-cpi-to-you/thanks/')
+    else:
+        form = BringCpiForm()
+
+    context = {
+        'form': form,
+        'cities': City.objects.all(),
+    }
     return render(request, template, context)
 
 @never_cache
