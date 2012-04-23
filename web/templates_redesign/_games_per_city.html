@@ -40,7 +40,7 @@
             <div class="gameslist-details slides_container">
                 {% for instance in instances_current %}
                 <div>
-                    <div class='gameslist-slide-container'>
+                    <div class="gameslist-slide-container">
                         <div class="gameslist-countdown-container">
                             {% if not instance.is_active %}
                                 <div class="gameslist-countdown">
@@ -103,18 +103,23 @@
                 {% endfor %}
             </ul>
             <div class="gameslist-details slides_container">
-                {% for instance in instances_past %}
                 <div>
-                    <div class="gameslist-detail-attachment">
-                        {% if instance.get_slideshow_attachment.get_att_type_display == 'Video' %}
-                            {% embed_video instance.get_slideshow_attachment.url %}
-                        {% else %}
-                        <img class="gameslist-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
-                        {% endif %}
+                    <div class="gameslist-slide-container">
+                        {% for instance in instances_past %}
+                        <div class="gameslist-countdown-container"></div>
+                        <div class="gameslist-details-container">
+                            <div class="gameslist-detail-attachment">
+                                {% if instance.get_slideshow_attachment.get_att_type_display == 'Video' %}
+                                    {% embed_video instance.get_slideshow_attachment.url %}
+                                {% else %}
+                                <img class="gameslist-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
+                                {% endif %}
+                            </div>
+                            <p class="gameslist-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
+                        </div>
+                        {% endfor %}
                     </div>
-                    <p class="gameslist-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
                 </div>
-                {% endfor %}
             </div>
         </div>
     </div>
