@@ -88,6 +88,41 @@
         min-height: 75px;
     }
 
+    #profile-tagline {
+        position: relative;
+        padding: 20px;
+        background: #e3f1ea;
+        font-family: 'Enriqueta';
+        font-size: 1.25em;
+        color: #a7a9ac;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+    }
+    
+        #profile-tagline:before {
+            content: ' ';
+            position: absolute;
+            top: 45px;
+            left: -30px;
+            width: 0px;
+            height: 0px;
+            border: 15px solid transparent;
+
+            border-right-color: #e3f1ea;
+        }
+        
+    #profile-points {}
+
+        #profile-points .points {
+            display: inline-block;
+            position: relative;
+            bottom: -5px;
+            margin: 0px 10px;
+            font-family: "Enriqueta";
+            font-size: 3em;
+            color: #ff5036;
+        }
 /* Account Edit Profile Specific Styles */
 #profile-editform-container {
   margin-right: 20px;
@@ -114,7 +149,6 @@
         display: inline-block;
         width: 75px;
     }
-    
     #id_stakes {
         width: 125px;
         margin-left: 5px;

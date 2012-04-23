@@ -569,8 +569,14 @@ p.instructions {
 
 .btn-back {
     float: right;
-    padding-left: 15px;
+    padding-left: 18px;
     background: url('../img/btn-back.png') no-repeat left center;
+}
+
+.btn-forward {
+    float: right;
+    padding-right: 18px;
+    background: url('../img/btn-forward.png') no-repeat right center;
 }
 
 
