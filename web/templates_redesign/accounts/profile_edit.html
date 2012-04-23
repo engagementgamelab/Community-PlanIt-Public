@@ -17,9 +17,9 @@
             <div class="column-third">
                 <div class="column-container">
                     {%if user.get_profile.avatar%}
-                        <img src="{{ MEDIA_URL }}{{ user.get_profile.avatar }}">
+                        <img src="{{ MEDIA_URL }}{{ user.get_profile.avatar }}" width="200" height="200">
                     {%else%}
-                        <img class="avatar-edit" src="{{ STATIC_URL }}img/avatar-blank.png">
+                        <img class="avatar-edit" src="{{ STATIC_URL }}img/avatar-blank.png" width="200" height="200">
                     {%endif%}
         
                     {{ profile_form.avatar }}
@@ -68,9 +68,9 @@
                     {%csrf_token%}
                     <p>
                         {%if change_password_form.errors%}
-                        {{change_password_form.errors}}
+                            {{change_password_form.errors}}
                         {%endif%}
-                        {{change_password_form.password}}
+                        {{change_password_form.password}}<br/>
                         {{change_password_form.confirm}}
                     </p>
                     <input type="submit" class="button submit" value="Change Password" />
