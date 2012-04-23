@@ -145,8 +145,6 @@ hr.rainbow {
             display: inline-block;
             padding: 20px;
             text-align: center;
-/*            border: 1px dotted #ddd;*/
-/*            background: #2D3542;*/
             cursor: pointer;
         }
         
@@ -163,33 +161,18 @@ hr.rainbow {
     .games hr.thick {
         margin-bottom: 10px;
     }
-    
-    #games-countdown {
-        display: inline-block;
-        vertical-align: bottom;
-        width: 150px;
-        height: 50px;
-        font-size: 0.9em;
-        text-align: center;
-        background: #e0f0e9;
-        color: #ff5036;
-    }
-    
-        #games-countdown-time {
-            margin: 5px;
-            font-size: 1.5em;
-        }
         
-    .games-filter-container {
+    .gameslist-container {
     }
 
-    .games-list {
-        top: 0px;
+    .gameslist {
+        position: relative;
+        top: -80px;
         left: 0px;
         clear: both;
     }
     
-        .games-list-signedup {
+        .gameslist-signedup {
             position: relative;
             left: -15px;
             display: inline-block;
@@ -201,32 +184,30 @@ hr.rainbow {
             box-shadow: 0 2px 4px rgba(0,0,0,.1);
         }
         
-         .games-list-signedup:before{
-             content: '';
-             position: absolute;
-             border-style: solid;
-             border-color: transparent;
-             bottom: -5px;
-         }
-
-        .games-list-signedup:before
-        {
+        .gameslist-signedup:before{
+            content: '';
+            position: absolute;
+            border-style: solid;
+            border-color: transparent;
+            bottom: -5px;
             border-width: 0 5px 5px 0;
             border-right-color: #e26521;
             left: 0;
         }
         
         /* Games list Navigation (left) */
-        .games-list-nav {
+        .gameslist-nav {
             float: left;
             width: 200px;
+            margin-top: 80px;
+/*            border: 1px solid black;*/
         }
         
-            .games-list-nav li+li {
+            .gameslist-nav li+li {
                 border-top: 2px dotted #e4f2ed;
             }
                 
-            .games-list-nav > li > a {
+            .gameslist-nav > li > a {
                 display: block;
                 padding: 15px 10px;
                 text-decoration: none;
@@ -234,101 +215,93 @@ hr.rainbow {
                 color: inherit;
             }
             
-            .games-list-nav > li > a:hover,
-            .games-list-nav > li.current > a {
+            .gameslist-nav > li > a:hover,
+            .gameslist-nav > li.current > a {
                 background-color: #e4f2ed;
             }
             
-            .games-list-nav h3 {
+            .gameslist-nav h3 {
                 font-size: 1.4em;
                 font-weight: bold;
             }
             
-            .games-list-nav p {
+            .gameslist-nav p {
                 margin: 10px 0px;
                 font-size: 0.75em;
             }
         
         /* Public games list details */
-        #public-index .games-list-details {
+        .gameslist-details {
             position: relative;
             float: left;
             width: 440px;
-            background: #e0f0e9;
+/*            border: 1px solid black;*/
         }
-/*            .games-list-detail-countdown {
-                position: absolute;
-                right: -20px;
-                top: -95px;
-                width: 200px;
-                height: 75px;
-                text-align: center;
-                background: #e0f0e9;
-                border-left: 10px solid white;
-            } */
-            
-            #public-index .games-list-details > div {
-                display: block;
+
+            .gameslist-details .gameslist-slide-container {
                 width: 440px;
-                margin: 20px;
+                height: 700px;
+            }
+                            
+            .gameslist-countdown-container {
+                float: right;
+                width: 150px;
+                height: 80px;
+            } 
+            
+                .gameslist-countdown {
+                    width: 100%;
+                    height: 100%;
+                    text-align: center;
+                    background: #e0f0e9;
+/*                    border-left: 10px solid white;*/
+                    -webkit-border-top-left-radius: 10px;
+                    -webkit-border-top-right-radius: 10px;
+                    -moz-border-radius-topleft: 10px;
+                    -moz-border-radius-topright: 10px;
+                    border-top-left-radius: 10px;
+                    border-top-right-radius: 10px;
+                    color: #ff5036;
+                }
+                
+                    .gameslist-countdown-timer {
+                        font-family: "Enriqueta";
+                        font-size: 2em;
+                        font-weight: bold;
+                        line-height: 60px;
+                        height: 60px
+                    }
+                    
+            
+            
+            .gameslist-details-container {
+                clear: right;
+                background: #e0f0e9;
+                padding: 20px;
             }
             
-                #public-index .games-list-details > div > div {
-                    width: 400px;
+                .gameslist-details > div > div {
                     text-align: center;
                 }
                 
-                #public-index .games-list-details .games-list-detail-img {
+                .gameslist-details .gameslist-detail-img {
                     width: 400px;
                     height: 300px;
                 }
                 
-                #public-index .games-list-details .games-list-detail-attachment {
+                .gameslist-details .gameslist-detail-attachment {
                     width: 400px;
                     height: 300px;
                 }
 
-                #public-index .games-list-details .games-list-detail-description {
+                .gameslist-details .gameslist-detail-description {
                     margin: 20px 0px;
                     width: 400px;
                     text-align: left;
+
                 }
-                
-/* Public - city pages have slightly different setup... */
 
-/*#public-city #games {
-    width: 920px;
-}
-
-    #public-city #games > .slides_container {
-        width: 920px;
-        height: 600px;
-    }
-                    
-        #public-city .games-list-details {
-            float: left;
-            width: 720px;
-            background: #e4f2ed;
-        }
-
-            #public-city .games-list-details > div {
-                display: block;
-                width: 720px;
-                margin: 20px;
-            }
-
-                #public-city .games-list-details > div > div {
-                    width: 680px;
-                }
-                
-
-
-                #public-city .games-list-details .games-list-detail-img {
-                    width: 680px;
-                    height: 300px;
-                }*/
-
-/* Private - city (logged-in) pages again have a slightly different setup... sigh... */
+/* City pages need different widths */
 
 #public-city #games,
 #private-city #games {
@@ -341,41 +314,45 @@ hr.rainbow {
         height: 600px;
     }
     
-        #public-city .games-list-details,
-        #private-city .games-list-details {
+        #public-city .gameslist-details,
+        #private-city .gameslist-details {
             position: relative;
             float: left;
             width: 580px;
-            background: #e4f2ed;
         }
         
-            #public-city .games-list-details > div,
-            #private-city .games-list-details > div {
+            #public-city .gameslist-details > div,
+            #private-city .gameslist-details > div {
                 display: block;
                 width: 580px;
-                margin: 20px;
             }
             
-                #private-city .games-list-details > div > div,
-                #private-city .games-list-details > div > div {
+                #public-city .gameslist-details > div > div,
+                #private-city .gameslist-details > div > div {
                     width: 540px;
                     text-align: center;
                 }
                 
-                #public-city .games-list-details .games-list-detail-img,
-                #private-city .games-list-details .games-list-detail-img {
+                #public-city .gameslist-details .gameslist-slide-container,
+                #private-city .gameslist-details .gameslist-slide-container {
+                    width: 580px;
+                    height: 700px;
+                }
+                
+                #public-city .gameslist-details .gameslist-detail-img,
+                #private-city .gameslist-details .gameslist-detail-img {
                     width: 540px;
                     height: 300px;
                 }
                 
-                #public-city .games-list-details .games-list-detail-attachment,
-                #private-city .games-list-details .games-list-detail-attachment {
+                #public-city .gameslist-details .gameslist-detail-attachment,
+                #private-city .gameslist-details .gameslist-detail-attachment {
                     width: 540px;
                     height: 300px;
                 }
 
-                #public-city .games-list-details .games-list-detail-description,
-                #private-city .games-list-details .games-list-detail-description {
+                #public-city .gameslist-details .gameslist-detail-description,
+                #private-city .gameslist-details .gameslist-detail-description {
                     margin: 20px 0px;
                     width: 540px;
                     text-align: left;
