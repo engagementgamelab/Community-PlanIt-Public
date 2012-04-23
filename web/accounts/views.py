@@ -369,7 +369,7 @@ def ajax_search(request, search_form, request_uri=None):
                 'request': request,
                 'paginate_players_per_page' : settings.ENDLESS_PAGINATE_PLAYERS_PER_PAGE,
             }
-            players_count_str = "found %s players" % profiles_for_game.count()
+            players_count_str = "<h3>%s total players</h3>" % profiles_for_game.count()
             obj_response.html("#id_players-count", players_count_str)
             players_tmpl = """
             {% load endless %}
