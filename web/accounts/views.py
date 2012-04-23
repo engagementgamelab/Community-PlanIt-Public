@@ -404,10 +404,13 @@ def profile(request, id, template_name="accounts/profile.html"):
     player = get_object_or_404(User, id=id)
     current_game = request.current_game
     stream = Action.objects.get_for_actor(player)
-    profile_per_instance = UserProfilePerInstance.objects.get(
-                user_profile = player.get_profile(),
-                instance = request.current_game,
-    )
+    try:
+        profile_per_instance = UserProfilePerInstance.objects.get(
+                    user_profile = player.get_profile(),
+                    instance = request.current_game,
+        )
+    except UserProfilePerInstance.DoesNotExist:
+        raise Http404("user for this game is not registered")
 
     my_games = Instance.objects.exclude(is_disabled=True).filter(
                     pk__in=
