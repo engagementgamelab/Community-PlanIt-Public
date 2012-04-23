@@ -46,28 +46,14 @@ class RegisterFormOne(forms.Form):
         try:
             current_city = City.objects.get(domain=self.domain)
             self.fields['city'] = forms.CharField(widget=forms.HiddenInput(), initial=current_city.pk)
-            instances = Instance.objects.exclude(is_disabled=True).filter(for_city=current_city).values_list('pk', 'title') #.distinct().order_by('title')
         except City.DoesNotExist:
             cities = City.objects.values_list('pk', 'name')
             self.fields['city'] = forms.ChoiceField(label=_('Choose your city'), choices=cities)
-            #games_for_first_city = Instance.objects.filter(for_city__pk=cities[0][0]).language(get_language())
-            #instances = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_first_city]
-            instances = Instance.objects.filter(for_city__pk=cities[0][0]).values_list('pk', 'title').distinct().order_by('title')
-
-#        self.fields['instance'] = forms.ChoiceField(label=_(u'Select your game'), required=False, choices=instances)
-        self.fields['instance'] = forms.ModelChoiceField(label=_(u'Select your game'), required=False, queryset=Instance.objects.all())
+        self.fields['instance'] = forms.ModelChoiceField(label=_(u'Select your game'), required=False, queryset=Instance.objects.exclude(is_disabled=True).all())
         self.fields['preferred_language'] = forms.ModelChoiceField(required=True, 
                                                             label=_("Preferred Language"), 
                                                             queryset=Language.objects.all()
         )
-
-
-        #self.fields['accepted_terms'] = forms.BooleanField(
-        #    required=True,
-        #    label=mark_safe(
-        #        _('Confirm that you have read and agree to the <a target="_blank" href="%(terms)s">Terms of Use</a>.') % {'terms': reverse('terms')}
-        #    )
-        #)
 
     def clean(self):
         """Ensure that a user has not already registered an account with that email address and that game."""
