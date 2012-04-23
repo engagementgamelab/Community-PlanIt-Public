@@ -16,25 +16,25 @@
             generatePagination: false
         });
         
-        $("#games-list-current").slides({
+        $("#gameslist-current").slides({
             effect: 'fade',
             generatePagination: false,
-            paginationClass: 'games-list-nav'
+            paginationClass: 'gameslist-nav'
         });
         
-        $("#games-list-past").slides({
+        $("#gameslist-past").slides({
             effect: 'fade',
             generatePagination: false,
-            paginationClass: 'games-list-nav'
+            paginationClass: 'gameslist-nav'
         });
         
-        $('.games-list').hide();
+        $('.gameslist').hide();
         
         $(".games-filter a").click(function(){
             $this = $(this);
             $(".games-filter a").removeClass('active');
             $this.addClass('active');
-            $('.games-list').hide();
+            $('.gameslist').hide();
             $('#'+$this.attr('data-target')).show();
         })
         

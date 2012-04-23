@@ -2,16 +2,16 @@
 <!-- Games per City -->
 <div id="games" class="games">
     <ul class="games-filter">
-        <li><a data-target='games-list-current'>Games</a></li>
-        {% if instances_past %}<li><a data-target='games-list-past'>Past Games</a></li>{% endif %}
+        <li><a data-target='gameslist-current'>Games</a></li>
+        {% if instances_past %}<li><a data-target='gameslist-past'>Past Games</a></li>{% endif %}
     </ul>
     
     <hr class="thick" />
     {% block games_extras %}{% endblock %}
-    <div class="games-filter-container">
+    <div class="gameslist-container">
         <!-- Current Games -->
-        <div id="games-list-current" class="games-list">
-            <ul class="games-list-nav">
+        <div id="gameslist-current" class="gameslist">
+            <ul class="gameslist-nav">
                 {% for instance in instances_current %}
                 <li>
                     <a>
@@ -28,7 +28,7 @@
                             {% endif %}
                             {# If you're signed up for this current game #}
                             {% if instance in request.user.get_profile.instances.all %}
-                                <div class="games-list-signedup">
+                                <div class="gameslist-signedup">
                                     You're signed up!
                                 </div>
                             {% endif %}
@@ -37,37 +37,52 @@
                 </li>
                 {% endfor %}
             </ul>
-            <div class="games-list-details slides_container">
+            <div class="gameslist-details slides_container">
                 {% for instance in instances_current %}
                 <div>
-                    
-                    <div class="games-list-detail-attachment">
-                        {% if instance.get_slideshow_attachment.get_att_type_display == 'Video' %}
-                            {% embed_video instance.get_slideshow_attachment.url %}
-                        {% else %}
-                        <img class="games-list-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
-                        {% endif %}
-                    </div>
-                    <p class="games-list-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
-                    <div id="games-list-detail-signup" class="btn-arrow">
-                        {% if user.is_authenticated %}
-                            {# Sign up for Instance #}
-                            {% if instance in request.user.get_profile.instances.all %}
-                                {# TODO: Go to this game if started! #}
-                                {% if current_city %}
-                                    {# they are on city page already... bring them to missions #}
-                                
-                                {% else %}
-                                    {# bring them to the city page... #}
-                                    <a href="http://{{ instance.for_city.domain }}">Get Ready for the Game</a>
-                                {% endif %}
-                            {% else %}
-                                <a href="{% url accounts:register %}">Sign up for this game!</a>
+                    <div class='gameslist-slide-container'>
+                        <div class="gameslist-countdown-container">
+                            {% if not instance.is_active %}
+                                <div class="gameslist-countdown">
+                                    {% if instance.time_until_start.days > 1 %}
+                                        <div class="gameslist-countdown-timer">{{ instance.time_until_start.days }} days</div>
+                                    {% else %}
+                                        <div class="gameslist-countdown-timer">{{ instance.time_until_start.seconds }} seconds</div>
+                                    {% endif %}
+                                    <div class="gameslist-countdown-untilstart">Till Game Launch</div>
+                                </div>
                             {% endif %}
-                        {% else %}
-                            {# Authenticate, and then sign up for this instance #}
-                            <a href="{% url accounts:register %}">Sign up for this game!</a>                        
-                        {% endif %}
+                        </div>
+                        <div class="gameslist-details-container">
+                            <div class="gameslist-detail-attachment">
+                                {% if instance.get_slideshow_attachment.get_att_type_display == 'Video' %}
+                                    {% embed_video instance.get_slideshow_attachment.url %}
+                                {% else %}
+                                <img class="gameslist-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
+                                {% endif %}
+                            </div>
+                            <div class="gameslist-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</div>
+                            <div id="gameslist-detail-signup" class="btn-arrow">
+                                {% if user.is_authenticated %}
+                                    {# Sign up for Instance #}
+                                    {% if instance in request.user.get_profile.instances.all %}
+                                        {# TODO: Go to this game if started! #}
+                                        {% if current_city %}
+                                            {# CITY PAGE #}
+                
+                                        {% else %}
+                                            {# INDEX page #}
+                                            <a href="http://{{ instance.for_city.domain }}">Get Ready for the Game</a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a href="{% url accounts:register %}">Sign up for this game!</a>
+                                    {% endif %}
+                                {% else %}
+                                    {# Authenticate, and then sign up for this instance #}
+                                    <a href="{% url accounts:register %}">Sign up for this game!</a>                        
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
@@ -76,28 +91,28 @@
         
         
         <!-- Past Games -->
-        <div id="games-list-past" class="games-list">
-            <ul class="games-list-nav">
+        <div id="gameslist-past" class="gameslist">
+            <ul class="gameslist-nav">
                 {% for instance in instances_past %}
                 <li>
                     <a>
                         <h3>{{ instance.title }}</h3>
-                        <p>{{ instance.for_city.name }} &bull; Ran from {{ instance.start_date|date:"n/j/y" }} - {{ instance.end_date|date:"n/j/y" }}</p>
+                        <p>{{ instance.for_city.name }} &bull; {% trans "Ran from" %} {{ instance.start_date|date:"n/j/y" }} - {{ instance.end_date|date:"n/j/y" }}</p>
                     </a>
                 </li>
                 {% endfor %}
             </ul>
-            <div class="games-list-details slides_container">
+            <div class="gameslist-details slides_container">
                 {% for instance in instances_past %}
                 <div>
-                    <div class="games-list-detail-attachment">
+                    <div class="gameslist-detail-attachment">
                         {% if instance.get_slideshow_attachment.get_att_type_display == 'Video' %}
                             {% embed_video instance.get_slideshow_attachment.url %}
                         {% else %}
-                        <img class="games-list-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
+                        <img class="gameslist-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
                         {% endif %}
                     </div>
-                    <p class="games-list-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
+                    <p class="gameslist-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
                 </div>
                 {% endfor %}
             </div>
