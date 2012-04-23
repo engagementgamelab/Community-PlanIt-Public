@@ -28,7 +28,7 @@ urlpatterns = patterns('',
                                                 RegisterFormTwo
                                             ]
                                 ), name='register'),
-    url(r'^dashboard/$', 'index', name='dashboard'),
+    url(r'^dashboard/$', 'web.views.index', name='dashboard'),
 )
 urlpatterns += patterns('accounts.views',
     url(r'^$', 'all', name='all'),
