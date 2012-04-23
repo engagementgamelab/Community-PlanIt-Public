@@ -53,12 +53,14 @@
                 {{ filter_by_variants_form.affiliation }}
                 {{ filter_by_variants_form.stakes }}
                 <input id="profile-filters-apply" class="btn-blue" type="submit" value="Apply" />
+                <a id="profile-reset" href="{% url accounts:all %}" class="btn-blue">Reset</a>
             </form>
             <form action="." method="post" id="id_search-by-kw-form">
-                    {# search_by_kw_form.q #}
-                    <input id="id_q" type="text" maxlength="50" name="q" placeholder="{% trans 'Search for a player' %}">
-                    <input id="profile-search-apply" class="btn-blue" type="submit" value="Search" />
+                {# search_by_kw_form.q #}
+                <input id="id_q" type="text" maxlength="50" name="q" placeholder="{% trans 'Search for a player' %}">
+                <input id="profile-search-apply" class="btn-blue" type="submit" value="Search" />
             </form>
+            
         </div>
         
     </div>
