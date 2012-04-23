@@ -11,7 +11,7 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404, HttpResponseServerError
 from django.shortcuts import get_object_or_404, render, redirect
-from django.template import Context, RequestContext, loader
+from django.template import Context, RequestContext, loader, Template
 
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
@@ -344,6 +344,7 @@ def all(request, template='accounts/all.html'):
         'search_by_kw_sijax_js': search_by_kw.get_js(),
         'paginate_players_per_page' : settings.ENDLESS_PAGINATE_PLAYERS_PER_PAGE,
     }
+
     return render(request, template, context)
 
 def ajax_search(request, search_form, request_uri=None):
@@ -356,14 +357,35 @@ def ajax_search(request, search_form, request_uri=None):
     def search(obj_response, form_data):
         form = search_form(request, data=form_data)
         if form.is_valid():
+            profiles_for_game = form.search()
+            print "search got %s players" % profiles_for_game.count()
             context = {
-                'profiles_for_game' : form.search(),
+                'profiles_for_game' : profiles_for_game,
                 'MEDIA_URL' : settings.MEDIA_URL,
                 'STATIC_URL' : settings.STATIC_URL,
-                # 'paginate_players_per_page' : settings.ENDLESS_PAGINATE_PLAYERS_PER_PAGE,
+                'request': request,
+                'paginate_players_per_page' : settings.ENDLESS_PAGINATE_PLAYERS_PER_PAGE,
             }
-            players_table = loader.render_to_string("accounts/_players_table.html", context).encode('utf-8')
+            players_count_str = "found %s players" % profiles_for_game.count()
+            obj_response.html("#id_players-count", players_count_str)
+            players_tmpl = """
+            {% load endless %}
+            {% paginate paginate_players_per_page profiles_for_game as players %}
+                {% include "accounts/_players_table.html" %}
+            """
+            t = Template(players_tmpl)
+            players_table = t.render(Context(context))
             obj_response.html('#id_players-table', players_table)
+
+            pag_tmpl = """
+            {% load endless %}
+            {% paginate paginate_players_per_page profiles_for_game %}
+                {% include "accounts/_pagination.html" %}
+            """
+            t = Template(pag_tmpl)
+            pagination = t.render(Context(context))
+            print pagination
+            obj_response.html('div#profile-pagination', pagination)
         else:
             log.debug('find players filter errors: %s', form.errors)
 

@@ -64,8 +64,9 @@
         </div>
         
     </div>
-    
-    {% paginate paginate_players_per_page profiles_for_game %}
+    <div id="id_players-count" style="margin-left:20px;">found {{ profiles_for_game.count }} players</div> 
+    <br class="clearfix" />
+    {% paginate paginate_players_per_page profiles_for_game as players %}
 
     <div id="id_players-table">
         {% include "accounts/_players_table.html" %}
@@ -74,16 +75,7 @@
     <br class="clearfix" />
     
     <div id="profile-pagination" class="column-container">
-        <table>
-        <tr class='wine bold'>
-            <td style='text-align:left'>
-                <div class="pagination">
-                    <span class="disabled prev_page"></span> 
-                    {% show_pages %}
-                </div>
-            </td>
-            </tr>
-        </table> 
+        {% include "accounts/_pagination.html" %}
     </div>
     
 </div>
