@@ -1,0 +1,24 @@
+{%extends "affiliations/base.html"%}
+
+{% load i18n %}
+{% load i18n cpi_tags %}
+
+{% block title %}{% trans "Affiliations" %}{% endblock %}
+
+{% block game_content %}
+<div>
+    <div class="column-container">
+        <div>
+            <a href="{% url accounts:all %}" class="btn-back">{% trans "Back to Find Players" %}</a><br />
+            <a href="{% url affiliations:affiliations %}" class="btn-back">{% trans "Back to Affiliations" %}</a>
+        </div>
+        
+        <h1>{{ affiliation.name }}</h1>
+    
+        <h3>{% trans "Members" %}</h3>
+        
+        
+    </div>
+    
+</div>
+{% endblock %}

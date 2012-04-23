@@ -11,7 +11,10 @@ from crowds.models import Crowd
 
 # Ability for players to create crowds
 class CrowdForm(forms.ModelForm):
-
+    name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Awesome Community Event!'}))
+    description = forms.CharField(widget=forms.Textarea(
+        attrs={'placeholder': 'Let\'s finally get something done! Here\'s what we\'ll do...'}
+    ))
     map = GoogleMapsField().formfield(label=_('Location'))
     start_date = forms.SplitDateTimeField(required=False,
                                           input_time_formats=('%I:%M %p', '%H:%M'),

@@ -54,7 +54,13 @@
                             {# Sign up for Instance #}
                             {% if instance in request.user.get_profile.instances.all %}
                                 {# TODO: Go to this game if started! #}
-                                <a href="{{ instance.mission_set.0.slug }}">Go to game!</a>
+                                {% if current_city %}
+                                    {# they are on city page already... bring them to missions #}
+                                
+                                {% else %}
+                                    {# bring them to the city page... #}
+                                    <a href="http://{{ instance.for_city.domain }}">Get Ready for the Game</a>
+                                {% endif %}
                             {% else %}
                                 <a href="{% url accounts:register %}">Sign up for this game!</a>
                             {% endif %}

@@ -278,7 +278,9 @@ AJAX_LOOKUP_CHANNELS = {
 
 #django_endless_pagination
 ENDLESS_PAGINATION_ADD_NOFOLLOW = True
-ENDLESS_PAGINATE_PLAYERS_PER_PAGE = 20
+ENDLESS_PAGINATE_PLAYERS_PER_PAGE = 16
+ENDLESS_PAGINATION_PREVIOUS_LABEL = '''<div class="pagination-previous"></div>'''
+ENDLESS_PAGINATION_NEXT_LABEL = '''<div class="pagination-next"></div>'''
 
 # django-celery
 import djcelery

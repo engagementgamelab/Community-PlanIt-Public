@@ -38,15 +38,16 @@
 
 <div>
 
-    {% if form.errors or form.non_field_errors %}
-    <div id="form_errors" class="error">
-        {% trans "Please correct the errors below." %}
-        {{form.non_field_errors.as_ul}}
-    </div>
-    {% endif %}
-
 
     <div id="crowds-addform">
+        
+        {% if form.errors or form.non_field_errors %}
+        <div id="form_errors" class="error">
+            {% trans "Please correct the errors below." %}
+            {{form.non_field_errors.as_ul}}
+        </div>
+        {% endif %}
+        
         <form class="column-container" action="" method="POST"> 
             {% csrf_token %}
             <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
@@ -63,29 +64,34 @@
                     {{form.description.help_text}}
                 </div>
                 {{form.description}}
-                <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div>
+                {# <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div> #}
                 {{form.description.errors}}
             </p>
+            
+            <div id="crowds-addform-location">
+                <div class="column-half">
+                    <p id="crowds-addform-map-container">
+                        {# {{form.map.label_tag}} #}
+                        {{form.map}}
+                        {{form.map.errors}}
+                    </p>
+                </div>
+            
+                <div class="column-half">
+                    <div>
+                        {{ form.start_date.label_tag }}
+                        {{ form.start_date }}
+                        {{ form.start_date.errors }}
+                    </div>
+                    <p>
+                        {{form.end_date.label_tag}}
+                        {{form.end_date}}
+                        {{form.end_date.errors}}
+                    </p>
+                </div>
+            </div>
 
-            <p>
-                {{form.map.label_tag}}
-                {{form.map}}
-                {{form.map.errors}}
-            </p>
-
-            <p>
-                {{form.start_date.label_tag}}
-                {{form.start_date}}
-                {{form.start_date.errors}}
-            </p>
-
-            <p>
-                {{form.end_date.label_tag}}
-                {{form.end_date}}
-                {{form.end_date.errors}}
-            </p>
-
-            <div class="controls">
+            <div class="controls clearfix">
                 <input type="submit" class="button submit" value="{% trans "Get Together!" %}">
             </div>
         </form>

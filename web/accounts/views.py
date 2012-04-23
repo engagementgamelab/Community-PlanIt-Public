@@ -359,6 +359,7 @@ def ajax_search(request, search_form, request_uri=None):
                 'profiles_for_game' : form.search(),
                 'MEDIA_URL' : settings.MEDIA_URL,
                 'STATIC_URL' : settings.STATIC_URL,
+                # 'paginate_players_per_page' : settings.ENDLESS_PAGINATE_PLAYERS_PER_PAGE,
             }
             players_table = loader.render_to_string("accounts/_players_table.html", context).encode('utf-8')
             obj_response.html('#id_players-table', players_table)

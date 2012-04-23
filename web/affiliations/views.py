@@ -15,33 +15,54 @@ from challenges.models import *
 from accounts.forms import *
 
 @login_required
-def affiliation(request):
-    aff = request.GET.get('aff', '')
-    if not aff:
-        return Http404("affiliation could not be located")
+def all(request, template="affiliations/all.html"):
+    context = {
+        'affiliations': Affiliation.objects.all()
+    }
+    return render(request, template, context)
 
-    players = UserProfile.objects.select_related('user').filter(affiliations__contains=aff)
+    # tmpl = loader.get_template('affiliations/all.html')
+    # affiliations = _get_affiliations_leaderboard()               
+    # return HttpResponse(tmpl.render(RequestContext(request, { 'affiliations': affiliations},))
+    # )
 
-    affiliation_points = players.aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
-
-
-    #affiliation_leaderboard = []
-    #for up in UserProfile.objects.filter(affiliations__contains=aff).order_by("-totalPoints"):
-    #    affiliation_leaderboard.append(up.user)
-    affiliation_leaderboard = players.order_by('-totalPoints')
-
-
-    tmpl = loader.get_template('affiliations/base.html')
-    return HttpResponse(tmpl.render(RequestContext(request, {
-        'affiliation': aff,
-        'players': players,
-        'affiliation_leaderboard': affiliation_leaderboard,
-        'affiliations_leaderboard': _get_affiliations_leaderboard(),    
-        'affiliation_points': affiliation_points,
-    }, 
-    #[ip]
-    )))
-
+@login_required
+def affiliation(request, slug, template='affiliations/affiliation.html'):
+    try: 
+        affiliation = Affiliation.objects.get(slug=slug)
+    except:
+        affiliation = None
+    
+    context = {
+        'affiliation': affiliation,
+    }
+    
+    return render(request, template, context)
+    # aff = request.GET.get('aff', '')
+    # if not aff:
+    #     return Http404("affiliation could not be located")
+    # 
+    # players = UserProfile.objects.select_related('user').filter(affiliations__contains=aff)
+    # 
+    # affiliation_points = players.aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
+    # 
+    # 
+    # #affiliation_leaderboard = []
+    # #for up in UserProfile.objects.filter(affiliations__contains=aff).order_by("-totalPoints"):
+    # #    affiliation_leaderboard.append(up.user)
+    # affiliation_leaderboard = players.order_by('-totalPoints')
+    # 
+    # 
+    # tmpl = loader.get_template('affiliations/base.html')
+    # return HttpResponse(tmpl.render(RequestContext(request, {
+    #     'affiliation': aff,
+    #     'players': players,
+    #     'affiliation_leaderboard': affiliation_leaderboard,
+    #     'affiliations_leaderboard': _get_affiliations_leaderboard(),    
+    #     'affiliation_points': affiliation_points,
+    # }, 
+    # #[ip]
+    # )))
 
 def _get_affiliations_leaderboard():
     affiliations = []  
@@ -55,14 +76,3 @@ def _get_affiliations_leaderboard():
     return affiliations
 
 
-@login_required
-def all(request, template="affiliations/all.html"):
-    context = {
-        'affiliations': Affiliation.objects.all()
-    }
-    return render(request, template, context)
-
-    # tmpl = loader.get_template('affiliations/all.html')
-    # affiliations = _get_affiliations_leaderboard()               
-    # return HttpResponse(tmpl.render(RequestContext(request, { 'affiliations': affiliations},))
-    # )

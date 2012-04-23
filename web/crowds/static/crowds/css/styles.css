@@ -6,7 +6,7 @@
 
     #crowds-addform label {
         display: block;
-        margin: 3px 0px;
+        margin: 10px 0px 3px 0px;
         font-size: 0.75em;
     }
     
@@ -16,6 +16,7 @@
         border: 0px;
         border-radius: 3px;
     }
+    
     
         #crowds-addform #id_name {
             width: 80%;
@@ -27,6 +28,29 @@
         
         #crowds-addform #id_confirmation_code {
             width: 80%;
+        }
+    
+        #crowds-addform-location {
+            margin: 20px 0px;
+        }
+        
+        #crowds-addform .map {
+            width: 300px !important;
+            height: 200px !important;
+            border: 1px solid #ddd;
+        }
+        
+        #crowds-addform #id_start_date_0, 
+        #crowds-addform #id_end_date_0 {
+            position: relative;
+            width: 100px;
+            margin-left: 25px;
+        }
+        
+        #crowds-addform #id_start_date_1,
+        #crowds-addform #id_end_date_1 {
+            width: 75px;
+            margin-left: 25px;
         }
         
     #crowds-addform input[type='submit'] {
@@ -43,6 +67,7 @@
         -moz-border-radius: 5px;
         border-radius: 5px;
     }
+
 
 #crowds-index {}
 
