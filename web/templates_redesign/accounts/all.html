@@ -64,7 +64,7 @@
         </div>
         
     </div>
-    <div id="id_players-count" style="margin-left:20px;">found {{ profiles_for_game.count }} players</div> 
+    <div id="id_players-count" class="column-container" style="text-align: right"><h3>{{ profiles_for_game.count }} total players</h3></div> 
     <br class="clearfix" />
     {% paginate paginate_players_per_page profiles_for_game as players %}
 
