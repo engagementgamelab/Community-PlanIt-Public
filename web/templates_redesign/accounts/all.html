@@ -61,17 +61,16 @@
             </form>
         </div>
         
-        <h3>{% trans "Recently Joined" %}</h3>
-        
     </div>
+    
+    {% paginate paginate_players_per_page profiles_for_game %}
 
-    <span id="id_players-table">
-    {% include "accounts/_players_table.html" %}
-    </span>
+    <div id="id_players-table">
+        {% include "accounts/_players_table.html" %}
+    </div>
     
     <br class="clearfix" />
     
-    {% paginate paginate_players_per_page profiles_for_game %}
     <div id="profile-pagination" class="column-container">
         <table>
         <tr class='wine bold'>

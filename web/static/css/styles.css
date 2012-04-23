@@ -679,3 +679,22 @@ p.instructions {
         color: #fff;
     }
     
+
+/* Pagination */
+.pagination a {
+    margin: 0px 10px;
+}
+
+.pagination-previous {
+    display: inline-block;
+    width: 12px;
+    height: 8px;
+    background: url('../img/btn-back.png') no-repeat left center;
+}
+
+.pagination-next {
+    display: inline-block;
+    width: 12px;
+    height: 8px;
+    background: url('../img/btn-forward.png') no-repeat left center;
+}
