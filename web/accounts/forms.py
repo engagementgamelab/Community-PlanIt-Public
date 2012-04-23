@@ -336,39 +336,40 @@ class ChangePasswordForm(forms.Form):
 
         return confirm
 
-class UserProfileForm(forms.ModelForm):
+class UserProfileForm(forms.Form):
     # Required fields
     first_name = forms.CharField(max_length=30, required=True, label=_('First Name'))
     last_name = forms.CharField(max_length=30, required=True, label=_('Last Name'))
+    birth_year = forms.CharField(max_length=4, required=True, label=_('Year you were born'))
     email = forms.CharField(max_length=250, required=True, label=_('Email'))
     receive_email = forms.BooleanField(required=False, label=_('Should we send you notifications and news via email?'))
-    preferred_language = forms.ChoiceField(choices=[(l[0], _(l[1])) for l in settings.LANGUAGES], label=_('Preferred Language'))
     avatar = forms.ImageField(required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
         self.fields['email'].widget.attrs['readonly'] = True
-        #TODO
-        # need to include the user selected choices in the list
-        #affil_choices = Affiliation.objects.filter(instance=self.instance.instance).order_by("name").values_list('pk', 'name')
 
-        #self.fields['affils'] = forms.MultipleChoiceField(label=_(u'Affiliations'), help_text=_('Right Click (or control and click on a Mac) to select more than one affiliation'), required=False, choices=affil_choices)
+        self.fields['stakes'] = forms.ModelMultipleChoiceField(
+                                    label=_(u'Stake in the community'),
+                                    required=False,
+                                    queryset=request.current_game.user_profile_variants.stake_variants.all().order_by("pos")
+        )
+        self.fields['affiliations'] = forms.ModelMultipleChoiceField(
+                                    label=_(u'Affiliations'),
+                                    required=False,
+                                    queryset=request.current_game.user_profile_variants.affiliation_variants.all().order_by("name"))
 
-        #self.fields['affiliations_other'] = forms.CharField(required=False, 
-        #       label=_('Don\'t see your affiliation? Enter it here. Please place a comma between each affiliation.'),
-        #        widget=forms.Textarea(attrs={"rows": 2, "cols": 40}))
 
-    class Meta:
-        model = UserProfile
-        fields = ('email', 'first_name', 'last_name', 'preferred_language',
-                  'receive_email', 'avatar',
+        lang_qs = Language.objects.filter(instance=request.current_game)
+        if lang_qs.count()  > 0:
+            self.fields['preferred_language'] = forms.ModelChoiceField(required=True, 
+                                                    label=_("Preferred Language"), 
+                                                    queryset=lang_qs,
             )
 
-#    def clean_stake(self):
-#        try:
-#            return UserProfileStake.objects.get(pk=self.cleaned_data['stake'])
-#        except UserProfileStake.DoesNotExist:
-#            return None
+    class Meta:
+        fields = ('email', 'first_name', 'last_name', 'birth_year', 'preferred_language',
+                  'receive_email', 'avatar', 'stakes', 'affiliations')
 
 
 class FilterPlayersByVariantsForm(forms.Form):

@@ -246,14 +246,14 @@ def forgot(request):
 
 # Edit profile
 @login_required
-def edit(request):
+def edit(request, template_name='accounts/profile_edit.html'):
     try:
         profile = request.user.get_profile()
     except:
         raise Http404("could not locate a user profile")
 
     change_password_form = ChangePasswordForm()
-    profile_form = UserProfileForm(instance=profile,
+    profile_form = UserProfileForm(request,
                                    initial={
                                         'first_name': profile.user.first_name if profile.user.first_name is not None else "",
                                         'last_name': profile.user.last_name if profile.user.last_name is not None else "",
@@ -276,16 +276,17 @@ def edit(request):
                 messages.success(request, "Your new password was saved.")
         else:
             # User profile form updated, not change password
-            profile_form = UserProfileForm(data=request.POST, files=request.FILES, instance=profile)
+            profile_form = UserProfileForm(request, data=request.POST, files=request.FILES)
             if profile_form.is_valid():
                 profile = profile_form.save()
+                cd = profile_form.cleaned_data
                 #changing birth year (needed because of the int)
                 #This fails with the birth_year being blank and python can not convert
                 #a '' to an int
-                if (request.POST.get('birth_year', None) == None or request.POST.get('birth_year', None) == ''):
+                if (cd.get('birth_year', None) == None or cd.get('birth_year', None) == ''):
                     profile.birth_year = None
                 else:
-                    profile.birth_year = int(profile_form.cleaned_data['birth_year'])
+                    profile.birth_year = int(cd['birth_year'])
 
                 #updating email address
                 #if (request.POST.get('email', None) == None or request.POST.get('email', None) == ''):
@@ -293,15 +294,20 @@ def edit(request):
                 #else:
                 #    profile.user.email = profile_form.cleaned_data['email']
 
-                if (request.POST.get('first_name', None) == None or request.POST.get('first_name', None) == ''):
-                    profile.user.first_name = None
-                else:
-                    profile.user.first_name = profile_form.cleaned_data['first_name']
+                #if (request.POST.get('first_name', None) == None or request.POST.get('first_name', None) == ''):
+                #    profile.user.first_name = None
+                #else:
+                #    profile.user.first_name = profile_form.cleaned_data['first_name']
 
-                if (request.POST.get('last_name', None) == None or request.POST.get('last_name', None) == ''):
-                    profile.user.last_name = None
-                else:
-                    profile.user.last_name = profile_form.cleaned_data['last_name']
+                #if (request.POST.get('last_name', None) == None or request.POST.get('last_name', None) == ''):
+                #    profile.user.last_name = None
+                #else:
+                #    profile.user.last_name = profile_form.cleaned_data['last_name']
+
+                prof_for_game = UserProfilePerInstance.objects.get(user_profile=profile, instance=request.current_game)
+                prof_for_game.stakes = cd.get('stakes')
+                prof_for_game.affils = cd.get('affiliations')
+                prof_for_game.save()
 
 
 #                profile.affils = profile_form.cleaned_data.get('affiliations')
@@ -316,16 +322,16 @@ def edit(request):
 #                    profile.avatar = request.FILES['avatar']
                 profile.user.save()
                 profile.save()
-                
-
                 return redirect(reverse('accounts:dashboard'))
 
-    tmpl = loader.get_template('accounts/profile_edit.html')
-    return HttpResponse(tmpl.render(RequestContext(request, {
+            else:
+                print profile_form.errors
+
+    context = {
         'profile_form': profile_form,
         'change_password_form': change_password_form,
-        'user': request.user,
-    })))
+    }
+    return render(request, template_name, context)
 
 @login_required
 def all(request, template='accounts/all.html'):
