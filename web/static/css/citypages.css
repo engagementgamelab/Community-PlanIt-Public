@@ -267,6 +267,7 @@ hr.rainbow {
                     .gameslist-countdown-timer {
                         font-family: "Enriqueta";
                         font-size: 2em;
+                        font-weight: bold;
                         line-height: 60px;
                         height: 60px
                     }
