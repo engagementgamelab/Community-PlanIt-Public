@@ -33,7 +33,13 @@
                 <br /><br /><br />
                 
                 <!-- Your Games -->
-                <h3>{% trans "Your Games" %}</h3>
+                <h3>
+                    {% if request.user == player %}
+                        {% trans "Your Games" %}
+                    {% else %}
+                        {% trans "Player's Games" %}
+                    {% endif %}
+                </h3>
                 <p class="profile-detail">
                 {% for game in my_games %} 
                     <a class="highlight" href="{% url instances:instance game.slug  %}">{{ game.title }}</a>
