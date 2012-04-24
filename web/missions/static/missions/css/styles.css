@@ -27,68 +27,101 @@
 .activity {
     position: relative;
 }
+    
 
     .activity a {
         display: block;
         margin: 5px 0px;
         padding: 12px 10px 12px 50px;
-        background: #e3f1ea;
+        background-color: #e3f1ea;
+        background-repeat: no-repeat;
+        background-position: 10px center;
     }
 
+    .activity.activity-completed a {
+        background-color: #f8f8f9;
+        color: #a7a9ac;
+    }
+    
+    .activity a:hover {
+        background-color: #007dff;
+        color: #fff;
+    }
+    
     .activity.open_ended a {
-        background: #e3f1ea url('../img/icon-open_ended.png') no-repeat 10px center;
+        background-image: url('../img/icon-open_ended.png');
     }
     
         .activity.open_ended a:hover {
             background-image: url('../img/icon-open_ended_over.png');
         }
+        
+        .activity.open_ended.activity-completed a {
+            background-image: url('../img/icon-open_ended_completed.png');
+        }
     
     .activity.map a {
-        background: #e3f1ea url('../img/icon-map.png') no-repeat 10px center;
+        background-image: url('../img/icon-map.png');
     }
     
         .activity.map a:hover {
             background-image: url('../img/icon-map_over.png');
         }
+        
+        .activity.map.activity-completed a {
+            background-image: url('../img/icon-map_completed.png');
+        }
     
     .activity.single_response a {
-        background: #e3f1ea url('../img/icon-multi_response.png') no-repeat 10px center;
+        background-image: url('../img/icon-single_response.png');
     }
     
         .activity.single_response a:hover {
-            background-image: url('../img/icon-multi_response_over.png');
+            background-image: url('../img/icon-single_response_over.png');
+        }
+        
+        .activity.single_response.activity-completed a {
+            background-image: url('../img/icon-single_response_completed.png');
         }
         
     .activity.multi_response a {
-        background: #e3f1ea url('../img/icon-multi_response.png') no-repeat 10px center;
+        background-image: url('../img/icon-multi_response.png');
     }
         
         .activity.multi_response a:hover {
             background-image: url('../img/icon-multi_response_over.png');
         }
+        
+        .activity.multi_response.activity-completed a {
+            background-image: url('../img/icon-multi_response_completed.png');
+        }
     
     .activity.empathy a {
-        background: #e3f1ea url('../img/icon-empathy.png') no-repeat 10px center;
+        background-image: url('../img/icon-empathy.png');
     }
         
         .activity.empathy a:hover {
             background-image: url('../img/icon-empathy_over.png');
         }
         
+        .activity.empathy.activity-completed a {
+            background-image: url('../img/icon-empathy_completed.png');
+        }
+        
     .activity.trivia a {
-        background: #e3f1ea url('../img/icon-trivia.png') no-repeat 10px center;
+        background-image: url('../img/icon-trivia.png');
     }
 
         .activity.trivia a:hover {
             background-image: url('../img/icon-trivia_over.png');
         }
-
-    .activity a:hover {
-        background-color: #007dff !important;
-        color: #fff;
-    }
+        
+        .activity.trivia.activity-completed a:hover {
+            background-image: url('../img/icon-trivia_completed.png');
+        }
     
-    .mission-activity-points {
+    .mission-activity-points,
+    .mission-activity-completed {
         position: absolute;
         right: 100px;
         top: 5px;
@@ -99,7 +132,14 @@
         line-height: 33px;
         text-align: center;
         color: #fff;
+    }
+    
+    .mission-activity-points {
         background: url('../img/bg-mission-activities-points.png') no-repeat center center;
+    }
+    
+    .mission-activity-completed {
+        background: url('../img/icon-mission-activities-completed.png') no-repeat center center;
     }
     
         .activity a:hover .mission-activity-points {

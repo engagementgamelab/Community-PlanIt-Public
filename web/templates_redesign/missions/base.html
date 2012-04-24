@@ -62,7 +62,7 @@
                     {# Active Mission #}
                     {% if activity in completed %}
                     {#  completed activity #}
-                    <div class="activity {{activity.type.type}}">
+                    <div class="activity activity-completed {{activity.type.type}}">
                         <a href="{{ activity.get_activity_url }}">
                             {{ activity|trans_fallback:"name" }} ({{ activity.completed_user_count }} new responses)
                             <div class="mission-activity-completed"></div> (completed)
