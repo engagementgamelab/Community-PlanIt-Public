@@ -343,6 +343,7 @@ class UserProfileForm(forms.Form):
     birth_year = forms.CharField(max_length=4, required=True, label=_('Year you were born'))
     email = forms.CharField(max_length=250, required=True, label=_('Email'))
     receive_email = forms.BooleanField(required=False, label=_('Should we send you notifications and news via email?'))
+    tagline = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Give yourself a tagline...'}), required=False, label=_('Tagline'))
     avatar = forms.ImageField(required=False)
 
     def __init__(self, request, *args, **kwargs):
@@ -369,7 +370,7 @@ class UserProfileForm(forms.Form):
 
     class Meta:
         fields = ('email', 'first_name', 'last_name', 'birth_year', 'preferred_language',
-                  'receive_email', 'avatar', 'stakes', 'affiliations')
+                  'receive_email', 'tagline', 'avatar', 'stakes', 'affiliations')
 
 
 class FilterPlayersByVariantsForm(forms.Form):
