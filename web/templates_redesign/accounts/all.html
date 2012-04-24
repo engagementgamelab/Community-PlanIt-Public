@@ -37,7 +37,7 @@
     <div class="column-container">
         {# TODO back to mission if in game #}
         <a href="{% url home %}" class="btn-back">{% trans "Back to " %}{{ request.current_city.name }}</a>
-        <h1>{% trans "Find Players" %} <a class="nav-heading-tab" href="{% url affiliations:affiliations %}">Affiliations</a></h1> 
+        <h1>{% trans "Find Players" %} {#<a class="nav-heading-tab" href="{% url affiliations:affiliations %}">Affiliations</a>#}</h1> 
 
         <div id="profile-filters">
             <form action="." method="post" id="id_find-players-form">
