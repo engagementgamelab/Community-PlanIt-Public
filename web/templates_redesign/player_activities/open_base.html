@@ -1,25 +1,35 @@
-{%extends "player_activities/base.html"%}
+{% extends "player_activities/base.html" %}
 {% load i18n %}
-{%block title%}{{ block.super }} Open Response.{%endblock%}
+{% block title %}{{ block.super }} | Open Response{% endblock %}
 
-{%block activity%}
-<p> Complete the activity to see everyone's responses.  </p>
-<h1>{{activity.name}}</h1>
-<h3>{{activity.question|safe}}</h3>
+{% block game_content %}
+<div class="column-container">
+    <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
 
-    {% include "player_activities/attachments.html" %}
+    <h1>{{activity.name}}<span class="points">{{ activity.points }}</span></h1>
     
-    {{ block.super }}
-    <form id="id_activity-form" enctype="multipart/form-data" action="" method="POST">{% csrf_token %}
-        <input type="hidden" name="form" value="open_ended">
-        <h3>{% trans "Enter your response (required)" %}</h3>
-        {{ form.response }}
-        <h4>You have <span id="charsLeft">1000</span> chars left.</h4>
-        {% block comment %}{% endblock %}
-        <div class="controls">
-            <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
+    
+    <form id="id_activity-form" enctype="multipart/form-data" action="" method="POST">
+        <div class="column-threequarter">
+            {% csrf_token %}
+            <input type="hidden" name="form" value="open_ended">
+        
+            <div class="activity-question">{{ activity.question|safe }}</div>
+            <div class="activity-response">
+                {{ form.response }}
+                <div class="comment-response-counter counter">(<span class="count">1000</span> characters left)</div>
+            </div>
+            {% block comment %}{% endblock %}
+            <div class="activity-response-submit">
+                <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="36" height="36" />
+                <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
+            </div>
+        
+            {% include "player_activities/attachments.html" %}
+            
         </div>
     </form>
-
+    <p class="clearfix">Once you are done, you will be able to view everyone's responses.</p>
+</div>
     
-{%endblock%}
+{% endblock%}

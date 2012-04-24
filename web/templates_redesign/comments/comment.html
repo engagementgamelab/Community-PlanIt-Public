@@ -2,12 +2,15 @@
 <li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
     {% if comment.display_user %} 
         <div class="comment-header">
-            <img class="comment-avatar" src="{{comment.user.avatar}}" width="48" height="48"/>
+            
+            <img src="{% if comment.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof comment.user.get_profile.avatar 'img/avatar-blank.png' %}" width="48" height="48" />
+            
+            
             <div class="comment-header-text">
                 {% if comment.user == request.user %}
-                    <p class="comment-author"><a href="{% url accounts_profile comment.user.id %}">your</a> {% trans "response" %} </p>
+                    <p class="comment-author"><a href="{% url accounts:player_profile comment.user.id %}">your</a> {% trans "response" %} </p>
                 {% else %}
-                    <p class="comment-author">{% trans "From" %} <a href="{% url accounts_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a></p>
+                    <p class="comment-author">{% trans "From" %} <a href="{% url accounts:player_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a></p>
                 {% endif %}    
                 <p class="comment-postdate">{{comment.posted_date|date:"N j, Y"}}, {{comment.posted_date|date:"g:i a"}}</p>
             </div>

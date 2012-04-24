@@ -1,34 +1,43 @@
 {% extends "player_activities/base.html" %}
 {% load i18n %}
-{% block title %}{{ block.super }} Empathy Response. {% endblock %}
+{% block title %}{{ block.super }} | Empathy Response{% endblock %}
 
 {% block game_content %}
-    {{ block.super }}
-    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">{% csrf_token %}
-        <input type="hidden" name="form" value="empathy">
+<div class="column-container">
+    <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
+    
+    <h1>{{activity.name}}<span class="points">{{ activity.points }}</span></h1>
 
-        <h1>{{activity.name}}</h1>
-
-        <p class="bio">
+    
+    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">
+        <div class="column-threequarter">
+            {% csrf_token %}
+            <input type="hidden" name="form" value="empathy">
+        
             {% if activity.avatar %}
-                <img class="left avatar" src="{{MEDIA_URL}}/{{activity.avatar}}">
+                <img class="left avatar" src="{{ MEDIA_URL }}/{{activity.avatar}}" width="128" height="128">
             {% endif %}
-            {{activity.bio}}
-        </p>
-        
-        <p> Complete the activity to see everyone's responses.  </p>
-        <h3 class="clear">{{activity.question|safe}}</h3>
 
-        {% include "player_activities/attachments.html" %}
-         
-        <h3>{% trans "Enter your response (required)" %}</h3>
-        {{ form.response }}
-        <h4>You have <span id="charsLeft"></span> chars left.</h4>
+            <div class="activity-question">
+                <p class="bio">{{activity.bio}}</p>
+                <p>{{activity.question|safe}}</p>
+            </div>
         
-        {% block comment %}{% endblock %}
-        <div class="controls">
-            <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
+            {% include "player_activities/attachments.html" %}
+         
+            <div class="activity-response">
+                {{ form.response }}
+                <div class="comment-response-counter counter">(<span class="count">1000</span> characters left)</div>
+            </div>
+        
+            {% block comment %}{% endblock %}
+            
+            <div class="activity-response-submit">
+                <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="36" height="36" />
+                <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
+            </div>
+        
         </div>
     </form>
+</div>
 {% endblock %}
-

@@ -1,26 +1,43 @@
-{%extends "player_activities/base.html"%}
-{%block title%}{{ block.super }}Single Response.{%endblock%}
+{% extends "player_activities/base.html" %}
+{% load i18n %}
+{% block title %}{{ block.super }} | Single Response{% endblock %}
 
-{%block activity%}
-    {{ block.super }}
-<p> Complete the activity to see everyone's responses.  </p>
-    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">{% csrf_token %}
-        <input type="hidden" name="form" value="single_response">
-        <h2>{{ activity.question|safe }}</h2>
-        {% include "player_activities/attachments.html" %}
-        
-        <div class="fieldWrapper">
-            {{ form.response.errors }}
-            <label for="id_answerbox">Your Choices:</label>
-            <ul style="list-style-type: none">
-            {% for choice in form.response.field.choices %}
-              <li><label for="response_{{choice.0}}"><input type="radio" name="response" value="{{choice.0}}">{{choice.1}}</label></li>
-            {% endfor %}
-            </ul>
-        </div>
-        
-        {% block comment %}{% endblock %}
-        <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
-    </form>
+{% block game_content %}
+<div class="single-response column-container">
+    <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
     
+    <h1>{{ activity.name|safe }}<span class="points">{{ activity.points }}</span></h1>
+    
+    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">
+        <div class="column-threequarter">
+            <div class="activity-question">{{ activity.question|safe }}</div>
+        
+                {% csrf_token %}
+            <input type="hidden" name="form" value="single_response">
+    
+    
+            <div>
+                {{ form.response.errors }}
+                <ul class="activity-question-options">
+                    {% for choice in form.response.field.choices %}
+                        <li><label for="response_{{choice.0}}"><input id="response_{{choice.0}}" type="radio" name="response" value="{{choice.0}}"> {{choice.1}}</label></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% block comment %}{% endblock %}
+            
+            <div class="activity-response-submit">
+                <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="36" height="36" />
+                <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
+            </div>
+        
+            {% include "player_activities/attachments.html" %}
+    
+        </div>
+        <div class="column-onequarter">
+    
+        </div>
+    </form>
+</div>
 {%endblock%}

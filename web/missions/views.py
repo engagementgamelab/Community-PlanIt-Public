@@ -45,6 +45,7 @@ def fetch(request, slug, template='missions/base.html'):
             next_mission = None
 
     context = dict(
+        game_header = True,
         mission = mission,
         activities = activities,
         completed = completed,
@@ -69,10 +70,11 @@ def all(request, template="missions/all.html", extra_context={}):
         current_instance = request.current_game
     else:
         raise Http404("could not locate a valid game")
-
-
+    
     context = dict(
-            instance= "current_instance",
+            instance= current_instance,
+            # mission = Mission.objects.filter(instance=current_instance)[0],
+            # game_header = True,
             active_missions= current_instance.missions.active(),
             active_future= current_instance.missions.future(),
             active_past= current_instance.missions.past(),

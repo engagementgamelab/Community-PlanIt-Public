@@ -69,7 +69,7 @@
                                         {# TODO: Go to this game if started! #}
                                         {% if current_city %}
                                             {# CITY PAGE #}
-                
+                                            <a href="{% url missions:mission instance.missions.all.0.slug %}">Go to Missions!</a>
                                         {% else %}
                                             {# INDEX page #}
                                             <a href="http://{{ instance.for_city.domain }}">Get Ready for the Game</a>

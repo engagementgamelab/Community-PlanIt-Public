@@ -45,27 +45,36 @@
                     <a href="{{ activity.get_overview_url }}">
                         {{ activity|trans_fallback:"name" }} 
                         {% if activity.completed_user_count %}
-                        {{ activity.completed_user_count }} new responses
+                        ({{ activity.completed_user_count }} new responses)
                         {% endif %}
                         <div class="mission-activity-points">{{ activity.getPoints }}</div>
                     </a>
                 </div>
             {% else %}
                 {% if mission.is_future %}
-                    {{ activity|trans_fallback:"name" }}
-                {% else %}
-                    {% if activity in completed %}
+                    {# Non-started Mission #}
                     <div class="activity {{activity.type.type}}">
                         <a href="{{ activity.get_activity_url }}">
-                            {{ activity|trans_fallback:"name" }} {{ activity.completed_user_count }} new responses
-                            <div class="mission-activity-completed">{{ activity.getPoints }}</div> (completed)
+                        {{ activity|trans_fallback:"name" }} (inactive)
+                        </a>
+                    </div>
+                {% else %}
+                    {# Active Mission #}
+                    {% if activity in completed %}
+                    {#  completed activity #}
+                    <div class="activity {{activity.type.type}}">
+                        <a href="{{ activity.get_activity_url }}">
+                            {{ activity|trans_fallback:"name" }} ({{ activity.completed_user_count }} new responses)
+                            <div class="mission-activity-completed"></div> (completed)
                         </a>
                     </div>
                     {% else %}
-                    <div class="activity {{activity.type.type}}">
+                    {# fresh activity #}
+                    <div class="activity {{ activity.type.type }}">
                         <a href="{{ activity.get_activity_url }}">
-                            {{ activity|trans_fallback:"name" }} {{ activity.completed_user_count }} new responses
-                            <div class="mission-activity-points">{{ activity.getPoints }}</div>
+                            {{ activity.type.type }}
+                            {{ activity|trans_fallback:"name" }} ({{ activity.completed_user_count }} new responses)
+                            <div class="mission-activity-points">{{ activity.getPoints }}</div> (active)
                         </a>
                     </div>
                     {% endif %}

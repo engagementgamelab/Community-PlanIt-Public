@@ -1,22 +1,38 @@
-{%extends "player_activities/base.html"%}
+{% extends "player_activities/base.html" %}
+{% load i18n %}
+{% block title %}{{ block.super }} | Multi Response{% endblock %}
 
-{%block title%}{{ block.super }} Multi Response.{%endblock%}
-
-{%block game_content%}
-<p> Complete the activity to see everyone's responses.  </p>
-    <form id="id_activity-form" action="" method="post">{% csrf_token %}
-        <input type="hidden" name="form" value="multi_response">
-        <h2>{{activity.question|safe}}</h2>
-        <div class="fieldWrapper">
-            {{ form.response.errors }}
-            <label for="id_answerbox">Your Choices:</label>
-            <ul style="list-style-type: none;">
-            {% for choice in form.response.field.choices %}
-              <li><label for="response_{{choice.0}}"><input type="checkbox" name="response_{{choice.0}}" value="{{choice.0}}">{{choice.1}}</label></li>
-            {% endfor %}
-            </ul>
+{% block game_content %}
+<div class="multi-response column-container">
+    <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
+    
+    <h1>{{ activity.name|safe }}<span class="points">{{ activity.points }}</span></h1>
+    
+    
+    
+    <form id="id_activity-form" action="" method="post">
+        {% csrf_token %}
+        <div class="column-threequarter">
+        
+            <div class="activity-question">{{ activity.question|safe }}</div>
+            <input type="hidden" name="form" value="multi_response">
+        
+            <div>
+                {{ form.response.errors }}
+                <ul class="activity-question-options">
+                    {% for choice in form.response.field.choices %}
+                        <li><label for="response_{{choice.0}}"><input id="response_{{choice.0}}" type="checkbox" name="response_{{choice.0}}" value="{{choice.0}}"> {{choice.1}}</label></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        
+            {% block comment %}{% endblock %}
+        
+            <div class="activity-response-submit">
+                <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="36" height="36" />
+                <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
+            </div>
         </div>
-        {% block comment %}{% endblock %}
-        <input type="submit" id="id_activity-btn-submit" class="button submit" value="Submit" />
     </form>
+</div>
 {%endblock%}
