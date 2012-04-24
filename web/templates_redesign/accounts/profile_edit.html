@@ -7,33 +7,39 @@
 {% block game_content %}
 <div>
     <div class="column-container">
-        <h1>Profile</h1>
+        <h1>Edit Profile</h1>
+        
     </div>
         <div id="profile-editform-container">
             <div class="column-container">
-                <h2>{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+                <h1>{{ request.user.first_name }} {{ request.user.last_name }}</h1>
+                
+                {%if profile_form.errors %}
+                <p id="profile-editform-error">{% trans "Please correct the errors below." %}</p>
+                {%endif%}
             </div>
-            <form enctype="multipart/form-data" action="" method="post">
+            <form id="profile-editform" enctype="multipart/form-data" action="" method="post">
             <div class="column-third">
                 <div class="column-container">
                     {%if request.user.get_profile.avatar %}
-                        <img src="{{ MEDIA_URL }}{{ request.user.get_profile.avatar }}" width="200" height="200">
+                        <img class="avatar-edit" src="{{ MEDIA_URL }}{{ request.user.get_profile.avatar }}" width="200" height="200">
                     {%else%}
                         <img class="avatar-edit" src="{{ STATIC_URL }}img/avatar-blank.png" width="200" height="200">
                     {%endif%}
         
                     {{ profile_form.avatar }}
                     {{ profile_form.avatar.errors }}
-                    <p>By uploading a file you certify that you have the right to distribute this picture and that it does not violate the <a href="{% url terms %}">Terms of Service</a></a>
+                    <p id="profile-editform-disclaimer">By uploading a file you certify that you have the right to distribute this picture and that it does not violate the <a href="{% url terms %}">Terms of Service</a></a></p>
                 </div>
             </div>
-            <div class="column-twothird">
+            <div class="column-third">
                 <div class="column-container">
-                    {%csrf_token%}
-                    <input type="hidden" name="form" value="updated_profile">
-                    {%if profile_form.errors %}
-                    {% trans "Please correct the errors below" %}
-                    {%endif%}
+                    <p>
+                        <div id="profile-editform-tagline-container">
+                            {# TODO tagline #}
+                            <textarea id="id_tagline"></textarea>
+                        </div>
+                    <p>
                     <p>
                         {{ profile_form.first_name.label_tag }}
                         {{ profile_form.first_name }}
@@ -66,6 +72,13 @@
                         {{ profile_form.birth_year }}
                         {{ profile_form.birth_year.errors }}
                     </p>                        
+                </div>
+            </div>
+            <div class="column-third">
+                <div class="column-container">
+                    {%csrf_token%}
+                    <input type="hidden" name="form" value="updated_profile">
+
                     <p>    
                         {{ profile_form.stakes.label_tag }}
                         {{ profile_form.stakes }}
@@ -76,26 +89,30 @@
                         {{ profile_form.affiliations }}
                         {{ profile_form.affiliations.errors }}
                     </p>                        
-                    <input type="submit" class="button submit" value="Update Profile" />
+                    
                 </div>
-                </form>            
-                <form action="" method="post">
-                <div class="column-container">
-                    <input type="hidden" name="form" value="change_password">
-                    {%csrf_token%}
-                    <p>
-                        {%if change_password_form.errors%}
-                            {{change_password_form.errors}}
-                        {%endif%}
-                        {{change_password_form.password}}<br/>
-                        {{change_password_form.confirm}}
-                    </p>
-                    <input type="submit" class="button submit" value="Change Password" />
-                </div>
-                </form>
+                     
+                {# <form action="" method="post"> #}
+                {# <div class="column-container"> #}
+                {#     <input type="hidden" name="form" value="change_password"> #}
+                {#     {%csrf_token%} #}
+                {#     <p> #}
+                {#         {%if change_password_form.errors%} #}
+                {#             {{change_password_form.errors}} #}
+                {#         {%endif%} #}
+                {#         {{change_password_form.password}}<br/> #}
+                {#         {{change_password_form.confirm}} #}
+                {#     </p> #}
+                {#     <input type="submit" class="button submit" value="Change Password" /> #}
+                {# </div> #}
+                {# </form> #}
             </div>
             <br class="clearfix" />
+            <div class="column-container" style="text-align: right;"><input type="submit" class="btn-yellow" value="Save Changes" /></div>
         </div>
+        
+            
+        </form>       
         <div class="column-full">
             <div class="column-container">
             </div>
