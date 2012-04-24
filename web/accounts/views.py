@@ -417,7 +417,6 @@ def profile(request, id, template_name="accounts/profile.html"):
         'stakes': profile_per_instance.stakes.all(),
         'my_games': my_games,
     }
-    print context
     return render(request, template_name, context)
 
 @login_required
