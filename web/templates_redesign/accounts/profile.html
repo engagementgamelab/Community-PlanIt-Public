@@ -44,7 +44,7 @@
                 </h3>
                 <p class="profile-detail">
                 {% for game in my_games %} 
-                    <a class="highlight" href="{% url home %}">{{ game.title }}</a>
+                    <a class="highlight" href="{% url home %}">{{ game.title }}</a><br />
                 {% endfor %}
                 </p>
                 
@@ -52,7 +52,7 @@
                 <h3>{% trans "Stake" %}</h3>
                 <p class="profile-detail">
                     {% if stakes %}
-                    {{ profile_per_instance.format_stakes }}
+                    {{ profile_per_instance.format_stakes }}<br />
                     {% endif %}
                 </p>
                 
@@ -61,7 +61,7 @@
                 <p class="profile-detail">
                 {% if affiliations %}
                     {% for aff in affiliations %} 
-                        {{ aff.name }}
+                        {{ aff.name }}<br />
                         {# <a class="highlight" href="{# url instances:affiliation player.get_profile.instance.slug aff.slug ">{{ aff.name }}</a> #}
                     {% endfor %}
                 {% endif %}
