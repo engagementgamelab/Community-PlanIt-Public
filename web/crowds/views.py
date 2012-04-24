@@ -193,7 +193,7 @@ def rally(request):
 
     return render(request, 'crowds/add.html', 
         dict(location = current_instance_location.coordinates,
-             crowds = current_instance.crowds.all(),
+             crowds = Crowd.objects.filter(instance=current_instance).order_by('-start_date'),
              form = form,)
     )
 

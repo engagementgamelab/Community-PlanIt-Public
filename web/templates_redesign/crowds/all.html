@@ -35,7 +35,7 @@
                 <div class="crowds-event-left-container">
                     <div class="crowds-event-name">{{ crowd.name}}</div>
                     {% if request.user in crowd.participants.all %}<div class="crowds-event-attending"></div>{% endif %}
-                    <div class="crowds-event-participants">({{ crowd.participants.all.count }} {% trans "players attending" %})</div>
+                    <div class="crowds-event-participants">({{ crowd.participants.all.count }} {% if crowd.is_expired %}{% trans "players attended" %}{% else %}{% trans "players attending" %}{% endif %})</div>
                     <div class="crowds-event-creator">{% trans "created by" %} {{ crowd.creator.get_profile.screen_name }}</div>
                 </div>
                 <div class="crowds-event-right-container">

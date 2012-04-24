@@ -7,8 +7,8 @@
 <div class="column-full">
     <div class="column-container">
         <div><a href="{% url crowds:index %}" class="btn-back">{% trans "Back to Get Togethers!" %}</a></div>        
-        <h1>{{ crowd.name }}</h1>        
-        <h3>{{ crowd.start_date }} - {{ crowd.end_date }}</h3>
+        <h1>{{ crowd.name }}</h1>
+        <h3>{{ crowd.start_date }} - {{ crowd.end_date }} {% if crowd.is_expired %}(This event has passed){% endif %}</h3>
     </div>
 </div>
 <div class="column-threequarter">
@@ -27,12 +27,16 @@
 </div>
 <div class="column-onequarter">
     <div class="column-container">
-        {% if not request.user in crowd.participants.all %}
-            <a href="{% url crowds:join crowd.pk %}" class="btn-blue">{% trans "Join" %}</a>
-        {% else %}
-            <div class="crowds-event-attending"></div><div id="crowds-view-youareattending">{% trans "Joined! You're going" %}</div>
+        {% if not crowd.is_expired %}
+            {% if not request.user in crowd.participants.all %}
+                <a href="{% url crowds:join crowd.pk %}" class="btn-blue">{% trans "Join" %}</a>
+            {% else %}
+                <div class="crowds-event-attending"></div><div id="crowds-view-youareattending">{% trans "Joined! You're going" %}</div>
             
-            <div>{% trans "Can't make it?" %} <a href="{% url crowds:leave crowd.pk %}" class="btn-blue">{% trans "Unjoin" %}</a></div>
+                <div>{% trans "Can't make it?" %} <a href="{% url crowds:leave crowd.pk %}" class="btn-blue">{% trans "Unjoin" %}</a></div>
+            {% endif %}
+        {% else %}
+            <p>This get together has passed.</p><br />
         {% endif %}
         
         <div>
