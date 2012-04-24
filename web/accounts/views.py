@@ -252,7 +252,12 @@ def edit(request, template_name='accounts/profile_edit.html'):
     except:
         raise Http404("could not locate a user profile")
 
-    change_password_form = ChangePasswordForm()
+    prof_for_game = UserProfilePerInstance.objects.get(
+                                            user_profile=profile,
+                                            instance=request.current_game
+    )
+
+    #change_password_form = ChangePasswordForm()
     profile_form = UserProfileForm(request,
                                    initial={
                                         'first_name': profile.user.first_name if profile.user.first_name is not None else "",
@@ -260,76 +265,49 @@ def edit(request, template_name='accounts/profile_edit.html'):
                                         'email': profile.email if profile.email is not None else "",
                                         'birth_year': profile.birth_year if profile.birth_year is not None else "",
                                         'preferred_language': profile.preferred_language,
-                                        #'affiliations': profile.affils.values_list('pk', flat=True), 
+                                        'tagline': profile.tagline,
+                                        'affiliations': prof_for_game.affils.all(),
+                                        'stakes': prof_for_game.stakes.all(),
                                     }
     )
     if request.method == 'POST':
         # Change password form moved to user profile
-        if request.POST['form'] == 'change_password':
-            change_password_form = ChangePasswordForm(request.POST)
-            if change_password_form.is_valid():
-                password = change_password_form.cleaned_data['password']
-                confirm = change_password_form.cleaned_data['confirm']
+        #if request.POST['form'] == 'change_password':
+        #    change_password_form = ChangePasswordForm(request.POST)
+        #    if change_password_form.is_valid():
+        #        password = change_password_form.cleaned_data['password']
+        #        confirm = change_password_form.cleaned_data['confirm']
 
-                request.user.set_password(confirm)
-                request.user.save()
-                messages.success(request, "Your new password was saved.")
+        #        request.user.set_password(confirm)
+        #        request.user.save()
+        #        messages.success(request, "Your new password was saved.")
+        # User profile form updated, not change password
+        profile_form = UserProfileForm(request, data=request.POST, files=request.FILES)
+        if profile_form.is_valid():
+            cd = profile_form.cleaned_data
+            print cd
+            #changing birth year (needed because of the int)
+            #This fails with the birth_year being blank and python can not convert
+            #a '' to an int
+            profile.birth_year = int(cd['birth_year'])
+            profile.tagline = cd['tagline']
+
+            prof_for_game.stakes = cd.get('stakes')
+            prof_for_game.affils = cd.get('affiliations')
+            prof_for_game.save()
+
+            if request.FILES.get('avatar', None) != None:
+                profile.avatar = request.FILES['avatar']
+            profile.user.save()
+            profile.save()
+            return redirect(reverse('accounts:dashboard'))
+
         else:
-            # User profile form updated, not change password
-            profile_form = UserProfileForm(request, data=request.POST, files=request.FILES)
-            if profile_form.is_valid():
-                profile = profile_form.save()
-                cd = profile_form.cleaned_data
-                #changing birth year (needed because of the int)
-                #This fails with the birth_year being blank and python can not convert
-                #a '' to an int
-                if (cd.get('birth_year', None) == None or cd.get('birth_year', None) == ''):
-                    profile.birth_year = None
-                else:
-                    profile.birth_year = int(cd['birth_year'])
-
-                #updating email address
-                #if (request.POST.get('email', None) == None or request.POST.get('email', None) == ''):
-                #    profile.user.email = None
-                #else:
-                #    profile.user.email = profile_form.cleaned_data['email']
-
-                #if (request.POST.get('first_name', None) == None or request.POST.get('first_name', None) == ''):
-                #    profile.user.first_name = None
-                #else:
-                #    profile.user.first_name = profile_form.cleaned_data['first_name']
-
-                #if (request.POST.get('last_name', None) == None or request.POST.get('last_name', None) == ''):
-                #    profile.user.last_name = None
-                #else:
-                #    profile.user.last_name = profile_form.cleaned_data['last_name']
-
-                prof_for_game = UserProfilePerInstance.objects.get(user_profile=profile, instance=request.current_game)
-                prof_for_game.stakes = cd.get('stakes')
-                prof_for_game.affils = cd.get('affiliations')
-                prof_for_game.save()
-
-
-#                profile.affils = profile_form.cleaned_data.get('affiliations')
-#                aff_other = profile_form.cleaned_data.get('affiliations_other')
-#                if aff_other != '':
-#                    for a in aff_other.split(','):
-#                        aff, created = Affiliation.objects.get_or_create(name=a.strip())
-#                        aff.save()
-#                        profile.affils.add(aff)
-
-#                if request.FILES.get('avatar', None) != None:
-#                    profile.avatar = request.FILES['avatar']
-                profile.user.save()
-                profile.save()
-                return redirect(reverse('accounts:dashboard'))
-
-            else:
-                print profile_form.errors
+            print profile_form.errors
 
     context = {
         'profile_form': profile_form,
-        'change_password_form': change_password_form,
+        #'change_password_form': change_password_form,
     }
     return render(request, template_name, context)
 

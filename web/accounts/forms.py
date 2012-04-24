@@ -348,7 +348,10 @@ class UserProfileForm(forms.Form):
 
     def __init__(self, request, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].widget.attrs['readonly'] = True
+        self.fields['last_name'].widget.attrs['readonly'] = True
         self.fields['email'].widget.attrs['readonly'] = True
+        self.fields['birth_year'].widget.attrs['readonly'] = True
 
         self.fields['stakes'] = forms.ModelMultipleChoiceField(
                                     label=_(u'Stake in the community'),
@@ -362,7 +365,7 @@ class UserProfileForm(forms.Form):
 
 
         lang_qs = Language.objects.filter(instance=request.current_game)
-        if lang_qs.count()  > 0:
+        if lang_qs.count()  > 1:
             self.fields['preferred_language'] = forms.ModelChoiceField(required=True, 
                                                     label=_("Preferred Language"), 
                                                     queryset=lang_qs,
