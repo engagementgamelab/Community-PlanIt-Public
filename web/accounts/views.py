@@ -252,23 +252,27 @@ def edit(request, template_name='accounts/profile_edit.html'):
     except:
         raise Http404("could not locate a user profile")
 
+    if request.user.is_superuser:
+        raise Http404("browsing the site as admin user is not supported")
+
+    if not hasattr(request, 'current_game'):
+        raise Http404("you are have not property authenticated")
+
+
+
     prof_for_game = UserProfilePerInstance.objects.get(
                                             user_profile=profile,
                                             instance=request.current_game
     )
 
     #change_password_form = ChangePasswordForm()
-    profile_form = UserProfileForm(request,
+    profile_form = UserProfileForm(request=request,
                                    initial={
-                                        'first_name': profile.user.first_name if profile.user.first_name is not None else "",
-                                        'last_name': profile.user.last_name if profile.user.last_name is not None else "",
-                                        'email': profile.email if profile.email is not None else "",
-                                        'birth_year': profile.birth_year if profile.birth_year is not None else "",
                                         'preferred_language': profile.preferred_language,
                                         'tagline': profile.tagline,
                                         'affiliations': prof_for_game.affils.all(),
                                         'stakes': prof_for_game.stakes.all(),
-                                    }
+                                    }, instance=profile
     )
     if request.method == 'POST':
         # Change password form moved to user profile
@@ -282,13 +286,9 @@ def edit(request, template_name='accounts/profile_edit.html'):
         #        request.user.save()
         #        messages.success(request, "Your new password was saved.")
         # User profile form updated, not change password
-        profile_form = UserProfileForm(request, data=request.POST, files=request.FILES)
+        profile_form = UserProfileForm(request=request, data=request.POST, files=request.FILES, instance=profile)
         if profile_form.is_valid():
             cd = profile_form.cleaned_data
-            #changing birth year (needed because of the int)
-            #This fails with the birth_year being blank and python can not convert
-            #a '' to an int
-            profile.birth_year = int(cd['birth_year'])
             profile.tagline = cd['tagline']
 
             prof_for_game.stakes = cd.get('stakes')

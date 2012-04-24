@@ -179,6 +179,7 @@ def rally(request):
             crowd = form.save(commit=False)
             crowd.instance = current_instance
             crowd.creator = request.user
+            crowd.participants.add(creator)
             crowd.save()
 
             #PointsAssigner().assign(request.user, 'challenge_created')

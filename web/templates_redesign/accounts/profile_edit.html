@@ -4,6 +4,24 @@
 
 {% block title %}{% trans "Edit Profile" %}{% endblock %}
 
+{% block css %}
+{{ block.super }}
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/admin_widgets.css">
+{% endblock css %}
+
+{% block js %}
+{{ block.super }}
+    <script type="text/javascript" src="/static/admin/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+    <script type="text/javascript" src="/static/admin/js/core.js"></script>
+    <script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
+    <script type="text/javascript" src="/static/admin/js/actions.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+    <script src="{{ STATIC_URL }}js/jsi18n.js"></script>
+{% endblock js%}
+
+
 {% block game_content %}
 <div>
     <div class="column-container">
@@ -42,44 +60,7 @@
                         </div>
                         {{ profile_form.tagline.errors }}
                     <p>
-                    <p>
-                        {{ profile_form.first_name.label_tag }}
-                        {{ profile_form.first_name }}
-                        {{ profile_form.first_name.errors }}
-                    </p>
-                    <p>
-                        {{ profile_form.last_name.label_tag }}
-                        {{ profile_form.last_name }}
-                        {{ profile_form.last_name.errors }}
-                    </p>
-                    <p>    
-                        {{ profile_form.email.label_tag}}
-                        {{ profile_form.email }}
-                        {{ profile_form.email.errors }}
-                    </p>    
-                    <p>
-                        {{ profile_form.receive_email.label_tag}}
-                        {{ profile_form.receive_email }}
-                        {{ profile_form.receive_email.errors }}
-                    </p>
-                    {% if profile_form.preferred_language %}
-                    <p>    
-                        {{ profile_form.preferred_language.label_tag }}
-                        {{ profile_form.preferred_language }}
-                        {{ profile_form.preferred_language.errors }}
-                    </p>                        
-                    {% endif %}
-                    <p>    
-                        {{ profile_form.birth_year.label_tag }}
-                        {{ profile_form.birth_year }}
-                        {{ profile_form.birth_year.errors }}
-                    </p>                        
-                </div>
-            </div>
-            <div class="column-third">
-                <div class="column-container">
-                    {%csrf_token%}
-                    <input type="hidden" name="form" value="updated_profile">
+
 
                     <p>    
                         {{ profile_form.stakes.label_tag }}
@@ -97,6 +78,26 @@
                         {{ profile_form.affiliation_new }}
                         {{ profile_form.affiliation_new.errors }}
                     </p>                        
+
+                </div>
+            </div>
+            <div class="column-third">
+                <div class="column-container">
+                    {%csrf_token%}
+                    <input type="hidden" name="form" value="updated_profile">
+                    <p>
+                        {{ profile_form.receive_email.label_tag}}
+                        {{ profile_form.receive_email }}
+                        {{ profile_form.receive_email.errors }}
+                    </p>
+                    {% if profile_form.preferred_language %}
+                    <p>    
+                        {{ profile_form.preferred_language.label_tag }}
+                        {{ profile_form.preferred_language }}
+                        {{ profile_form.preferred_language.errors }}
+                    </p>                        
+                    {% endif %}
+
                 </div>
                      
                 {# <form action="" method="post"> #}

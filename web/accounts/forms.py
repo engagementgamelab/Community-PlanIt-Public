@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.core.files.storage import FileSystemStorage
+
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.db import transaction
@@ -15,10 +16,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
+from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.formtools.wizard.views import SessionWizardView
 
-from accounts.models import *
-from web.instances.models import Instance, City, Language
+from .models import *
+from web.instances.models import Instance, City, Language, Affiliation
 
 from web.core.utils import get_translation_with_fallback
 
@@ -338,12 +340,9 @@ class ChangePasswordForm(forms.Form):
 
         return confirm
 
-class UserProfileForm(forms.Form):
+
+class UserProfileForm(forms.ModelForm):
     # Required fields
-    first_name = forms.CharField(max_length=30, required=True, label=_('First Name'))
-    last_name = forms.CharField(max_length=30, required=True, label=_('Last Name'))
-    birth_year = forms.CharField(max_length=4, required=True, label=_('Year you were born'))
-    email = forms.CharField(max_length=100, required=True, label=_('Email'))
     receive_email = forms.BooleanField(required=False, label=_('Should we send you notifications and news via email?'))
     tagline = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Give yourself a tagline...'}), required=False, label=_('Tagline'))
     affiliation_new = forms.CharField(
@@ -352,34 +351,37 @@ class UserProfileForm(forms.Form):
     )
     avatar = forms.ImageField(required=False)
 
-    def __init__(self, request, *args, **kwargs):
+    stakes = forms.ModelMultipleChoiceField(
+                        label=_(u'Stake in the community'),
+                        widget= FilteredSelectMultiple("Stakes", False, attrs={'rows':'10'}),
+                        queryset = UserProfileStake.objects.none(),
+                        required=False,
+    )
+    affiliations = forms.ModelMultipleChoiceField(
+                        label=_(u'Affiliations'),
+                        widget= FilteredSelectMultiple("Affiliations", False, attrs={'rows':'10'}),
+                        queryset = Affiliation.objects.none(),
+                        required=False,
+    )
+
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+
         super(UserProfileForm, self).__init__(*args, **kwargs)
-        self.fields['first_name'].widget.attrs['readonly'] = True
-        self.fields['last_name'].widget.attrs['readonly'] = True
-        self.fields['email'].widget.attrs['readonly'] = True
-        self.fields['birth_year'].widget.attrs['readonly'] = True
 
-        self.fields['stakes'] = forms.ModelMultipleChoiceField(
-                                    label=_(u'Stake in the community'),
-                                    required=False,
-                                    queryset=request.current_game.user_profile_variants.stake_variants.all().order_by("pos")
-        )
-        self.fields['affiliations'] = forms.ModelMultipleChoiceField(
-                                    label=_(u'Affiliations'),
-                                    required=False,
-                                    queryset=request.current_game.user_profile_variants.affiliation_variants.all().order_by("name"))
-
-
-        lang_qs = Language.objects.filter(instance=request.current_game)
+        lang_qs = Language.objects.filter(instance=self.request.current_game)
         if lang_qs.count()  > 1:
             self.fields['preferred_language'] = forms.ModelChoiceField(required=True, 
                                                     label=_("Preferred Language"), 
                                                     queryset=lang_qs,
             )
+        self.fields['stakes'].queryset = self.request.current_game.user_profile_variants.stake_variants.all().order_by("pos")
+        self.fields['affiliations'].queryset = self.request.current_game.user_profile_variants.affiliation_variants.all().order_by("name")
 
     class Meta:
-        fields = ('email', 'first_name', 'last_name', 'birth_year', 'preferred_language',
-                  'receive_email', 'tagline', 'avatar', 'stakes', 'affiliations')
+        fields = ('preferred_language', 'receive_email', 'tagline', 'avatar', 'stakes', 'affiliations')
+        model = UserProfile
 
 
 class FilterPlayersByVariantsForm(forms.Form):
