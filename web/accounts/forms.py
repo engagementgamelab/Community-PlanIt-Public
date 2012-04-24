@@ -17,7 +17,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.formtools.wizard.views import SessionWizardView
 
-from web.accounts.models import *
+from accounts.models import *
 from web.instances.models import Instance, City, Language
 
 from web.core.utils import get_translation_with_fallback
@@ -285,6 +285,8 @@ class RegistrationWizard(SessionWizardView):
                 if created:
                     aff.save()
                 user_profile_per_instance.affils.add(aff)
+                variants = UserProfileVariantsForInstance.objects.get(instance=game)
+                variants.affiliation_variants.add(aff)
         user_profile_per_instance.save()
 
         tmpl = loader.get_template('accounts/email/welcome.html')
