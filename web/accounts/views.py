@@ -27,12 +27,12 @@ from django.contrib.sites.models import get_current_site
 
 from PIL import Image
 
-from web.accounts.forms import *
-from web.accounts.models import Notification, UserProfile
+from .forms import *
+from .models import Notification, UserProfile, UserProfileVariantsForInstance
 from web.answers.models import Answer
 from web.challenges.models import Challenge, PlayerChallenge
 from web.comments.forms import CommentForm
-from web.instances.models import Instance
+from web.instances.models import Instance, Affiliation
 from web.missions.models import Mission
 from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
 from web.reports.models import Activity
@@ -300,6 +300,12 @@ def edit(request, template_name='accounts/profile_edit.html'):
                 profile.avatar = request.FILES['avatar']
             profile.user.save()
             profile.save()
+            if cd.get('affiliation_new') != '':
+                affiliation, created = Affiliation.objects.get_or_create(name=cd.get('affiliation_new'))
+                variants = UserProfileVariantsForInstance.objects.get(instance=request.current_game)
+                variants.affiliation_variants.add(affiliation)
+                prof_for_game.affils.add(affiliation)
+
             return redirect(reverse('accounts:dashboard'))
 
         else:

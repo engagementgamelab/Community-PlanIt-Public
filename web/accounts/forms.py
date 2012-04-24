@@ -341,9 +341,13 @@ class UserProfileForm(forms.Form):
     first_name = forms.CharField(max_length=30, required=True, label=_('First Name'))
     last_name = forms.CharField(max_length=30, required=True, label=_('Last Name'))
     birth_year = forms.CharField(max_length=4, required=True, label=_('Year you were born'))
-    email = forms.CharField(max_length=250, required=True, label=_('Email'))
+    email = forms.CharField(max_length=100, required=True, label=_('Email'))
     receive_email = forms.BooleanField(required=False, label=_('Should we send you notifications and news via email?'))
     tagline = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Give yourself a tagline...'}), required=False, label=_('Tagline'))
+    affiliation_new = forms.CharField(
+                max_length=100, required=False, label=_("Don't see an affiliation that fits you?"),
+                widget=forms.TextInput(attrs={"placeholder": "Add your own Affiliation"})
+    )
     avatar = forms.ImageField(required=False)
 
     def __init__(self, request, *args, **kwargs):
