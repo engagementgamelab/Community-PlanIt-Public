@@ -508,7 +508,6 @@ def dashboard(request, template_name='accounts/dashboard.html'):
     )
     return render(request, template_name, context)
 
-"""
 @login_required
 def admin_instance_email(request, instance_id=None):
     if not request.user.is_superuser:
@@ -551,4 +550,3 @@ def admin_sendemail(request):
              }, 
             #[ip]
             )))
-"""
