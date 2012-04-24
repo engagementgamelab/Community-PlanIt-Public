@@ -126,6 +126,7 @@ class RegisterFormTwo(forms.Form):
 
         self.fields['how_discovered_other'] = forms.CharField(
             required=False, 
+            max_length=1000,
             label=_('If other, please tell us how you learned about Community PlanIt'),
             widget=forms.Textarea())
 
