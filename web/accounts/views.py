@@ -285,7 +285,6 @@ def edit(request, template_name='accounts/profile_edit.html'):
         profile_form = UserProfileForm(request, data=request.POST, files=request.FILES)
         if profile_form.is_valid():
             cd = profile_form.cleaned_data
-            print cd
             #changing birth year (needed because of the int)
             #This fails with the birth_year being blank and python can not convert
             #a '' to an int
@@ -377,7 +376,6 @@ def ajax_search(request, search_form, request_uri=None):
             """
             t = Template(pag_tmpl)
             pagination = t.render(Context(context))
-            print pagination
             obj_response.html('div#profile-pagination', pagination)
         else:
             log.debug('find players filter errors: %s', form.errors)
