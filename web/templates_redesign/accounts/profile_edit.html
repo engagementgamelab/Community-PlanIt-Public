@@ -7,8 +7,8 @@
 {% block game_content %}
 <div>
     <div class="column-container">
+        <a href="{% url accounts:player_profile request.user.id %}" class="btn-back">{% trans "Back to Profile" %}</a>
         <h1>Edit Profile</h1>
-        
     </div>
         <div id="profile-editform-container">
             <div class="column-container">
