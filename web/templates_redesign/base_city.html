@@ -10,6 +10,23 @@
 
 {% block body_class %}{% if game_header %}private{% else %}public{% endif %}{% endblock %}
 
+{% block top_nav %}
+<div id="top-nav">
+    <ul>
+        {# TODO, back to missions if in game #}
+        
+        
+        {% if user.is_authenticated %}
+            <li><a href="{% url home %}">My Game</a></li>
+            <li><a href="{% url accounts:logout %}">Sign Out</a></li>
+        {% else %}
+            <li><a href="{% url accounts:login %}">Sign In</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}
+
+
 {% block header %}
     {# Current Site: {{ request.current_site }}<br /> #}
     {# Current City: {{ request.current_city }}<br /> #}
