@@ -13,6 +13,8 @@
 {% block game_content %}
 <div>
     <div class="column-container">
+        {# TODO back to mission if in game #}
+        <a href="{% url home %}" class="btn-back">{% trans "Back to " %}{{ request.current_city.name }}</a>
         <h1>{{ player.get_profile.screen_name }}</h1>
         {% if request.user == player %}<a class="button" href="{% url accounts:profile_edit %}">edit my profile</a>{% endif %}
     </div>
@@ -42,7 +44,7 @@
                 </h3>
                 <p class="profile-detail">
                 {% for game in my_games %} 
-                    <a class="highlight" href="{% url instances:instance game.slug  %}">{{ game.title }}</a>
+                    <a class="highlight" href="{% url home %}">{{ game.title }}</a>
                 {% endfor %}
                 </p>
                 

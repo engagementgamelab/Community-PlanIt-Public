@@ -6,14 +6,16 @@
 {% block game_content %}
 <div class="column-full">
     <div class="column-container">
-    <h1>{% trans "Get Together!" %}</h1>
-    <p class="instructions">{% trans "Get together with your fellow players to organize, rally, and take action at physical meet-ups in your community!" %}</p>
+        {# TODO back to mission if in game #}
+        <a href="{% url home %}" class="btn-back">{% trans "Back to " %}{{ request.current_city.name }}</a>
+        <h1>{% trans "Get Together!" %}</h1>
+        <p class="instructions">{% trans "Get together with your fellow players to organize, rally, and take action at physical meet-ups in your community!" %}</p>
     
-    {% block crowds_add %}
-        <div class="tabbutton">
-            <a href="{% url crowds:rally %}" class="button">{% trans "+ Create a Get Together!" %}</a>
-        </div>
-    {% endblock %}
+        {% block crowds_add %}
+            <div class="tabbutton">
+                <a href="{% url crowds:rally %}" class="button">{% trans "+ Create a Get Together!" %}</a>
+            </div>
+        {% endblock %}
     
     
         {% for crowd in crowds %}

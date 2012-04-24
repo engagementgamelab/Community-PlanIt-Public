@@ -6,6 +6,8 @@
 {% regroup attachments by instance as game_list %}
 <div>
     <div class="column-container clearfix">
+        {# TODO back to mission if in game #}
+        <a href="{% url home %}" class="btn-back">{% trans "Back to " %}{{ request.current_city.name }}</a>
         <h1>{% trans "Become an Expert" %}</h1>
     </div>
     
