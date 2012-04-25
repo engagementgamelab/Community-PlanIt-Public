@@ -256,7 +256,7 @@
         clear: left;
     }
     
-    .profile-container img {
+    .profile-container .profile-avatar {
         display: block;
         width: 164px;
         height: 164px;
