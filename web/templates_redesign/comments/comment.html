@@ -113,7 +113,6 @@
                 <form enctype="multipart/form-data" method="POST" action="{% url comments:reply comment.id %}">
                     {% csrf_token %}
                     
-                        
                     <textarea name="message" class="comment-message" cols="40" rows="6" id="message-{{comment.id}}" placeholder="{% trans 'Type your response here... ' %}"></textarea>
                     <div class="actions">
                         <span class="reply-comment-counter">(<span class="count">1000</span> {% trans "chars left" %})</span>

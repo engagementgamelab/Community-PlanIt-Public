@@ -37,21 +37,18 @@
     {% if is_completed  or activity.is_past %}
     <div class="comments embedded">
         {% if answers %}
-            <div class="controls right">
-                Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
-            </div>
-            <div style="clear:both;">&nbsp;</div>
+            {# <div class="controls right"> #}
+            {#     Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a> #}
+            {# </div> #}
+            {# <div style="clear:both;">&nbsp;</div> #}
         {% endif %}
         {% for answer in answers %}
+        <h2>{% trans "Responses" %}</h2>
         {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
-        <h3>
-            {% blocktrans %}{{comment_heading}}{% endblocktrans %}
-        
-        </h3>
         <ul class="comment_list">
             {% for comment in comments.all %}
                 {% with extra_message=answer.selected.value %}
-                {% include "comments/comment.html" %}
+                    {% include "comments/comment.html" %}
                 {% endwith %}
             {% empty %}
             <li class="comment">No comments found.</li>

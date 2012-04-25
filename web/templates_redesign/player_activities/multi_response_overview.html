@@ -35,22 +35,20 @@
         <br class="clearfix"/>
         {% if is_completed  or activity.is_past %}
             <h2>{% trans "Response Summary" %}</h2>
-            <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; margin-top: 25px; margin-bottom: 25px; "></div>
+            {# <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; margin-top: 25px; margin-bottom: 25px; "></div> #}
             {% if all_answers %}
                 <div class="comments embedded">
-                    <h2>
-                        {% trans "Responses" %}
-                        <div class="controls right">
-                            Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
-                        </div>
-                    </h2>
+                    <h2>{% trans "Responses" %}</h2>
+                        {# <div class="controls right"> #}
+                        {#     Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a> #}
+                        {# </div> #}
                     <ul class="comment_list">
                     {% with instance=activity.mission.instance %}
                     {% for user, answers, comments in all_answers %}
                         {% if comments %}
                             {% with extra_message=answers %}
                             {% for comment in comments %}
-                            {% include "comments/comment.html" %}
+                                {% include "comments/comment.html" %}
                             {% endfor %}
                             {% endwith %}
                         {% endif %}
