@@ -53,7 +53,7 @@
                         {# {% if forloop.last %}<div class="nav-missions-end-arrow"></div>{% endif %} #}
                     {# </li> #}
                     <li>
-                        <a href="">
+                        <a href="{% url missions:mission mission.slug %}">
                             <div class="nav-missions-number">{{ forloop.counter }}</div>
                             <div class="nav-missions-endsin">
                                 <p class="nav-missions-endsin-label">Ends in<p>
