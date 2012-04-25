@@ -33,11 +33,15 @@
     </div>
     
     <div class="column-container">
-        <p class="instructions">{% trans "By answering challenge questions you are helping plan your community, and you are earning points that move you towards accomplishing the mission." %}</p>
-    
-        {% if activities and mission.is_active %}
-            {% trans "You have completed" %} {{ completed|length }}/{{ activities|length }} {% trans "challenges" %}:
-        {% endif %}
+        <div id="mission-activities-intro">
+            <p class="instructions">{% trans "By answering challenge questions you are helping plan your community, and you are earning points that move you towards accomplishing the mission." %}</p>
+            <div id="mission-activities-completion">
+            {% if activities and mission.is_active %}
+                <div id="completion">{{ completed|length }}/{{ activities|length }}</div>
+                <div>{% trans "challenges completed" %}</div>
+            {% endif %}
+            </div>
+        </div>
         
         {% for activity in activities %}
             {% if mission.is_expired %}

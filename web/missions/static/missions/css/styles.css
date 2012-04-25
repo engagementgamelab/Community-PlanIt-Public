@@ -24,10 +24,32 @@
     height: 150px;
 }
 
+#mission-activities-intro {
+    overflow: hidden;
+    margin: 15px 0px;
+}
+
+    #mission-activities-intro .instructions {
+        float: left;
+        margin: 15px 0px;
+        width: 500px;
+    }
+    
+    #mission-activities-completion {
+        float: right;
+        text-align: center;
+        width: 150px;
+        color: #aaa;
+    }
+
+        #mission-activities-completion #completion {
+            font-size: 2.5em;
+            color: #777;
+        }
+
 .activity {
     position: relative;
 }
-    
 
     .activity a {
         display: block;

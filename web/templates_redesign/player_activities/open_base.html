@@ -13,7 +13,8 @@
         <div class="column-threequarter">
             {% csrf_token %}
             <input type="hidden" name="form" value="open_ended">
-        
+            
+            {% include "player_activities/attachments.html" %}
             <div class="activity-question">{{ activity.question|safe }}</div>
             <div class="activity-response">
                 {{ form.response }}
@@ -25,8 +26,6 @@
                 <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
             </div>
         
-            {% include "player_activities/attachments.html" %}
-            
         </div>
     </form>
     <p class="clearfix">Once you are done, you will be able to view everyone's responses.</p>
