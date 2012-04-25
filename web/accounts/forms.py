@@ -79,11 +79,7 @@ class RegisterFormTwo(forms.Form):
             chosen_game = kwargs.pop('chosen_game')
         super(RegisterFormTwo, self).__init__(*args, **kwargs)
         self.chosen_game = chosen_game
-
-
-
         self.fields['avatar'] = forms.ImageField(required=False)
-
         self.fields['stakes'] = forms.ModelMultipleChoiceField(
                                     label=_(u'Stake in the community'),
                                     required=False,
@@ -197,7 +193,7 @@ class RegistrationWizard(SessionWizardView):
             #TODO is there another way to get
             #TODO to the data of the previous steps data
             chosen_game_id = self.storage.data.get('step_data')['0']['0-instance'][0]
-            chosen_game = Instance.objects.get(id=chosen_game_id)
+            chosen_game = Instance.objects.language(get_language()).get(id=chosen_game_id)
             return {'chosen_game' : chosen_game}
         if step == '0':
             return {'domain' : self.request.current_site.domain}
@@ -223,6 +219,11 @@ class RegistrationWizard(SessionWizardView):
                         form = AccountAuthenticationForm(self.request),
                     )
             )
+        elif self.steps.current == '1':
+            chosen_game_id = self.storage.data.get('step_data')['0']['0-instance'][0]
+            chosen_game = Instance.objects.language(get_language()).get(id=chosen_game_id)
+            context.update( {'chosen_game' : chosen_game})
+
         return context
 
     @transaction.commit_on_success
