@@ -44,6 +44,8 @@
     {# TODO: TEMPORARY FOR THE QUINCY LAUNCH, REMOVE!! #}
     {% if request.session.current_game_slug = 'north-quincy-wollaston-neighborhoods-on-the-move' %}
         {% include 'static/quincy_post_signup.html' %}
+    {% elif request.session.current_game_slug = 'detroit-247' %}
+        {% include 'static/detroit_post_signup.html' %}
     {% else %}
 
         {% include '_games_per_city.html' %}
