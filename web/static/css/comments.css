@@ -2,8 +2,9 @@
 
 .comment {
     position: relative;
-    width: 300px;
-    padding: 10px;
+    width: 290px;
+    padding: 15px 15px 5px 15px;
+    margin-bottom: 30px;
     background-color: #f6f6f6;
     -webkit-border-radius: 10px;
     -webkit-border-bottom-right-radius: 0;
@@ -23,8 +24,21 @@
         border: 12px solid transparent;
         border-top-color: #f6f6f6;
         border-right-color: #f6f6f6;
+        z-index: 2;
     }
     
+    .comment:before {
+        content: ' ';
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        bottom: -30px;
+        right: 0px;
+        border: 15px solid transparent;
+        border-top-color: #fff; /* sadly, this has to be whatever the bg color is */
+        border-right-color: #fff; /* sadly, this has to be whatever the bg color is */
+        z-index: 1;
+    }
     
     .comment .comment-header {}
     
@@ -39,12 +53,75 @@
             font-size: 0.9em;
             font-style: italic;
         }
-    
-    .comment .main {
-        border: 1px solid gray;
-    }
-    
+        
     /* Comment Message */
     .comment .comment-message {
-        border: 1px solid gray;
+        margin: 20px 0px;
     }
+ 
+    .comment textarea{
+        width: 100%;
+        border: none;
+        resize: vertical;
+        background: inherit;
+    }
+
+    .comment .actions {
+        overflow: hidden;
+        padding: 5px 0px;
+    }
+    
+    
+        /* LIKES! */
+        .comment .actions .likes {
+            float: left;
+        }
+
+            .comment .actions .likes .btn-like {
+                display: inline-block;
+                width: 20px;
+                height: 16px;
+                background: url('../img/icon-comments-like.png');
+            }
+        
+            .comment .actions .likes .likes-count {
+                display: inline-block;
+                color: #00a3ff;
+            }
+    
+        /* REPLIES! */
+        .comment .actions .replies {
+            float: right;
+        }
+
+            .comment .actions .replies .btn-replies {
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                background: url('../img/icon-comments-reply.png');
+            }
+            
+        /* REPLIES! (NESTED) */
+        .comment .actions .reply-comment-counter {
+            float: left;
+            color: #999;
+            font-size: 0.8em;
+            line-height: 2.5em;
+        }
+        
+        .comment .actions .reply {
+            float: right;
+        }
+            
+            .comment .actions .reply .btn-reply,
+            .comment .actions .reply .btn-cancel {
+                margin: 0px;
+            }
+    
+/* Nested Comments */
+.comment.nested  {
+    width: 270px; /* this and margin-left should add up to .comment */
+    margin-left: 20px;
+    margin-top: -25px;
+}
+

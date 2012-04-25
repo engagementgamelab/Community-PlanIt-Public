@@ -1,27 +1,27 @@
 {% load attachment_tags i18n %}
-<li class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
-    {% if comment.display_user %} 
-        {# HEADER #}
-        <div class="comment-header">
-            <div class="comment-header-avatar"><img src="{% if comment.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof comment.user.get_profile.avatar 'img/avatar-blank.png' %}" width="48" height="48" /></div>
-            <div class="comment-header-meta">
-                <div class="comment-author">{% trans "From" %} <a href="{% url accounts:player_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a></div>
-                <p class="comment-postdate">{{comment.posted_date|date:"N j, Y"}}, {{comment.posted_date|date:"g:i a"}}</p>
-            </div>
-        </div>
-        <br class="clearfix" />
-    {% endif %}
-    
-    <div class="main">
+<div class="thread-container">
+    <div class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
         {# META: FLAG AND EDIT #}
         <div class="meta">
             {% if not comment.hidden and comment.user != user and comment.instance.is_active or comment.is_official_response %}
-                <a href="{% url flags:add "comment" comment.id %}" title="flag comment"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
+                <a href="{% url flags:add 'comment' comment.id %}" title="flag comment"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
             {% endif %}
             {# {% if not comment.hidden and comment.user == request.user %} #}
             {#     <a href="{% url comments:edit comment.id %}" title="click to edit this comment">edit</a> #}
             {# {% endif %} #}
         </div>
+        
+        {% if comment.display_user %} 
+            {# HEADER #}
+            <div class="comment-header">
+                <div class="comment-header-avatar"><img src="{% if comment.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof comment.user.get_profile.avatar 'img/avatar-blank.png' %}" width="48" height="48" /></div>
+                <div class="comment-header-meta">
+                    <div class="comment-author">{% trans "From" %} <a href="{% url accounts:player_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a></div>
+                    <p class="comment-postdate">{{comment.posted_date|date:"N j, Y"}}, {{comment.posted_date|date:"g:i a"}}</p>
+                </div>
+            </div>
+            <br class="clearfix" />
+        {% endif %}
         
         {# COMMENT BODY MESSAGE #}
         <div class="comment-message">
@@ -29,12 +29,16 @@
                 {# Comment is flagged #}
                 <div class="notice">This content has been flagged by the community and hidden by the administrator.</div>
             {% else %}
-                {# Comment #}
+                
+                {# COMMENT #}
+                {# i think this is the response to the question... #}
                 {% if extra_message %}<div class="extra">{{extra_message|linebreaksbr}}</div>{% endif %}
+
+                {# Comment #}
                 {{comment.message|linebreaksbr}}
             {% endif %}
         </div>
-        
+    
         {% if not comment.hidden %}
             {# ATTACHMENTS #}
             <div class="attachments">
@@ -42,9 +46,9 @@
                 {% if attachment.is_valid %}
                     <div>
                         {% if attachment.type == 'video' %}
-                        {% embed_video attachment.url %}
+                            {% embed_video attachment.url %}
                         {% else %}
-                        <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                            <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
                         {% endif %}
                     </div>
                 {% else %}
@@ -52,94 +56,113 @@
                 {% endif %}
             {% endfor %}
             </div>
-            
-            <div class="likes">
-                <div id="id_likes-count-{{ comment.pk }}" class="count">{{comment.likes.count}}</div>
-                <div id="id_like-count-{{ comment.id }}">Like{{comment.likes.count|pluralize}}</div>
-                {% if comment.user != request.user and comment.instance.is_active  or comment.is_official_response %}
-                <div id="id_like-{{ comment.id }}" class="button" title="click to say you like this">Like</div>
-                    {% comment %} href="{% url comments:like comment.id %}" {% endcomment %}
-                {% endif %}
-            </div>
-            
-            <div class="controls">
-                {% if comment.instance.is_active  or comment.is_official_response %}
-                
-                    {# SEE MORE REPLIES #}
-                    <div class="actions">
-                            {% if comment.comments.count %}
-                            <a class="togglereplies" href="#replies-{{comment.pk}}">
-                                <img class="closed" src="{{MEDIA_URL}}img/icons/plus.png" alt=""/>
-                                <img class="open" src="{{MEDIA_URL}}img/icons/minus.png" alt=""/>
-                            </a>
-                            <span>{{comment.comments.count}} repl{{ comment.comments.count|pluralize:"y,ies" }}</span>
-                            {% endif %}
-                            <a class="small button reply" href="#reply-{{comment.id}}">reply</a>
-                    </div>
-                
-                    {# REPLY #}
-                    <div class="reply-modal">
-                        <form enctype="multipart/form-data" method="POST" action="{% url comments:reply comment.id %}">
-                            {% csrf_token %}
-                            <textarea name="message" class="comment_message" cols="40" rows="6" id="message-{{comment.id}}"></textarea>
-                            <button type="submit" class="button small submit">save reply</button>
-                            <button type="reset" class="button small cancel">cancel</button>
-                            <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div>
-                        </form>
-                        {# <script type="text/javascript">  #}
-                        {#  #}
-                        {#     $.fn.extend({   #}
-                        {#         limit: function(limit,element) { #}
-                        {#             var interval, f; #}
-                        {#             var self = $(this); #}
-                        {#             $(this).focus(function(){ #}
-                        {#                 interval = window.setInterval(substring,100); #}
-                        {#             }); #}
-                        {#             $(this).blur(function(){ #}
-                        {#                 clearInterval(interval); #}
-                        {#                 substring(); #}
-                        {#             }); #}
-                        {#             substringFunction = "function substring(){ var val = $(self).val(); if (val) {var length = val.length;if(length > limit){$(self).val($(self).val().substring(0,limit));}}"; #}
-                        {#             if(typeof element != 'undefined') #}
-                        {#                 substringFunction += "if($(element).html() != limit-length){$(element).html((limit-length<=0)?'0':limit-length);}" #}
-                        {#             substringFunction += "}"; #}
-                        {#             eval(substringFunction); #}
-                        {#             substring(); #}
-                        {#          #}
-                        {#         }  #}
-                        {#     });  #}
-                        {#  #}
-                        {#     var type_count = function(evt) { #}
-                        {#         var comment_form = $(this.form); #}
-                        {#         var val = this.value.replace(/\r?\n/g, 'xx'); #}
-                        {#         var len = Math.max(0, 1000 - val.length); #}
-                        {#         comment_form.find('.count').text(len); #}
-                        {#         if (len < 1) { #}
-                        {#             comment_form.find('.counter').addClass('limited'); #}
-                        {#             if (!(evt.ctrlKey || evt.which < 48 && evt.which !== 9 && evt.which !== 13)) { #}
-                        {#                 return false; #}
-                        {#             } #}
-                        {#         } #}
-                        {#         comment_form.find('.counter').removeClass('limited'); #}
-                        {#     } #}
-                        {#     $('textarea#message-{{ comment.pk }}').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change(); #}
-                        {#     $('textarea#message-{{ comment.pk }}').limit('1000','#charsLeft'); #}
-                        {# </script> #}
-                    </div>
-                {% endif %}
-            </div>
         {% endif %}
-        {% if comment.comments.all %}
-            <div id="replies-{{comment.pk}}" class="replies">
-                <ul class="nested">
-                    {% for comment in comment.comments.all %}
-                        {% with filename="comments/comment.html" extra_message=None %}
-                          {% include filename %}
-                        {% endwith %}
-                    {% endfor %}
-                </ul>
-                <div style="clear:both"></div>
+        
+        <div class="actions">
+            {# LIKES! #}
+            <div class="likes">
+                {# {% if comment.user != request.user and comment.instance.is_active or comment.is_official_response %} #}
+                    <div id="id_like-{{ comment.id }}" class="btn-like" title="click to say you like this"></div>{# href="{% url comments:like comment.id %}"  #}
+                    <div id="id_likes-count-{{ comment.pk }}" class="likes-count">{{comment.likes.count}}</div>
+                {# {% endif %} #}
+            </div>
+        
+            {# SEE MORE REPLIES #}
+            <div class="replies">
+                {# {% if comment.comments.count %} #}
+                {# <a class="togglereplies" href="#replies-{{comment.pk}}"> #}
+                {#     <img class="closed" src="{{MEDIA_URL}}img/icons/plus.png" alt=""/> #}
+                {#     <img class="open" src="{{MEDIA_URL}}img/icons/minus.png" alt=""/> #}
+                {# </a> #}
+                {# <span>{{ comment.comments.count }} repl{{ comment.comments.count|pluralize:"y,ies" }}</span> #}
+                {# {% endif %} #}
+                <a class="btn-replies" href="#reply-{{comment.id}}"></a>
+            </div>
+        </div>
+    </div>
+    
+    
+    {# NESTED comments #}
+    {% if comment.comments.all %}
+    <div class="nested" id="replies-{{comment.pk}}" class="replies">
+        {% for comment in comment.comments.all %}
+            {% with filename="comments/comment.html" extra_message=None %}
+                {% include filename %}
+            {% endwith %}
+        {% endfor %}
+        <div style="clear:both"></div>
+    </div>
+    {% endif %}
+    
+    {# MY RESPONSE TO THIS THREAD #}
+    <div class="comment nested controls">
+        {# MY RESPONSE HEADER #}
+        {# HEADER #}
+        <div class="comment-header">
+            <div class="comment-header-avatar"><img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="48" height="48" /></div>
+            <div class="comment-header-meta">
+                <div class="comment-author">{% trans "My response..." %}</div>
+            </div>
+        </div>
+        <br class="clearfix" />
+        
+        
+        {% if comment.instance.is_active  or comment.is_official_response %}
+            {# REPLY #}
+            <div class="reply-modal">
+                <form enctype="multipart/form-data" method="POST" action="{% url comments:reply comment.id %}">
+                    {% csrf_token %}
+                    
+                        
+                    <textarea name="message" class="comment-message" cols="40" rows="6" id="message-{{comment.id}}" placeholder="{% trans 'Type your response here... ' %}"></textarea>
+                    <div class="actions">
+                        <span class="reply-comment-counter">(<span class="count">1000</span> {% trans "chars left" %})</span>
+                        <div class="reply">
+                            <button type="submit" class="btn-blue btn-reply">{% trans "Post" %}</button> <button type="reset" class="btn-blue small btn-cancel">cancel</button>
+                        </div>
+                    </div>
+                </form>
+                <script type="text/javascript"> 
+                    $.fn.extend({  
+                        limit: function(limit,element) {
+                            var interval, f;
+                            var self = $(this);
+                            $(this).focus(function(){
+                                interval = window.setInterval(substring,100);
+                            });
+                            $(this).blur(function(){
+                                clearInterval(interval);
+                                substring();
+                            });
+                            substringFunction = "function substring(){ var val = $(self).val(); if (val) {var length = val.length;if(length > limit){$(self).val($(self).val().substring(0,limit));}}";
+                            if(typeof element != 'undefined')
+                                substringFunction += "if($(element).html() != limit-length){$(element).html((limit-length<=0)?'0':limit-length);}"
+                            substringFunction += "}";
+                            eval(substringFunction);
+                            substring();
+
+                        } 
+                    }); 
+
+                    var type_count = function(evt) {
+                        var comment_form = $(this.form);
+                        var val = this.value.replace(/\r?\n/g, 'xx');
+                        var len = Math.max(0, 1000 - val.length);
+                        comment_form.find('.count').text(len);
+                        if (len < 1) {
+                            comment_form.find('.reply-comment-counter').addClass('limited');
+                            if (!(evt.ctrlKey || evt.which < 48 && evt.which !== 9 && evt.which !== 13)) {
+                                return false;
+                            }
+                        }
+                        comment_form.find('.reply-comment-counter').removeClass('limited');
+                    }
+                    $('textarea#message-{{ comment.pk }}').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
+                    $('textarea#message-{{ comment.pk }}').limit('1000','#charsLeft');
+                </script>
             </div>
         {% endif %}
     </div>
-</li>
+</div>
+
+

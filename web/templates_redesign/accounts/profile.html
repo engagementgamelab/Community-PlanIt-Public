@@ -78,22 +78,44 @@
                 {{ profile_per_instance.user_profile.tagline }}
             </p>
             <br />
-            <h2>{% trans "Community Messages" %}</h2>
-    
-            {# Notifications Here #}
-            <p class="profile-detail">
-            {% for notification in request.user.notifications.all %}
-        
-            {% empty %}
             
-                {% if request.user == player %}
-                    No one has commented on your profile yet. Check out Find Players to connect to friends or meet new ones!
-                    <br /><br />
-                    <a href="{% url accounts:all %}" class="btn-forward">{% trans "Find players" %}</a>
-                {% else %}
-                    There are no comments for this player's profile yet.
-                {% endif %}
-            {% endfor %}
+            <!-- Comments -->
+            {% comment %}
+            <h2>{% trans "Community Messages" %}</h2>
+            {% with comments=player.get_profile.comments comment_heading=comment_heading|default:"Comments" %}
+            {% if not comment_form.just_one_form %}
+                {% include "comments/comments.html" %}
+            {% else %}
+                <h2>{% blocktrans %}{{comment_heading}}{% endblocktrans %}</h2>
+            {% endif %}
+            <div class="comment">
+                {# {% if instance.is_active %} #}
+                
+                    <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
+                        {% include "comments/duplicate.html" %}
+                        <button type="submit" class="button right">Add Comment</button>
+                    </form>
+                {# {% else %} #}
+                    {# <p>This community is no longer active.</p> #}
+                {# {% endif %} #}
+            </div>
+            {% endwith %}
+            
+            {% endcomment %}
+            
+            <!-- Notifications -->
+            <p class="profile-detail">
+            {# {# {% for notification in request.user.notifications.all %} #}
+            {# {#          #}
+            {# {# {% empty %} #}
+            {#     {% if request.user == player %} #}
+            {#         No one has commented on your profile yet. Check out Find Players to connect to friends or meet new ones! #}
+            {#         <br /><br /> #}
+            {#         <a href="{% url accounts:all %}" class="btn-forward">{% trans "Find players" %}</a> #}
+            {#     {% else %} #}
+            {#         There are no comments for this player's profile yet. #}
+            {#     {% endif %} #}
+            {# {% endfor %} #}
             </p>
             
         </div>
@@ -122,34 +144,6 @@
         </div>
     </div>
     <br class="clearfix" />
-    
-    {% comment %} 
-    <div class="column-full">
-        <div class="column-container">
-            <h3>Community Messages</h3>
-            {% with comments=player.get_profile.comments comment_heading=comment_heading|default:"Comments" %}
-            <div class="comments">
-                {% if not comment_form.just_one_form %}
-                    {% include "comments/comments.html" %}
-                {% else %}
-                    <h2>{% blocktrans %}{{comment_heading}}{% endblocktrans %}</h2>
-                {% endif %}
-                {% if instance.is_active %}
-                    <h3>{% blocktrans with player=player.get_profile.screen_name %}Share your thoughts with {{player}} &#8212; leave a comment below{% endblocktrans %}</h3>
-                    <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
-                        {% include "comments/duplicate.html" %}
-                        <button type="submit" class="button right">Add Comment</button>
-                    </form>
-                {% else %}
-                    {# <p>This community is no longer active.</p> #}
-                {% endif %}
-            </div>
-            {% endwith %}
-        </div>
-    </div>
-    {% endcomment %} 
-    
-
  
 </div>
 {% endblock %}
