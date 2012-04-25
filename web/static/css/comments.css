@@ -1,5 +1,50 @@
 /* Styles for Comments! */
 
 .comment {
-    border: 1px solid gray;
+    position: relative;
+    width: 300px;
+    padding: 10px;
+    background-color: #f6f6f6;
+    -webkit-border-radius: 10px;
+    -webkit-border-bottom-right-radius: 0;
+    -moz-border-radius: 10px;
+    -moz-border-radius-bottomright: 0;
+    border-radius: 10px;
+    border-bottom-right-radius: 0;
 }
+
+    .comment:after {
+        content: ' ';
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        bottom: -24px;
+        right: 0px;
+        border: 12px solid transparent;
+        border-top-color: #f6f6f6;
+        border-right-color: #f6f6f6;
+    }
+    
+    
+    .comment .comment-header {}
+    
+        .comment .comment-header .comment-header-avatar{
+            float: left;
+            width: 48px;
+        }
+        
+        .comment .comment-header .comment-header-meta{
+            float: left;
+            margin: 10px 10px;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+    
+    .comment .main {
+        border: 1px solid gray;
+    }
+    
+    /* Comment Message */
+    .comment .comment-message {
+        border: 1px solid gray;
+    }

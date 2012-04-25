@@ -48,77 +48,78 @@
         color: #fff;
     }
     
+    /* The different types of activities. 3 different states. Order matters here */
     .activity.open_ended a {
         background-image: url('../img/icon-open_ended.png');
     }
-    
-        .activity.open_ended a:hover {
-            background-image: url('../img/icon-open_ended_over.png');
-        }
         
         .activity.open_ended.activity-completed a {
             background-image: url('../img/icon-open_ended_completed.png');
+        }
+    
+        .activity.open_ended a:hover {
+            background-image: url('../img/icon-open_ended_over.png');
         }
     
     .activity.map a {
         background-position: 14px center !important;
         background-image: url('../img/icon-map.png');
     }
-    
-        .activity.map a:hover {
-            background-image: url('../img/icon-map_over.png');
-        }
         
         .activity.map.activity-completed a {
             background-image: url('../img/icon-map_completed.png');
         }
     
+        .activity.map a:hover {
+            background-image: url('../img/icon-map_over.png');
+        }
+    
     .activity.single_response a {
         background-image: url('../img/icon-single_response.png');
     }
-    
-        .activity.single_response a:hover {
-            background-image: url('../img/icon-single_response_over.png');
-        }
         
         .activity.single_response.activity-completed a {
             background-image: url('../img/icon-single_response_completed.png');
+        }
+    
+        .activity.single_response a:hover {
+            background-image: url('../img/icon-single_response_over.png');
         }
         
     .activity.multi_response a {
         background-image: url('../img/icon-multi_response.png');
     }
         
-        .activity.multi_response a:hover {
-            background-image: url('../img/icon-multi_response_over.png');
-        }
-        
         .activity.multi_response.activity-completed a {
             background-image: url('../img/icon-multi_response_completed.png');
+        }
+        
+        .activity.multi_response a:hover {
+            background-image: url('../img/icon-multi_response_over.png');
         }
     
     .activity.empathy a {
         background-image: url('../img/icon-empathy.png');
     }
         
-        .activity.empathy a:hover {
-            background-image: url('../img/icon-empathy_over.png');
-        }
-        
         .activity.empathy.activity-completed a {
             background-image: url('../img/icon-empathy_completed.png');
+        }
+        
+        .activity.empathy a:hover {
+            background-image: url('../img/icon-empathy_over.png');
         }
         
     .activity.trivia a {
         background-image: url('../img/icon-trivia.png');
     }
-
-        .activity.trivia a:hover {
-            background-image: url('../img/icon-trivia_over.png');
-        }
         
         .activity.trivia.activity-completed a:hover {
             background-image: url('../img/icon-trivia_completed.png');
+        }
+
+        .activity.trivia a:hover {
+            background-image: url('../img/icon-trivia_over.png');
         }
     
     .mission-activity-points,
