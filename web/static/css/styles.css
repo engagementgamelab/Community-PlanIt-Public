@@ -293,18 +293,46 @@ a {
                 font-weight: bold;
             }
 
-/* Mission Progress Bar*/
+/* Map the Future in the header */
 #mission-mapthefuture {
    position: absolute;
    right: 0px;
    bottom: 0px;
+   width: 203px;
+   height: 106px;
+   background: url('../img/bg-mission-mapthefuture.png') no-repeat;
 }
     #mission-mapthefuture a {
-        display: block;
-        width: 203px;
-        height: 106px;
-        background: url('../img/bg-mission-mapthefuture.png') no-repeat;
+        position: absolute;
+        bottom: 50px;
+        right: 25px;
+        display: inline-block;
+        padding: 10px 20px;
+        background: #f7ff59;
+        font-family: "Enriqueta";
+        font-size: 1.2em;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        color: #2d3542;
     }
+    
+    #mission-mapthefuture-flags-container {
+        position: absolute;
+        bottom: 5px;
+        right: 10px;
+        text-align: right;
+    }
+    
+        .mapthefuture-flag {
+            display: inline-block;
+            margin-right: -13px;
+            width: 28px;
+            height: 28px;
+            background: url('../values/img/flag-individual_28.png');
+        }
+
+/* Mission Progress Bar*/
 
 #mission-progress-container {
    width: 600px;
@@ -315,7 +343,8 @@ a {
 
    #mission-progress-total {
        position: relative;
-       width: 650px;
+       width: 600px;
+       padding-right: 50px;
        height: 40px;
        margin-left: 20px;
        background: #f2f7ed url('../img/bg-mission-progress-ticks.png') repeat-x center center; /* Old browsers */
@@ -329,23 +358,60 @@ a {
    }
 
    #mission-progress-individual {
-       width: 20%;
+       position: relative;
+       min-width: 10%;
+/*       width: 0%; width is decided in the template to drive progress */
        height: 100%;
-       background: #7beed0 url('../img/bg-mission-progress-ticks.png') repeat-x center center;
+       padding-right: 20px;
        font-size: 1.5em;
-       line-height: 50px;
+       line-height: 40px;
+       background: #7beed0 url('../img/bg-mission-progress-ticks.png') repeat-x center center;
        text-align: right;
        color: #fff;
    }
 
+        #mission-progress-individual-marker {
+            position: absolute;
+            right: -8px;
+            top: -10px;
+            width: 16px;
+            height: 25px;
+            background: #ff5036;
+        }
+
+            #mission-progress-individual-marker:before {
+                position: absolute;
+                top: 0px;
+                right: -10px;
+                content: ' ';
+                width: 0px;
+                height: 0px;
+                border: 5px solid transparent;
+                border-bottom: 5px solid #dda51e;
+                border-left: 5px solid #dda51e;
+            }
+            
+            #mission-progress-individual-marker:after {
+                position: absolute;
+                bottom: -16px;
+                left: 0px;
+                content: ' ';
+                width: 0px;
+                height: 0px;
+                border: 8px solid transparent;
+                border-top: 8px solid #ff5036;
+            }
+
    #mission-progress-marker {
        position: absolute;
-       top: -28px;
-       left: 500px;
-       width: 25px;
-       height: 49px;
-       background: url('../img/icon-mission-progress-marker.png') no-repeat;
+       bottom: 20px;
+       left: 620px; /* Should be width of progress-total (100%) + padding-right of individual */
+       width: 64px;
+       height: 64px;
+       background: url('../values/img/flag-individual_64.png') no-repeat;
+       z-index: 1;
    }
+   
    
    
 /* Siebar-Nav */

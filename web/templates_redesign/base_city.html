@@ -57,7 +57,7 @@
                             <div class="nav-missions-number">{{ forloop.counter }}</div>
                             <div class="nav-missions-endsin">
                                 <p class="nav-missions-endsin-label">Ends in<p>
-                                <p class="nav-missions-endsin-time">4 days</p>
+                                <p class="nav-missions-endsin-time">{# TODO #}# days</p>
                             </div>
                         </a>
                         {% if forloop.last %}<div class="nav-missions-end-arrow"></div>{% endif %}
@@ -67,12 +67,30 @@
                 <div id="mission-progress-container">
                     <div id="mission-progress-total">
                         <div id="mission-progress-marker"></div>
-                        <div id="mission-progress-individual">{{ request.user.get_profile.totalPoints }}</div>
+                        <div id="mission-progress-individual" style="width:20%;"> {# TODO: width decides the progress #}
+                            {{ request.user.get_profile.totalPoints }}
+                            <div id="mission-progress-individual-marker"></div>
+                        </div>
                     </div>
                 </div>
             </div>
             {# MAP THE FUTURE #}
-            <div id="mission-mapthefuture"><a href="{% url values:index %}">Map the Future</a></div>
+            <div id="mission-mapthefuture">
+                <a href="{% url values:index %}">Map the Future</a>
+                <div id="mission-mapthefuture-flags-container">
+                    {# TODO for token in tokens #}
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                </div>
+            </div>
         </div>
     {% else %}    
         {% comment %} CITY PAGE HEADER {% endcomment %}
