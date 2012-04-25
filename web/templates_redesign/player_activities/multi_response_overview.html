@@ -9,9 +9,6 @@
         {% if my_answers %}
             <div>
                 <a class="btn-back" href="{{activity.mission.get_absolute_url}}">{% trans "Return to mission" %}</a>
-                {# {% blocktrans with mission_url=activity.mission.get_absolute_url %} #}
-                {# Thanks for completing this activity. When you're ready for more, visit the <a href="{{mission_url}}">mission page</a>. #}
-                {# {% endblocktrans %} #}
             </div>
         {% endif %}
         
@@ -28,7 +25,7 @@
             
             {# Replay #}
             <div class="activity-response-submit">
-                <input class="btn-blue" type="button" value="Replay" onClick="window.location='{% url activities:replay activity.id %}' ">
+                <a class="btn-blue" href="{% url activities:replay activity.id %}">{% trans 'Replay' %}</a>
             </div>
         
             {% endif %}

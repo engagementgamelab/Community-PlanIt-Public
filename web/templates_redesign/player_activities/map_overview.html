@@ -1,76 +1,81 @@
 {% extends "player_activities/base.html" %}
 {% load gmap attachment_tags i18n %}
-{% block title %}Map Overview{% endblock %}
+{% block title %}{{ activity.name }} | Map Response Overview{% endblock %}
 
 {% block game_content %}
-<div>
-    <div class="column-container">
-        <hr class="thick" />
+
+<div class="map column-container">
+    <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
+    
+    {% include "player_activities/official_responses.html" %}
+    <h1>{{ activity.name }}<span class="points">{{ activity.getPoints }}</span></h1>
+    
+    <div class="column-threequarter">
         
-        {% include "player_activities/official_responses.html" %}
-        <h1>Map Overview  ({{ activity.points }})</h1>
-        <p>{{activity.question|safe}}</p>
-
-    
-        {%if not activity.mission.is_expired %}
-        <div>
-            <input class="button" type="button" value="Your Comment" onClick="window.location='#comment-{{myComment.id}}' ">
-            <input class="button" type="button" value="Replay" onClick="window.location='{% url activities:map-replay activity.id %}' ">
-        </div>
-        {% endif %}
-    
-        {% include "player_activities/attachments.html" %}
-
+        <div class="activity-question">{{ activity.question|safe }}</div>
+        
         <input type="hidden" id="dragable" name="dragable" value="false">
         {% for x, lat, lon, message, player in init_coords %}
         <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}" message="{{message}}" player="{{player}}"/>
         {% endfor %}
-    
+        <br />
+        
         <div id="map" class="google-map" data-type="Point" data-state="overview"></div>
-    
-        {% if is_completed  or activity.is_past %}
-        <div class="comments embedded">
-            {% if answers %}
-                <div class="controls right">
-                    Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
-                </div>
-                <div style="clear:both;">&nbsp;</div>
-            {% endif %}
-            {% for answer in answers %}
-            {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
-            <h3>
-                {% blocktrans %}{{comment_heading}}{% endblocktrans %}
-            
-            </h3>
-            <ul class="comment_list">
-                {% for comment in comments.all %}
-                    {% with extra_message=answer.selected.value %}
-                    {% include "comments/comment.html" %}
-                    {% endwith %}
-                {% empty %}
-                <li class="comment">No comments found.</li>
-                {% endfor %}
-            </ul>
-            {% endwith %}
-            {% endfor %}
-        </div>
-        {% else %}    
-            <h2>{% trans "Complete the activity to see everyone's responses" %}</h2>        
+        
+        {%if not activity.mission.is_expired %}
+            <div class="activity-response-submit">
+                <a class="btn-blue" href="{% url activities:map-replay activity.id %}">{% trans 'Replay' %}</a>
+            </div>
         {% endif %}
+    
     </div>
+
+    <br class="clearfix" />
+    
+    {% include "player_activities/attachments.html" %}
+
+    {% if is_completed  or activity.is_past %}
+    <div class="comments embedded">
+        {% if answers %}
+            <div class="controls right">
+                Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a>
+            </div>
+            <div style="clear:both;">&nbsp;</div>
+        {% endif %}
+        {% for answer in answers %}
+        {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
+        <h3>
+            {% blocktrans %}{{comment_heading}}{% endblocktrans %}
+        
+        </h3>
+        <ul class="comment_list">
+            {% for comment in comments.all %}
+                {% with extra_message=answer.selected.value %}
+                {% include "comments/comment.html" %}
+                {% endwith %}
+            {% empty %}
+            <li class="comment">No comments found.</li>
+            {% endfor %}
+        </ul>
+        {% endwith %}
+        {% endfor %}
+    </div>
+    {% else %}    
+        <h2>{% trans "Complete the activity to see everyone's responses" %}</h2>        
+    {% endif %}
 </div>
+
 {% endblock %}
 
 
-{# {% block body %} #}
-{#     <script src="http://maps.google.com/maps/api/js?sensor=false&libraries=places" type="text/javascript"></script> #}
-{#     <script src="{{MEDIA_URL}}js/games/mapit.js" type="text/javascript" charset="utf-8"></script> #}
-{#     <script type="text/javascript" charset="utf-8"> #}
-{#         jQuery(function($) { #}
-{#             $(".google-map").mapit({{map|safe|escape}}); #}
-{#             $(".remove-map").remove(); #}
-{#         }); #}
-{#     </script> #}
-{#      #}
-{#     <script> #}
-{# {% endblock %} #}
+{% block js %}
+    {{ block.super }}
+    <script src="http://maps.google.com/maps/api/js?sensor=false&libraries=places" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/mapit.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        jQuery(function($) {
+            $(".google-map").mapit({{map|safe|escape}});
+            $(".remove-map").remove();
+        });
+    </script>
+{% endblock %}

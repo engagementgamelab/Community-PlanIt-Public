@@ -54,6 +54,48 @@
             -moz-border-radius-bottomright: 0;
             border-bottom-right-radius: 0;
         }
+        
+        /* Empathy questions point to the left for an image */
+        #player-activities .empathy .activity-question {
+            margin-top: 0px;
+        }
+            
+            #player-activities .empathy .activity-question:before {
+                content: ' ';
+                position: absolute;
+                width: 0px;
+                height: 0px;
+                top: 0px;
+                left: -24px;
+                border: 12px solid transparent;
+                border-top-color: #e3f1ea;
+                border-right-color: #e3f1ea;
+            }
+        
+        #player-activities .empathy .bio {
+            font-style: italic;
+            color: #666;
+        }
+        
+        #player-activities .empathy .question {
+            margin: 10px 0px;
+        }
+    
+        /* Map styles */
+        #player-activities .map .map-controls {
+            text-align: right;
+        }
+        
+            #player-activities .map .map-controls input[type='text'] {
+                width: 250px;
+                border: 1px solid #ddd;
+                padding: 8px 5px;
+            }
+            
+            #player-activities .map #map {
+                height: 300px !important;
+                border: 1px solid #ddd;
+            }
     
     /* at the end of options is a capper to close off the bubble */
     #player-activities .activity-question-options:after { 

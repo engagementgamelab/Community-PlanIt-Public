@@ -72,7 +72,6 @@
                     {# fresh activity #}
                     <div class="activity {{ activity.type.type }}">
                         <a href="{{ activity.get_activity_url }}">
-                            {{ activity.type.type }}
                             {{ activity|trans_fallback:"name" }} ({{ activity.completed_user_count }} new responses)
                             <div class="mission-activity-points">{{ activity.getPoints }}</div> (active)
                         </a>

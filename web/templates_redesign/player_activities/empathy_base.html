@@ -3,10 +3,10 @@
 {% block title %}{{ block.super }} | Empathy Response{% endblock %}
 
 {% block game_content %}
-<div class="column-container">
+<div class="empathy column-container">
     <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
     
-    <h1>{{activity.name}}<span class="points">{{ activity.points }}</span></h1>
+    <h1>{{activity.name}}<span class="points">{{ activity.getPoints }}</span></h1>
 
     
     <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">
@@ -14,15 +14,16 @@
             {% csrf_token %}
             <input type="hidden" name="form" value="empathy">
         
-            {% if activity.avatar %}
-                <img class="left avatar" src="{{ MEDIA_URL }}/{{activity.avatar}}" width="128" height="128">
-            {% endif %}
-
-            <div class="activity-question">
-                <p class="bio">{{activity.bio}}</p>
-                <p>{{activity.question|safe}}</p>
+            <div class="column-third">
+                {% if activity.avatar %}<img class="left avatar" src="{{ MEDIA_URL }}/{{activity.avatar}}" width="128" height="128">{% endif %}
             </div>
-        
+            <div class="column-twothird">
+                <div class="activity-question">
+                    <p class="bio">{{activity.bio}}</p>
+                    <p class="question">{{activity.question|safe}}</p>
+                </div>
+            </div>
+            <br class="clearfix" />
             {% include "player_activities/attachments.html" %}
          
             <div class="activity-response">

@@ -61,6 +61,7 @@
         }
     
     .activity.map a {
+        background-position: 14px center !important;
         background-image: url('../img/icon-map.png');
     }
     

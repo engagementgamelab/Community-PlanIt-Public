@@ -430,7 +430,7 @@ def profile(request, id, template_name="accounts/profile.html"):
         'profile_per_instance' : profile_per_instance,
         'stream': stream,
         'affiliations': profile_per_instance.affils.all(),
-        'stakes': profile_per_instance.stakes.all(),
+        # 'stakes': profile_per_instance.stakes.all(),
         'my_games': my_games,
     }
     print context
