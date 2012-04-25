@@ -12,7 +12,11 @@
     
     <div class="column-threequarter">
         
-        <div class="activity-question">{{ activity.question|safe }}</div>
+        <div class="activity-question">
+            {% include "player_activities/attachments.html" %}
+            <div>{{ activity.question|safe }}</div>
+            <br class="clearfix" />
+        </div>
         
         <input type="hidden" id="dragable" name="dragable" value="false">
         {% for x, lat, lon, message, player in init_coords %}
@@ -32,7 +36,7 @@
 
     <br class="clearfix" />
     
-    {% include "player_activities/attachments.html" %}
+    
 
     {% if is_completed  or activity.is_past %}
     <div class="comments embedded">

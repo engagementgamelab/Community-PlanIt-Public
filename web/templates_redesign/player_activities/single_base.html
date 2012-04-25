@@ -10,7 +10,11 @@
     
     <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">
         <div class="column-threequarter">
-            <div class="activity-question">{{ activity.question|safe }}</div>
+            <div class="activity-question">
+                {% include "player_activities/attachments.html" %}
+                <div>{{ activity.question|safe }}</div>
+                <br class="clearfix" />
+            </div>
         
                 {% csrf_token %}
             <input type="hidden" name="form" value="single_response">
@@ -32,7 +36,7 @@
                 <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
             </div>
         
-            {% include "player_activities/attachments.html" %}
+            
     
         </div>
         <div class="column-onequarter">

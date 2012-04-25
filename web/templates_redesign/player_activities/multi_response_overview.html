@@ -16,7 +16,11 @@
         {% include "player_activities/official_responses.html" %}
         <div class="column-threequarter">
         
-            <div class="activity-question">{{ activity.question|safe }}</div>
+            <div class="activity-question">
+                {% include "player_activities/attachments.html" %}
+                <div>{{ activity.question|safe }}</div>
+                <br class="clearfix" />
+            </div>
         
             {% if my_answers %}
             <div class="comment-response">
@@ -30,7 +34,7 @@
         
             {% endif %}
 
-            {% include "player_activities/attachments.html" %}
+            
         </div>
         <br class="clearfix"/>
         {% if is_completed  or activity.is_past %}

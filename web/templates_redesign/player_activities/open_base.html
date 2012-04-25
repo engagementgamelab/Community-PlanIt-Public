@@ -14,8 +14,12 @@
             {% csrf_token %}
             <input type="hidden" name="form" value="open_ended">
             
-            {% include "player_activities/attachments.html" %}
-            <div class="activity-question">{{ activity.question|safe }}</div>
+            
+            <div class="activity-question">
+                {% include "player_activities/attachments.html" %}
+                <div>{{ activity.question|safe }}</div>
+                <br class="clearfix" />
+            </div>
             <div class="activity-response">
                 {{ form.response }}
                 <div class="comment-response-counter counter">(<span class="count">1000</span> characters left)</div>

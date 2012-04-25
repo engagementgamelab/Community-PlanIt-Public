@@ -14,7 +14,11 @@
         {% csrf_token %}
         <div class="column-threequarter">
         
-            <div class="activity-question">{{ activity.question|safe }}</div>
+            <div class="activity-question">
+                {% include "player_activities/attachments.html" %}
+                <div>{{ activity.question|safe }}</div>
+                <br class="clearfix" />
+            </div>
             <input type="hidden" name="form" value="multi_response">
         
             <div>

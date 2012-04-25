@@ -187,8 +187,22 @@
                 margin-left: 20px;
             }
             
-        
-    /* Attachments for duplate.html */
+    /* Attachments for questions */
+    #player-activities .attachments {
+        float: left;
+        width: 200px;
+        height: 150px;
+        border: 1px solid black;
+        margin: 0px 20px 10px 0px;
+    }
+    
+        #player-activities .attachments div {
+            max-width: 200px;
+            max-height: 200px;
+        }
+    
+    
+    /* Attachments for duplicate.html */
     #player-activities .comment-response-attachments {
         border: 1px solid black;
         float: left;

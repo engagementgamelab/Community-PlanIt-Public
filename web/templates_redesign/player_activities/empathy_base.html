@@ -19,12 +19,14 @@
             </div>
             <div class="column-twothird">
                 <div class="activity-question">
+                    {% include "player_activities/attachments.html" %}
                     <p class="bio">{{activity.bio}}</p>
                     <p class="question">{{activity.question|safe}}</p>
+                    <br class="clearfix" />
                 </div>
             </div>
             <br class="clearfix" />
-            {% include "player_activities/attachments.html" %}
+            
          
             <div class="activity-response">
                 {{ form.response }}

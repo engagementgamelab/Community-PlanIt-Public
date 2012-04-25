@@ -17,9 +17,13 @@
     
     {# QUESTION AND YOUR RESPONSE #}
     <div class="column-threequarter">
-        <div class="activity-question">{{activity.question|safe}}</div>
+        <div class="activity-question">
+            {% include "player_activities/attachments.html" %}
+            <div>{{ activity.question|safe }}</div>
+            <br class="clearfix" />
+        </div>
 
-        {% include "player_activities/attachments.html" %}
+        
 
         {% if not activity.mission.is_expired and myComment %}
             <div class="activity-response">
