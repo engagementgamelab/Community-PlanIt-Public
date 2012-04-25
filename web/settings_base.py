@@ -125,7 +125,6 @@ INSTALLED_APPS = (
 
 LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/'
-SESSION_COOKIE_DOMAIN = '.communityplanit.org'
 MANAGERS = ADMINS
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
@@ -170,8 +169,11 @@ SERIALIZATION_MODULES = {
 } 
 
 SERVER_EMAIL = 'noreply@communityplanit.org'
-SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
 SITE_ID = 1
+
+SESSION_COOKIE_DOMAIN = '.communityplanit.org'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',

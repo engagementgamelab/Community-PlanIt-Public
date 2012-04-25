@@ -189,7 +189,7 @@ class UserProfile(models.Model):
     income = models.ForeignKey(UserProfileIncome, blank=True, null=True, default=None)
     living = models.ForeignKey(UserProfileLivingSituation, blank=True, null=True, default=None)
     how_discovered = models.ForeignKey(UserProfileHowDiscovered, blank=True, null=True, default=None)
-    how_discovered_other = models.CharField(max_length=128, blank=True, default='')
+    how_discovered_other = models.CharField(max_length=1000, blank=True, default='')
     tagline = models.CharField(max_length=140, blank=True, default='')
 
     #
