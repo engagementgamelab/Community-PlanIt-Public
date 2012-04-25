@@ -294,14 +294,17 @@ a {
             }
 
 /* Mission Progress Bar*/
-#mission-map {
+#mission-mapthefuture {
    position: absolute;
-   right: 100px;
-   top: 30px;
-   width: 125px;
-   height: 108px;
-   background: url('../img/icon-map.png') no-repeat;
+   right: 0px;
+   bottom: 0px;
 }
+    #mission-mapthefuture a {
+        display: block;
+        width: 203px;
+        height: 106px;
+        background: url('../img/bg-mission-mapthefuture.png') no-repeat;
+    }
 
 #mission-progress-container {
    width: 600px;

@@ -1,0 +1,235 @@
+{% extends "values/base.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% trans "Map the Future" %}{% endblock %}
+{% block js %}
+    <script src="{{ STATIC_URL }}js/mootools-core-1.4.5.js"></script>
+    <script src="{{ STATIC_URL }}js/mootools-more-1.4.0.1.js"></script>
+    
+    <script type="text/javascript" charset="utf-8">
+        window.addEvent('domready', function(){
+            
+            /* Presets for community flags */
+            var initial_communityflags = [12, 2, 1, 1, 3, 2];
+            
+            /* Presets for individual flags */
+            var initial_individualflags = [1, 0, 0, 0, 1, 0];
+            
+            // Array marking spent flags to be returned to the db
+            var spent_individualflags = [0, 0, 0, 0, 0, 0];
+            
+            function render_communityflags(){
+                /* Calculate total flags */
+                var total_communityflags = 0;
+                initial_communityflags.each(function(el){
+                    total_communityflags += el;
+                });            
+
+                /* Calculate percentages */
+                var percentage_communityflags = [];
+                initial_communityflags.each(function(el, index){
+                    if(total_communityflags == 0){
+                        percentage_communityflags[index] = 0
+                    } else {
+                        percentage_communityflags[index] = (el / total_communityflags)*100;
+                    }
+                });
+
+                /* Scale community flags to the correct size and update count*/
+                var communityflags = $$('.mapthefuture-flag-community');
+                communityflags.each(function(el, index, array){
+                    el.morph({
+                        'height': 10 + percentage_communityflags[index]*1.2,
+                        'width': 10 + percentage_communityflags[index]*1.2
+                    });
+                    el.getElement('.mapthefuture-count-community').set('html', initial_communityflags[index])
+                    
+                    /* Scale label font size, for community flags ONLY */
+                    var label = el.getParent().getElement('.mapthefuture-label');
+                    label.tween('font-size', 12 + percentage_communityflags[index]*.3);
+                });
+            }
+            
+            function render_individualflags(){
+                /* Calculate total flags */
+                var total_individualflags = 0;
+                initial_individualflags.each(function(el){
+                    total_individualflags += el;
+                });            
+
+                /* Calculate percentages */
+                var percentage_individualflags = [];
+                initial_individualflags.each(function(el, index){
+                    if(total_individualflags == 0){
+                        percentage_individualflags[index] = 0
+                    } else {
+                        percentage_individualflags[index] = (el / total_individualflags)*100;
+                    }
+                });
+
+                /* Scale individual flags to the correct size and update count*/
+                var individualflags = $$('.mapthefuture-flag-individual');
+                individualflags.each(function(el, index, array){
+                    el.morph({
+                        'height': 10 + percentage_individualflags[index]*1.2,
+                        'width': 10 + percentage_individualflags[index]*1.2
+                    });
+                    el.getElement('.mapthefuture-count-individual').set('html', initial_individualflags[index])
+                });
+            }
+            
+            $$('.draggable').makeDraggable({
+                droppables: $$('.droppable'),
+                onBeforeStart: function(draggable, droppable){
+                    draggable.addClass('dragging');
+                },
+                onCancel: function(draggable, droppable){
+                    draggable.removeClass('dragging');
+                },
+                onEnter: function(draggable, droppable){
+                    droppable.addClass('over');
+                },
+                onLeave: function(draggable, droppable){
+                    droppable.removeClass('over');
+                },
+                onDrop: function(draggable, droppable){
+                    if (droppable){
+                        draggable.destroy();
+                        
+                        /* Update all the arrays to count correctly */
+                        var dropped_index = $$('.droppable').indexOf(droppable);
+                        initial_individualflags[dropped_index] = initial_individualflags[dropped_index]+1;
+                        initial_communityflags[dropped_index] = initial_communityflags[dropped_index]+1;
+                        spent_individualflags[dropped_index] = spent_individualflags[dropped_index]+1;
+                        console.log(spent_individualflags);
+                        
+                        /* Recalculate flags to correct size and update counts */
+                        render_communityflags();
+                        render_individualflags();
+                        
+                        droppable.removeClass('over');
+                    } else {
+                        draggable.removeClass('dragging');
+                    }
+                }
+            });
+            
+            /* Initialize */
+            render_communityflags();
+            render_individualflags();
+        });
+    </script>
+{% endblock %}
+
+{% block game_content %}
+    <div class="column-container">
+    <h1>Map the Future!</h1>
+    <p class="instructions">Plant your flags in the star next to the things you'd like the community to prioritize. Click on the star next to each  priority to learn more about it, discover who planted flags there, and have a conversation. Want more flags? You get  one each time you complete a mission!</p>
+</div>
+
+<div id="mapthefuture">
+    <div id="mapthefuture-flags-earned">
+        <div id="mapthefuture-crosshairs"></div>
+
+        <div class="draggable-container"><div class="mapthefuture-flag-individual-earned draggable"></div></div>
+        <div class="draggable-container"><div class="mapthefuture-flag-individual-earned draggable"></div></div>
+        <div class="draggable-container"><div class="mapthefuture-flag-individual-earned draggable"></div></div>
+
+        <div id="mapthefuture-controls">
+            <div>Drag your flags where you want them.</div>
+            <div>Then click Done! or Reset</div>
+        </div>
+    </div>
+
+
+    <div id="mapthefuture-map">
+        <div class="mapthefuture-grid">
+            <div id="mapthefuture-star1" class="mapthefuture-star droppable">
+                <div class="mapthefuture-label-container">
+                    <div class="mapthefuture-label">Business Development</div>
+                </div>
+                <div class="mapthefuture-flag-community">
+                    <div class="mapthefuture-count-community"></div>
+                </div>
+                <div class="mapthefuture-flag-individual">
+                    <div class="mapthefuture-count-individual"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mapthefuture-grid">
+            <div id="mapthefuture-star2" class="mapthefuture-star droppable">
+                <div class="mapthefuture-label-container">
+                    <div class="mapthefuture-label">Transportation Improvement</div>
+                </div>
+                <div class="mapthefuture-flag-community">
+                    <div class="mapthefuture-count-community"></div>
+                </div>
+                <div class="mapthefuture-flag-individual">
+                    <div class="mapthefuture-count-individual"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mapthefuture-grid">
+            <div id="mapthefuture-star3" class="mapthefuture-star droppable">
+                <div class="mapthefuture-label-container">
+                    <div class="mapthefuture-label">Housing Development</div>
+                </div>
+                <div class="mapthefuture-flag-community">
+                    <div class="mapthefuture-count-community"></div>
+                </div>
+                <div class="mapthefuture-flag-individual">
+                    <div class="mapthefuture-count-individual"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mapthefuture-grid">
+            <div id="mapthefuture-star4" class="mapthefuture-star droppable">
+                <div class="mapthefuture-label-container">
+                    <div class="mapthefuture-label">Recreation &amp; Cultural Amenities</div>
+                </div>
+                <div class="mapthefuture-flag-community">
+                    <div class="mapthefuture-count-community"></div>
+                </div>
+                <div class="mapthefuture-flag-individual">
+                    <div class="mapthefuture-count-individual"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mapthefuture-grid">
+            <div id="mapthefuture-star5" class="mapthefuture-star droppable">
+                <div class="mapthefuture-label-container">
+                    <div class="mapthefuture-label">Community Engagement</div>
+                </div>
+                <div class="mapthefuture-flag-community">
+                    <div class="mapthefuture-count-community"></div>
+                </div>
+                <div class="mapthefuture-flag-individual">
+                    <div class="mapthefuture-count-individual"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mapthefuture-grid">
+            <div id="mapthefuture-star6" class="mapthefuture-star droppable">
+                <div class="mapthefuture-label-container">
+                    <div class="mapthefuture-label">Health, Education, &amp; Services</div>
+                </div>
+                <div class="mapthefuture-flag-community">
+                    <div class="mapthefuture-count-community"></div>
+                </div>
+                <div class="mapthefuture-flag-individual">
+                    <div class="mapthefuture-count-individual"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="mapthefuture-legend">
+        <div>Community flag</div>
+        <div id="mapthefuture-legend-communityflag"></div>
+        <div id="mapthefuture-legend-individualflag"></div>
+        <div>My flag</div>
+    </div>
+</div>
+
+{% endblock %}

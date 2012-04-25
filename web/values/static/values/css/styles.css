@@ -1,0 +1,269 @@
+#mapthefuture {
+    margin: 20px;
+    padding: 20px;
+    background: #f8f8f9;
+}
+
+    #mapthefuture-crosshairs {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0px 20px 0px 10px;
+        width: 15px;
+        height: 15px;
+        background: url('../img/icon-crosshairs.png') no-repeat;
+    }
+
+    #mapthefuture-flags-earned {
+        background: #fff;
+        padding: 20px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+    }
+
+    .draggable-container {
+        display: inline-block;
+        vertical-align: middle;
+        width: 75px;
+        height: 85px;
+        position: relative;
+    }
+
+        .draggable {
+            width: 75px;
+            height: 75px;
+            cursor: move;
+            z-index: 1;
+        }
+        
+        .mapthefuture-flag-individual-earned {
+            display: inline-block;
+            width: 75px;
+            height: 85px;
+            background: url('../img/flag-draggable.png') no-repeat;
+            background-size: 100% 100%; /* so that the bg img scales with the element sizes */
+        }
+        
+        .mapthefuture-flag-individual-earned.dragging {
+            background: url('../img/flag-draggable_over.png') no-repeat;
+        }
+    
+    #mapthefuture-controls {
+        float: right;
+    }
+
+#mapthefuture-map {
+    width: 760px;
+    height: 430px;
+    margin: 100px auto;
+    background: url('../img/bg-mapthefuture.png') no-repeat;
+}
+
+    .mapthefuture-grid {
+        position: relative;
+        float: left;
+        width: 253px; /* should be 253 */
+        height: 215px;
+        
+    }
+    
+        .mapthefuture-star {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-top: 50px solid transparent; /* for padding to make droppable area expand up and right */
+            border-right: 50px solid transparent; /* for padding to make droppable area expand up and right */
+            background: url('../img/bg-star.png') no-repeat bottom left;                    
+        }
+        
+        
+        .mapthefuture-star.over {
+            background: url('../img/bg-star_over.png') no-repeat bottom left;
+        }
+        
+        
+            .mapthefuture-label {
+                position: absolute;
+                width: 300px;
+                line-height: 1em;
+                font-size: 1em;
+            }
+            
+            
+            /* SPECIFIC TO EACH GRID */
+
+            #mapthefuture-star1 {
+                right: 50px; /* adjust this */
+                bottom: 45px; /* adjust this */
+            }
+            
+                #mapthefuture-star1 .mapthefuture-label-container{
+                    height: 120px; /* adjust this */
+                    bottom: 100%;
+                }
+                
+                    #mapthefuture-star1 .mapthefuture-label{
+                        bottom: 100%;
+                        left: -150px; /* adjust this */
+                        text-align: center;
+                    }
+        
+            #mapthefuture-star2 {
+                right: 50px; /* adjust this */
+                bottom: 165px; /* adjust this */
+            }
+        
+                #mapthefuture-star2 .mapthefuture-label-container{
+                    height: 25px; /* adjust this */
+                    top: 90%;
+                }
+                
+                    #mapthefuture-star2 .mapthefuture-label{
+                        top: 100%;
+                        left: -150px;
+                        text-align: center;
+                    }
+                    
+            #mapthefuture-star3 {
+                left: 100px; /* adjust this */ 
+                bottom: 65px; /* adjust this */
+            }
+        
+                #mapthefuture-star3 .mapthefuture-label-container{
+                    height: 110px; /* adjust this */
+                    bottom: 100%; 
+                }
+                
+                    #mapthefuture-star3 .mapthefuture-label{
+                        bottom: 100%;
+                        left: -50px;
+                        text-align: left;
+                    }
+                
+            #mapthefuture-star4 {
+                right: 50px;
+                top: 85px;
+            }
+            
+                #mapthefuture-star4 .mapthefuture-label-container{
+                    height: 110px; /* adjust this */
+                    bottom: 100%; 
+                }
+                
+                    #mapthefuture-star4 .mapthefuture-label{
+                        bottom: 100%;
+                        right: -20px;
+                        text-align: right;
+                    }
+        
+            #mapthefuture-star5 {
+                left: 80px;
+                top: -10px;
+            }
+        
+                #mapthefuture-star5 .mapthefuture-label-container{
+                    height: 50px; /* adjust this */
+                    top: 90%; 
+                }
+                
+                    #mapthefuture-star5 .mapthefuture-label{
+                        top: 100%;
+                        right: -150px;
+                        text-align: center;
+                    }
+                
+            #mapthefuture-star6 {
+                left: 40px;
+                top: 75px;
+            }
+            
+                #mapthefuture-star6 .mapthefuture-label-container{
+                    height: 110px; /* adjust this */
+                    bottom: 100%; 
+                }
+                
+                    #mapthefuture-star6 .mapthefuture-label{
+                        bottom: 100%;
+                        left: -40px;
+                        text-align: left;
+                    }
+        
+        .mapthefuture-flag-community {
+            position: absolute;
+            bottom: 25px;
+            right: 26px;
+            width: 0px;
+            height: 0px;
+            background: url('../img/flag-community.png') no-repeat;
+            background-size: 100% 100%; /* so that the bg img scales with the element sizes */
+        }
+        
+            .mapthefuture-count-community {
+                position: absolute;
+                right: 60%;
+                bottom: 100%;
+                font-style: italic;
+                color: rgb(5, 128, 128);
+            }
+        
+        .mapthefuture-flag-individual {
+            position: absolute;
+            bottom: 25px;
+            left: 26px;
+            display: inline-block;
+            width: 0px;
+            height: 0px;
+            background: url('../img/flag-individual.png') no-repeat;
+            background-size: 100% 100%; /* so that the bg img scales with the element sizes */
+        }
+        
+            .mapthefuture-count-individual {
+                position: absolute;
+                left: 60%;
+                bottom: 95%;
+                width: 20px;
+                height: 20px;
+                text-align: center;
+                line-height: 20px;
+                font-style: italic;
+                color: rgb(255, 80, 54);
+                border: 2px solid rgb(255, 80, 54);
+                -webkit-border-radius: 50px;
+                -moz-border-radius: 50px;
+                border-radius: 50px;
+            }
+        
+        .mapthefuture-label-container {
+            position: absolute;
+            width: 1px;
+            left: 50%;
+            border-left: 1px dotted #aaa;
+        }
+
+    #mapthefuture-legend {
+        text-align: right;
+        font-style: italic;
+        color: #999;
+    }
+    
+        #mapthefuture-legend > div {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0px 5px;
+        }
+        
+            #mapthefuture-legend-communityflag {
+                display: inline-block;
+                width: 25px;
+                height: 25px;
+                background: url('../img/flag-community.png') no-repeat;
+                background-size: 100% 100%; /* so that the bg img scales with the element sizes */
+            }
+            
+            #mapthefuture-legend-individualflag {
+                display: inline-block;
+                width: 25px;
+                height: 25px;
+                background: url('../img/flag-individual.png') no-repeat;
+                background-size: 100% 100%; /* so that the bg img scales with the element sizes */
+            }
