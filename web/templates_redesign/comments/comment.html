@@ -11,26 +11,17 @@
         </div>
         <br class="clearfix" />
     {% endif %}
-    <div class="likes">
-        <div id="id_likes-count-{{ comment.pk }}" class="count">{{comment.likes.count}}</div>
-        <div id="id_like-count-{{ comment.id }}">Like{{comment.likes.count|pluralize}}</div>
-        {% if comment.user != request.user and comment.instance.is_active  or comment.is_official_response %}
-        <div id="id_like-{{ comment.id }}" class="button" title="click to say you like this">Like</div>
-            {% comment %} href="{% url comments:like comment.id %}" {% endcomment %}
-        {% endif %}
-    </div>
     
     <div class="main">
+        {# META: FLAG AND EDIT #}
         <div class="meta">
             {% if not comment.hidden and comment.user != user and comment.instance.is_active or comment.is_official_response %}
                 <a href="{% url flags:add "comment" comment.id %}" title="flag comment"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
             {% endif %}
-            {% if not comment.hidden and comment.user == request.user %}
-                <a href="{% url comments:edit comment.id %}" title="click to edit this comment">edit</a>
-            {% endif %}
+            {# {% if not comment.hidden and comment.user == request.user %} #}
+            {#     <a href="{% url comments:edit comment.id %}" title="click to edit this comment">edit</a> #}
+            {# {% endif %} #}
         </div>
-        
-        <br class="clearfix" />
         
         {# COMMENT BODY MESSAGE #}
         <div class="comment-message">
@@ -60,6 +51,15 @@
                     <div class="notice">This content is currently unavailable.</div>
                 {% endif %}
             {% endfor %}
+            </div>
+            
+            <div class="likes">
+                <div id="id_likes-count-{{ comment.pk }}" class="count">{{comment.likes.count}}</div>
+                <div id="id_like-count-{{ comment.id }}">Like{{comment.likes.count|pluralize}}</div>
+                {% if comment.user != request.user and comment.instance.is_active  or comment.is_official_response %}
+                <div id="id_like-{{ comment.id }}" class="button" title="click to say you like this">Like</div>
+                    {% comment %} href="{% url comments:like comment.id %}" {% endcomment %}
+                {% endif %}
             </div>
             
             <div class="controls">

@@ -114,7 +114,7 @@
         background-image: url('../img/icon-trivia.png');
     }
         
-        .activity.trivia.activity-completed a:hover {
+        .activity.trivia.activity-completed a {
             background-image: url('../img/icon-trivia_completed.png');
         }
 
