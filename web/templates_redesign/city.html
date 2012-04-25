@@ -45,6 +45,7 @@
     {% if request.session.current_game_slug = 'north-quincy-wollaston-neighborhoods-on-the-move' %}
         {% include 'static/quincy_post_signup.html' %}
     {% elif request.session.current_game_slug = 'detroit-247' %}
+        {% block top_nav %}<br />{% endblock %}
         {% include 'static/detroit_post_signup.html' %}
     {% else %}
 
