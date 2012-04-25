@@ -256,13 +256,19 @@
         clear: left;
     }
     
-    .profile-container img{
+    .profile-container img {
         display: block;
         width: 164px;
         height: 164px;
         margin: 0px;
+        background: #e5f0ea;
     }
     
+        .profile-container .profile-avatar img {
+            max-width: 164px;
+            max-height: 164px;
+        }
+        
     .profile-container .profile-screenname {
         padding: 8px 10px;
         background: #f3f7ed;

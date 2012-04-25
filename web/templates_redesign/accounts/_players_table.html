@@ -4,11 +4,13 @@
     {% with profile_per_instance as p %}
         <a href="{% url accounts:player_profile p.user_profile.user.id %}">
         <div class="profile-container">
+            <div class="profile-avatar">
             {% if p.user_profile.avatar %}
                 <img src="{{ MEDIA_URL }}{{ p.user_profile.avatar }}" width="164" height="164" />
             {% else %}
                 <img src="{{ STATIC_URL }}/img/avatar-blank.png" width="164" height="164" />
             {% endif %}
+            </div>
             <div class="profile-screenname">{{ p.user_profile.screen_name }}</div>
             {# <div class="profile-screenname">{{ p.format_stakes }}</div> #}
             <div class="profile-tagline">{{ p.user_profile.tagline|truncatechars:140 }}</div>
