@@ -187,19 +187,41 @@
                 margin-left: 20px;
             }
             
-    /* Attachments for questions */
+    /* Restricting Attachments for questions */
     #player-activities .attachments {
         float: left;
-        width: 200px;
-        height: 150px;
         margin: 0px 20px 10px 0px;
     }
-    
-        #player-activities .attachments div {
+        
+        #player-activities .attachments.attachments-type_Video {
+            float: none;
+            display: block;
+            width: 480px;
+            height: 320px;
+            margin: 20px auto
+        }
+        
+        #player-activities .attachments.attachments-type_Image img {
             max-width: 200px;
-            max-height: 200px;
         }
     
+        /* Empathy should also be one own line */
+        #player-activities .empathy .attachments {
+            float: none;
+            text-align: center;
+        }
+    
+            #player-activities .empathy .attachments.attachments-type_Image img {
+                max-width: 300px;
+            }
+            
+            #player-activities .attachments.attachments-type_Video {
+                float: none;
+                display: block;
+                width: 320px;
+                height: 240px;
+                margin: 20px auto
+            }
     
     /* Attachments for duplicate.html */
     #player-activities .comment-response-attachments {
