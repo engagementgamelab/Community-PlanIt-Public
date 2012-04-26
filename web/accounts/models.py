@@ -163,6 +163,10 @@ class UserProfilePerInstance(models.Model):
     def format_stakes(self):
         return ", ".join(self.stakes.language(get_language()).all().values_list('stake', flat=True))
 
+    @property
+    def user_profile_email(self):
+        return self.user_profile.email or self.user_profile.user.email 
+
     class Meta:
         unique_together = ('user_profile', 'instance',)
         ordering = ('date_created', 'user_profile__user__last_name', )
@@ -265,6 +269,7 @@ class UserProfileVariantsForInstance(models.Model):
     instance = models.OneToOneField(Instance, unique=True, related_name='user_profile_variants')
     stake_variants = models.ManyToManyField(UserProfileStake, blank=True, null=True, default=None)
     affiliation_variants = models.ManyToManyField(Affiliation, blank=True, null=True, default=None)
+
 
 # Custom hook for adding an anonymous username to the User model.
 def user_pre_save(instance, **kwargs):

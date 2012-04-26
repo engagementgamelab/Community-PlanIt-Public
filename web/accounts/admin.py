@@ -2,7 +2,10 @@ from django.contrib import admin
 
 from nani.admin import TranslatableAdmin
 
-from accounts.models import *
+from .models import *
+
+from .actions import export_emails_for_instance_csv
+
 
 class UserProfileOptionAdmin(TranslatableAdmin):
     list_display = ('__str__', 'pos', 'all_translations')
@@ -45,6 +48,7 @@ class UserProfilePerInstanceAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'date_created',)
     list_filter = ('instance', 'date_created',)
     search_fields = ('user_profile__email',)
+    actions = [export_emails_for_instance_csv]
 
 admin.site.register(UserProfilePerInstance, UserProfilePerInstanceAdmin)
 
