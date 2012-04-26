@@ -116,6 +116,11 @@
                 }
             });
             
+            $('btn-submit').addEvent('click', function(){
+                {# TODO ajax submit to view or form #}
+                alert(spent_individualflags);
+            });
+            
             /* Initialize */
             render_communityflags();
             render_individualflags();
@@ -140,7 +145,7 @@
 
         <div id="mapthefuture-controls">
             <div>Drag your flags where you want them.</div>
-            <div>Then click Done! or Reset</div>
+            <div>Then click <a id="btn-submit" class="btn-blue">Done!</a> or <a href="{% url values:index %}" class="btn-blue">Reset</a></div>
         </div>
     </div>
 
