@@ -9,7 +9,7 @@
     <script src="{{ STATIC_URL }}js/mapit.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
         jQuery(function($) {
-            $(".google-map").mapit({{ map|safe|escape }});
+            $(".map").mapit({{ map|safe|escape }});
             $(".remove-map").remove();
         });
     </script>
@@ -52,6 +52,7 @@
         <div id="form_errors" class="error">
             {% trans "Please correct the errors below." %}
             {{form.non_field_errors.as_ul}}
+            {{ form.errors }}
         </div>
         {% endif %}
         
@@ -60,8 +61,8 @@
             {% comment %}
             <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
             {% endcomment %}
-            <!--input type="hidden" name="form" value="map"-->
-            <input type="hidden" id="max_points_input" name="max_points_input" value="3">
+            <input type="hidden" name="form" value="map">
+            <input type="hidden" id="max_points_input" name="max_points_input" value="1">
 
             <p>
                 {{form.name.label_tag}}
@@ -81,22 +82,23 @@
 
 
             <div class="map-controls">
-                <label>{#activity.maxNumMarkers#}</label>
+                {# <label>1</label> #}
                 <input type="text" name="google_search" id="google_search" placeholder="Search for a company or an address" />
-                {% comment %}
-                <button class="btn-blue add">Add Point</button>
-                <button class="btn-blue rm">Clear All Points</button>
-                {% endcomment %}
+                
+                {# <button class="btn-blue add">Add Point</button> #}
+                {# <button class="btn-blue rm">Clear All Points</button> #}
+                
             </div>
             
             <div id="crowds-addform-location">
                 <div class="column-half">
                     <p id="crowds-addform-map-container">
+                        {{ form.map.errors }}
                         {# {{form.map.label_tag}} #}
                         {{ form.map }}
-                        {{form.map.errors}}
+                        {# <div id="map" class="google-map" data-type="Point"></div> #}
+                        
                     </p>
-                    <div id="map" class="google-map" data-type="Point"></div>
                 </div>
             
                 <div class="column-half">

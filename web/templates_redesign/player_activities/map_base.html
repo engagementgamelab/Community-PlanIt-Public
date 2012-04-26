@@ -31,7 +31,7 @@
                 {% for x, lat, lon in init_coords %}
                     <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
                 {% endfor %}
-                {{form.map.errors}}
+                {{ form.map.errors }}
                 <div id="map" class="google-map" data-type="Point"></div>
             </div>
         
