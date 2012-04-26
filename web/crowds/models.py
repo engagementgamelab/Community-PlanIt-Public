@@ -33,7 +33,9 @@ def determine_path(instance, filename):
 
 class Crowd(models.Model):
     name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, default='')
     map = GoogleMapsField()
+
     image = models.ImageField(upload_to=determine_path, null=True, blank=True)
 
     description = models.TextField()

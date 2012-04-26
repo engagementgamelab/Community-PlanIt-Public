@@ -1,14 +1,21 @@
 {% extends 'crowds/all.html' %}
-{% load game_extras i18n %}
+{% load gmap game_extras i18n %}
 
 {% block js %}
     {{ block.super }}
     <script src="https://maps.google.com/maps/api/js?sensor=false&amp;libraries=places"></script>
     <script type="text/javascript" src="/admin/gmapsfield/admin/admin.js"></script>
     <script src="{{ STATIC_URL }}js/date.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/mapit.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        jQuery(function($) {
+            $(".google-map").mapit({{ map|safe|escape }});
+            $(".remove-map").remove();
+        });
+    </script>
     <script>
         $(document).ready(function(){
-            $(".add-map, .remove-map").remove();
+            //$(".add-map, .remove-map").remove();
             
             $("#id_start_date_0").datepicker();
             $("#id_start_date_1").timepicker({
@@ -50,7 +57,11 @@
         
         <form class="column-container" action="" method="POST"> 
             {% csrf_token %}
+            {% comment %}
             <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
+            {% endcomment %}
+            <!--input type="hidden" name="form" value="map"-->
+            <input type="hidden" id="max_points_input" name="max_points_input" value="3">
 
             <p>
                 {{form.name.label_tag}}
@@ -67,14 +78,25 @@
                 {# <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div> #}
                 {{form.description.errors}}
             </p>
+
+
+            <div class="map-controls">
+                <label>{#activity.maxNumMarkers#}</label>
+                <input type="text" name="google_search" id="google_search" placeholder="Search for a company or an address" />
+                {% comment %}
+                <button class="btn-blue add">Add Point</button>
+                <button class="btn-blue rm">Clear All Points</button>
+                {% endcomment %}
+            </div>
             
             <div id="crowds-addform-location">
                 <div class="column-half">
                     <p id="crowds-addform-map-container">
                         {# {{form.map.label_tag}} #}
-                        {{form.map}}
+                        {{ form.map }}
                         {{form.map.errors}}
                     </p>
+                    <div id="map" class="google-map" data-type="Point"></div>
                 </div>
             
                 <div class="column-half">
