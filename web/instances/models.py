@@ -34,6 +34,7 @@ class CityManager(models.Manager):
     #    return City.objects.
 
 class City(models.Model):
+    slug = models.SlugField(default='')
     name = models.CharField(max_length=100)
     domain = models.CharField(max_length=100)
     description = models.TextField(null=False, blank=True, default='')
@@ -43,6 +44,11 @@ class City(models.Model):
 
     def __unicode__(self):
         return "%s at <%s>" %(self.name, self.domain)
+
+    def save(self, *args, **kwargs):
+        if not self.slug or self.slug == '':
+            self.slug = slugify(self.name)[:30]
+        super(City, self).save()
 
     class Meta:
         verbose_name_plural = 'Cities'
