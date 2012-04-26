@@ -60,7 +60,8 @@
         background-position: 10px center;
     }
 
-    .activity.activity-completed a {
+    .activity.activity-completed a,
+    .activity.activity-inactive a {
         background-color: #f8f8f9;
         color: #a7a9ac;
     }
@@ -68,6 +69,11 @@
     .activity a:hover {
         background-color: #007dff;
         color: #fff;
+    }
+    
+    .activity.activity-inactive a:hover {
+        background-color: #f8f8f9;
+        color: #a7a9ac;
     }
     
     /* The different types of activities. 3 different states. Order matters here */
@@ -81,6 +87,10 @@
     
         .activity.open_ended a:hover {
             background-image: url('../img/icon-open_ended_over.png');
+        }
+        
+        .activity.open_ended.activity-inactive a {
+            background-image: url('../img/icon-open_ended_completed.png');
         }
     
     .activity.map a {
@@ -96,6 +106,10 @@
             background-image: url('../img/icon-map_over.png');
         }
     
+        .activity.map.activity-inactive a {
+            background-image: url('../img/icon-map_completed.png');
+        }
+        
     .activity.single_response a {
         background-image: url('../img/icon-single_response.png');
     }
@@ -108,6 +122,10 @@
             background-image: url('../img/icon-single_response_over.png');
         }
         
+        .activity.single_response.activity-inactive a {
+            background-image: url('../img/icon-single_response_completed.png');
+        }
+        
     .activity.multi_response a {
         background-image: url('../img/icon-multi_response.png');
     }
@@ -118,6 +136,10 @@
         
         .activity.multi_response a:hover {
             background-image: url('../img/icon-multi_response_over.png');
+        }
+        
+        .activity.multi_response.activity-inactive a {
+            background-image: url('../img/icon-multi_response_completed.png');
         }
     
     .activity.empathy a {
@@ -132,6 +154,10 @@
             background-image: url('../img/icon-empathy_over.png');
         }
         
+        .activity.empathy.activity-inactive a {
+            background-image: url('../img/icon-empathy_completed.png');
+        }
+        
     .activity.trivia a {
         background-image: url('../img/icon-trivia.png');
     }
@@ -143,6 +169,12 @@
         .activity.trivia a:hover {
             background-image: url('../img/icon-trivia_over.png');
         }
+        
+        .activity.trivia.activity-inactive a {
+            background-image: url('../img/icon-trivia_completed.png');
+        }
+        
+
     
     .mission-activity-points,
     .mission-activity-completed {
@@ -161,12 +193,19 @@
     .mission-activity-points {
         background: url('../img/bg-mission-activities-points.png') no-repeat center center;
     }
-    
+
+        .activity a:hover .mission-activity-points {
+            background: url('../img/bg-mission-activities-points_over.png') no-repeat center center;
+            color: #00e7c5;
+        }    
+
     .mission-activity-completed {
         background: url('../img/icon-mission-activities-completed.png') no-repeat center center;
     }
     
-        .activity a:hover .mission-activity-points {
-            background: url('../img/bg-mission-activities-points_over.png') no-repeat center center;
+        .activity a:hover .mission-activity-completed {
+            background: url('../img/icon-mission-activities-completed_over.png') no-repeat center center;
             color: #00e7c5;
         }
+        
+    .
