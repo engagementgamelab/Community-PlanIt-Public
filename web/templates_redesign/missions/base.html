@@ -49,7 +49,8 @@
                     <a href="{{ activity.get_overview_url }}">
                         {{ activity|trans_fallback:"name" }} 
                         {% if activity.completed_user_count %}
-                        ({{ activity.completed_user_count }} new responses)
+                        
+                        ({# TODO new comments since user submitted #}{{ activity.completed_user_count }} new responses)
                         {% endif %}
                         <div class="mission-activity-points">{{ activity.getPoints }}</div>
                     </a>
