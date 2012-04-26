@@ -1,10 +1,11 @@
+{% load avatar %}
 <div id="sidebar-nav">
     <ul>
         <li class="sidebar-nav-profile">
             <a id="sidebar-nav-profile" href="{% url accounts:player_profile request.user.id %}">
                 <div>
                     <p id="sidebar-nav-profile-notifications">0</p>
-                        <img id="sidebar-nav-profile-avatar" src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="64" height="64" />
+                        {% avatar request.user %}
                     {# if user has badges... #}
                     <img src="{{ STATIC_URL }}img/badge-blank.png">
                 </div>

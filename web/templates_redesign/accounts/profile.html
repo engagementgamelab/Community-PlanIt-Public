@@ -1,6 +1,5 @@
 {% extends 'accounts/base_game.html' %}
-{% load i18n %}
-{% load i18n cpi_tags %}
+{% load i18n cpi_tags avatar %}
 
 {% block title %}{% trans "Profile" %}{% endblock %}
 
@@ -27,11 +26,9 @@
     <div id="profile-player">
         <div class="column-third">
             <div class="column-container">
-                {% if player.get_profile.avatar %}
-                    <img class="" src="{{ MEDIA_URL }}{{ player.get_profile.avatar }}" width="200" height="200">
-                {% else %}
-                    <img class="" src="{{ STATIC_URL }}/img/avatar-blank.png" width="200" height="200">
-                {% endif %}
+
+                {% avatar player %}
+
                 <br /><br /><br />
                 
                 <!-- Your Games -->

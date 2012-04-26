@@ -1,6 +1,5 @@
 {% extends "accounts/base_game.html" %}
-{% load i18n %}
-{% load i18n cpi_tags %}
+{% load i18n cpi_tags avatar %}
 
 {% block title %}{% trans "Edit Profile" %}{% endblock %}
 
@@ -39,11 +38,7 @@
             <form id="profile-editform" enctype="multipart/form-data" action="" method="post">
             <div class="column-third">
                 <div class="column-container">
-                    {%if request.user.get_profile.avatar %}
-                        <img class="avatar-edit" src="{{ MEDIA_URL }}{{ request.user.get_profile.avatar }}" width="200" height="200">
-                    {%else%}
-                        <img class="avatar-edit" src="{{ STATIC_URL }}img/avatar-blank.png" width="200" height="200">
-                    {%endif%}
+                    {% avatar request.user %}
         
                     {{ profile_form.avatar }}
                     {{ profile_form.avatar.errors }}

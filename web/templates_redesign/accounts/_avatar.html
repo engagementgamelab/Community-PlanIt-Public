@@ -1,0 +1,35 @@
+{% load static %}
+
+{% comment %}
+Avatars require this styling to adjust size
+.avatar {
+    display: block;
+    width: 164px;
+    height: 164px;
+    text-align: center;
+    margin: 0px;
+    font-size: 0px; /* fixes spaces for inline-blocks */
+    background: #e5f0ea;
+}
+
+    .avatar .avatar-content {
+        line-height: 164px;
+    }
+    
+    .avatar .img {
+        vertical-align: middle;
+        max-width: 164px;
+        max-height: 164px;
+    }
+
+{% endcomment %}
+
+<div class="avatar">
+    <div class="avatar-content">
+    {% if user.get_profile.avatar %}
+        <img src="{% get_media_prefix %}{{ user.get_profile.avatar }}" />
+    {% else %}
+        <img src="{% get_static_prefix %}/img/avatar-blank.png" />
+    {% endif %}
+    </div>
+</div>

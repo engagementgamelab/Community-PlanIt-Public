@@ -83,6 +83,28 @@
 
 #profile-player {}
     
+    /* profile avatar restrict size */
+    #profile-player .avatar {
+        width: 200px;
+        height: 200px;
+    }
+    
+        #profile-player .avatar-content {
+            line-height: 200px;
+        }
+        
+        #profile-player .avatar img {
+            max-width: 200px;
+            max-height: 200px;
+        }
+        
+    .profile-container .profile-screenname {
+        padding: 8px 10px;
+        background: #f3f7ed;
+        font-weight: bold;
+        color: #323843;
+    }
+    
     .profile-detail {
         margin: 10px 0px;
         min-height: 75px;
@@ -131,6 +153,22 @@
 }
 
 #profile-editform {}
+    
+    /* profile avatar restrict size */
+    #profile-editform .avatar {
+        width: 200px;
+        height: 200px;
+    }
+    
+        #profile-editform .avatar-content {
+            line-height: 200px;
+        }
+        
+        #profile-editform .avatar img {
+            max-width: 200px;
+            max-height: 200px;
+        }
+        
     
     #profile-editform-error {
         margin-bottom: 20px;;
@@ -256,15 +294,17 @@
         clear: left;
     }
     
-    .profile-container .profile-avatar {
-        display: block;
+    /* profile avatar restrict size */
+    .profile-container .avatar {
         width: 164px;
         height: 164px;
-        margin: 0px;
-        background: #e5f0ea;
     }
     
-        .profile-container .profile-avatar img {
+        .profile-container .avatar-content {
+            line-height: 164px;
+        }
+        
+        .profile-container .avatar img {
             max-width: 164px;
             max-height: 164px;
         }

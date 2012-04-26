@@ -479,12 +479,23 @@ a {
                         padding: 5px;
                         color: #fff;
                     }
-                
-                    #sidebar-nav-profile-avatar {
-                        float: left;
+                    
+                    /* profile avatar restrict size */
+                    #sidebar-nav-profile .avatar {
+                        display: inline-block;
+                        width: 64px;
+                        height: 64px;
                     }
-                    
-                    
+
+                        #sidebar-nav-profile .avatar-content {
+                            line-height: 64px;
+                        }
+
+                        #sidebar-nav-profile .avatar img {
+                            max-width: 64px;
+                            max-height: 64px;
+                        }
+                        
                 
             #sidebar-nav-expert {
                 background: url('../img/icon-nav-expert.png') no-repeat center 20px;
@@ -758,6 +769,29 @@ p.instructions {
         color: #fff;
     }
     
+
+/* Avatars */
+
+.avatar {
+    display: block;
+    width: 164px;
+    height: 164px;
+    text-align: center;
+    margin: 0px;
+    font-size: 0px; /* fixes spaces for inline-blocks */
+    background: #e5f0ea;
+}
+
+    .avatar .avatar-content {
+        line-height: 164px;
+    }
+    
+    .avatar img {
+        vertical-align: middle;
+        max-width: 164px;
+        max-height: 164px;
+    }
+
 
 /* Pagination */
 .pagination a {
