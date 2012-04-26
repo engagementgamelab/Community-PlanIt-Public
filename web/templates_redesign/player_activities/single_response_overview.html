@@ -42,14 +42,18 @@
     {# RESPONSE SUMMARY #}
     {% if is_completed or activity.is_past %}
         <h2>{% trans "Response Summary" %}</h2>
-        {# <div id="choicePie" class="graph" style="width:350px;height:300px; margin-right:auto; margin-top: 25px; margin-bottom: 25px; "></div> #}
+        {# TODO #}
+        {% comment %}
+        I need:
+            totals and percentages for the community responses, for each answer
+            user's response
+        {% endcomment %}
         {% if answers.count %}
+        
+        {# COMMENTS #}
         <div class="comments embedded">
             <h2>
                 {% trans "Responses" %}
-                {# <div class="controls right"> #}
-                {#     Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a> #}
-                {# </div> #}
             </h2>
             <ul class="comment_list">
             {% for answer in answers %}
