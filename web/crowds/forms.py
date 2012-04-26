@@ -1,6 +1,7 @@
 import datetime
 from gmapsfield.fields import GoogleMapsField
 
+from django.utils import simplejson
 from django import forms
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -28,6 +29,15 @@ class CrowdForm(forms.ModelForm):
     class Meta:
         model = Crowd
         exclude = ('instance', 'confirmation_code', 'participants', 'creator', 'flagged', 'attachments', 'comments',)
+
+    def clean_map(self):
+        map = self.cleaned_data.get('map')
+        if not map:
+            raise forms.ValidationError("The map doesn't exist")
+        mapDict = simplejson.loads(map);
+        if len(mapDict["markers"]) == 0:
+            raise forms.ValidationError("Please select a point on the map")
+        return map
 
     def clean(self):
         cd = self.cleaned_data

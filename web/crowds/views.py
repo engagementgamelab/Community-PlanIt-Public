@@ -162,21 +162,21 @@ def rally(request):
     else:
         raise Http404("could not locate a valid game")
 
-    current_instance_location = current_instance.location
-
     # if current_instance.is_expired():
     #     return HttpResponseRedirect(reverse('crowds:index'))
 
     if request.method == 'POST':
         form = CrowdForm(request.POST)
         if form.is_valid():
-            #map = None
-            #if (request.POST.get('map', None) == None or request.POST.get('map', None) == "None"):
-            #    map = current_instance_location
-            #else:
-            #    map = form.cleaned_data['map']
+            map = None
+            if (form.cleaned_data.get('map', None) == None or form.cleaned_data.get('map', None) == "None"):
+                map = current_instance.location
+            else:
+                map = form.cleaned_data['map']
 
             crowd = form.save(commit=False)
+            crowd.map = map
+            crowd.address = form.cleaned_data.get('address')
             crowd.instance = current_instance
             crowd.creator = request.user
             crowd.participants.add(creator)
@@ -191,12 +191,13 @@ def rally(request):
 
     else:
         form = CrowdForm()
-
-    return render(request, 'crowds/add.html', 
-        dict(location = current_instance_location.coordinates,
-             crowds = Crowd.objects.filter(instance=current_instance).order_by('-start_date'),
-             form = form,)
+    context = dict(
+            map = current_instance.location,
+            crowds = Crowd.objects.filter(instance=current_instance).order_by('-start_date'),
+            form = form,
     )
+    print context
+    return render(request, 'crowds/add.html', context)
 
 
 
