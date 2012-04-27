@@ -46,7 +46,7 @@ class City(models.Model):
         return "%s at <%s>" %(self.name, self.domain)
 
     def save(self, *args, **kwargs):
-        if not self.slug or self.slug == '':
+        if self.slug is None or self.slug == '':
             self.slug = slugify(self.name)[:30]
         super(City, self).save()
 
@@ -74,7 +74,7 @@ class Affiliation(models.Model):
         return "%s" %(self.name,)
 
     def save(self, *args, **kwargs):
-        if not self.slug or self.slug == '':
+        if self.slug is None or self.slug == '':
             self.slug = slugify(self.name)[:100]
         super(Affiliation, self).save()
 
