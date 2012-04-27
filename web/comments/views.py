@@ -21,6 +21,9 @@ from .models import Comment
 
 from attachments.models import Attachment
 
+import logging
+log = logging.getLogger(__name__)
+
 @login_required
 def flag(request, id):
     c = Comment.objects.get(id=id)
@@ -66,7 +69,7 @@ def ajax_like(request, id):
 def ajax_create(request, comment_form=CommentForm):
     request_uri = reverse('comments:ajax-create')
     def create(obj_response, form_data):
-        print "creating comment", form_data
+        log.debug("creating comment: %s" % form_data)
         form = comment_form(data=form_data)
         if form.is_valid():
             cd = form.cleaned_data
@@ -79,7 +82,20 @@ def ajax_create(request, comment_form=CommentForm):
                 user=request.user,
                 instance=instance,
             )
-            print "comment created.", vars(c)
+            log.debug("comment created. %s" % vars(c))
+            stream_verb = 'commented'
+            stream_utils.action.send(request.user, stream_verb, target=parent_comment, action_object=c, description="commented on a comment")
+
+            #from celery.execute import send_task
+            #result = send_task("badges.tasks.gen_badges", [request.user.pk, stream_verb, action_object_])
+            #print result.get()
+            from badges.tasks import gen_badges
+            user_id=request.user.pk
+            task_kwargs = dict(
+                    stream_verb=stream_verb,
+            )
+            gen_badges.apply_async(args=[user_id,], kwargs=task_kwargs)
+
 
             context = dict(
                 comment = parent_comment,

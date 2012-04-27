@@ -4,8 +4,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.template.defaultfilters import slugify
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+#from django.db.models.signals import post_save
+#from django.dispatch import receiver
 from django.utils.translation import get_language
 
 from nani.models import TranslatableModel, TranslatedFields
@@ -57,8 +57,8 @@ class BadgeRulesBase(object):
 
 
 class CommunityBuilderRules(BadgeRulesBase):
-	comments_per_level = 15
-	levels_total = 3
+	COMMENTS_PER_LEVEL = 15
+	TOTAL_LEVELS = 3
 
 
 class BadgePerPlayer(models.Model):
@@ -69,10 +69,13 @@ class BadgePerPlayer(models.Model):
     def increment_level(self, n=1):
         self.level+=n
 
+    class Meta:
+        unique_together = (badge, user,)
 
-@receiver(post_save, sender=Comment, dispatch_uid='cpi-badges')
-def my_callback(sender, **kwargs):
-    print "comment created!"
+
+#@receiver(post_save, sender=Comment, dispatch_uid='cpi-badges')
+#def my_callback(sender, **kwargs):
+#    print "comment created!"
 
 
 
