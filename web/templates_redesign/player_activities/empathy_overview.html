@@ -43,32 +43,26 @@
             <a class="btn-blue" href="{% url activities:empathy-replay activity.id %}">{% trans 'Replay' %}</a>
         </div>
     </div>
-        
-    <br class="clearfix" />
 
     {% if is_completed or activity.is_past %}
-    {% if answers %}
-    <div class="comments embedded clear">
-        <h2>{% trans "Responses" %}</h2>
-        {# <div class="controls right"> #}
-        {#     Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a> #}
-        {# </div> #}
-        <ul class="comment_list">
-        {% for answer in answers %}
-            {% with instance=activity.mission.instance %}
-                {% for comment in answer.comments.select_related.all reversed %}
-                    {% with extra_message=answer.selected.value %}
-                    {% include "comments/comment.html" %}
-                    {% endwith %}
-                {% endfor %}
-            {% endwith %}
-        {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
+        {% if answers %}
+        <div class="comments embedded clearfix">
+            <h2>{% trans "Responses" %}</h2>
+            {% for answer in answers %}
+                {% with instance=activity.mission.instance %}
+                    {% for comment in answer.comments.select_related.all reversed %}
+                        {% with extra_message=answer.selected.value %}
+                            {% include "comments/comment.html" %}
+                        {% endwith %}
+                    {% endfor %}
+                {% endwith %}
+            {% endfor %}
+        </div>
+        {% endif %}
     {% else %}
-        <h2>{% trans "Complete the activity to see everyone's responses" %}</h2>
+        <p>{% trans "Complete the activity to see everyone's responses" %}</p>
     {% endif %}
+    
 </div>
 
     

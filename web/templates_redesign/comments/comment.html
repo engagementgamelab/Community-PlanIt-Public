@@ -1,5 +1,5 @@
 {% load attachment_tags i18n %}
-<div class="thread-container">
+<div class="thread">
     <div class="comment {% if nested %}nested{% endif %}" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
         {# META: FLAG AND EDIT #}
         <div class="meta">
@@ -167,7 +167,6 @@
             {# endif #}
         </div>
     {% endif %}
-    
 </div>
 
 

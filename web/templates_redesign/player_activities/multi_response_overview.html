@@ -46,27 +46,26 @@
                 user's response
             {% endcomment %}
             {% if all_answers %}
-                <div class="comments embedded">
+                <div class="comments embedded clearfix">
                     <h2>{% trans "Responses" %}</h2>
-                        {# <div class="controls right"> #}
-                        {#     Sort by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a> #}
-                        {# </div> #}
-                    <ul class="comment_list">
+
                     {% with instance=activity.mission.instance %}
-                    {% for user, answers, comments in all_answers %}
-                        {% if comments %}
-                            {% with extra_message=answers %}
-                            {% for comment in comments %}
-                                {% include "comments/comment.html" %}
-                            {% endfor %}
-                            {% endwith %}
-                        {% endif %}
-                    {% endfor %}
+                        {% for user, answers, comments in all_answers %}
+                            {% if comments %}
+                                {% with extra_message=answers %}
+                                    {% for comment in comments %}
+                                        {% include "comments/comment.html" %}
+                                    {% empty %}
+                                        <div class="comment">There are no comments for this activity yet.</div>
+                                    {% endfor %}
+                                {% endwith %}
+                            {% endif %}
+                        {% endfor %}
                     {% endwith %}
-                    </ul>
+
                 </div>
             {% else %}
-                <h2>{% trans "no responses have been submitted" %}</h2>
+                <hp>{% trans "no responses have been submitted" %}</p>
             {% endif %}
         {% else %}
             <h2>{% trans "Complete the activity to see everyones responses" %}</h2>

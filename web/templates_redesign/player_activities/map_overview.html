@@ -34,35 +34,23 @@
     
     </div>
 
-    <br class="clearfix" />
-    
-    
-
-    {% if is_completed  or activity.is_past %}
-    <div class="comments embedded">
-        {% if answers %}
-            {# <div class="controls right"> #}
-            {#     Sort comments by: <a class="button comment_sort_time" href="#">timestamp</a> <a class="button comment_sort_activity" href="#">popularity</a> #}
-            {# </div> #}
-            {# <div style="clear:both;">&nbsp;</div> #}
-        {% endif %}
-        {% for answer in answers %}
-        <h2>{% trans "Responses" %}</h2>
-        {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
-        <ul class="comment_list">
-            {% for comment in comments.all %}
-                {% with extra_message=answer.selected.value %}
-                    {% include "comments/comment.html" %}
+    {% if is_completed or activity.is_past %}
+        <div class="comments embedded clearfix">
+            {% for answer in answers %}
+                <h2>{% trans "Responses" %}</h2>
+                {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
+                    {% for comment in comments.all %}
+                        {% with extra_message=answer.selected.value %}
+                            {% include "comments/comment.html" %}
+                        {% endwith %}
+                    {% empty %}
+                        <div class="comment">There are no comments for this activity yet.</div>
+                    {% endfor %}
                 {% endwith %}
-            {% empty %}
-            <li class="comment">No comments found.</li>
             {% endfor %}
-        </ul>
-        {% endwith %}
-        {% endfor %}
-    </div>
+        </div>
     {% else %}    
-        <h2>{% trans "Complete the activity to see everyone's responses" %}</h2>        
+        <p>{% trans "Complete the activity to see everyone's responses" %}</hp>
     {% endif %}
 </div>
 

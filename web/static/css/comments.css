@@ -1,4 +1,7 @@
 /* Styles for Comments! */
+.thread {
+    float: left;
+}
 
 .comment {
     position: relative;
