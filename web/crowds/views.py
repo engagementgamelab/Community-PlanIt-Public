@@ -188,6 +188,8 @@ def rally(request):
             #                         description="A challenge was created"
             #)
             return HttpResponseRedirect(reverse('crowds:index'))
+        else:
+            print form.errors
 
     else:
         form = CrowdForm()
