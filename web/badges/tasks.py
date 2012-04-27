@@ -20,10 +20,10 @@ tasks.register(TestT)
 
 @task
 def gen_badges(user_id, **kwargs):
-	print user_id
-	print kwargs
-	user = User.objects.get(pk=user_id)
-	comments_for_user = Action.objects.filter(actor_user=user, verb='commented').count()
+    print user_id
+    print kwargs
+    user = User.objects.get(pk=user_id)
+    comments_for_user = Action.objects.filter(actor_user=user, verb='commented').count()
 
     if comments_for_user > CommunityBuilderRules.COMMENTS_PER_LEVEL:
         badge = Badge.objects.get(type=Badge.BADGE_COMMUNITY_BUILDER)

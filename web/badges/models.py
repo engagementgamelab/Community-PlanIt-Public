@@ -70,7 +70,7 @@ class BadgePerPlayer(models.Model):
         self.level+=n
 
     class Meta:
-        unique_together = (badge, user,)
+        unique_together = ('badge', 'user',)
 
 
 #@receiver(post_save, sender=Comment, dispatch_uid='cpi-badges')
