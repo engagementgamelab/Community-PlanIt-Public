@@ -2,9 +2,13 @@
 
 extends=Community-PlanIt/config/buildout_base.cfg
 
-uwsgi-socket-port=7010
+parts += uwsgi
+         nginx-config
+         supervisor-config
+         resetdb
 
 project_name=Community-PlanIt
+venv_dir = /var/local/venv
 download_cache_dir = /var/local/buildout
 eggs-directory=${buildout:download_cache_dir}/eggs
 download-cache = ${buildout:download_cache_dir}/cache
@@ -22,4 +26,40 @@ eggs +=
 
 
 
+[server]
+name=pk.communityplanit.org
+user=cpi
+uwsgi-socket-port=7010
+
+[uwsgi]
+recipe=eqb.recipe.uwsgi
+uid=${server:user}
+home=${buildout:directory}
+pythonpath=${buildout:directory}/${buildout:project_name}/web
+wsgi-file=${buildout:directory}/bin/django.wsgi
+pidfile=/var/run/uwsgi/${server:name}.pid
+socket=127.0.0.1:${server:uwsgi-socket-port}
+single-interpreter=true
+master=True
+eggs=Django
+versions=versions
+import=uwsgiutils.tasks
+
+[supervisor-config]
+recipe = collective.recipe.template
+input = ${buildout:project_name}/config/templates/supervisor.in
+output = ${buildout:parts-directory}/etc/supervisor.conf
+
+[nginx-config]
+recipe = collective.recipe.template
+input = ${buildout:project_name}/config/templates/nginx.in
+output = ${buildout:parts-directory}/etc/nginx.conf
+
+[resetdb]
+recipe = collective.recipe.template
+db_name = cpi
+db_user = cpi
+db_host = 127.0.0.1
+input = ${buildout:project_name}/config/templates/resetdb.in
+output = ${buildout:bin-directory}/resetdb
 
