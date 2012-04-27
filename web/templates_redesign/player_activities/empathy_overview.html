@@ -44,10 +44,12 @@
         </div>
     </div>
 
+    <br class="clearfix">
+    
     {% if is_completed or activity.is_past %}
         {% if answers %}
-        <div class="comments embedded clearfix">
-            <h2>{% trans "Responses" %}</h2>
+        <h2>{% trans "Responses" %}</h2>
+        <div class="comments embedded">    
             {% for answer in answers %}
                 {% with instance=activity.mission.instance %}
                     {% for comment in answer.comments.select_related.all reversed %}

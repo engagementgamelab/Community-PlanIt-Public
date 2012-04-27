@@ -37,6 +37,7 @@
             
         </div>
         <br class="clearfix"/>
+        
         {% if is_completed  or activity.is_past %}
             <h2>{% trans "Response Summary" %}</h2>
             {# TODO #}
@@ -45,24 +46,22 @@
                 totals and percentages for the community responses, for each answer
                 user's response
             {% endcomment %}
-            {% if all_answers %}
-                <div class="comments embedded clearfix">
-                    <h2>{% trans "Responses" %}</h2>
-
-                    {% with instance=activity.mission.instance %}
-                        {% for user, answers, comments in all_answers %}
-                            {% if comments %}
-                                {% with extra_message=answers %}
-                                    {% for comment in comments %}
-                                        {% include "comments/comment.html" %}
-                                    {% empty %}
-                                        <div class="comment">There are no comments for this activity yet.</div>
-                                    {% endfor %}
-                                {% endwith %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endwith %}
-
+            {% if all_answers %}                
+                <h2>{% trans "Responses" %}</h2>
+                <div class="comments embedded">
+                {% with instance=activity.mission.instance %}
+                    {% for user, answers, comments in all_answers %}
+                        {% if comments %}
+                            {% with extra_message=answers %}
+                                {% for comment in comments %}
+                                    {% include "comments/comment.html" %}
+                                {% empty %}
+                                    <div class="comment">There are no comments for this activity yet.</div>
+                                {% endfor %}
+                            {% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
                 </div>
             {% else %}
                 <hp>{% trans "no responses have been submitted" %}</p>

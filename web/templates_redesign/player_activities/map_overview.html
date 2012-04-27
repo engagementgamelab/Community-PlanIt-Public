@@ -33,21 +33,23 @@
         {% endif %}
     
     </div>
+    
+    <br class="clearfix">
 
-    {% if is_completed or activity.is_past %}
-        <div class="comments embedded clearfix">
-            {% for answer in answers %}
-                <h2>{% trans "Responses" %}</h2>
-                {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
-                    {% for comment in comments.all %}
-                        {% with extra_message=answer.selected.value %}
-                            {% include "comments/comment.html" %}
-                        {% endwith %}
-                    {% empty %}
-                        <div class="comment">There are no comments for this activity yet.</div>
-                    {% endfor %}
-                {% endwith %}
-            {% endfor %}
+    {% if is_completed or activity.is_past %}        
+        <h2>{% trans "Responses" %}</h2>
+        <div class="comments embedded">
+        {% for answer in answers %}   
+            {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
+                {% for comment in comments.all %}
+                    {% with extra_message=answer.selected.value %}
+                        {% include "comments/comment.html" %}
+                    {% endwith %}
+                {% empty %}
+                    <div class="comment">There are no comments for this activity yet.</div>
+                {% endfor %}
+            {% endwith %}
+        {% endfor %}
         </div>
     {% else %}    
         <p>{% trans "Complete the activity to see everyone's responses" %}</hp>
