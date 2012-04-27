@@ -1,11 +1,14 @@
 /* Styles for Comments! */
 
 .comments {
-    
+    width: 960px;
+    margin-left: -20px;
 }
 
 .thread {
     float: left;
+    width: 280px;
+    margin: 0px 20px;
 }
 
 .comment {
