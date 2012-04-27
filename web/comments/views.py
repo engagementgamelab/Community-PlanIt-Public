@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from django.template import Context, RequestContext, loader
+from django.template import Context, RequestContext, loader, Template
 from django.conf import settings
 
 
@@ -80,6 +80,24 @@ def ajax_create(request, comment_form=CommentForm):
                 instance=instance,
             )
             print "comment created.", vars(c)
+
+            context = dict(
+                comment = parent_comment,
+                STATIC_URL = settings.STATIC_URL,
+                request = request,
+            )
+            players_tmpl = """\
+                <div class="nested replies" id="replies-{{comment.pk}}">
+                    {% for comment in comment.comments.all %}
+                        {% with filename="comments/comment.html" extra_message=None %}
+                            {% include filename %}
+                        {% endwith %}
+                    {% endfor %}
+                    <div style="clear:both"></div>
+                </div> """
+            t = Template(players_tmpl)
+            rendered_comments = t.render(Context(context))
+            obj_response.html('#id_replies-'+str(parent_comment.pk), rendered_comments)
         else:
             print "form errors; ", form.errors
 

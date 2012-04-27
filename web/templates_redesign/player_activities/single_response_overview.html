@@ -57,7 +57,7 @@
             </h2>
             <ul class="comment_list">
             {% for answer in answers %}
-            {% with instance=activity.mission.instance comments=answer.comments %}
+            {% with comments=answer.comments %}
                 {% for comment in comments.all reversed %}
                     {% with extra_message=answer.selected.value %}
                     {% include "comments/comment.html" %}

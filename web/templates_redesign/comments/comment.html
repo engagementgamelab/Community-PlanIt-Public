@@ -81,9 +81,9 @@
     
     {# NESTED comments #}
     {% if comment.comments.all %}
-    <div class="nested" id="replies-{{comment.pk}}" class="replies">
+    <div class="nested replies" id="replies-{{comment.pk}}">
         {% for comment in comment.comments.all %}
-            {% with filename="comments/comment.html" extra_message=None disable_next_level=True %}
+            {% with filename="comments/comment.html" extra_message=None %}
                 {% include filename %}
             {% endwith %}
         {% endfor %}
@@ -96,7 +96,9 @@
         {# MY RESPONSE HEADER #}
         {# HEADER #}
         <div class="comment-header">
-            <div class="comment-header-avatar"><img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="48" height="48" /></div>
+            <div class="comment-header-avatar">
+                <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="48" height="48" />
+            </div>
             <div class="comment-header-meta">
                 <div class="comment-author">{% trans "My response..." %}</div>
             </div>
@@ -105,7 +107,6 @@
         
         
         {# if comment.instance.is_active #}
-        {% if not disable_next_level %}
             {# REPLY #}
         <div class="reply-modal">
             <!--form enctype="multipart/form-data" method="POST" action="{# url comments:reply comment.id #}"-->
@@ -160,7 +161,6 @@
                 $('textarea#message-{{ comment.pk }}').limit('1000','#charsLeft');
             </script>
         </div>
-        {% endif %}
         {# endif #}
     </div>
 </div>
