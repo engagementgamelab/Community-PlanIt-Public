@@ -53,7 +53,9 @@ class PointsAssigner:
     
     def assign(self, user, action):
         try:
-            p = PointsAssignment.objects.get(instance=user.get_profile().instance, action__action=action)
+            p = PointsAssignment.objects.get(instance=None,
+                                                #user.get_profile().instance, 
+                                                action__action=action)
             self.assignPoints(user, p.points)
         except PointsAssignment.DoesNotExist:
             pass
