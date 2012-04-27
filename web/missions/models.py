@@ -59,23 +59,32 @@ class Mission(TranslatableModel):
     objects = MissionManager()
 
     class Meta:
-        pass
+    	ordering = ('end_date',)
         #get_latest_by = 'start_date'
 
     @models.permalink
     def get_absolute_url(self):
         return ('missions:mission', [self.slug])
 
+    @property
+    def ends_in_days(self):
+    	delta =  self.end_date - self.start_date
+    	return str(delta.days)
+
+    @property
     def is_active(self):
         now = datetime.datetime.now()
         return self.start_date <= now and now <= self.end_date
-        
+
+    @property
     def is_expired(self):
         return datetime.datetime.now() > self.end_date
-    
+
+    @property
     def is_started(self):
         return datetime.datetime.now() >= self.start_date
 
+    @property
     def is_future(self):
         return datetime.datetime.now() <= self.start_date
 

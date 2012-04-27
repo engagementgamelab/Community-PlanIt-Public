@@ -41,7 +41,7 @@ def fetch(request, slug, game_header=True, template='missions/base.html'):
     my_missions = Mission.objects.filter(instance=current_instance).exclude(slug=slug).order_by('-start_date')
     if my_missions.count() > 0:
         next_mission = my_missions[0]
-        if next_mission.is_expired():
+        if next_mission.is_expired:
             next_mission = None
 
     context = dict(
