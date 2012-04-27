@@ -94,7 +94,7 @@ def ajax_create(request, comment_form=CommentForm):
             task_kwargs = dict(
                     stream_verb=stream_verb,
             )
-            gen_badges.apply_async(args=[user_id,], kwargs=task_kwargs)
+            # gen_badges.apply_async(args=[user_id,], kwargs=task_kwargs)
 
 
             context = dict(
