@@ -1,6 +1,7 @@
+from sijax import Sijax
+from PIL import Image
 from stream import utils as stream_utils
 
-from PIL import Image
 from nani.utils import get_translation
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -15,11 +16,10 @@ from accounts.models import UserProfile
 from reports.actions import PointsAssigner
 from answers.models import Answer
 from challenges.models import Challenge
-from comments.forms import *
-from comments.models import Comment
+from .forms import *
+from .models import Comment
 
 from attachments.models import Attachment
-
 
 @login_required
 def flag(request, id):
@@ -60,6 +60,35 @@ def ajax_like(request, id):
         c.user.notifications.create(content_object=c, message=message)
         stream_utils.action.send(request.user, 'liked', target=c, description="liked a comment")
     return HttpResponse(str(c.likes.all().count()))
+
+
+@login_required
+def ajax_create(request, comment_form=CommentForm):
+    request_uri = reverse('comments:ajax-create')
+    def create(obj_response, form_data):
+        print "creating comment", form_data
+        form = comment_form(data=form_data)
+        if form.is_valid():
+            cd = form.cleaned_data
+            parent_comment = get_object_or_404(Comment, id=cd.get('parent_comment_id'))
+            instance = parent_comment.instance
+
+            c = parent_comment.comments.create(
+                content_object=parent_comment,
+                message=cd.get(u'message'),
+                user=request.user,
+                instance=instance,
+            )
+            print "comment created.", vars(c)
+        else:
+            print "form errors; ", form.errors
+
+    instance = Sijax()
+    instance.set_data(request.POST)
+    instance.set_request_uri(request_uri)
+    instance.register_callback('create_comment', create)
+    if instance.is_sijax_request:
+        return HttpResponse(instance.process_request())
 
 @login_required
 def reply(request, id):

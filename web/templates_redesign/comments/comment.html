@@ -3,7 +3,7 @@
     <div class="comment" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
         {# META: FLAG AND EDIT #}
         <div class="meta">
-            {% if not comment.hidden and comment.user != user and comment.instance.is_active or comment.is_official_response %}
+            {% if not comment.hidden and comment.user != user and comment.instance.is_active %}
                 <a href="{% url flags:add 'comment' comment.id %}" title="flag comment"><img src="{{MEDIA_URL}}img/icons/flag.png" alt="flag"/></a>
             {% endif %}
             {# {% if not comment.hidden and comment.user == request.user %} #}
@@ -11,17 +11,15 @@
             {# {% endif %} #}
         </div>
         
-        {% if comment.display_user %} 
-            {# HEADER #}
-            <div class="comment-header">
-                <div class="comment-header-avatar"><img src="{% if comment.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof comment.user.get_profile.avatar 'img/avatar-blank.png' %}" width="48" height="48" /></div>
-                <div class="comment-header-meta">
-                    <div class="comment-author">{% trans "From" %} <a href="{% url accounts:player_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a></div>
-                    <p class="comment-postdate">{{comment.posted_date|date:"N j, Y"}}, {{comment.posted_date|date:"g:i a"}}</p>
-                </div>
+        {# HEADER #}
+        <div class="comment-header">
+            <div class="comment-header-avatar"><img src="{% if comment.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof comment.user.get_profile.avatar 'img/avatar-blank.png' %}" width="48" height="48" /></div>
+            <div class="comment-header-meta">
+                <div class="comment-author">{% trans "From" %} <a href="{% url accounts:player_profile comment.user.id %}">{{comment.user.get_profile.screen_name}}</a></div>
+                <p class="comment-postdate">{{comment.posted_date|date:"N j, Y"}}, {{comment.posted_date|date:"g:i a"}}</p>
             </div>
-            <br class="clearfix" />
-        {% endif %}
+        </div>
+        <br class="clearfix" />
         
         {# COMMENT BODY MESSAGE #}
         <div class="comment-message">
@@ -61,7 +59,7 @@
         <div class="actions">
             {# LIKES! #}
             <div class="likes">
-                {# {% if comment.user != request.user and comment.instance.is_active or comment.is_official_response %} #}
+                {# {% if comment.user != request.user and comment.instance.is_active %} #}
                     <div id="id_like-{{ comment.id }}" class="btn-like" title="click to say you like this"></div>{# href="{% url comments:like comment.id %}"  #}
                     <div id="id_likes-count-{{ comment.pk }}" class="likes-count">{{comment.likes.count}}</div>
                 {# {% endif %} #}
@@ -81,12 +79,11 @@
         </div>
     </div>
     
-    
     {# NESTED comments #}
     {% if comment.comments.all %}
     <div class="nested" id="replies-{{comment.pk}}" class="replies">
         {% for comment in comment.comments.all %}
-            {% with filename="comments/comment.html" extra_message=None %}
+            {% with filename="comments/comment.html" extra_message=None disable_next_level=True %}
                 {% include filename %}
             {% endwith %}
         {% endfor %}
@@ -107,60 +104,64 @@
         <br class="clearfix" />
         
         
-        {% if comment.instance.is_active  or comment.is_official_response %}
+        {# if comment.instance.is_active #}
+        {% if not disable_next_level %}
             {# REPLY #}
-            <div class="reply-modal">
-                <form enctype="multipart/form-data" method="POST" action="{% url comments:reply comment.id %}">
-                    {% csrf_token %}
-                    
-                    <textarea name="message" class="comment-message" cols="40" rows="6" id="message-{{comment.id}}" placeholder="{% trans 'Type your response here... ' %}"></textarea>
-                    <div class="actions">
-                        <span class="reply-comment-counter">(<span class="count">1000</span> {% trans "chars left" %})</span>
-                        <div class="reply">
-                            <button type="submit" class="btn-blue btn-reply">{% trans "Post" %}</button> <button type="reset" class="btn-blue small btn-cancel">cancel</button>
-                        </div>
+        <div class="reply-modal">
+            <!--form enctype="multipart/form-data" method="POST" action="{# url comments:reply comment.id #}"-->
+            <form id="id_comment-form-{{ comment.pk }}"
+                enctype="multipart/form-data" method="POST" action=""> {% csrf_token %}
+                <input type="hidden" name="parent_comment_id" value="{{ comment.pk }}"/>
+                <textarea name="message" class="comment-message" cols="40" rows="6" id="message-{{comment.id}}" placeholder="{% trans 'Type your response here... ' %}"></textarea>
+                <div class="actions">
+                    <span class="reply-comment-counter">(<span class="count">1000</span> {% trans "chars left" %})</span>
+                    <div class="reply">
+                        <button type="submit" id="{{ comment.pk }}" class="btn-blue btn-reply">{% trans "Post" %}</button> 
+                        <button type="reset" class="btn-blue small btn-cancel">{% trans "cancel" %}</button>
                     </div>
-                </form>
-                <script type="text/javascript"> 
-                    $.fn.extend({  
-                        limit: function(limit,element) {
-                            var interval, f;
-                            var self = $(this);
-                            $(this).focus(function(){
-                                interval = window.setInterval(substring,100);
-                            });
-                            $(this).blur(function(){
-                                clearInterval(interval);
-                                substring();
-                            });
-                            substringFunction = "function substring(){ var val = $(self).val(); if (val) {var length = val.length;if(length > limit){$(self).val($(self).val().substring(0,limit));}}";
-                            if(typeof element != 'undefined')
-                                substringFunction += "if($(element).html() != limit-length){$(element).html((limit-length<=0)?'0':limit-length);}"
-                            substringFunction += "}";
-                            eval(substringFunction);
+                </div>
+            </form>
+            <script type="text/javascript"> 
+                $.fn.extend({  
+                    limit: function(limit,element) {
+                        var interval, f;
+                        var self = $(this);
+                        $(this).focus(function(){
+                            interval = window.setInterval(substring,100);
+                        });
+                        $(this).blur(function(){
+                            clearInterval(interval);
                             substring();
+                        });
+                        substringFunction = "function substring(){ var val = $(self).val(); if (val) {var length = val.length;if(length > limit){$(self).val($(self).val().substring(0,limit));}}";
+                        if(typeof element != 'undefined')
+                            substringFunction += "if($(element).html() != limit-length){$(element).html((limit-length<=0)?'0':limit-length);}"
+                        substringFunction += "}";
+                        eval(substringFunction);
+                        substring();
 
-                        } 
-                    }); 
+                    } 
+                }); 
 
-                    var type_count = function(evt) {
-                        var comment_form = $(this.form);
-                        var val = this.value.replace(/\r?\n/g, 'xx');
-                        var len = Math.max(0, 1000 - val.length);
-                        comment_form.find('.count').text(len);
-                        if (len < 1) {
-                            comment_form.find('.reply-comment-counter').addClass('limited');
-                            if (!(evt.ctrlKey || evt.which < 48 && evt.which !== 9 && evt.which !== 13)) {
-                                return false;
-                            }
+                var type_count = function(evt) {
+                    var comment_form = $(this.form);
+                    var val = this.value.replace(/\r?\n/g, 'xx');
+                    var len = Math.max(0, 1000 - val.length);
+                    comment_form.find('.count').text(len);
+                    if (len < 1) {
+                        comment_form.find('.reply-comment-counter').addClass('limited');
+                        if (!(evt.ctrlKey || evt.which < 48 && evt.which !== 9 && evt.which !== 13)) {
+                            return false;
                         }
-                        comment_form.find('.reply-comment-counter').removeClass('limited');
                     }
-                    $('textarea#message-{{ comment.pk }}').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
-                    $('textarea#message-{{ comment.pk }}').limit('1000','#charsLeft');
-                </script>
-            </div>
+                    comment_form.find('.reply-comment-counter').removeClass('limited');
+                }
+                $('textarea#message-{{ comment.pk }}').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
+                $('textarea#message-{{ comment.pk }}').limit('1000','#charsLeft');
+            </script>
+        </div>
         {% endif %}
+        {# endif #}
     </div>
 </div>
 

@@ -8,6 +8,27 @@
 
 {% block body_id %}player-activities{% endblock %}
 
+
+{% block extra_head %}
+    <script src="{{ STATIC_URL }}js/sijax.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+
+            {% include "js/ajax_csrf.html" %}
+
+            $(".btn-reply").click(function(e){
+                e.preventDefault();
+                {{ create_comment_sijax_js|safe }}
+                var form_data = Sijax.getFormValues('#id_comment-form-'+$(this).attr('id'));
+                Sijax.request('create_comment', [form_data]);
+            });
+        });
+
+    </script>
+{% endblock extra_head %}
+
+
 {% block js %}
     {{ block.super }}
     {# This is some old javascript leftover from the redesign #}

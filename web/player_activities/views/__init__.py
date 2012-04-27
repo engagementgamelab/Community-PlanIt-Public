@@ -69,7 +69,6 @@ def log_activity_and_redirect(request, activity, message):
     #stream_utils.action.send(request.user, 'activity_%s' % message, action_object=activity,
     #                        description="%s activity" % message
     #)
-
     return HttpResponseRedirect(activity.get_overview_url())   
 
 

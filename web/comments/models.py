@@ -35,13 +35,13 @@ class Comment(models.Model):
 
     message = models.CharField(max_length=2000, blank=True, null=True)
 
-    @property
-    def display_user(self):
-        return not self.is_official_response
+    #@property
+    #def display_user(self):
+    #    return not self.is_official_response
 
-    @property
-    def is_official_response(self):
-        return self.content_object.__class__.__name__ in ['PlayerActivityOfficialResponse', 'MapOfficialResponse', 'EmpathyOfficialResponse', 'ChallengeOfficialResponse']
+    #@property
+    #def is_official_response(self):
+    #    return self.content_object.__class__.__name__ in ['PlayerActivityOfficialResponse', 'MapOfficialResponse', 'EmpathyOfficialResponse', 'ChallengeOfficialResponse']
 
     def __unicode__(self):
         if self.message:
@@ -50,7 +50,7 @@ class Comment(models.Model):
             return str(self.pk)
 
     def save(self, *args, **kwargs):
-        if len(self.message) > 1000:
+        if self.message is not None and len(self.message) > 1000:
             self.message = self.message.replace('\r\n', '\n')
         super(Comment, self).save(*args, **kwargs)
 

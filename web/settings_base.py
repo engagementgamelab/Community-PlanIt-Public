@@ -86,7 +86,6 @@ INSTALLED_APPS = (
     'accounts',
     'answers',
     'attachments',
-    'challenges',
     'crowds',
     'comments',
     'core',
@@ -98,7 +97,9 @@ INSTALLED_APPS = (
     'player_activities',
     'reports',
     'responses',
-    'values',
+    #'values',
+    'challenges',
+    'badges',
 
     # Need this after web.admin because of test runner: 
     # it loads django admin tests by 'admin' app label first
@@ -289,6 +290,9 @@ ENDLESS_PAGINATION_NEXT_LABEL = '''<div class="pagination-next"></div>'''
 # django-celery
 import djcelery
 djcelery.setup_loader()
+
+CELERY_IMPORTS = ('badges.tasks',)
+
 
 BROKER_HOST = "localhost"
 BROKER_PORT = 5672

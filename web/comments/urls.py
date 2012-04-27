@@ -8,4 +8,6 @@ urlpatterns = patterns('comments.views',
     url(r'^reply/(?P<id>.*)/$', 'reply', name='reply'),
     url(r'^edit/(?P<id>.*)/$', 'edit', name='edit'),
     url(r'^attachment/remove/(?P<id>.*)/(?P<comment_id>.*)/$', 'remove_attachment', name='remove_attachment'),
+
+    url(r'^ajax/create/', 'ajax_create', name='ajax-create'),
 )

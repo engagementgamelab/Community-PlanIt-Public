@@ -5,6 +5,7 @@ class CommentForm(forms.Form):
     # before the user has contributed
     just_one_form = False
     allow_replies = True
+    parent_comment_id = forms.CharField(widget=forms.HiddenInput(), required=False)
     message = forms.CharField(
         max_length=1000,
         widget=forms.Textarea(

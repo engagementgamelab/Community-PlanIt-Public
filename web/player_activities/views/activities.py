@@ -1,3 +1,4 @@
+from sijax import Sijax
 from PIL import Image
 
 from django.conf import settings
@@ -45,6 +46,15 @@ def _build_context(request, action, activity, user=None):
                     return getattr(activity, related_name)
 
     if action == 'overview':
+
+        create_comment_sijax = Sijax()
+        create_comment_sijax.set_request_uri(reverse('comments:ajax-create'))
+        context.update(
+                {
+                    'create_comment_sijax_js' : create_comment_sijax.get_js(),
+            }
+        )
+
         if activity.type.type != 'multi_response':
             answers = activity.__class__.objects.none()
             myAnswer = None
@@ -320,6 +330,8 @@ def activity(request, activity_id, game_header=True, template=None, **kwargs):
                     PointsAssigner().assignAct(request.user, activity)
                     return log_activity_and_redirect(request, activity, "completed")
 
+        # all submissions on overview to be redone in ajax
+        """
         elif action == "overview":
             if comment_form and comment_form.is_valid():
                 comment = Comment.objects.create(
@@ -336,7 +348,7 @@ def activity(request, activity_id, game_header=True, template=None, **kwargs):
                             type='video',
                             user=request.user,
                             instance=activity.mission.instance)
-            
+
                 if request.FILES.has_key('picture'):
                     file = request.FILES.get('picture')
                     picture = Image.open(file)
@@ -347,6 +359,7 @@ def activity(request, activity_id, game_header=True, template=None, **kwargs):
                         user=request.user,
                         instance=activity.mission.instance)
             return HttpResponseRedirect(activity.get_overview_url())
+        """
 
     user = None
     if activity.mission.is_active() and not request.user.is_superuser:
