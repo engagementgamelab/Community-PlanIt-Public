@@ -310,6 +310,7 @@ a {
         padding: 10px 20px;
         background: #f7ff59;
         font-family: "Enriqueta";
+        font-weight: bold;
         font-size: 1.2em;
         -webkit-border-radius: 5px;
         -moz-border-radius: 5px;
@@ -356,6 +357,16 @@ a {
        background: linear-gradient(left,  #f2f7ed 0%,#f7ff5d 100%); /* W3C */
        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f7ed', endColorstr='#f7ff5d',GradientType=1 ); /* IE6-9 */
    }
+   
+       #mission-progress-total:after {
+           content: '';
+           position: absolute;
+           top: 0px;
+           right: -10px;
+           border-top: 20px solid transparent;
+           border-bottom: 20px solid transparent;
+           border-left: 10px solid #f7ff5d;
+       }
 
    #mission-progress-individual {
        position: relative;
