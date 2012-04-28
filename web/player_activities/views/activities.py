@@ -1,4 +1,5 @@
 from sijax import Sijax
+from stream.models import Action
 from PIL import Image
 
 from django.conf import settings
@@ -230,6 +231,16 @@ def activity(request, activity_id, game_header=True, template=None, **kwargs):
 
         if action in ['play', 'replay']:
             answer = None
+            activity_completed_verb = "activity_completed"
+
+            def add_to_stream():
+                # make sure we mark
+                Action.objects.create(
+                            actor=request.user,
+                            verb=activity_completed_verb,
+                            action_object=activity,
+                )
+
             if request.POST["form"] == "single_response":
                 choices = _get_mc_choices(activity)
                 form = make_single_form(choices)(request.POST)
@@ -321,13 +332,13 @@ def activity(request, activity_id, game_header=True, template=None, **kwargs):
                             myComment.message=form.cleaned_data.get('response', '')
                             myComment.save()
                     return log_activity_and_redirect(request, activity, "replayed")
-
                 elif action == 'play':
                     if activity.type.type in ['open_ended', 'empathy']:
                         comment_fun(answer, request, None, message=form.cleaned_data.get('response', ''))
                     else:
                         comment_fun(answer, request, comment_form)
                     PointsAssigner().assignAct(request.user, activity)
+                    add_to_stream()
                     return log_activity_and_redirect(request, activity, "completed")
 
         # all submissions on overview to be redone in ajax

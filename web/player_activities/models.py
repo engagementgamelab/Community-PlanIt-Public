@@ -1,5 +1,14 @@
+__all__ = ( 
+    'PlayerActivityType',
+    'PlayerActivity', 
+    'PlayerMapActivity', 
+    'PlayerEmpathyActivity', 
+    'MultiChoiceActivity', 
+)
+
 import datetime
 from stream import utils as stream_utils
+from stream.models import Action
 from nani.models import TranslatableModel, TranslatedFields
 
 from django.conf import settings
@@ -11,19 +20,14 @@ from django.db.models.signals import pre_delete, post_save
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from attachments.models import Attachment
-from comments.models import Comment
-from missions.models import Mission
-from reports.models import Activity
-from instances.models import Instance
+from web.attachments.models import Attachment
+from web.comments.models import Comment
+from web.missions.models import Mission
+from web.reports.models import Activity
+from web.instances.models import Instance
 
-__all__ = ( 
-    'PlayerActivityType',
-    'PlayerActivity', 
-    'PlayerMapActivity', 
-    'PlayerEmpathyActivity', 
-    'MultiChoiceActivity', 
-)
+import logging
+log = logging.getLogger(__name__)
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.creationUser.id) +'/'+ filename
@@ -70,17 +74,18 @@ class PlayerActivityBase(TranslatableModel):
 
     @property
     def completed_user_count(self):
-        if self.type.type == 'multi_response':
-            #users = AnswerMultiChoice.objects.filter(option__activity=self).valus_list('user').distinct()
-            #print users
-            #return len(users)
-            return 0
-        #else:
-        #    for answer_klass_name in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse', 'AnswerOpenEnded']:
-        #        related_name = answer_klass_name.replace('Answer', '').lower() + '_answers'
-        #        if hasattr(self, related_name):
-        #            if getattr(self, related_name).filter(answerUser=answerUser).count():
-        #                return True
+        # the count of users completing an activity
+        # comes from the activity stream
+        d = {
+            'empathy':'action_object_playerempathyactivity',
+            'map':'action_object_playermapactivity',
+        }
+        action_object = d.get(self.type.type, 'action_object_playeractivity')
+        kwargs={
+            'verb':"activity_completed", 
+            action_object:self,
+        }
+        return Action.objects.filter(**kwargs).count()
 
     def is_past(self):
         return self.mission.end_date < datetime.datetime.now()
