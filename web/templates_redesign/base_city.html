@@ -4,11 +4,12 @@
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/citypages.css"> 
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/quincy.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/comments.css"> 
 {% endblock %}
 
 {% block title %}{% if request.current_city %}{{ request.current_city.name }}{% else %}Welcome{% endif %}{% endblock %}
 
-{% block body_class %}{% if game_header %}private{% else %}public{% endif %}{% endblock %}
+{% block body_class %}{% if city_header %}public{% else %}private{% endif %}{% endblock %}
 
 {% block top_nav %}
 <div id="top-nav">
@@ -33,8 +34,21 @@
     {# Current Game: {{ request.current_game }}<br /> #}
     {# Current Game Slug: {{ request.session.current_game_slug }} #}
     
+        
+    {% if city_header %}
+        {% comment %} CITY PAGE HEADER {% endcomment %}
+        <div id="header">
+            <div id="logo-container">
+                <a href="http://{{ top_level_domain }}"><img src="{{ STATIC_URL }}img/logo.png" width="150" height="100" /></a>
+            </div>
+            <div id="header-extras-container">
+                <div id="header-extras-cityname">{{ request.current_city.name }}</div>
+                <div id="header-extras-citydescription">{{ request.current_city.description }}</div>
+                {% if request.current_city.image %}<div id="header-extras-cityimage"><a href="{% url home %}"><img src="{{ MEDIA_URL }}{{ request.current_city.image }}" width="230" height="124" /></a></div>{% endif %}
+            </div>
+        </div>
+    {% else %}    
         {% comment %} GAME PAGE HEADER (WITH MISSION NAVIGATION) {% endcomment %}
-        {% if game_header %}
         <div id="header">
             <div id="logo-container">
                 <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo.png" width="80" height="51"/></a>
@@ -60,28 +74,34 @@
 
                         {% if forloop.last %}<div class="nav-missions-end-arrow"></div>{% endif %}
                     </li>
-                     <li> </li> 
                     {% endfor %}
                 </ul>
                 <div id="mission-progress-container">
                     <div id="mission-progress-total">
                         <div id="mission-progress-marker"></div>
-                        <div id="mission-progress-individual">250</div>
+                            <div id="mission-progress-individual" style="width:20%;"> {# TODO: width decides the progress #}
+                                {{ request.user.get_profile.totalPoints }}
+                                <div id="mission-progress-individual-marker"></div>
+                            </div>
                     </div>
                 </div>
             </div>
-            <div id="mission-map"></div>
-        </div>
-    {% else %}    
-        {% comment %} CITY PAGE HEADER {% endcomment %}
-        <div id="header">
-            <div id="logo-container">
-                <a href="http://{{ top_level_domain }}"><img src="{{ STATIC_URL }}img/logo.png" width="150" height="100" /></a>
-            </div>
-            <div id="header-extras-container">
-                <div id="header-extras-cityname">{{ request.current_city.name }}</div>
-                <div id="header-extras-citydescription">{{ request.current_city.description }}</div>
-                {% if request.current_city.image %}<div id="header-extras-cityimage"><a href="{% url home %}"><img src="{{ MEDIA_URL }}{{ request.current_city.image }}" width="230" height="124" /></a></div>{% endif %}
+            {# MAP THE FUTURE #}
+            <div id="mission-mapthefuture">
+                <a href="{% url values:index %}">Map the Future</a>
+                <div id="mission-mapthefuture-flags-container">
+                    {# TODO for token in tokens #}
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                    <div class="mapthefuture-flag"></div>
+                </div>
             </div>
         </div>
     {% endif %}
@@ -91,7 +111,7 @@
     <hr class="rainbow" />            
     <br />
     
-    {% if game_header %}
+    {% if city_header %}
     <div id="header-instance">
         <h1>
         {% if activity %}

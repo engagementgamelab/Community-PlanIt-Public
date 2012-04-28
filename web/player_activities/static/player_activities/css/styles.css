@@ -223,18 +223,3 @@
                 margin: 20px auto
             }
     
-    /* Attachments for duplicate.html */
-    #player-activities .comment-response-attachments {
-        border: 1px solid black;
-        float: left;
-    }
-    
-        #player-activities .comment-response-attachments .input,
-        #player-activities .comment-response-attachments .controls {
-            display: inline-block;
-        }
-        
-        #player-activities .comment-response-attachments input {
-            border: 1px solid gray;
-            width: 200px;
-        }

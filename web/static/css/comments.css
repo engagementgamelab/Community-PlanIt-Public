@@ -1,19 +1,8 @@
 /* Styles for Comments! */
 
-.comments {
-    width: 960px;
-    margin-left: -20px;
-}
-
-.thread {
-    float: left;
-    width: 280px;
-    margin: 0px 20px;
-}
-
 .comment {
     position: relative;
-    width: 250px;
+    width: 290px;
     padding: 15px 15px 5px 15px;
     margin-bottom: 30px;
     background-color: #f6f6f6;
@@ -131,8 +120,30 @@
     
 /* Nested Comments */
 .comment.nested  {
-    width: 230px; /* this and margin-left should add up to .comment */
+    width: 270px; /* this and margin-left should add up to .comment */
     margin-left: 20px;
     margin-top: -25px;
 }
+
+
+/* Attachments for duplicate.html */
+.attachments-instructions {
+    color: #999;
+}
+
+#player-activities .comment-response-attachments {
+    float: left;
+}
+
+    #player-activities .comment-response-attachments .input,
+    #player-activities .comment-response-attachments .controls {
+        display: inline-block;
+    }
+    
+    #player-activities .comment-response-attachments input[type='text'] {
+        border: 1px solid gray;
+        width: 200px;
+        padding: 8px 5px;
+    }
+
 

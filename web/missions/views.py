@@ -16,7 +16,7 @@ from missions.models import *
 from player_activities.models import *
 
 @login_required
-def fetch(request, slug, game_header=True, template='missions/base.html'):
+def fetch(request, slug, template='missions/base.html'):
     # expecting the current game to be 
     # set by middleware
     if hasattr(request, 'current_game'):
@@ -44,7 +44,6 @@ def fetch(request, slug, game_header=True, template='missions/base.html'):
             next_mission = None
 
     context = dict(
-        game_header = game_header,
         mission = mission,
         activities = activities,
         completed = completed,

@@ -12,7 +12,7 @@ from web.accounts.views import dashboard
 from web.accounts.forms import AccountAuthenticationForm
 from web.instances.models import Instance, City
 
-def index(request, template='index.html'):
+def index(request, template='index.html', city_header=True):
 
     domain = request.current_site.domain
     print domain
@@ -33,6 +33,9 @@ def index(request, template='index.html'):
         current_city = current_city,
         cities = City.objects.all(),
     )
+    context.update({
+        'city_header': city_header
+    })
     return render(request, template, context)
 
 class BringCpiForm(forms.Form):

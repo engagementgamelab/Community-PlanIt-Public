@@ -180,7 +180,7 @@ def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
 
 @login_required
-def activity(request, activity_id, game_header=True, template=None, **kwargs):
+def activity(request, activity_id, template=None, **kwargs):
     model = kwargs.pop('model')
     action = kwargs.pop('action')
     activity = _get_activity(activity_id, get_model(*(model.split('.'))))
@@ -373,7 +373,7 @@ def activity(request, activity_id, game_header=True, template=None, **kwargs):
         """
 
     user = None
-    if activity.mission.is_active() and not request.user.is_superuser:
+    if activity.mission.is_active and not request.user.is_superuser:
         user = request.user
 
     ctx = _build_context(request, action, activity, user=user )
@@ -384,9 +384,6 @@ def activity(request, activity_id, game_header=True, template=None, **kwargs):
         template = template + "_response.html"
     elif action in ['replay', 'overview']:
         template= "".join([template, "_", action, ".html"])
-    context.update({
-            'game_header': game_header
-    })
     return render_to_response(template, RequestContext(request, context))
 
 
