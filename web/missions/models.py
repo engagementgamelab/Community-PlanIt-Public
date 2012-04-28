@@ -1,9 +1,12 @@
 import datetime
+from operator import attrgetter
 from dateutil.relativedelta import relativedelta
 from stream import utils as stream_utils
+from stream.models import Action
 from django.template.defaultfilters import slugify
 from django.db import models
 from django.contrib import admin
+from django.db.models import Q
 
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
@@ -85,6 +88,27 @@ class Mission(TranslatableModel):
     @property
     def is_future(self):
         return datetime.datetime.now() <= self.start_date
+
+    def get_completed_activities(self, user=None):
+        """ return a QuerySet with all completed activities """
+        for_mission = self.get_activities()
+        qs = Action.objects.filter(
+                verb = 'activity_completed'
+        ).filter(
+                Q(action_object_playeractivity__in=for_mission) | 
+                Q(action_object_playermapactivity__in=for_mission) | 
+                Q(action_object_playerempathyactivity__in=for_mission)
+        )
+        if user:
+            qs = qs.filter(actor_user=user)
+        return qs
+
+    def get_activities(self):
+        """ return a list of all available activities """
+        activities = []
+        for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
+            activities.extend(getattr(self, 'player_activities_%s_related' % model_klass.lower()).all())
+        return sorted(activities, key=attrgetter('name'))
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]

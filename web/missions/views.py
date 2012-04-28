@@ -1,5 +1,6 @@
 import datetime
-from operator import attrgetter
+
+from stream.models import Action
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
@@ -25,16 +26,12 @@ def fetch(request, slug, template='missions/base.html'):
         raise Http404("could not locate a valid game")
 
     mission = get_object_or_404(Mission, slug=slug, instance=current_instance)
+    activities = mission.get_activities()
 
-    activities = []
-    for model_klass in [PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity]:
-        activities.extend(list(model_klass.objects.filter(mission=mission)))
-    activities = sorted(activities, key=attrgetter('name'))
-
-    completed = []
-    for activity in activities:
-        if activity.is_completed(request.user):
-            completed.append(activity)
+    #completed = []
+    #for activity in activities:
+    #    if activity.is_completed(request.user):
+    #        completed.append(activity)
 
     next_mission = None
     my_missions = Mission.objects.filter(instance=current_instance).exclude(slug=slug).order_by('-start_date')
@@ -43,12 +40,13 @@ def fetch(request, slug, template='missions/base.html'):
         if next_mission.is_expired:
             next_mission = None
 
+    completed = mission.get_completed_activities(request.user)
     context = dict(
         mission = mission,
         activities = activities,
         completed = completed,
         comment_form = CommentForm(),
-        mission_completed = len(activities) == len(completed),
+        mission_completed = len(activities) == completed.count(),
         next_mission = next_mission,
     )
     return render(request, template, context)
