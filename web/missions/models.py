@@ -68,8 +68,13 @@ class Mission(TranslatableModel):
 
     @property
     def ends_in_days(self):
-        delta =  self.end_date - self.start_date
-        return str(delta.days)
+        delta =  self.end_date - datetime.datetime.now()
+        return delta.days
+        
+    @property
+    def starts_in_days(self):
+        delta = self.start_date - datetime.datetime.now()
+        return delta.days
 
     def is_active(self):
         now = datetime.datetime.now()
