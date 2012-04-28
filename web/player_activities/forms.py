@@ -6,9 +6,9 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from gmapsfield.fields import *
 
+from .models import PlayerActivity, PlayerActivityType, MultiChoiceActivity
 from instances.models import Instance
 from missions.models import Mission
-from player_activities.models import PlayerActivity, PlayerActivityType, MultiChoiceActivity
 from answers.models import *
 
 
@@ -66,10 +66,16 @@ class SelectNewActivityForm(forms.Form):
     #)
     name = forms.CharField(required=True, max_length=255, label=_("Name"))
     question = forms.CharField(required=True, max_length=1000, label=_("Question"))
-    type = forms.ChoiceField(
-                choices=PlayerActivityType.objects.filter(
-                        type__in=['open_ended', 'multi_response', 'map']
-                        ).values_list('type', 'displayType')
+    #type = forms.ChoiceField(
+    #            choices=PlayerActivityType.objects.filter(
+    #                    type__in=['open_ended', 'multi_response', 'map']
+    #                    ).values_list('type', 'displayType')
+    #)
+    type = forms.ModelChoiceField(required=True,
+                                label = _("Select Type of Challenge"),
+                                queryset = PlayerActivityType.objects.filter(
+                                        type__in=['open_ended', 'multi_response', 'map']
+                                        )  #.values_list('type', 'displayType')
     )
 
 class MultiResponseForm(forms.Form):

@@ -38,44 +38,48 @@
         <div class="tabbutton">
             <a href="">- Ask a Question</a>
         </div>
+        {% comment %}
         {% if activities and mission.is_active %}
             {% trans "You have completed" %} {{ completed|length }}/{{ activities|length }} {% trans "activities" %}:
         {% else %}
             {% trans "Activities" %}:
         {% endif %}
-        
-        {% for activity in activities %}
-            {% if mission.is_expired %}
-                <div class="activity {{activity.type.type}}">
-                    <a href="{{ activity.get_overview_url }}">
-                        {{ activity|trans_fallback:"name" }}
-                        {{ activity.getPoints }}
-                    </a>
-                </div>
+        {% endcomment %}
+        {% block new_activity_forms %}
+        <form action="." method="post">{% csrf_token %}
+            {{ wizard.management_form }}
+
+            {% if wizard.form.forms %}
+                {{ wizard.form.management_form }}
+                {% for form in wizard.form.forms %}
+                    {{ form.as_p }}
+                {% endfor %}
             {% else %}
-                {% if mission.is_future %}
-                    {{ activity|trans_fallback:"name" }}
-                {% else %}
-                    {% if activity in completed %}
-                    <div class="activity {{activity.type.type}}">
-                        <a href="{{ activity.get_activity_url }}">
-                            {{ activity|trans_fallback:"name" }}
-                            {{ activity.getPoints }} (completed)
-                        </a>
-                    </div>
-                    {% else %}
-                    <div class="activity {{activity.type.type}}">
-                        <a href="{{ activity.get_activity_url }}">
-                            {{ activity|trans_fallback:"name" }}
-                            {{ activity.getPoints }}
-                        </a>
-                    </div>
-                    {% endif %}
-                {% endif %}
+                {{ wizard.form.as_p }}
             {% endif %}
-        {% empty %}
-            {% trans "There are currently no activities for this mission. Check back later." %}
-        {% endfor %}
+            <input type="submit">
+
+            {% comment %}
+            {{ form.errors }}
+            <div class="fieldWrapper">
+                {{ form.name.errors }}
+                <label for="id_name">Name:</label> {{ form.name }}
+            </div>
+            <div class="fieldWrapper">
+                {{ form.question.errors }}
+                <label for="id_question">Question:</label> {{ form.question }}
+            </div>
+            <div class="fieldWrapper">
+                <label for="id_types">Type</label> {{ form.type }}
+            </div>
+            <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
+            {{ previous_fields|safe }}
+            <input type="submit">
+            {% endcomment %}
+        </form>
+
+        {% endblock new_activity_forms %}
+        
     </div>
 
 </div>

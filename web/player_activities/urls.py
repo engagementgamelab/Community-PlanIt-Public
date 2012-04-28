@@ -1,12 +1,12 @@
 from django.conf.urls.defaults import *
-from player_activities.forms import SelectNewActivityForm
-from player_activities.views.activities import NewActivityWizard
+from .forms import SelectNewActivityForm
+from .views.activities import NewActivityWizard
 
 urlpatterns = patterns('player_activities.views',
     # Need to import all URLs from activities
     #url(r"^$", "index", name="all"),
     url(r"^(?P<mission_slug>[-\w]+)/new/$",
-        NewActivityWizard([SelectNewActivityForm,]),
+        NewActivityWizard.as_view([SelectNewActivityForm,]),
         name = "new"),
     url(r"^(?P<activity_id>\d+)/$",
             "activities.activity",

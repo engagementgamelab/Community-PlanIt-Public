@@ -12,7 +12,7 @@ from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
-from django.contrib.formtools.wizard import FormWizard
+from django.contrib.formtools.wizard.views import SessionWizardView
 
 from answers.models import *
 from missions.models import Mission
@@ -390,49 +390,53 @@ def activity(request, activity_id, game_header=True, template=None, **kwargs):
     return render_to_response(template, RequestContext(request, context))
 
 
-class NewActivityWizard(FormWizard):
+class NewActivityWizard(SessionWizardView):
 
-    def parse_params(self, request, *args, **kwargs):
-        self.mission_slug = kwargs.get('mission_slug', '')
+    #def parse_params(self, request, *args, **kwargs):
+    #    self.mission_slug = kwargs.get('mission_slug', '')
 
-    def process_step(self, request, form, step):
-        if form.cleaned_data.get('type') == 'multi_response':
-            self.form_list = [
-                SelectNewActivityForm,
-                MultiResponseForm,
-            ]
-        elif form.cleaned_data.get('type') == 'map':
-            self.form_list = [
-                SelectNewActivityForm,
-                MapForm,
-            ]
-            mission = Mission.objects.get(slug=self.mission_slug)
-            init_coords = []
-            map = mission.instance.location
-            markers = simplejson.loads("%s" % map)["markers"]
-            x = 0
-            for coor in markers if markers != None else []:
-                coor = coor["coordinates"]
-                init_coords.append( [x, coor[0], coor[1]] )
-                x = x + 1
-            self.extra_context.update(dict(
-                init_coords = init_coords,
-                map = map,
-            ))
-            #import ipdb;ipdb.set_trace()
-            
-    def get_template(self, step):
-        log.debug("new activity wizard step %s" % step)
-        #import ipdb;ipdb.set_trace()
-        if len(self.form_list) > 1:
-            if self.form_list[1] == MultiResponseForm:
-                print 'multi map'
-                return 'player_activities/new_activity_multi.html'
-            elif self.form_list[1] == MapForm:
-                print 'map'
-                return 'player_activities/new_activity_map.html'
-        print 'open ended'
-        return 'player_activities/new_activity_base.html'
+    def process_step(self, form):
+        cd =  form.cleaned_data
+        print cd
+        print self.form_list
+        d = {
+                'multi_response': MultiResponseForm,
+                'map' : MapForm,
+        }
+        next_form = d.get(cd.get('type').type)
+        if next_form:
+            self.form_list.update({'1': next_form})
+        return self.get_form_step_data(form)
+
+    def get_context_data(self, form, **kwargs):
+        context = super(NewActivityWizard, self).get_context_data(form, **kwargs)
+        context.update({
+                'game_header' : True,
+        })
+        form_list = self.get_form_list()
+        if len(form_list.keys()) > 1:
+            if form_list.get('1') == MultiResponseForm:
+                self.template_name = 'player_activities/new_activity_multi.html'
+            elif form_list.get('1') == MapForm:
+                self.template_name =  'player_activities/new_activity_map.html'
+
+                mission = Mission.objects.get(slug=self.mission_slug)
+                init_coords = []
+                map = mission.instance.location
+                markers = simplejson.loads("%s" % map)["markers"]
+                x = 0
+                for coor in markers if markers != None else []:
+                    coor = coor["coordinates"]
+                    init_coords.append( [x, coor[0], coor[1]] )
+                    x = x + 1
+                self.context.update(dict(
+                        init_coords = init_coords,
+                        map = map,
+                ))
+        else:
+            self.template_name =  'player_activities/new_activity_base.html'
+
+        return context
 
     def done(self, request, form_list):
 

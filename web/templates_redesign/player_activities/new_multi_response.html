@@ -1,0 +1,58 @@
+{% extends "player_activities/new_activity_base.html" %}
+{% block new_activity_forms %}
+
+<p>Input possible answers to your multi response question<p/>
+
+{% if form.errors or form.non_field_errors or wizard_error %}
+<div id="form_errors" class="error">
+    {% trans "Please correct the errors below." %}
+    {{form.non_field_errors.as_ul}}
+    {{wizard_error}}
+</div>
+{% endif %}
+        
+{{ wizard.management_form }}
+{% if wizard.form.forms %}
+    {{ wizard.form.management_form }}
+    {% for form in wizard.form.forms %}
+        {{ form }}
+    {% endfor %}
+{% else %}
+ {% with wizard.form as form %}
+
+<form action="." method="post">{% csrf_token %}
+
+    {{ form.errors }}
+
+    <div class="fieldWrapper">
+        <label for="id_types">{{ form.answ1.label}}</label>
+            {{ form.answ1 }}
+    </div>
+
+    <div class="fieldWrapper">
+        <label for="id_types">{{ form.answ2.label}}</label>
+            {{ form.answ2 }}
+    </div>
+
+    <div class="fieldWrapper">
+        <label for="id_types">{{ form.answ3.label}}</label>
+            {{ form.answ3 }}
+    </div>
+
+    <div class="fieldWrapper">
+        <label for="id_types">{{ form.answ4.label}}</label>
+            {{ form.answ4 }}
+    </div>
+
+    <div class="fieldWrapper">
+        <label for="id_types">{{ form.answ5.label}}</label>
+            {{ form.answ5}}
+    </div>
+
+    <input type="submit" name="Submit">
+</form>
+  {% endwith %}
+        {% endif %}
+
+
+{% endblock new_activity_forms %}
