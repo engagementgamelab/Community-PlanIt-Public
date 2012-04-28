@@ -34,7 +34,6 @@ def fetch(request, slug, game_header=True, template='missions/base.html'):
     completed = []
     for activity in activities:
         if activity.is_completed(request.user):
-            count = activity.completed_user_count
             completed.append(activity)
 
     next_mission = None

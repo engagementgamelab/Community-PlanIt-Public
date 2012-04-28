@@ -68,15 +68,13 @@ class Mission(TranslatableModel):
 
     @property
     def ends_in_days(self):
-    	delta =  self.end_date - self.start_date
-    	return str(delta.days)
+        delta =  self.end_date - self.start_date
+        return str(delta.days)
 
-    @property
     def is_active(self):
         now = datetime.datetime.now()
         return self.start_date <= now and now <= self.end_date
 
-    @property
     def is_expired(self):
         return datetime.datetime.now() > self.end_date
 
