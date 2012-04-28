@@ -18,7 +18,11 @@
         
         
         {% if user.is_authenticated %}
-            <li><a href="{% url home %}">My Game</a></li>
+            {% if city_header %}
+                <li><a href="{% url home %}">My Game</a></li>
+            {% else %}
+                <li><a href="{% url missions:mission request.current_game.missions.active.0.slug %}">My Game</a></li>
+            {% endif %}    
             <li><a href="{% url accounts:logout %}">Sign Out</a></li>
         {% else %}
             <li><a href="{% url accounts:login %}">Sign In</a></li>
