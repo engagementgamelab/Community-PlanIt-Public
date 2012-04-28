@@ -130,6 +130,8 @@
 
 {% block game_content %}
 <div class="column-container">
+    <a href="{% url missions:mission request.current_game.missions.active.0.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
+    
     <h1>Map the Future!</h1>
     <p class="instructions">Plant your flags in the star next to the things you'd like the community to prioritize. Click on the star next to each  priority to learn more about it, discover who planted flags there, and have a conversation. Want more flags? You get  one each time you complete a mission!</p>
 </div>
