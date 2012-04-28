@@ -416,11 +416,11 @@ class NewActivityWizard(SessionWizardView):
         form_list = self.get_form_list()
         if len(form_list.keys()) > 1:
             if form_list.get('1') == MultiResponseForm:
-                self.template_name = 'player_activities/new_activity_multi.html'
+                self.template_name = 'player_activities/new_multi_response.html'
             elif form_list.get('1') == MapForm:
-                self.template_name =  'player_activities/new_activity_map.html'
+                self.template_name =  'player_activities/new_map.html'
 
-                mission = Mission.objects.get(slug=self.mission_slug)
+                mission = Mission.objects.get(slug="growth-versus-proficiency")
                 init_coords = []
                 map = mission.instance.location
                 markers = simplejson.loads("%s" % map)["markers"]
@@ -429,7 +429,7 @@ class NewActivityWizard(SessionWizardView):
                     coor = coor["coordinates"]
                     init_coords.append( [x, coor[0], coor[1]] )
                     x = x + 1
-                self.context.update(dict(
+                context.update(dict(
                         init_coords = init_coords,
                         map = map,
                 ))
@@ -443,7 +443,7 @@ class NewActivityWizard(SessionWizardView):
         form_one = form_list[0]
 
         type = PlayerActivityType.objects.get( type=form_one.cleaned_data.get('type'))
-        mission = Mission.objects.get(slug=self.mission_slug)
+        mission = Mission.objects.get(slug="growth-versus-proficiency")
         q = form_one.cleaned_data.get('question', '')
         create_kwargs =dict( 
                 mission=mission,
