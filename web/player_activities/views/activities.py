@@ -362,7 +362,7 @@ def activity(request, activity_id, game_header=True, template=None, **kwargs):
         """
 
     user = None
-    if activity.mission.is_active() and not request.user.is_superuser:
+    if activity.mission.is_active and not request.user.is_superuser:
         user = request.user
 
     ctx = _build_context(request, action, activity, user=user )
