@@ -244,17 +244,17 @@ PREFIX_DEFAULT_LOCALE = True
 #django-stream
 # see notes in web.reports.actions
 STREAM_VERBS = (
-    ('challenge_created', 'created a challenge'),
-    ('challenge_updated', 'updated a challenge'),
-    ('challenge_accepted', 'accepted a challenge'),
-    ('challenge_declined', 'declined a challenge'),
-    ('challenge_deleted', 'deleted a challenge'),
-    ('challenge_commented', 'commented on a challenge'),
-    ('challenge_completed', 'completed a challenge'),
+    #('challenge_created', 'created a challenge'),
+    #('challenge_updated', 'updated a challenge'),
+    #('challenge_accepted', 'accepted a challenge'),
+    #('challenge_declined', 'declined a challenge'),
+    #('challenge_deleted', 'deleted a challenge'),
+    #('challenge_commented', 'commented on a challenge'),
+    #('challenge_completed', 'completed a challenge'),
 
     ('crowd_created', 'create a crowd'),
 
-    ('activity_official_response_created', 'created a response'),
+    #('activity_official_response_created', 'created a response'),
 
     ('activity_replayed', 'replayed activity'),
     ('activity_completed', 'completed activity'),
