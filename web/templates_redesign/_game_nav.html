@@ -12,21 +12,18 @@
                 {{ request.user.get_profile.screen_name }}
             </a>
         </li>
-        {% if in_game %}
-        <li><a href="{% url attachments:index %}{{ request.session.current_game_slug }}" id="sidebar-nav-expert">Become an Expert</a></li>
-        {% else %}
-        <li><a href="{% url attachments:index %}" id="sidebar-nav-expert">Become an Expert</a></li>
-        {% endif %}
+        
+            <li><a href="{% url attachments:index %}{% if city_header %}{{ request.session.current_game_slug }}{% endif %}" id="sidebar-nav-expert">Become an Expert</a></li>
         
         <li><a href="{% url crowds:index %}" id="sidebar-nav-crowds">Get Together!</a></li>
         
-        {% if in_game %}
+        {% if not city_header %}
             <li><a href="{% url instances:stream %}" id="sidebar-nav-news">What's Happening</a></li>
         {% endif %}
         
         <li><a href="{% url accounts:all %}" id="sidebar-nav-players">Find Players</a></li>
         
-        {% if in_game %}
+        {% if not city_header %}
             <li><a href="{% url instances:leaderboard %}" id="sidebar-nav-standings">Check the Standings</a></li>
         {% endif %}
     </ul>
