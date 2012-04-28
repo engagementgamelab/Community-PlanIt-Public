@@ -3,8 +3,10 @@
 extends=Community-PlanIt/config/buildout_base.cfg
 
 parts += uwsgi
-         nginx-config
+         nginx-config-local
+         nginx-config-local-install
          supervisor-config
+         supervisor-config-install
          resetdb
 
 project_name=Community-PlanIt
@@ -27,9 +29,16 @@ eggs +=
 
 
 [server]
-name=pk.communityplanit.org
-user=cpi
+host=pk.communityplanit.org
+venv_name=cpi-pk
+user=www-data
 uwsgi-socket-port=7010
+db_name = cpi
+db_user = web
+db_host = 127.0.0.1
+project_dir = ${buildout:venv_dir}/${server:venv_name}/${buildout:proj}
+supervisor-conf-path = /etc/supervisor/conf.d
+nginx-conf-path = /etc/nginx
 
 [uwsgi]
 recipe=eqb.recipe.uwsgi
@@ -37,7 +46,7 @@ uid=${server:user}
 home=${buildout:directory}
 pythonpath=${buildout:directory}/${buildout:project_name}/web
 wsgi-file=${buildout:directory}/bin/django.wsgi
-pidfile=/var/run/uwsgi/${server:name}.pid
+pidfile=/var/run/uwsgi/${server:host}.pid
 socket=127.0.0.1:${server:uwsgi-socket-port}
 single-interpreter=true
 master=True
@@ -45,21 +54,74 @@ eggs=Django
 versions=versions
 import=uwsgiutils.tasks
 
-[supervisor-config]
+[nginx-config-local]
 recipe = collective.recipe.template
-input = ${buildout:project_name}/config/templates/supervisor.in
-output = ${buildout:parts-directory}/etc/supervisor.conf
+output = ${buildout:parts-directory}/etc/${server:host}.nginx.conf
+inline =
+    server {
+        listen   80;
+        server_name *.communityplanit.org;
 
-[nginx-config]
+        access_log /var/log/nginx/${server:host}.access.log;
+        error_log /var/log/nginx/${server:host}.error.log;
+
+        location / {
+            #proxy_pass http://127.0.0.1:9099/;
+            #include /etc/nginx/proxy.conf;
+            include uwsgi_params;
+            uwsgi_pass 127.0.0.1:${server:uwsgi-socket-port};
+        }
+
+        location /assets {
+            alias "${server:project_dir}/assets";
+        }
+        location /static {
+            alias "${server:project_dir}/web/static_collected";
+        }
+
+    }
+
+[nginx-config-local-install]
 recipe = collective.recipe.template
-input = ${buildout:project_name}/config/templates/nginx.in
-output = ${buildout:parts-directory}/etc/nginx.conf
+output = ${buildout:bin-directory}/install_local_nginx
+mode = 755
+inline =
+    sudo rm ${server:nginx-conf-path}/sites-available/${server:host}.nginx.conf
+    sudo rm ${server:nginx-conf-path}/sites-enabled/${server:host}.nginx.conf
+    sudo ln -s ${buildout:parts-directory}/etc/${server:host}.nginx.conf ${server:nginx-conf-path}/sites-available/${server:host}.nginx.conf
+    sudo ln -s ${server:nginx-conf-path}/sites-available/${server:host}.nginx.conf  ${server:nginx-conf-path}/sites-enabled/${server:host}.nginx.conf
+    sudo service nginx restart
 
 [resetdb]
 recipe = collective.recipe.template
-db_name = cpi
-db_user = cpi
-db_host = 127.0.0.1
-input = ${buildout:project_name}/config/templates/resetdb.in
 output = ${buildout:bin-directory}/resetdb
+mode = 755
+inline =
+    sudo su postgres -c "dropdb ${server:db_name}"
+    sudo su postgres -c "createdb -O ${server:db_user} -h ${server:db_host} -D pg_default -T template_postgis -E UTF8 -l en_US.UTF-8 ${server:db_name}"
+    sudo su postgres -c "psql -U ${server:db_user} -h ${server:db_host} ${server:db_name} < $VIRTUAL_ENV/${server:db_name}.latest.sql"
+
+[supervisor-config]
+recipe = collective.recipe.template
+output = ${buildout:parts-directory}/etc/${server:host}.supervisor.conf
+inline = 
+    [program:${buildout:project_name}]
+    user = root
+    command=${buildout:bin-directory}/uwsgi --xmlconfig=${buildout:parts-directory}/uwsgi/uwsgi.xml
+    autostart=true
+    autorestart=true
+    directory=${buildout:directory}
+    stderr_logfile = ${buildout:directory}/log/uwsgi.err.log
+    stdout_logfile = ${buildout:directory}/log/uwsgi.out.log
+    stopsignal=INT
+
+[supervisor-config-install]
+recipe = collective.recipe.template
+output = ${buildout:bin-directory}/install_supervisor
+mode = 755
+inline =
+    sudo rm ${server:supervisor-conf-path}/${server:host}.supervisor.conf
+    sudo ln -s ${buildout:parts-directory}/etc/${server:host}.supervisor.conf ${server:supervisor-conf-path}/${server:host}.supervisor.conf
+    sudo service supervisor stop
+    sudo service supervisor start
 
