@@ -1,3 +1,7 @@
+__all__ = (
+        'Answer', 'AnswerSingleResponse', 'AnswerOpenEnded', 'AnswerMap', 'AnswerEmpathy', 'AnswerMultiChoice'
+)
+
 import datetime
 
 from django.db import models
@@ -10,14 +14,9 @@ from django.contrib.contenttypes import generic
 
 from gmapsfield.fields import GoogleMapsField
 
-from comments.models import Comment
-from missions.models import Mission
-from player_activities.models import (PlayerActivity, MultiChoiceActivity, 
-        PlayerEmpathyActivity, PlayerMapActivity)
-
-__all__ = (
-        'Answer', 'AnswerSingleResponse', 'AnswerOpenEnded', 'AnswerMap', 'AnswerEmpathy', 'AnswerMultiChoice'
-)
+from web.comments.models import Comment
+from web.missions.models import Mission
+from web.player_activities.models import *
 
 class Answer(models.Model):
     answerUser = models.ForeignKey(User, editable=False, related_name='answers')

@@ -16,7 +16,7 @@ from django.contrib import admin
 #from games.mapit.models import *
 #admin.site.register(Mapit, MapitAdmin)
 
-from answers.models import *
+from web.answers.models import *
 admin.site.register(Answer)
 admin.site.register(AnswerEmpathy)
 admin.site.register(AnswerSingleResponse)
