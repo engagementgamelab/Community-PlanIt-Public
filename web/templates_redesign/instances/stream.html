@@ -2,44 +2,43 @@
 {% load i18n %}
 {% load i18n cpi_tags %}
 
-{% block title %}{% trans "Find Players" %}{% endblock %}
+{% block title %}{% trans "What's Happening" %}{% endblock %}
 
 {% block body_id %}stream{% endblock %}
 
 {% block body_class %}{{ block.super }} section-stream{% endblock %}
 
 {% block game_content %}
-<div>
-    <div class="column-container">
-        <a href="{% url missions:mission request.current_game.missions.active.0.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
-        
-        <h1>What's Happening</h1>
-        
-        <div id="stream-filters">
-            <label>Filter by:</label>
-            <select id="stream-filters-stake">
-                {# TODO: for stakes in stakes_for_this_instance #}
-                <option>Stake</option>
-            </select>
-            <select id="stream-filters-affiliation">
-                {# TODO: for affilitation in affiliations_for_this_instance #}
-                <option>Affiliation</option>
-            </select>
-            <input id="stream-filters-apply" class="btn-blue" type="submit" value="Apply" />
-         </div>
+<div class="column-container">
+    <a href="{% url missions:mission request.current_game.missions.active.0.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
+    
+    <h1>What's Happening</h1>
+    
+    <div id="stream-filters">
+        <label>Filter by:</label>
+        <select id="stream-filters-stake">
+            {# TODO: for stakes in stakes_for_this_instance #}
+            <option>Stake</option>
+        </select>
+        <select id="stream-filters-affiliation">
+            {# TODO: for affilitation in affiliations_for_this_instance #}
+            <option>Affiliation</option>
+        </select>
+        <input id="stream-filters-apply" class="btn-blue" type="submit" value="Apply" />
+     </div>
 
-        {% regroup stream_for_game by datetime|date:"Y-m-d" as stream_by_day_list %}
-        {% for day in stream_by_day_list %}
-        <h2>{{ day.grouper }}</h2>
-        {% for action in day.list %}
-        <div class="stream-container">
-            <div class="stream-event">
-                <div class="stream-event-time">{{ action.datetime|date:"h:i:A" }}</div>
-                <div class="stream-event-action"><a href="{% url accounts:player_profile action.actor.pk %}">{{ action.actor.get_profile.screen_name }}</a> {{ action.description }} <a href="{{ action.action_object.get_absolute_url }}">{{ action.action_object }}</a></div>
-            </div>
-        {% endfor %}
+    {% regroup stream_for_game by datetime|date:"Y-m-d" as stream_by_day_list %}
+    {% for day in stream_by_day_list %}
+    <h2>{{ day.grouper }}</h2>
+    {% for action in day.list %}
+    <div class="stream-container">
+        <div class="stream-event">
+            <div class="stream-event-time">{{ action.datetime|date:"h:i:A" }}</div>
+            <div class="stream-event-action"><a href="{% url accounts:player_profile action.actor.pk %}">{{ action.actor.get_profile.screen_name }}</a> {{ action.description }} <a href="{{ action.action_object.get_absolute_url }}">{{ action.action_object }}</a></div>
         </div>
-        {% endfor %}
+    {% endfor %}
     </div>
+    {% endfor %}
 </div>
+
 {% endblock %}
