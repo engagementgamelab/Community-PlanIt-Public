@@ -357,6 +357,12 @@ a {
         color: #2d3542;
     }
     
+        #mission-mapthefuture a:hover,
+        .section-mapthefuture #mission-mapthefuture a {
+            background: #00A3FF;
+            color: #fff;
+        }
+    
     #mission-mapthefuture-flags-container {
         position: absolute;
         bottom: 5px;
@@ -739,7 +745,8 @@ p.instructions {
 }
 
     .btn-blue:hover {
-        background: #007dff;
+        background: #f7ff59;
+        color: #2D3542;
     }
 
 /* Yellow Buttons...  */
@@ -759,6 +766,11 @@ p.instructions {
     border-radius: 5px;
 }
 
+
+    .btn-yellow:hover {
+        background: #00A3FF;
+        color: #fff;
+    }
 /* Arrow button are yellow... refer to design :-\ */
 .btn-arrow {
     display: inline-block;

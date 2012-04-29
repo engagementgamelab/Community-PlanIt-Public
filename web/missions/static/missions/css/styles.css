@@ -25,8 +25,9 @@
 }
 
     #mission-video-container .notice {
+        border: 1px dashed #ddd;
         text-align: center;
-        line-height: 208px; /* same as #mission-video-container height */
+        line-height: 206px; /* same as #mission-video-container height */
         color: #999
     }
 

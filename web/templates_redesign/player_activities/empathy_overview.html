@@ -15,7 +15,7 @@
     {% include "player_activities/official_responses.html" %}
 
     <div class="column-threequarter">
-        <h1>{{activity.name}}<span class="points">{{ activity.getPoints }}</span></h1>
+        <h1>{{activity.name}}<span class="points">{{ activity.get_points }}</span></h1>
         <div class="column-third">
             {% if activity.avatar %}<img class="left avatar" src="{{ MEDIA_URL }}/{{activity.avatar}}" width="128" height="128">{% endif %}
         </div>

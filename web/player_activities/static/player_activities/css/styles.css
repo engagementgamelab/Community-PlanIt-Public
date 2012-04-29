@@ -1,4 +1,5 @@
 /* Player Activities Specific Stylesheet */
+    
 
 #player-activities {
 }
@@ -8,12 +9,12 @@
         display: inline-block;
         position: relative;
         top: -8px;
-        width: 30px;
-        height: 30px;
+        width: 42px;
+        height: 42px;
         margin: 0px 10px;
         font-size: 0.4em;
         font-weight: bold;
-        line-height: 30px;
+        line-height: 42px;
         text-align: center;
         background: url('../img/bg-activities-points.png') no-repeat center center;
         color: #fff;
@@ -173,7 +174,8 @@
     
         #player-activities .activity-response-submit {
             float: right;
-            margin-right: -82px; /* adjust */
+            font-size: 1.4em;
+            margin-right: -100px; /* adjust */
         }
 
             #player-activities .activity-response-submit img {

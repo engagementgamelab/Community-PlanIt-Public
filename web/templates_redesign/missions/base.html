@@ -58,7 +58,7 @@
                         
                         ({# TODO new comments since user submitted #}{{ activity.completed_user_count }} new response{{ activity.completed_user_count|pluralize }})
                         {% endif %}
-                        <div class="mission-activity-points">{{ activity.getPoints }}</div>
+                        <div class="mission-activity-points">{{ activity.get_points }}</div>
                     </a>
                 </div>
             {% else %}
@@ -84,7 +84,7 @@
                     <div class="activity {{ activity.type.type }}">
                         <a href="{{ activity.get_activity_url }}">
                             {{ activity|trans_fallback:"name" }}  ({{ activity.completed_user_count }} new response{{ activity.completed_user_count|pluralize }})
-                            <div class="mission-activity-points">{{ activity.getPoints }}</div>
+                            <div class="mission-activity-points">{{ activity.get_points }}</div>
                         </a>
                     </div>
                     {% endif %}
