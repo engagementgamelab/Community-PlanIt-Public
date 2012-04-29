@@ -392,13 +392,19 @@ def profile(request, id, template_name="accounts/profile.html"):
     player = get_object_or_404(User, id=id)
     current_game = request.current_game
     stream = Action.objects.get_for_actor(player)
-    try:
-        profile_per_instance = UserProfilePerInstance.objects.get(
-                    user_profile = player.get_profile(),
-                    instance = request.current_game,
-        )
-    except UserProfilePerInstance.DoesNotExist:
-        raise Http404("user for this game is not registered")
+
+    mission = Mission.objects.active(instance=current_game)[0]
+
+    if request.user == player:
+        profile_per_instance = request.prof_per_instance
+    else:
+        try:
+            profile_per_instance = UserProfilePerInstance.objects.get(
+                        user_profile = player.get_profile(),
+                        instance = request.current_game,
+            )
+        except UserProfilePerInstance.DoesNotExist:
+            raise Http404("user for this game is not registered")
 
     my_games = Instance.objects.exclude(is_disabled=True).filter(
                     pk__in=
@@ -407,13 +413,17 @@ def profile(request, id, template_name="accounts/profile.html"):
                     ).values_list('instance__pk', flat=True)
     )
 
+    my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
+
     context = {
         'player': player,
         'profile_per_instance' : profile_per_instance,
         'stream': stream,
+        'mission': mission,
         'affiliations': profile_per_instance.affils.all(),
-        # 'stakes': profile_per_instance.stakes.all(),
         'my_games': my_games,
+        'my_points_for_mission': my_points_for_mission,
+        'progress_percentage': progress_percentage,
     }
     return render(request, template_name, context)
 
