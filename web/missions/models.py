@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 from operator import attrgetter
 from dateutil.relativedelta import relativedelta
 from stream import utils as stream_utils
@@ -103,7 +104,7 @@ class Mission(TranslatableModel):
 
     @property
     def total_points(self):
-        return sum([activity.get_points() for activity in self.get_activities()])
+        return Decimal(sum([activity.get_points() for activity in self.get_activities()]))
 
     #@property
     #def mission_flag_points(self):
