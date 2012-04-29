@@ -108,6 +108,17 @@
         }
         
     /* Comment Message */
+    /* their answers to the questions */
+    .comment .extra {
+        margin: 10px 0px;
+        color: #999;
+    }
+        
+        .comment .extra li {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+    
     .comment .comment-message {
         margin: 20px 0px;
     }

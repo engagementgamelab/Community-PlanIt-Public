@@ -22,12 +22,22 @@
             <div>{{ activity.question|safe }}</div>
             <br class="clearfix" />
         </div>
-
         
         
         {% if not activity.mission.is_expired %}
             {% if myAnswer %}
-                <div class="comment-response">{{ myAnswer.selected.value }}</div>
+                <div id="activity-response-summary">
+                {% if answers %}
+                    {% for choice in choices %}
+                        <div class="activity-response-summary-choice {% ifequal choice myAnswer.selected %}my-choice{% endifequal %}">
+                            {{ choice }}
+                            <div class="activity-response-summary-choice-percentage" style="width: {% cycle '5' '60' '20' '25' %}%;"> {# TODO percentage for the community responses to this answer#}
+                        </div>
+
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                </div>
 
                 {# Replay #}
                 <div class="activity-response-submit">
@@ -41,13 +51,7 @@
 
     {# RESPONSE SUMMARY #}
     {% if is_completed or activity.is_past %}
-        <h2>{% trans "Response Summary" %}</h2>
-        {# TODO #}
-        {% comment %}
-        I need:
-            totals and percentages for the community responses, for each answer
-            user's response
-        {% endcomment %}
+        
         {% if answers.count %}
             {# COMMENTS #}
             <h2>{% trans "Responses" %}</h2>

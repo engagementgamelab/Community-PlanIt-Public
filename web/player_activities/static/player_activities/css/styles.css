@@ -222,4 +222,34 @@
                 height: 240px;
                 margin: 20px auto
             }
+
+
+/* Response Summary Charts */
+#activity-response-summary {
+    margin: 20px 0px;
+}
+
+    .activity-response-summary-choice {
+        position: relative;
+        margin: 5px 0px;
+        padding: 15px 20px;
+        z-index: 0;
+    }
     
+    .activity-response-summary-choice.my-choice {
+        font-weight: bold;
+    }
+    
+        .activity-response-summary-choice-percentage {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 100%;
+            background: #E3F1EA;
+            z-index: -1;
+        }
+
+
+        .my-choice .activity-response-summary-choice-percentage {
+            background: #00e5b8;
+        }
