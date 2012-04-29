@@ -5,12 +5,31 @@
     width: 960px;
 }
 
-    .corner-stamp {
+    #corner-stamp {
         float: right;
-        width: 318px;
-        height: 335px;
-        border: 1px dotted #ddd;
+        width: 300px;
+        height: 325px;
+        margin: 0px 10px;
     }
+    
+        #corner-stamp > div {
+            float: left;
+            margin: 0px 10px;
+            text-align: right;
+        }
+        
+        #corner-stamp #comments-legend {
+            width: 35px;
+            height: 300px;
+            background: #f7ff5a; /* Old browsers */
+            background: -moz-linear-gradient(top,  #f7ff5a 0%, #f6f6f6 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7ff5a), color-stop(100%,#f6f6f6)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  #f7ff5a 0%,#f6f6f6 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  #f7ff5a 0%,#f6f6f6 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  #f7ff5a 0%,#f6f6f6 100%); /* IE10+ */
+            background: linear-gradient(top,  #f7ff5a 0%,#f6f6f6 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7ff5a', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-9 */
+        }
     
 .thread {
     float: left;

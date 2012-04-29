@@ -28,8 +28,8 @@ def fetch(request, slug, template='missions/base.html'):
     mission = get_object_or_404(Mission, slug=slug, instance=current_instance)
     activities = mission.get_activities()
 
-    #completed = []
-    #for activity in activities:
+    # completed = []
+    # for activity in activities:
     #    if activity.is_completed(request.user):
     #        completed.append(activity)
 

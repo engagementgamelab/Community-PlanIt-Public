@@ -49,7 +49,7 @@
             {% if all_answers %}                
                 <h2>{% trans "Responses" %}</h2>
                 <div class="comments embedded">
-                <div class="corner-stamp"></div>
+                {% include 'player_activities/_corner_stamp.html' %}
                 {% with instance=activity.mission.instance %}
                     {% for user, answers, comments in all_answers %}
                         {% if comments %}
@@ -73,52 +73,4 @@
     </div>
 </div>
 {% endblock %}
-
-{# {% block body %}    #}
-{# <script type="text/javascript"> #}
-{#     $(function () { #}
-{#         try { #}
-{#          #}
-{#         var answerData = new Array(0); #}
-{#         {% for choice in choices %} #}
-{#             answerData.push({label: "{{choice.value}}", data: {{choice.multichoice_answers.count}} }); #}
-{#         {% empty %} #}
-{#             answerData.push({label: "No answers yet.", data: 1}); #}
-{#         {% endfor %} #}
-{#          #}
-{#         $.plot($("#choicePie"), answerData, { #}
-{#             series: {  #}
-{#                 pie: {  #}
-{#                     show: true, #}
-{#                     radius: 1, #}
-{#                     stroke: { #}
-{#                         color: '#FFECD8', #}
-{#                         width: 2 #}
-{#                     }, #}
-{#                     label: { #}
-{#                         show: true, #}
-{#                         radius: .55, #}
-{#                         formatter: function(label, series) { #}
-{#                             var output = '<div class="pielabel">' + label; #}
-{#                             if (series.percent < 100) { #}
-{#                                 output += '<br/><strong>'+Math.round(series.percent)+'%</strong></div>'; #}
-{#                             } #}
-{#                             return output; #}
-{#                         }, #}
-{#                         threshold: 0.1 #}
-{#                     } #}
-{#                 } #}
-{#             }, #}
-{#             legend: {  #}
-{#                 show: false #}
-{#             } #}
-{#         }); #}
-{#          #}
-{#         } catch (err) { #}
-{#             alert(err); #}
-{#         } #}
-{#     }); #}
-{#      #}
-{# </script>     #}
-{# {% endblock body %}    #}
 
