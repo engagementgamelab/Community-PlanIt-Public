@@ -251,22 +251,23 @@ STREAM_VERBS = (
     #('challenge_deleted', 'deleted a challenge'),
     #('challenge_commented', 'commented on a challenge'),
     #('challenge_completed', 'completed a challenge'),
+    #('activity_official_response_created', 'created a response'),
+    #('token_spent', 'spent token'),
+    #('token_reclaimed', 'reclaimed token'),
 
     ('crowd_created', 'create a crowd'),
-
-    #('activity_official_response_created', 'created a response'),
 
     ('activity_replayed', 'replayed activity'),
     ('activity_completed', 'completed activity'),
 
-    ('token_spent', 'spent token'),
-    ('token_reclaimed', 'reclaimed token'),
-
     ('replied', 'replied'),
     ('liked', 'liked a comment'),
     ('commented', 'comment'),
-)
 
+    ('flag_awarded', 'a flag was awarded'),
+    ('flag_spent', 'a flag was spent'),
+    ('flag_reclaimed', 'a flag was reclaimed'),
+)
 
 REPORTS_RECIPIENTS = (
         'eric_gordon@emerson.edu',
