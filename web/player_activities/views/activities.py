@@ -378,6 +378,13 @@ def activity(request, activity_id, template=None, **kwargs):
 
     ctx = _build_context(request, action, activity, user=user )
     context.update(ctx)
+    my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(activity.mission)
+    context.update(dict(
+            my_points_for_mission=my_points_for_mission,
+            progress_percentage=progress_percentage,
+    ))
+
+
     template = "player_activities/" + activity.type.type
 
     if action == 'play':

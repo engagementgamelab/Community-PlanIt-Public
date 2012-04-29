@@ -165,6 +165,30 @@ class UserProfilePerInstance(models.Model):
     def __unicode__(self):
         return "'%s <%s>' for: %s" % (self.user_profile.user.get_full_name(), self.user_profile.email, self.instance.title, )
 
+    def progress_percentage_by_mission(self, mission):
+        mission_total_points = mission.total_points
+        my_points_for_mission = self.total_points_for_mission(mission)
+        percentage = int(my_points_for_mission/mission_total_points*Decimal(100))
+        log.debug("%s/%s (%s percent). %s" % (
+                                            my_points_for_mission,
+                                            mission_total_points,
+                                            percentage,
+                                            mission.title,
+                                            )
+        )
+        return (my_points_for_mission, percentage)
+
+    def total_points_for_mission(self, mission):
+        my_completed = self.my_completed_by_mission(mission)
+        return Decimal(sum(activity.get_points() for activity in my_completed))
+
+    @property
+    def total_points(self):
+        my_completed = []
+        for mission in self.instance.missions.all():
+            my_completed.extend(self.my_completed_by_mission(mission))
+        return Decimal(sum(activity.get_points() for activity in my_completed))
+
     def my_completed_by_mission(self, mission):
         def activities_from_actions(actions):
             return [getattr(action, 'action_object_playeractivity') or \
@@ -227,15 +251,13 @@ class UserProfile(models.Model):
 
     #
     # internal system records
-    # 
-
+    #
     # the current number of coins that the player has
     currentCoins = models.IntegerField(default=0)
     # the total points that the player has accrued
     totalPoints = models.IntegerField(default=0)
     # points to the next coin
     coinPoints = models.IntegerField(default=0)
-        
     # comments on the profile from others
     comments = generic.GenericRelation(Comment)
 

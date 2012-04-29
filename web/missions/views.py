@@ -20,7 +20,6 @@ from web.accounts.models import UserProfilePerInstance
 import logging
 log = logging.getLogger(__name__)
 
-
 @login_required
 def fetch(request, slug, template='missions/base.html'):
     # expecting the current game to be 
@@ -36,20 +35,20 @@ def fetch(request, slug, template='missions/base.html'):
         if next_mission.is_expired:
             next_mission = None
 
-    #completed_count = mission.get_completed_activities_count(request.user)
-    prof_per_instance = UserProfilePerInstance.objects.get(instance=request.current_game, user_profile=request.user.get_profile())
-    completed_count = len(prof_per_instance.my_completed_by_mission(mission))
-    log.debug("i completed %s" % completed_count)
-    log.debug("i have %s flags" % prof_per_instance.flags)
+    completed_count = len(request.prof_per_instance.my_completed_by_mission(mission))
+    log.debug("i completed %s challenges" % completed_count)
 
     activities = mission.get_activities()
 
+    my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
     context = dict(
         mission = mission,
         activities = activities,
         completed_count = completed_count,
+        my_points_for_mission=my_points_for_mission,
+        progress_percentage=progress_percentage,
         comment_form = CommentForm(),
-        mission_completed = len(activities) == completed_count,
+        #mission_completed = len(activities) == completed_count,
         next_mission = next_mission,
     )
     return render(request, template, context)
