@@ -40,11 +40,13 @@ def fetch(request, slug, template='missions/base.html'):
 
     activities = mission.get_activities()
 
+    my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
     context = dict(
         mission = mission,
         activities = activities,
         completed_count = completed_count,
-        progress_percentage = int(request.prof_per_instance.progress_percentage_by_mission(mission)),
+        my_points_for_mission=my_points_for_mission,
+        progress_percentage=progress_percentage,
         comment_form = CommentForm(),
         #mission_completed = len(activities) == completed_count,
         next_mission = next_mission,

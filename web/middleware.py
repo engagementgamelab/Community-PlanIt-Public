@@ -23,6 +23,6 @@ class CurrentDomainMiddleware(object):
         if request.user.is_authenticated():
             prof_per_instance = UserProfilePerInstance.objects.get(instance=request.current_game, user_profile=request.user.get_profile())
             request.prof_per_instance  = prof_per_instance 
-            request.my_total_points = prof_per_instance.total_points
-            request.my_flags_count = prof_per_instance.flags
+            #request.my_total_points = prof_per_instance.total_points
+            #request.my_flags_count = prof_per_instance.flags
         return None
