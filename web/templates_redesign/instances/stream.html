@@ -27,59 +27,19 @@
             </select>
             <input id="stream-filters-apply" class="btn-blue" type="submit" value="Apply" />
          </div>
-        
-        <h2>May 30, 2012</h2>
-        <div class="stream-container">
-            {# TODO: for event in stream-events #}
-            <div class="stream-event">
-                <div class="stream-event-time">11:07am</div>
-                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
-            </div>
-            <div class="stream-event">
-                <div class="stream-event-time">10:07am</div>
-                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
-            </div>
-            <div class="stream-event">
-                <div class="stream-event-time">9:07am</div>
-                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
-            </div>
-            <div class="stream-event">
-                <div class="stream-event-time">8:07am</div>
-                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
-            </div>
-            <div class="stream-event">
-                <div class="stream-event-time">7:07am</div>
-                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
-            </div>
-        </div>
-    
-        <h2>May 3, 2012</h2>
+
+        {% regroup stream_for_game by datetime|date:"Y-m-d" as stream_by_day_list %}
+        {% for day in stream_by_day_list %}
+        <h2>{{ day.grouper }}</h2>
+        {% for action in day.list %}
         <div class="stream-container">
             <div class="stream-event">
-                <div class="stream-event-time">11:07am</div>
-                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
+                <div class="stream-event-time">{{ action.datetime|date:"h:i:A" }}</div>
+                <div class="stream-event-action"><a href="{% url accounts:player_profile action.actor.pk %}">{{ action.actor.get_profile.screen_name }}</a> {{ action.description }} <a href="{{ action.action_object.get_absolute_url }}">{{ action.action_object }}</a></div>
             </div>
-            <div class="stream-event">
-                <div class="stream-event-time">10:07am</div>
-                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
-            </div>
-            <div class="stream-event">
-                <div class="stream-event-time">9:07am</div>
-                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
-            </div>
-            <div class="stream-event">
-                <div class="stream-event-time">8:07am</div>
-                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
-            </div>
-            <div class="stream-event">
-                <div class="stream-event-time">7:07am</div>
-                <div class="stream-event-action"><a href="">Nerissa C.</a> completed challenge <a href="">How Environments Inspire Growth</a></div>
-            </div>
+        {% endfor %}
         </div>
-        
+        {% endfor %}
     </div>
-
-    
-
 </div>
 {% endblock %}

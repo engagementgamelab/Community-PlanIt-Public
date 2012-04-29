@@ -1,6 +1,7 @@
 import datetime
 
 from sijax import Sijax
+from stream.models import Action
 
 from django.contrib import auth
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -86,7 +87,12 @@ def all(request):
 @login_required
 def stream(request, template='instances/stream.html'):
 
-    context = {}
+    stream_for_game = Action.objects.get_for_target(request.current_game)
+    completed_challenges = filter(lambda a: a.verb == "activity_completed", stream_for_game)
+
+    context = {
+            'stream_for_game': completed_challenges,
+    }
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
     context.update(missions_bar_context(request))
