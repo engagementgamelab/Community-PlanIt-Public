@@ -11,7 +11,10 @@ from django.db.models import Q
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
 
-from instances.models import Instance
+from web.instances.models import Instance
+
+import logging
+log = logging.getLogger(__name__)
 
 class MissionManager(TranslationManager):
 
@@ -44,6 +47,10 @@ class MissionManager(TranslationManager):
 
 
 class Mission(TranslatableModel):
+
+    # percentage for total points per mission
+    # earned toward a mission flag 
+    MISSION_FLAG_PERCENTAGE = 80
 
     title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
     instance = models.ForeignKey(Instance, related_name='missions')
@@ -89,19 +96,36 @@ class Mission(TranslatableModel):
     def is_future(self):
         return datetime.datetime.now() <= self.start_date
 
-    def get_completed_activities(self, user=None):
-        """ return a QuerySet with all completed activities """
-        for_mission = self.get_activities()
-        qs = Action.objects.filter(
-                verb = 'activity_completed'
-        ).filter(
-                Q(action_object_playeractivity__in=for_mission) | 
-                Q(action_object_playermapactivity__in=for_mission) | 
-                Q(action_object_playerempathyactivity__in=for_mission)
-        )
-        if user:
-            qs = qs.filter(actor_user=user)
-        return qs
+    @property
+    def total_points(self):
+        return sum([activity.get_points() for activity in self.get_activities()])
+
+    #@property
+    #def mission_flag_points(self):
+    #    return self.total_points / Decimal(Mission.MISSION_FLAG_PERCENTAGE)*Decimal(100)
+
+    #def total_points_for_completed_activities(self, user):
+
+    #def get_completed_activities_count(self, user=None):
+    #    return self.completed_from_stream.count()
+
+    #def completed_from_stream(self, user=None):
+    #    """ return a QuerySet of Action instances of completed activities """
+    #    for_mission = self.get_activities()
+    #    qs = Action.objects.filter(
+    #            verb = 'activity_completed'
+    #    ).filter(
+    #            Q(action_object_playeractivity__in=for_mission) | 
+    #            Q(action_object_playermapactivity__in=for_mission) | 
+    #            Q(action_object_playerempathyactivity__in=for_mission)
+    #    )
+    #    if user:
+    #        qs = qs.filter(actor_user=user)
+    #    return qs
+
+    #def get_completed_by_user(self, user):
+    #    all_activities = self.get_activities()
+    #    completed_from_stream = self.completed_from_stream(user)
 
     def get_activities(self):
         """ return a list of all available activities """

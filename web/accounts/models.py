@@ -1,8 +1,10 @@
 import os.path
 import datetime
+from decimal import Decimal
 from uuid import uuid4 as uuid
 
 from stream import utils as stream_utils
+from stream.models import Action
 
 from django import forms
 from django.core.urlresolvers import reverse
@@ -23,6 +25,10 @@ from web.comments.models import Comment
 from web.accounts.models import *
 from web.challenges.models import *
 from web.instances.models import Instance, Affiliation
+from web.missions.models import Mission
+
+import logging
+log = logging.getLogger(__name__)
 
 class UserProfileOptionBase(TranslatableModel):
     pos = models.IntegerField(blank=False, null=False)
@@ -145,7 +151,7 @@ class UserProfilePerInstanceManager(models.Manager):
 class UserProfilePerInstance(models.Model):
     user_profile = models.ForeignKey("UserProfile", related_name='user_profiles_per_instance')
     instance = models.ForeignKey(Instance)
-    
+
     # to be removed
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
 
@@ -158,6 +164,29 @@ class UserProfilePerInstance(models.Model):
 
     def __unicode__(self):
         return "'%s <%s>' for: %s" % (self.user_profile.user.get_full_name(), self.user_profile.email, self.instance.title, )
+
+    def my_completed_by_mission(self, mission):
+        def activities_from_actions(actions):
+            return [getattr(action, 'action_object_playeractivity') or \
+                    getattr(action, 'action_object_playermapactivity') or \
+                    getattr(action, 'action_object_playerempathyactivity') for action in actions]
+        activities_for_mission = mission.get_activities()
+        actions = Action.objects.get_for_action_objects(activities_for_mission)
+        actions_completed_activities = filter(lambda a: a.verb == "activity_completed" and a.actor==self.user_profile.user, actions)
+        return activities_from_actions(actions_completed_activities)
+
+    @property
+    def flags(self):
+        missions = self.instance.missions.all()
+        my_flags = missions.count()
+
+        for m in missions:
+            min_points_for_mission = Decimal(m.total_points) * (Decimal(Mission.MISSION_FLAG_PERCENTAGE) / Decimal(100))
+            my_completed = self.my_completed_by_mission(m)
+            my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))
+            if my_points_for_mission > min_points_for_mission:
+                my_flags+=1
+        return my_flags
 
     @property
     def format_stakes(self):

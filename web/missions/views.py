@@ -1,6 +1,6 @@
 import datetime
 
-from stream.models import Action
+#from stream.models import Action
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
@@ -9,44 +9,48 @@ from django.http import Http404
 
 from django.contrib.auth.decorators import login_required
 
-from answers.models import *
-from comments.forms import CommentForm
-from comments.models import Comment
-from instances.models import Instance
-from missions.models import *
-from player_activities.models import *
+from web.answers.models import *
+from web.comments.forms import CommentForm
+from web.comments.models import Comment
+from web.instances.models import Instance
+from web.missions.models import *
+from web.player_activities.models import *
+from web.accounts.models import UserProfilePerInstance
+
+import logging
+log = logging.getLogger(__name__)
+
 
 @login_required
 def fetch(request, slug, template='missions/base.html'):
     # expecting the current game to be 
     # set by middleware
-    if hasattr(request, 'current_game'):
-        current_instance = request.current_game
-    else:
+    if not hasattr(request, 'current_game'):
         raise Http404("could not locate a valid game")
 
-    mission = get_object_or_404(Mission, slug=slug, instance=current_instance)
-    activities = mission.get_activities()
-
-    #completed = []
-    #for activity in activities:
-    #    if activity.is_completed(request.user):
-    #        completed.append(activity)
+    mission = get_object_or_404(Mission, slug=slug, instance=request.current_game)
 
     next_mission = None
-    my_missions = Mission.objects.filter(instance=current_instance).exclude(slug=slug).order_by('-start_date')
+    my_missions = Mission.objects.filter(instance=request.current_game).exclude(slug=slug).order_by('-start_date')
     if my_missions.count() > 0:
         next_mission = my_missions[0]
         if next_mission.is_expired:
             next_mission = None
 
-    completed = mission.get_completed_activities(request.user)
+    #completed_count = mission.get_completed_activities_count(request.user)
+    prof_per_instance = UserProfilePerInstance.objects.get(instance=request.current_game, user_profile=request.user.get_profile())
+    completed_count = len(prof_per_instance.my_completed_by_mission(mission))
+    log.debug("i completed %s" % completed_count)
+    log.debug("i have %s flags" % prof_per_instance.flags)
+
+    activities = mission.get_activities()
+
     context = dict(
         mission = mission,
         activities = activities,
-        completed = completed,
+        completed_count = completed_count,
         comment_form = CommentForm(),
-        mission_completed = len(activities) == completed.count(),
+        mission_completed = len(activities) == completed_count,
         next_mission = next_mission,
     )
     return render(request, template, context)
