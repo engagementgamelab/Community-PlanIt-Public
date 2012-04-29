@@ -40,6 +40,20 @@
         z-index: 1;
     }
     
+    
+    .comment .flag-comment {
+        float: right;
+        display: inline-block;
+        width: 10px;
+        height: 13px;
+        background: url('../img/icon-flag-comment.png');
+        cursor: pointer;
+    }
+    
+        .comment .flag-comment:hover {
+            background-position: 10px 0px;
+        }
+    
     .comment .comment-header {}
     
         .comment .comment-header .comment-header-avatar{
@@ -67,6 +81,7 @@
     }
 
     .comment .actions {
+        clear: both;
         overflow: hidden;
         padding: 5px 0px;
     }
