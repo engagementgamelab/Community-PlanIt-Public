@@ -41,7 +41,8 @@
     {% if is_completed or activity.is_past %}
         {% if answers.count %}
             <h2>{% trans "Responses" %}</h2>
-            <div class="comments embedded">    
+            <div class="comments embedded">
+                <div class="corner-stamp"></div>
                 {% for answer in answers %}
                     {% with instance=activity.mission.instance comments=answer.comments %}
                         {% for comment in comments.all %}

@@ -49,6 +49,7 @@
             {% if all_answers %}                
                 <h2>{% trans "Responses" %}</h2>
                 <div class="comments embedded">
+                <div class="corner-stamp"></div>
                 {% with instance=activity.mission.instance %}
                     {% for user, answers, comments in all_answers %}
                         {% if comments %}

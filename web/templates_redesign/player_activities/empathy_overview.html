@@ -49,7 +49,8 @@
     {% if is_completed or activity.is_past %}
         {% if answers %}
         <h2>{% trans "Responses" %}</h2>
-        <div class="comments embedded">    
+        <div class="comments embedded"> 
+            <div class="corner-stamp"></div>   
             {% for answer in answers %}
                 {% with instance=activity.mission.instance %}
                     {% for comment in answer.comments.select_related.all reversed %}
