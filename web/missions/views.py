@@ -9,6 +9,7 @@ from django.http import Http404
 
 from django.contrib.auth.decorators import login_required
 
+from web.core.utils import missions_bar_context
 from web.answers.models import *
 from web.comments.forms import CommentForm
 from web.comments.models import Comment
@@ -39,18 +40,18 @@ def fetch(request, slug, template='missions/base.html'):
     log.debug("i completed %s challenges" % completed_count)
 
     activities = mission.get_activities()
-    my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
+    #my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
 
     context = dict(
-        mission = mission,
         activities = activities,
         completed_count = completed_count,
-        my_points_for_mission=my_points_for_mission,
-        progress_percentage=progress_percentage,
         comment_form = CommentForm(),
         #mission_completed = len(activities) == completed_count,
         next_mission = next_mission,
     )
+    # this line here updates the context with 
+    # mission, my_points_for_mission and progress_percentage
+    context.update(missions_bar_context(request, mission))
     return render(request, template, context)
 
 """

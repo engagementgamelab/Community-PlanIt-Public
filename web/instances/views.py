@@ -17,14 +17,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 
-from accounts.forms import *
-from accounts.models import *
-from attachments.models import Attachment
-from challenges.models import *
-from instances.forms import NotificationRequestForm
-from instances.models import *
-from missions.models import *
-from reports.models import Activity 
+from web.core.utils import missions_bar_context
+from web.accounts.forms import *
+from web.accounts.models import *
+from web.attachments.models import Attachment
+#from web.challenges.models import *
+from web.instances.forms import NotificationRequestForm
+from web.instances.models import *
+from web.missions.models import *
+from web.reports.models import Activity 
 from core.utils import get_translation_with_fallback
 
 #TODO: this does not fail nicely, it should 
@@ -85,17 +86,23 @@ def all(request):
 @login_required
 def stream(request, template='instances/stream.html'):
 
-    response = {}
-
-    return render(request, template, response)
+    context = {}
+    # this line here updates the context with 
+    # mission, my_points_for_mission and progress_percentage
+    context.update(missions_bar_context(request))
+    return render(request, template, context)
 
 @login_required
 def leaderboard(request, template='instances/leaderboard.html'):
 
-    response = {}
+    context = {}
         # 'affiliations_leaderboard': _get_affiliations_leaderboard(), 
 
-    return render(request, template, response)
+    context = {}
+    # this line here updates the context with 
+    # mission, my_points_for_mission and progress_percentage
+    context.update(missions_bar_context(request))
+    return render(request, template, context)
 
 @login_required
 def affiliation(request, instance_slug, affiliation_slug, template='affiliations/base.html'):

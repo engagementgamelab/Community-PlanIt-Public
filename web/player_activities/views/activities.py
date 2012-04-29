@@ -14,15 +14,16 @@ from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 from django.contrib.formtools.wizard.views import SessionWizardView
 
-from answers.models import *
-from missions.models import Mission
-from comments.models import *
-from comments.forms import *
-from player_activities.forms import *
-from player_activities.models import *
-from player_activities.views import _get_activity, comment_fun,\
+from web.core.utils import missions_bar_context
+from web.answers.models import *
+from web.missions.models import Mission
+from web.comments.models import *
+from web.comments.forms import *
+from web.reports.actions import *
+from ..forms import *
+from ..models import *
+from ..views import _get_activity, comment_fun,\
     log_activity_and_redirect
-from reports.actions import *
 
 from django.db.models import get_model
 
@@ -376,14 +377,10 @@ def activity(request, activity_id, template=None, **kwargs):
     if activity.mission.is_active and not request.user.is_superuser:
         user = request.user
 
-    ctx = _build_context(request, action, activity, user=user )
-    context.update(ctx)
-    my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(activity.mission)
-    context.update(dict(
-            my_points_for_mission=my_points_for_mission,
-            progress_percentage=progress_percentage,
-    ))
-
+    context.update(_build_context(request, action, activity, user=user))
+    # this line here updates the context with 
+    # mission, my_points_for_mission and progress_percentage
+    context.update(missions_bar_context(request, activity.mission))
 
     template = "player_activities/" + activity.type.type
 
