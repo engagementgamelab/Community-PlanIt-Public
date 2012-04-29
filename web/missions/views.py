@@ -29,7 +29,6 @@ def fetch(request, slug, template='missions/base.html'):
         raise Http404("could not locate a valid game")
 
     mission = get_object_or_404(Mission, slug=slug, instance=request.current_game)
-
     next_mission = None
     my_missions = Mission.objects.filter(instance=request.current_game).exclude(slug=slug).order_by('-start_date')
     if my_missions.count() > 0:

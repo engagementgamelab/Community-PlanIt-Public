@@ -52,17 +52,18 @@
             {# COMMENTS #}
             <h2>{% trans "Responses" %}</h2>
             <div class="comments embedded">
-            {% for answer in answers %}
-                {% with comments=answer.comments %}
-                    {% for comment in comments.all reversed %}
-                        {% with extra_message=answer.selected.value %}
-                            {% include "comments/comment.html" %}
-                        {% endwith %}                        
-                    {% empty %}
-                        <div class="comment">No comments found.</div>
-                    {% endfor %}
-                {% endwith %}
-            {% endfor %}
+                {% include 'player_activities/_corner_stamp.html' %}
+                {% for answer in answers %}
+                    {% with comments=answer.comments %}
+                        {% for comment in comments.all reversed %}
+                            {% with extra_message=answer.selected.value %}
+                                {% include "comments/comment.html" %}
+                            {% endwith %}                        
+                        {% empty %}
+                            <div class="comment">No comments found.</div>
+                        {% endfor %}
+                    {% endwith %}
+                {% endfor %}
             </div>
         {% else %}
             <h2>{% trans "No responses submitted" %}</h2>
@@ -72,54 +73,4 @@
     {% endif %}
 </div>
 {% endblock %}
-
-{# {% block body %}    #}
-{# <script type="text/javascript"> #}
-{#     $(function () { #}
-{#         try { #}
-{#          #}
-{#         var answerData = new Array(0); #}
-{#         {% if answers %} #}
-{#             {% for choice in choices %} #}
-{#                 answerData.push({label: "{{choice.value}}", data: {{choice.singleresponse_answers.count}} }); #}
-{#             {% endfor %} #}
-{#         {% else %} #}
-{#             answerData.push({label: "No answers yet.", data: 1}); #}
-{#         {% endif %} #}
-{#          #}
-{#         $.plot($("#choicePie"), answerData, { #}
-{#             series: {  #}
-{#                 pie: {  #}
-{#                     show: true, #}
-{#                     radius: 1, #}
-{#                     stroke: { #}
-{#                         color: '#FFECD8', #}
-{#                         width: 2 #}
-{#                     }, #}
-{#                     label: { #}
-{#                         show: true, #}
-{#                         radius: 1/2, #}
-{#                         formatter: function(label, series) { #}
-{#                             var output = '<div class="pielabel">' + label; #}
-{#                             if (series.percent < 100) { #}
-{#                                 output += '<br/><strong>'+Math.round(series.percent)+'%</strong></div>'; #}
-{#                             } #}
-{#                             return output; #}
-{#                         }, #}
-{#                         threshold: 0.1 #}
-{#                     } #}
-{#                 } #}
-{#             }, #}
-{#             legend: {  #}
-{#                 show: false #}
-{#             } #}
-{#         }); #}
-{#          #}
-{#         } catch (err) { #}
-{#             alert(err); #}
-{#         } #}
-{#     }); #}
-{#      #}
-{# </script>     #}
-{# {% endblock body %}    #}
 

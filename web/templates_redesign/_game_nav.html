@@ -1,6 +1,10 @@
 {% load avatar %}
 <div id="sidebar-nav">
     <ul>
+        {% if not city_header %}
+        <li class="sidebar-nav-profile"><a href="{% url missions:mission request.current_game.missions.active.0.slug %}" id="sidebar-nav-missioncontrol">Mission Control</a></li>
+        {% endif %}
+        
         <li class="sidebar-nav-profile">
             <a id="sidebar-nav-profile" href="{% url accounts:player_profile request.user.id %}">
                 <div>

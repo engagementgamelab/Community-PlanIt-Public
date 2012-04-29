@@ -16,6 +16,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script src="{{ STATIC_URL }}js/slides.jquery.js"></script>
         <script src="{{ STATIC_URL }}js/jquery-ui.min.js"></script>
+        {# masonry is required to display comments correctly #}
+        <script src="{{ STATIC_URL }}js/jquery.masonry.min.js"></script>
         <script src="{{ STATIC_URL }}js/jquery-ui-timepicker-addon.js"></script>
 
         <script type="text/javascript">
@@ -42,18 +44,29 @@
 
 {% block body %}
 <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
+    <div id="topper">
+        {% block top-breadcrumbs %}
+        <div id="top-breadcrumbs">
+            <ul>
+                <li><a href="http://{{ top_level_domain }}">Home</a></li>
+                <li><a href="{% url home %}">{{ request.current_city.name }}</a></li>
+                <li><a href="{% url missions:mission request.current_game.missions.active.0.slug %}">{{ request.current_game }}</a></li>
+            </ul>
+        </div>
+        {% endblock %}
     
-    {% block top_nav %}
-    <div id="top-nav">
-        <ul>
-            {% if user.is_authenticated %}
-                <li><a href="{% url accounts:logout %}">Sign Out</a></li>
-            {% else %}
-                <li><a href="{% url accounts:login %}">Sign In</a></li>
-            {% endif %}
-        </ul>
+        {% block top_nav %}
+        <div id="top-nav">
+            <ul>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url accounts:logout %}">Sign Out</a></li>
+                {% else %}
+                    <li><a href="{% url accounts:login %}">Sign In</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endblock %}
     </div>
-    {% endblock %}
     
     {% block page %}
         {% block header %}
