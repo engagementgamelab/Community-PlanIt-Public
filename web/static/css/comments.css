@@ -1,8 +1,27 @@
 /* Styles for Comments! */
 
+.comments {
+    margin-left: -20px;
+    width: 960px;
+}
+
+    .corner-stamp {
+        float: right;
+        width: 318px;
+        height: 335px;
+        border: 1px dotted #ddd;
+    }
+    
+.thread {
+    float: left;
+    width: 300px;
+    margin: 0px 10px;
+/*    border: 1px solid black;*/
+}
+
 .comment {
     position: relative;
-    width: 290px;
+    width: 270px;
     padding: 15px 15px 5px 15px;
     margin-bottom: 30px;
     background-color: #f6f6f6;
@@ -46,6 +65,7 @@
         display: inline-block;
         width: 10px;
         height: 13px;
+        margin-top: 10px;
         background: url('../img/icon-flag-comment.png');
         cursor: pointer;
     }
@@ -135,7 +155,7 @@
     
 /* Nested Comments */
 .comment.nested  {
-    width: 270px; /* this and margin-left should add up to .comment */
+    width: 250px; /* this and margin-left should add up to .comment */
     margin-left: 20px;
     margin-top: -25px;
 }
