@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load i18n cpi_tags %}
 
-{% block title %}{% trans "What's Happening" %}{% endblock %}
+{% block title %}{% trans "Whats Happening" %}{% endblock %}
 
 {% block body_id %}stream{% endblock %}
 
@@ -28,16 +28,16 @@
      </div>
 
     {% regroup stream_for_game by datetime|date:"Y-m-d" as stream_by_day_list %}
-    {% for day in stream_by_day_list %}
-    <h2>{{ day.grouper }}</h2>
-    {% for action in day.list %}
-    <div class="stream-container">
-        <div class="stream-event">
-            <div class="stream-event-time">{{ action.datetime|date:"h:i:A" }}</div>
-            <div class="stream-event-action"><a href="{% url accounts:player_profile action.actor.pk %}">{{ action.actor.get_profile.screen_name }}</a> {{ action.description }} <a href="{{ action.action_object.get_absolute_url }}">{{ action.action_object }}</a></div>
-        </div>
-    {% endfor %}
-    </div>
+        {% for day in stream_by_day_list %}
+        <h2>{{ day.grouper }}</h2>
+        {% for action in day.list %}
+            <div class="stream-container">
+                <div class="stream-event">
+                    <div class="stream-event-time">{{ action.datetime|date:"h:i:A" }}</div>
+                    <div class="stream-event-action"><a href="{% url accounts:player_profile action.actor.pk %}">{{ action.actor.get_profile.screen_name }}</a> {{ action.description }} <a href="{{ action.action_object.get_absolute_url }}">{{ action.action_object }}</a></div>
+                </div>
+            </div>
+        {% endfor %}
     {% endfor %}
 </div>
 
