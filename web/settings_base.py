@@ -257,8 +257,8 @@ STREAM_VERBS = (
 
     ('crowd_created', 'create a crowd'),
 
-    ('activity_replayed', 'replayed activity'),
-    ('activity_completed', 'completed activity'),
+    ('activity_replayed', 'replayed challenge'),
+    ('activity_completed', 'completed challenge'),
 
     ('replied', 'replied'),
     ('liked', 'liked a comment'),

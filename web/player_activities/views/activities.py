@@ -239,7 +239,9 @@ def activity(request, activity_id, template=None, **kwargs):
                 Action.objects.create(
                             actor=request.user,
                             verb=activity_completed_verb,
+                            target=request.current_game,
                             action_object=activity,
+                            description = 'completed challenge',
                 )
 
             if request.POST["form"] == "single_response":
