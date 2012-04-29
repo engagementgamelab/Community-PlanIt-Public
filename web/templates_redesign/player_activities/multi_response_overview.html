@@ -22,16 +22,26 @@
                 <br class="clearfix" />
             </div>
         
-            {% if my_answers %}
-            <div class="comment-response">
-                {{ my_answers }}
-            </div>
-            
-            {# Replay #}
-            <div class="activity-response-submit">
-                <a class="btn-blue" href="{% url activities:replay activity.id %}">{% trans 'Replay' %}</a>
-            </div>
         
+            {% if is_completed or activity.is_past %}
+                {# RESPONSE SUMMARY #}
+                <div id="activity-response-summary">
+                    {% for choice in choices %}
+                        <div class="activity-response-summary-choice {% if choice.value in my_answers %}my-choice{% endif %}">
+                            {{ choice }} {# ({{ choice.multichoice_answers.count }}) #}
+                            <div class="activity-response-summary-choice-percentage" style="width: {% cycle '5' '60' '20' '25' %}%;"> {# TODO percentage for the community responses to this answer#}
+                        </div>
+
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% if my_answers %}
+                {# Replay #}
+                <div class="activity-response-submit">
+                    <a class="btn-blue" href="{% url activities:replay activity.id %}">{% trans 'Replay' %}</a>
+                </div>
             {% endif %}
 
             
@@ -39,13 +49,6 @@
         <br class="clearfix"/>
         
         {% if is_completed  or activity.is_past %}
-            <h2>{% trans "Response Summary" %}</h2>
-            {# TODO #}
-            {% comment %}
-            I need:
-                totals and percentages for the community responses, for each answer
-                user's response
-            {% endcomment %}
             {% if all_answers %}                
                 <h2>{% trans "Responses" %}</h2>
                 <div class="comments embedded">

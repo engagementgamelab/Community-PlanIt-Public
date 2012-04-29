@@ -24,7 +24,8 @@
         </div>
         
         
-        {% if not activity.mission.is_expired %}
+        {% if is_completed or activity.is_past %}
+            {# RESPONSE SUMMARY #}
             {% if myAnswer %}
                 <div id="activity-response-summary">
                 {% if answers %}
@@ -38,7 +39,12 @@
                     {% endfor %}
                 {% endif %}
                 </div>
-
+            {% endif %}
+        {% endif %}
+        
+        {% if not activity.mission.is_expired %}
+            
+            {% if myAnswer %}
                 {# Replay #}
                 <div class="activity-response-submit">
                     <a class="btn-blue" href="{% url activities:replay activity.id %}">{% trans 'Replay' %}</a>
@@ -49,7 +55,7 @@
     
     <br class="clearfix" />
 
-    {# RESPONSE SUMMARY #}
+    
     {% if is_completed or activity.is_past %}
         
         {% if answers.count %}
