@@ -52,9 +52,7 @@
                 <!-- Stake -->
                 <h3>{% trans "Stake" %}</h3>
                 <p class="profile-detail">
-                    {% if stakes %}
                     {{ profile_per_instance.format_stakes }}<br />
-                    {% endif %}
                 </p>
                 
                 <!-- Affiliations -->
@@ -125,7 +123,7 @@
                 <!-- Total Game Points -->
                 {# <h3>Total Game Points</h3> #}
                 <p id="profile-points" class="profile-detail">
-                    <span class="points">{{player.get_profile.totalPoints}}</span> {% trans "total game points" %}
+                    <span class="points">{{ profile_per_instance.total_points }}</span> {% trans "total game points" %}
                 </p>
                 
                 <!-- Badges -->

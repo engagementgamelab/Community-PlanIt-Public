@@ -4,7 +4,8 @@ from django.conf import settings
 from django.utils.translation import get_language
 from django.contrib.sites.models import RequestSite
 
-from instances.models import Instance
+from web.instances.models import Instance
+from web.missions.models import Mission
 
 def _fake_latest(model, qs):
     if model and qs:
@@ -28,3 +29,21 @@ def instance_from_request(request):
         return Instance.objects.get(for_city__domain=domain)
     except Instance.DoesNotExist:
         return
+
+def missions_bar_context(request, mission=None):
+    if not mission:
+        mission = Mission.objects.active(instance=request.current_game)[0]
+
+    my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
+
+    context = {
+        'mission': mission,
+        'my_points_for_mission': my_points_for_mission,
+        'progress_percentage': progress_percentage,
+    }
+
+    return context
+
+
+
+

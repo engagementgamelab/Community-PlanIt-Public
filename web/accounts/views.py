@@ -29,6 +29,7 @@ from PIL import Image
 
 from .forms import *
 from .models import Notification, UserProfile, UserProfileVariantsForInstance
+from web.core.utils import missions_bar_context
 from web.answers.models import Answer
 from web.challenges.models import Challenge, PlayerChallenge
 from web.comments.forms import CommentForm
@@ -392,13 +393,17 @@ def profile(request, id, template_name="accounts/profile.html"):
     player = get_object_or_404(User, id=id)
     current_game = request.current_game
     stream = Action.objects.get_for_actor(player)
-    try:
-        profile_per_instance = UserProfilePerInstance.objects.get(
-                    user_profile = player.get_profile(),
-                    instance = request.current_game,
-        )
-    except UserProfilePerInstance.DoesNotExist:
-        raise Http404("user for this game is not registered")
+
+    if request.user == player:
+        profile_per_instance = request.prof_per_instance
+    else:
+        try:
+            profile_per_instance = UserProfilePerInstance.objects.get(
+                        user_profile = player.get_profile(),
+                        instance = request.current_game,
+            )
+        except UserProfilePerInstance.DoesNotExist:
+            raise Http404("user for this game is not registered")
 
     my_games = Instance.objects.exclude(is_disabled=True).filter(
                     pk__in=
@@ -406,15 +411,16 @@ def profile(request, id, template_name="accounts/profile.html"):
                             user_profile = player.get_profile()
                     ).values_list('instance__pk', flat=True)
     )
-
     context = {
         'player': player,
         'profile_per_instance' : profile_per_instance,
         'stream': stream,
         'affiliations': profile_per_instance.affils.all(),
-        # 'stakes': profile_per_instance.stakes.all(),
         'my_games': my_games,
     }
+    # this line here updates the context with 
+    # mission, my_points_for_mission and progress_percentage
+    context.update(missions_bar_context(request))
     return render(request, template_name, context)
 
 @login_required
