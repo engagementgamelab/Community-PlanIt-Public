@@ -61,4 +61,4 @@ class PointsAssigner:
             pass
     
     def assignAct(self, user, activity):
-        self.assignPoints(user, activity.getPoints())
+        self.assignPoints(user, activity.get_points())
