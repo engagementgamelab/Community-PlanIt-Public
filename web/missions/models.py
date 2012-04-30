@@ -26,6 +26,12 @@ log = logging.getLogger(__name__)
 
 class MissionManager(TranslationManager):
 
+    @cached(60*60*24, 'missions')
+    def all(self, *args, **kwargs):
+        log.debug('`all` MissionManager %s ** no cache **')
+        return super(MissionManager, self).all(*args, **kwargs)
+
+
     def latest_by_instance(self, instance):
         missions_for_instance = self.filter(instance=instance)
         if missions_for_instance:

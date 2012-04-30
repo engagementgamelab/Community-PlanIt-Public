@@ -10,9 +10,9 @@ from stream.models import Action
 from django import forms
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
+from django.contrib.auth.signals import user_logged_in
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import get_language
+from django.utils.translation import get_language, ugettext_lazy as _ 
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
@@ -171,24 +171,27 @@ class UserProfilePerInstance(models.Model):
     def __unicode__(self):
         return "'%s <%s>' for: %s" % (self.user_profile.user.get_full_name(), self.user_profile.email, self.instance.title, )
 
-    @cached(60*60*24, 'prof_per_instance')
     def progress_percentage_by_mission(self, mission):
-        log.debug("running progress_percentage_by_mission ** not cached ** ")
-        mission_total_points = mission.total_points
-        my_points_for_mission = self.total_points_for_mission(mission)
-        percentage = int(my_points_for_mission/mission_total_points*Decimal(100))
-        log.debug("%s/%s (%s percent). %s" % (
-                                            my_points_for_mission,
-                                            mission_total_points,
-                                            percentage,
-                                            mission.title,
-                                            )
-        )
-        return (my_points_for_mission, percentage)
-
-    def total_points_for_mission(self, mission):
-        my_completed = self.my_completed_by_mission(mission)
-        return Decimal(sum(activity.get_points() for activity in my_completed))
+        # TODO
+        # this cache group gets invalidated explicitly for everybody 
+        # as a challenge is played.
+        # update to only invalidate for this pk and mission 
+        @cached(60*60*24, 'my_progress_data')
+        def my_progress(pk, mission):
+            log.debug("running progress_percentage_by_mission ** not cached ** ")
+            mission_total_points = mission.total_points
+            my_completed = self.my_completed_by_mission(mission)
+            my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))
+            percentage = int(my_points_for_mission/mission_total_points*Decimal(100))
+            log.debug("%s/%s (%s percent). %s" % (
+                                                my_points_for_mission,
+                                                mission_total_points,
+                                                percentage,
+                                                mission.title,
+                                                )
+            )
+            return (my_points_for_mission, percentage)
+        return my_progress(self.pk, mission)
 
     @property
     def total_points(self):
@@ -394,6 +397,18 @@ class Notification(models.Model):
 
 
 # invalidate cache for 'prof_per_instance' group
-def invalidate_prof_per_instance(sender, **kwargs):
-    log.debug("invalidating cache for group `prof_per_instance` ")
-    cache.invalidate_group('prof_per_instance')
+#def invalidate_prof_per_instance(sender, **kwargs):
+#    log.debug("invalidating cache for group `prof_per_instance` ")
+#    cache.invalidate_group('prof_per_instance')
+
+def capture_user_login(sender, user, request, **kwargs):
+    # TODO
+    #   somehow capture the game the user
+    #   is logging into
+    stream_utils.action.send(
+                    actor=user,
+                    verb='user_logged_in',
+                    #target=request.current_game,
+                    description='user logged in to system'
+    )
+user_logged_in.connect(capture_user_login)

@@ -21,7 +21,7 @@ class CurrentDomainMiddleware(object):
             request.current_game = Instance.objects.language(get_language()).get(
                         slug=request.session.get('current_game_slug')
             )
-        if request.user.is_authenticated() and not request.user.is_superuser:
+        #if request.user.is_authenticated() and not request.user.is_superuser:
             try:
                 prof_per_instance = UserProfilePerInstance.objects.get(
                             instance=request.current_game, 

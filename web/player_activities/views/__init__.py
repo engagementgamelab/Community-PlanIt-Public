@@ -3,6 +3,7 @@ from PIL import Image
 from stream import utils as stream_utils
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
@@ -69,6 +70,10 @@ def log_activity_and_redirect(request, activity, message):
                             target=request.current_game,
                             description="%s challenge" % message
     )
+    # method of UserProfilePerInstance caches the
+    # users total points per mission and percentage of missions total
+    # points. invalidate here.
+    cache.invalidate_group('my_progress_data')
     return HttpResponseRedirect(activity.get_overview_url())
 
 # NOT USED

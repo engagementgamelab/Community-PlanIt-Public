@@ -120,7 +120,8 @@ INSTALLED_APPS = (
     # django-ajax-selects
     'ajax_select',
     'django_extensions',
-    'template_repl',
+    #'template_repl',
+    'cache_utils',
     'south',
 )
 
@@ -198,7 +199,7 @@ CACHES = {
         #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
         'KEY_PREFIX': 'cpi',
-        'TIMEOUT': 300,
+        'TIMEOUT':  60*60*24*365,
         'VERSION': 1,
     }
 }
@@ -267,6 +268,8 @@ STREAM_VERBS = (
     ('flag_awarded', 'a flag was awarded'),
     ('flag_spent', 'a flag was spent'),
     ('flag_reclaimed', 'a flag was reclaimed'),
+
+    ('user_logged_in', 'a user logged into the system'),
 )
 
 REPORTS_RECIPIENTS = (
