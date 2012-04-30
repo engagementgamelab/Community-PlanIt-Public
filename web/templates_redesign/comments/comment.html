@@ -1,5 +1,5 @@
-{% load attachment_tags i18n %}
-{% if not nested %}<div class="thread">{% endif %}
+{% load attachment_tags i18n heatmap %}
+{% if not nested %}<div class="thread heatmap-{{comment.comments.count|heatmap}}">{% endif %}
     <div class="comment {% if nested %}nested{% endif %}" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
         {# META: FLAG AND EDIT #}
         <div class="meta">
@@ -74,7 +74,7 @@
                 {# </a> #}
                 {# <span>{{ comment.comments.count }} repl{{ comment.comments.count|pluralize:"y,ies" }}</span> #}
                 {# {% endif %} #}
-                <span id="replies-count-{{ comment.pk }}" class="replies-count">{{comment.comments.count}}</span>
+                <span id="replies-count-{{ comment.pk }}" class="replies-count"> {{comment.comments.count}}</span>
                 <a class="btn-replies" href="#reply-{{comment.id}}"></a>
             </div>
             {% endif %}

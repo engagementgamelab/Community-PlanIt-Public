@@ -247,3 +247,50 @@
     }
 
 
+/* Heatmap */
+
+.thread.heatmap-1 .comment {
+    background-color: #f6f7e4;
+}
+
+    .thread.heatmap-1 .comment:after {
+        border-top-color: #f6f7e4;
+        border-right-color: #f6f7e4;
+    }
+    
+.thread.heatmap-2 .comment {
+background-color: #f6f8cf;
+}
+
+    .thread.heatmap-2 .comment:after {
+        border-top-color: #f6f8cf;
+        border-right-color: #f6f8cf;
+    }
+
+.thread.heatmap-3 .comment {
+    background-color: #f7fba0;
+}
+
+    .thread.heatmap-3 .comment:after {
+        border-top-color: #f7fba0;
+        border-right-color: #f7fba0;
+    }
+
+.thread.heatmap-4 .comment {
+    background-color: #f7fd82;
+}
+
+    .thread.heatmap-4 .comment:after {
+        border-top-color: #f7fd82;
+        border-right-color: #f7fd82;
+    }
+
+.thread.heatmap-5 .comment {
+    background-color: #f7ff5f;
+}
+
+    .thread.heatmap-5 .comment:after {
+        border-top-color: #f7ff5f;
+        border-right-color: #f7ff5f;
+    }
+
