@@ -55,7 +55,7 @@
                     <a href="{{ activity.get_overview_url }}">
                         {{ activity|trans_fallback:"name" }} 
                         {% if completed_count %}
-                            {{ completed_count }} response{{ completed_count|pluralize }})
+                            ({{ completed_count }} response{{ completed_count|pluralize }})
                         {% endif %}
                     </a>
                 </div>
