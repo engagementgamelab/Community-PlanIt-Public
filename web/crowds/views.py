@@ -302,18 +302,20 @@ def comment(request, id):
     return HttpResponseRedirect(reverse('challenges:challenge', args=[id]))
 
 @login_required
-def all(request, template='crowds/all.html'):
-
+def all(request, template='crowds/all.html', extra_context={}):
+    
     if hasattr(request, 'current_game'):
         current_instance = request.current_game
     else:
         raise Http404("could not locate a valid game")
     
-    response = {
+    context = {
         'crowds': Crowd.objects.filter(instance=current_instance).order_by('-start_date'),
     }
     
-    return render_to_response(template, response, context_instance=RequestContext(request))
+    context.update(extra_context)
+    print context
+    return render(request, template, context)
 
 
 

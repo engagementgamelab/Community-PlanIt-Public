@@ -25,9 +25,9 @@
             </a>
         </li>
         
-            <li><a href="{% url attachments:index %}{% if city_header %}{{ request.session.current_game_slug }}{% endif %}" id="sidebar-nav-expert">Become an Expert</a></li>
+            <li><a href="{% url attachments:index %}{% if not city_header %}{{ request.session.current_game_slug }}{% endif %}" id="sidebar-nav-expert">Become an Expert</a></li>
         
-        <li><a href="{% url crowds:index %}" id="sidebar-nav-crowds">Get Together!</a></li>
+        <li><a href="{% if city_header %}{% url crowds:city-index %}{% else %}{% url crowds:index %}{% endif %}" id="sidebar-nav-crowds">Get Together!</a></li>
         
         {% if not city_header %}
             <li><a href="{% url instances:stream %}" id="sidebar-nav-news">What's Happening</a></li>
