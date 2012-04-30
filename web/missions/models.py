@@ -2,9 +2,14 @@ import datetime
 from decimal import Decimal
 from operator import attrgetter
 from dateutil.relativedelta import relativedelta
+
+from cache_utils.decorators import cached
 from stream import utils as stream_utils
 from stream.models import Action
+
+from django.core.cache import cache
 from django.template.defaultfilters import slugify
+from django.db.models.signals import post_save
 from django.db import models
 from django.contrib import admin
 from django.db.models import Q
@@ -13,6 +18,8 @@ from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
 
 from web.instances.models import Instance
+#from web.accounts.models import invalidate_prof_per_instance
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -38,6 +45,11 @@ class MissionManager(TranslationManager):
         if instance:
             kwargs.update(dict(instance=instance))
         return self.filter(**kwargs).order_by('start_date')
+
+    @cached(60*60*24, 'missions')
+    def default(self, instance=None):
+        log.debug("getting default mission ** no cache **")
+        return self.active(instance)[0]
 
     def active(self, instance=None):
         now = datetime.datetime.now()
@@ -103,7 +115,9 @@ class Mission(TranslatableModel):
         return datetime.datetime.now() <= self.start_date
 
     @property
+    @cached(60*60*24, 'missions')
     def total_points(self):
+        log.debug("mission total_points ** no cache **")
         return Decimal(sum([activity.get_points() for activity in self.get_activities()]))
 
     #@property
@@ -133,8 +147,10 @@ class Mission(TranslatableModel):
     #    all_activities = self.get_activities()
     #    completed_from_stream = self.completed_from_stream(user)
 
+    @cached(60*60*24, 'missions')
     def get_activities(self):
         """ return a list of all available activities """
+        log.debug("getting activities for mission ** no cache **")
         activities = []
         for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
             activities.extend(getattr(self, 'player_activities_%s_related' % model_klass.lower()).all())
@@ -157,5 +173,12 @@ class Mission(TranslatableModel):
         return self.title
 
 stream_utils.register_target(Mission)
+
+# invalidate cache for 'missions' group
+def invalidate_mission(sender, **kwargs):
+    log.debug("invalidating cache for group `missions` ")
+    cache.invalidate_group('missions')
+post_save.connect(invalidate_mission, Mission)
+#post_save.connect(invalidate_prof_per_instance, Mission)
 
 

@@ -194,8 +194,8 @@ USE_L10N = True
 
 CACHES = {
     'default': {
-        # 'BACKEND': 'cache_utils.group_backend.CacheClass',
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'BACKEND': 'cache_utils.group_backend.CacheClass',
+        #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
         'KEY_PREFIX': 'cpi',
         'TIMEOUT': 300,

@@ -11,9 +11,11 @@ from stream import utils as stream_utils
 from stream.models import Action
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
+from cache_utils.decorators import cached
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save
 from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete, post_save
@@ -23,9 +25,10 @@ from django.contrib.contenttypes import generic
 
 from web.attachments.models import Attachment
 from web.comments.models import Comment
-from web.missions.models import Mission
+from web.missions.models import Mission, invalidate_mission
 from web.reports.models import Activity
 from web.instances.models import Instance
+#from web.accounts.models import invalidate_prof_per_instance
 
 import logging
 log = logging.getLogger(__name__)
@@ -312,9 +315,19 @@ stream_utils.register_target(PlayerMapActivity)
 stream_utils.register_action_object(PlayerEmpathyActivity)
 stream_utils.register_target(PlayerEmpathyActivity)
 
-@receiver(pre_delete, sender=PlayerActivity, dispatch_uid='web.playeractivities.models')
-@receiver(pre_delete, sender=PlayerMapActivity, dispatch_uid='web.playeractivities.models')
-@receiver(pre_delete, sender=PlayerEmpathyActivity, dispatch_uid='web.playeractivities.models')
-def remove_url_from_news_feeds(sender, **kwargs):     
-    instance = kwargs['instance']
-    Activity.objects.filter(url=instance.get_activity_url()).update(url='')
+#@receiver(pre_delete, sender=PlayerActivity, dispatch_uid='web.playeractivities.models')
+#@receiver(pre_delete, sender=PlayerMapActivity, dispatch_uid='web.playeractivities.models')
+#@receiver(pre_delete, sender=PlayerEmpathyActivity, dispatch_uid='web.playeractivities.models')
+#def remove_url_from_news_feeds(sender, **kwargs):     
+#    instance = kwargs['instance']
+#    Activity.objects.filter(url=instance.get_activity_url()).update(url='')
+
+# invalidate cache for 'missions' group
+post_save.connect(invalidate_mission, PlayerActivity)
+post_save.connect(invalidate_mission, PlayerMapActivity)
+post_save.connect(invalidate_mission, PlayerEmpathyActivity)
+
+#post_save.connect(invalidate_prof_per_instance, PlayerActivity)
+#post_save.connect(invalidate_prof_per_instance, PlayerMapActivity)
+#post_save.connect(invalidate_prof_per_instance, PlayerEmpathyActivity)
+

@@ -234,16 +234,6 @@ def activity(request, activity_id, template=None, **kwargs):
             answer = None
             activity_completed_verb = "activity_completed"
 
-            def add_to_stream():
-                # make sure we mark
-                Action.objects.create(
-                            actor=request.user,
-                            verb=activity_completed_verb,
-                            target=request.current_game,
-                            action_object=activity,
-                            description = 'completed challenge',
-                )
-
             if request.POST["form"] == "single_response":
                 choices = _get_mc_choices(activity)
                 form = make_single_form(choices)(request.POST)
@@ -341,7 +331,6 @@ def activity(request, activity_id, template=None, **kwargs):
                     else:
                         comment_fun(answer, request, comment_form)
                     PointsAssigner().assignAct(request.user, activity)
-                    add_to_stream()
                     return log_activity_and_redirect(request, activity, "completed")
 
         # all submissions on overview to be redone in ajax

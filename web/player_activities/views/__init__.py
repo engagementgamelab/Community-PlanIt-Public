@@ -63,14 +63,13 @@ def comment_fun(answer, request, form=None, message=''):
 
 def log_activity_and_redirect(request, activity, message):
 
-	# FIXME
-    # Enable this after fixing the activity submissions
-
-    #stream_utils.action.send(request.user, 'activity_%s' % message, action_object=activity,
-    #                        description="%s activity" % message
-    #)
-    return HttpResponseRedirect(activity.get_overview_url())   
-
+    stream_utils.action.send(request.user,
+                            verb='activity_%s' % message,
+                            action_object=activity,
+                            target=request.current_game,
+                            description="%s challenge" % message
+    )
+    return HttpResponseRedirect(activity.get_overview_url())
 
 # NOT USED
 """

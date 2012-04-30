@@ -32,7 +32,7 @@ def instance_from_request(request):
 
 def missions_bar_context(request, mission=None):
     if not mission:
-        mission = Mission.objects.active(instance=request.current_game)[0]
+        mission = Mission.objects.default(instance=request.current_game)
 
     my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
 

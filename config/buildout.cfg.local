@@ -26,8 +26,6 @@ eggs +=
        django-paging
        django-template-repl
 
-
-
 [server]
 host=pk.communityplanit.org
 venv_name=cpi-pk

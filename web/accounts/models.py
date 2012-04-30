@@ -2,12 +2,14 @@ import os.path
 import datetime
 from decimal import Decimal
 from uuid import uuid4 as uuid
+from cache_utils.decorators import cached
 
 from stream import utils as stream_utils
 from stream.models import Action
 
 from django import forms
 from django.core.urlresolvers import reverse
+from django.core.cache import cache
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import get_language
@@ -143,7 +145,11 @@ class CPIUser(User):
         return self.username
 
 class UserProfilePerInstanceManager(models.Manager):
-	pass
+
+    @cached(60*60*24, 'user_profile_per_instance_get')
+    def get(self, *args, **kwargs):
+        log.debug('get prof_per_instance %s ** no cache **' % kwargs)
+        return super(UserProfilePerInstanceManager, self).get(*args, **kwargs)
 
     #def latest_instance_by_profile(self, user_profile, domain):
     #    return self.objects.filter(user_profile=user_profile).latest_for_city_domain(domain)
@@ -165,7 +171,9 @@ class UserProfilePerInstance(models.Model):
     def __unicode__(self):
         return "'%s <%s>' for: %s" % (self.user_profile.user.get_full_name(), self.user_profile.email, self.instance.title, )
 
+    @cached(60*60*24, 'prof_per_instance')
     def progress_percentage_by_mission(self, mission):
+        log.debug("running progress_percentage_by_mission ** not cached ** ")
         mission_total_points = mission.total_points
         my_points_for_mission = self.total_points_for_mission(mission)
         percentage = int(my_points_for_mission/mission_total_points*Decimal(100))
@@ -383,3 +391,9 @@ class Notification(models.Model):
         Return the URL of the object associated with the notification.
         """
         return self.content_object.get_absolute_url()
+
+
+# invalidate cache for 'prof_per_instance' group
+def invalidate_prof_per_instance(sender, **kwargs):
+    log.debug("invalidating cache for group `prof_per_instance` ")
+    cache.invalidate_group('prof_per_instance')
