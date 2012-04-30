@@ -879,6 +879,20 @@ p.instructions {
             border-left-width: 0.8em;
         }
 
+    .btn-arrow a:hover {
+        background: #00A3FF;
+        color: #fff;
+    }
+    
+        .btn-arrow a:hover:before {
+            border-top-color: #00A3FF;
+            border-bottom-color: #00A3FF;
+        }
+        
+        .btn-arrow a:hover:after {
+            border-left-color: #00A3FF;
+        }
+
 /* Tab Buttons are used as page navigations... refer to design :-\ */
 .btn-tab {
     display: inline-block;
