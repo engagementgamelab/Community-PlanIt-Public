@@ -145,6 +145,7 @@ a {
     }
 
 #column-body {
+    margin-top: 20px;
     float: left;
     width: 820px;
 }   
