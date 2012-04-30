@@ -68,6 +68,13 @@ class PlayerActivityBase(TranslatableModel):
         rel_objs = self._meta.get_all_related_objects()
         return [getattr(self, x.get_accessor_name()) for x in rel_objs if x.model != type(self)]
 
+    @property
+    def activity_type_readable(self):
+        @cached(60*60*168)
+        def this_type(pk):
+            #log.debug("type: %s" % self.type.type)
+            return self.type.type
+        return this_type(self.pk)
 
     def get_points(self):
         if self.points == None:
@@ -103,9 +110,10 @@ class PlayerActivityBase(TranslatableModel):
     #    return Action.objects.filter(**kwargs).count()
 
     @property
-    def completed_user_count(self):
+    def completed_count(self):
         actions = Action.objects.get_for_action_object(self)
-        return len(filter(lambda a: a.verb == "activity_completed", actions))
+        all_completed = filter(lambda a: a.verb == "activity_completed", actions)
+        return len(all_completed)
 
     def is_past(self):
         return self.mission.end_date < datetime.datetime.now()
