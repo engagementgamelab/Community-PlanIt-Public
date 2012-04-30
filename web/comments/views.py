@@ -100,6 +100,7 @@ def ajax_create(request, comment_form=CommentForm):
             context = dict(
                 comment = parent_comment,
                 STATIC_URL = settings.STATIC_URL,
+                MEDIA_URL = settings.MEDIA_URL,
                 request = request,
             )
             players_tmpl = """\
