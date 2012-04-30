@@ -31,20 +31,21 @@ def fetch(request, slug, template='missions/base.html'):
     mission = get_object_or_404(Mission, slug=slug, instance=request.current_game)
     next_mission = None
     my_missions = Mission.objects.filter(instance=request.current_game).exclude(slug=slug).order_by('-start_date')
+    log.debug("this game has %s missions" % my_missions.count())
     if my_missions.count() > 0:
         next_mission = my_missions[0]
         if next_mission.is_expired:
             next_mission = None
 
-    completed_count = len(request.prof_per_instance.my_completed_by_mission(mission))
-    log.debug("i completed %s challenges" % completed_count)
+    my_completed = request.prof_per_instance.my_completed_by_mission(mission)
+    log.debug("i completed %s challenges" % len(my_completed))
 
     activities = mission.get_activities()
     #my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
 
     context = dict(
         activities = activities,
-        completed_count = completed_count,
+        my_completed = my_completed,
         comment_form = CommentForm(),
         #mission_completed = len(activities) == completed_count,
         next_mission = next_mission,

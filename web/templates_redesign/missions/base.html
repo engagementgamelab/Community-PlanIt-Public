@@ -39,7 +39,7 @@
             <p class="instructions">{% trans "By answering challenge questions you are helping plan your community, and you are earning points that move you towards accomplishing the mission." %}</p>
             <div id="mission-activities-completion">
             {% if activities and mission.is_active %}
-                <div id="completion">{{ completed_count }}/{{ activities|length }}</div>
+                <div id="completion">{{ my_completed|length }}/{{ activities|length }}</div>
                 <div>{% trans "challenges completed" %}</div>
             {% endif %}
             </div>
@@ -71,7 +71,7 @@
                     </div>
                 {% else %}
                     {# Active Mission #}
-                    {% if activity in completed %}
+                    {% if activity in my_completed %}
                     {#  completed activity #}
                     <div class="activity activity-completed {{activity.type.type}}">
                         <a href="{{ activity.get_activity_url }}">

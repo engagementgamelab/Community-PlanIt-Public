@@ -14,13 +14,14 @@ from django.template import Context, RequestContext, loader
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from accounts.models import UserProfile
-from attachments.models import Attachment
-from comments.forms import CommentForm
-from comments.models import Comment
+from web.accounts.models import UserProfile
+from web.attachments.models import Attachment
+from web.comments.forms import CommentForm
+from web.comments.models import Comment
 #from reports.models import ActivityLogger
-from reports.actions import PointsAssigner
-from values.models import *
+from web.reports.actions import PointsAssigner
+from web.values.models import *
+from web.core.utils import missions_bar_context
 
 from PIL import Image
 
@@ -55,6 +56,9 @@ def all(request, template='values/all.html'):
         community_spent = community_spent,
         player_spent = player_spent,
     )
+    # this line here updates the context with 
+    # mission, my_points_for_mission and progress_percentage
+    context.update(missions_bar_context(request))
 
     return render_to_response(template, (RequestContext(request, context)))
 

@@ -27,11 +27,13 @@ log = logging.getLogger(__name__)
 class MissionManager(TranslationManager):
 
     @cached(60*60*24, 'missions')
-    def all(self, *args, **kwargs):
-        log.debug('`all` MissionManager %s ** no cache **')
-        return super(MissionManager, self).all(*args, **kwargs)
+    def filter(self, *args, **kwargs):
+        log.debug('`filter` MissionManager %s ** no cache **')
+        log.debug('%s, %s'% (args, kwargs))
+        return super(MissionManager, self).filter(*args, **kwargs)
 
 
+    @cached(60*60*24, 'missions')
     def latest_by_instance(self, instance):
         missions_for_instance = self.filter(instance=instance)
         if missions_for_instance:
@@ -40,12 +42,14 @@ class MissionManager(TranslationManager):
 
         return self.none()
 
+    @cached(60*60*24, 'missions')
     def past(self, instance=None):
         kwargs = dict(end_date__lt=datetime.datetime.now(),)
         if instance:
             kwargs.update(dict(instance=instance))
         return self.filter(**kwargs).order_by('-end_date')
 
+    @cached(60*60*24, 'missions')
     def future(self, instance=None):
         kwargs = dict(start_date__gt=datetime.datetime.now(),)
         if instance:
@@ -57,6 +61,7 @@ class MissionManager(TranslationManager):
         log.debug("getting default mission ** no cache **")
         return self.active(instance)[0]
 
+    @cached(60*60*24, 'missions')
     def active(self, instance=None):
         now = datetime.datetime.now()
         kwargs = dict(start_date__lte=now, end_date__gte=now,)

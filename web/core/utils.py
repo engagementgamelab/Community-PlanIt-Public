@@ -36,8 +36,11 @@ def missions_bar_context(request, mission=None):
 
     my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
 
+    all_missions_for_game = Mission.objects.filter(instance=request.current_game)
+
     context = {
         'mission': mission,
+        'all_missions_for_game': all_missions_for_game,
         'my_points_for_mission': my_points_for_mission,
         'progress_percentage': progress_percentage,
     }

@@ -52,7 +52,7 @@
                 <h1>Missions</h1>
                 <ul id="nav-missions">
                     {% with mission as current_mission %}
-                        {% for mission in request.current_game.missions.all %}
+                        {% for mission in all_missions_for_game %}
                         <li>                            
                             <a {% ifequal mission current_mission %}class="active"{% endifequal %} href="{% url missions:mission mission.slug %}" title="{{ mission.title }}"> 
                                 <div class="nav-missions-number">{{ forloop.counter }}</div> 
