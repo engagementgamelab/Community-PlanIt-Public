@@ -13,34 +13,11 @@
 
 {% block js %}
     {{ block.super }}
-    {# This is some old javascript leftover from the redesign #}
     <script src="{{ STATIC_URL }}js/sijax.js"></script>
     
     {# TODO: Move this to activities/static/activities/js/scripts.js #}
     <script>
     jQuery(function($) {
-        // $("#id_activity-btn-submit").live("click", function(event){
-        //     event.preventDefault();
-        //     $.ajax({
-        //             type: "POST",
-        //             url: "{% if view_action == 'replay' %} {{ activity.get_replay_url }} {% else %} {{ activity.get_activity_url }} {% endif %}",
-        //             data: $('#id_activity-form').serialize(),
-        //             success: function(data, textStatus) {
-        //                 var $data = $(data);
-        //                 var has_errors = $(data).find(".errorlist");
-        //     
-        //                 if (has_errors.length > 0){
-        //                     $('#content').html($data.find('#content'));
-        //                 }
-        //                 else {
-        //                     window.location='{{ activity.get_overview_url }}';
-        //                 }
-        //             },
-        //             error: function(data){                                        
-        //                 $('#content').html(data.responseText);
-        //             }
-        //     });
-        // });
         
         $.fn.extend({  
             limit: function(limit,element) {
@@ -76,12 +53,11 @@
         
         /* Masonry is a piece of javascript used to layout comments ('bricks') into columns floating left and upwards */
         
-        /* Masonry corner stamp modifications */
+        /* Modify Masonry to support "Corner Stamp" for the heat-map legend */
         $.Mason.prototype.resize = function() {
             this._getColumns();
             this._reLayout();
         };
-
         $.Mason.prototype._reLayout = function( callback ) {
             var freeCols = this.cols;
             if ( this.options.cornerStampSelector ) {
@@ -90,23 +66,19 @@
                   ( this.element.offset().left + this.offset.x + parseInt($cornerStamp.css('marginLeft')) );
             freeCols = Math.floor( cornerStampX / this.columnWidth );
             }
-
             // reset columns
             var i = this.cols;
-            this.colYs = [];
+                this.colYs = [];
             while (i--) {
-            this.colYs.push( this.offset.y );
+                this.colYs.push( this.offset.y );
             }
-
             for ( i = freeCols; i < this.cols; i++ ) {
-            this.colYs[i] = this.offset.y + $cornerStamp.outerHeight(true);
+                this.colYs[i] = this.offset.y + $cornerStamp.outerHeight(true);
             }
-
             // apply layout logic to all bricks
             this.layout( this.$bricks, callback );
         };
                 
-        /* Masonry is used to float the comments into columns correctly */
         init_masonry = function(){
             $('.comments').masonry({
                 // options
@@ -115,8 +87,15 @@
                 cornerStampSelector: '#corner-stamp'
             });
         }
+
+        $('.thread-tail').hide();
         
-        init_masonry();
+        $('.btn-replies').click(function(){
+            console.log($(this).parents('.comment').nextAll('.nested'));
+            $(this).parents('.comment').next('.thread-tail').toggle(200, init_masonry);
+        });
+        
+        
         
         /* This is the character limit counter for response textareas */
         var type_count = function(evt) {
@@ -134,6 +113,9 @@
         }
         $('#message_area, #id_response').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
         $('#message_area, #id_response').limit('1000','#charsLeft');
+        
+        init_masonry();
+        
     });
     
     

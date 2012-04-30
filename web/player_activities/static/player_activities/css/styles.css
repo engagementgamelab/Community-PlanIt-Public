@@ -235,11 +235,14 @@
         position: relative;
         margin: 5px 0px;
         padding: 15px 20px;
+        font-weight: bold;
+        color: #a7a9ac;
         z-index: 0;
     }
     
     .activity-response-summary-choice.my-choice {
-        font-weight: bold;
+        
+        color: #000;
     }
     
         .activity-response-summary-choice-percentage {
