@@ -72,18 +72,42 @@
     .stream-container {
         margin: 20px 0px;
     }
+    
     .stream-event {
         overflow: hidden;
         margin: 10px 0px;
     }
         
         .stream-event-time {
-            float: left;
+            display: inline-block;
             width: 100px;
+            vertical-align: center;
             font-style: italic;
-            color: #666;
+            color: #999;
         }
         
+
+        .stream-event-avatar {
+            display: inline-block;
+            vertical-align: center;
+        }
+        
+            .stream-event-avatar .avatar {
+                display: inline-block;
+                width: 32px;
+                height: 32px;
+            }
+
+                .stream-event-avatar .avatar-content {
+                    line-height: 32px;
+                }
+
+                .stream-event-avatar .avatar img {
+                    max-width: 32px;
+                    max-height: 32px;
+                }
+        
         .stream-event-action {
-            float: left;
+            display: inline-block;
+            vertical-align: center;
         }
