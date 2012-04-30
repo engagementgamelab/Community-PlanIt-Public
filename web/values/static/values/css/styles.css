@@ -50,6 +50,7 @@
     
     #mapthefuture-controls {
         float: right;
+        color: #999;
     }
 
 #mapthefuture-map {
@@ -241,7 +242,8 @@
         }
 
     #mapthefuture-legend {
-        text-align: right;
+        text-align: left;
+        margin: 20px 0px;
         font-style: italic;
         color: #999;
     }
