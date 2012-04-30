@@ -28,8 +28,8 @@
                 <div id="activity-response-summary">
                     {% for choice in choices %}
                         <div class="activity-response-summary-choice {% if choice.value in my_answers %}my-choice{% endif %}">
-                            {{ choice }} {# ({{ choice.multichoice_answers.count }}) #}
-                            <div class="activity-response-summary-choice-percentage" style="width: {% cycle '5' '60' '20' '25' %}%;"> {# TODO percentage for the community responses to this answer#}
+                            {{ choice }}
+                            <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.multichoice_answers.count }}'>
                         </div>
 
                         </div>

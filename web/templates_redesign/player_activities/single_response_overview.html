@@ -32,7 +32,7 @@
                     {% for choice in choices %}
                         <div class="activity-response-summary-choice {% ifequal choice myAnswer.selected %}my-choice{% endifequal %}">
                             {{ choice }}
-                            <div class="activity-response-summary-choice-percentage" style="width: {% cycle '5' '60' '20' '25' %}%;"> {# TODO percentage for the community responses to this answer#}
+                            <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'>
                         </div>
 
                         </div>

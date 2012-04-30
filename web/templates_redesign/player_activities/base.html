@@ -97,7 +97,7 @@
         
         
         
-        /* This is the character limit counter for response textareas */
+        /* Character Limit Counter */
         var type_count = function(evt) {
             var comment_form = $(this.form);
             var val = this.value.replace(/\r?\n/g, 'xx');
@@ -114,6 +114,23 @@
         $('#message_area, #id_response').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
         $('#message_area, #id_response').limit('1000','#charsLeft');
         
+        
+        /* Summary Graph */
+        /* calculate total */
+        var activity_response_total = 0;
+        $('.activity-response-summary-choice-percentage').each(function(index){
+            activity_response_total += parseInt($(this).attr('data-summary-count'));
+        });
+        
+        /* calculate percentages and animate */
+        $('.activity-response-summary-choice-percentage').each(function(index){
+            var activity_response_percentage = Math.round((parseInt($(this).attr('data-summary-count'))/activity_response_total)*100);
+            $(this).animate({
+                width: activity_response_percentage+'%'
+            }, 2000);
+        });
+        
+        /* Init */
         init_masonry();
         
     });
