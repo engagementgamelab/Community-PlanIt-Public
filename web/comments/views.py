@@ -105,15 +105,17 @@ def ajax_create(request, comment_form=CommentForm):
             players_tmpl = """\
                 <div class="nested replies" id="replies-{{comment.pk}}">
                     {% for comment in comment.comments.all %}
-                        {% with filename="comments/comment.html" extra_message=None %}
-                            {% include filename %}
+                        {% with filename="comments/comment.html" extra_message=None nested=1 %}
+                                {% include filename %}
                         {% endwith %}
                     {% endfor %}
                     <div style="clear:both"></div>
-                </div> """
+                </div>
+                """
             t = Template(players_tmpl)
             rendered_comments = t.render(Context(context))
-            obj_response.html('#id_replies-'+str(parent_comment.pk), rendered_comments)
+            obj_response.html('#replies-'+str(parent_comment.pk), rendered_comments)
+            obj_response.call('init_masonry')
         else:
             print "form errors; ", form.errors
 

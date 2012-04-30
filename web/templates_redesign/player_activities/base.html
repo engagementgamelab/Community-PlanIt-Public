@@ -107,13 +107,17 @@
         };
                 
         /* Masonry is used to float the comments into columns correctly */
-        $('.comments').masonry({
-            // options
-            itemSelector : '.thread',
-            columnWidth : 320,
-            cornerStampSelector: '#corner-stamp'
-        });
+        init_masonry = function(){
+            $('.comments').masonry({
+                // options
+                itemSelector : '.thread',
+                columnWidth : 320,
+                cornerStampSelector: '#corner-stamp'
+            });
+            alert('masonry init!');
+        }
         
+        init_masonry();
         
         /* This is the character limit counter for response textareas */
         var type_count = function(evt) {
