@@ -338,6 +338,7 @@ def all(request, template='accounts/all.html'):
         'search_by_kw_sijax_js': search_by_kw.get_js(),
         'paginate_players_per_page' : settings.ENDLESS_PAGINATE_PLAYERS_PER_PAGE,
     }
+    context.update(missions_bar_context(request))
 
     return render(request, template, context)
 
