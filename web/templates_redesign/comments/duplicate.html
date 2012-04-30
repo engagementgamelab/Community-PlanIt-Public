@@ -1,5 +1,7 @@
 {% csrf_token %}
 
+{% load i18n %}
+
 {# comment_form.message.errors #}
 <div class="comment-response">
     <textarea id="message_area" name="message" class="comment_message" cols="80" rows="6"></textarea>
@@ -8,19 +10,21 @@
 
 {# ATTACHMENT A PICTURE OR VIDEO #}
 <div class="comment-response-attachments attachments">
-    <div class="attachments-instructions">Add a photo or video to your response.</div>
-    <div class="add-comment-video form">
-        <div class="input"><input name="video-url" type="text" maxlength="255" /></div>
-        <div class="controls">
-            <button class="btn-blue add">add</button>
-            <button type="reset" class="btn-blue reset">remove</button>
+    <div class="attachments-instructions">{% trans "Add a photo or video to your response." %}</div>
+    <div class="attachments-container">
+        <div class="add-comment-video form">
+            <div class="input"><input name="video-url" type="text" maxlength="255" /></div>
+            <div class="controls">
+                <button class="btn-blue add">add</button>
+                <button type="reset" class="btn-blue reset">remove</button>
+            </div>
         </div>
-    </div>
-    <div class="add-comment-picture form">
-        <div class="input"><input name="picture" type="file"></div>
-        <div class="controls">
-            <button class="btn-blue add">add</button>
-            <button type="reset" class="btn-blue reset">remove</button>
+        <div class="add-comment-picture form">
+            <div class="input"><input name="picture" type="file"></div>
+            <div class="controls">
+                <button class="btn-blue add">add</button>
+                <button type="reset" class="btn-blue reset">remove</button>
+            </div>
         </div>
     </div>
 </div>

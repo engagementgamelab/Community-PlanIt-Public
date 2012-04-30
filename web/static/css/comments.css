@@ -210,17 +210,40 @@
 
 #player-activities .comment-response-attachments {
     float: left;
+    padding-bottom: 20px;
 }
+
+    .attachments-instructions {
+        margin-bottom: 10px;
+        font-style: italic;
+    }
+    
+    .attachments-container {
+        border-left: 1px solid #efefef;
+        margin-left: 20px;
+        padding-left: 20px;
+    }
 
     #player-activities .comment-response-attachments .input,
     #player-activities .comment-response-attachments .controls {
         display: inline-block;
     }
     
+        #player-activities .comment-response-attachments .controls .btn-blue {
+            margin: 0px 0px 0px 10px;
+        }
+    
     #player-activities .comment-response-attachments input[type='text'] {
-        border: 1px solid gray;
-        width: 200px;
+        width: 225px;
         padding: 8px 5px;
+        border: 0px;
+        background: #EFF2F2;
+    }
+    
+    #player-activities .comment-response-attachments input[type='file'] {
+        width: 225px;
+        padding: 8px 5px;
+        border: 0px;
     }
 
 
