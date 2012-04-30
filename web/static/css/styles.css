@@ -487,6 +487,7 @@ a {
     margin: 0 -20px 20px 0px;
     width: 140px;
     background: #f2f7ed;
+    font-family: 'Enriqueta';
 }
 
     #sidebar-nav:after {
@@ -519,60 +520,111 @@ a {
             padding-top: 70px;
             padding-bottom: 10px;
             text-align: center;
+            color: #2D3542;
+            font-weight: bold;
+            font-size: 0.8em;
         }
     
             #sidebar-nav-missioncontrol {
                 background: url('../img/icon-nav-missioncontrol.png') no-repeat 70px center;
                 padding: 30px 60px 30px 10px !important;
                 text-align: left !important;
+                font-size: 1.0em !important;
             }
             
                 .section-missions #sidebar-nav-missioncontrol,
                 .section-activities #sidebar-nav-missioncontrol {
                     background: #fff url('../img/icon-nav-missioncontrol_over.png') no-repeat 70px center;
+                    color: #00e5b8;
                 }
 
             #sidebar-nav-profile {
+                position: relative;
                 padding-top: 10px !important;
             }
-            
+                
                 .section-profile #sidebar-nav-profile {
                     background: #fff;
                 }
                 
                 #sidebar-nav-profile div {
-                    margin-left: -5px;
-                    margin-bottom: 10px;
                     overflow: hidden;
                 }
             
-                    #sidebar-nav-profile-notifications {
-                        float: left;
-                        width: 12px;
-                        height: 12px;
-                        line-height: 12px;
-                        background: #2d3542;
-                        padding: 5px;
+                    #sidebar-nav-profile-notifications-container {
+                        display: block;
+                        position: absolute;
+                        top: 0px;
+                        right: 3px;
                         color: #fff;
+/*                        background: #F2F7ED;*/
+                        padding: 8px;
+                    }
+                    
+                    #sidebar-nav-profile-notifications-container:hover {
+/*                        background: #fff;*/
+                    }
+                    
+                        #sidebar-nav-profile-notifications {
+                            width: 24px;
+                            height: 26px;
+                            background: url('../img/bg-nav-notification.png') no-repeat;
+                            line-height: 36px;
+                        }
+                        
+                        #sidebar-nav-profile-notifications.active {
+                            background: url('../img/bg-nav-notification.png') 24px 0px;
+                        }
+                            
+                    #sidebar-nav-profile-badges-container {
+                        display: block;
+                        position: absolute;
+                        top: 44px;
+                        right: 3px;
+                        color: #fff;
+/*                        background: #F2F7ED;*/
+                        padding: 8px;
+                    }
+                    
+                        #sidebar-nav-profile-badges {
+                            width: 24px;
+                            height: 27px;
+                            background: url('../img/badge-blank.png');
+                            line-height: 30px;
+                        }
+
+
+                    #sidebar-nav-profile-avatar {
+                        position: relative;
+                        left: -16px;
+                        
                     }
                     
                     /* profile avatar restrict size */
-                    #sidebar-nav-profile .avatar {
+                    #sidebar-nav-profile-avatar .avatar {
+                        border: 1px solid #eee;
                         display: inline-block;
-                        width: 64px;
-                        height: 64px;
+                        width: 72px;
+                        height: 72px;
                     }
 
-                        #sidebar-nav-profile .avatar-content {
-                            line-height: 64px;
+                        #sidebar-nav-profile-avatar .avatar-content {
+                            line-height: 72px;
                         }
 
-                        #sidebar-nav-profile .avatar img {
-                            max-width: 64px;
-                            max-height: 64px;
+                        #sidebar-nav-profile-avatar .avatar img {
+                            max-width: 72px;
+                            max-height: 72px;
                         }
-
-                        
+                    
+                    #sidebar-nav-profile-points {
+                        font-size: 2em;
+                        color: red;
+                    }
+                    
+                    #sidebar-nav-profile-screenname {
+                        font-size: 1.4em;
+                    }
                 
             #sidebar-nav-expert {
                 background: url('../img/icon-nav-expert.png') no-repeat center 20px;

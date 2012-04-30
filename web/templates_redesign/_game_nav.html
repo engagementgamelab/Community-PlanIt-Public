@@ -7,13 +7,21 @@
         
         <li class="sidebar-nav-profile">
             <a id="sidebar-nav-profile" href="{% url accounts:player_profile request.user.id %}">
-                <div>
-                    <p id="sidebar-nav-profile-notifications">0</p>
-                        {% avatar request.user %}
-                    {# if user has badges... #}
-                    <img src="{{ STATIC_URL }}img/badge-blank.png">
+                
+                    <div id="sidebar-nav-profile-avatar">{% avatar request.user %}</div>
+                <div id="sidebar-nav-profile-notifications-container">
+                    {# TODO #}{% if notifications %}
+                        <div id="sidebar-nav-profile-notifications" {# class="active" #}>2</div>
+                    {% else %}
+                        <div id="sidebar-nav-profile-notifications" {# class="active" #}>2</div>
+                    {% endif %}
+                    
                 </div>
-                {{ request.user.get_profile.screen_name }}
+                <div id="sidebar-nav-profile-badges-container">
+                    <div id="sidebar-nav-profile-badges">{# TODO #}0</div>
+                </div>
+                <div id="sidebar-nav-profile-points">{# TODO #}5775</div>
+                <div id="sidebar-nav-profile-screenname">{{ request.user.get_profile.screen_name }}</div>
             </a>
         </li>
         
