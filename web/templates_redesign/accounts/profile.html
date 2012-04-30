@@ -3,6 +3,7 @@
 
 {% block title %}{% trans "Profile" %}{% endblock %}
 
+{% block body_class %}{{ block.super }} {% ifequal request.user player %}section-profile{% else %}section-players{% endifequal %}{% endblock %}
 
 {% block css %}
     {{ block.super }}
@@ -12,14 +13,17 @@
 {% block game_content %}
 <div>
     <div class="column-container">
-        {% if city_header %}
-            <a href="{% url home %}" class="btn-back">{% trans "Back to " %}{{ request.current_city.name }}</a>
+        {% ifequal request.user player %}
+            {% if city_header %}
+                <a href="{% url home %}" class="btn-back">{% trans "Back to " %}{{ request.current_city.name }}</a>
+            {% else %}
+                <a href="{% url missions:mission request.current_game.missions.active.0.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
+            {% endif %}
         {% else %}
-            <a href="{% url missions:mission request.current_game.missions.active.0.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
-        {% endif %}
-        
+            <a href="{% url accounts:all %}" class="btn-back">{% trans "Back to Find Players" %}</a>
+        {% endifequal %}
         <h1>{{ player.get_profile.screen_name }}</h1>
-        {% if request.user == player %}<a class="button" href="{% url accounts:profile_edit %}">edit my profile</a>{% endif %}
+        {% ifequal request.user player %}<a class="button" href="{% url accounts:profile_edit %}">edit my profile</a>{% endifequal %}
     </div>
     
     
