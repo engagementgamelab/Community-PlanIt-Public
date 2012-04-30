@@ -97,7 +97,7 @@ INSTALLED_APPS = (
     'player_activities',
     'reports',
     'responses',
-    #'values',
+    'values',
     'challenges',
     'badges',
 
