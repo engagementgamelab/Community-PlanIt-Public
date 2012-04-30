@@ -229,9 +229,18 @@ a {
    }
 
    .private #header h1 {
-       font-size: 1.8em;
-       padding: 10px;
+       padding: 20px 0px 5px 20px;
+       font-family: 'Enriqueta';
+       font-size: 1.0em;
+       font-weight: bold;
+       color: #f2f7c7;
    }
+   
+        .private #header h1 a {
+            display: inline-block;
+            margin: 0px 10px;
+            color: #fff;
+        }
 
    .private #top-nav {}
 
