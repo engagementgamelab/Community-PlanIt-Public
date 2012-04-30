@@ -37,14 +37,15 @@ def fetch(request, slug, template='missions/base.html'):
         if next_mission.is_expired:
             next_mission = None
 
-    my_completed = request.prof_per_instance.my_completed_by_mission(mission)
+    my_completed = set(request.prof_per_instance.my_completed_by_mission(mission))
     log.debug("i completed %s challenges" % len(my_completed))
-
-    activities = mission.get_activities()
-    #my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
-
+    my_not_completed = set(mission.get_activities()) - my_completed
+    my_not_completed = list(my_not_completed)
+    my_completed = list(my_completed)
+    my_not_completed.extend(my_completed)
+    all_activities_sorted = my_not_completed
     context = dict(
-        activities = activities,
+        activities = all_activities_sorted,
         my_completed = my_completed,
         comment_form = CommentForm(),
         #mission_completed = len(activities) == completed_count,
