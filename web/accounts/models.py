@@ -212,10 +212,10 @@ class UserProfilePerInstance(models.Model):
 
     @property
     def flags(self):
-        missions = self.instance.missions.all()
-        my_flags = missions.count()
+        all_missions_for_game = Mission.objects.filter(instance=self.instance)
+        my_flags = all_missions_for_game.count()
 
-        for m in missions:
+        for m in all_missions_for_game:
             min_points_for_mission = Decimal(m.total_points) * (Decimal(Mission.MISSION_FLAG_PERCENTAGE) / Decimal(100))
             my_completed = self.my_completed_by_mission(m)
             my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))

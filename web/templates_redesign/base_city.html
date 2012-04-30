@@ -87,16 +87,9 @@
                 <a href="{% url values:index %}">Map the Future</a>
                 <div id="mission-mapthefuture-flags-container">
                     {# TODO for token in tokens #}
+                    {% for i in my_flags_range %}
                     <div class="mapthefuture-flag"></div>
-                    <div class="mapthefuture-flag"></div>
-                    <div class="mapthefuture-flag"></div>
-                    <div class="mapthefuture-flag"></div>
-                    <div class="mapthefuture-flag"></div>
-                    <div class="mapthefuture-flag"></div>
-                    <div class="mapthefuture-flag"></div>
-                    <div class="mapthefuture-flag"></div>
-                    <div class="mapthefuture-flag"></div>
-                    <div class="mapthefuture-flag"></div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
