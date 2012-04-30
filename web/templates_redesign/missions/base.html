@@ -58,7 +58,6 @@
                         {% if completed_count %}
                             {{ completed_count }} response{{ completed_count|pluralize }})
                         {% endif %}
-                        <div class="mission-activity-points">{{ points }}</div>
                     </a>
                 </div>
             {% else %}
@@ -83,7 +82,7 @@
                     {# fresh activity #}
                     <div class="activity {{ activity_type }}">
                         <a href="{{ activity.get_activity_url }}">
-                            {{ activity|trans_fallback:"name" }}  ({{ completed_count }} new response{{ completed_count|pluralize }})
+                            {{ activity|trans_fallback:"name" }}
                             <div class="mission-activity-points">{{ points }}</div>
                         </a>
                     </div>
