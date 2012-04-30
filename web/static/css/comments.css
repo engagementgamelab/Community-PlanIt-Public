@@ -152,6 +152,8 @@
             .comment .actions .likes .likes-count {
                 display: inline-block;
                 color: #00a3ff;
+                margin: 0px 5px;
+                
             }
     
         /* REPLIES! */
@@ -161,9 +163,19 @@
 
             .comment .actions .replies .btn-replies {
                 display: inline-block;
+                vertical-align: middle;
+                position: relative;
+                bottom: -2px;
                 width: 20px;
                 height: 20px;
                 background: url('../img/icon-comments-reply.png');
+            }
+            
+            .comment .actions .replies .replies-count {
+                display: inline-block;
+                vertical-align: middle;
+                color: #00a3ff;
+                margin: 0px 5px;
             }
             
         /* REPLIES! (NESTED) */

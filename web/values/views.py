@@ -106,7 +106,7 @@ def detail(request, id):
     values = value.instance.values.language(get_language())
     total_coins = values.aggregate(Sum('coins'))['coins__sum'] or 0
 
-    tmpl = loader.get_template('values/base.html')
+    tmpl = loader.get_template('values/value.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
         'value': value,
         'total_coins': total_coins,
