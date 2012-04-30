@@ -29,12 +29,11 @@
     </div>
     
     <div class="column-container">
-        <div id="btn-challenges" class="btn-tab left clearfix"><a class="active">Challenges</a></div>
-        <div id="btn-player-challenges" class="btn-tab right"><a href="{% url activities:new mission.slug %}">You Pose the Challenges</a></div>
-        <hr class="thick clearfix" />
+        <h1 id="btn-challenges" class="btn-tab"><a class="active">{% trans "Challenges" %}</a></h1>
+        <h1 id="btn-player-challenges" class="btn-tab"><a href="{% url activities:new mission.slug %}">You Pose the Challenges</a></h1>
     </div>
     
-    <div class="column-container">
+    <div class="column-container clearfix">
         <div id="mission-activities-intro">
             <p class="instructions">{% trans "By answering challenge questions you are helping plan your community, and you are earning points that move you towards accomplishing the mission." %}</p>
             <div id="mission-activities-completion">

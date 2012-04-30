@@ -10,12 +10,7 @@
 
     #btn-player-challenges a {
         padding: 15px 20px 15px 40px;
-        background: url('../img/icon-player-challenges.png') no-repeat 10px center;
-    }
-    
-    #btn-player-challenges a:hover,
-    #btn-player-challenges a.active {
-        background: #2d3542 url('../img/icon-player-challenges_over.png') no-repeat 10px center;
+        background: url('../img/icon-player-challenges_over.png') no-repeat 10px center;
     }
 
 
