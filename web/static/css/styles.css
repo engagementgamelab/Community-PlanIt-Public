@@ -806,7 +806,8 @@ p.instructions {
     border-radius: 5px;
 }
 
-    .btn-blue:hover {
+    .btn-blue:hover,
+    .btn-blue.blue {
         background: #f7ff59;
         color: #2D3542;
     }
@@ -829,7 +830,8 @@ p.instructions {
 }
 
 
-    .btn-yellow:hover {
+    .btn-yellow:hover,
+    .btn-yellow.active {
         background: #00A3FF;
         color: #fff;
     }

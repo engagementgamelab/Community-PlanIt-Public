@@ -37,11 +37,10 @@
     </script>
 {% endblock %}
 
+{% block no_gettogethers %}{% endblock %}
 
 {% block crowds_add %}
-<div class="tabbutton">
-    <a href="{% url crowds:index %}" class="button">{% trans "- Create a Get Together!" %}</a>
-</div>
+    <a href="{% url crowds:index %}" class="btn-yellow active">{% trans "- Create a Get Together!" %}</a>
 
 <div>
 

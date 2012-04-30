@@ -16,9 +16,7 @@
         <p class="instructions">{% trans "Get together with your fellow players to organize, rally, and take action in your community!" %}</p>
     
         {% block crowds_add %}
-            <div class="tabbutton">
-                <a href="{% url crowds:rally %}" class="button">{% trans "+ Create a Get Together!" %}</a>
-            </div>
+            <a href="{% url crowds:rally %}" class="btn-yellow">{% trans "+ Create a Get Together!" %}</a>
         {% endblock %}
     
     
@@ -47,10 +45,10 @@
                 </div>
             </a>
         {% empty %}
+            {% block no_gettogethers %}
             <div>There are no get togethers. Be the first to <a href="{% url crowds:rally %}" class="button">create one</a>.</div>
+            {% endblock %}
         {% endfor %}
-        
-        <hr class="thick" />
 
     </ul>
     </div>
