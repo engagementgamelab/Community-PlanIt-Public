@@ -113,7 +113,7 @@ def view_crowd(request, id, template='crowds/crowd.html'):
     context = {
         'crowd': crowd,
     }
-    
+    context.update(missions_bar_context(request))
     return render(request, template, context)
 
 @login_required
@@ -317,7 +317,7 @@ def all(request, template='crowds/all.html', extra_context={}):
     }
     
     context.update(extra_context)
-    print context
+    context.update(missions_bar_context(request))
     return render(request, template, context)
 
 
