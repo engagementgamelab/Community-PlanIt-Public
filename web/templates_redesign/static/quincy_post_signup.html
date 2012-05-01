@@ -1,3 +1,23 @@
+{%extends "base.html"%}
+{% load i18n %}
+
+{% block title %}{% trans "Welcome" %}{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <!--link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/citypages.css"--> 
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/quincy.css"> 
+{% endblock %}
+
+{% block body_id %}public-index{% endblock %}
+
+{% block top-breadcrumbs %}
+<div id="top-breadcrumbs">
+</div>
+{% endblock %}
+
+{% block content %}
+
 <div class="column-full" id="quincy">
     <div class="column-container">
         <h1><span class="blue">Success!</span><br /> You're signed up to play the North Quincy &amp; Wollaston: Neighborhoods on the Move game on Community PlanIt!</h1>
@@ -11,3 +31,10 @@
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+
+
+
+
