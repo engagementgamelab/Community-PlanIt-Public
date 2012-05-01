@@ -1,0 +1,38 @@
+/* Badge-Specific Styles */
+
+.badge {
+    width: 59px;
+    height: 72px;
+}
+    
+    .badge.communitybuilder {
+        background-image: url('../img/badge-communitybuilder.png');
+    }
+
+    .badge.crowdsourcer {
+        background-image: url('../img/badge-crowdsourcer.png');
+    }
+
+    .badge.empathizer {
+        background-image: url('../img/badge-empathizer.png');
+    }
+
+    .badge.hometownhero {
+        background-image: url('../img/badge-hometownhero.png');
+    }
+
+    .badge.localsage {
+        background-image: url('../img/badge-localsage.png');
+    }
+
+    .badge.moverandshaker {
+        background-image: url('../img/badge-moverandshaker.png');
+    }
+
+    .badge.provocateur {
+        background-image: url('../img/badge-provocateur.png');
+    }
+
+    .badge.visionary {
+        background-image: url('../img/badge-visionary.png');   
+    }

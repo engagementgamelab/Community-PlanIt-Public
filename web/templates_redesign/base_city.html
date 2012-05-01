@@ -5,7 +5,8 @@
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/citypages.css"> 
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/quincy.css">
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/comments.css"> 
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/comments.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/badges.css"> 
 {% endblock %}
 
 {% block title %}{% if request.current_city %}{{ request.current_city.name }}{% else %}{% trans "Welcome" %}{% endif %}{% endblock %}

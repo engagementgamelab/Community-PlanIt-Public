@@ -56,7 +56,7 @@
                 <!-- Stake -->
                 <h3>{% trans "Stake" %}</h3>
                 <p class="profile-detail">
-                    {{ profile_per_instance.format_stakes }}<br />
+                    {# {{ profile_per_instance.format_stakes }}<br /> #}
                 </p>
                 
                 <!-- Affiliations -->
@@ -83,7 +83,7 @@
             <br />
             
             <!-- Comments -->
-            {% comment %}
+
             <h2>{% trans "Community Messages" %}</h2>
             {% with comments=player.get_profile.comments comment_heading=comment_heading|default:"Comments" %}
             {% if not comment_form.just_one_form %}
@@ -91,35 +91,14 @@
             {% else %}
                 <h2>{% blocktrans %}{{comment_heading}}{% endblocktrans %}</h2>
             {% endif %}
-            <div class="comment">
-                {# {% if instance.is_active %} #}
-                
-                    <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
+            
+                <form enctype="multipart/form-data" action="{{comment_post_url|default:"."}}" method="POST">
+                    <div class="comment">
                         {% include "comments/duplicate.html" %}
-                        <button type="submit" class="button right">Add Comment</button>
-                    </form>
-                {# {% else %} #}
-                    {# <p>This community is no longer active.</p> #}
-                {# {% endif %} #}
+                    <button type="submit" class="button right">Add Comment</button>
+                </form>
             </div>
             {% endwith %}
-            
-            {% endcomment %}
-            
-            <!-- Notifications -->
-            <p class="profile-detail">
-            {# {# {% for notification in request.user.notifications.all %} #}
-            {# {#          #}
-            {# {# {% empty %} #}
-            {#     {% if request.user == player %} #}
-            {#         No one has commented on your profile yet. Check out Find Players to connect to friends or meet new ones! #}
-            {#         <br /><br /> #}
-            {#         <a href="{% url accounts:all %}" class="btn-forward">{% trans "Find players" %}</a> #}
-            {#     {% else %} #}
-            {#         There are no comments for this player's profile yet. #}
-            {#     {% endif %} #}
-            {# {% endfor %} #}
-            </p>
             
         </div>
         <div class="column-third">
@@ -132,15 +111,38 @@
                 
                 <!-- Badges -->
                 <h2>{% trans "Badges Earned" %}</h2>
-                <p class="profile-detail">
+                <div id="profile-badges" class="profile-detail">
                     {# TODO: Badges #}
-                    {# if empty #}
-                    {% if request.user == player %}
-                        {% trans "You haven't earned any badges yet!" %}
-                    {% else %}
-                        {% trans "This player has no badges yet." %}
-                    {% endif %}
-                </p>
+                    
+                    <div class="badge-container">
+                        <div class="badge moverandshaker"></div>
+                        <div class="badge-name">Mover &amp; Shaker</div>
+                    </div>
+                    
+                    <div class="badge-container">
+                        <div class="badge crowdsourcer"></div>
+                        <div class="badge-name">Crowdsourcer</div>
+                    </div>
+                    
+                    <div class="badge-container">
+                        <div class="badge localsage"></div>
+                        <div class="badge-name">Local Safe</div>
+                    </div>
+                    
+                    <div class="badge-container">
+                        <div class="badge visionary"></div>
+                        <div class="badge-name">Visionary</div>
+                    </div>
+                    <br /><br />
+                    <a href="{% url badges:all %}" class="btn-forward">{% trans "Go to Badge Gallery" %}</a>
+                    
+                    {# empty #}
+                    {# {% ifequal request.user player %} #}
+                    {#     {% trans "You haven't earned any badges yet!" %} #}
+                    {# {% else %} #}
+                    {#     {% trans "This player has no badges yet." %} #}
+                    {# {% endifequal %} #}
+                </div>
 
 
             </div>

@@ -41,7 +41,8 @@ urlpatterns = patterns('web',
     (r'^lists/', include('lists.urls', namespace='lists', app_name='lists')),
     (r'^flags/', include('flags.urls', namespace='flags', app_name='flags')),
     (r'^activities/', include("player_activities.urls", namespace='activities', app_name='player_activities')),
-
+    (r'^badges/', include('badges.urls', namespace='badges', app_name='badges')),
+    
     # Admin stuff
     #(r'^curator/', include('curator.urls')),
     (r'^reports/', include('reports.urls', namespace='reports', app_name='reports')),
