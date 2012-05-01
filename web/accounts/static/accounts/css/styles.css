@@ -97,13 +97,6 @@
             max-width: 200px;
             max-height: 200px;
         }
-        
-    .profile-container .profile-screenname {
-        padding: 8px 10px;
-        background: #f3f7ed;
-        font-weight: bold;
-        color: #323843;
-    }
     
     .profile-detail {
         margin: 10px 0px;
@@ -286,7 +279,6 @@
     width: 164px;
     float: left;
     margin: 20px 20px;
-    background: #e5f0ea url('../../../../static/img/bg-pagefold.png') no-repeat right bottom;
     overflow: hidden;
 }
 
@@ -310,16 +302,30 @@
         }
         
     .profile-container .profile-screenname {
-        padding: 8px 10px;
-        background: #f3f7ed;
         font-weight: bold;
-        color: #323843;
+        font-size: 1.2em;
+        margin: 10px 0px;
+        padding-left: 20px;
+        background: url('../../../../static/img/icon-findplayers.png') no-repeat left 2px;
+    }
+        
+    .profile-container .profile-stakes {
+        text-transform: uppercase;
+        margin: 5px 0px;
+        font-weight: bold;
+    }
+
+    .profile-container .profile-points {
+        font-style: italic;
+        color: red;
+        margin: 5px 0px;
+        font-weight: bold;
     }
     
     .profile-container .profile-tagline {
-        margin: 10px 10px;
         font-style: italic;
-        color: black;
+        margin: 5px 0px;
+        color: #999;
     }
 
 #profile-pagination {

@@ -12,7 +12,7 @@
     {% for comment in comments.all reversed %}
         {% include "comments/comment.html" %}
     {% empty %}
-    <li class="comment">No comments found.</li>
+    There are no comments yet.
     {% endfor %}
 </ul>
 {% endwith %}
