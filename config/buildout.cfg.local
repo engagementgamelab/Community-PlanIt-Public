@@ -30,7 +30,7 @@ eggs +=
 
 [server]
 host=pk.communityplanit.org
-venv_name=cpi-pk
+venv_name=cpi
 user=www-data
 uwsgi-socket-port=7010
 db_name = cpi
