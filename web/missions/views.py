@@ -28,15 +28,7 @@ def fetch(request, slug, template='missions/base.html'):
     if not hasattr(request, 'current_game'):
         raise Http404("could not locate a valid game")
 
-    mission = get_object_or_404(Mission, slug=slug, instance=request.current_game)
-    next_mission = None
-    my_missions = Mission.objects.filter(instance=request.current_game).exclude(slug=slug).order_by('-start_date')
-    log.debug("this game has %s missions" % my_missions.count())
-    if my_missions.count() > 0:
-        next_mission = my_missions[0]
-        if next_mission.is_expired:
-            next_mission = None
-
+    mission = get_object_or_404(Mission, slug=slug)
     my_completed = set(request.prof_per_instance.my_completed_by_mission(mission))
     log.debug("i completed %s challenges" % len(my_completed))
     my_not_completed = set(mission.get_activities()) - my_completed
@@ -48,8 +40,6 @@ def fetch(request, slug, template='missions/base.html'):
         activities = all_activities_sorted,
         my_completed = my_completed,
         comment_form = CommentForm(),
-        #mission_completed = len(activities) == completed_count,
-        next_mission = next_mission,
     )
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
