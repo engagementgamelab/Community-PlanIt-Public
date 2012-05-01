@@ -26,11 +26,15 @@ log = logging.getLogger(__name__)
 
 class MissionManager(TranslationManager):
 
-    @cached(60*60*24, 'missions')
-    def filter(self, *args, **kwargs):
+    @cached(60*60*24, 'missions_for_instance')
+    def for_instance(self, instance):
         log.debug('`filter` MissionManager %s ** no cache **')
-        log.debug('%s, %s'% (args, kwargs))
-        return super(MissionManager, self).filter(*args, **kwargs)
+        return self.filter(instance=instance)
+
+    #def filter(self, *args, **kwargs):
+    #    log.debug('`filter` MissionManager %s ** no cache **')
+    #    log.debug('%s, %s'% (args, kwargs))
+    #    return super(MissionManager, self).filter(*args, **kwargs)
 
 
     @cached(60*60*24, 'missions')
@@ -43,31 +47,22 @@ class MissionManager(TranslationManager):
         return self.none()
 
     @cached(60*60*24, 'missions')
-    def past(self, instance=None):
-        kwargs = dict(end_date__lt=datetime.datetime.now(),)
-        if instance:
-            kwargs.update(dict(instance=instance))
-        return self.filter(**kwargs).order_by('-end_date')
+    def past(self, instance):
+        return self.filter(instance=instance, end_date__lt=datetime.datetime.now()).order_by('-end_date')
 
     @cached(60*60*24, 'missions')
-    def future(self, instance=None):
-        kwargs = dict(start_date__gt=datetime.datetime.now(),)
-        if instance:
-            kwargs.update(dict(instance=instance))
-        return self.filter(**kwargs).order_by('start_date')
+    def future(self, instance):
+        return self.filter(instance=instance, start_date__gt=datetime.datetime.now()).order_by('start_date')
 
     @cached(60*60*24, 'missions')
-    def default(self, instance=None):
+    def default(self, instance):
         log.debug("getting default mission ** no cache **")
         return self.active(instance)[0]
 
     @cached(60*60*24, 'missions')
-    def active(self, instance=None):
+    def active(self, instance):
         now = datetime.datetime.now()
-        kwargs = dict(start_date__lte=now, end_date__gte=now,)
-        if instance:
-            kwargs.update(dict(instance=instance))
-        return self.filter(**kwargs).order_by('start_date')
+        return self.filter(instance=instance, start_date__lte=now, end_date__gte=now).order_by('start_date')
 
 
 class Mission(TranslatableModel):
@@ -158,14 +153,16 @@ class Mission(TranslatableModel):
     #    all_activities = self.get_activities()
     #    completed_from_stream = self.completed_from_stream(user)
 
-    @cached(60*60*24, 'missions')
     def get_activities(self):
         """ return a list of all available activities """
-        log.debug("getting activities for mission ** no cache **")
-        activities = []
-        for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
-            activities.extend(getattr(self, 'player_activities_%s_related' % model_klass.lower()).all())
-        return sorted(activities, key=attrgetter('name'))
+        @cached(60*60*24*7, 'activities_for_mission')
+        def activities_for_mission(pk):
+            log.debug("getting activities for mission ** no cache **")
+            activities = []
+            for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
+                activities.extend(getattr(self, 'player_activities_%s_related' % model_klass.lower()).all())
+            return sorted(activities, key=attrgetter('name'))
+        return activities_for_mission(self.pk)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]

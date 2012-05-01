@@ -193,6 +193,13 @@ class UserProfilePerInstance(models.Model):
             return (my_points_for_mission, percentage)
         return my_progress(self.pk, mission)
 
+    def get_user(self):
+        @cached(60*60*24*30)
+        def this_user(pk):
+            log.debug("got user for profile **no cache**")
+            return self.user_profile.user
+        return this_user(self.pk)
+
     @property
     def total_points(self):
         my_completed = []
@@ -206,8 +213,10 @@ class UserProfilePerInstance(models.Model):
                     getattr(action, 'action_object_playermapactivity') or \
                     getattr(action, 'action_object_playerempathyactivity') for action in actions]
         activities_for_mission = mission.get_activities()
+        if len(activities_for_mission) == 0:
+            return []
         actions = Action.objects.get_for_action_objects(activities_for_mission)
-        actions_completed_activities = filter(lambda a: a.verb == "activity_completed" and a.actor==self.user_profile.user, actions)
+        actions_completed_activities = filter(lambda a: a.verb == "activity_completed" and a.actor==self.get_user(), actions)
         return activities_from_actions(actions_completed_activities)
 
     @property
