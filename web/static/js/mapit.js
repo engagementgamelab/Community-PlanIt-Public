@@ -260,7 +260,7 @@
                         });
                         markers.push(marker);
                         var input = document.getElementById('google_search');
-                        input.value = "";
+                        //input.value = "";
                     }
                     return false;
                 });

@@ -16,7 +16,7 @@
         <p class="instructions">{% trans "Get together with your fellow players to organize, rally, and take action in your community!" %}</p>
     
         {% block crowds_add %}
-            <a href="{% url crowds:rally %}" class="btn-yellow">{% trans "+ Create a Get Together!" %}</a>
+            <a href="{% url crowds:create %}" class="btn-yellow">{% trans "+ Create a Get Together!" %}</a>
         {% endblock %}
     
     
@@ -35,7 +35,7 @@
                 {% endif %}
                 </div>
                 <div class="crowds-event-left-container">
-                    <div class="crowds-event-name">{{ crowd.name}}</div>
+                    <div class="crowds-event-name">{{ crowd.name}} {{ crowd.address }} </div>
                     {% if request.user in crowd.participants.all %}<div class="crowds-event-attending"></div>{% endif %}
                     <div class="crowds-event-participants">({{ crowd.participants.all.count }} {% if crowd.is_expired %}{% trans "players attended" %}{% else %}{% trans "players attending" %}{% endif %})</div>
                     <div class="crowds-event-creator">{% trans "created by" %} {{ crowd.creator.get_profile.screen_name }}</div>
@@ -46,7 +46,7 @@
             </a>
         {% empty %}
             {% block no_gettogethers %}
-            <div>There are no get togethers. Be the first to <a href="{% url crowds:rally %}" class="button">create one</a>.</div>
+            <div>There are no get togethers. Be the first to <a href="{% url crowds:create %}" class="button">create one</a>.</div>
             {% endblock %}
         {% endfor %}
 
