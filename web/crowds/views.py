@@ -185,6 +185,9 @@ def create(request):
 
             crowd = form.save(commit=False)
             crowd.map = map
+            # TODO how is the size supposed to be set?
+            # the map will not render if the size is missing.
+            crowd.map.size = [500, 400]
             crowd.address = address
             crowd.instance = current_instance
             crowd.creator = request.user
