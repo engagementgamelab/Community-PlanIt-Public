@@ -61,6 +61,7 @@ class PlayerActivityBase(TranslatableModel):
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
     comments = generic.GenericRelation(Comment)
     comment_required = models.BooleanField('comment required', default=True)
+    is_player_submittd = models.BooleanField("is player submitted?", default=False)
 
     #objects = PlayerActivityManager()
 

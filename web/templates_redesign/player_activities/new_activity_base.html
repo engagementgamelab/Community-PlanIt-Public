@@ -44,40 +44,7 @@
             {% trans "Activities" %}:
         {% endif %}
         {% endcomment %}
-        {% block new_activity_forms %}
-        <form action="." method="post">{% csrf_token %}
-            {{ wizard.management_form }}
-
-            {% if wizard.form.forms %}
-                {{ wizard.form.management_form }}
-                {% for form in wizard.form.forms %}
-                    {{ form.as_p }}
-                {% endfor %}
-            {% else %}
-                {{ wizard.form.as_p }}
-            {% endif %}
-            <input type="submit">
-
-            {% comment %}
-            {{ form.errors }}
-            <div class="fieldWrapper">
-                {{ form.name.errors }}
-                <label for="id_name">Name:</label> {{ form.name }}
-            </div>
-            <div class="fieldWrapper">
-                {{ form.question.errors }}
-                <label for="id_question">Question:</label> {{ form.question }}
-            </div>
-            <div class="fieldWrapper">
-                <label for="id_types">Type</label> {{ form.type }}
-            </div>
-            <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
-            {{ previous_fields|safe }}
-            <input type="submit">
-            {% endcomment %}
-        </form>
-
-        {% endblock new_activity_forms %}
+        {% block forms %} {% endblock forms %}
         
     </div>
 
