@@ -8,17 +8,18 @@ class CurrentDomainMiddleware(object):
 
     def process_request(self, request):
         request.current_site = RequestSite(request)
-
         try:
-            current_city = City.objects.get(domain=request.current_site)
+            current_city = City.objects.for_domain(domain=request.current_site)
         except City.DoesNotExist:
             current_city = None
         request.current_city = current_city
 
-
         if request.session.has_key('current_game_slug') and \
                 not hasattr(request, 'current_game'):
-            request.current_game = Instance.objects.language(get_language()).get(
+            #request.current_game = Instance.objects.language(get_language()).for_slug(
+            #            slug=request.session.get('current_game_slug')
+            #)
+            request.current_game = Instance.objects.for_slug(
                         slug=request.session.get('current_game_slug')
             )
         #if request.user.is_authenticated() and not request.user.is_superuser:

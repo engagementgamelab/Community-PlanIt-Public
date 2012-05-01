@@ -27,7 +27,7 @@
                                 Starts on {{ instance.start_date|date:"M j" }}
                             {% endif %}
                             {# If you're signed up for this current game #}
-                            {% if instance in request.user.get_profile.instances.all %}
+                            {% if instance in my_games %}
                                 <div class="gameslist-signedup">
                                     You're signed up!
                                 </div>
@@ -55,17 +55,19 @@
                         </div>
                         <div class="gameslist-details-container">
                             <div class="gameslist-detail-attachment">
-                                {% if instance.get_slideshow_attachment.get_att_type_display == 'Video' %}
-                                    {% embed_video instance.get_slideshow_attachment.url %}
+                                {% with instance.get_slideshow_attachment as attachment %}
+                                {% if attachment.get_att_type_display == 'Video' %}
+                                    {% embed_video attachment.url %}
                                 {% else %}
-                                <img class="gameslist-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
+                                <img class="gameslist-detail-img" src="{{ MEDIA_URL }}{{ attachment.file }}">
                                 {% endif %}
+                                {% endwith %}
                             </div>
                             <div class="gameslist-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</div>
                             <div id="gameslist-detail-signup" class="btn-arrow">
                                 {% if user.is_authenticated %}
                                     {# Sign up for Instance #}
-                                    {% if instance in request.user.get_profile.instances.all %}
+                                    {% if instance in my_games %}
                                         {# TODO: Go to this game if started! #}
                                         {% if current_city %}
                                             {# CITY PAGE #}
@@ -109,11 +111,13 @@
                         <div class="gameslist-countdown-container"></div>
                         <div class="gameslist-details-container">
                             <div class="gameslist-detail-attachment">
-                                {% if instance.get_slideshow_attachment.get_att_type_display == 'Video' %}
-                                    {% embed_video instance.get_slideshow_attachment.url %}
+                                {% with instance.get_slideshow_attachment as attachment %}
+                                {% if attachment.get_att_type_display == 'Video' %}
+                                    {% embed_video attachment.url %}
                                 {% else %}
-                                <img class="gameslist-detail-img" src="{{ MEDIA_URL }}{{ instance.get_slideshow_attachment.file }}">
+                                <img class="gameslist-detail-img" src="{{ MEDIA_URL }}{{ attachment.file }}">
                                 {% endif %}
+                                {% endwith %}
                             </div>
                             <p class="gameslist-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
                         </div>

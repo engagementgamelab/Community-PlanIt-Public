@@ -151,6 +151,13 @@ class UserProfilePerInstanceManager(models.Manager):
         log.debug('get prof_per_instance %s ** no cache **' % kwargs)
         return super(UserProfilePerInstanceManager, self).get(*args, **kwargs)
 
+    @cached(60*60*24, 'all_games_for_profile')
+    def games_for_profile(self, user_profile):
+        game_pks = self.filter(user_profile=user_profile).values_list('instance__pk', flat=True)
+        my_games = Instance.objects.filter(pk__in=game_pks)
+        log.debug('my games %s. ** no cached ** ' % my_games)
+        return my_games
+
     #def latest_instance_by_profile(self, user_profile, domain):
     #    return self.objects.filter(user_profile=user_profile).latest_for_city_domain(domain)
 
@@ -203,7 +210,7 @@ class UserProfilePerInstance(models.Model):
     @property
     def total_points(self):
         my_completed = []
-        for mission in self.instance.missions.all():
+        for mission in Mission.objects.for_instance(self.instance):
             my_completed.extend(self.my_completed_by_mission(mission))
         return Decimal(sum(activity.get_points() for activity in my_completed))
 

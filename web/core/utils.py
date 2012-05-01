@@ -40,6 +40,7 @@ def missions_bar_context(request, mission=None):
     my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
     all_missions_for_game = Mission.objects.for_instance(instance=request.current_game)
     my_flags_count = request.prof_per_instance.flags
+    my_flags_count = request.prof_per_instance.flags
     log.debug("i have %s flags" % my_flags_count)
     my_flags_range = range(0, my_flags_count)
 
