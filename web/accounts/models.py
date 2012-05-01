@@ -230,7 +230,7 @@ class UserProfilePerInstance(models.Model):
 
     @property
     def flags(self):
-        all_missions_for_game = Mission.objects.filter(instance=self.instance)
+        all_missions_for_game = Mission.objects.for_instance(self.instance)
         my_flags = all_missions_for_game.count()
 
         for m in all_missions_for_game:
