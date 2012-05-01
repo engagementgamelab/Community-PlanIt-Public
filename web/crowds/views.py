@@ -1,6 +1,7 @@
 import datetime
 import re
 from stream import utils as stream_utils
+from PIL import Image
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -9,13 +10,13 @@ from django.template import Context, RequestContext, loader
 
 from django.contrib.auth.decorators import login_required
 
-from crowds.forms import *
-from crowds.models import *
-from comments.forms import CommentForm
-from comments.models import Comment
-from reports.actions import PointsAssigner
+from web.core.utils import missions_bar_context
+from web.comments.forms import CommentForm
+from web.comments.models import Comment
+from web.reports.actions import PointsAssigner
 #from responses.comment.forms import CommentAttachmentResponseForm
-from PIL import Image
+from .forms import *
+from .models import *
 
 import logging
 log = logging.getLogger(__name__)
@@ -85,14 +86,16 @@ def crowd(request, id, template='crowds/base.html'):
     else:
         form = PlayerChallengeForm()
 
-    data = {
+    context = {
         'challenge': challenge,
         'player_challenge': pc,
         'instance': challenge.instance,
         #'comment_form': CommentForm(),
         'response_form': form,
     }
-    return render_to_response(template, data, context_instance=RequestContext(request))
+
+    context.update(missions_bar_context(request))
+    return render(request, template, context)
 
 @login_required
 def view_crowd(request, id, template='crowds/crowd.html'):
@@ -198,7 +201,7 @@ def rally(request):
             crowds = Crowd.objects.filter(instance=current_instance).order_by('-start_date'),
             form = form,
     )
-    print context
+    context.update(missions_bar_context(request))
     return render(request, 'crowds/add.html', context)
 
 

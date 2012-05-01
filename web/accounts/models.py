@@ -215,6 +215,8 @@ class UserProfilePerInstance(models.Model):
         activities_for_mission = mission.get_activities()
         if len(activities_for_mission) == 0:
             return []
+        # do not pass en empty list to Action.get_for_action_objects
+        # it will blow up
         actions = Action.objects.get_for_action_objects(activities_for_mission)
         actions_completed_activities = filter(lambda a: a.verb == "activity_completed" and a.actor==self.get_user(), actions)
         return activities_from_actions(actions_completed_activities)

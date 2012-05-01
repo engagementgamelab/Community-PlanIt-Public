@@ -39,7 +39,7 @@ class Crowd(models.Model):
     image = models.ImageField(upload_to=determine_path, null=True, blank=True)
 
     description = models.TextField()
-    confirmation_code = models.CharField(max_length=255, blank=True, default='')
+    #confirmation_code = models.CharField(max_length=255, blank=True, default='')
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     flagged = models.BooleanField(default=0, editable=False)

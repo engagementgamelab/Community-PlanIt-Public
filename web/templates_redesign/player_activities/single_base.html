@@ -21,7 +21,9 @@
     
     
             <div>
-                {{ form.response.errors }}
+                {% if errors.response %}
+                {{ errors.response }}
+                {% endif %}
                 <ul class="activity-question-options">
                     {% for choice in form.response.field.choices %}
                         <li><label for="response_{{choice.0}}"><input id="response_{{choice.0}}" type="radio" name="response" value="{{choice.0}}"> {{choice.1}}</label></li>
