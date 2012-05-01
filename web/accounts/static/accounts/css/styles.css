@@ -138,6 +138,24 @@
             font-size: 3em;
             color: #ff5036;
         }
+        
+    #profile-badges {}
+
+        #profile-badges .badge-container {
+        }
+
+        #profile-badges .badge {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 20px;
+        }
+        
+        #profile-badges .badge-name {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        
 /* Account Edit Profile Specific Styles */
 #profile-editform-container {
   margin-right: 20px;
@@ -282,7 +300,7 @@
     overflow: hidden;
 }
 
-    #id_players-table .profile-container:nth-child(4n+1){
+    #id_players-table a:nth-child(4n+1) .profile-container{
         clear: left;
     }
     
