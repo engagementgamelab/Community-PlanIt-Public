@@ -1,6 +1,5 @@
 from django.conf.urls.defaults import *
-from .forms import SelectNewActivityForm
-from .views.activities import NewActivityWizard
+from .forms import SelectNewActivityForm, NewActivityWizard
 
 urlpatterns = patterns('player_activities.views',
     # Need to import all URLs from activities

@@ -1,4 +1,5 @@
 {% extends "player_activities/new_activity_base.html" %}
+{% load i18n %}
 {% block new_activity_forms %}
 
 <p>Input possible answers to your multi response question<p/>
@@ -12,6 +13,7 @@
 {% endif %}
         
 {{ wizard.management_form }}
+
 {% if wizard.form.forms %}
     {{ wizard.form.management_form }}
     {% for form in wizard.form.forms %}
