@@ -145,14 +145,24 @@
                 display: inline-block;
                 width: 20px;
                 height: 16px;
-                background: url('../img/icon-comments-like.png');
+                background: url('../img/icon-comments-like.png') 0px 0px;
+                cursor: pointer;
             }
+            
+                .comment .actions .likes .btn-like:hover,
+                .comment .actions .likes .btn-like.active {
+                    background-position: 20px 0px;
+                }
+                
+                .comment .actions .likes .btn-like.active {
+                    cursor: default;
+                }
+                
         
             .comment .actions .likes .likes-count {
                 display: inline-block;
                 color: #00a3ff;
-                margin: 0px 5px;
-                
+                margin: 0px 4px;
             }
     
         /* REPLIES! */

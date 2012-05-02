@@ -43,6 +43,15 @@
 
         {% include "js/ajax_csrf.html" %}
 
+
+        $('.btn-like:not(.active)').live('click', function(e){
+            $this = $(this);
+            $.get($this.attr('data-url'), function(data) {
+                $this.addClass('active');
+                $('#id_likes-count-'+$this.attr('data-commentid')).html(data);
+            });
+        });
+
         $(".btn-reply").click(function(e){
             e.preventDefault();
             {{ create_comment_sijax_js|safe }}

@@ -55,14 +55,12 @@
         
         <div class="actions">
             {# LIKES! #}
-            {% comment %}
             <div class="likes">
-                {# {% if comment.user != request.user and comment.instance.is_active %} #}
-                    <div id="id_like-{{ comment.id }}" class="btn-like" title="click to say you like this"></div> {# href="{% url comments:like comment.id %}"  #}
-                    <div id="id_likes-count-{{ comment.pk }}" class="likes-count">{{comment.likes.count}}</div>
-                {# {% endif %} #}
+                {% if comment.user != request.user and comment.instance.is_active %}
+                    <div id="id_like-{{ comment.id }}" class="btn-like {% if request.user in comment.likes.all %}active{%endif %}" title="click to say you like this" data-commentid="{{ comment.id }}" data-url="{% url comments:like comment.id %}"></div>
+                    <div id="id_likes-count-{{ comment.id }}" class="likes-count">{{comment.likes.count}}</div>
+                {% endif %}
             </div>
-            {% endcomment %}
         
             {# SEE MORE REPLIES #}
             {% if not nested %}
