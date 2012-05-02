@@ -102,6 +102,7 @@
         $('.btn-replies').click(function(){
             console.log($(this).parents('.comment').nextAll('.nested'));
             $(this).parents('.comment').next('.thread-tail').toggle(200, init_masonry);
+            $(this).toggleClass('active')
         });
         
         
