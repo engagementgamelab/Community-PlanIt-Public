@@ -129,65 +129,6 @@
             #player-activities .activity-question-options label input[type='checkbox'] {
                 margin-right: 20px;
             }
-    
-    /* Comments and Open-responses are styled the same way */
-    #player-activities .activity-response,
-    #player-activities .comment-response {
-        position: relative;
-        margin: 20px 0px;
-        padding: 20px;
-        background: #eff2f2;
-        -webkit-border-radius: 10px;
-        -webkit-border-bottom-right-radius: 0;
-        -moz-border-radius: 10px;
-        -moz-border-radius-bottomright: 0;
-        border-radius: 10px;
-        border-bottom-right-radius: 0;
-    }
-    
-    
-        #player-activities .comment-response-counter {
-            color: #999;
-            font-size: 0.8em;
-        }
-    
-        #player-activities .activity-response:after,
-        #player-activities .comment-response:after {
-            content: ' ';
-            position: absolute;
-            width: 0px;
-            height: 0px;
-            bottom: -24px;
-            right: 0px;
-            border: 12px solid transparent;
-            border-top-color: #eff2f2;
-            border-right-color: #eff2f2;
-        }
-        
-        #player-activities .activity-response textarea,
-        #player-activities .comment-response textarea {
-            width: 100%;
-            border: 1px solid #ddd;
-            background: #eff2f2;
-            resize: none;
-        }
-    
-        #player-activities .activity-response-submit {
-            float: right;
-            font-size: 1.4em;
-            margin-right: -100px; /* adjust */
-        }
-
-            #player-activities .activity-response-submit img {
-                display: inline-block;
-                vertical-align: middle;
-            }
-        
-            #player-activities .activity-response-submit input {
-                display: inline-block;
-                vertical-align: middle;
-                margin-left: 20px;
-            }
             
     /* Restricting Attachments for questions */
     #player-activities .attachments {

@@ -124,6 +124,12 @@
         $('#message_area, #id_response').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
         $('#message_area, #id_response').limit('1000','#charsLeft');
         
+        /* Toggle Attachments */
+        $('.attachments-container').hide();
+        $('.attachments-instructions').click(function(){
+            $(this).toggleClass('active');
+            $(this).next('.attachments-container').toggle();
+        });
         
         /* Summary Graph */
         /* calculate total */
