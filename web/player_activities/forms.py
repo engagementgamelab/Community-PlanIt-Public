@@ -1,6 +1,6 @@
 from localeurl.models import reverse
 from stream import utils as stream_utils
-#from gmapsfield.fields import *
+from gmapsfield.fields import *
 
 from django import forms
 from django.core.cache import cache
@@ -56,17 +56,17 @@ def make_multi_form(choices):
             model = AnswerMultiChoice
     return MultiForm
 
-#class MapForm(forms.Form):
-#    map = GoogleMapsField().formfield()
+class MapForm(forms.Form):
+    map = GoogleMapsField().formfield()
 
-#    def clean_map(self):
-#        map = self.cleaned_data.get('map')
-#        if not map:
-#            raise forms.ValidationError("The map doesn't exist")
-#        mapDict = simplejson.loads(map);
-#        if len(mapDict["markers"]) == 0:
-#            raise forms.ValidationError("Please select a point on the map")
-#        return map
+    def clean_map(self):
+        map = self.cleaned_data.get('map')
+        if not map:
+            raise forms.ValidationError("The map doesn't exist")
+        mapDict = simplejson.loads(map);
+        if len(mapDict["markers"]) == 0:
+            raise forms.ValidationError("Please select a point on the map")
+        return map
 
 # =========================================
 # player submitted activity wizard and forms
