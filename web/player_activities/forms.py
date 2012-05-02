@@ -1,5 +1,9 @@
 from localeurl.models import reverse
+from stream import utils as stream_utils
+#from gmapsfield.fields import *
+
 from django import forms
+from django.core.cache import cache
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib.formtools.wizard.views import SessionWizardView
@@ -7,9 +11,8 @@ from django.shortcuts import redirect
 from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
-from gmapsfield.fields import *
 
-from .models import PlayerActivity, PlayerActivityType, MultiChoiceActivity
+from .models import PlayerActivity, PlayerMapActivity, PlayerActivityType, MultiChoiceActivity
 from web.instances.models import Instance
 from web.missions.models import Mission
 from web.answers.models import *
@@ -105,8 +108,6 @@ class NewActivityWizard(SessionWizardView):
     def process_step(self, form):
         form_list = self.get_form_list()
         cd =  form.cleaned_data
-        log.debug(cd)
-        log.debug( form_list)
         if len(form_list.keys()) == 1:
             d = {
                     'multi_response': MultiResponseForm,
@@ -122,9 +123,7 @@ class NewActivityWizard(SessionWizardView):
         context.update({ 'game_header' : True, })
         context.update(missions_bar_context(self.request))
 
-
         form_list = self.get_form_list()
-        print form_list
         if len(form_list.keys()) > 1:
             if form_list.get('1') == MultiResponseForm:
                 self.template_name = 'player_activities/new_multi_response.html'
@@ -151,9 +150,6 @@ class NewActivityWizard(SessionWizardView):
 
     def done(self, form_list, **kwargs):
 
-        log.debug("wizard done.")
-        log.debug("done with kwargs: %s" % kwargs)
-
         mission_slug = kwargs.pop('mission_slug', '')
 
         form_one = form_list[0]
@@ -163,7 +159,7 @@ class NewActivityWizard(SessionWizardView):
         q = form_one.cleaned_data.get('question', '')
 
         if type.type == 'map':
-            activity_cls = MapActivity
+            activity_cls = PlayerMapActivity
         elif type.type in ['multi_response', 'open_ended']:
             activity_cls = PlayerActivity
 
@@ -173,6 +169,7 @@ class NewActivityWizard(SessionWizardView):
                 type=type,
                 question=q,
                 points=0,
+                is_player_submittd=True,
                 name = form_one.cleaned_data.get('name', ''),
         )
         new_activity = activity_cls.objects.create(**create_kwargs)
@@ -186,4 +183,12 @@ class NewActivityWizard(SessionWizardView):
                             value=form_two.cleaned_data.get(f, ''),
                             activity=new_activity,
                     )
+        cache.invalidate_group('activities_for_mission')
+        stream_utils.action.send(
+                                self.request.user,
+                                verb='activity_player_submitted',
+                                action_object=new_activity,
+                                target=self.request.current_game,
+                                description='player submitted a challenge',
+        )
         return redirect(reverse("missions:mission", args=(mission.slug,)))

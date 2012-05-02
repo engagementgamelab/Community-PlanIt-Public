@@ -174,7 +174,8 @@ SERVER_EMAIL = 'noreply@communityplanit.org'
 
 SITE_ID = 1
 
-SESSION_COOKIE_DOMAIN = '.communityplanit.org'
+SESSION_COOKIE_DOMAIN = None #'.communityplanit.org'
+#SESSION_COOKIE_PATH = '/pk.local'
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -260,6 +261,7 @@ STREAM_VERBS = (
 
     ('activity_replayed', 'replayed challenge'),
     ('activity_completed', 'completed challenge'),
+    ('activity_player_submitted', 'player submitted an activity'),
 
     ('replied', 'replied'),
     ('liked', 'liked a comment'),

@@ -54,12 +54,12 @@ class MissionManager(TranslationManager):
     def future(self, instance):
         return self.filter(instance=instance, start_date__gt=datetime.datetime.now()).order_by('start_date')
 
-    @cached(60*60*24, 'missions')
+    #@cached(60*60*24, 'missions')
     def default(self, instance):
         log.debug("getting default mission ** no cache **")
         return self.active(instance)[0]
 
-    @cached(60*60*24, 'missions')
+    #@cached(60*60*24, 'missions')
     def active(self, instance):
         now = datetime.datetime.now()
         return self.filter(instance=instance, start_date__lte=now, end_date__gte=now).order_by('start_date')
