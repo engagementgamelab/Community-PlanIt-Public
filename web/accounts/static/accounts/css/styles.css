@@ -219,8 +219,6 @@
         width: 230px;
     }
     
-
-    
     #profile-editform #profile-editform-tagline-container {
         position: relative;
         width: 210px;
@@ -250,6 +248,75 @@
             resize: none;
         }
         
+    /* Multi-select from django-admin, styling */
+    #profile-editform-affiliations {
+        width: 500px;
+    }
+    
+        #profile-editform-affiliations h2 {
+            font-size: 1em;
+            font-family: "Trebuchet MS";
+            color: #666;
+        }
+        
+    #profile-editform-affiliations .help-tooltip {
+        display: none;
+    }
+    
+    #profile-editform-affiliations .selector-available {
+        display: inline-block;
+        vertical-align: top;
+        width: 230px;
+    }
+    
+        #id_affiliations_from {
+            margin: 10px 0px;
+            height: 120px !important;
+        }
+    
+    #profile-editform-affiliations .selector-chooser {
+        display: inline-block;
+        vertical-align: top;
+        margin: 120px 5px 0px 5px;
+    }
+    
+        #id_affiliations_add_link {
+            display: block;
+            width: 12px;
+            height: 8px;
+            margin: 8px 0px;
+            text-indent: -3000px;
+            background: url('../../../../static/img/btn-forward.png');
+        }
+        
+        #id_affiliations_remove_link {
+            display: block;
+            width: 12px;
+            height: 8px;
+            margin: 8px 0px;
+            text-indent: -3000px;
+            background: url('../../../../static/img/btn-back.png');
+        }
+    
+        #id_affiliations_add_all_link,
+        #id_affiliations_remove_all_link {
+            display: block;
+            float: right;
+        }
+        
+    #profile-editform-affiliations .selector-chosen {
+        display: inline-block;
+        vertical-align: top;
+        width: 230px;
+    }
+    
+        #id_affiliations_to {
+            margin: 41px 0px 10px 0px;
+            height: 120px !important;
+        }
+        
+    
+    
     
 /* Account ProfileSSSSS Specific Styles */
 
