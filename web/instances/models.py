@@ -2,7 +2,7 @@ import os.path
 import datetime
 
 from stream import utils as stream_utils
-#from cache_utils.decorators import cached
+from cache_utils.decorators import cached
 
 from django.db import models
 from django.template.defaultfilters import slugify
@@ -28,10 +28,10 @@ def determine_path(instance, filename):
     return os.path.join('uploads/cities/', str(instance.domain), filename)
 
 class CityManager(models.Manager):
-	pass
 
-    #def city_by_domain(self):
-    #    return City.objects.
+    @cached(60*60*24*7, 'cities')
+    def for_domain(self, domain):
+        return City.objects.get(domain=domain)
 
 class City(models.Model):
     slug = models.SlugField(default='')
@@ -84,6 +84,11 @@ class InstanceManager(TranslationManager):
     def __init__(self, *args, **kwargs):
         super(InstanceManager, self).__init__(*args, **kwargs)
         self.now = datetime.datetime.now()
+
+
+    @cached(60*60*24*7)
+    def for_slug(self, slug):
+        return self.get(slug=slug)
 
     def common_excludes(self):
         return self.exclude(is_disabled=True)

@@ -10,14 +10,16 @@ from django.core.mail import send_mail
 from web.settings import *
 from web.accounts.views import dashboard
 from web.accounts.forms import AccountAuthenticationForm
+from web.accounts.models import UserProfilePerInstance
 from web.instances.models import Instance, City
 
-def index(request, template='index.html', city_header=True):
+import logging
+log = logging.getLogger(__name__)
 
+def index(request, template='index.html', city_header=True):
     domain = request.current_site.domain
-    print domain
     try:
-        current_city = City.objects.get(domain=domain)
+        current_city = City.objects.for_domain(domain=domain)
     except City.DoesNotExist:
         # No city,
         current_city = None
@@ -25,12 +27,22 @@ def index(request, template='index.html', city_header=True):
         # City exists, send them to city page
         template = 'city.html'
 
+    # if user logged in to a game
+    # expecting the `prof_per_instance
+    # to be set in the middleware
+    if hasattr(request, 'prof_per_instance'):
+        my_games = UserProfilePerInstance.objects.games_for_profile(user_profile=request.user.get_profile())
+        log.debug('my_games: %s' % my_games)
+    else:
+        my_games = []
+
     context = dict(
         instances_past = Instance.objects.past(for_city=current_city),
         instances_active = Instance.objects.active(for_city=current_city),
         instances_future = Instance.objects.future(for_city=current_city),
         instances_current = Instance.objects.current(for_city=current_city),
         current_city = current_city,
+        my_games = my_games,
         cities = City.objects.all(),
     )
     context.update({

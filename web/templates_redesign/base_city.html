@@ -20,7 +20,7 @@
             {% if city_header %}
                 <li><a href="{% url home %}">{% trans "My Game" %}</a></li>
             {% else %}
-                <li><a href="{% url missions:mission request.current_game.missions.active.0.slug %}">{% trans "My Game" %}</a></li>
+                <li><a href="{% url missions:mission mission.slug %}">{% trans "My Game" %}</a></li>
             {% endif %}    
             <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
         {% else %}

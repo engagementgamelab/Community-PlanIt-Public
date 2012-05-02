@@ -1,8 +1,10 @@
 {% extends "player_activities/new_activity_base.html" %}
-{% block new_activity_forms %}
+{% load i18n %}
+{% block forms %}
 
 <p>Input possible answers to your multi response question<p/>
 
+{% comment %}
 {% if form.errors or form.non_field_errors or wizard_error %}
 <div id="form_errors" class="error">
     {% trans "Please correct the errors below." %}
@@ -10,49 +12,64 @@
     {{wizard_error}}
 </div>
 {% endif %}
+{% endcomment %}
         
-{{ wizard.management_form }}
-{% if wizard.form.forms %}
-    {{ wizard.form.management_form }}
-    {% for form in wizard.form.forms %}
-        {{ form }}
-    {% endfor %}
-{% else %}
- {% with wizard.form as form %}
-
 <form action="." method="post">{% csrf_token %}
+    {{ wizard.management_form }}
 
-    {{ form.errors }}
+    {% if wizard.form.forms %}
 
-    <div class="fieldWrapper">
-        <label for="id_types">{{ form.answ1.label}}</label>
-            {{ form.answ1 }}
-    </div>
+        {{ wizard.form.management_form }}
+        {% for form in wizard.form.forms %}
+            {{ form }}
+        {% endfor %}
 
-    <div class="fieldWrapper">
-        <label for="id_types">{{ form.answ2.label}}</label>
-            {{ form.answ2 }}
-    </div>
+    {% else %}
 
-    <div class="fieldWrapper">
-        <label for="id_types">{{ form.answ3.label}}</label>
-            {{ form.answ3 }}
-    </div>
+        {{ wizard.form.as_p }}
+        <input type="submit">
 
-    <div class="fieldWrapper">
-        <label for="id_types">{{ form.answ4.label}}</label>
-            {{ form.answ4 }}
-    </div>
 
-    <div class="fieldWrapper">
-        <label for="id_types">{{ form.answ5.label}}</label>
-            {{ form.answ5}}
-    </div>
+        {% comment %}
+        {% with wizard.form as form %}
 
-    <input type="submit" name="Submit">
+            <form action="." method="post">{% csrf_token %}
+
+
+                {{ form.errors }}
+
+                <div class="fieldWrapper">
+                    <label for="id_types">{{ form.answ1.label}}</label>
+                        {{ form.answ1 }}
+                </div>
+
+                <div class="fieldWrapper">
+                    <label for="id_types">{{ form.answ2.label}}</label>
+                        {{ form.answ2 }}
+                </div>
+
+                <div class="fieldWrapper">
+                    <label for="id_types">{{ form.answ3.label}}</label>
+                        {{ form.answ3 }}
+                </div>
+
+                <div class="fieldWrapper">
+                    <label for="id_types">{{ form.answ4.label}}</label>
+                        {{ form.answ4 }}
+                </div>
+
+                <div class="fieldWrapper">
+                    <label for="id_types">{{ form.answ5.label}}</label>
+                        {{ form.answ5}}
+                </div>
+
+                <input type="submit" name="Submit">
+            </form>
+
+        {% endwith %}
+        {% endcomment %}
+
+    {% endif %}
 </form>
-  {% endwith %}
-        {% endif %}
 
-
-{% endblock new_activity_forms %}
+{% endblock forms %}

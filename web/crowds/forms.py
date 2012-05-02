@@ -28,7 +28,11 @@ class CrowdForm(forms.ModelForm):
 
     class Meta:
         model = Crowd
-        exclude = ('instance', 'confirmation_code', 'participants', 'creator', 'flagged', 'attachments', 'comments',)
+        exclude = ('instance', 
+                #'confirmation_code', 
+                'participants', 'creator', 'flagged', 'attachments', 'comments',
+                'address',
+        )
 
     def clean_map(self):
         map = self.cleaned_data.get('map')

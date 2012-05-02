@@ -2,7 +2,7 @@
 <div id="sidebar-nav">
     <ul>
         {% if not city_header %}
-        <li class="sidebar-nav-profile"><a href="{% url missions:mission request.current_game.missions.active.0.slug %}" id="sidebar-nav-missioncontrol">Mission Control</a></li>
+        <li class="sidebar-nav-profile"><a href="{% url missions:mission mission.slug %}" id="sidebar-nav-missioncontrol">Mission Control</a></li>
         {% endif %}
         
         <li class="sidebar-nav-profile">
@@ -21,7 +21,7 @@
                     <div id="sidebar-nav-profile-badges">{# TODO #}0</div>
                 </div>
                 {% if not city_header %}
-                <div id="sidebar-nav-profile-points">{# TODO #}5775</div>
+                <div id="sidebar-nav-profile-points">{{ request.prof_per_instance.total_points }}</div>
                 {% endif %}
                 <div id="sidebar-nav-profile-screenname">{{ request.user.get_profile.screen_name }}</div>
             </a>

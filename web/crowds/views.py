@@ -158,7 +158,7 @@ def leave_crowd(request, id):
 
 
 @login_required
-def rally(request):
+def create(request):
 
     if hasattr(request, 'current_game'):
         current_instance = request.current_game
@@ -171,28 +171,36 @@ def rally(request):
     if request.method == 'POST':
         form = CrowdForm(request.POST)
         if form.is_valid():
+            cd = form.cleaned_data
+
+            # TODO include the address on the CrowdForm
+            address = request.POST.get("google_search")
+            log.debug("new crowd address --> %s" % address)
+            log.debug("create crowd cleaned data: %s" % cd)
             map = None
-            if (form.cleaned_data.get('map', None) == None or form.cleaned_data.get('map', None) == "None"):
+            if (cd.get('map', None) == None or cd.get('map', None) == "None"):
                 map = current_instance.location
             else:
-                map = form.cleaned_data['map']
+                map = cd['map']
 
             crowd = form.save(commit=False)
             crowd.map = map
-            crowd.address = form.cleaned_data.get('address')
+            # TODO how is the size supposed to be set?
+            # the map will not render if the size is missing.
+            crowd.map.size = [500, 400]
+            crowd.address = address
             crowd.instance = current_instance
             crowd.creator = request.user
-            crowd.participants.add(creator)
             crowd.save()
-
-            #PointsAssigner().assign(request.user, 'challenge_created')
+            crowd.participants.add(request.user)
+            #gno PointsAssigner().assign(request.user, 'challenge_created')
             #ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'created', reverse('challenges:challenge', args=[challenge.id]), 'challenge')
             #stream_utils.action.send(request.user, 'challenge_created', target=current_instance, action_object=challenge, 
             #                         description="A challenge was created"
             #)
             return HttpResponseRedirect(reverse('crowds:index'))
         else:
-            print form.errors
+            log.debug("create crowd errors: %s" % form.errors)
 
     else:
         form = CrowdForm()
