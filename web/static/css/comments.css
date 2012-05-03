@@ -219,10 +219,28 @@
 
 /* Attachments for duplicate.html */
 .attachments-instructions {
-    color: #999;
+    display: block;
+    position: relative;
+    margin-left: 40px;
+    cursor: pointer;
 }
 
-#player-activities .comment-response-attachments {
+    .attachments-instructions:before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -25px;
+        width: 15px;
+        height: 20px;
+        background: url('../img/icon-comments-attachments.png') 0px 0px;
+    }
+    
+    .attachments-instructions:hover:before,
+    .attachments-instructions.active:before {
+        background-position: 15px 0px;
+    }
+    
+.comment-response-attachments {
     float: left;
     padding-bottom: 20px;
 }
@@ -238,23 +256,23 @@
         padding-left: 20px;
     }
 
-    #player-activities .comment-response-attachments .input,
-    #player-activities .comment-response-attachments .controls {
+    .comment-response-attachments .input,
+    .comment-response-attachments .controls {
         display: inline-block;
     }
     
-        #player-activities .comment-response-attachments .controls .btn-blue {
+        .comment-response-attachments .controls .btn-blue {
             margin: 0px 0px 0px 10px;
         }
     
-    #player-activities .comment-response-attachments input[type='text'] {
+    .comment-response-attachments input[type='text'] {
         width: 225px;
         padding: 8px 5px;
         border: 0px;
         background: #EFF2F2;
     }
     
-    #player-activities .comment-response-attachments input[type='file'] {
+    .comment-response-attachments input[type='file'] {
         width: 225px;
         padding: 8px 5px;
         border: 0px;
@@ -308,3 +326,65 @@ background-color: #f6f8cf;
         border-right-color: #f7ff5f;
     }
 
+/* Player Activity Responses */
+/* Comments and open-responses are styled the same way */
+.activity-response,
+.comment-response {
+    position: relative;
+    margin: 20px 0px;
+    padding: 20px;
+    background: #eff2f2;
+    -webkit-border-radius: 10px;
+    -webkit-border-bottom-right-radius: 0;
+    -moz-border-radius: 10px;
+    -moz-border-radius-bottomright: 0;
+    border-radius: 10px;
+    border-bottom-right-radius: 0;
+}
+
+
+    .comment-response-counter {
+        color: #999;
+        font-size: 0.8em;
+    }
+
+    .activity-response:after,
+    .comment-response:after {
+        content: ' ';
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        bottom: -24px;
+        right: 0px;
+        border: 12px solid transparent;
+        border-top-color: #eff2f2;
+        border-right-color: #eff2f2;
+    }
+    
+    .activity-response textarea,
+    .comment-response textarea {
+        width: 100%;
+        border: 1px solid #ddd;
+        background: #eff2f2;
+        resize: none;
+    }
+
+    .activity-response-submit,
+    .comment-response-submit {
+        float: right;
+        font-size: 1.4em;
+        margin-right: -100px; /* adjust */
+    }
+
+       .activity-response-submit img,
+       .comment-response-submit {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    
+        .activity-response-submit input,
+        .activity-response-submit input {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 20px;
+        }

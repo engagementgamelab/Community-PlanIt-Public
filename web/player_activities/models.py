@@ -95,6 +95,19 @@ class PlayerActivityBase(TranslatableModel):
                         return True
         return False
 
+
+    # TODO: Yuan wrote these, please cleanup
+    def get_trivia_answer(self):
+        if hasattr(self, 'answer_choices'):
+            for choice in self.answer_choices.all():
+                if choice.trivia_correct_answer:
+                    return choice
+        return False
+    
+    def is_trivia(self):
+        return True if self.get_trivia_answer() else False
+    
+
     #@property
     #def completed_user_count(self):
     #    # the count of users completing an activity

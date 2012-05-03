@@ -2,8 +2,8 @@
 
 {% load i18n %}
 
-{# comment_form.message.errors #}
 <div class="comment-response">
+    {{ comment_form.message.errors }}
     <textarea id="message_area" name="message" class="comment_message" cols="80" rows="6"></textarea>
     {% if errors.message %}
     <div class="comment-response-counter counter">{{ errors.message }}</div>
@@ -13,7 +13,7 @@
 
 {# ATTACHMENT A PICTURE OR VIDEO #}
 <div class="comment-response-attachments attachments">
-    <div class="attachments-instructions">{% trans "Add a photo or video to your response." %}</div>
+    <a class="attachments-instructions">{% trans "Add a photo or video to your response." %}</a>
     <div class="attachments-container">
         <div class="add-comment-video form">
             <div class="input"><input name="video-url" type="text" maxlength="255" /></div>

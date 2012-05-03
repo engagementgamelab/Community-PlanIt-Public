@@ -1,0 +1,31 @@
+{% extends "accounts/base_game.html" %}
+{% load i18n cpi_tags %}
+
+{% block title %}{% trans "Notifications" %}{% endblock %}
+
+{% block body_class %}{{ block.super }} section-notifications{% endblock %}
+
+{% block game_content %}
+<div id="notifications" class="column-container">    
+    <h1>{% trans "Notifications" %}</h1>
+    
+    {% if notifications_page.object_list %}
+        {% regroup notifications_page.object_list by timestamp|date:"F j, Y" as notifications_list %}
+        {% for notification in notifications_list %}
+            <h2>{{notification.grouper}}</h2>
+            {% for notification in notification.list %}
+            <a href="{{ notification.content_object.get_absolute_url }}" class="notification {% if notification.unread %}unread{% endif %}">
+                <div class="notification-time">{{ notification.timestamp|date:"h:i A" }}</div>
+                <div class="notification-message">{{ notification.message }}</div>
+            </a>
+            {% endfor %}
+        {% endfor %}
+
+        {% if notifications_page.paginator.num_pages > 1 %}
+            {% pagenavigator notifications_page request.get_full_path %}
+        {% endif %}
+    {% else %}
+        You have no notifications at this time.
+    {% endif %}
+</div>
+{% endblock %}
