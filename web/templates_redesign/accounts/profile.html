@@ -10,6 +10,16 @@
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}comments/css/styles.css">  
 {% endblock %}
 
+{% block js %}
+    {{ block.super }}
+    {# masonry is required to display comments correctly #}
+    <script src="{{ STATIC_URL }}js/jquery.masonry.min.js"></script>
+    <script src="{{ STATIC_URL }}js/sijax.js"></script>
+    <script src="{{ STATIC_URL }}js/comments.js"></script>
+
+{% endblock %}
+
+
 {% block game_content %}
 <div>
     <div class="column-container">
