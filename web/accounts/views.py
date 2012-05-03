@@ -13,7 +13,7 @@ from django.http import HttpResponse, Http404, HttpResponseServerError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template import Context, RequestContext, loader, Template
 
-from django.utils.datastructures import SortedDict
+#from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
