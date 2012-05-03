@@ -231,6 +231,9 @@ class RegistrationWizard(SessionWizardView):
         form_one = form_list[0]
         form_two = form_list[1]
 
+        log.debug(form_one.cleaned_data)
+        log.debug(form_two.cleaned_data)
+
         game = form_one.cleaned_data.get('instance')
 
         first_name = form_one.cleaned_data.get('first_name')
@@ -251,7 +254,6 @@ class RegistrationWizard(SessionWizardView):
 
         profile = player.get_profile()
         profile.email = form_one.cleaned_data.get('email')
-        profile.preferred_language = form_one.cleaned_data['preferred_language']
         profile.city = form_one.cleaned_data.get('city')
 
         profile.avatar = form_two.cleaned_data.get('avatar')
@@ -275,12 +277,12 @@ class RegistrationWizard(SessionWizardView):
         user_profile_per_instance = UserProfilePerInstance(
                                         user_profile=profile,
                                         instance=game,
+                                        preferred_language = form_one.cleaned_data.get('preferred_language'),
                 )
         user_profile_per_instance.save()
 
         user_profile_per_instance.affils = form_two.cleaned_data.get('affiliations')
         user_profile_per_instance.stakes = form_two.cleaned_data.get('stakes')
-
 
         aff_other = form_two.cleaned_data.get('affiliations_other')
         if aff_other != '':
@@ -382,7 +384,7 @@ class UserProfileForm(forms.ModelForm):
         self.fields['affiliations'].queryset = self.request.current_game.user_profile_variants.affiliation_variants.all().order_by("name")
 
     class Meta:
-        fields = ('preferred_language', 'receive_email', 'tagline', 'avatar', 'stakes', 'affiliations')
+        fields = ('receive_email', 'tagline', 'avatar', 'stakes', 'affiliations')
         model = UserProfile
 
 

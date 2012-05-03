@@ -170,6 +170,7 @@ class UserProfilePerInstance(models.Model):
 
     stakes = models.ManyToManyField(UserProfileStake, blank=True, null=True, related_name='stakes')
     affils = models.ManyToManyField(Affiliation, blank=True, null=True, related_name='affiliations')
+    preferred_language = models.ForeignKey(Language)
 
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -266,7 +267,7 @@ class UserProfile(models.Model):
     city = models.CharField(max_length=128, blank=True, default='')
     zip_code = models.CharField(max_length=10, blank=True, default='')
     #preferred_language = models.CharField(max_length=5, default='en-us')
-    preferred_language = models.ForeignKey(Language)
+    #preferred_language = models.ForeignKey(Language)
 
     # Additional profile fields
     birth_year = models.IntegerField(blank=True, null=True, default=0)
