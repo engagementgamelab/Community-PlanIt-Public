@@ -19,7 +19,18 @@
     <div class="column-threequarter">            
         <div class="activity-question">
             {% include "player_activities/attachments.html" %}
-            <div>{{ activity.question|safe }}</div>
+            <div>
+                {{ activity.question|safe }}
+            </div>
+            {% if activity.is_trivia %}
+                <div class="activity-question-trivia-result">
+                    {% ifequal myAnswer.selected activity.get_trivia_answer %}
+                        <span class="activity-question-trivia-correct">{{ activity.get_trivia_answer }}</span> is correct! You just earned {{ activity.get_pointed }} points!
+                    {% else %}
+                        Sorry! <span class="activity-question-trivia-incorrect">{{ myAnswer.selected }}</span> is incorrect. The correct answer is <span class="activity-question-trivia-correct">{{ activity.get_trivia_answer }}</span>
+                    {% endifequal %}
+                </div>
+            {% endif %}
             <br class="clearfix" />
         </div>
         
@@ -27,11 +38,11 @@
         {% if is_completed or activity.is_past %}
             {# RESPONSE SUMMARY #}
             {% if myAnswer %}
-                <div id="activity-response-summary">
+                <div id="activity-response-summary" class="{% if activity.is_trivia %}activity-type-trivia{% endif %}">
                 {% if answers %}
                     {% for choice in choices %}
-                        <div class="activity-response-summary-choice {% ifequal choice myAnswer.selected %}my-choice{% endifequal %}">
-                            {{ choice }}
+                        <div class="activity-response-summary-choice {% ifequal choice myAnswer.selected %}my-choice{% endifequal %} {% ifequal choice activity.get_trivia_answer %}correct-answer{% else %}incorrect-answer{% endifequal %}">
+                            {{ choice }} 
                             <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'>
                         </div>
 

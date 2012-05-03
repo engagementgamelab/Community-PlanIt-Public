@@ -166,7 +166,8 @@
                 margin: 20px auto
             }
 
-
+    
+    
 /* Response Summary Charts */
 #activity-response-summary {
     margin: 20px 0px;
@@ -182,7 +183,6 @@
     }
     
     .activity-response-summary-choice.my-choice {
-        
         color: #000;
     }
     
@@ -199,3 +199,29 @@
         .my-choice .activity-response-summary-choice-percentage {
             background: #00e5b8;
         }
+        
+        #activity-response-summary.activity-type-trivia .correct-answer .activity-response-summary-choice-percentage {
+            background: #00e5b8 !important;
+        }
+        
+        #activity-response-summary.activity-type-trivia .my-choice.incorrect-answer .activity-response-summary-choice-percentage {
+            background: #ff5036;
+        }
+
+/* Trivia Questions */
+.activity-question-trivia-result {
+    font-weight: bold;
+}
+    
+    .activity-question-trivia-correct {
+        display: inline-block;
+        background-color: #00e5b8;
+        padding: 3px 5px;
+    }
+    
+    .activity-question-trivia-incorrect {
+        display: inline-block;
+        background-color: #ff5036;
+        padding: 3px 5px;
+    }
+    

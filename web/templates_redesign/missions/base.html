@@ -51,9 +51,9 @@
         {% for activity in activities %}
         {% with activity.get_points as points and activity.completed_count as completed_count and activity.activity_type_readable as activity_type %}
             {% if mission.is_expired %}
-                <div class="activity  activity-inactive {{ activity_type }}">
+                <div class="activity  activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                     <a href="{{ activity.get_overview_url }}">
-                        {{ activity|trans_fallback:"name" }} 
+                        {{ activity|trans_fallback:"name" }}
                         {% if completed_count %}
                             ({{ completed_count }} response{{ completed_count|pluralize }})
                         {% endif %}
@@ -62,7 +62,7 @@
             {% else %}
                 {% if mission.is_future %}
                     {# Non-started Mission #}
-                    <div class="activity activity-inactive {{ activity_type }}">
+                    <div class="activity activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                         <a>
                         {{ activity|trans_fallback:"name" }}
                         </a>
@@ -71,7 +71,7 @@
                     {# Active Mission #}
                     {% if activity in my_completed %}
                     {#  completed activity #}
-                    <div class="activity activity-completed {{ activity_type}}">
+                    <div class="activity activity-completed {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                         <a href="{{ activity.get_activity_url }}">
                             {{ activity|trans_fallback:"name" }} ({{ completed_count }} new response{{ completed_count|pluralize }})
                             <div class="mission-activity-completed"></div>
@@ -79,7 +79,7 @@
                     </div>
                     {% else %}
                     {# fresh activity #}
-                    <div class="activity {{ activity_type }}">
+                    <div class="activity {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                         <a href="{{ activity.get_activity_url }}">
                             {{ activity|trans_fallback:"name" }}
                             <div class="mission-activity-points">{{ points }}</div>
