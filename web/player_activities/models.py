@@ -69,12 +69,12 @@ class PlayerActivityBase(TranslatableModel):
     #    rel_objs = self._meta.get_all_related_objects()
     #    return [getattr(self, x.get_accessor_name()) for x in rel_objs if x.model != type(self)]
 
-    #@property
-    #def activity_type_readable(self):
-    #    @cached(60*60*168)
-    #    def this_type(pk):
-    #        return self.type.type
-    #    return this_type(self.pk)
+    @property
+    def activity_type_readable(self):
+        @cached(60*60*168)
+        def this_type(pk):
+            return self.type.type
+        return this_type(self.pk)
 
     def get_points(self):
         if self.points == None:
@@ -94,18 +94,23 @@ class PlayerActivityBase(TranslatableModel):
                         return True
         return False
 
+    def trivia_answers(self):
+        return filter(lambda c: c.trivia_correct_answer is True, self.answer_choices.all() if hasattr(self, 'answer_choices') else [])
+
     def get_trivia_answer(self):
         # This will work for multi_response activities only
         # which is what the requirements are for now
         # in the future may need to update to work for other
         # activity types
-        trivia_answers = filter(lambda c: c.trivia_correct_answer is True, self.answer_choices.all())
+        trivia_answers = self.trivia_answers()
         if len(trivia_answers) > 0:
             return trivia_answers[0]
 
     def is_trivia(self):
-        return len(filter(lambda c: c.trivia_correct_answer is True, self.answer_choices.all()))
-
+        @cached(60*60*24*7)
+        def is_trivia_by_pk(pk):
+            return len(self.trivia_answers()) > 0
+        return is_trivia_by_pk(self.pk)
 
     #@property
     #def completed_user_count(self):
