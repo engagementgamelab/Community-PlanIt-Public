@@ -26,7 +26,7 @@ from nani.models import TranslatableModel, TranslatedFields
 from web.comments.models import Comment
 from web.accounts.models import *
 from web.challenges.models import *
-from web.instances.models import Instance, Affiliation
+from web.instances.models import Instance, Affiliation, Language
 from web.missions.models import Mission
 
 import logging
@@ -265,7 +265,8 @@ class UserProfile(models.Model):
     receive_email = models.BooleanField(default=True)
     city = models.CharField(max_length=128, blank=True, default='')
     zip_code = models.CharField(max_length=10, blank=True, default='')
-    preferred_language = models.CharField(max_length=5, default='en-us')
+    #preferred_language = models.CharField(max_length=5, default='en-us')
+    preferred_language = models.ForeignKey(Language)
 
     # Additional profile fields
     birth_year = models.IntegerField(blank=True, null=True, default=0)
