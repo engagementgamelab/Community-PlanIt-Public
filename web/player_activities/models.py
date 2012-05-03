@@ -65,17 +65,16 @@ class PlayerActivityBase(TranslatableModel):
 
     #objects = PlayerActivityManager()
 
-    def get_children(self):
-        rel_objs = self._meta.get_all_related_objects()
-        return [getattr(self, x.get_accessor_name()) for x in rel_objs if x.model != type(self)]
+    #def get_children(self):
+    #    rel_objs = self._meta.get_all_related_objects()
+    #    return [getattr(self, x.get_accessor_name()) for x in rel_objs if x.model != type(self)]
 
-    @property
-    def activity_type_readable(self):
-        @cached(60*60*168)
-        def this_type(pk):
-            #log.debug("type: %s" % self.type.type)
-            return self.type.type
-        return this_type(self.pk)
+    #@property
+    #def activity_type_readable(self):
+    #    @cached(60*60*168)
+    #    def this_type(pk):
+    #        return self.type.type
+    #    return this_type(self.pk)
 
     def get_points(self):
         if self.points == None:
@@ -95,18 +94,18 @@ class PlayerActivityBase(TranslatableModel):
                         return True
         return False
 
-
-    # TODO: Yuan wrote these, please cleanup
     def get_trivia_answer(self):
-        if hasattr(self, 'answer_choices'):
-            for choice in self.answer_choices.all():
-                if choice.trivia_correct_answer:
-                    return choice
-        return False
-    
+        # This will work for multi_response activities only
+        # which is what the requirements are for now
+        # in the future may need to update to work for other
+        # activity types
+        trivia_answers = filter(lambda c: c.trivia_correct_answer is True, self.answer_choices.all())
+        if len(trivia_answers) > 0:
+            return trivia_answers[0]
+
     def is_trivia(self):
-        return True if self.get_trivia_answer() else False
-    
+        return len(filter(lambda c: c.trivia_correct_answer is True, self.answer_choices.all()))
+
 
     #@property
     #def completed_user_count(self):
@@ -286,8 +285,8 @@ class MultiChoiceActivity(TranslatableModel):
     activity = models.ForeignKey(PlayerActivity, related_name='answer_choices')
 
     # this field signifies that the multi-response question is of type
-    # `Trivia`. 
-    # 
+    # `Trivia`.
+    #
     trivia_correct_answer = models.BooleanField(default=False, verbose_name="The correct answer to a trivia question")
 
     translations = TranslatedFields(
