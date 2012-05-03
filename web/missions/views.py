@@ -4,7 +4,6 @@ import datetime
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
-from django.template import RequestContext
 from django.http import Http404
 
 from django.contrib.auth.decorators import login_required
@@ -16,7 +15,6 @@ from web.comments.models import Comment
 from web.instances.models import Instance
 from web.missions.models import *
 from web.player_activities.models import *
-from web.accounts.models import UserProfilePerInstance
 
 import logging
 log = logging.getLogger(__name__)
