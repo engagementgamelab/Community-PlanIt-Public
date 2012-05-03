@@ -5,14 +5,12 @@ from dateutil.relativedelta import relativedelta
 
 from cache_utils.decorators import cached
 from stream import utils as stream_utils
-from stream.models import Action
 
 from django.core.cache import cache
 from django.template.defaultfilters import slugify
 from django.db.models.signals import post_save
 from django.db import models
 from django.contrib import admin
-from django.db.models import Q
 
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
@@ -125,33 +123,6 @@ class Mission(TranslatableModel):
     def total_points(self):
         log.debug("mission total_points ** no cache **")
         return Decimal(sum([activity.get_points() for activity in self.get_activities()]))
-
-    #@property
-    #def mission_flag_points(self):
-    #    return self.total_points / Decimal(Mission.MISSION_FLAG_PERCENTAGE)*Decimal(100)
-
-    #def total_points_for_completed_activities(self, user):
-
-    #def get_completed_activities_count(self, user=None):
-    #    return self.completed_from_stream.count()
-
-    #def completed_from_stream(self, user=None):
-    #    """ return a QuerySet of Action instances of completed activities """
-    #    for_mission = self.get_activities()
-    #    qs = Action.objects.filter(
-    #            verb = 'activity_completed'
-    #    ).filter(
-    #            Q(action_object_playeractivity__in=for_mission) | 
-    #            Q(action_object_playermapactivity__in=for_mission) | 
-    #            Q(action_object_playerempathyactivity__in=for_mission)
-    #    )
-    #    if user:
-    #        qs = qs.filter(actor_user=user)
-    #    return qs
-
-    #def get_completed_by_user(self, user):
-    #    all_activities = self.get_activities()
-    #    completed_from_stream = self.completed_from_stream(user)
 
     def get_activities(self):
         """ return a list of all available activities """
