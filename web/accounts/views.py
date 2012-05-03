@@ -61,7 +61,11 @@ def login_ajax(request, authentication_form=AuthenticationForm):
             request.session['current_game_slug'] = current_game.slug
             log.debug('logged in: %s <%s> to %s' % (str(user), user.email, current_game.slug))
 
-            lang = user.get_profile().preferred_language
+            prof_per_instance = UserProfilePerInstance.objects.get(
+                        instance=current_game,
+                        user_profile=user.get_profile()
+            )
+            lang = prof_per_instance.preferred_language
             log.debug("preferred lang: %s" % lang)
             if lang.code in dict(settings.LANGUAGES).keys():
                 spath = strip_path(settings.LOGIN_REDIRECT_URL)[1]
