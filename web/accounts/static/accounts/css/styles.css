@@ -123,8 +123,22 @@
             width: 0px;
             height: 0px;
             border: 15px solid transparent;
-
             border-right-color: #e3f1ea;
+        }
+
+    #profile-stream {}
+    
+        #profile-stream .stream-event-action {
+            margin: 20px 0px;
+            color: #666;
+        }
+
+        #profile-stream .stream-event-actor {
+            font-weight: bold;
+        }
+        
+        #profile-stream .stream-event-description {
+            font-style: italic;
         }
         
     #profile-points {}
