@@ -1,8 +1,11 @@
+import datetime
 from PIL import Image
 
 from stream import utils as stream_utils
+from stream.models import Action
 
 from django.conf import settings
+from django.db.models import Q
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -62,17 +65,33 @@ def comment_fun(answer, request, form=None, message=''):
             user=request.user,
             instance=current_instance)
 
-def log_activity_and_redirect(request, activity, message):
+def log_activity_and_redirect(request, activity, action_msg):
 
-    stream_utils.action.send(request.user,
-                            verb='activity_%s' % message,
-                            action_object=activity,
-                            target=request.current_game,
-                            description="%s challenge" % message
-    )
+    if action_msg != "replayed":
+        stream_utils.action.send(request.user,
+                                verb='activity_%s' % action_msg,
+                                action_object=activity,
+                                target=request.current_game,
+                                description="%s challenge" % action_msg
+        )
+    else:
+        qs = Action.objects.filter(
+                verb = 'activity_completed',
+                actor_user=request.user,
+        ).filter(
+                Q(action_object_playeractivity=activity) | 
+                Q(action_object_playermapactivity=activity) | 
+                Q(action_object_playerempathyactivity=activity)
+        )
+        if qs.count() > 0:
+            action = qs[0]
+            action.datetime=datetime.datetime.now()
+            action.save()
+
     # method of UserProfilePerInstance caches the
     # users total points per mission and percentage of missions total
     # points. invalidate here.
+    # TODO only invalidate by one UserProfilePerInstance instance
     cache.invalidate_group('my_progress_data')
     return HttpResponseRedirect(activity.get_overview_url())
 

@@ -1,5 +1,4 @@
 from sijax import Sijax
-from stream.models import Action
 from PIL import Image
 
 from django.conf import settings
@@ -130,8 +129,6 @@ def _build_context(request, action, activity, user=None):
             ))
 
     elif action in ['play', 'replay']:
-
-
         if activity.type.type == 'open_ended':
             form = make_openended_form()
         elif activity.type.type == 'empathy':
@@ -323,14 +320,15 @@ def activity(request, activity_id, template=None, **kwargs):
                             myComment = my_comments[0]
                             myComment.message=form.cleaned_data.get('response', '')
                             myComment.save()
-                    return log_activity_and_redirect(request, activity, "replayed")
+                    action_msg = 'replayed'
                 elif action == 'play':
                     if activity.type.type in ['open_ended', 'empathy']:
                         comment_fun(answer, request, None, message=form.cleaned_data.get('response', ''))
                     else:
                         comment_fun(answer, request, comment_form)
                     PointsAssigner().assignAct(request.user, activity)
-                    return log_activity_and_redirect(request, activity, "completed")
+                    action_msg = 'completed'
+                return log_activity_and_redirect(request, activity, action_msg)
 
         # all submissions on overview to be redone in ajax
         """
