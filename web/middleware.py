@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 
 class CurrentDomainMiddleware(object):
     def process_request(self, request):
-        log.debug("middleware. auth?: %s" % request.user.is_authenticated())
+        #log.debug("middleware. auth?: %s" % request.user.is_authenticated())
 
         request.current_site = RequestSite(request)
         try:
