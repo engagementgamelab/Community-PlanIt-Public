@@ -212,9 +212,9 @@ def notifications(request):
         'notifications_page': notifications_page,
     }
 
-    if request.user.get_profile().instance:
-        data['instance'] = request.user.get_profile().instance
-
+    if request.prof_per_instance:
+        data['instance'] = request.prof_per_instance
+        
     for notification in notifications_page.object_list:
         if notification.read == False:
             notification.unread = True

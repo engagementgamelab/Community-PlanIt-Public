@@ -438,3 +438,29 @@
 
 #leaderboard {}
     
+    
+/* Notifications */
+#notifications {}
+    
+    #notifications .notification {
+        display: block;
+        padding: 8px 10px;
+        margin: 2px 0px;
+    }
+    
+    #notifications .notification.unread {
+        background-color: #e3f1ea;
+    }
+    
+        .notification-time {
+            display: inline-block;
+            width: 100px;
+            vertical-align: center;
+            font-style: italic;
+            color: #999;
+        }
+        
+        .notification-message {
+            display: inline-block;
+        }
+    

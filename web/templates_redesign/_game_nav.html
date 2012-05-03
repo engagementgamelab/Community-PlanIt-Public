@@ -5,12 +5,15 @@
         <li class="sidebar-nav-profile"><a href="{% url missions:mission mission.slug %}" id="sidebar-nav-missioncontrol">Mission Control</a></li>
         {% endif %}
         
+        <li><a href="{% url accounts:notifications %}">Notifications</a></li>
+        
         <li class="sidebar-nav-profile">
             <a id="sidebar-nav-profile" href="{% url accounts:player_profile request.user.id %}">
                 
-                    <div id="sidebar-nav-profile-avatar">{% avatar request.user %}</div>
+                <div id="sidebar-nav-profile-avatar">{% avatar request.user %}</div>
                 <div id="sidebar-nav-profile-notifications-container">
-                    {# TODO #}{% if notifications %}
+                    {# TODO #}
+                    {% if notifications %}
                         <div id="sidebar-nav-profile-notifications" {# class="active" #}>2</div>
                     {% else %}
                         <div id="sidebar-nav-profile-notifications" {# class="active" #}>2</div>
