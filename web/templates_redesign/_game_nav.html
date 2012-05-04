@@ -9,7 +9,7 @@
         
         <li class="sidebar-nav-notifications">
             <a id="sidebar-nav-notifications" href="{% url accounts:notifications %}" {% if notifications %}class="active"{% endif %}>
-                <div id="sidebar-nav-notifications-container">{% if notifications %}{# TODO number of new notifications #}{% endif %}</div>
+                <div id="sidebar-nav-notifications-container">{% if request.user.notifications %}{{ request.user.notifications.unread|length }}{% endif %}</div>
             </a>
         </li>
         
