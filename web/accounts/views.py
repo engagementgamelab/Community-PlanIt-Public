@@ -212,13 +212,13 @@ def notifications(request):
     page = request.GET.get('page', 1)
     notifications_page = paginator.page(page)
 
-    data = {
+    context = {
         'paginator': paginator,
         'notifications_page': notifications_page,
     }
 
     if request.prof_per_instance:
-        data['instance'] = request.prof_per_instance
+        context['instance'] = request.prof_per_instance
         
     for notification in notifications_page.object_list:
         if notification.read == False:
@@ -226,7 +226,8 @@ def notifications(request):
         notification.read = True
         notification.save()
 
-    return render(request, 'accounts/notifications.html', data)
+    context.update(missions_bar_context(request))
+    return render(request, 'accounts/notifications.html', context)
 
 # Forgot your password
 def forgot(request):

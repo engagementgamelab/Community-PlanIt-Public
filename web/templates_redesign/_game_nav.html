@@ -6,12 +6,13 @@
             <a href="{% url missions:mission mission.slug %}" id="sidebar-nav-missioncontrol">Mission Control</a>
         </li>
         {% endif %}
-        
+        {% with request.user.notifications.unread|length as unread_notifications_count %}
         <li class="sidebar-nav-notifications">
-            <a id="sidebar-nav-notifications" href="{% url accounts:notifications %}" {% if notifications %}class="active"{% endif %}>
-                <div id="sidebar-nav-notifications-container">{% if notifications %}{# TODO number of new notifications #}{% endif %}</div>
+        <a id="sidebar-nav-notifications" href="{% url accounts:notifications %}" {% if unread_notifications_count > 0 %}class="active"{% endif %}>
+                <div id="sidebar-nav-notifications-container">{{ unread_notifications_count }}</div>
             </a>
         </li>
+        {% endwith %}
         
         <li class="sidebar-nav-profile">
             <a id="sidebar-nav-profile" href="{% url accounts:player_profile request.user.id %}">
