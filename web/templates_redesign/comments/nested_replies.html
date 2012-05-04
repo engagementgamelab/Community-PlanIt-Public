@@ -1,0 +1,9 @@
+{# NESTED comments #}
+<div class="nested replies" id="replies-{{comment.pk}}">
+    {% for comment in comment.comments.all %}
+        {% with filename="comments/comment.html" extra_message=None nested=1 %}
+                {% include filename %}
+        {% endwith %}
+    {% endfor %}
+    <div style="clear:both"></div>
+</div>

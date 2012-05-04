@@ -54,9 +54,7 @@
                 <div class="activity  activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                     <a href="{{ activity.get_overview_url }}">
                         {{ activity|trans_fallback:"name" }}
-                        {% if completed_count %}
-                            ({{ completed_count }} response{{ completed_count|pluralize }})
-                        {% endif %}
+                        ({{ completed_count }} response{{ completed_count|pluralize }})
                     </a>
                 </div>
             {% else %}

@@ -9,12 +9,13 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.template import Context, RequestContext, loader, Template
+from django.template.loader import render_to_string
 from django.conf import settings
 
 
 from accounts.models import UserProfile
 from reports.actions import PointsAssigner
-from answers.models import Answer
+from answers.models import Answer, AnswerMultiChoice
 from challenges.models import Challenge
 from .forms import *
 from .models import Comment
@@ -65,9 +66,49 @@ def ajax_like(request, id):
     return HttpResponse(str(c.likes.all().count()))
 
 
+
+def notify_author(request, parent_comment, comment):
+    topic = parent_comment.topic
+    message = None
+
+    recipient = None
+    if request.user != parent_comment.user:
+        #if isinstance(topic, Challenge):
+        #    message = "%s replied to a comment on %s" % (
+        #        request.user.get_profile().screen_name,
+        #        topic
+        #    )
+        #    recipient = topic.user
+        #elif isinstance(topic, UserProfile):
+        #    message = "%s replied to a comment on your profile" % (
+        #        request.user.get_profile().screen_name
+        #    )
+        #    recipient = topic.user
+        #else:
+        #    message = "%s replied to your comment on %s" % (
+        #        request.user.get_profile().screen_name,
+        #        topic
+        #    )
+        #    recipient = parent_comment.user
+        if isinstance(topic, Answer) or isinstance(topic, AnswerMultiChoice):
+            message = "%s replied to your answer %s" %(
+                request.user.get_profile().screen_name,
+                topic
+            )
+            try:
+                recipient = topic.answerUser
+            except AttributeError:
+                recipient = topic.user
+
+    if recipient is not None and message is not None:
+        recipient.notifications.create(content_object=comment, message=message)
+
+
 @login_required
 def ajax_create(request, comment_form=CommentForm):
+
     request_uri = reverse('comments:ajax-create')
+
     def create(obj_response, form_data):
         log.debug("creating comment: %s" % form_data)
         form = comment_form(data=form_data)
@@ -84,41 +125,35 @@ def ajax_create(request, comment_form=CommentForm):
             )
             log.debug("comment created. %s" % vars(c))
             stream_verb = 'commented'
-            stream_utils.action.send(request.user, stream_verb, target=parent_comment, action_object=c, description="commented on a comment")
+            stream_utils.action.send(
+                            request.user, 
+                            stream_verb, 
+                            target=parent_comment, 
+                            action_object=c, 
+                            description="commented on a comment"
+            )
+            notify_author(request, parent_comment, c)
 
             #from celery.execute import send_task
             #result = send_task("badges.tasks.gen_badges", [request.user.pk, stream_verb, action_object_])
             #print result.get()
-            from badges.tasks import gen_badges
-            user_id=request.user.pk
-            task_kwargs = dict(
-                    stream_verb=stream_verb,
-            )
+            #from badges.tasks import gen_badges
+            #user_id=request.user.pk
+            #task_kwargs = dict(
+            #        stream_verb=stream_verb,
+            #)
             # gen_badges.apply_async(args=[user_id,], kwargs=task_kwargs)
-
-
             context = dict(
                 comment = parent_comment,
                 STATIC_URL = settings.STATIC_URL,
                 MEDIA_URL = settings.MEDIA_URL,
                 request = request,
             )
-            players_tmpl = """\
-                <div class="nested replies" id="replies-{{comment.pk}}">
-                    {% for comment in comment.comments.all %}
-                        {% with filename="comments/comment.html" extra_message=None nested=1 %}
-                                {% include filename %}
-                        {% endwith %}
-                    {% endfor %}
-                    <div style="clear:both"></div>
-                </div>
-                """
-            t = Template(players_tmpl)
-            rendered_comments = t.render(Context(context))
+            rendered_comments = render_to_string('comments/nested_replies.html', context)
             obj_response.html('#replies-'+str(parent_comment.pk), rendered_comments)
             obj_response.call('init_masonry')
         else:
-            print "form errors; ", form.errors
+            log.debug("form errors: %s" % form.errors)
 
     instance = Sijax()
     instance.set_data(request.POST)

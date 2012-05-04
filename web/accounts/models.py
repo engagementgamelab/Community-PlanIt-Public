@@ -406,6 +406,9 @@ class Notification(models.Model):
 
     objects = NotificationManager()
 
+    def __unicode__(self):
+        return "notification for %s" % (self.user.get_profile().screen_name)
+
     class Meta:
         ordering = ['-timestamp']
 

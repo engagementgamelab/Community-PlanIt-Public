@@ -39,7 +39,6 @@ jQuery(function($) {
 
   $(".btn-reply").click(function(e){
       e.preventDefault();
-      {{ create_comment_sijax_js|safe }}
       var form_data = Sijax.getFormValues('#id_comment-form-'+$(this).attr('id'));
       Sijax.request('create_comment', [form_data]);
   });
