@@ -275,7 +275,7 @@ def edit(request, template_name='accounts/profile_edit.html'):
     #change_password_form = ChangePasswordForm()
     profile_form = UserProfileForm(request=request,
                                    initial={
-                                        'preferred_language': profile.preferred_language,
+                                        'preferred_language': prof_for_game.preferred_language,
                                         'tagline': profile.tagline,
                                         'affiliations': prof_for_game.affils.all(),
                                         'stakes': prof_for_game.stakes.all(),
@@ -297,6 +297,9 @@ def edit(request, template_name='accounts/profile_edit.html'):
         if profile_form.is_valid():
             cd = profile_form.cleaned_data
             profile.tagline = cd['tagline']
+
+            if cd.has_key('preferred_language'):
+                prof_for_game.preferred_language = cd.get('preferred_language')
 
             prof_for_game.stakes = cd.get('stakes')
             prof_for_game.affils = cd.get('affiliations')
@@ -321,6 +324,8 @@ def edit(request, template_name='accounts/profile_edit.html'):
         'profile_form': profile_form,
         #'change_password_form': change_password_form,
     }
+
+    context.update(missions_bar_context(request))
     return render(request, template_name, context)
 
 @login_required
