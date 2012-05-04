@@ -6,8 +6,8 @@
         {% endif %}
         
         <li class="sidebar-nav-notifications">
-            <a id="sidebar-nav-notifications" href="{% url accounts:notifications %}" class="active"{% if notifications %}class="active"{% endif %}>
-                <div id="sidebar-nav-notifications-container">3</div>
+            <a id="sidebar-nav-notifications" href="{% url accounts:notifications %}" {% if notifications %}class="active"{% endif %}>
+                <div id="sidebar-nav-notifications-container">{% if notifications %}{# TODO number of new notifications #}{% endif %}</div>
             </a>
         </li>
         
