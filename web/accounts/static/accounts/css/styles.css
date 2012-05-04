@@ -455,12 +455,14 @@
         .notification-time {
             display: inline-block;
             width: 100px;
-            vertical-align: center;
+            vertical-align: top;
             font-style: italic;
             color: #999;
         }
         
         .notification-message {
             display: inline-block;
+            vertical-align: top;
+            width: 600px;
         }
     

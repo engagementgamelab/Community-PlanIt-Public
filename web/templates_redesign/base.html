@@ -42,6 +42,20 @@
 
 {% block body %}
 <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
+    {% block google_translate %}
+    <div id="google_translate_element" style="text-align: right;"></div><script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'auto',
+        autoDisplay: false,
+        gaTrack: true,
+        gaId: 'UA-31043728-1',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+    </script><script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    {% endblock %}
+    
     <div id="topper">
         {% block top-breadcrumbs %}
         <div id="top-breadcrumbs">
