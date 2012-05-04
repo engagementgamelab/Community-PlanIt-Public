@@ -2,17 +2,20 @@ import datetime
 from operator import itemgetter
 import re
 
+from PIL import Image
+
 from stream import utils as stream_utils
 
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.translation import get_language
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.template import Context, RequestContext, loader
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils.datastructures import SortedDict
 
 from web.accounts.models import UserProfile
 from web.attachments.models import Attachment
@@ -23,7 +26,9 @@ from web.reports.actions import PointsAssigner
 from web.values.models import *
 from web.core.utils import missions_bar_context
 
-from PIL import Image
+import logging
+log = logging.getLogger(__name__)
+
 
 @login_required
 def all(request, template='values/all.html'):
@@ -31,36 +36,44 @@ def all(request, template='values/all.html'):
         current_instance = request.current_game
     else:
         raise Http404("could not locate a valid game")
-    
-    values = Value.objects.untranslated().filter(instance=current_instance)
-    community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
-    
-    value_wrapper = []
-    player_values = PlayerValue.objects.filter(user=request.user)
-    player_spent = player_values.aggregate(Sum('coins'))['coins__sum'] or 0
+    values_sorted = SortedDict()
+    for v in Value.objects.filter(instance=current_instance):
+        values_sorted[v] = dict(
+                community_spent_total = PlayerValue.objects.filter(value=v).aggregate(Sum('coins'))['coins__sum'] or 0,
+                individual_spent_total = PlayerValue.objects.filter(value=v, user=request.user).aggregate(Sum('coins'))['coins__sum'] or 0,
+        )
 
-    for value in values:
-        player_value = player_values.filter(value=value)
-        coins = float(value.coins)
-        if len(player_value) > 0:
-            value_wrapper.append({ 'message': value.message, 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
-                                  'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })
-        else:
-            value_wrapper.append({ 'message': value.message, 'value': value, 'coins': coins, 'player_coins': 0,
-                                   'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
-    value_wrapper = sorted(value_wrapper, key=itemgetter('message'))
+    log.debug(values_sorted)
 
     context = dict(
-        values = values,
-        value_wrapper = value_wrapper,
-        community_spent = community_spent,
-        player_spent = player_spent,
+        values_sorted = values_sorted,
     )
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
     context.update(missions_bar_context(request))
 
-    return render_to_response(template, (RequestContext(request, context)))
+    return render(request, template, context)
+
+#value_wrapper = value_wrapper,
+#community_spent = community_spent,
+#player_spent = player_spent,
+#community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
+#player_values = PlayerValue.objects.filter(user=request.user)
+#player_spent = player_values.aggregate(Sum('coins'))['coins__sum'] or 0
+
+#value_wrapper = []
+#for value in values:
+#    player_value = player_values.filter(value=value)
+#    coins = float(value.coins)
+#    if len(player_value) > 0:
+#        value_wrapper.append({ 'message': value.message, 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
+#                              'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })
+#    else:
+#        value_wrapper.append({ 'message': value.message, 'value': value, 'coins': coins, 'player_coins': 0,
+#                               'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
+#value_wrapper = sorted(value_wrapper, key=itemgetter('message'))
+#log.debug(value_wrapper)
+
 
 @login_required
 def detail(request, id):

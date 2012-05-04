@@ -10,15 +10,23 @@
         window.addEvent('domready', function(){
             
             /* Presets for community flags */
-            {# TODO count of number of flags spent on each value #}
-            var initial_communityflags = [12, 2, 1, 1, 3, 2];
+            var initial_communityflags = [
+                {% for value, value_data in values_sorted.items %}
+                    {{ value_data.community_spent_total }},
+                {% endfor %}
+            ];
             
             /* Presets for individual flags */
-            {# TODO count of the number of flags spent on each value by the user #}
-            var initial_individualflags = [1, 0, 0, 0, 1, 0];
+            var initial_individualflags = [
+                {% for value, value_data in values_sorted.items %}
+                    {{ value_data.individual_spent_total }},
+                {% endfor %}
+            ];
             
             // Array marking spent flags to be returned to the db
-            var spent_individualflags = [0, 0, 0, 0, 0, 0];
+            var spent_individualflags = [
+                {% for i in values_sorted.keys %} 0, {% endfor %}
+            ];
             
             function render_communityflags(){
                 /* Calculate total flags */
@@ -140,10 +148,9 @@
     <div id="mapthefuture-flags-earned">
         <div id="mapthefuture-crosshairs"></div>
         
-        {# TODO Number of flags user has #}
+        {% for f in my_flags_range %}
         <div class="draggable-container"><div class="mapthefuture-flag-individual-earned draggable"></div></div>
-        <div class="draggable-container"><div class="mapthefuture-flag-individual-earned draggable"></div></div>
-        <div class="draggable-container"><div class="mapthefuture-flag-individual-earned draggable"></div></div>
+        {% endfor %}
 
         <div id="mapthefuture-controls">
             <div>Drag your flags where you want them.</div>
@@ -158,12 +165,12 @@
         <div>My flag</div>
     </div>
     
-    {# TODO Loop through the mission.values #}
     <div id="mapthefuture-map">
+        {% for value in values_sorted.keys %}
         <div class="mapthefuture-grid">
-            <div id="mapthefuture-star1" class="mapthefuture-star droppable">
+            <div id="mapthefuture-star{{ forloop.counter }}" class="mapthefuture-star droppable">
                 <div class="mapthefuture-label-container">
-                    <div class="mapthefuture-label"><a href="{% url values:detail 23 %}">Business Development</a></div>
+                    <div class="mapthefuture-label"><a href="{% url values:detail value.pk %}">{{ value.message }}</a></div>
                 </div>
                 <div class="mapthefuture-flag-community">
                     <div class="mapthefuture-count-community"></div>
@@ -173,71 +180,7 @@
                 </div>
             </div>
         </div>
-        <div class="mapthefuture-grid">
-            <div id="mapthefuture-star2" class="mapthefuture-star droppable">
-                <div class="mapthefuture-label-container">
-                    <div class="mapthefuture-label"><a href="{% url values:detail 23 %}">Transportation Improvement</a></div>
-                </div>
-                <div class="mapthefuture-flag-community">
-                    <div class="mapthefuture-count-community"></div>
-                </div>
-                <div class="mapthefuture-flag-individual">
-                    <div class="mapthefuture-count-individual"></div>
-                </div>
-            </div>
-        </div>
-        <div class="mapthefuture-grid">
-            <div id="mapthefuture-star3" class="mapthefuture-star droppable">
-                <div class="mapthefuture-label-container">
-                    <div class="mapthefuture-label"><a href="{% url values:detail 23 %}">Housing Development</a></div>
-                </div>
-                <div class="mapthefuture-flag-community">
-                    <div class="mapthefuture-count-community"></div>
-                </div>
-                <div class="mapthefuture-flag-individual">
-                    <div class="mapthefuture-count-individual"></div>
-                </div>
-            </div>
-        </div>
-        <div class="mapthefuture-grid">
-            <div id="mapthefuture-star4" class="mapthefuture-star droppable">
-                <div class="mapthefuture-label-container">
-                    <div class="mapthefuture-label"><a href="{% url values:detail 23 %}">Recreation &amp; Cultural Amenities</a></div>
-                </div>
-                <div class="mapthefuture-flag-community">
-                    <div class="mapthefuture-count-community"></div>
-                </div>
-                <div class="mapthefuture-flag-individual">
-                    <div class="mapthefuture-count-individual"></div>
-                </div>
-            </div>
-        </div>
-        <div class="mapthefuture-grid">
-            <div id="mapthefuture-star5" class="mapthefuture-star droppable">
-                <div class="mapthefuture-label-container">
-                    <div class="mapthefuture-label"><a href="{% url values:detail 23 %}">Community Engagement</a></div>
-                </div>
-                <div class="mapthefuture-flag-community">
-                    <div class="mapthefuture-count-community"></div>
-                </div>
-                <div class="mapthefuture-flag-individual">
-                    <div class="mapthefuture-count-individual"></div>
-                </div>
-            </div>
-        </div>
-        <div class="mapthefuture-grid">
-            <div id="mapthefuture-star6" class="mapthefuture-star droppable">
-                <div class="mapthefuture-label-container">
-                    <div class="mapthefuture-label"><a href="{% url values:detail 23 %}">Health, Education, &amp; Services</a></div>
-                </div>
-                <div class="mapthefuture-flag-community">
-                    <div class="mapthefuture-count-community"></div>
-                </div>
-                <div class="mapthefuture-flag-individual">
-                    <div class="mapthefuture-count-individual"></div>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 
