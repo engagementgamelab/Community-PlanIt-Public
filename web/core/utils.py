@@ -37,7 +37,11 @@ def missions_bar_context(request, mission=None):
     if not mission:
         mission = Mission.objects.default(instance=request.current_game)
 
-    my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
+    if mission is not None:
+        my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
+    else:
+        my_points_for_mission = progress_percentage  = 0
+
     all_missions_for_game = Mission.objects.for_instance(instance=request.current_game)
     my_flags_count = request.prof_per_instance.flags
     log.debug("i have %s flags" % my_flags_count)
