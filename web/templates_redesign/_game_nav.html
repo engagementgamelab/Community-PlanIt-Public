@@ -9,7 +9,7 @@
         {% with request.user.notifications.unread|length as unread_notifications_count %}
         <li class="sidebar-nav-notifications">
         <a id="sidebar-nav-notifications" href="{% url accounts:notifications %}" {% if unread_notifications_count > 0 %}class="active"{% endif %}>
-                <div id="sidebar-nav-notifications-container">{{ unread_notifications_count }}</div>
+                <div id="sidebar-nav-notifications-container">{% if unread_notifications_count > 0 %}{{ unread_notifications_count }}{% endif %}</div>
             </a>
         </li>
         {% endwith %}
