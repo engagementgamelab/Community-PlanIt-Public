@@ -2,24 +2,20 @@
 <div id="sidebar-nav">
     <ul>
         {% if not city_header %}
-        <li class="sidebar-nav-profile"><a href="{% url missions:mission mission.slug %}" id="sidebar-nav-missioncontrol">Mission Control</a></li>
+        <li class="sidebar-nav-missioncontrol">
+            <a href="{% url missions:mission mission.slug %}" id="sidebar-nav-missioncontrol">Mission Control</a>
+        </li>
         {% endif %}
         
-        <li><a href="{% url accounts:notifications %}">Notifications</a></li>
+        <li class="sidebar-nav-notifications">
+            <a id="sidebar-nav-notifications" href="{% url accounts:notifications %}" {% if notifications %}class="active"{% endif %}>
+                <div id="sidebar-nav-notifications-container">{% if notifications %}{# TODO number of new notifications #}{% endif %}</div>
+            </a>
+        </li>
         
         <li class="sidebar-nav-profile">
             <a id="sidebar-nav-profile" href="{% url accounts:player_profile request.user.id %}">
-                
                 <div id="sidebar-nav-profile-avatar">{% avatar request.user %}</div>
-                <div id="sidebar-nav-profile-notifications-container">
-                    {# TODO #}
-                    {% if notifications %}
-                        <div id="sidebar-nav-profile-notifications" {# class="active" #}>2</div>
-                    {% else %}
-                        <div id="sidebar-nav-profile-notifications" {# class="active" #}>2</div>
-                    {% endif %}
-                    
-                </div>
                 <div id="sidebar-nav-profile-badges-container">
                     <div id="sidebar-nav-profile-badges">{# TODO #}0</div>
                 </div>

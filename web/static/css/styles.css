@@ -509,11 +509,6 @@ a {
     #sidebar-nav li:hover {
         background-color: #fff;
     }
-    
-    /* the profile nav is different */
-    #sidebar-nav li.sidebar-nav-profile {
-        background-image: none;
-    }
 
         #sidebar-nav a {
             display: block;
@@ -524,23 +519,67 @@ a {
             font-weight: bold;
             font-size: 0.8em;
         }
+
+    /* Mission Control is a bit different... */
+    #sidebar-nav li.sidebar-nav-missioncontrol {
+        background-image: none;
+    }
     
-            #sidebar-nav-missioncontrol {
-                background: url('../img/icon-nav-missioncontrol.png') no-repeat 70px center;
-                padding: 30px 60px 30px 10px !important;
-                text-align: left !important;
-                font-size: 1.0em !important;
+    #sidebar-nav-missioncontrol {
+        background: url('../img/icon-nav-missioncontrol.png') no-repeat 70px center;
+        padding: 30px 60px 30px 10px !important;
+        text-align: left !important;
+        font-size: 1.0em !important;
+    }
+    
+        .section-missions #sidebar-nav-missioncontrol,
+        .section-activities #sidebar-nav-missioncontrol {
+            background: #fff url('../img/icon-nav-missioncontrol_over.png') no-repeat 70px center;
+            color: #00e5b8;
+        }
+
+    /* the notifications nav is different */
+    #sidebar-nav li.sidebar-nav-notifications {
+        float: right;
+        background-image: none;
+        border-bottom: none;
+    }
+
+        #sidebar-nav-notifications {
+            display: block;
+            color: #fff;
+            padding: 0px !important;
+            width: 42px;
+            height: 37px;
+        }
+
+        .section-notifications li.sidebar-nav-notifications {
+            background: #fff!important;
+        }
+        
+            #sidebar-nav-notifications-container {
+                position: relative;
+                margin: 3px 9px 8px 9px;
+                width: 24px;
+                height: 26px;
+                padding: 0px !important;
+                background: url('../img/bg-nav-notification.png') no-repeat;
+                line-height: 36px;
+                color: #fff;
             }
             
-                .section-missions #sidebar-nav-missioncontrol,
-                .section-activities #sidebar-nav-missioncontrol {
-                    background: #fff url('../img/icon-nav-missioncontrol_over.png') no-repeat 70px center;
-                    color: #00e5b8;
-                }
+            #sidebar-nav-notifications.active #sidebar-nav-notifications-container{
+                background: url('../img/bg-nav-notification.png') 24px 0px;
+            }
 
+    /* the profile nav is different */
+    #sidebar-nav li.sidebar-nav-profile {
+        background-image: none;
+        clear: right;
+    }
             #sidebar-nav-profile {
                 position: relative;
-                padding-top: 10px !important;
+                padding-top: 60px !important;
             }
                 
                 .section-profile #sidebar-nav-profile {
@@ -550,39 +589,13 @@ a {
                 #sidebar-nav-profile div {
                     overflow: hidden;
                 }
-            
-                    #sidebar-nav-profile-notifications-container {
-                        display: block;
-                        position: absolute;
-                        top: 0px;
-                        right: 3px;
-                        color: #fff;
-/*                        background: #F2F7ED;*/
-                        padding: 8px;
-                    }
-                    
-                    #sidebar-nav-profile-notifications-container:hover {
-/*                        background: #fff;*/
-                    }
-                    
-                        #sidebar-nav-profile-notifications {
-                            width: 24px;
-                            height: 26px;
-                            background: url('../img/bg-nav-notification.png') no-repeat;
-                            line-height: 36px;
-                        }
-                        
-                        #sidebar-nav-profile-notifications.active {
-                            background: url('../img/bg-nav-notification.png') 24px 0px;
-                        }
                             
                     #sidebar-nav-profile-badges-container {
                         display: block;
                         position: absolute;
-                        top: 44px;
-                        right: 3px;
+                        top: 3px;
+                        right: 2px;
                         color: #fff;
-/*                        background: #F2F7ED;*/
                         padding: 8px;
                     }
                     
@@ -595,9 +608,15 @@ a {
 
 
                     #sidebar-nav-profile-avatar {
-                        position: relative;
-                        left: -16px;
-                        
+                        position: absolute;
+                        left: 0px;
+                        top: -40px;
+                        padding: 12px;
+                    }
+                    
+                     .section-profile #sidebar-nav-profile-avatar,
+                     #sidebar-nav-profile:hover #sidebar-nav-profile-avatar {
+                        background: #fff;
                     }
                     
                     /* profile avatar restrict size */
