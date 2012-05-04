@@ -521,6 +521,10 @@ a {
         }
 
     /* Mission Control is a bit different... */
+    #sidebar-nav li.sidebar-nav-missioncontrol {
+        background-image: none;
+    }
+    
     #sidebar-nav-missioncontrol {
         background: url('../img/icon-nav-missioncontrol.png') no-repeat 70px center;
         padding: 30px 60px 30px 10px !important;

@@ -2,7 +2,9 @@
 <div id="sidebar-nav">
     <ul>
         {% if not city_header %}
-        <li><a href="{% url missions:mission mission.slug %}" id="sidebar-nav-missioncontrol">Mission Control</a></li>
+        <li class="sidebar-nav-missioncontrol">
+            <a href="{% url missions:mission mission.slug %}" id="sidebar-nav-missioncontrol">Mission Control</a>
+        </li>
         {% endif %}
         
         <li class="sidebar-nav-notifications">
