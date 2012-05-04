@@ -6,5 +6,6 @@ from values.models import Value
 
 class ValueAdmin(TranslatableAdmin):
     list_display = ('__str__', 'instance')
+    list_filter = ('instance',)
 
 admin.site.register(Value, ValueAdmin)
