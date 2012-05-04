@@ -215,5 +215,31 @@
             background: url('../img/icon-mission-activities-completed_over.png') no-repeat center center;
             color: #00e7c5;
         }
+
+/* Your Pose the Challenges - Missions View */
+#challenge-newform-container {
+  margin-right: 20px;
+  padding: 20px 0px 30px 0px;
+  background: #00e5b8;
+}
+
+    #challenge-newform label {
+        display: block;
+        margin: 10px 0px 3px 0px;
+        font-size: 0.75em;
+    }
+    
+    #challenge-newform input[type='text'], 
+    #challenge-newform textarea {
+        padding: 5px 8px;
+        border: 0px;
+        border-radius: 3px;
+    }
+
+        #id_0-name {
+            width: 300px;
+        }
         
-    .
+        #id_0-question {
+            width: 700px;
+        }

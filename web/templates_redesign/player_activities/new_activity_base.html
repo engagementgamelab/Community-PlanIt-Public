@@ -1,4 +1,5 @@
 {% extends "player_activities/base.html" %}
+
 {% load attachment_tags gmap i18n game_extras cpi_tags %}
 
 {% block css %}
@@ -11,25 +12,27 @@
 {% block game_content %}
 <div>
     <div class="column-container">
-        <h1>{# mission.title #}</h1>
+        <h1>{{ mission.title }}</h1>
     </div>
     <div id="mission-intro">
-        <div class="column-twothird">
+        <div class="column-half">
             <div class="column-container">
-                <p>{# mission.description #}</p>
+                <p>{{ mission.description }}</p>
             </div>
         </div>
-        <div class="column-third">
+        <div class="column-half">
             <div class="column-container">
-                <div id="mission-video-container">{# embed_video mission.video #}</div>
+                <div id="mission-video-container">{% embed_video mission.video %}</div>
             </div>
         </div>
     </div>
     
+    {% block missions_nav %}
     <div class="column-container">
-        <h1 id="btn-challenges" class="btn-tab"><a href="{% url missions:mission mission_slug %}">Challenges</a></h1>
+        <h1 id="btn-challenges" class="btn-tab"><a href="{% url missions:mission mission.slug %}">Challenges</a></h1>
         <h1 id="btn-player-challenges" class="btn-tab"><a class="active">You Pose the Challenges</a></h1>
     </div>
+    {% endblock %}
     
     <div class="column-container">
         <p class="instructions">{% trans "Response to questions that your community has posed, or ask one of your own. Adding to the dialogue will help make sure that everyones voice is heard." %}</p>
@@ -37,6 +40,7 @@
         <div class="tabbutton">
             <a href="">- Ask a Question</a>
         </div>
+        
         {% comment %}
         {% if activities and mission.is_active %}
             {% trans "You have completed" %} {{ completed|length }}/{{ activities|length }} {% trans "activities" %}:
@@ -44,9 +48,9 @@
             {% trans "Activities" %}:
         {% endif %}
         {% endcomment %}
+    </div>
         {% block forms %} {% endblock forms %}
         
-    </div>
 
 </div>
 {% endblock %}

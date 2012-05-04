@@ -27,13 +27,15 @@
             </div>
         </div>
     </div>
-    
+    {% block mission_tab_nav %}
     <div class="column-container">
         <h1 id="btn-challenges" class="btn-tab"><a class="active">{% trans "Challenges" %}</a></h1>
-        <h1 id="btn-player-challenges" class="btn-tab"><a href="{% url activities:new mission.slug %}">You Pose the Challenges</a></h1>
+        <h1 id="btn-player-challenges" class="btn-tab"><a href="{% url missions:mission_playercreated mission.slug %}">You Pose the Challenges</a></h1>
     </div>
+    {% endblock %}
     
     <div class="column-container clearfix">
+        {% block mission_intro %}
         <div id="mission-activities-intro">
             <p class="instructions">{% trans "By answering challenge questions you are helping plan your community, and you are earning points that move you towards accomplishing the mission." %}</p>
             <div id="mission-activities-completion">
@@ -43,6 +45,7 @@
             {% endif %}
             </div>
         </div>
+        {% endblock %}
         
         {% comment %}
             Keep these verbose for now, easier to read/debug until we launch

@@ -2,74 +2,38 @@
 {% load i18n %}
 {% block forms %}
 
-<p>Input possible answers to your multi response question<p/>
+<div id="challenge-newform-container">
+    
 
-{% comment %}
-{% if form.errors or form.non_field_errors or wizard_error %}
-<div id="form_errors" class="error">
-    {% trans "Please correct the errors below." %}
-    {{form.non_field_errors.as_ul}}
-    {{wizard_error}}
-</div>
-{% endif %}
-{% endcomment %}
-        
-<form action="." method="post">{% csrf_token %}
-    {{ wizard.management_form }}
-
-    {% if wizard.form.forms %}
-
-        {{ wizard.form.management_form }}
-        {% for form in wizard.form.forms %}
-            {{ form }}
-        {% endfor %}
-
-    {% else %}
-
-        {{ wizard.form.as_p }}
-        <input type="submit">
-
-
-        {% comment %}
-        {% with wizard.form as form %}
-
-            <form action="." method="post">{% csrf_token %}
-
-
-                {{ form.errors }}
-
-                <div class="fieldWrapper">
-                    <label for="id_types">{{ form.answ1.label}}</label>
-                        {{ form.answ1 }}
-                </div>
-
-                <div class="fieldWrapper">
-                    <label for="id_types">{{ form.answ2.label}}</label>
-                        {{ form.answ2 }}
-                </div>
-
-                <div class="fieldWrapper">
-                    <label for="id_types">{{ form.answ3.label}}</label>
-                        {{ form.answ3 }}
-                </div>
-
-                <div class="fieldWrapper">
-                    <label for="id_types">{{ form.answ4.label}}</label>
-                        {{ form.answ4 }}
-                </div>
-
-                <div class="fieldWrapper">
-                    <label for="id_types">{{ form.answ5.label}}</label>
-                        {{ form.answ5}}
-                </div>
-
-                <input type="submit" name="Submit">
-            </form>
-
-        {% endwith %}
-        {% endcomment %}
-
+    {% comment %}
+    {% if form.errors or form.non_field_errors or wizard_error %}
+    <div id="form_errors" class="error">
+        {% trans "Please correct the errors below." %}
+        {{form.non_field_errors.as_ul}}
+        {{wizard_error}}
+    </div>
     {% endif %}
-</form>
+    {% endcomment %}
+        
+    <form id="challenge-newform" class="column-container" action="." method="post">{% csrf_token %}
+        <p>Input possible answers to your multi response question<p/>
+        
+        {{ wizard.management_form }}
+
+        {% if wizard.form.forms %}
+
+            {{ wizard.form.management_form }}
+            {% for form in wizard.form.forms %}
+                {{ form }}
+            {% endfor %}
+
+        {% else %}
+
+            {{ wizard.form.as_p }}
+            <input type="submit" class="btn-blue">
+
+        {% endif %}
+    </form>
+</div>
 
 {% endblock forms %}
