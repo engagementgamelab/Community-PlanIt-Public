@@ -131,7 +131,7 @@ class PlayerActivityBase(TranslatableModel):
     def completed_count(self):
         actions = Action.objects.get_for_action_object(self)
         all_completed = filter(lambda a: a.verb == "activity_completed", actions)
-        log.debug("%s completed %s" % (self.__unicode__(), len(all_completed)))
+        #log.debug("%s completed %s" % (self.__unicode__(), len(all_completed)))
         return len(all_completed)
 
     def is_past(self):

@@ -178,7 +178,7 @@ class NewActivityWizard(SessionWizardView):
             form_two = form_list[1]
             log.debug("player submitted multi:%s " % form_two.cleaned_data)
             for f in form_two.cleaned_data.keys():
-                if form_two.cleaned_data.get(f) is not None:
+                if form_two.cleaned_data.get(f).strip() != '':
                     mc = MultiChoiceActivity.objects.create(
                             value=form_two.cleaned_data.get(f, ''),
                             activity=new_activity,
