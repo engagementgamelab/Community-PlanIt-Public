@@ -12,17 +12,20 @@
             <p class="instructions">{% trans "Response to questions that your community has posed, or ask one of your own. Adding to the dialogue will help make sure that everyone's voice is heard." %}</p>
         </div>
         
-        {% block forms %}
-        <div class="tabbutton">
-            <a href="{% url player_activities:new mission.slug %}">+ Create A Challenge</a>
-        </div>
-        {% endblock %}
+        {% if mission.is_active %}
+            {% block forms %}
+            <div class="tabbutton">
+                <a href="{% url player_activities:new mission.slug %}">+ Create A Challenge</a>
+            </div>
+            {% endblock %}
+        {% endif %}
         
         {% for activity in activities %}
             {% with activity.get_points as points and activity.completed_count as completed_count and activity.activity_type_readable as activity_type %}
                 {% if mission.is_expired %}
                     <div class="activity playercreated activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                         <a href="{{ activity.get_overview_url }}">
+                            <div class="mission-activity-creator">{% avatar activity.creationUser %}</div>
                             {{ activity|trans_fallback:"name" }}
                             ({{ completed_count }} response{{ completed_count|pluralize }})
                         </a>
@@ -31,9 +34,8 @@
                     {% if mission.is_future %}
                         {# Non-started Mission #}
                         <div class="activity playercreated activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
-                            <a>
-                            {{ activity|trans_fallback:"name" }}
-                            </a>
+                            <div class="mission-activity-creator">{% avatar activity.creationUser %}</div>
+                            <a>{{ activity|trans_fallback:"name" }}</a>
                         </div>
                     {% else %}
                         {# Active Mission #}
@@ -41,6 +43,7 @@
                         {#  completed activity #}
                         <div class="activity playercreated activity-completed {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                             <a href="{{ activity.get_activity_url }}">
+                                <div class="mission-activity-creator">{% avatar activity.creationUser %}</div>
                                 {{ activity|trans_fallback:"name" }} ({{ completed_count }} new response{{ completed_count|pluralize }})
                                 <div class="mission-activity-completed"></div>
                             </a>
@@ -59,7 +62,13 @@
             {% endwith %}
         {% empty %}
             {% block no_activities %}
-            <div class="no-activities">{% trans "There are currently no player created activities for this mission. Be the first to" %} <a href="{% url player_activities:new mission.slug %}">{% trans "Create a Challenge" %}</a>!</div>
+                {% if mission.is_active %}
+                    <div class="no-activities">{% trans "There are currently no player created activities for this mission. Be the first to" %} <a href="{% url player_activities:new mission.slug %}">{% trans "Create a Challenge" %}</a>!</div>
+                {% elif mission.is_future %}
+                    <div class="no-activities">{% trans "This mission has not started yet. You will be able to pose challenges to the community once it does." %}</div>
+                {% else %}
+                    <div class="no-activities">{% trans "This mission is currently not active." %}</div>
+                {% endif %}
             {% endblock %}
         {% endfor %}
     
