@@ -13,11 +13,10 @@
 
 {% block game_content %}
 <div id="priority">
-    <a href="{% url values:index %}" class="btn-back">{% trans "Back to Map" %}</a>
-    
-    <div class="column-half">
+    <div class="column-half">        
         <div class="column-container">
-            
+        <a href="{% url values:index %}" class="btn-back">{% trans "Back to Map the Future" %}</a>
+        
             <h1>Map the Future!</h1>
             <div id="priority-star"></div>
             <h2>{{ value.message }}</h2>

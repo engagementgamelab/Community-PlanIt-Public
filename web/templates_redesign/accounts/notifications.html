@@ -6,7 +6,9 @@
 {% block body_class %}{{ block.super }} section-notifications{% endblock %}
 
 {% block game_content %}
-<div id="notifications" class="column-container">    
+<div id="notifications" class="column-container">
+    <a href="{% url missions:mission mission.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
+    
     <h1>{% trans "Notifications" %}</h1>
     
     {% if notifications_page.object_list %}

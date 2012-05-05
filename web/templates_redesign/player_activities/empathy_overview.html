@@ -6,15 +6,10 @@
 
 <div class="empathy column-container">
     
-    {% if my_answers %}
-        <div>
-            <a class="btn-back" href="{{activity.mission.get_absolute_url}}">{% trans "Return to mission" %}</a>
-        </div>
-    {% endif %}
-
-    {% include "player_activities/official_responses.html" %}
-
-    <div class="column-threequarter">
+    <a class="btn-back" href="{{ activity.mission.get_absolute_url }}">{% trans "Return to mission" %}</a>
+    
+    <div class="column-threequarter clearfix">
+        
         <h1>{{activity.name}}<span class="points">{{ activity.get_points }}</span></h1>
         <div class="column-third">
             {% if activity.avatar %}<img class="left avatar" src="{{ MEDIA_URL }}/{{activity.avatar}}" width="128" height="128">{% endif %}
@@ -31,7 +26,8 @@
         
         <br class="clearfix" />
         
-
+        {% include "player_activities/official_responses.html" %}
+        
         {% if not activity.mission.is_expired and myComment %}
         <div class="activity-response">
             {{ myComment.message }}
