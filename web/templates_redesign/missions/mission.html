@@ -1,0 +1,65 @@
+{% extends 'missions/base.html' %}
+{% load attachment_tags gmap i18n game_extras cpi_tags %}
+
+{% block activities_list %}
+    <div class="column-container">
+        <h1 id="btn-challenges" class="btn-tab"><a class="active">{% trans "Challenges" %}</a></h1>
+        <h1 id="btn-player-challenges" class="btn-tab"><a href="{% url missions:mission_playercreated mission.slug %}">You Pose the Challenges</a></h1>
+    </div>
+    
+    <div class="column-container clearfix">    
+        <div id="mission-activities-intro">
+            <p class="instructions">{% trans "By answering challenge questions you are helping plan your community, and you are earning points that move you towards accomplishing the mission." %}</p>
+            <div id="mission-activities-completion">
+            {% if activities and mission.is_active %}
+                <div id="completion">{{ my_completed|length }}/{{ activities|length }}</div>
+                <div>{% trans "challenges completed" %}</div>
+            {% endif %}
+            </div>
+        </div>
+
+        {% for activity in activities %}
+            {% with activity.get_points as points and activity.completed_count as completed_count and activity.activity_type_readable as activity_type %}
+                {% if mission.is_expired %}
+                    <div class="activity  activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
+                        <a href="{{ activity.get_overview_url }}">
+                            {{ activity|trans_fallback:"name" }}
+                            ({{ completed_count }} response{{ completed_count|pluralize }})
+                        </a>
+                    </div>
+                {% else %}
+                    {% if mission.is_future %}
+                        {# Non-started Mission #}
+                        <div class="activity activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
+                            <a>
+                            {{ activity|trans_fallback:"name" }}
+                            </a>
+                        </div>
+                    {% else %}
+                        {# Active Mission #}
+                        {% if activity in my_completed %}
+                        {#  completed activity #}
+                        <div class="activity activity-completed {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
+                            <a href="{{ activity.get_activity_url }}">
+                                {{ activity|trans_fallback:"name" }} ({{ completed_count }} new response{{ completed_count|pluralize }})
+                                <div class="mission-activity-completed"></div>
+                            </a>
+                        </div>
+                        {% else %}
+                        {# fresh activity #}
+                        <div class="activity {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
+                            <a href="{{ activity.get_activity_url }}">
+                                {{ activity|trans_fallback:"name" }}
+                                <div class="mission-activity-points">{{ points }}</div>
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endwith %}
+        {% empty %}
+            {% trans "There are currently no activities for this mission. Check back later." %}
+        {% endfor %}
+    
+    </div>
+{% endblock %}

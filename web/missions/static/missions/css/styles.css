@@ -84,6 +84,11 @@
         color: #a7a9ac;
     }
     
+    .activity.playercreated a {
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+    
     /* The different types of activities. 3 different states. Order matters here */
     .activity.open_ended a {
         background-image: url('../img/icon-open_ended.png');
@@ -181,8 +186,27 @@
         .activity.trivia.activity-inactive a {
             background-image: url('../img/icon-trivia_completed.png');
         }
-        
+    
+    /* Player-created activities only... display the avatar of the creator */
+    .mission-activity-creator {
+        display: inline-block;
+        margin: 0px 20px 0px 0px;
+    }
+    
+        /* profile avatar restrict size */
+        .mission-activity-creator .avatar {
+            width: 28px;
+            height: 28px;
+        }
 
+            .mission-activity-creator .avatar-content {
+                line-height: 28px;
+            }
+
+            .mission-activity-creator .avatar img {
+                max-width: 28px;
+                max-height: 28px;
+            }
     
     .mission-activity-points,
     .mission-activity-completed {

@@ -20,10 +20,9 @@ import logging
 log = logging.getLogger(__name__)
 
 @login_required
-def fetch(request, slug, include_player_submitted=False, template='missions/base.html'):
+def fetch(request, slug, include_player_submitted=False, template='missions/mission.html'):
     # expecting the current game to be 
     # set by middleware
-    print 'asdfasdfasdf'
     if not hasattr(request, 'current_game'):
         raise Http404("could not locate a valid game")
     
