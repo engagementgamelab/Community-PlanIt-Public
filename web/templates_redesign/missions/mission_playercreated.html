@@ -8,14 +8,16 @@
     </div>
 
     <div class="column-container">
-        <div class="tabbutton">
-            <a href="{% url player_activities:new mission.slug %}">+ Ask a Question</a>
+        <div id="mission-activities-intro">
+            <p class="instructions">{% trans "Response to questions that your community has posed, or ask one of your own. Adding to the dialogue will help make sure that everyone's voice is heard." %}</p>
         </div>
         
-        <div id="mission-activities-intro">
-            <p class="instructions">{% trans "Response to questions that your community has posed, or ask one of your own. Adding to the dialogue will help make sure that everyones voice is heard." %}</p>
+        {% block forms %}
+        <div class="tabbutton">
+            <a href="{% url player_activities:new mission.slug %}">+ Create A Challenge</a>
         </div>
-
+        {% endblock %}
+        
         {% for activity in activities %}
             {% with activity.get_points as points and activity.completed_count as completed_count and activity.activity_type_readable as activity_type %}
                 {% if mission.is_expired %}
@@ -56,7 +58,9 @@
                 {% endif %}
             {% endwith %}
         {% empty %}
-            {% trans "There are currently no activities for this mission. Check back later." %}
+            {% block no_activities %}
+            <div class="no-activities">{% trans "There are currently no player created activities for this mission. Be the first to" %} <a href="{% url player_activities:new mission.slug %}">{% trans "Create a Challenge" %}</a>!</div>
+            {% endblock %}
         {% endfor %}
     
     </div>

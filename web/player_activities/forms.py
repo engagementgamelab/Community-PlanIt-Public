@@ -76,27 +76,32 @@ class SelectNewActivityForm(forms.Form):
     #mission = forms.ModelChoiceField(
     #            queryset=Mission.objects.filter()
     #)
-    name = forms.CharField(required=True, max_length=255, label=_("Name"))
-    question = forms.CharField(required=True, max_length=1000, label=_("Question"))
-    #type = forms.ChoiceField(
-    #            choices=PlayerActivityType.objects.filter(
-    #                    type__in=['open_ended', 'multi_response', 'map']
-    #                    ).values_list('type', 'displayType')
-    #)
+    name = forms.CharField(widget=forms.TextInput(attrs={
+        'placeholder':'Title of your Challenge...'
+    }), required=True, max_length=255, label=_("Name"))
     type = forms.ModelChoiceField(required=True,
                                 label = _("Select Type of Challenge"),
                                 queryset = PlayerActivityType.objects.filter(
                                         type__in=['open_ended', 'multi_response', 'map']
                                         )  #.values_list('type', 'displayType')
     )
+    question = forms.CharField(widget=forms.Textarea(attrs={
+        'placeholder':'Described your Challenge...'
+    }), required=True, max_length=1000, label=_("Question"))
+    #type = forms.ChoiceField(
+    #            choices=PlayerActivityType.objects.filter(
+    #                    type__in=['open_ended', 'multi_response', 'map']
+    #                    ).values_list('type', 'displayType')
+    #)
+
 
 class MultiResponseForm(forms.Form):
 
-    answ1 = forms.CharField(required=True, max_length=255, label=_("Answer a)"))
-    answ2 = forms.CharField(required=True, max_length=255, label=_("Answer b)"))
-    answ3 = forms.CharField(required=False, max_length=255, label=_("Answer c)"))
-    answ4 = forms.CharField(required=False, max_length=255, label=_("Answer d)"))
-    answ5 = forms.CharField(required=False, max_length=255, label=_("Answer e)"))
+    answ1 = forms.CharField(required=True, max_length=255, label=_("Answer A)"))
+    answ2 = forms.CharField(required=True, max_length=255, label=_("Answer B)"))
+    answ3 = forms.CharField(required=False, max_length=255, label=_("Answer C)"))
+    answ4 = forms.CharField(required=False, max_length=255, label=_("Answer D)"))
+    answ5 = forms.CharField(required=False, max_length=255, label=_("Answer E)"))
 
     #class Meta:
     #    exclude = ('activity',)
