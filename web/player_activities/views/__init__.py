@@ -3,6 +3,7 @@ from PIL import Image
 
 from stream import utils as stream_utils
 from stream.models import Action
+from celery.execute import send_task
 
 from django.conf import settings
 from django.db.models import Q
@@ -13,6 +14,7 @@ from django.http import HttpResponseRedirect
 
 from comments.forms import *
 from comments.models import Comment, Attachment
+from web.attachments.tasks import run_attachment_checks
 #from player_activities.models import PlayerActivity
 #from reports.models import ActivityLogger
 #from core.utils import instance_from_request
@@ -57,7 +59,9 @@ def comment_fun(answer, request, form=None, message=''):
             )
             comment.attachment.add(attachment)
         log.debug("created attachment video url for comment %s. %s" % (comment.pk, attachment))
-    
+        result = send_task("attachments.tasks.run_attachment_checks")
+        log.debug(result)
+
     if request.FILES.has_key('picture'):
         image_file = request.FILES.get('picture')
         picture = Image.open(image_file)
