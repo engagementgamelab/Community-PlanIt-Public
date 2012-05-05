@@ -1,7 +1,7 @@
 {% csrf_token %}
 
 {% load i18n %}
-
+{% if activity.type.displayType != 'Open Ended' and activity.type.displayType != 'Empathy' %}
 <div class="comment-response">
     {{ comment_form.message.errors }}
     <textarea id="message_area" name="message" class="comment_message" cols="80" rows="6"></textarea>
@@ -10,6 +10,7 @@
     {% endif %}
     <div class="comment-response-counter counter">(<span class="count">1000</span> characters left)</div>
 </div>
+{% endif %}
 
 {# ATTACHMENT A PICTURE OR VIDEO #}
 <div class="comment-response-attachments attachments">
