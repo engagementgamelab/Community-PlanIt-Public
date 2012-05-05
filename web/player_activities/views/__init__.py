@@ -7,17 +7,18 @@ from stream.models import Action
 from django.conf import settings
 from django.db.models import Q
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
+#from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.contrib.contenttypes.models import ContentType
-
-from PIL import Image
+#from django.contrib.contenttypes.models import ContentType
 
 from comments.forms import *
 from comments.models import Comment, Attachment
-from player_activities.models import PlayerActivity
-from reports.models import ActivityLogger
+#from player_activities.models import PlayerActivity
+#from reports.models import ActivityLogger
 #from core.utils import instance_from_request
+
+import logging
+log = logging.getLogger(__name__)
 
 def _get_activity(pk, model_klass):
     trans_model = model_klass.objects.translations_model()
@@ -36,7 +37,6 @@ def comment_fun(answer, request, form=None, message=''):
     else:
         raise Http404("could not locate a valid game")
 
-
     if form is not None:
         message = form.cleaned_data['message']
     comment = answer.comments.create(
@@ -48,24 +48,31 @@ def comment_fun(answer, request, form=None, message=''):
 
     if request.POST.has_key('video-url'):
         if request.POST.get('video-url'):
-            comment.attachment.create(
+            attachment = Attachment.objects.create(
                     file=None,
                     url=request.POST.get('video-url'),
                     att_type=Attachment.ATTACHMENT_TYPE_VIDEO,
                     user=request.user,
-                    instance=current_instance)
+                    instance=current_instance,
+            )
+            comment.attachment.add(attachment)
+        log.debug("created attachment video url for comment %s. %s" % (comment.pk, attachment))
     
     if request.FILES.has_key('picture'):
-        file = request.FILES.get('picture')
-        picture = Image.open(file)
-        if (file.name.rfind(".") -1):
-            file.name = "%s.%s" % (file.name, picture.format.lower())
-        comment.attachment.create(
-            file=request.FILES.get('picture'),
+        image_file = request.FILES.get('picture')
+        picture = Image.open(image_file)
+        if (image_file.name.rfind(".") -1):
+            image_file.name = "%s.%s" % (image_file.name, picture.format.lower())
+
+        attachment = Attachment.objects.create(
+            file=image_file,
             att_type=Attachment.ATTACHMENT_TYPE_IMAGE,
             is_valid=True,
             user=request.user,
-            instance=current_instance)
+            instance=current_instance,
+        )
+        comment.attachment.add(attachment)
+        log.debug("created attachment image for comment %s. %s" % (comment.pk, attachment))
 
 def log_activity_and_redirect(request, activity, action_msg):
 

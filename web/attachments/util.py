@@ -4,6 +4,9 @@ import re
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+import logging
+log = logging.getLogger(__name__)
+
 # we accept the long URLs shown in the location bar or the short versions
 # produced by the Share button
 YOUTUBE_URL_RE = re.compile(r'^https?://(?:www.youtube.com/watch\?v=|youtu.be/)(?P<video_id>[-\w]{11}).*$')
@@ -43,7 +46,7 @@ def get_video_embedding_code(url):
         video_id = get_vimeo_video_id(url)
         output = VIMEO_EMBEDDING_TEMPLATE % video_id
     except ValueError:
-        print "NOT VIMEO URL:", url
+        log.debug("NOT VIMEO URL: %s" % url)
         try:
             video_id = get_youtube_video_id(url)
             output = YOUTUBE_EMBEDDING_TEMPLATE % video_id
@@ -81,6 +84,7 @@ def is_valid_youtube_video(video_id):
     c = httplib.HTTPConnection('gdata.youtube.com')
     c.request('HEAD', '/feeds/api/videos/' + video_id)
     r = c.getresponse()
+    log.debug(r)
     if r.status == 200:
         return True
     return False
