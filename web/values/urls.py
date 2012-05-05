@@ -5,7 +5,7 @@ urlpatterns = patterns('',
     # Show all
     url(r'^$', 'values.views.all', name='index'),
     # Spend coin
-    url(r'^spend/(?P<id>\d+)/$', 'values.views.spend', name='spend'),
+    url(r'^spend/$', 'values.views.spend', name='spend'),
     # Take coin
     url(r'^take/(?P<id>\d+)/$', 'values.views.take', name='take'),
     # Show detail

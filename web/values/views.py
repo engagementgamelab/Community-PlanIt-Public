@@ -76,7 +76,7 @@ def all(request, template='values/all.html'):
 
 
 @login_required
-def detail(request, id):
+def detail(request, id, template='values/value.html'):
     value = get_object_or_404(Value, id=id)
 
     if request.method == 'POST':
@@ -119,39 +119,46 @@ def detail(request, id):
     values = value.instance.values.language(get_language())
     total_coins = values.aggregate(Sum('coins'))['coins__sum'] or 0
 
-    tmpl = loader.get_template('values/value.html')
-    return HttpResponse(tmpl.render(RequestContext(request, {
+    context = {
         'value': value,
         'total_coins': total_coins,
         'comments': value,
         'comment_form': CommentForm(),
-    }, 
-    #[ip]
-    )))
+    }
+    
+    context.update(missions_bar_context(request))
+    
+    return render(request, template, context)
+    
 
 @login_required
-def spend(request, id):
-    user = request.user
-    profile = user.get_profile()
-    value = Value.objects.get(id=id)
+def spend(request):
 
-    playervalue, created = PlayerValue.objects.get_or_create(user=user, value=value)
-    if profile.currentCoins > 0:
-        value.coins += 1
-        playervalue.coins += 1
-        profile.currentCoins -= 1
+    print request.POST[0]
+
+    # user = request.user
+    # profile = user.get_profile()
+    # value = Value.objects.get(id=id)
+    # 
+    # 
+    # playervalue, created = PlayerValue.objects.get_or_create(user=user, value=value)
+    # if profile.currentCoins > 0:
+    #     value.coins += 1
+    #     playervalue.coins += 1
+    #     profile.currentCoins -= 1
+    # 
+    #     value.save()
+    #     playervalue.save()
+    #     profile.save()
+    #     
+    #     #log_url = reverse('values:detail', args=[id])
+    #     #ActivityLogger().log(request.user, request, 'on value: ' + value.message[:30], 'spent token', log_url, 'value')
+    #     stream_utils.action.send(request.user, 'token_spent', action_object=value, description="token spent")
+    # else:
+    #     messages.error(request, 'No tokens available to spend')
     
-        value.save()
-        playervalue.save()
-        profile.save()
-        
-        #log_url = reverse('values:detail', args=[id])
-        #ActivityLogger().log(request.user, request, 'on value: ' + value.message[:30], 'spent token', log_url, 'value')
-        stream_utils.action.send(request.user, 'token_spent', action_object=value, description="token spent")
-    else:
-        messages.error(request, 'No tokens available to spend')
-    
-    return HttpResponseRedirect(reverse('values:index'))
+    # return HttpResponseRedirect(reverse('values:index'))
+    return HttpResponse("You all good!")
 
 @login_required
 def take(request, id):

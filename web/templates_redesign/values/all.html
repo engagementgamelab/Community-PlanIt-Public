@@ -124,9 +124,29 @@
                 }
             });
             
+            /* Request object to send to view */
+            var spend = new Request({
+                url: '{% url values:spend %}',
+                method: 'post',
+                headers: {
+                    'X-CSRFToken': $$('[name=csrfmiddlewaretoken]')[0].get('value')
+                },
+                onRequest: function(){
+                    alert('sent to view');
+                },
+                onSuccess: function(responseText){
+                    alert(responseText);
+                },
+                onFailure: function(){
+                    alert('something went wrong');
+                }
+            });
+            
+            /* When submit button is clicked, send object to view */
             $('btn-submit').addEvent('click', function(){
-                {# TODO ajax submit to view or form #}
-                alert(spent_individualflags);
+                spend.send({
+                    data: JSON.encode(Object.merge({}, spent_individualflags)) // Array to Object
+                });
             });
             
             /* Initialize */
@@ -137,6 +157,9 @@
 {% endblock %}
 
 {% block game_content %}
+
+{% csrf_token %}
+
 <div class="column-container">
     <a href="{% url missions:mission request.current_game.missions.active.0.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
     

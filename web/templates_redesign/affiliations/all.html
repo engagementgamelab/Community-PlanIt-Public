@@ -6,26 +6,25 @@
 {% block title %}{% trans "Affiliations" %}{% endblock %}
 
 {% block game_content %}
-<div>
+<div id="affiliations">
     <div class="column-container">
         <h1><a class="nav-heading-tab" href="{% url accounts:all %}">Find Players</a> {% trans "Affiliations" %}</h1>
         
         <p class="instructions">{% trans "Affiliations are groups of players that have something in common, like a high school, a  department or a neighborhood. You can be part of as many affiliations as you like, and you  can even create your own." %}</p>
-        
+        <br /><br />
         
         <div>
-            <div class="tabbutton">
-            <a class="button">+ Create an Affiliation</a>
-            </div>
-            <hr class="thick" />
+            {# <div class="tabbutton"> #}
+            {# <a class="button">+ Create an Affiliation</a> #}
+            {# </div> #}
+            {# <hr class="thick" /> #}
             {# SEARCH #}
-            <input id="profile-search" placeholder="{% trans 'Search for an affiliation' %}">
-            <input id="profile-search-apply" class="btn-blue" type="submit" value="Search" />
+            {# <input id="profile-search" placeholder="{% trans 'Search for an affiliation' %}"> #}
+            {# <input id="profile-search-apply" class="btn-blue" type="submit" value="Search" /> #}
          </div>
         
-        <h3>{% trans "All Affiliations" %}</h3>
         {% for affiliation in affiliations %}
-            <div><a href="{% url affiliations:affiliation affiliation.slug %}">{{ affiliation.name }}</a></div>
+            <div class="affiliations-affiliation"><a href="{% url affiliations:affiliation affiliation.slug %}">{{ affiliation.name }}</a></div>
         {% endfor %}
     </div>
     

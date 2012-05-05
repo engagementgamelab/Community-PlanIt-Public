@@ -1,10 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8" />
-	<title>value</title>
-</head>
-<body>
+{% extends "values/base.html" %}
+{% load i18n humanize %}
 
-</body>
-</html>
+{% block title %}{% trans "Map the Future" %}{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {# masonry is required to display comments correctly #}
+    <script src="{{ STATIC_URL }}js/jquery.masonry.min.js"></script>
+    <script src="{{ STATIC_URL }}js/sijax.js"></script>
+    <script src="{{ STATIC_URL }}js/comments.js"></script>
+{% endblock %}
+
+{% block game_content %}
+<div id="priority">
+    <a href="{% url values:index %}" class="btn-back">{% trans "Back to Map" %}</a>
+    
+    <div class="column-half">
+        <div class="column-container">
+            
+            <h1>Map the Future!</h1>
+            <div id="priority-star"></div>
+            <h2>{{ value.message }}</h2>
+            <p id="priority-community-spent">{# TODO: community flags #}321 community pins</p>
+            <p id="priority-individual-spent">{# TODO: user invested flags #}<span id="priority-individual-spent-count">2</span> of my pins</p>
+            <p><strong>Goal:</strong> {# TODO: value description #}Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+        </div>
+    </div>
+    <br class="clearfix" /><br /><br /><br />
+    <div class="column-twothird">
+        <div class="column-container">
+            <h2>Thoughts on This Priority</h2>
+            <!-- Add A Comment-->
+            <form enctype="multipart/form-data" action="{{ comment_post_url|default:"."}}" method="POST">
+                {% include "comments/duplicate.html" %}
+                <div class="comment-response-submit">
+                    <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="36" height="36" />
+                    <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="column-container clearfix">
+    <!-- Comments -->
+    {% with comments=player.get_profile.comments %}
+            {% include "comments/comments.html" %}
+    {% endwith %}
+    </div>
+</div>    
+{% endblock %}

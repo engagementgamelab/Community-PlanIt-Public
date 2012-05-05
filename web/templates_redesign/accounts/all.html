@@ -41,7 +41,7 @@
             <a href="{% url missions:mission request.current_game.missions.active.0.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
         {% endif %}
         
-        <h1>{% trans "Find Players" %} {#<a class="nav-heading-tab" href="{% url affiliations:affiliations %}">Affiliations</a>#}</h1> 
+        <h1>{% trans "Find Players" %} <a class="nav-heading-tab" href="{% url affiliations:affiliations %}">Affiliations</a></h1> 
 
         <div id="profile-filters">
             <form action="." method="post" id="id_find-players-form">

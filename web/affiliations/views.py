@@ -14,11 +14,15 @@ from missions.models import *
 from challenges.models import *
 from accounts.forms import *
 
+from web.core.utils import missions_bar_context
+
 @login_required
 def all(request, template="affiliations/all.html"):
     context = {
         'affiliations': Affiliation.objects.all()
     }
+    
+    context.update(missions_bar_context(request))
     return render(request, template, context)
 
     # tmpl = loader.get_template('affiliations/all.html')
@@ -37,6 +41,7 @@ def affiliation(request, slug, template='affiliations/affiliation.html'):
         'affiliation': affiliation,
     }
     
+    context.update(missions_bar_context(request))
     return render(request, template, context)
     # aff = request.GET.get('aff', '')
     # if not aff:

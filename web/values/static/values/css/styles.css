@@ -269,3 +269,38 @@
                 background: url('../img/flag-individual.png') no-repeat;
                 background-size: 100% 100%; /* so that the bg img scales with the element sizes */
             }
+
+/* A single "Priority"/Value */        
+#priority {}
+    
+    #priority #priority-star {
+        width: 50px;
+        height: 50px;
+        background: url('../img/bg-star_over.png') no-repeat;
+    }
+    
+    #priority #priority-community-spent {
+        margin: 10px 0px;
+        font-style: italic;
+        color: #777;
+    }
+    
+    #priority #priority-individual-spent {
+        margin: 10px 0px;
+        font-style: italic;
+        font-size: 0.9em;
+        color: rgb(255, 80, 54);
+    }
+    
+        #priority #priority-individual-spent-count {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgb(255, 80, 54);
+            text-align: center;
+            line-height: 15px;
+            font-size: 0.9em;
+            -webkit-border-radius: 50px;
+            -moz-border-radius: 50px;
+            border-radius: 50px;
+        }

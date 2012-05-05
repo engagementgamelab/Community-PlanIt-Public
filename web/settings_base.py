@@ -84,8 +84,11 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     
     'accounts',
+    'affiliations',
     'answers',
     'attachments',
+    'badges',
+    'challenges',
     'crowds',
     'comments',
     'core',
@@ -98,8 +101,6 @@ INSTALLED_APPS = (
     'reports',
     'responses',
     'values',
-    'challenges',
-    'badges',
 
     # Need this after web.admin because of test runner: 
     # it loads django admin tests by 'admin' app label first

@@ -12,9 +12,13 @@
             <a href="{% url affiliations:affiliations %}" class="btn-back">{% trans "Back to Affiliations" %}</a>
         </div>
         
-        <h1>{{ affiliation.name }}</h1>
+        <h1 id="affiliation-name">{{ affiliation.name }}</h1>
+        
+        <div><span id="affiliation-points">{# TODO #}5,775</span> total points</div>
     
-        <h3>{% trans "Members" %}</h3>
+        <br /><br />
+        
+        <h2>{% trans "Members" %}</h2>
         
         
     </div>

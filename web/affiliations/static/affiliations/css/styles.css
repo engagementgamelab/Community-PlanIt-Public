@@ -1,0 +1,36 @@
+/* Affiliations-App specific Styles */
+
+#affiliations {}
+    
+    #affiliations .affiliations-affiliation {
+        font-family: 'Enriqueta';
+        display: inline-block;
+        width: 350px;
+        margin: 5px 0px;
+        text-transform: capitalize; /* Hehehe... */
+        font-size: 1.3em;
+    }
+    
+    
+
+
+
+
+
+#affiliation {}
+    
+    #affiliation-name {
+        text-transform: capitalize;
+    }
+    
+    #affiliation-points {
+        display: inline-block;
+        font-family: 'Enriqueta';
+        position: relative;
+        top: -10px;
+        color: rgb(255, 80, 54);
+        font-weight: bold;
+        font-size: 2em;
+        margin-right: 5px;
+        vertical-align: middle;
+    }

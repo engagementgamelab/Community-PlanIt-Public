@@ -13,6 +13,8 @@
     
     <h1>What's Happening</h1>
     
+    {% comment %}
+    Filtering events by stake and affiliation is stupid... not implementing this for Detroit launch 
     <div id="stream-filters">
         <label>Filter by:</label>
         <select id="stream-filters-stake">
@@ -24,7 +26,8 @@
             <option>Affiliation</option>
         </select>
         <input id="stream-filters-apply" class="btn-blue" type="submit" value="Apply" />
-     </div>
+    </div>
+    {% endcomment %}
 
     {% regroup stream_for_game by datetime|date:"F j, Y" as stream_by_day_list %}
         {% for day in stream_by_day_list %}

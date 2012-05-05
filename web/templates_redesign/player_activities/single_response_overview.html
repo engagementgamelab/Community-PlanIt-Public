@@ -53,8 +53,7 @@
             {% endif %}
         {% endif %}
         
-        {% if not activity.mission.is_expired %}
-            
+        {% if not activity.mission.is_expired and not activity.is_trivia%}
             {% if myAnswer %}
                 {# Replay #}
                 <div class="activity-response-submit">
