@@ -43,7 +43,9 @@
                         {% if attachment.type == 'video' %}
                             {% embed_video attachment.url %}
                         {% else %}
+                            {% if attachment.file %}
                             <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                            {% endif %}
                         {% endif %}
                     </div>
                 {% else %}
@@ -80,19 +82,6 @@
     </div>
     
     <div class="thread-tail">
-
-
-        {% comment %}
-        {# NESTED comments #}
-        <div class="nested replies" id="replies-{{comment.pk}}">
-            {% for comment in comment.comments.all %}
-                {% with filename="comments/comment.html" extra_message=None nested=1 %}
-                        {% include filename %}
-                {% endwith %}
-            {% endfor %}
-            <div style="clear:both"></div>
-        </div>
-        {% endcomment %}
 
         {% include "comments/nested_replies.html"%}
 

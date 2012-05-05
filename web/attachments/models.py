@@ -16,11 +16,9 @@ def determine_path(instance, filename):
 def determine_path_thumb(instance, filename):
     return os.path.join('uploads', 'attachments', str(instance.instance.pk), 'thumb_'+filename)
 
-ATTACHMENT_VALIDITY_CHECK_INTERVAL = 3600
-
-        
 class Attachment(models.Model):
 
+    ATTACHMENT_VALIDITY_CHECK_INTERVAL = 3600
     ATTACHMENT_TYPE_PICTURE, ATTACHMENT_TYPE_VIDEO, ATTACHMENT_TYPE_IMAGE, \
     ATTACHMENT_TYPE_CHART, ATTACHMENT_TYPE_GRAPH, \
     ATTACHMENT_TYPE_HYPERLINK, ATTACHMENT_TYPE_DOCUMENT = xrange(1,8)
@@ -52,7 +50,8 @@ class Attachment(models.Model):
     # so we cache the results of each check and update attachment status with a
     # task run under supervisor
     is_valid = models.BooleanField(default=False, editable=False)
-    last_validity_check = models.DateTimeField(default=datetime.datetime.now, editable=False)
+    #last_validity_check = models.DateTimeField(default=datetime.datetime.now, editable=False)
+    date_added = models.DateTimeField(default=datetime.datetime.now, editable=False)
 
     @property 
     def resource_type(self):
