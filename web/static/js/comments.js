@@ -39,8 +39,11 @@ jQuery(function($) {
 
   $(".btn-reply").click(function(e){
       e.preventDefault();
+      var form = $('#id_comment-form-'+$(this).attr('id'))[0];
       var form_data = Sijax.getFormValues('#id_comment-form-'+$(this).attr('id'));
       Sijax.request('create_comment', [form_data]);
+      console.log(form);
+      form.reset();
   });
 
   /* Masonry is a piece of javascript used to layout comments ('bricks') into columns floating left and upwards */
