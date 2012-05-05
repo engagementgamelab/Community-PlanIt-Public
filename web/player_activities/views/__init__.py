@@ -59,8 +59,8 @@ def comment_fun(answer, request, form=None, message=''):
             )
             comment.attachment.add(attachment)
             log.debug("created attachment video url for comment %s. %s" % (comment.pk, attachment))
-        result = send_task("attachments.tasks.run_attachment_checks")
-        log.debug(result)
+            #result = send_task("attachments.tasks.run_attachment_checks")
+            #log.debug(result)
 
     if request.FILES.has_key('picture'):
         image_file = request.FILES.get('picture')
