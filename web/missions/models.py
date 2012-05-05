@@ -126,16 +126,17 @@ class Mission(TranslatableModel):
         log.debug("mission total_points ** no cache **")
         return Decimal(sum([activity.get_points() for activity in self.get_activities()]))
 
-    def get_activities(self):
+    def get_activities(self, include_player_submitted=False):
         """ return a list of all available activities """
         @cached(60*60*24*7, 'activities_for_mission')
-        def activities_for_mission(pk):
+        def activities_for_mission(pk, include_player_submitted):
             log.debug("getting activities for mission ** no cache **")
             activities = []
             for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
                 activities.extend(getattr(self, 'player_activities_%s_related' % model_klass.lower()).all())
+                activities = filter(lambda a: a.is_player_submitted == include_player_submitted, activities)
             return sorted(activities, key=attrgetter('name'))
-        return activities_for_mission(self.pk)
+        return activities_for_mission(self.pk, include_player_submitted)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]

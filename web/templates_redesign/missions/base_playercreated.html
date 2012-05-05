@@ -9,7 +9,15 @@
 {% endblock %}
 
 {% block mission_intro %}
-    <p class="instructions">{% trans "Response to questions that your community has posed, or ask one of your own. Adding to the dialogue will help make sure that everyones voice is heard." %}</p>
+    <div id="mission-activities-intro">
+        <p class="instructions">{% trans "Response to questions that your community has posed, or ask one of your own. Adding to the dialogue will help make sure that everyones voice is heard." %}</p>
+        <div id="mission-activities-completion">
+        {% if activities and mission.is_active %}
+            <div id="completion">{{ my_completed|length }}/{{ activities|length }}</div>
+            <div>{% trans "challenges completed" %}</div>
+        {% endif %}
+        </div>
+    </div>
 
     <div class="tabbutton">
         <a href="{% url player_activities:new mission.slug %}">+ Ask a Question</a>

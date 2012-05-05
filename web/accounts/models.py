@@ -215,12 +215,12 @@ class UserProfilePerInstance(models.Model):
             my_completed.extend(self.my_completed_by_mission(mission))
         return Decimal(sum(activity.get_points() for activity in my_completed))
 
-    def my_completed_by_mission(self, mission):
+    def my_completed_by_mission(self, mission, include_player_submitted=False):
         def activities_from_actions(actions):
             return [getattr(action, 'action_object_playeractivity') or \
                     getattr(action, 'action_object_playermapactivity') or \
                     getattr(action, 'action_object_playerempathyactivity') for action in actions]
-        activities_for_mission = mission.get_activities()
+        activities_for_mission = mission.get_activities(include_player_submitted)
         if len(activities_for_mission) == 0:
             return []
         # do not pass en empty list to Action.get_for_action_objects
@@ -389,7 +389,18 @@ class Notification(models.Model):
     """
     These notifications are messages for a particular user, sent by the system
     when another user likes or replies to a comment, or completes a challenge.
+
+    latest req. 05-05-2012
+
+        -- When someone likes their comment or response.
+        -- when someone replies to their comment or response
+        -- when someone joins their get together
+        -- when someone comments on their profile
+        -- when someone completes a challenge they posed.
+        -- when they earn a badge
+        -- when they earn a flag
     """
+
     timestamp = models.DateTimeField(default=datetime.datetime.now)
     user = models.ForeignKey(User, related_name='notifications')
     message = models.TextField()

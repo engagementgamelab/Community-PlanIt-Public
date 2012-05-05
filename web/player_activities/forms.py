@@ -169,7 +169,7 @@ class NewActivityWizard(SessionWizardView):
                 type=type,
                 question=q,
                 points=0,
-                is_player_submittd=True,
+                is_player_submitted=True,
                 name = form_one.cleaned_data.get('name', ''),
         )
         new_activity = activity_cls.objects.create(**create_kwargs)

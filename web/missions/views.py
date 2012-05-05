@@ -20,7 +20,7 @@ import logging
 log = logging.getLogger(__name__)
 
 @login_required
-def fetch(request, slug, template='missions/base.html'):
+def fetch(request, slug, include_player_submitted=False, template='missions/base.html'):
     # expecting the current game to be 
     # set by middleware
     print 'asdfasdfasdf'
@@ -29,38 +29,9 @@ def fetch(request, slug, template='missions/base.html'):
     
     # TODO: Should only return non-player-created challenges
     mission = get_object_or_404(Mission, slug=slug)
-    my_completed = set(request.prof_per_instance.my_completed_by_mission(mission))
+    my_completed = set(request.prof_per_instance.my_completed_by_mission(mission, include_player_submitted))
     log.debug("i completed %s challenges" % len(my_completed))
-    my_not_completed = set(mission.get_activities()) - my_completed
-    my_not_completed = list(my_not_completed)
-    my_completed = list(my_completed)
-    my_not_completed.extend(my_completed)
-    all_activities_sorted = my_not_completed
-    context = dict(
-        activities = all_activities_sorted,
-        my_completed = my_completed,
-        comment_form = CommentForm(),
-    )
-    # this line here updates the context with 
-    # mission, my_points_for_mission and progress_percentage
-    context.update(missions_bar_context(request, mission))
-    return render(request, template, context)
-
-
-@login_required
-def fetch_playercreated(request, slug, template='missions/base_playercreated.html'):
-    # expecting the current game to be 
-    # set by middleware
-
-    print 'asdf'
-    if not hasattr(request, 'current_game'):
-        raise Http404("could not locate a valid game")
-
-    # TODO: Should only return player-created challenges
-    mission = get_object_or_404(Mission, slug=slug)
-    my_completed = set(request.prof_per_instance.my_completed_by_mission(mission))
-    
-    my_not_completed = set(mission.get_activities()) - my_completed
+    my_not_completed = set(mission.get_activities(include_player_submitted)) - my_completed
     my_not_completed = list(my_not_completed)
     my_completed = list(my_completed)
     my_not_completed.extend(my_completed)

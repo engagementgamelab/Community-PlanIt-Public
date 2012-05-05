@@ -230,7 +230,9 @@ def activity(request, activity_id, template=None, **kwargs):
             answer = None
             activity_completed_verb = "activity_completed"
 
-            if request.POST["form"] == "single_response":
+            form_name = request.POST["form"] 
+
+            if form_name == "single_response":
                 choices = _get_mc_choices(activity)
                 form = make_single_form(choices)(request.POST)
                 if _is_form_valid():
@@ -251,7 +253,7 @@ def activity(request, activity_id, template=None, **kwargs):
                         )
                 else:
                     _update_errors()
-            elif request.POST["form"] == "multi_response":
+            elif form_name == "multi_response":
                 choices = _get_mc_choices(activity)
                 form = make_multi_form(choices)(request.POST)
                 if _is_form_valid():
@@ -281,7 +283,7 @@ def activity(request, activity_id, template=None, **kwargs):
                                 first_found = True
                 else:
                     _update_errors()
-            elif request.POST["form"] == "map":
+            elif form_name == "map":
                 form = MapForm(request.POST)
                 if _is_form_valid():
                     map = form.cleaned_data["map"]
@@ -296,7 +298,7 @@ def activity(request, activity_id, template=None, **kwargs):
                 else:
                     _update_errors()
 
-            elif request.POST["form"] == "open_ended":
+            elif form_name == "open_ended":
                 form = make_openended_form()(request.POST)
                 if _is_form_valid():
                     answer, created = AnswerOpenEnded.objects.get_or_create(activity=activity, answerUser=request.user)

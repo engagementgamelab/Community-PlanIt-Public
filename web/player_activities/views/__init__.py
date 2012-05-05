@@ -14,7 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 from PIL import Image
 
 from comments.forms import *
-from comments.models import Comment
+from comments.models import Comment, Attachment
 from player_activities.models import PlayerActivity
 from reports.models import ActivityLogger
 #from core.utils import instance_from_request
@@ -51,7 +51,7 @@ def comment_fun(answer, request, form=None, message=''):
             comment.attachment.create(
                     file=None,
                     url=request.POST.get('video-url'),
-                    type='video',
+                    att_type=Attachment.ATTACHMENT_TYPE_VIDEO,
                     user=request.user,
                     instance=current_instance)
     
@@ -62,6 +62,8 @@ def comment_fun(answer, request, form=None, message=''):
             file.name = "%s.%s" % (file.name, picture.format.lower())
         comment.attachment.create(
             file=request.FILES.get('picture'),
+            att_type=Attachment.ATTACHMENT_TYPE_IMAGE,
+            is_valid=True,
             user=request.user,
             instance=current_instance)
 

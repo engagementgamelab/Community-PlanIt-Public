@@ -20,7 +20,7 @@ class MultiChoiceActivityInline(TranslatableStackedInline):
 
 class PlayerActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
-    list_filter = ('type', 'mission__instance', 'mission', 'is_player_submittd' )
+    list_filter = ('type', 'mission__instance', 'mission', 'is_player_submitted' )
     ordering = ('mission', 'type',)
     inlines = [MultiChoiceActivityInline,]
 
@@ -34,7 +34,7 @@ class MultiChoiceActivityAdmin(TranslatableAdmin):
 
 class PlayerMapActivityAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
-    list_filter = ('mission__instance', 'mission', 'is_player_submittd' )
+    list_filter = ('mission__instance', 'mission', 'is_player_submitted' )
 
 admin.site.register(PlayerActivity, PlayerActivityAdmin)
 admin.site.register(PlayerActivityType, PlayerActivityTypeAdmin)
