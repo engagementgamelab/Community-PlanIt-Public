@@ -161,6 +161,7 @@ a {
         font-family: 'Enriqueta', serif;
         font-size: 2em;
         font-weight: bold;
+        clear: both;
     }
     
     #content h2 {
@@ -796,7 +797,7 @@ p.instructions {
 }
 
 .btn-back {
-    float: right;
+    float: left;
     padding-left: 18px;
     background: url('../img/btn-back.png') no-repeat left center;
 }

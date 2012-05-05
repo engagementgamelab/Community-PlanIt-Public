@@ -8,7 +8,7 @@
             {% avatar p.user_profile.user %}
             <div class="profile-screenname">{{ p.user_profile.screen_name }}</div>
             </a>
-            <div class="profile-stakes">{{ p.format_stakes }}</div>
+            {# <div class="profile-stakes">{{ p.format_stakes }}</div> #}
             <div class="profile-points">{{ p.total_points }}</div>    
             <div class="profile-tagline">{{ p.user_profile.tagline|truncatechars:140 }}</div>
         </div>

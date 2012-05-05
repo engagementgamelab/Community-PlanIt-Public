@@ -11,7 +11,7 @@
 {% block game_content %}
 <div>
     <div class="column-container">
-        <a href="{% url missions:mission request.current_game.missions.active.0.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
+        <a href="{% url missions:mission mission.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
         
         <h1>Check the Standings</a></h1>
     </div>

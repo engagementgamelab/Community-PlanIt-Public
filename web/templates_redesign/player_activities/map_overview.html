@@ -5,6 +5,8 @@
 {% block game_content %}
 
 <div class="map column-container">
+    
+    <a class="btn-back" href="{{ activity.mission.get_absolute_url }}">{% trans "Return to mission" %}</a>
     <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
     
     {% include "player_activities/official_responses.html" %}
@@ -47,7 +49,7 @@
                         {% include "comments/comment.html" %}
                     {% endwith %}
                 {% empty %}
-                    <div class="comment">There are no comments for this activity yet.</div>
+                    <div class="comment">{% trans "There are no comments for this activity yet." %}</div>
                 {% endfor %}
             {% endwith %}
         {% endfor %}

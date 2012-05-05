@@ -29,8 +29,8 @@
     
     {% block missions_nav %}
     <div class="column-container">
-        <h1 id="btn-challenges" class="btn-tab"><a href="{% url missions:mission mission.slug %}">Challenges</a></h1>
-        <h1 id="btn-player-challenges" class="btn-tab"><a class="active">You Pose the Challenges</a></h1>
+        <h1 id="btn-challenges" class="btn-tab"><a href="{% url missions:mission mission.slug %}">{% trans "Challenges" %}</a></h1>
+        <h1 id="btn-player-challenges" class="btn-tab"><a class="active">{% trans "You Pose the Challenges" %}</a></h1>
     </div>
     {% endblock %}
     
@@ -38,7 +38,7 @@
         <p class="instructions">{% trans "Response to questions that your community has posed, or ask one of your own. Adding to the dialogue will help make sure that everyones voice is heard." %}</p>
         
         <div class="tabbutton">
-            <a href="">- Ask a Question</a>
+            <a href="">- {% trans "Ask a Question" %}</a>
         </div>
         
         {% comment %}

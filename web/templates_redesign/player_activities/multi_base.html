@@ -4,7 +4,7 @@
 
 {% block game_content %}
 <div class="multi-response column-container">
-    <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
+    <a href="{% url missions:mission mission.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
     
     <h1>{{ activity.name|safe }}<span class="points">{{ activity.get_points }}</span></h1>
     
@@ -38,6 +38,6 @@
             </div>
         </div>
     </form>
-    <p class="clearfix">Once you are done, you will be able to view everyone's responses.</p>
+    <p class="clearfix">{% trans "Once you are done, you will be able to view everyone's responses." %}</p>
 </div>
 {%endblock%}

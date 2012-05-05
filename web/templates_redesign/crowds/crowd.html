@@ -8,7 +8,7 @@
     <div class="column-container">
         <div><a href="{% url crowds:index %}" class="btn-back">{% trans "Back to Get Togethers!" %}</a></div>        
         <h1>{{ crowd.name }}</h1>
-        <h3>{{ crowd.start_date }} - {{ crowd.end_date }} {% if crowd.is_expired %}(This get together has passed){% endif %}</h3>
+        <h3>{{ crowd.start_date }} - {{ crowd.end_date }} {% if crowd.is_expired %}({% trans "This get together has passed" %}){% endif %}</h3>
     </div>
 </div>
 <div class="column-threequarter">
@@ -35,7 +35,7 @@
                 <div>{% trans "Can't make it?" %} <a href="{% url crowds:leave crowd.pk %}" class="btn-blue">{% trans "Unjoin" %}</a></div>
             {% endif %}
         {% else %}
-            <p>This get together has passed.</p><br />
+            <p>{% trans "This get together has passed." %}</p><br />
         {% endif %}
         
         <div>
