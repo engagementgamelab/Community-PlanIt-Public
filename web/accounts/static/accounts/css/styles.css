@@ -60,6 +60,10 @@
     }
     .accounts-form select {
         width: 220px;
+/*        height: 171px;*/
+    }
+    
+    .accounts-form select[multiple=multiple] {
         height: 171px;
     }
     
