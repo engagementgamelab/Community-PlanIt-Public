@@ -17,7 +17,7 @@
         <div class="column-container">
         <a href="{% url values:index %}" class="btn-back">{% trans "Back to Map the Future" %}</a>
         
-            <h1>Map the Future!</h1>
+            <h1>{% trans "Map the Future!" %}</h1>
             <div id="priority-star"></div>
             <h2>{{ value.message }}</h2>
             <p id="priority-community-spent">{{ total_flags_by_game }} community pin{{ total_flags_by_game|pluralize }} </p>
@@ -29,7 +29,7 @@
     <br class="clearfix" /><br /><br /><br />
     <div class="column-twothird">
         <div class="column-container">
-            <h2>Thoughts on This Priority</h2>
+            <h2>{% trans "Thoughts on This Priority" %}</h2>
             <!-- Add A Comment-->
             <form enctype="multipart/form-data" action="{{ comment_post_url|default:"."}}" method="POST">
                 {% include "comments/duplicate.html" %}
