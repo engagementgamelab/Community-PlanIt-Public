@@ -32,8 +32,8 @@
                 {# Comment #}
                 {{comment.message|linebreaksbr}}
                 {# ATTACHMENTS #}
-                <div class="comment-message-attachments">
                 {% for attachment in comment.attachment.all %}
+                <div class="comment-message-attachments">
                     {% if attachment.is_valid %}
                         <div>
                             {% if attachment.type == 'video' %}
@@ -47,8 +47,8 @@
                     {% else %}
                         <div class="notice">This content is currently unavailable.</div>
                     {% endif %}
+                </div>
                 {% endfor %}
-            </div>
             {% endif %}
         </div>
         
