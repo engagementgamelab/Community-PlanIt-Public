@@ -76,12 +76,11 @@ class PlayerActivityBase(TranslatableModel):
             return self.type.type
         return this_type(self.pk)
 
-    @cached(60*60*168, 'activity_points')
     def get_points(self):
-        if self.points == None:
-            return self.type.defaultPoints
-        else:
-            return self.points
+        @cached(60*60*168, 'activity_points')
+        def this_activity_points(pk):
+            return self.type.defaultPoints if self.points == None else self.points
+        return this_activity_points(self.pk)
 
     def is_completed(self, answerUser):
         if self.type.type == 'multi_response':
