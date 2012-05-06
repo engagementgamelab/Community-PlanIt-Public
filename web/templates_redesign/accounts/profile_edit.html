@@ -45,23 +45,13 @@
                     {{ profile_form.avatar }}
                     {{ profile_form.avatar.errors }}
                     <p id="profile-editform-disclaimer">By uploading a file you certify that you have the right to distribute this picture and that it does not violate the <a href="{% url terms %}">Terms of Service</a></a></p>
-                    
-                    
 
                     <input type="hidden" name="form" value="updated_profile">
-                    {# <div> #}
-                    {#     {{ profile_form.receive_email.label_tag}} #}
-                    {#     {{ profile_form.receive_email }} #}
-                    {#     {{ profile_form.receive_email.errors }} #}
-                    {# </div> #}
-                    {# {% if profile_form.preferred_language %} #}
-                    {# <div> #}
-                    {#     {{ profile_form.preferred_language.label_tag }} #}
-                    {#     {{ profile_form.preferred_language }} #}
-                    {#     {{ profile_form.preferred_language.errors }} #}
-                    {# </div>                         #}
-                    {# {% endif %} #}
-
+                     <div> 
+                         {{ profile_form.receive_email.label_tag}} 
+                         {{ profile_form.receive_email }} 
+                         {{ profile_form.receive_email.errors }} 
+                     </div> 
                 </div>
             </div>
             <div class="column-twothird">
@@ -114,6 +104,7 @@
                         {{ profile_form.affiliation_new.errors }}
                     </div>
                 </div>
+
             </div>
             <br class="clearfix" />
             <div class="column-container" style="text-align: right;"><input type="submit" class="btn-yellow" value="Save Changes" /></div>
@@ -121,6 +112,27 @@
         
             
         </form>       
+
+
+        <div class="column-container clearfix">
+            <form action="" method="post">
+                <input type="hidden" name="form" value="change_password">
+                {%csrf_token%}
+                <p>
+                    {%if change_password_form.errors %}
+                    {{ change_password_form.errors }}
+                    {% endif %}
+                    {{ change_password_form.password }}
+                    {{ change_password_form.confirm }}
+                </p>
+                <input type="submit" class="button submit" value="Change Password" />
+            </form>
+
+        </div>
+
+
+
+
         <div class="column-full">
             <div class="column-container">
             </div>

@@ -282,7 +282,7 @@ def edit(request, template_name='accounts/profile_edit.html'):
                                             instance=request.current_game
     )
 
-    #change_password_form = ChangePasswordForm()
+    change_password_form = ChangePasswordForm()
     profile_form = UserProfileForm(request=request,
                                    initial={
                                         'preferred_language': prof_for_game.preferred_language,
@@ -293,46 +293,47 @@ def edit(request, template_name='accounts/profile_edit.html'):
     )
     if request.method == 'POST':
         # Change password form moved to user profile
-        #if request.POST['form'] == 'change_password':
-        #    change_password_form = ChangePasswordForm(request.POST)
-        #    if change_password_form.is_valid():
-        #        password = change_password_form.cleaned_data['password']
-        #        confirm = change_password_form.cleaned_data['confirm']
+        if request.POST['form'] == 'change_password':
+            change_password_form = ChangePasswordForm(request.POST)
+            if change_password_form.is_valid():
+                password = change_password_form.cleaned_data['password']
+                confirm = change_password_form.cleaned_data['confirm']
 
-        #        request.user.set_password(confirm)
-        #        request.user.save()
-        #        messages.success(request, "Your new password was saved.")
-        # User profile form updated, not change password
-        profile_form = UserProfileForm(request=request, data=request.POST, files=request.FILES, instance=profile)
-        if profile_form.is_valid():
-            cd = profile_form.cleaned_data
-            profile.tagline = cd['tagline']
-
-            if cd.has_key('preferred_language'):
-                prof_for_game.preferred_language = cd.get('preferred_language')
-
-            prof_for_game.stakes = cd.get('stakes')
-            prof_for_game.affils = cd.get('affiliations')
-            prof_for_game.save()
-
-            if request.FILES.get('avatar', None) != None:
-                profile.avatar = request.FILES['avatar']
-            profile.user.save()
-            profile.save()
-            if cd.get('affiliation_new') != '':
-                affiliation, created = Affiliation.objects.get_or_create(name=cd.get('affiliation_new'))
-                variants = UserProfileVariantsForInstance.objects.get(instance=request.current_game)
-                variants.affiliation_variants.add(affiliation)
-                prof_for_game.affils.add(affiliation)
-
-            return redirect(reverse('accounts:dashboard'))
-
+                request.user.set_password(confirm)
+                request.user.save()
+                messages.success(request, "Your new password was saved.")
         else:
-            log.debug("edit profile form errors %s: %s" % (profile, profile_form.errors))
+            # User profile form updated, not change password
+            profile_form = UserProfileForm(request=request, data=request.POST, files=request.FILES, instance=profile)
+            if profile_form.is_valid():
+                cd = profile_form.cleaned_data
+                profile.tagline = cd['tagline']
+
+                if cd.has_key('preferred_language'):
+                    prof_for_game.preferred_language = cd.get('preferred_language')
+
+                prof_for_game.stakes = cd.get('stakes')
+                prof_for_game.affils = cd.get('affiliations')
+                prof_for_game.save()
+
+                if request.FILES.get('avatar', None) != None:
+                    profile.avatar = request.FILES['avatar']
+                profile.user.save()
+                profile.save()
+                if cd.get('affiliation_new') != '':
+                    affiliation, created = Affiliation.objects.get_or_create(name=cd.get('affiliation_new'))
+                    variants = UserProfileVariantsForInstance.objects.get(instance=request.current_game)
+                    variants.affiliation_variants.add(affiliation)
+                    prof_for_game.affils.add(affiliation)
+            else:
+                log.debug("edit profile form errors %s: %s" % (profile, profile_form.errors))
+
+        return redirect(reverse('accounts:dashboard'))
+
 
     context = {
         'profile_form': profile_form,
-        #'change_password_form': change_password_form,
+        'change_password_form': change_password_form,
     }
 
     context.update(missions_bar_context(request))
