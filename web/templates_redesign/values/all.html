@@ -105,13 +105,17 @@
                 onDrop: function(draggable, droppable){
                     if (droppable){
                         draggable.destroy();
+                        /* Unsave */
+                        $('mapthefuture-controls-reset').fade('show');
+                        $('mapthefuture-controls-saved').fade('hide');
+                        $('mapthefuture-saved').slide('out');
+                        $('btn-submit').removeClass('active');
                         
                         /* Update all the arrays to count correctly */
                         var dropped_index = $$('.droppable').indexOf(droppable);
                         initial_individualflags[dropped_index] = initial_individualflags[dropped_index]+1;
                         initial_communityflags[dropped_index] = initial_communityflags[dropped_index]+1;
                         spent_individualflags[dropped_index] = spent_individualflags[dropped_index]+1;
-                        console.log(spent_individualflags);
                         
                         /* Recalculate flags to correct size and update counts */
                         render_communityflags();
@@ -132,26 +136,34 @@
                     'X-CSRFToken': $$('[name=csrfmiddlewaretoken]')[0].get('value')
                 },
                 onRequest: function(){
-                    alert('sent to view');
+                    // alert('sent to view');
                 },
                 onSuccess: function(responseText){
-                    alert(responseText);
+                    $('btn-submit').addClass('active');
+                    $('mapthefuture-controls-saved').fade('show');
+                    $('mapthefuture-controls-reset').fade('hide');            
+                    $('mapthefuture-saved').slide('in');
                 },
                 onFailure: function(){
-                    alert('something went wrong');
+                    // alert('something went wrong');
                 }
             });
             
             /* When submit button is clicked, send object to view */
-            $('btn-submit').addEvent('click', function(){
+            $$('#btn-submit').addEvent('click', function(e){
+                e.stop();
                 spend.send({
                     data: JSON.encode(Object.merge({}, spent_individualflags)) // Array to Object
                 });
+                
             });
-            
+                        
             /* Initialize */
             render_communityflags();
             render_individualflags();
+            
+            $('mapthefuture-saved').slide('hide');
+            $('mapthefuture-controls-saved').fade('hide');
         });
     </script>
 {% endblock %}
@@ -173,15 +185,17 @@
 
 <div id="mapthefuture">
     <div id="mapthefuture-flags-earned">
-        <div id="mapthefuture-crosshairs"></div>
+        <div id="mapthefuture-flags-earned-container">
+            <div id="mapthefuture-crosshairs"></div>
         
-        {% for f in my_flags_range %}
-        <div class="draggable-container"><div class="mapthefuture-flag-individual-earned draggable"></div></div>
-        {% endfor %}
-
+            {% for f in my_flags_range %}
+            <div class="draggable-container"><div class="mapthefuture-flag-individual-earned draggable"></div></div>
+            {% endfor %}
+        </div>
         <div id="mapthefuture-controls">
             <div>Drag your flags where you want them.</div>
-            <div>Then click <a id="btn-submit" class="btn-blue">Done!</a> or <a href="{% url values:index %}" class="btn-blue">Reset</a></div>
+            <div>Then click <a id="btn-submit" class="btn-blue">Done!</a><span id="mapthefuture-controls-reset"> or <a href="{% url values:index %}" class="btn-blue">Reset</a></span></div>
+            <div id="mapthefuture-controls-saved">Your priorities have been saved!</div>
         </div>
     </div>
 
@@ -192,6 +206,10 @@
         <div>My flag</div>
     </div>
     
+    <div id="mapthefuture-saved">
+        Your flags have been saved! Click a priority or join the conversation or <a href="{% url missions:mission mission.slug %}">complete more challenges</a>!
+    </div>
+        
     <div id="mapthefuture-map">
         {% for value in values_sorted.keys %}
         <div class="mapthefuture-grid">

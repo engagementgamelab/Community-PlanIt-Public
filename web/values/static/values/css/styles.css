@@ -7,7 +7,7 @@
     #mapthefuture-crosshairs {
         display: inline-block;
         vertical-align: middle;
-        margin: 0px 20px 0px 10px;
+        margin: 45px 20px 45px 10px;
         width: 15px;
         height: 15px;
         background: url('../img/icon-crosshairs.png') no-repeat;
@@ -19,6 +19,11 @@
         -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
         border-radius: 10px;
+    }
+
+    #mapthefuture-flags-earned-container {
+        display: inline-block;
+        max-width: 450px;
     }
 
     .draggable-container {
@@ -52,6 +57,20 @@
         float: right;
         color: #999;
     }
+    
+        #mapthefuture-controls-saved{
+            padding-left: 25px;
+            background: url('../../../../static/missions/img/icon-mission-activities-completed.png') no-repeat left center;
+        }
+        
+#mapthefuture-saved {
+    background: #f7ff59;
+    padding: 20px;
+    text-align: center;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
 
 #mapthefuture-map {
     width: 760px;
