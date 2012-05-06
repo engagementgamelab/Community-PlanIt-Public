@@ -827,7 +827,7 @@ p.instructions {
 }
 
     .btn-blue:hover,
-    .btn-blue.blue {
+    .btn-blue.active {
         background: #f7ff59;
         color: #2D3542;
     }
