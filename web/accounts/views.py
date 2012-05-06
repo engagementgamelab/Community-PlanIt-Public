@@ -328,7 +328,7 @@ def edit(request, template_name='accounts/profile_edit.html'):
             else:
                 log.debug("edit profile form errors %s: %s" % (profile, profile_form.errors))
 
-        return redirect(reverse('accounts:dashboard'))
+        return redirect(reverse('accounts:player_profile', args=(request.user.pk,)))
 
 
     context = {
