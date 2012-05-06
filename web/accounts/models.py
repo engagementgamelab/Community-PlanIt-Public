@@ -28,6 +28,7 @@ from web.accounts.models import *
 from web.challenges.models import *
 from web.instances.models import Instance, Affiliation, Language
 from web.missions.models import Mission
+from web.values.models import PlayerValue
 
 import logging
 log = logging.getLogger(__name__)
@@ -240,6 +241,9 @@ class UserProfilePerInstance(models.Model):
             my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))
             if my_points_for_mission > min_points_for_mission:
                 my_flags+=1
+        my_spent_flags = PlayerValue.objects.total_flags_for_player(instance=self.instance, user=self.get_user())
+        if my_spent_flags is not None:
+            return my_flags - int(my_spent_flags)
         return my_flags
 
     @property

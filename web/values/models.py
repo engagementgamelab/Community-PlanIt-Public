@@ -1,13 +1,15 @@
 from stream import utils as stream_utils
 from nani.models import TranslatableModel, TranslatedFields
-from nani.manager import TranslationManager
+#from nani.manager import TranslationManager
+
+from cache_utils.decorators import cached
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from instances.models import Instance
-from comments.models import Comment
+from web.instances.models import Instance
+from web.comments.models import Comment
 
 #TODO: change coins to something like coinsSpentOnIntance or something
 #more descriptive
@@ -37,11 +39,24 @@ class Value(TranslatableModel):
 stream_utils.register_target(Value)
 stream_utils.register_action_object(Value)
 
+class PlayerValueManager(models.Manager):
+
+    @cached(60*60*24)
+    def for_instance(self, instance):
+        return self.filter(value__instance=instance)
+
+    @cached(60*60*24, 'my_spent_flags')
+    def total_flags_for_player(self, instance, user):
+        player_values = self.for_instance(instance=instance).filter(user=user)
+        return player_values.aggregate(models.Sum('coins')).get('coins__sum')
+
 class PlayerValue(models.Model):
 
     user = models.ForeignKey(User)
     value = models.ForeignKey(Value)
     coins = models.IntegerField(default=0)
+
+    objects = PlayerValueManager()
 
     class Meta:
         unique_together = (('user', 'value'),)
