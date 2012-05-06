@@ -60,6 +60,7 @@
     }
     .accounts-form select {
         width: 220px;
+        height: 171px;
     }
     
     #accounts-form-step2-instructions {

@@ -18,7 +18,7 @@
         
         <div class="column-container-40">
             <h2>Welcome to {{ chosen_game.title }}</h2>
-            <p id="accounts-form-step2-instructions"> Just one more thing... Help decision makers get a fuller picture of who you are by providing some information about yourself. The information marked private <img src="{{ STATIC_URL }}img/icon-private.png" /> will not be shared publicly or with any third parties.  This is your only chance to share this information, so please answer carefully.
+            <p id="accounts-form-step2-instructions"> Just one more thing... Help decision makers get a fuller picture of who you are by providing some information about yourself. The information marked private <img src="{{ STATIC_URLTIC_URL }}img/icon-private.png" /> will not be shared publicly or with any third parties.  This is your only chance to share this information, so please answer carefully.
             {% comment %}
             Check out our <a href="{% url privacy %}" target="new">Privacy Policy</a> and <a href="{% url terms %}" target="new">Terms of Use</a> for more information.</p>
             {% endcomment %}
@@ -48,11 +48,16 @@
                 </div>
                 <div class="column-third">
                     <div class="column-container">
-                        <p>{{form.stakes.label_tag}} {{form.stakes}} {{form.stakes.errors}}</p>
+                        <p>{{form.stakes.label_tag}} 
+                            <label>Hold down "Control", or "&#8984;" on a Mac, to add or select more than one.</label>
+                            {{form.stakes}} {{form.stakes.errors}}</p>
                         
-                        <p>{{ form.affiliations.label_tag }} {{ form.affiliations }} {{ form.affiliations.errors }}</p>
+                        <p>{{ form.affiliations.label_tag }} 
+                            <label>Hold down "Control", or "&#8984;" on a Mac, to add or select more than one.</label>
+                            {{ form.affiliations }} {{ form.affiliations.errors }}</p>
                         
-                        <p>{{ form.affiliations_other.label_tag }} {{ form.affiliations_other }} {{ form.affiliations_other.errors }}</p>
+                        <p>{{ form.affiliations_other.label_tag }} 
+                            {{ form.affiliations_other }} {{ form.affiliations_other.errors }}</p>
                         
                         <p>{{form.tagline.label_tag}} {{form.tagline}} {{form.tagline.errors}}</p>
                         
