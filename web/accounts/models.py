@@ -243,9 +243,7 @@ class UserProfilePerInstance(models.Model):
             if my_points_for_mission > min_points_for_mission:
                 my_flags+=1
         my_spent_flags = PlayerValue.objects.total_flags_for_player(instance=self.instance, user=self.get_user())
-        if my_spent_flags is not None:
-            return my_flags - int(my_spent_flags)
-        return my_flags
+        return my_flags - int(my_spent_flags)
 
     def my_logins_from_stream(self):
         return filter(lambda a: a.verb=='user_logged_in', Action.objects.get_for_actor(self.get_user()))
