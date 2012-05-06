@@ -53,7 +53,7 @@ class PageNavigatorNode(template.Node):
             output = '<ul class="page_navigator">'
             if page.has_previous():
                 data[page_param] = page.previous_page_number()
-                link = link_template % (self.make_page_url(parsed_url, data), '<img src="%simg/icons/paginator_previous.png" alt="previous"/>' % settings.MEDIA_URL)
+                link = link_template % (self.make_page_url(parsed_url, data), '')
                 output += li_template % ('prev', link) 
 
             for i in range(offset, last_page):
@@ -65,7 +65,7 @@ class PageNavigatorNode(template.Node):
 
             if page.has_next():
                 data[page_param] = page.next_page_number()
-                link = link_template % (self.make_page_url(parsed_url, data), '<img src="%simg/icons/paginator_next.png" alt="next"/>' % settings.MEDIA_URL)
+                link = link_template % (self.make_page_url(parsed_url, data), '')
                 output += li_template % ('next', link) 
 
             output += "</ul>"

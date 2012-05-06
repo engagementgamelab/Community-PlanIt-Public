@@ -217,7 +217,7 @@ def validate_and_generate(base_form, request, callback):
 @login_required
 def notifications(request):
     notifications = Notification.objects.filter(user=request.user)
-    paginator = Paginator(notifications, 5)
+    paginator = Paginator(notifications, 20)
 
     page = request.GET.get('page', 1)
     notifications_page = paginator.page(page)
