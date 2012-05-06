@@ -94,18 +94,14 @@
                     </div>
                 </div>
                 {% endif %}
-
-                <div class="column-half">
-                    <div class="column-container">
-                        <div>
-                            {{ profile_form.stakes.label_tag }}
-                            {{ profile_form.stakes }}
-                            {{ profile_form.stakes.errors }}
-                        </div>                       
-                    </div>
-                </div>
                 <br class="clearfix" /><br /><br />
                 <div class="column-container clearfix">
+                    <h2>Stakes</h2>
+                    <div id="profile-editform-stakes">
+                        {{ profile_form.stakes }}
+                        {{ profile_form.stakes.errors }}
+                    </div>
+                    
                     <h2>Affiliations</h2>
                     <div id="profile-editform-affiliations">
                         {{ profile_form.affiliations }}

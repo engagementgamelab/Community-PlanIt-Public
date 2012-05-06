@@ -263,38 +263,44 @@
         }
         
     /* Multi-select from django-admin, styling */
-    #profile-editform-affiliations {
+    #profile-editform-affiliations,
+    #profile-editform-stakes {
         width: 500px;
     }
     
-        #profile-editform-affiliations h2 {
+        #profile-editform-affiliations h2,
+        #profile-editform-stakes h2 {
             font-size: 1em;
             font-family: "Trebuchet MS";
             color: #666;
         }
         
-    #profile-editform-affiliations .help-tooltip {
+    #profile-editform-affiliations .help-tooltip,
+    #profile-editform-stakes .help-tooltip {
         display: none;
     }
     
-    #profile-editform-affiliations .selector-available {
+    #profile-editform-affiliations .selector-available,
+    #profile-editform-stakes .selector-available {
         display: inline-block;
         vertical-align: top;
         width: 230px;
     }
     
-        #id_affiliations_from {
+        #id_affiliations_from,
+        #id_stakes_from {
             margin: 10px 0px;
             height: 120px !important;
         }
     
-    #profile-editform-affiliations .selector-chooser {
+    .selector-chooser {
         display: inline-block;
         vertical-align: top;
         margin: 120px 5px 0px 5px;
     }
     
-        #id_affiliations_add_link {
+        #id_affiliations_add_link,
+        #id_stakes_add_link {
             display: block;
             width: 12px;
             height: 8px;
@@ -303,7 +309,8 @@
             background: url('../../../../static/img/btn-forward.png');
         }
         
-        #id_affiliations_remove_link {
+        #id_affiliations_remove_link,
+        #id_stakes_remove_link {
             display: block;
             width: 12px;
             height: 8px;
@@ -313,18 +320,21 @@
         }
     
         #id_affiliations_add_all_link,
-        #id_affiliations_remove_all_link {
+        #id_affiliations_remove_all_link,
+        #id_stakes_add_all_link,
+        #id_stakes_remove_all_link {
             display: block;
             float: right;
         }
         
-    #profile-editform-affiliations .selector-chosen {
+    .selector-chosen {
         display: inline-block;
         vertical-align: top;
         width: 230px;
     }
     
-        #id_affiliations_to {
+        #id_affiliations_to,
+        #id_stakes_to {
             margin: 41px 0px 10px 0px;
             height: 120px !important;
         }
