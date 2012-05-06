@@ -19,11 +19,11 @@ class CrowdForm(forms.ModelForm):
     map = GoogleMapsField().formfield(label=_('Location'))
     start_date = forms.SplitDateTimeField(required=False,
                                           input_time_formats=('%I:%M %p', '%H:%M'),
-                                          label=_("When? (time of event)"),
+                                          label=_("When? (Start Date/Time of Event)"),
                                          )
     end_date = forms.SplitDateTimeField(required=False,
                                           input_time_formats=('%I:%M %p', '%H:%M'),
-                                          label=_("Till When? (end time of event)"),
+                                          label=_("Till When? (End Date/Time of Event)"),
                                          )
 
     class Meta:

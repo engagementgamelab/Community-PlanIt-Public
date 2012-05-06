@@ -47,26 +47,15 @@
 
     <div id="crowds-addform">
         
-        {% if form.errors or form.non_field_errors %}
-        <div id="form_errors" class="error">
-            {% trans "Please correct the errors below." %}
-            {{form.non_field_errors.as_ul}}
-            {{ form.errors }}
-        </div>
-        {% endif %}
-        
-        <form class="column-container" action="" method="POST"> 
+        <form class="column-container" action="" method="POST">
             {% csrf_token %}
-            {% comment %}
-            <input type="hidden" class="defaults" value='{"zoom": 14, "coordinates": {{location}} }'>
-            {% endcomment %}
             <input type="hidden" name="form" value="map">
             <input type="hidden" id="max_points_input" name="max_points_input" value="1">
 
             <p>
                 {{form.name.label_tag}}
-                {{form.name}}
                 {{form.name.errors}}
+                {{form.name}}
             </p>
 
             <p>
@@ -74,21 +63,14 @@
                 <div class="help">
                     {{form.description.help_text}}
                 </div>
+                {{form.description.errors}}
                 {{form.description}}
                 {# <div class="fine counter">(<span class="count">1000</span> {% trans "characters left" %})</div> #}
-                {{form.description.errors}}
+                
             </p>
 
 
-            <div class="map-controls">
-                 <label> Address </label> 
-                 <input type="text" name="google_search" id="google_search" />
-                 {# placeholder="Search for a company or an address" #}
-                
-                {# <button class="btn-blue add">Add Point</button> #}
-                {# <button class="btn-blue rm">Clear All Points</button> #}
-                
-            </div>
+
             
             <div id="crowds-addform-location">
                 <div class="column-half">
@@ -102,15 +84,20 @@
                 </div>
             
                 <div class="column-half">
+                    <div class="map-controls">
+                         <label> Address </label> 
+                         <input type="text" name="google_search" id="google_search" placeholder="Start typing a location/address..."/>
+                    </div>
+                    <br />
                     <div>
                         {{ form.start_date.label_tag }}
-                        {{ form.start_date }}
                         {{ form.start_date.errors }}
+                        {{ form.start_date }}
                     </div>
                     <p>
                         {{form.end_date.label_tag}}
-                        {{form.end_date}}
                         {{form.end_date.errors}}
+                        {{form.end_date}}
                     </p>
                 </div>
             </div>

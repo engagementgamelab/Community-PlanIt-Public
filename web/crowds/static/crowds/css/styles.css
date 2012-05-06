@@ -6,7 +6,7 @@
 
     #crowds-addform label {
         display: block;
-        margin: 10px 0px 3px 0px;
+        margin: 5px 0px 5px 0px;
         font-size: 0.75em;
     }
     
@@ -15,6 +15,7 @@
         padding: 5px 8px;
         border: 0px;
         border-radius: 3px;
+        margin-bottom: 10px;
     }
     
     
@@ -35,16 +36,19 @@
         }
         
         #crowds-addform .map {
-            width: 300px !important;
+            width: 340px !important;
             height: 200px !important;
             border: 1px solid #ddd;
+        }
+        
+        #google_search {
+            width: 216px;
         }
         
         #crowds-addform #id_start_date_0, 
         #crowds-addform #id_end_date_0 {
             position: relative;
             width: 100px;
-            margin-left: 25px;
         }
         
         #crowds-addform #id_start_date_1,
