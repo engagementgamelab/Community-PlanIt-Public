@@ -1,5 +1,6 @@
 import datetime
 #from operator import itemgetter
+from collections import OrderedDict
 import json
 #import re
 
@@ -67,7 +68,8 @@ def spend(request):
 
     values = list(Value.objects.filter(instance=current_instance).order_by('pk'))
 
-    flags_spent = json.loads(request.POST.keys()[0]).values()
+    log.debug("querydict: %s " % request.POST.keys()[0])
+    flags_spent = json.loads(request.POST.keys()[0], object_pairs_hook=OrderedDict).values()
     log.debug("flags spent from front-end: %s" % flags_spent)
     if len(values) != len(flags_spent):
         raise Exception("mismatch of values to flags spent in map the future form")
