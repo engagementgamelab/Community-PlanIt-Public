@@ -1,6 +1,9 @@
 import datetime
 #from operator import itemgetter
-from collections import OrderedDict
+try:
+    from collections import OrderedDict
+except ImportError: 
+    import ordereddict as OrderedDict # Py26
 import json
 #import re
 
