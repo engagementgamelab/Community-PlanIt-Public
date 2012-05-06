@@ -1,6 +1,6 @@
 from stream import utils as stream_utils
 from nani.models import TranslatableModel, TranslatedFields
-#from nani.manager import TranslationManager
+from nani.manager import TranslationManager
 
 from cache_utils.decorators import cached
 
@@ -10,6 +10,10 @@ from django.contrib.contenttypes import generic
 
 from web.instances.models import Instance
 from web.comments.models import Comment
+
+class ValueManager(TranslationManager):
+    pass
+
 
 #TODO: change coins to something like coinsSpentOnIntance or something
 #more descriptive
@@ -24,6 +28,7 @@ class Value(TranslatableModel):
     translations = TranslatedFields(
         message = models.CharField(max_length=60, verbose_name='Name'),
     )
+    objects = ValueManager()
 
     @property
     def stream_action_title(self):
@@ -45,10 +50,15 @@ class PlayerValueManager(models.Manager):
     def for_instance(self, instance):
         return self.filter(value__instance=instance)
 
+    def total_flags_by_game(self, instance, value):
+        return PlayerValue.objects.for_instance(instance=instance).filter(value=value).aggregate(models.Sum('coins')).get('coins__sum') or 0
+
     @cached(60*60*24, 'my_spent_flags')
-    def total_flags_for_player(self, instance, user):
+    def total_flags_for_player(self, instance, user, value=None):
         player_values = self.for_instance(instance=instance).filter(user=user)
-        return player_values.aggregate(models.Sum('coins')).get('coins__sum')
+        if value is not None:
+            player_values = player_values.filter(value=value)
+        return player_values.aggregate(models.Sum('coins')).get('coins__sum') or 0
 
 class PlayerValue(models.Model):
 

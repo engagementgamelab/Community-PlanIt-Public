@@ -20,8 +20,8 @@
             <h1>Map the Future!</h1>
             <div id="priority-star"></div>
             <h2>{{ value.message }}</h2>
-            <p id="priority-community-spent">{# TODO: community flags #}321 community pins</p>
-            <p id="priority-individual-spent">{# TODO: user invested flags #}<span id="priority-individual-spent-count">2</span> of my pins</p>
+            <p id="priority-community-spent">{{ total_flags_by_game }} community pin{{ total_flags_by_game|pluralize }} </p>
+            <p id="priority-individual-spent"><span id="priority-individual-spent-count">{{ my_total_flags_for_value }}</span> of my pin{{ my_total_flags_for_value|pluralize }}</p>
             <p><strong>Goal:</strong> {# TODO: value description #}Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
 
         </div>
