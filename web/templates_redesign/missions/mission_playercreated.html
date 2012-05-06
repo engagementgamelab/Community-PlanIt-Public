@@ -54,6 +54,7 @@
                             <a href="{{ activity.get_activity_url }}">
                                 <div class="mission-activity-creator">{% avatar activity.creationUser %}</div>
                                 {{ activity|trans_fallback:"name" }}
+                                <div class="mission-activity-points">{{ points }}</div>
                             </a>
                         </div>
                         {% endif %}
