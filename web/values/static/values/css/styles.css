@@ -304,3 +304,11 @@
             -moz-border-radius: 50px;
             border-radius: 50px;
         }
+        
+/* Other */
+p.instructions {
+    width: 100%;
+    color: #333;
+    font-size: 1em;
+    margin-bottom: 20px;
+}

@@ -44,7 +44,7 @@
                         <div class="activity playercreated activity-completed {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                             <a href="{{ activity.get_activity_url }}">
                                 <div class="mission-activity-creator">{% avatar activity.creationUser %}</div>
-                                {{ activity|trans_fallback:"name" }} ({{ completed_count }} new response{{ completed_count|pluralize }})
+                                {{ activity|trans_fallback:"name" }} ({{ completed_count }} response{{ completed_count|pluralize }})
                                 <div class="mission-activity-completed"></div>
                             </a>
                         </div>
