@@ -160,6 +160,15 @@ class UserProfilePerInstanceManager(models.Manager):
         log.debug('my games %s. ** no cached ** ' % my_games)
         return my_games
 
+    @cached(60*60*24)
+    def total_points_for_profile(self, instance, user_profile):
+        return self.get(instance=instance, user_profile=user_profile).total_points
+
+    @cached(60*60*24)
+    def progress_data_for_mission(self, instance, mission, user_profile):
+        return self.get(instance=instance, user_profile=user_profile).\
+                progress_percentage_by_mission(mission)
+
     #def latest_instance_by_profile(self, user_profile, domain):
     #    return self.objects.filter(user_profile=user_profile).latest_for_city_domain(domain)
 
@@ -182,26 +191,18 @@ class UserProfilePerInstance(models.Model):
         return "'%s <%s>' for: %s" % (self.user_profile.user.get_full_name(), self.user_profile.email, self.instance.title, )
 
     def progress_percentage_by_mission(self, mission):
-        # TODO
-        # this cache group gets invalidated explicitly for everybody 
-        # as a challenge is played.
-        # update to only invalidate for this pk and mission 
-        @cached(60*60*24, 'my_progress_data')
-        def my_progress(pk, mission):
-            log.debug("running progress_percentage_by_mission ** not cached ** ")
-            mission_total_points = mission.total_points
-            my_completed = self.my_completed_by_mission(mission)
-            my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))
-            percentage = int(my_points_for_mission/mission_total_points*Decimal(100))
-            log.debug("%s/%s (%s percent). %s" % (
-                                                my_points_for_mission,
-                                                mission_total_points,
-                                                percentage,
-                                                mission.title,
-                                                )
-            )
-            return (my_points_for_mission, percentage)
-        return my_progress(self.pk, mission)
+        mission_total_points = mission.total_points
+        my_completed = self.my_completed_by_mission(mission)
+        my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))
+        percentage = int(my_points_for_mission/mission_total_points*Decimal(100))
+        #log.debug("%s/%s (%s percent). %s" % (
+        #                                    my_points_for_mission,
+        #                                    mission_total_points,
+        #                                    percentage,
+        #                                    mission.title,
+        #                                    )
+        #)
+        return (my_points_for_mission, percentage)
 
     def get_user(self):
         @cached(60*60*24*30)

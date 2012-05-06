@@ -15,18 +15,16 @@ class ValueManager(TranslationManager):
     pass
 
 
-#TODO: change coins to something like coinsSpentOnIntance or something
-#more descriptive
 #Make the comments into a foreign key field. There is no reason why
 # a comment should belong to more than 1 value
 class Value(TranslatableModel):
-    coins = models.IntegerField(default=0)
 
     instance = models.ForeignKey(Instance, related_name='values')
     comments = generic.GenericRelation(Comment)
 
     translations = TranslatedFields(
         message = models.CharField(max_length=60, verbose_name='Name'),
+        description = models.TextField(max_length=1000, verbose_name='Description', default=''),
     )
     objects = ValueManager()
 
