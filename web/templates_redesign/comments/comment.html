@@ -31,29 +31,26 @@
 
                 {# Comment #}
                 {{comment.message|linebreaksbr}}
+                {# ATTACHMENTS #}
+                <div class="comment-message-attachments">
+                {% for attachment in comment.attachment.all %}
+                    {% if attachment.is_valid %}
+                        <div>
+                            {% if attachment.type == 'video' %}
+                                {% embed_video attachment.url %}
+                            {% else %}
+                                {% if attachment.file %}
+                                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="notice">This content is currently unavailable.</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
             {% endif %}
         </div>
-    
-        {% if not comment.hidden %}
-            {# ATTACHMENTS #}
-            <div class="attachments">
-            {% for attachment in comment.attachment.all %}
-                {% if attachment.is_valid %}
-                    <div>
-                        {% if attachment.type == 'video' %}
-                            {% embed_video attachment.url %}
-                        {% else %}
-                            {% if attachment.file %}
-                            <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <div class="notice">This content is currently unavailable.</div>
-                {% endif %}
-            {% endfor %}
-            </div>
-        {% endif %}
         
         <div class="actions">
             {# LIKES! #}
