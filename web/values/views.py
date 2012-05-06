@@ -1,6 +1,7 @@
 import datetime
-from operator import itemgetter
-import re
+#from operator import itemgetter
+import json
+#import re
 
 from PIL import Image
 
@@ -8,9 +9,10 @@ from stream import utils as stream_utils
 
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
+from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.translation import get_language
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.template import Context, RequestContext, loader
 
 from django.contrib import messages
@@ -37,7 +39,7 @@ def all(request, template='values/all.html'):
     else:
         raise Http404("could not locate a valid game")
     values_sorted = SortedDict()
-    for v in Value.objects.filter(instance=current_instance):
+    for v in Value.objects.filter(instance=current_instance).order_by('pk'):
         values_sorted[v] = dict(
                 community_spent_total = PlayerValue.objects.filter(value=v).aggregate(Sum('coins'))['coins__sum'] or 0,
                 individual_spent_total = PlayerValue.objects.filter(value=v, user=request.user).aggregate(Sum('coins'))['coins__sum'] or 0,
@@ -54,26 +56,44 @@ def all(request, template='values/all.html'):
 
     return render(request, template, context)
 
-#value_wrapper = value_wrapper,
-#community_spent = community_spent,
-#player_spent = player_spent,
-#community_spent = values.aggregate(Sum('coins'))['coins__sum'] or 0
-#player_values = PlayerValue.objects.filter(user=request.user)
-#player_spent = player_values.aggregate(Sum('coins'))['coins__sum'] or 0
 
-#value_wrapper = []
-#for value in values:
-#    player_value = player_values.filter(value=value)
-#    coins = float(value.coins)
-#    if len(player_value) > 0:
-#        value_wrapper.append({ 'message': value.message, 'value': value, 'coins': coins, 'player_coins': player_value[0].coins, 
-#                              'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })
-#    else:
-#        value_wrapper.append({ 'message': value.message, 'value': value, 'coins': coins, 'player_coins': 0,
-#                               'percent': 0 if community_spent == 0 else (coins/community_spent)*100 })    
-#value_wrapper = sorted(value_wrapper, key=itemgetter('message'))
-#log.debug(value_wrapper)
+@login_required
+def spend(request):
 
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
+    values = list(Value.objects.filter(instance=current_instance).order_by('pk'))
+
+    flags_spent = json.loads(request.POST.keys()[0]).values()
+    log.debug(flags_spent)
+    if len(values) != len(flags_spent):
+        raise Exception("mismatch of values to flags spent in map the future form")
+
+    for i in range(len(values)):
+        log.debug("v: %s, spent %s" % (values[i], flags_spent[i]))
+
+        playervalue, created = PlayerValue.objects.get_or_create(user=request.user, value=values[i])
+        if created:
+            playervalue.coins = flags_spent[i]
+        else:
+            playervalue.coins+=flags_spent[i]
+
+        playervalue.save()
+
+        log.debug("%s spent %s flags on %s" % (request.user.get_profile().screen_name, flags_spent[i], values[i].__unicode__()))
+
+        stream_utils.action.send(
+                    request.user,
+                    'flag_spent',
+                    action_object=values[i], description="token spent",
+                    target=current_instance
+        )
+        cache.invalidate_group('my_spent_flags')
+
+    return redirect(reverse('values:index'))
 
 @login_required
 def detail(request, id, template='values/value.html'):
@@ -130,35 +150,6 @@ def detail(request, id, template='values/value.html'):
     
     return render(request, template, context)
     
-
-@login_required
-def spend(request):
-
-    print request.POST[0]
-
-    # user = request.user
-    # profile = user.get_profile()
-    # value = Value.objects.get(id=id)
-    # 
-    # 
-    # playervalue, created = PlayerValue.objects.get_or_create(user=user, value=value)
-    # if profile.currentCoins > 0:
-    #     value.coins += 1
-    #     playervalue.coins += 1
-    #     profile.currentCoins -= 1
-    # 
-    #     value.save()
-    #     playervalue.save()
-    #     profile.save()
-    #     
-    #     #log_url = reverse('values:detail', args=[id])
-    #     #ActivityLogger().log(request.user, request, 'on value: ' + value.message[:30], 'spent token', log_url, 'value')
-    #     stream_utils.action.send(request.user, 'token_spent', action_object=value, description="token spent")
-    # else:
-    #     messages.error(request, 'No tokens available to spend')
-    
-    # return HttpResponseRedirect(reverse('values:index'))
-    return HttpResponse("You all good!")
 
 @login_required
 def take(request, id):
