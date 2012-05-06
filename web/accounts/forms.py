@@ -332,8 +332,8 @@ class ForgotForm(forms.Form):
             raise forms.ValidationError(_('Email not found in our system'))
 
 class ChangePasswordForm(forms.Form):
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirm = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'New Password'}))
+    confirm = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm New Password'}))
 
     # Ensure that both passwords match.
     def clean_confirm(self):
@@ -347,7 +347,7 @@ class ChangePasswordForm(forms.Form):
 
 class UserProfileForm(forms.ModelForm):
     # Required fields
-    receive_email = forms.BooleanField(required=False, label=_('Should we send you notifications and news via email?'))
+    receive_email = forms.BooleanField(required=False, label=_('Receive notifications via email'))
     tagline = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Give yourself a tagline...'}), required=False, label=_('Tagline'))
     affiliation_new = forms.CharField(
                 max_length=100, required=False, label=_("Don't see an affiliation that fits you?"),

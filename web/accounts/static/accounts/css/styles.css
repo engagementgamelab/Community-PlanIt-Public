@@ -177,10 +177,30 @@
         
 /* Account Edit Profile Specific Styles */
 #profile-editform-container {
-  margin-right: 20px;
-  padding: 20px 0px 30px 0px;
-  background: #00e5b8;
+    position: relative;
+    margin-right: 20px;
+    padding: 20px 0px 30px 0px;
+    background: #00e5b8;
 }
+
+#profile-editpasswordform {
+    position: absolute;
+    top: 600px;
+    left: 20px;
+}
+
+    #profile-editpasswordform input[type='password'] {
+        display: inline-block;
+        vertical-align: middle;
+        width: 210px;
+        margin: 5px 0px;
+        padding: 8px 10px;
+        border: 0px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+    }
+
 
 #profile-editform {}
     
@@ -266,7 +286,41 @@
             border: 0px;
             resize: none;
         }
-        
+    
+    
+    /* Avatar */
+    #profile-editform-avatar {
+        margin: 10px 0px;
+    }
+    
+        #avatar-clear_id {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    
+        label[for='avatar-clear_id'] {
+            display: inline-block !important;
+            vertical-align: middle;
+            width: 180px !important;
+            margin: 0px 0px 0px 10px !important;
+        }
+    
+    /* Email Notifications */
+    
+    #profile-editform-emails {}
+
+        #id_receive_email {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    
+        #profile-editform-emails label {
+            display: inline-block;
+            vertical-align: middle;
+            width: 180px;
+            margin: 0px 0px 0px 10px;
+        }
+    
     /* Multi-select from django-admin, styling */
     #profile-editform-affiliations,
     #profile-editform-stakes {
