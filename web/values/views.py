@@ -68,7 +68,7 @@ def spend(request):
     values = list(Value.objects.filter(instance=current_instance).order_by('pk'))
 
     flags_spent = json.loads(request.POST.keys()[0]).values()
-    log.debug(flags_spent)
+    log.debug("flags spent from front-end: %s" % flags_spent)
     if len(values) != len(flags_spent):
         raise Exception("mismatch of values to flags spent in map the future form")
 
