@@ -960,20 +960,36 @@ p.instructions {
 
 
 /* Pagination */
+.page_navigator {
+    text-align: center;
+    margin: 30px 0px;
+}
+
+    .page_navigator a {
+        font-weight: bold;
+    }
+    
 .pagination a {
     margin: 0px 10px;
 }
 
-.pagination-previous {
+.pagination-previous,
+.page_navigator li.prev a {
     display: inline-block;
     width: 12px;
     height: 8px;
     background: url('../img/btn-back.png') no-repeat left center;
 }
 
-.pagination-next {
+.pagination-next,
+.page_navigator li.next a {
     display: inline-block;
     width: 12px;
     height: 8px;
     background: url('../img/btn-forward.png') no-repeat left center;
+}
+
+.page_navigator li {
+    display: inline-block;
+    margin: 0px 10px;
 }
