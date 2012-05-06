@@ -1,0 +1,14 @@
+{% extends "static/base.html"%}
+{% load i18n %}
+
+{% block title %}{% trans "500 Server Error" %}{% endblock %}
+
+{% block content %}
+
+<div class="column-full">
+    <div class="column-container">
+        <h1>{% trans "Whoops, something went wrong!" %}</h1>
+        <p>{% trans "Whoops, something went wrong. Our programmers have been notified by email and are on the case!" %}</p>
+    </div>
+</div>
+{% endblock %}
