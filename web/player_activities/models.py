@@ -76,6 +76,7 @@ class PlayerActivityBase(TranslatableModel):
             return self.type.type
         return this_type(self.pk)
 
+    @cached(60*60*168, 'activity_points')
     def get_points(self):
         if self.points == None:
             return self.type.defaultPoints

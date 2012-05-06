@@ -15,6 +15,7 @@ from django.http import HttpResponseRedirect
 from comments.forms import *
 from comments.models import Comment, Attachment
 from web.attachments.tasks import run_attachment_checks
+from web.accounts.models import UserProfilePerInstance
 #from player_activities.models import PlayerActivity
 #from reports.models import ActivityLogger
 #from core.utils import instance_from_request
@@ -107,7 +108,7 @@ def log_activity_and_redirect(request, activity, action_msg):
     # TODO only invalidate by one UserProfilePerInstance instance
     #cache.invalidate_group('my_progress_data')
     my_prof = request.user.get_profile()
-    UserProfilePerInstance.objects.progress_data_for_mission(request.current_game, mission, activity.mission, my_prof)
+    UserProfilePerInstance.objects.progress_data_for_mission(request.current_game, activity.mission, my_prof)
     UserProfilePerInstance.objects.total_points_for_profile.invalidate(request.current_game, my_prof)
     return HttpResponseRedirect(activity.get_overview_url())
 
