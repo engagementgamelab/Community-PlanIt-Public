@@ -1,5 +1,5 @@
 {% extends "player_activities/base.html" %}
-{% load gmap attachment_tags i18n %}
+{% load gmap attachment_tags i18n avatar %}
 {% block title %}{{activity.name}} | Open-Ended Response Overview{% endblock %}
 
 {% block game_content %}
@@ -11,6 +11,7 @@
 
     {% include "player_activities/official_responses.html" %}
     <h1>{{activity.name}}<span class="points">{{ activity.get_points }}</span></h1>
+    {% if activity.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile activity.creationUser.id %}">{% avatar activity.creationUser %}</a> created by <a href="{% url accounts:player_profile activity.creationUser.id %}">{{ activity.creationUser.get_profile.screen_name }}</a></div>{% endif %}
     
     {# QUESTION AND YOUR RESPONSE #}
     <div class="column-threequarter">

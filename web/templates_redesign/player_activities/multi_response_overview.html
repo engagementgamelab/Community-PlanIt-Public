@@ -1,5 +1,5 @@
 {% extends "player_activities/base.html" %}
-{% load gmap attachment_tags i18n %}
+{% load gmap attachment_tags i18n avatar %}
 {% block title %}{{activity.name}} | Multi Response Overview{% endblock %}
 
 {% block game_content %}
@@ -10,6 +10,7 @@
         <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
         
         <h1>{{ activity.name|safe }}<span class="points">{{ activity.get_points }}</span></h1>
+        {% if activity.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile activity.creationUser.id %}">{% avatar activity.creationUser %}</a> created by <a href="{% url accounts:player_profile activity.creationUser.id %}">{{ activity.creationUser.get_profile.screen_name }}</a></div>{% endif %}
         {% include "player_activities/official_responses.html" %}
         <div class="column-threequarter">
         

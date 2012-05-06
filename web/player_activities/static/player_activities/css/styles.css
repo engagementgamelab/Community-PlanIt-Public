@@ -20,6 +20,28 @@
         color: #fff;
     }
     
+    #player-activities #created-by {
+        margin-bottom: 20px;
+        color: #999;
+        font-style: italic;
+    }
+    
+        /* profile avatar restrict size */
+        #created-by .avatar {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+        }
+
+            #created-by .avatar-content {
+                line-height: 28px;
+            }
+
+            #created-by .avatar img {
+                max-width: 28px;
+                max-height: 28px;
+            }
+    
     #player-activities .activity-question {
         position: relative;
         padding: 20px;
@@ -44,6 +66,8 @@
             border-bottom-color: #e3f1ea;
             border-left-color: #e3f1ea;
         }
+        
+        
         
         /* Single and Multi-response has bo bottom-radius */
         #player-activities .single-response .activity-question,
