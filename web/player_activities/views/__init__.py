@@ -43,11 +43,12 @@ def comment_fun(answer, request, form=None, message=''):
     if form is not None:
         message = form.cleaned_data['message']
     comment = answer.comments.create(
-        content_object=answer,
-        message=message,
-        user=request.user,
-        instance=current_instance,
+                    content_object=answer,
+                    message=message,
+                    user=request.user,
+                    instance=current_instance,
     )
+    log.debug("challenge attachments %s" % request.FILES.keys())
 
     if request.POST.has_key('video-url'):
         if request.POST.get('video-url'):
@@ -62,6 +63,9 @@ def comment_fun(answer, request, form=None, message=''):
             log.debug("created attachment video url for comment %s. %s" % (comment.pk, attachment))
             #result = send_task("attachments.tasks.run_attachment_checks")
             #log.debug(result)
+    else:
+        log.debug("no challenge attached video url %s" % request.POST.keys())
+
 
     if request.FILES.has_key('picture'):
         image_file = request.FILES.get('picture')
@@ -108,7 +112,7 @@ def log_activity_and_redirect(request, activity, action_msg):
     # TODO only invalidate by one UserProfilePerInstance instance
     #cache.invalidate_group('my_progress_data')
     my_prof = request.user.get_profile()
-    UserProfilePerInstance.objects.progress_data_for_mission(request.current_game, activity.mission, my_prof)
+    UserProfilePerInstance.objects.progress_data_for_mission.invalidate(request.current_game, activity.mission, my_prof)
     UserProfilePerInstance.objects.total_points_for_profile.invalidate(request.current_game, my_prof)
     return HttpResponseRedirect(activity.get_overview_url())
 
