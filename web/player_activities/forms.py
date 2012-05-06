@@ -196,4 +196,4 @@ class NewActivityWizard(SessionWizardView):
                                 target=self.request.current_game,
                                 description='player submitted a challenge',
         )
-        return redirect(reverse("missions:mission", args=(mission.slug,)))
+        return redirect(reverse("missions:mission_playercreated", args=(mission.slug,)))
