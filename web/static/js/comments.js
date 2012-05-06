@@ -42,7 +42,6 @@ jQuery(function($) {
       var form = $('#id_comment-form-'+$(this).attr('id'))[0];
       var form_data = Sijax.getFormValues('#id_comment-form-'+$(this).attr('id'));
       Sijax.request('create_comment', [form_data]);
-      console.log(form);
       form.reset();
   });
 
@@ -86,7 +85,6 @@ jQuery(function($) {
   $('.thread-tail').hide();
 
   $('.btn-replies').click(function(){
-      console.log($(this).parents('.comment').nextAll('.nested'));
       $(this).parents('.comment').next('.thread-tail').toggle(200, init_masonry);
       $(this).toggleClass('active')
   });
