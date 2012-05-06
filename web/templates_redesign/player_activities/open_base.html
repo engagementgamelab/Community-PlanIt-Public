@@ -4,8 +4,12 @@
 
 {% block game_content %}
 <div class="column-container">
-    <a href="{% url missions:mission mission.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
-
+    {% if activity.is_player_submitted %}
+        <a href="{% url missions:mission_playercreated mission.slug %}" class="btn-back">{% trans "Return" %}</a>
+    {% else %}
+        <a href="{% url missions:mission mission.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
+    {% endif %}
+    
     <h1>{{activity.name}}<span class="points">{{ activity.get_points }}</span></h1>
     
     
