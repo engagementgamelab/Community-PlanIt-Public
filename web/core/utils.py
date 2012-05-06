@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils.translation import get_language
 from django.contrib.sites.models import RequestSite
 
+from web.accounts.models import UserProfilePerInstance
 from web.instances.models import Instance
 from web.missions.models import Mission
 
@@ -38,7 +39,12 @@ def missions_bar_context(request, mission=None):
         mission = Mission.objects.default(instance=request.current_game)
 
     if mission is not None:
-        my_points_for_mission, progress_percentage = request.prof_per_instance.progress_percentage_by_mission(mission)
+        my_points_for_mission, progress_percentage = \
+            UserProfilePerInstance.objects.progress_data_for_mission(
+                        request.current_game, 
+                        mission, 
+                        request.prof_per_instance.user_profile
+            )
     else:
         my_points_for_mission = progress_percentage  = 0
 

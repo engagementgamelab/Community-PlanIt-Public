@@ -73,6 +73,8 @@ def login_ajax(request, authentication_form=AuthenticationForm):
             if last_login_datetime is not None and current_game.is_active() \
                     and last_login_datetime < current_game.start_date:
                 log.debug('last login on %s redirect %s to map the future' %(last_login_datetime, prof_per_instance.user_profile.screen_name))
+                # getting rid of the first slash to be used later with
+                # os.path.join
                 values_path = strip_path(reverse('values:index'))[1][1:]
 
             if lang.code in dict(settings.LANGUAGES).keys():
@@ -326,7 +328,7 @@ def edit(request, template_name='accounts/profile_edit.html'):
             return redirect(reverse('accounts:dashboard'))
 
         else:
-            print profile_form.errors
+            log.debug("edit profile form errors %s: %s" % (profile, profile_form.errors))
 
     context = {
         'profile_form': profile_form,
@@ -338,7 +340,7 @@ def edit(request, template_name='accounts/profile_edit.html'):
 
 @login_required
 def all(request, template='accounts/all.html'):
-    profiles_for_game =  UserProfilePerInstance.objects.filter(
+    profiles_for_game =  UserProfilePerInstance.objects.select_related().filter(
                                                             instance=request.current_game
                                                         ).exclude(
                                                                 user_profile__user__is_active=False

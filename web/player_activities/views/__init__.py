@@ -105,7 +105,10 @@ def log_activity_and_redirect(request, activity, action_msg):
     # users total points per mission and percentage of missions total
     # points. invalidate here.
     # TODO only invalidate by one UserProfilePerInstance instance
-    cache.invalidate_group('my_progress_data')
+    #cache.invalidate_group('my_progress_data')
+    my_prof = request.user.get_profile()
+    UserProfilePerInstance.objects.progress_data_for_mission(request.current_game, mission, activity.mission, my_prof)
+    UserProfilePerInstance.objects.total_points_for_profile.invalidate(request.current_game, my_prof)
     return HttpResponseRedirect(activity.get_overview_url())
 
 # NOT USED
