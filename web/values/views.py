@@ -101,6 +101,13 @@ def spend(request):
 def detail(request, id, template='values/value.html'):
     value = get_object_or_404(Value, id=id)
 
+    if hasattr(request, 'current_game'):
+        current_instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
+
+
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -138,20 +145,21 @@ def detail(request, id, template='values/value.html'):
             #ActivityLogger().log(request.user, request, 'to value: ' + value.message[:30], 'added comment', log_url, 'value')
             return HttpResponseRedirect(reverse('values:detail', args=[id]))
 
-    values = value.instance.values.language(get_language())
-    total_coins = values.aggregate(Sum('coins'))['coins__sum'] or 0
+    #values = value.instance.values.language(get_language())
+    #total_coins = values.aggregate(Sum('coins'))['coins__sum'] or 0
+
+    total_flags_by_game = PlayerValue.objects.total_flags_by_game(current_instance, value)
+    my_total_flags_for_value = PlayerValue.objects.total_flags_for_player(current_instance, request.user, value=value)
 
     context = {
         'value': value,
-        'total_coins': total_coins,
+        'total_flags_by_game': total_flags_by_game,
+        'my_total_flags_for_value': my_total_flags_for_value,
         'comments': value,
         'comment_form': CommentForm(),
     }
-    
     context.update(missions_bar_context(request))
-    
     return render(request, template, context)
-    
 
 @login_required
 def take(request, id):
