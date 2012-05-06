@@ -1,3 +1,4 @@
+import os.path
 import datetime
 import urlparse
 
@@ -66,16 +67,23 @@ def login_ajax(request, authentication_form=AuthenticationForm):
                         user_profile=user.get_profile()
             )
             lang = prof_per_instance.preferred_language
-            log.debug("preferred lang: %s" % lang)
+            last_login_datetime = prof_per_instance.my_last_login_from_stream()
+
+            values_path = None
+            if last_login_datetime is not None and current_game.is_active() \
+                    and last_login_datetime < current_game.start_date:
+                log.debug('last login on %s redirect %s to map the future' %(last_login_datetime, prof_per_instance.user_profile.screen_name))
+                values_path = strip_path(reverse('values:index'))[1][1:]
+
             if lang.code in dict(settings.LANGUAGES).keys():
                 spath = strip_path(settings.LOGIN_REDIRECT_URL)[1]
-                log.debug("1. auth?: %s" % user.is_authenticated())
                 redir = "".join([current_game.get_absolute_url(ssl=not(settings.DEBUG)),
                                     locale_path(spath, lang.code)])
+                if values_path is not None:
+                    redir = os.path.join(redir, values_path)
                 log.debug("post login redir %s" % redir)
                 return obj_response.redirect(redir)
 
-            log.debug("2. auth?: %s" % user.is_authenticated)
             return obj_response.redirect(
                     "".join([
                                 current_game.get_absolute_url(ssl=not(settings.DEBUG)), 

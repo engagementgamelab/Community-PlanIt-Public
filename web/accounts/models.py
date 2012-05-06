@@ -1,5 +1,6 @@
 import os.path
 import datetime
+from operator import attrgetter
 from decimal import Decimal
 from uuid import uuid4 as uuid
 from cache_utils.decorators import cached
@@ -245,6 +246,18 @@ class UserProfilePerInstance(models.Model):
         if my_spent_flags is not None:
             return my_flags - int(my_spent_flags)
         return my_flags
+
+    def my_logins_from_stream(self):
+        return filter(lambda a: a.verb=='user_logged_in', Action.objects.get_for_actor(self.get_user()))
+
+    def my_last_login_from_stream(self):
+        """
+            get the latest login from activity stream 
+            return the datetime 
+        """
+        logins =  self.my_logins_from_stream()
+        if len(logins) > 0:
+            return sorted(logins, key=attrgetter('datetime'))[-1].datetime
 
     @property
     def format_stakes(self):
