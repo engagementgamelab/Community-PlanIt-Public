@@ -19,16 +19,25 @@
         background: url('../img/icon-player-challenges_over.png') no-repeat 10px center;
     }
 
+.column-missionintro {
+    float: left;
+    width: 40%;
+}
+
+.column-missionvideo {
+    float: left;
+    width: 60%;
+}
 
 #mission-video-container {
-    width: 370px;
-    height: 208px;
+    width: 452px;
+    height: 254px;
 }
 
     #mission-video-container .notice {
         border: 1px dashed #ddd;
         text-align: center;
-        line-height: 206px; /* same as #mission-video-container height */
+        line-height: 252px; /* same as #mission-video-container height */
         color: #999
     }
 
