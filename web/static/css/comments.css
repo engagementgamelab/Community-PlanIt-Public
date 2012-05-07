@@ -399,13 +399,13 @@ background-color: #f6f8cf;
     }
 
        .activity-response-submit img,
-       .comment-response-submit {
+       .comment-response-submit img {
             display: inline-block;
             vertical-align: middle;
         }
     
         .activity-response-submit input,
-        .activity-response-submit input {
+        .comment-response-submit input {
             display: inline-block;
             vertical-align: middle;
             margin-left: 20px;
