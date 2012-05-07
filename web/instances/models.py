@@ -78,6 +78,9 @@ class Affiliation(models.Model):
             self.slug = slugify(self.name)[:100]
         super(Affiliation, self).save()
 
+    class Meta:
+        ordering = ('name',)
+
 
 class InstanceManager(TranslationManager):
 
