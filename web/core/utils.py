@@ -60,7 +60,6 @@ def missions_bar_context(request, mission=None):
 
     all_missions_for_game = Mission.objects.for_instance(instance=request.current_game)
     my_flags_count = prof_per_instance.flags
-    log.debug("i have %s flags" % my_flags_count)
     my_flags_range = range(0, my_flags_count)
 
     context = {
