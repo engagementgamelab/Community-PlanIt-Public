@@ -19,7 +19,7 @@ class MultiChoiceActivityInline(TranslatableStackedInline):
 	model = MultiChoiceActivity
 
 class PlayerActivityAdmin(TranslatableAdmin):
-    list_display = ('__str__', 'mission', 'type', 'all_translations')
+    list_display = ('__str__', 'mission', 'type', 'points', 'all_translations')
     list_filter = ('type', 'mission__instance', 'mission', 'is_player_submitted' )
     ordering = ('mission', 'type',)
     inlines = [MultiChoiceActivityInline,]
