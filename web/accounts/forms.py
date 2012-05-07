@@ -306,10 +306,7 @@ class RegistrationWizard(SessionWizardView):
         #
         self.request.session['current_game_slug'] = game.slug
 
-        if game.slug == 'noquwo-neighborhoods-on-the-move':
-            page = reverse('quincy')
-        else:
-            page = reverse('accounts:dashboard')
+        page = reverse('accounts:dashboard')
 
         return redirect(
                         ''.join(
