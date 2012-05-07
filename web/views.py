@@ -29,10 +29,12 @@ def index(request, template='index.html', city_header=True):
         template = 'city.html'
 
     # if user logged in to a game
-    # expecting the `prof_per_instance
+    # expecting the `current_game
     # to be set in the middleware
-    if hasattr(request, 'prof_per_instance'):
-        my_games = UserProfilePerInstance.objects.games_for_profile(user_profile=request.user.get_profile())
+    if hasattr(request, 'current_game'):
+        my_games = UserProfilePerInstance.objects.games_for_profile(
+                                        user_profile=request.user.get_profile()
+        )
         log.debug('my_games: %s' % my_games)
     else:
         my_games = []
