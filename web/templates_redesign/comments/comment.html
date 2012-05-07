@@ -22,7 +22,7 @@
         <div class="comment-message">
             {% if comment.hidden %}
                 {# Comment is flagged #}
-                <div class="notice">This content has been flagged by the community and hidden by the administrator.</div>
+                <div class="notice">{% trans "This content has been flagged by the community and hidden by the administrator." %}</div>
             {% else %}
                 
                 {# COMMENT #}
@@ -45,7 +45,7 @@
                             {% endif %}
                         </div>
                     {% else %}
-                        <div class="notice">This content is currently unavailable.</div>
+                        <div class="notice">{% trans "The video will be ready soon." %}</div>
                     {% endif %}
                 </div>
                 {% endfor %}
