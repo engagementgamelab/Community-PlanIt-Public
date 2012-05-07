@@ -8,8 +8,6 @@ urlpatterns = patterns('instances.views',
 
     url(r'^(?P<slug>[-\w]+)/$', 'region', name='instance'),
     url(r'^$', 'all', name='instances'),
-    url(r'^(?P<slug>[-\w]+)/affiliations/$', 'affiliations_all', name='affiliations'),
-    url(r'^(?P<instance_slug>[-\w]+)/affiliations/(?P<affiliation_slug>[-\w]+)/$', 'affiliation', name='affiliation'),
     url(r"^ajax/load-games-by-city/(?P<for_city_id>\d+)/$", "ajax_load_games_by_city", name="ajax-load-games-by-city"),
     url(r"^ajax/load-languages-by-game/(?P<instance_id>\d+)/$", "ajax_load_languages_by_game", name="ajax-load-languages-by-game"),
 
