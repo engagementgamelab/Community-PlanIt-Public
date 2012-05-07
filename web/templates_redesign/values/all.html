@@ -144,9 +144,9 @@
                     $('mapthefuture-controls-reset').fade('hide');            
                     $('mapthefuture-saved').slide('in');
                 },
-                onFailure: function(){
-                    alert('something went wrong');
-                    console.log(this)
+                onFailure: function(xhr){
+                    console.log('XHR error');
+                    console.log(xhr);
                 }
             });
             
