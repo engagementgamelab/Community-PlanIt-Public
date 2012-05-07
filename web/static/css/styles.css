@@ -927,12 +927,15 @@ p.instructions {
         display: inline-block;
         font-size: 0.5em;
     }
-    
-    .btn-tab a:hover,
+
     .btn-tab a.active {
         display: block;
         color: #000;
         font-size: 1.0em;
+    }
+    
+    .btn-tab a:hover {
+        color: #000;
     }
     
 
