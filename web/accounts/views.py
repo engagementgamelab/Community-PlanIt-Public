@@ -417,7 +417,9 @@ def ajax_search(request, search_form, request_uri=None):
 def profile(request, id, template_name="accounts/profile.html"):
     player = get_object_or_404(User, id=id)
     current_game = request.current_game
-    stream = Action.objects.get_for_actor(player)[:10]
+    stream = Action.objects.get_for_actor(
+            player
+    ).exclude(verb='user_logged_in').order_by('datetime')[:10]
 
     if request.user == player:
         try:
