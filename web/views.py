@@ -12,6 +12,7 @@ from web.accounts.views import dashboard
 from web.accounts.forms import AccountAuthenticationForm
 from web.accounts.models import UserProfilePerInstance
 from web.instances.models import Instance, City
+from web.core.utils import missions_bar_context
 
 import logging
 log = logging.getLogger(__name__)
@@ -48,6 +49,9 @@ def index(request, template='index.html', city_header=True):
     context.update({
         'city_header': city_header
     })
+    if hasattr(request, 'current_game'): 
+        context.update(missions_bar_context(request))
+    
     return render(request, template, context)
 
 class BringCpiForm(forms.Form):
@@ -74,6 +78,9 @@ def bringcpi(request, template='bringcpi.html'):
         'form': form,
         'cities': City.objects.all(),
     }
+    
+    if hasattr(request, 'current_game'): 
+        context.update(missions_bar_context(request))
     return render(request, template, context)
 
 @never_cache
