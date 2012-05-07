@@ -343,11 +343,9 @@ def edit(request, template_name='accounts/profile_edit.html'):
 
 @login_required
 def all(request, template='accounts/all.html'):
-    profiles_for_game =  UserProfilePerInstance.objects.select_related().filter(
-                                                            instance=request.current_game
-                                                        ).exclude(
-                                                                user_profile__user__is_active=False
-    )
+    profiles_for_game =  UserProfilePerInstance.objects.select_related().filter(instance=request.current_game
+        ).exclude(user_profile__user__is_active=False
+        ).order_by('-date_created')
     filter_by_variants = Sijax()
     filter_by_variants.set_request_uri(reverse('accounts:ajax-filter-players-by-variant'))
 
@@ -419,7 +417,7 @@ def profile(request, id, template_name="accounts/profile.html"):
     current_game = request.current_game
     stream = Action.objects.get_for_actor(
             player
-    ).exclude(verb='user_logged_in').order_by('datetime')[:10]
+    ).exclude(verb='user_logged_in').order_by('-datetime')[:10]
 
     if request.user == player:
         try:
