@@ -90,7 +90,7 @@
                 <p class="profile-detail">
                 {% if affiliations %}
                     {% for aff in affiliations %} 
-                    <a class="highlight" href="{% url affiliations:affiliation aff.slug %}">{{ aff.name }}</a>
+                    <a class="highlight" href="{% url affiliations:affiliation aff.slug %}">{{ aff.name }}</a><br />
                     {% endfor %}
                 {% endif %}
                 </p>
