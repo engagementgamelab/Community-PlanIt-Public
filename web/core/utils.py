@@ -68,6 +68,7 @@ def missions_bar_context(request, mission=None):
         'my_points_for_mission': my_points_for_mission,
         'progress_percentage': progress_percentage,
         'my_flags_range': my_flags_range,
+        'my_total_points': prof_per_instance.total_points,
     }
 
     return context
