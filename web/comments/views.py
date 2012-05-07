@@ -155,15 +155,24 @@ def ajax_create(request, comment_form=CommentForm):
             #        stream_verb=stream_verb,
             #)
             # gen_badges.apply_async(args=[user_id,], kwargs=task_kwargs)
-            context = dict(
-                comment = comment_parent,
-                STATIC_URL = settings.STATIC_URL,
-                MEDIA_URL = settings.MEDIA_URL,
-                request = request,
-            )
-            rendered_comments = render_to_string('comments/nested_replies.html', context)
-            obj_response.html('#replies-'+str(comment_parent.pk), rendered_comments)
-            obj_response.call('init_masonry')
+
+            if parent_type == 'user_profile':
+                obj_response.redirect(
+                            reverse('accounts:player_profile', 
+                                    args=(comment_parent.user_profile.user.pk,)
+                            )
+                )
+
+            elif parent_type == 'comment':
+                context = dict(
+                    comment = comment_parent,
+                    STATIC_URL = settings.STATIC_URL,
+                    MEDIA_URL = settings.MEDIA_URL,
+                    request = request,
+                )
+                rendered_comments = render_to_string('comments/nested_replies.html', context)
+                obj_response.html('#replies-'+str(comment_parent.pk), rendered_comments)
+                obj_response.call('init_masonry')
         else:
             log.debug("form errors: %s" % form.errors)
 
