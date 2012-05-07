@@ -104,7 +104,8 @@
                     <!--form enctype="multipart/form-data" method="POST" action="{# url comments:reply comment.id #}"-->
                     <form id="id_comment-form-{{ comment.pk }}"
                         enctype="multipart/form-data" method="POST" action=""> {% csrf_token %}
-                        <input type="hidden" name="parent_comment_id" value="{{ comment.pk }}"/>
+                        <input type="hidden" name="parent_id" value="{{ comment.pk }}"/>
+                        <input type="hidden" name="parent_type" value="comment"/>
                         <textarea name="message" class="comment-message" cols="40" rows="6" id="message-{{comment.id}}" placeholder="{% trans 'Type your response here... ' %}"></textarea>
                         <div class="actions">
                             <span class="reply-comment-counter">(<span class="count">1000</span> {% trans "chars left" %})</span>
