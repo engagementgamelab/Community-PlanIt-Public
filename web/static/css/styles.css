@@ -445,7 +445,7 @@ a {
             height: 25px;
             background: #ff5036;
         }
-
+        
             #mission-progress-individual-marker:before {
                 position: absolute;
                 top: 0px;
@@ -479,7 +479,29 @@ a {
        z-index: 1;
    }
    
+   /* Mission Accomplished */
    
+   #mission-progress-total.mission-accomplished {
+       background: #00A3FF;
+   }
+        #mission-progress-total.mission-accomplished:after {
+            border-left: 10px solid #00A3FF;
+        }
+   
+   #mission-progress-individual.mission-accomplished {
+       background: #00A3FF;
+       text-align: center;
+       padding-left: 20px;
+       width: 100% !important;
+   }
+   
+   #mission-progress-individual.mission-accomplished #mission-progress-individual-marker{
+       display: none;
+   }
+   
+   #mission-progress-total.mission-accomplished #mission-progress-marker {
+       display: none !important;
+   }
    
 /* Siebar-Nav */
 #sidebar-nav {
