@@ -1,12 +1,16 @@
+import os.path
 import datetime
 from decimal import Decimal
 from operator import attrgetter
 from dateutil.relativedelta import relativedelta
 
+from localeurl.utils import strip_path, locale_path
 from cache_utils.decorators import cached
 from stream import utils as stream_utils
 
+from django.conf import settings
 from django.core.cache import cache
+from localeurl.models import reverse
 from django.template.defaultfilters import slugify
 from django.db.models.signals import post_save
 from django.db import models
@@ -152,13 +156,35 @@ class Mission(TranslatableModel):
     def __unicode__(self):
         return self.title
 
+    def get_absolute_url(self, lang):
+        redir = ""
+        if lang.code in dict(settings.LANGUAGES).keys():
+            #spath = strip_path(settings.LOGIN_REDIRECT_URL)[1]
+            spath = '/'
+            redir = "".join([self.instance.get_absolute_url(ssl=not(settings.DEBUG)),
+                                locale_path(spath, lang.code)])
+            # getting rid of the first slash to be used later with
+            # os.path.join
+            default_mission_path = strip_path(reverse('missions:mission', args=(self.slug,)))[1][1:]
+            if default_mission_path is not None:
+                redir = os.path.join(redir, default_mission_path)
+        return redir
+
 stream_utils.register_target(Mission)
 
 # invalidate cache for 'missions' group
 def invalidate_mission(sender, **kwargs):
     log.debug("invalidating cache for group `missions` ")
     cache.invalidate_group('missions')
+    cache.invalidate_group('missions')
+
+    mission = kwargs.get('instance')
+    Mission.objects.for_instance(instance=mission.instance)
 post_save.connect(invalidate_mission, Mission)
 #post_save.connect(invalidate_prof_per_instance, Mission)
 
+def invalidate_activities_for_mission(sender, **kwargs):
+    activity = kwargs.get('instance')
+    log.debug("on_delete. invaliding activities_for_mission %s" %  activity)
+    Mission.objects.activities_for_mission(slug=activity.mission.slug, include_player_submitted=True)
 

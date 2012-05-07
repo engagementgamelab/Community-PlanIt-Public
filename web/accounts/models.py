@@ -258,17 +258,12 @@ class UserProfilePerInstance(models.Model):
         my_spent_flags = PlayerValue.objects.total_flags_for_player(instance=self.instance, user=self.get_user())
         return my_flags - int(my_spent_flags)
 
-    def my_logins_from_stream(self):
-        return Action.objects.get_for_actor(self.get_user()).filter(verb='user_logged_in')
-
     def my_last_login_from_stream(self):
         """
             get the latest login from activity stream 
             return the datetime 
         """
-        logins =  self.my_logins_from_stream()
-        if len(logins) > 0:
-            return sorted(logins, key=attrgetter('datetime'))[-1].datetime
+        return Action.objects.get_for_actor(self.get_user()).filter(verb='user_logged_in').latest('datetime')
 
     @property
     def format_stakes(self):

@@ -7,7 +7,6 @@ from sijax import Sijax
 from stream.models import Action
 
 from localeurl.models import reverse
-from localeurl.utils import strip_path, locale_path
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -68,25 +67,28 @@ def login_ajax(request, authentication_form=AuthenticationForm):
                         instance=current_game,
                         user_profile=user.get_profile()
             )
-            lang = prof_per_instance.preferred_language
-            last_login_datetime = prof_per_instance.my_last_login_from_stream()
-
-            values_path = None
-            if last_login_datetime is not None and current_game.is_active() \
-                    and last_login_datetime < current_game.start_date:
-                log.debug('last login on %s redirect %s to map the future' %(last_login_datetime, prof_per_instance.user_profile.screen_name))
+            #last_login_datetime  = None
+            #my_last_login = prof_per_instance.my_last_login_from_stream()
+            #if my_last_login:
+            #    last_login_datetime = my_last_login.datetime
+            #values_path = None
+            #if last_login_datetime is not None and current_game.is_active() \
+            #        and last_login_datetime < current_game.start_date:
+            #    log.debug('last login on %s redirect %s to map the future' %(last_login_datetime, prof_per_instance.user_profile.screen_name))
                 # getting rid of the first slash to be used later with
                 # os.path.join
-                values_path = strip_path(reverse('values:index'))[1][1:]
+            #    values_path = strip_path(reverse('values:index'))[1][1:]
+            #if values_path is not None:
+            #    redir = os.path.join(redir, values_path)
+            #log.debug("post login redir %s" % redir)
 
-            if lang.code in dict(settings.LANGUAGES).keys():
-                spath = strip_path(settings.LOGIN_REDIRECT_URL)[1]
-                redir = "".join([current_game.get_absolute_url(ssl=not(settings.DEBUG)),
-                                    locale_path(spath, lang.code)])
-                if values_path is not None:
-                    redir = os.path.join(redir, values_path)
-                log.debug("post login redir %s" % redir)
-                return obj_response.redirect(redir)
+            active_mission = Mission.objects.default(current_game)
+            if active_mission:
+                return obj_response.redirect(
+                            active_mission.get_absolute_url(
+                                lang=prof_per_instance.preferred_language
+                            )
+                )
 
             return obj_response.redirect(
                     "".join([
