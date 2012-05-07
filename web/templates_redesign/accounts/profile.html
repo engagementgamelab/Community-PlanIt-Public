@@ -90,8 +90,7 @@
                 <p class="profile-detail">
                 {% if affiliations %}
                     {% for aff in affiliations %} 
-                        {{ aff.name }}<br />
-                        {# <a class="highlight" href="{# url instances:affiliation player.get_profile.instance.slug aff.slug ">{{ aff.name }}</a> #}
+                    <a class="highlight" href="{% url affiliations:affiliation aff.slug %}">{{ aff.name }}</a>
                     {% endfor %}
                 {% endif %}
                 </p>
