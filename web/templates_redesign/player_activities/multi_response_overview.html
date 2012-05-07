@@ -7,7 +7,7 @@
     <div class="column-container">
 
         <a class="btn-back" href="{{ activity.mission.get_absolute_url }}">{% trans "Return to mission" %}</a>
-        <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
+        {% comment %}<a class="btn-forward" href="{# TODO #}">Next Challenge</a>{% endcomment %}
         
         <h1>{{ activity.name|safe }}<span class="points">{{ activity.get_points }}</span></h1>
         {% if activity.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile activity.creationUser.id %}">{% avatar activity.creationUser %}</a> created by <a href="{% url accounts:player_profile activity.creationUser.id %}">{{ activity.creationUser.get_profile.screen_name }}</a></div>{% endif %}

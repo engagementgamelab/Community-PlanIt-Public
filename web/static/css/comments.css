@@ -132,6 +132,11 @@
         .comment-message-attachments img {
             max-width: 270px;
         }
+        
+        .comment-message-attachments-video {
+            width: 270px;
+            height: 150px;
+        }
 
     .comment textarea{
         width: 100%;

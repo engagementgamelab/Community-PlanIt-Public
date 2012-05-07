@@ -113,7 +113,10 @@ jQuery(function($) {
       $(this).next('.attachments-container').toggle();
   });
   
-  /* Init */
-  init_masonry();
-  
+});
+
+
+$(window).bind("load", function() {
+    /* Make sure init_masonry runs last so that it calculates after css/images are loaded */
+    init_masonry();
 });

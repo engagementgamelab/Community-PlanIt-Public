@@ -36,8 +36,8 @@
                 <div class="comment-message-attachments">
                     {% if attachment.is_valid %}
                         <div>
-                            {% if attachment.type == 'video' %}
-                                {% embed_video attachment.url %}
+                            {% if attachment.get_att_type_display == 'Video' %}
+                                <div class="comment-message-attachments-video">{% embed_video attachment.url %}</div>
                             {% else %}
                                 {% if attachment.file %}
                                 <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
