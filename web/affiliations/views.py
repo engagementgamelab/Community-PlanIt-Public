@@ -50,8 +50,13 @@ def affiliation(request, slug, template='affiliations/affiliation.html'):
         raise Http404("could not locate a valid game")
 
     affiliation = get_object_or_404(Affiliation, slug=slug)
-    players = UserProfilePerInstance.objects.all_by_affiliation(request.current_game, slug)
-    total_points = UserProfilePerInstance.objects.total_points_by_affiliation(request.current_game, slug)
+    #players = UserProfilePerInstance.objects.all_by_affiliation(request.current_game, slug)
+    players = affiliation.user_profiles_per_instance.all()
+    total_points = 0
+    for player in players:
+        total_points+=UserProfilePerInstance.objects.total_points_for_profile(request.current_game, player)
+
+    #total_points = UserProfilePerInstance.objects.total_points_by_affiliation(request.current_game, slug)
 
     context = {
         'affiliation': affiliation,
