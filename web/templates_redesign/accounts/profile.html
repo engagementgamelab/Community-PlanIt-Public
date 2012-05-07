@@ -113,6 +113,7 @@
                 <div id="profile-badges" class="profile-detail">
                     {# TODO: Badges #}
                     
+                    {% comment %}
                     <div class="badge-container">
                         <div class="badge moverandshaker"></div>
                         <div class="badge-name">Mover &amp; Shaker</div>
@@ -133,6 +134,15 @@
                         <div class="badge-name">Visionary</div>
                     </div>
                     <br /><br />
+                    
+                    {% endcomment %}
+                    <p style="margin: 10px 0px;">
+                        {% ifequal request.user player %}
+                            {% trans "You currently do not have any badges." %}
+                        {% else %}
+                            {{player.get_profile.screen_name }} {% trans "currently does not have any badges." %}
+                        {% endifequal %}
+                        <p>
                     <a href="{% url badges:all %}" class="btn-forward">{% trans "Go to Badge Gallery" %}</a>
                     
                     {# empty #}
