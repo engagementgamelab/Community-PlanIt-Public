@@ -5,9 +5,9 @@
 <div class="comment-response">
     {{ comment_form.message.errors }}
     <textarea id="message_area" name="message" class="comment_message" cols="80" rows="6"></textarea>
-    {% if errors.message %}
-    <div class="comment-response-counter counter">{{ errors.message }}</div>
-    {% endif %}
+    {# {% if errors.message %} #}
+    {# <div class="comment-response-counter counter">{{ errors.message }}</div> #}
+    {# {% endif %} #}
     <div class="comment-response-counter counter">(<span class="count">1000</span> characters left)</div>
 </div>
 {% endif %}
