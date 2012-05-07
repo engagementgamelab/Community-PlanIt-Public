@@ -16,6 +16,7 @@ from web.comments.models import Comment
 from web.instances.models import Instance
 from web.missions.models import *
 from web.player_activities.models import *
+from web.accounts.models import UserProfilePerInstance
 
 import logging
 log = logging.getLogger(__name__)
@@ -26,25 +27,35 @@ def fetch(request, slug, include_player_submitted=False, template='missions/miss
     # set by middleware
     if not hasattr(request, 'current_game'):
         raise Http404("could not locate a valid game")
+
+    try:
+        prof_per_instance = UserProfilePerInstance.objects.get(
+                    instance=request.current_game, 
+                    user_profile=request.user.get_profile()
+        )
+    except UserProfilePerInstance.DoesNotExist:
+        raise Http404("user for this game is not registered")
+
     
     # TODO: Should only return non-player-created challenges
     mission = get_object_or_404(Mission, slug=slug)
-    my_completed = set(request.prof_per_instance.my_completed_by_mission(mission, include_player_submitted))
+    my_completed = set(prof_per_instance.my_completed_by_mission(mission, include_player_submitted))
     #my_completed = set()
 
-    log.debug("i completed %s challenges" % len(my_completed))
-    my_not_completed = set(
+    log.debug("%s completed %s challenges" % (prof_per_instance, len(my_completed)))
+    my_incomplete = set(
                             Mission.objects.activities_for_mission(
                                         mission.slug, 
                                         include_player_submitted
                             ) 
                         ) - my_completed
-    my_not_completed = sorted(list(my_not_completed), key=attrgetter('name'))
+    my_incomplete = sorted(list(my_incomplete), key=attrgetter('name'))
 
     my_completed = sorted(list(my_completed), key=attrgetter('name'))
 
-    my_not_completed.extend(my_completed)
-    all_activities_sorted = my_not_completed
+    my_incomplete.extend(my_completed)
+    all_activities_sorted = my_incomplete
+    log.debug(all_activities_sorted)
     context = dict(
         activities = all_activities_sorted,
         my_completed = my_completed,

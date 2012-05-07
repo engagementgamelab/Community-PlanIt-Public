@@ -229,8 +229,8 @@ def notifications(request):
         'notifications_page': notifications_page,
     }
 
-    if request.prof_per_instance:
-        context['instance'] = request.prof_per_instance
+    #if request.prof_per_instance:
+    #    context['instance'] = request.prof_per_instance
         
     for notification in notifications_page.object_list:
         if notification.read == False:
