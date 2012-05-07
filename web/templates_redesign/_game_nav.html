@@ -21,7 +21,7 @@
                     <div id="sidebar-nav-profile-badges">{# TODO #}0</div>
                 </div>
                 {% if not city_header %}
-                <div id="sidebar-nav-profile-points">{{ request.prof_per_instance.total_points }}</div>
+                <div id="sidebar-nav-profile-points">{{ my_total_points }}</div>
                 {% endif %}
                 <div id="sidebar-nav-profile-screenname">{{ request.user.get_profile.screen_name }}</div>
             </a>
