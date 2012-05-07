@@ -22,6 +22,7 @@
                 {% include "player_activities/attachments.html" %}
                 <div>{{ activity.question|safe }}</div>
                 <br class="clearfix" />
+                {{ form.response.errors }}
             </div>
             <input type="hidden" name="form" value="multi_response">
         
@@ -33,7 +34,7 @@
                 </ul>
             </div>
         
-            {{ form.response.errors }}
+            
             {% block comment %}{% endblock %}
         
             <div class="activity-response-submit">
