@@ -5,7 +5,7 @@
     {% for comment in comments.all reversed %}
         {% include "comments/comment.html" %}
     {% empty %}
-    There are no comments yet.
+        <div id="no-comments-yet">There are no comments yet.</div>
     {% endfor %}
 </ul>
 {% endwith %}
