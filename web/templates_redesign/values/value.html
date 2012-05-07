@@ -9,6 +9,21 @@
     <script src="{{ STATIC_URL }}js/jquery.masonry.min.js"></script>
     <script src="{{ STATIC_URL }}js/sijax.js"></script>
     <script src="{{ STATIC_URL }}js/comments.js"></script>
+
+    <script>
+    jQuery(function($) {
+        {% include "js/ajax_csrf.html" %}
+        {{ create_comment_sijax_js|safe }}
+
+        $(".btn-yellow").click(function(e){
+            e.preventDefault();
+            var form = $('#id_comment-form-'+$(this).attr('id'))[0];
+            var form_data = Sijax.getFormValues('#id_comment-form-'+$(this).attr('id'));
+            Sijax.request('create_comment', [form_data]);
+            form.reset();
+        });
+    });
+    </script>
 {% endblock %}
 
 {% block game_content %}
@@ -30,19 +45,24 @@
         <div class="column-container">
             <h2>{% trans "Thoughts on This Priority" %}</h2>
             <!-- Add A Comment-->
-            <form enctype="multipart/form-data" action="{{ comment_post_url|default:"."}}" method="POST">
+            {% with value.pk as value_pk %}
+            <form id="id_comment-form-{{ value_pk }}"
+                enctype="multipart/form-data" action="{{ comment_post_url|default:"."}}" method="POST">
                 {% include "comments/duplicate.html" %}
+                <input type="hidden" name="parent_id" value="{{ value_pk }}"/>
+                <input type="hidden" name="parent_type" value="map_the_future"/>
                 <div class="comment-response-submit">
                     <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="36" height="36" />
-                    <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
+                    <input type="submit"  id="{{ value_pk }}"  class="btn-yellow submit" value="Submit" />
                 </div>
             </form>
+            {% endwith %}
         </div>
     </div>
     
     <div class="column-container clearfix">
     <!-- Comments -->
-    {% with comments=player.get_profile.comments %}
+    {% with comments=value.comments %}
             {% include "comments/comments.html" %}
     {% endwith %}
     </div>

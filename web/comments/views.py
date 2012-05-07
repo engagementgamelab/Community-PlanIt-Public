@@ -16,7 +16,8 @@ from django.conf import settings
 from accounts.models import UserProfile, UserProfilePerInstance
 from reports.actions import PointsAssigner
 from answers.models import Answer, AnswerMultiChoice
-from challenges.models import Challenge
+from web.challenges.models import Challenge
+from web.values.models import Value
 from .forms import *
 from .models import Comment
 
@@ -124,6 +125,9 @@ def ajax_create(request, comment_form=CommentForm):
             if parent_type == 'user_profile':
                 comment_parent  = get_object_or_404(UserProfilePerInstance, id=cd.get('parent_id'))
                 stream_description = "commented on a user profile"
+            elif parent_type == 'map_the_future':
+                comment_parent  = get_object_or_404(Value, id=cd.get('parent_id'))
+                stream_description = "commented on a priority"
             elif parent_type == 'comment':
                 comment_parent  = get_object_or_404(Comment, id=cd.get('parent_id'))
                 stream_description = "commented on a comment"
@@ -163,6 +167,12 @@ def ajax_create(request, comment_form=CommentForm):
                             )
                 )
 
+            elif parent_type == 'map_the_future':
+                obj_response.redirect(
+                            reverse('values:detail', 
+                                    args=(comment_parent.pk,)
+                            )
+                )
             elif parent_type == 'comment':
                 context = dict(
                     comment = comment_parent,

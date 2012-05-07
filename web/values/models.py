@@ -26,6 +26,8 @@ class Value(TranslatableModel):
         message = models.CharField(max_length=60, verbose_name='Name'),
         description = models.TextField(max_length=1000, verbose_name='Description', default=''),
     )
+    # comments on the value
+    comments = generic.GenericRelation(Comment)
     objects = ValueManager()
 
     @property
