@@ -72,7 +72,7 @@ def notify_author(request, comment_parent, comment):
     if isinstance(comment_parent, UserProfilePerInstance):
         if request.user != comment_parent.user_profile.user:
             recipient = comment_parent.user_profile.user
-            message = '%s commented on your profile.' % request.user.get_profile.screen_name
+            message = '%s commented on your profile.' % request.user.get_profile().screen_name
 
     elif isinstance(comment_parent, Comment):
         if request.user != comment_parent.user:
