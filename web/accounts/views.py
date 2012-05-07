@@ -420,7 +420,13 @@ def profile(request, id, template_name="accounts/profile.html"):
     stream = Action.objects.get_for_actor(player)[:10]
 
     if request.user == player:
-        profile_per_instance = request.prof_per_instance
+        try:
+            profile_per_instance = UserProfilePerInstance.objects.get(
+                        instance=request.current_game, 
+                        user_profile=request.user.get_profile()
+            )
+        except UserProfilePerInstance.DoesNotExist:
+            raise Http404("user for this game is not registered")
     else:
         try:
             profile_per_instance = UserProfilePerInstance.objects.get(
