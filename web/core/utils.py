@@ -1,6 +1,7 @@
 from nani.utils import get_translation
 
 from django.conf import settings
+from django.http import Http404
 from django.utils.translation import get_language
 from django.contrib.sites.models import RequestSite
 
@@ -35,6 +36,15 @@ def instance_from_request(request):
         return
 
 def missions_bar_context(request, mission=None):
+
+    try:
+        prof_per_instance = UserProfilePerInstance.objects.get(
+                    instance=request.current_game, 
+                    user_profile=request.user.get_profile()
+        )
+    except UserProfilePerInstance.DoesNotExist:
+        raise Http404("user for this game is not registered")
+
     if not mission:
         mission = Mission.objects.default(instance=request.current_game)
 
@@ -43,13 +53,13 @@ def missions_bar_context(request, mission=None):
             UserProfilePerInstance.objects.progress_data_for_mission(
                         request.current_game, 
                         mission, 
-                        request.prof_per_instance.user_profile
+                        prof_per_instance.user_profile
             )
     else:
         my_points_for_mission = progress_percentage  = 0
 
     all_missions_for_game = Mission.objects.for_instance(instance=request.current_game)
-    my_flags_count = request.prof_per_instance.flags
+    my_flags_count = prof_per_instance.flags
     log.debug("i have %s flags" % my_flags_count)
     my_flags_range = range(0, my_flags_count)
 
