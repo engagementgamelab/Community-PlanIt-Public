@@ -7,7 +7,7 @@
     
     {# HEADERS #} 
     <a class="btn-back" href="{{ activity.mission.get_absolute_url }}">{% trans "Return to mission" %}</a>
-    <a class="btn-forward" href="{# TODO #}">Next Challenge</a>
+    {% comment %}<a class="btn-forward" href="{# TODO #}">Next Challenge</a>{% endcomment %}
 
     {# include "player_activities/official_responses.html" #}
     <h1>{{ activity.name|safe }}<span class="points">{{ activity.get_points }}</span></h1>
