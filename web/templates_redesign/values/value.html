@@ -62,9 +62,12 @@
     
     <div class="column-container clearfix">
     <!-- Comments -->
-    {% with comments=value.comments %}
-            {% include "comments/comments.html" %}
-    {% endwith %}
+        <div class="comments embedded">
+            {% if value.comments %}{% include 'player_activities/_corner_stamp.html' %}{% endif %}
+            {% with comments=value.comments %}
+                {% include "comments/comments.html" %}
+            {% endwith %}
+        </div>
     </div>
 </div>    
 {% endblock %}

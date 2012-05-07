@@ -30,6 +30,12 @@
             background: linear-gradient(top,  #f7ff5a 0%,#f6f6f6 100%); /* W3C */
             filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7ff5a', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-9 */
         }
+
+    #no-comments-yet {
+        margin: 20px;
+        color: #999;
+        font-style: italic;
+    }
     
 .thread {
     float: left;
