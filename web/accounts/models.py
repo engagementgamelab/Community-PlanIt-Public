@@ -162,7 +162,10 @@ class UserProfilePerInstanceManager(models.Manager):
 
     @cached(60*60*24)
     def total_points_for_profile(self, instance, user_profile):
-        return self.get(instance=instance, user_profile=user_profile).total_points
+        try:
+            return self.get(instance=instance, user_profile=user_profile).total_points
+        except UserProfilePerInstance.DoesNotExist:
+            return 0
 
     @cached(60*60*24)
     def progress_data_for_mission(self, instance, mission, user_profile):
@@ -172,14 +175,11 @@ class UserProfilePerInstanceManager(models.Manager):
     #def latest_instance_by_profile(self, user_profile, domain):
     #    return self.objects.filter(user_profile=user_profile).latest_for_city_domain(domain)
 
-    def all_by_affiliation(self, instance, affiliation_slug):
-        return self.filter(instance=instance, affils__slug=affiliation_slug)
-
-    def total_points_by_affiliation(self, instance, affiliation_slug):
-        total_points = 0
-        for player_profile in self.filter(instance=instance, affils__slug=affiliation_slug):
-            total_points+=self.total_points_for_profile(instance, player_profile)
-        return total_points
+    #def total_points_by_affiliation(self, instance, affiliation_slug):
+    #    total_points = 0
+    #    for player_profile in self.all_by_affiliation(instance, affiliation_slug):
+    #        total_points+=self.total_points_for_profile(instance, player_profile)
+    #    return total_points
 
 class UserProfilePerInstance(models.Model):
     user_profile = models.ForeignKey("UserProfile", related_name='user_profiles_per_instance')
@@ -189,7 +189,7 @@ class UserProfilePerInstance(models.Model):
     stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
 
     stakes = models.ManyToManyField(UserProfileStake, blank=True, null=True, related_name='stakes')
-    affils = models.ManyToManyField(Affiliation, blank=True, null=True, related_name='affiliations')
+    affils = models.ManyToManyField(Affiliation, blank=True, null=True, related_name='user_profiles_per_instance')
     preferred_language = models.ForeignKey(Language)
 
     # comments on the profile from others

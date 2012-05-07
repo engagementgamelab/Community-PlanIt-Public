@@ -19,7 +19,7 @@
         
         <h2>{% trans "Members" %}</h2>
             {% for player in players %}
-            <div class="affiliations-affiliation"><a href="{% url accounts:player_profile player.user_profile.pk %}">{{ player.user_profile.screen_name }}</a></div>
+            <div class="affiliations-affiliation"><a href="{% url accounts:player_profile player.user_profile.user.pk %}">{{ player.user_profile.screen_name }}</a></div>
             {% endfor %}
         
     </div>
