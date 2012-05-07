@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 
-from accounts.models import UserProfile
+from accounts.models import UserProfile, UserProfilePerInstance
 from reports.actions import PointsAssigner
 from answers.models import Answer, AnswerMultiChoice
 from challenges.models import Challenge
@@ -65,40 +65,44 @@ def ajax_like(request, id):
         stream_utils.action.send(request.user, 'liked', target=c, description="liked a comment")
     return HttpResponse(str(c.likes.all().count()))
 
-
-
-def notify_author(request, parent_comment, comment):
-    topic = parent_comment.topic
+def notify_author(request, comment_parent, comment):
     message = None
-
     recipient = None
-    if request.user != parent_comment.user:
-        #if isinstance(topic, Challenge):
-        #    message = "%s replied to a comment on %s" % (
-        #        request.user.get_profile().screen_name,
-        #        topic
-        #    )
-        #    recipient = topic.user
-        #elif isinstance(topic, UserProfile):
-        #    message = "%s replied to a comment on your profile" % (
-        #        request.user.get_profile().screen_name
-        #    )
-        #    recipient = topic.user
-        #else:
-        #    message = "%s replied to your comment on %s" % (
-        #        request.user.get_profile().screen_name,
-        #        topic
-        #    )
-        #    recipient = parent_comment.user
-        if isinstance(topic, Answer) or isinstance(topic, AnswerMultiChoice):
-            message = "%s replied to your answer %s" %(
-                request.user.get_profile().screen_name,
-                topic
-            )
-            try:
-                recipient = topic.answerUser
-            except AttributeError:
-                recipient = topic.user
+
+    if isinstance(comment_parent, UserProfilePerInstance):
+        if request.user != comment_parent.user_profile.user:
+            recipient = comment_parent.user_profile.user
+            message = '%s commented on your profile.' % request.user.get_profile().screen_name
+
+    elif isinstance(comment_parent, Comment):
+        if request.user != comment_parent.user:
+            topic = comment_parent.topic
+            #if isinstance(topic, Challenge):
+            #    message = "%s replied to a comment on %s" % (
+            #        request.user.get_profile().screen_name,
+            #        topic
+            #    )
+            #    recipient = topic.user
+            #elif isinstance(topic, UserProfile):
+            #    message = "%s replied to a comment on your profile" % (
+            #        request.user.get_profile().screen_name
+            #    )
+            #    recipient = topic.user
+            #else:
+            #    message = "%s replied to your comment on %s" % (
+            #        request.user.get_profile().screen_name,
+            #        topic
+            #    )
+            #    recipient = parent_comment.user
+            if isinstance(topic, Answer) or isinstance(topic, AnswerMultiChoice):
+                message = "%s replied to your answer %s" %(
+                    request.user.get_profile().screen_name,
+                    topic
+                )
+                try:
+                    recipient = topic.answerUser
+                except AttributeError:
+                    recipient = topic.user
 
     if recipient is not None and message is not None:
         recipient.notifications.create(content_object=comment, message=message)
@@ -114,11 +118,19 @@ def ajax_create(request, comment_form=CommentForm):
         form = comment_form(data=form_data)
         if form.is_valid():
             cd = form.cleaned_data
-            parent_comment = get_object_or_404(Comment, id=cd.get('parent_comment_id'))
-            instance = parent_comment.instance
+            log.debug("processed comment_form. cleaned_data: %s" % cd)
+            # convert this to work for other types of parent objects
+            parent_type = cd.get('parent_type')
+            if parent_type == 'user_profile':
+                comment_parent  = get_object_or_404(UserProfilePerInstance, id=cd.get('parent_id'))
+                stream_description = "commented on a user profile"
+            elif parent_type == 'comment':
+                comment_parent  = get_object_or_404(Comment, id=cd.get('parent_id'))
+                stream_description = "commented on a comment"
+            instance = comment_parent.instance
 
-            c = parent_comment.comments.create(
-                content_object=parent_comment,
+            c = comment_parent.comments.create(
+                content_object=comment_parent,
                 message=cd.get(u'message'),
                 user=request.user,
                 instance=instance,
@@ -126,13 +138,13 @@ def ajax_create(request, comment_form=CommentForm):
             log.debug("comment created. %s" % vars(c))
             stream_verb = 'commented'
             stream_utils.action.send(
-                            request.user, 
-                            stream_verb, 
-                            target=parent_comment, 
-                            action_object=c, 
-                            description="commented on a comment"
+                            request.user,
+                            stream_verb,
+                            target=comment_parent,
+                            action_object=c,
+                            description=stream_description
             )
-            notify_author(request, parent_comment, c)
+            notify_author(request, comment_parent, c)
 
             #from celery.execute import send_task
             #result = send_task("badges.tasks.gen_badges", [request.user.pk, stream_verb, action_object_])
@@ -144,13 +156,13 @@ def ajax_create(request, comment_form=CommentForm):
             #)
             # gen_badges.apply_async(args=[user_id,], kwargs=task_kwargs)
             context = dict(
-                comment = parent_comment,
+                comment = comment_parent,
                 STATIC_URL = settings.STATIC_URL,
                 MEDIA_URL = settings.MEDIA_URL,
                 request = request,
             )
             rendered_comments = render_to_string('comments/nested_replies.html', context)
-            obj_response.html('#replies-'+str(parent_comment.pk), rendered_comments)
+            obj_response.html('#replies-'+str(comment_parent.pk), rendered_comments)
             obj_response.call('init_masonry')
         else:
             log.debug("form errors: %s" % form.errors)

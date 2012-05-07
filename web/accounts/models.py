@@ -183,6 +183,9 @@ class UserProfilePerInstance(models.Model):
     affils = models.ManyToManyField(Affiliation, blank=True, null=True, related_name='affiliations')
     preferred_language = models.ForeignKey(Language)
 
+    # comments on the profile from others
+    comments = generic.GenericRelation(Comment)
+
     date_created = models.DateTimeField(auto_now_add=True)
 
     objects = UserProfilePerInstanceManager()
@@ -270,6 +273,8 @@ class UserProfilePerInstance(models.Model):
         unique_together = ('user_profile', 'instance',)
         ordering = ('date_created', 'user_profile__user__last_name', )
 
+stream_utils.register_target(UserProfilePerInstance)
+
 def determine_path(instance, filename):
     return os.path.join('uploads', 'avatars', str(instance.user.id), filename)
 
@@ -305,6 +310,8 @@ class UserProfile(models.Model):
     totalPoints = models.IntegerField(default=0)
     # points to the next coin
     coinPoints = models.IntegerField(default=0)
+
+    # to be removed. comments  are now game specific
     # comments on the profile from others
     comments = generic.GenericRelation(Comment)
 

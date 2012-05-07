@@ -2,6 +2,8 @@ import os.path
 import datetime
 import urlparse
 
+from sijax import Sijax
+
 from stream.models import Action
 
 from localeurl.models import reverse
@@ -434,6 +436,7 @@ def profile(request, id, template_name="accounts/profile.html"):
                             user_profile = player.get_profile()
                     ).values_list('instance__pk', flat=True)
     )
+
     context = {
         'player': player,
         'profile_per_instance' : profile_per_instance,
@@ -441,6 +444,14 @@ def profile(request, id, template_name="accounts/profile.html"):
         'affiliations': profile_per_instance.affils.all(),
         'my_games': my_games,
     }
+
+    create_comment_sijax = Sijax()
+    create_comment_sijax.set_request_uri(reverse('comments:ajax-create'))
+    context.update(
+            {
+                'create_comment_sijax_js' : create_comment_sijax.get_js(),
+        }
+    )
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
     context.update(missions_bar_context(request))

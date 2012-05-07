@@ -17,6 +17,25 @@
     <script src="{{ STATIC_URL }}js/sijax.js"></script>
     <script src="{{ STATIC_URL }}js/comments.js"></script>
 
+
+    <script>
+    jQuery(function($) {
+      {% include "js/ajax_csrf.html" %}
+      {{ create_comment_sijax_js|safe }}
+
+
+    $(".btn-yellow").click(function(e){
+        e.preventDefault();
+        var form = $('#id_comment-form-'+$(this).attr('id'))[0];
+        var form_data = Sijax.getFormValues('#id_comment-form-'+$(this).attr('id'));
+        Sijax.request('create_comment', [form_data]);
+        form.reset();
+    });
+
+    });
+    </script>
+
+
 {% endblock %}
 
 
@@ -162,17 +181,20 @@
         <div class="column-container">
             <h2>{% trans "Community Messages" %}</h2>
             <!-- Add A Comment-->
-            <form enctype="multipart/form-data" action="{{ comment_post_url|default:"."}}" method="POST">
+            <form id="id_comment-form-{{ profile_per_instance.pk }}"
+                enctype="multipart/form-data" action="{{ comment_post_url|default:"."}}" method="POST">
                 {% include "comments/duplicate.html" %}
+                <input type="hidden" name="parent_id" value="{{ profile_per_instance.pk }}"/>
+                <input type="hidden" name="parent_type" value="user_profile"/>
                 <div class="comment-response-submit">
                     <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="36" height="36" />
-                    <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
+                    <input type="submit" id="{{ profile_per_instance.pk }}" class="btn-yellow submit" value="Submit" />
                 </div>
             </form>
         
             <br class="clearfix"/>
             <!-- Comments -->
-            {% with comments=player.get_profile.comments %}
+            {% with comments=profile_per_instance.comments %}
                     {% include "comments/comments.html" %}
             {% endwith %}
         
