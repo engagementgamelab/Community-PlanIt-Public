@@ -223,14 +223,14 @@ class UserProfilePerInstance(models.Model):
             return [getattr(action, 'action_object_playeractivity') or \
                     getattr(action, 'action_object_playermapactivity') or \
                     getattr(action, 'action_object_playerempathyactivity') for action in actions]
-        activities_for_mission = mission.get_activities(include_player_submitted)
+        activities_for_mission = Mission.objects.activities_for_mission(mission.slug, include_player_submitted)
         if len(activities_for_mission) == 0:
             return []
         # do not pass en empty list to Action.get_for_action_objects
         # it will blow up
         actions = Action.objects.get_for_action_objects(activities_for_mission)
-        actions_completed_activities = filter(lambda a: a.verb == "activity_completed" and a.actor==self.get_user(), actions)
-        return activities_from_actions(actions_completed_activities)
+        actions = actions.filter(actor_user=self.get_user(), verb='activity_completed')
+        return activities_from_actions(actions)
 
     @property
     def flags(self):
@@ -247,7 +247,7 @@ class UserProfilePerInstance(models.Model):
         return my_flags - int(my_spent_flags)
 
     def my_logins_from_stream(self):
-        return filter(lambda a: a.verb=='user_logged_in', Action.objects.get_for_actor(self.get_user()))
+        return Action.objects.get_for_actor(self.get_user()).filter(verb='user_logged_in')
 
     def my_last_login_from_stream(self):
         """

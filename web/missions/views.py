@@ -1,4 +1,5 @@
 import datetime
+from operator import attrgetter
 
 #from stream.models import Action
 
@@ -29,10 +30,19 @@ def fetch(request, slug, include_player_submitted=False, template='missions/miss
     # TODO: Should only return non-player-created challenges
     mission = get_object_or_404(Mission, slug=slug)
     my_completed = set(request.prof_per_instance.my_completed_by_mission(mission, include_player_submitted))
+    #my_completed = set()
+
     log.debug("i completed %s challenges" % len(my_completed))
-    my_not_completed = set(mission.get_activities(include_player_submitted)) - my_completed
-    my_not_completed = list(my_not_completed)
-    my_completed = list(my_completed)
+    my_not_completed = set(
+                            Mission.objects.activities_for_mission(
+                                        mission.slug, 
+                                        include_player_submitted
+                            ) 
+                        ) - my_completed
+    my_not_completed = sorted(list(my_not_completed), key=attrgetter('name'))
+
+    my_completed = sorted(list(my_completed), key=attrgetter('name'))
+
     my_not_completed.extend(my_completed)
     all_activities_sorted = my_not_completed
     context = dict(
