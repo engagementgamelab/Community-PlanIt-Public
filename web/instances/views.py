@@ -110,50 +110,50 @@ def leaderboard(request, template='instances/leaderboard.html'):
     context.update(missions_bar_context(request))
     return render(request, template, context)
 
-@login_required
-def affiliation(request, instance_slug, affiliation_slug, template='affiliations/base.html'):
-    aff = get_object_or_404(Affiliation, slug=affiliation_slug)
+#@login_required
+#def affiliation(request, instance_slug, affiliation_slug, template='affiliations/base.html'):
+#    aff = get_object_or_404(Affiliation, slug=affiliation_slug)
 
-    players = aff.userprofile_set.all()
-    affiliation_points = players.aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
+#    players = aff.userprofile_set.all()
+#    affiliation_points = players.aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
 
     #affiliation_leaderboard = []
     #for up in UserProfile.objects.filter(affiliations__contains=aff).order_by("-totalPoints"):
     #    affiliation_leaderboard.append(up.user)
-    affiliation_leaderboard = players.order_by('-totalPoints')
+#    affiliation_leaderboard = players.order_by('-totalPoints')
 
-    context = {
-        'affiliation': aff,
-        'players': players,
-        'affiliation_leaderboard': affiliation_leaderboard,
-        'affiliations_leaderboard': _get_affiliations_leaderboard(),    
-        'affiliation_points': affiliation_points,
-    }
-    return render(request, template, context)
+#    context = {
+#        'affiliation': aff,
+#        'players': players,
+#        'affiliation_leaderboard': affiliation_leaderboard,
+#        'affiliations_leaderboard': _get_affiliations_leaderboard(),    
+#        'affiliation_points': affiliation_points,
+#    }
+#    return render(request, template, context)
 
 
-def _get_affiliations_leaderboard():
-    affiliations = []  
-    for user in UserProfile.objects.all().order_by("-totalPoints"):        
-        if user.affiliations is not None:
-            user_affiliations = user.affiliations.split(', ')
-            for affiliation in user_affiliations:
-                if affiliation != u'':
-                    if not affiliation.strip() == '' and not affiliation in affiliations:
-                        affiliations.append(affiliation)    
-    return affiliations
+#def _get_affiliations_leaderboard():
+#    affiliations = []  
+#    for user in UserProfile.objects.all().order_by("-totalPoints"):        
+#        if user.affiliations is not None:
+#            user_affiliations = user.affiliations.split(', ')
+#            for affiliation in user_affiliations:
+#                if affiliation != u'':
+#                    if not affiliation.strip() == '' and not affiliation in affiliations:
+#                        affiliations.append(affiliation)    
+#    return affiliations
 
-@login_required
-def affiliations_all(request, slug, template='affiliations/all.html'):
-    instance = get_object_or_404(Instance, slug=slug)
+#@login_required
+#def affiliations_all(request, slug, template='affiliations/all.html'):
+#    instance = get_object_or_404(Instance, slug=slug)
     #affiliations = _get_affiliations_leaderboard()
     #affiliations = UserProfile.objects.filter(instance=instance) #.aggregate(Sum('totalPoints'))['totalPoints__sum'] or 0
 
-    context = {
-            'instance': instance, 
-            'affiliations': instance.affiliations.all().order_by('name')
-    }
-    return render(request, template, context)
+#    context = {
+#            'instance': instance, 
+#            'affiliations': instance.affiliations.all().order_by('name')
+#    }
+#    return render(request, template, context)
 
 #@ensure_csrf_cookie
 def ajax_load_games_by_city(request, for_city_id):

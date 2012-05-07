@@ -24,7 +24,11 @@
          </div>
         
         {% for affiliation in affiliations %}
+            {% if affiliation.slug != ''%}
             <div class="affiliations-affiliation"><a href="{% url affiliations:affiliation affiliation.slug %}">{{ affiliation.name }}</a></div>
+            {% else %}
+            <div class="affiliations-affiliation">{{ affiliation.name }}</div>
+            {% endif %}
         {% endfor %}
     </div>
     

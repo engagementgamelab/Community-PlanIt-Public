@@ -172,6 +172,15 @@ class UserProfilePerInstanceManager(models.Manager):
     #def latest_instance_by_profile(self, user_profile, domain):
     #    return self.objects.filter(user_profile=user_profile).latest_for_city_domain(domain)
 
+    def all_by_affiliation(self, instance, affiliation_slug):
+        return self.filter(instance=instance, affils__slug=affiliation_slug)
+
+    def total_points_by_affiliation(self, instance, affiliation_slug):
+        total_points = 0
+        for player_profile in self.filter(instance=instance, affils__slug=affiliation_slug):
+            total_points+=self.total_points_for_profile(instance, player_profile)
+        return total_points
+
 class UserProfilePerInstance(models.Model):
     user_profile = models.ForeignKey("UserProfile", related_name='user_profiles_per_instance')
     instance = models.ForeignKey(Instance)

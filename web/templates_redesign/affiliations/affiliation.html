@@ -13,12 +13,14 @@
         
         <h1 id="affiliation-name">{{ affiliation.name }}</h1>
         
-        <div><span id="affiliation-points">{# TODO #}5,775</span> total points</div>
+        <div><span id="affiliation-points">{{ total_points}}</span> total points</div>
     
         <br /><br />
         
         <h2>{% trans "Members" %}</h2>
-        
+            {% for player in players %}
+            <div class="affiliations-affiliation"><a href="{% url accounts:player_profile player.user_profile.pk %}">{{ player.user_profile.screen_name }}</a></div>
+            {% endfor %}
         
     </div>
     
