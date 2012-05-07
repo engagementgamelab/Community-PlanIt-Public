@@ -58,7 +58,9 @@
             <p>{% trans "No responses submitted" %}</p>
         {% endif %}        
     {% else %}
-         <h2>{% trans "Complete the activity to see everyone's responses" %}</h2>
+        <br />
+        <h3>{% trans "Complete the activity to see everyone's responses" %}</h3>
+        <a href="{{ activity.get_activity_url }}" class="btn-blue">Play this Challenge</a>
     {% endif %}
 </div>
 
