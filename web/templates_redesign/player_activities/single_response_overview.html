@@ -20,7 +20,7 @@
             <div>
                 {{ activity.question|safe }}
             </div>
-            {% if activity.is_trivia %}
+            {% if activity.is_trivia and is_completed %}
                 <div class="activity-question-trivia-result">
                     {% ifequal myAnswer.selected activity.get_trivia_answer %}
                         <span class="activity-question-trivia-correct">{{ activity.get_trivia_answer }}</span> is correct! You just earned {{ activity.get_pointed }} points!
