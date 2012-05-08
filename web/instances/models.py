@@ -113,6 +113,7 @@ class InstanceManager(TranslationManager):
         qs = self.language(get_language()).exclude(is_disabled=True)
         return qs.filter(start_date__lte=self.now).language(get_language()).distinct()
 
+    @cached(60*60*24)
     def current(self, for_city=None):
         # basically, active and future
         qs = self.language(get_language()).exclude(is_disabled=True)
