@@ -78,8 +78,13 @@ class Affiliation(models.Model):
             self.slug = slugify(self.name)[:100]
         super(Affiliation, self).save()
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('affiliations:affiliation', (self.slug, ))
+
     class Meta:
         ordering = ('name',)
+
 
 
 class InstanceManager(TranslationManager):
@@ -180,19 +185,19 @@ class Instance(TranslatableModel):
     def coin_count(self):
         return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
 
-    def dump_users(self):
-        from accounts.models import UserProfile
-        profiles = UserProfile.objects.filter(instance=self)
-        out = ["Instance: %s" % self.title,]
-        for prof in profiles:
-            u = prof.user
-            prefix = u""
-            if u in self.curators.all():
-                prefix = u"CURATOR: "
-            out.append(u"%s %s %s <%s>, username: %s" %(prefix, u.first_name.capitalize(), u.last_name.capitalize(), 
-                                                prof.email, u.username)
-            )
-        return out
+    #def dump_users(self):
+    #    from accounts.models import UserProfile
+    #    profiles = UserProfile.objects.filter(instance=self)
+    #    out = ["Instance: %s" % self.title,]
+    #    for prof in profiles:
+    #        u = prof.user
+    #        prefix = u""
+    #        if u in self.curators.all():
+    #            prefix = u"CURATOR: "
+    #        out.append(u"%s %s %s <%s>, username: %s" %(prefix, u.first_name.capitalize(), u.last_name.capitalize(), 
+    #                                            prof.email, u.username)
+    #        )
+    #    return out
         
     def end_date(self):
         missions = self.missions.order_by('-end_date')
@@ -271,3 +276,4 @@ class NotificationRequest(models.Model):
 
     def __unicode__(self):
         return '{0}: {1}'.format(self.instance, self.email)
+
