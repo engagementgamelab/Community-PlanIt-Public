@@ -20,7 +20,7 @@ from django.contrib import messages
 
 from .forms import NotificationRequestForm
 from .models import *
-from .utils import leaderboard_for_game
+from web.core.models import PlayerLeaderboard, AffiliationLeaderboard
 from web.core.utils import missions_bar_context
 from web.accounts.forms import *
 from web.accounts.models import *
@@ -106,10 +106,12 @@ def stream(request, template='instances/stream.html'):
 @login_required
 def leaderboard(request, template='instances/leaderboard.html'):
     # expecting a list of tuples => (user_profile_per_instance, screen name,  points)
-    players_leaderboard = leaderboard_for_game(request.current_game)
-    log.debug(players_leaderboard)
+    players_leaderboard = PlayerLeaderboard.objects.for_game(request.current_game)
+    affiliations_leaderboard = AffiliationLeaderboard.objects.for_game(request.current_game)
+    #log.debug(players_leaderboard)
     context = {
         'players_leaderboard': players_leaderboard,
+        'affiliations_leaderboard': affiliations_leaderboard,
     }
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage

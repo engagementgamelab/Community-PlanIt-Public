@@ -18,8 +18,9 @@
         <br /><br />
         
         <h2>{% trans "Members" %}</h2>
+            {# players are instances of accounts.UserProfilePerInstance #}
             {% for player in players %}
-            <div class="affiliations-affiliation"><a href="{% url accounts:player_profile player.user_profile.user.pk %}">{{ player.user_profile.screen_name }}</a></div>
+            <div class="affiliations-affiliation"><a href="{{ player.get_absolute_url }}">{{ player.user_profile.screen_name }}</a></div>
             {% endfor %}
         
     </div>

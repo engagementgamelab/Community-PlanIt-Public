@@ -30,13 +30,13 @@
 
     <div class="column-half clearfix">
         <div class="column-container">
-            <h2>Individuals {{ players_leaderboard|length }} {{ players_leaderboard.0.2 }}</h2>
+            <h2>Individuals</h2>
             <div id="leaderboard-players" class="leaderboard-container">
-                {% for prof_per_instance, screen_name, points in players_leaderboard %}
+                {% for lb_entry in players_leaderboard %}
                 <div class="leaderboard-standings">
                     <div class="leaderboard-standings-rank">{{ forloop.counter }}</div>
-                    <div class="leaderboard-standings-name"><a href="{{ prof_per_instance.get_absolute_url }}">{{ screen_name }}</a></div>
-                    <div class="leaderboard-standings-points">{{ points }}</div>
+                    <div class="leaderboard-standings-name"><a href="{{ lb_entry.absolute_url }}">{{ lb_entry.screen_name }}</a></div>
+                    <div class="leaderboard-standings-points">{{ lb_entry.points }}</div>
                 </div>
                 {% endfor %}
             
@@ -47,25 +47,14 @@
         <div class="column-container">
             <h2>Affiliations</h2>
             
-            {# TODO: for leaderboard in affiliations_leaderboard #}
             <div id="leaderboard-affiliations" class="leaderboard-container">
+                {% for lb_entry in affiliations_leaderboard %}
                 <div class="leaderboard-standings">
-                    <div class="leaderboard-standings-rank">1</div>
-                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
-                    <div class="leaderboard-standings-points">12</div>
+                    <div class="leaderboard-standings-rank">{{ forloop.counter }}</div>
+                    <div class="leaderboard-standings-name"><a href="{{ lb_entry.absolute_url }}">{{ lb_entry.name }}</a></div>
+                    <div class="leaderboard-standings-points">{{ lb_entry.points}}</div>
                 </div>
-            
-                <div class="leaderboard-standings">
-                    <div class="leaderboard-standings-rank">1</div>
-                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
-                    <div class="leaderboard-standings-points">12</div>
-                </div>
-            
-                <div class="leaderboard-standings">
-                    <div class="leaderboard-standings-rank">1</div>
-                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
-                    <div class="leaderboard-standings-points">12</div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>

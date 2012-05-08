@@ -10,11 +10,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 
-from web.instances.models import *
-from web.accounts.models import *
-from web.missions.models import *
-from web.challenges.models import *
-from web.accounts.forms import *
+from web.core.models import AffiliationLeaderboard
+from web.instances.models import Affiliation
+from web.accounts.forms import UserProfileVariantsForInstance
 
 from web.core.utils import missions_bar_context
 
@@ -50,18 +48,18 @@ def affiliation(request, slug, template='affiliations/affiliation.html'):
         raise Http404("could not locate a valid game")
 
     affiliation = get_object_or_404(Affiliation, slug=slug)
+    leaderboard_entry = AffiliationLeaderboard.objects.get(instance=request.current_game, affiliation=affiliation)
     #players = UserProfilePerInstance.objects.all_by_affiliation(request.current_game, slug)
-    players = affiliation.user_profiles_per_instance.all()
-    total_points = 0
-    for player in players:
-        total_points+=UserProfilePerInstance.objects.total_points_for_profile(request.current_game, player)
-
+    players = affiliation.user_profiles_per_instance.filter(instance=request.current_game).order_by('user_profile__user__first_name')
+    #total_points = 0
+    #for player in players:
+    #    total_points+=UserProfilePerInstance.objects.total_points_for_profile(request.current_game, player)
     #total_points = UserProfilePerInstance.objects.total_points_by_affiliation(request.current_game, slug)
 
     context = {
         'affiliation': affiliation,
         'players': players,
-        'total_points': total_points,
+        'total_points': leaderboard_entry.points,
     }
     context.update(missions_bar_context(request))
 
