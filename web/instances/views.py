@@ -105,13 +105,24 @@ def stream(request, template='instances/stream.html'):
 
 @login_required
 def leaderboard(request, template='instances/leaderboard.html'):
-    # expecting a list of tuples => (user_profile_per_instance, screen name,  points)
     players_leaderboard = PlayerLeaderboard.objects.for_game(request.current_game)
+
+    try:
+        all_names = list(players_leaderboard.values_list('screen_name', flat=True))
+        my_name = request.user.get_profile().screen_name 
+        my_rank = all_names.index(my_name)+1
+        my_total_points = UserProfilePerInstance.objects.total_points_for_profile(request.current_game, request.user.get_profile())
+    except:
+        my_rank = 0
+        my_total_points = 0
+
     affiliations_leaderboard = AffiliationLeaderboard.objects.for_game(request.current_game)
-    #log.debug(players_leaderboard)
+
     context = {
         'players_leaderboard': players_leaderboard,
         'affiliations_leaderboard': affiliations_leaderboard,
+        'my_rank': my_rank,
+        'my_total_points': my_total_points,
     }
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage

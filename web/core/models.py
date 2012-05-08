@@ -12,7 +12,7 @@ class PlayerLeaderboardManager(models.Manager):
 
     #@cached(60*60*24)
     def for_game(self, game):
-        return self.filter(player__instance=game).exclude(points=0).order_by('-points')
+        return self.filter(player__instance=game).exclude(points=0).order_by('-points', 'player__user_profile__user__first_name')
 
 class PlayerLeaderboard(models.Model):
     player = models.ForeignKey(UserProfilePerInstance, unique=True, related_name="player_leaderboard_entries" )
@@ -29,7 +29,7 @@ class AffiliationLeaderboardManager(models.Manager):
 
     #@cached(60*60*24)
     def for_game(self, game):
-        return self.filter(instance=game).exclude(points=0).order_by('-points')
+        return self.filter(instance=game).exclude(points=0).order_by('-points', 'name')
 
 
 class AffiliationLeaderboard(models.Model):
