@@ -102,7 +102,8 @@ def rebuild_affiliation_leaderboard(game, affiliations):
                 continue
             points+=points_for_player
         lb.name = affiliation.name
-        lb.absolute_url = affiliation.get_absolute_url()
+        if affiliation.slug.strip() != '':
+            lb.absolute_url = affiliation.get_absolute_url()
         lb.points = points
         lb.date_last_built = datetime.datetime.now()
         lb.save()
