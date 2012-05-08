@@ -92,7 +92,7 @@ def all(request):
 @login_required
 def stream(request, template='instances/stream.html'):
 
-    stream_for_game = Action.objects.get_for_target(request.current_game)
+    stream_for_game = Action.objects.get_for_target(request.current_game).order_by('-datetime')
     completed_challenges = filter(lambda a: a.verb == "activity_completed", stream_for_game)
 
     context = {

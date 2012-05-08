@@ -18,6 +18,7 @@
         
         .leaderboard-standings-name {
             margin: 0px 20px;
+            width: 250px;
             float: left;
         }
         
@@ -27,7 +28,7 @@
         }
     
 
-    .leaderboard-container .leaderboard-standings:nth-child(1) {
+/*    .leaderboard-container .leaderboard-standings:nth-child(1) {
         background: #f7ff59;
     }
     
@@ -37,7 +38,7 @@
     
     .leaderboard-container .leaderboard-standings:nth-child(3) {
         background: #f2f7ed;
-    }
+    }*/
     
 #stream {
 }
