@@ -58,9 +58,23 @@
         color: #999;
     }
     
-        #mapthefuture-controls-saved{
+        #mapthefuture-controls-status {
+            position: relative;
+        }
+        
+        
+        #mapthefuture-controls-saved {
+            position: absolute;
+            top: 0px;
+            left: 0px;
             padding-left: 25px;
             background: url('../../../../static/missions/img/icon-mission-activities-completed.png') no-repeat left center;
+        }
+        
+        #mapthefuture-controls-error {
+            position: absolute;
+            top: -5px;
+            left: 0px;
         }
         
 #mapthefuture-saved {
