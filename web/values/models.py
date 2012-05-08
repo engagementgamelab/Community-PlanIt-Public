@@ -35,7 +35,7 @@ class Value(TranslatableModel):
         return str(self.message)
 
     def __unicode__(self):
-        return self.safe_translation_getter('message', '%s' % self.pk)
+        return self.message
 
     @models.permalink
     def get_absolute_url(self):
