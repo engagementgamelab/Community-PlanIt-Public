@@ -24,7 +24,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.datastructures import SortedDict
 
-from web.accounts.models import UserProfile
+from web.accounts.models import UserProfile, UserProfilePerInstance
 from web.attachments.models import Attachment
 from web.comments.forms import CommentForm
 from web.comments.models import Comment
@@ -70,11 +70,24 @@ def spend(request):
     else:
         raise Http404("could not locate a valid game")
 
+
+    try:
+        prof_per_instance = UserProfilePerInstance.objects.get(
+                    instance=request.current_game, 
+                    user_profile=request.user.get_profile()
+        )
+    except UserProfilePerInstance.DoesNotExist:
+        raise Http404("user for this game is not registered")
+
     values = list(Value.objects.filter(instance=current_instance).order_by('pk'))
 
     log.debug("querydict: %s " % request.POST.keys()[0])
     flags_spent = json.loads(request.POST.keys()[0], object_pairs_hook=OrderedDict).values()
     log.debug("flags spent from front-end: %s" % flags_spent)
+
+    if len(flags_spent) > prof_per_instance.flags:
+        raise Exception("user does not have enough flags accumulated to spend.")
+
     if len(values) != len(flags_spent):
         raise Exception("mismatch of values to flags spent in map the future form")
 
