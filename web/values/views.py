@@ -101,7 +101,7 @@ def spend(request):
         stream_utils.action.send(
                     request.user,
                     'flag_spent',
-                    action_object=values[i], description="planted a flag on",
+                    action_object=values[i].message, description="planted a flag on the value",
                     target=current_instance
         )
         cache.invalidate_group('my_spent_flags')
