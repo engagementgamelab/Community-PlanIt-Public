@@ -11,7 +11,9 @@
 <div class="column-container">
     <a href="{% url missions:mission mission.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
     
-    <h1>What's Happening</h1>
+    <h1>{% trans "What's Happening" %}</h1>
+    
+    <p class="instructions">Listed are the 100 most recent player activities out of a total of {{ stream_count }} since the launch of {{ request.current_game }}</p>
     
     {% comment %}
     Filtering events by stake and affiliation is stupid... not implementing this for Detroit launch 

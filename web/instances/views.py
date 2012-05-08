@@ -93,10 +93,12 @@ def all(request):
 def stream(request, template='instances/stream.html'):
 
     stream_for_game = Action.objects.get_for_target(request.current_game).order_by('-datetime')
-    completed_challenges = filter(lambda a: a.verb == "activity_completed", stream_for_game)
-
+    stream_count = stream_for_game.count()
+    completed_challenges = filter(lambda a: a.verb == "activity_completed", stream_for_game)[:100]
+    
     context = {
-            'stream_for_game': completed_challenges,
+        'stream_for_game': completed_challenges,
+        'stream_count': stream_count,
     }
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
