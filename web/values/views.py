@@ -1,10 +1,6 @@
 import datetime
 #from operator import itemgetter
-try:
-    from collections import OrderedDict
-except ImportError: 
-    import ordereddict as OrderedDict # Py26
-import json
+import simplejson
 #import re
 
 from PIL import Image
@@ -70,48 +66,46 @@ def spend(request):
     else:
         raise Http404("could not locate a valid game")
 
-
     try:
         prof_per_instance = UserProfilePerInstance.objects.get(
                     instance=request.current_game, 
                     user_profile=request.user.get_profile()
         )
+        
     except UserProfilePerInstance.DoesNotExist:
         raise Http404("user for this game is not registered")
 
     values = list(Value.objects.filter(instance=current_instance).order_by('pk'))
-
-    log.debug("querydict: %s " % request.POST.keys()[0])
-    flags_spent = json.loads(request.POST.keys()[0], object_pairs_hook=OrderedDict).values()
-    log.debug("flags spent from front-end: %s" % flags_spent)
-
-    if len(flags_spent) > prof_per_instance.flags:
-        raise Exception("user does not have enough flags accumulated to spend.")
-
+    
+    flags_spent=simplejson.loads(request.raw_post_data) # ie. [0, 2, 0, 0, 1]
+    
+    if sum(flags_spent) > prof_per_instance.flags:
+        raise Exception("User does not have enough flags accumulated to spend.")
+    
     if len(values) != len(flags_spent):
-        raise Exception("mismatch of values to flags spent in map the future form")
-
+        raise Exception("Mismatch of values to flags spent in map the future form")
+    
     for i in range(len(values)):
         log.debug("v: %s, spent %s" % (values[i], flags_spent[i]))
-
+    
         playervalue, created = PlayerValue.objects.get_or_create(user=request.user, value=values[i])
         if created:
             playervalue.coins = flags_spent[i]
         else:
             playervalue.coins+=flags_spent[i]
-
+    
         playervalue.save()
-
+    
         log.debug("%s spent %s flags on %s" % (request.user.get_profile().screen_name, flags_spent[i], values[i].__unicode__()))
-
+    
         stream_utils.action.send(
                     request.user,
                     'flag_spent',
-                    action_object=values[i], description="token spent",
+                    action_object=values[i], description="planted a flag on the value",
                     target=current_instance
         )
         cache.invalidate_group('my_spent_flags')
-
+    
     return redirect(reverse('values:index'))
 
 @login_required

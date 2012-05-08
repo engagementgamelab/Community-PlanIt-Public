@@ -136,7 +136,11 @@
                     'X-CSRFToken': $$('[name=csrfmiddlewaretoken]')[0].get('value')
                 },
                 onRequest: function(){
-                    // alert('sent to view');
+                    console.log('XHR sent.');
+                    $('btn-submit').removeClass('active');
+                    $('mapthefuture-saved').slide('hide');
+                    $('mapthefuture-controls-saved').fade('hide');
+                    $('mapthefuture-controls-error').fade('hide');
                 },
                 onSuccess: function(responseText){
                     $('btn-submit').addClass('active');
@@ -145,8 +149,11 @@
                     $('mapthefuture-saved').slide('in');
                 },
                 onFailure: function(xhr){
-                    console.log('XHR error');
-                    console.log(xhr);
+                    console.log('XHR error: ' + xhr);
+                    $('btn-submit').removeClass('active');
+                    $('mapthefuture-controls-error').fade('show');
+                    $('mapthefuture-controls-reset').fade('show');  
+                    
                 }
             });
             
@@ -154,7 +161,7 @@
             $$('#btn-submit').addEvent('click', function(e){
                 e.stop();
                 spend.send({
-                    data: JSON.encode(Object.merge({}, spent_individualflags)) // Array to Object
+                    data: JSON.encode(spent_individualflags) // Array to Object
                 });
                 
             });
@@ -165,6 +172,7 @@
             
             $('mapthefuture-saved').slide('hide');
             $('mapthefuture-controls-saved').fade('hide');
+            $('mapthefuture-controls-error').fade('hide');
         });
     </script>
 {% endblock %}
@@ -196,7 +204,10 @@
         <div id="mapthefuture-controls">
             <div>Drag your flags where you want them.</div>
             <div>Then click <a id="btn-submit" class="btn-blue">Done!</a><span id="mapthefuture-controls-reset"> or <a href="{% url values:index %}" class="btn-blue">Reset</a></span></div>
-            <div id="mapthefuture-controls-saved">Your priorities have been saved!</div>
+            <div id="mapthefuture-controls-status">
+                <div id="mapthefuture-controls-saved">Your priorities have been saved!</div>
+                <div id="mapthefuture-controls-error">There was an error saving your priorities</div>
+            </div>
         </div>
     </div>
 
