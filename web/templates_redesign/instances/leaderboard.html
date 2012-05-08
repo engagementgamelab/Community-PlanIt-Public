@@ -18,59 +18,28 @@
 
     <div class="column-half">
         <div class="column-container">
-            Available soon.
-        {#     <div class="leaderboard-standings"> #}
-        {#         <div class="leaderboard-standings-rank">1</div> #}
-        {#         <div class="leaderboard-standings-name"><a href="">{{ request.user.get_profile.screen_name }}</a></div> #}
-        {#         <div class="leaderboard-standings-points">12</div> #}
-        {#     </div> #}
+             <div class="leaderboard-standings"> 
+                 <div class="leaderboard-standings-rank">1</div> 
+                 <div class="leaderboard-standings-name"><a href="">{{ request.user.get_profile.screen_name }}</a></div> 
+                 <div class="leaderboard-standings-points">12</div> 
+             </div> 
         </div>
     </div>
 
-    {% comment %}
-    
     <br /><br />
 
     <div class="column-half clearfix">
         <div class="column-container">
-            <h2>Individuals</h2>
+            <h2>Individuals {{ players_leaderboard|length }} {{ players_leaderboard.0.2 }}</h2>
             <div id="leaderboard-players" class="leaderboard-container">
-                {# TODO: for leaderboard in players_leaderboard #}
+                {% for prof_per_instance, screen_name, points in players_leaderboard %}
                 <div class="leaderboard-standings">
-                    <div class="leaderboard-standings-rank">1</div>
-                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
-                    <div class="leaderboard-standings-points">12</div>
+                    <div class="leaderboard-standings-rank">{{ forloop.counter }}</div>
+                    <div class="leaderboard-standings-name"><a href="{{ prof_per_instance.get_absolute_url }}">{{ screen_name }}</a></div>
+                    <div class="leaderboard-standings-points">{{ points }}</div>
                 </div>
+                {% endfor %}
             
-                <div class="leaderboard-standings">
-                    <div class="leaderboard-standings-rank">1</div>
-                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
-                    <div class="leaderboard-standings-points">12</div>
-                </div>
-            
-                <div class="leaderboard-standings">
-                    <div class="leaderboard-standings-rank">1</div>
-                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
-                    <div class="leaderboard-standings-points">12</div>
-                </div>
-            
-                <div class="leaderboard-standings">
-                    <div class="leaderboard-standings-rank">1</div>
-                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
-                    <div class="leaderboard-standings-points">12</div>
-                </div>
-            
-                <div class="leaderboard-standings">
-                    <div class="leaderboard-standings-rank">1</div>
-                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
-                    <div class="leaderboard-standings-points">12</div>
-                </div>
-            
-                <div class="leaderboard-standings">
-                    <div class="leaderboard-standings-rank">1</div>
-                    <div class="leaderboard-standings-name"><a href="">Name</a></div>
-                    <div class="leaderboard-standings-points">12</div>
-                </div>
             </div>
         </div>
     </div>
@@ -100,6 +69,5 @@
             </div>
         </div>
     </div>
-    {% endcomment %}
 </div>
 {% endblock %}
