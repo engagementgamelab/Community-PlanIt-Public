@@ -143,6 +143,10 @@
                     $('mapthefuture-controls-error').fade('hide');
                 },
                 onSuccess: function(responseText){
+                    /* Reset the array so we can send again if necessary */
+                    spent_individualflags.each(function(item, index){
+                       this[index] = 0;
+                    }, spent_individualflags);
                     $('btn-submit').addClass('active');
                     $('mapthefuture-controls-saved').fade('show');
                     $('mapthefuture-controls-reset').fade('hide');            
@@ -160,6 +164,7 @@
             /* When submit button is clicked, send object to view */
             $$('#btn-submit').addEvent('click', function(e){
                 e.stop();
+                console.log(spent_individualflags);
                 spend.send({
                     data: JSON.encode(spent_individualflags) // Array to Object
                 });
@@ -196,7 +201,6 @@
     <div id="mapthefuture-flags-earned">
         <div id="mapthefuture-flags-earned-container">
             <div id="mapthefuture-crosshairs"></div>
-        
             {% for f in my_flags_range %}
             <div class="draggable-container"><div class="mapthefuture-flag-individual-earned draggable"></div></div>
             {% endfor %}
