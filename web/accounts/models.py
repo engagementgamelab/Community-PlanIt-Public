@@ -146,22 +146,24 @@ class CPIUser(User):
             return "%s %s" % (self.first_name, self.last_name)
         return self.username
 
+
 class UserProfilePerInstanceManager(models.Manager):
 
     @cached(60*60*24, 'user_profile_per_instance_get')
     def get(self, *args, **kwargs):
-        log.debug('get prof_per_instance %s ** no cache **' % kwargs)
+        log.debug('get prof_per_instance %s ** not cached **' % kwargs)
         return super(UserProfilePerInstanceManager, self).get(*args, **kwargs)
 
     @cached(60*60*24, 'all_games_for_profile')
     def games_for_profile(self, user_profile):
         game_pks = self.filter(user_profile=user_profile).values_list('instance__pk', flat=True)
         my_games = Instance.objects.filter(pk__in=game_pks)
-        log.debug('my games %s. ** no cached ** ' % my_games)
+        log.debug('my games %s. ** not cached ** ' % my_games)
         return my_games
 
     @cached(60*60*24)
     def total_points_for_profile(self, instance, user_profile):
+        log.debug("profile manager: total_points_for_profile %s ** not cached **" % user_profile.screen_name)
         try:
             return self.get(instance=instance, user_profile=user_profile).total_points
         except UserProfilePerInstance.DoesNotExist:
@@ -219,7 +221,7 @@ class UserProfilePerInstance(models.Model):
     def get_user(self):
         @cached(60*60*24*30)
         def this_user(pk):
-            log.debug("got user for profile **no cache**")
+            log.debug("got user for profile ** not cached **")
             return self.user_profile.user
         return this_user(self.pk)
 
@@ -272,6 +274,10 @@ class UserProfilePerInstance(models.Model):
     @property
     def user_profile_email(self):
         return self.user_profile.email or self.user_profile.user.email 
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('accounts:player_profile', [str(self.get_user().pk)])
 
     class Meta:
         unique_together = ('user_profile', 'instance',)
