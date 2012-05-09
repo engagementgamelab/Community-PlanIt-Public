@@ -15,6 +15,7 @@ download_cache_dir = /var/local/buildout
 eggs-directory=${buildout:download_cache_dir}/eggs
 download-cache = ${buildout:download_cache_dir}/cache
 uwsgi-run-dir = /var/local/run/uwsgi
+uwsgi-spool-dir = /var/local/uwsgi_spool/${buildout:project_name}
 
 
 eggs += 
@@ -52,7 +53,9 @@ single-interpreter=true
 master=True
 eggs=Django
 versions=versions
+spooler = ${buildout:uwsgi-spool-dir}
 import=uwsgiutils.tasks
+#import=uwsgiutils.tasks_localdev
 
 [nginx-config-local]
 recipe = collective.recipe.template

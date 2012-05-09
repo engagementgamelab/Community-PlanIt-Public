@@ -12,16 +12,15 @@ from django.template import Context, RequestContext, loader, Template
 from django.template.loader import render_to_string
 from django.conf import settings
 
-
-from accounts.models import UserProfile, UserProfilePerInstance
-from reports.actions import PointsAssigner
-from answers.models import Answer, AnswerMultiChoice
+from web.accounts.models import UserProfile, UserProfilePerInstance
+from web.reports.actions import PointsAssigner
+from web.answers.models import Answer, AnswerMultiChoice
 from web.challenges.models import Challenge
 from web.values.models import Value
 from .forms import *
 from .models import Comment
 
-from attachments.models import Attachment
+#from web.attachments.models import Attachment
 
 import logging
 log = logging.getLogger(__name__)
@@ -193,6 +192,7 @@ def ajax_create(request, comment_form=CommentForm):
     if instance.is_sijax_request:
         return HttpResponse(instance.process_request())
 
+
 @login_required
 def reply(request, id):
     parent_comment = get_object_or_404(Comment, id=id)
@@ -289,10 +289,10 @@ def edit(request, id, lang_code=None):
                                                                  "comment_form": comment_form }, 
                                                                  )))
 
-@login_required
-def remove_attachment(request, id, comment_id):
-    attachment = get_object_or_404(Attachment, id=id)
-    comment = get_object_or_404(Comment, id=comment_id) 
-    attachment.delete()
-    return HttpResponseRedirect(reverse("comments:edit", args=[comment.pk,]))
+#@login_required
+#def remove_attachment(request, id, comment_id):
+#    attachment = get_object_or_404(Attachment, id=id)
+#    comment = get_object_or_404(Comment, id=comment_id) 
+#    attachment.delete()
+#    return HttpResponseRedirect(reverse("comments:edit", args=[comment.pk,]))
     
