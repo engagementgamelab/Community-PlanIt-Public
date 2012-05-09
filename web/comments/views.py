@@ -20,8 +20,6 @@ from web.values.models import Value
 from .forms import *
 from .models import Comment
 
-#from web.attachments.models import Attachment
-
 import logging
 log = logging.getLogger(__name__)
 

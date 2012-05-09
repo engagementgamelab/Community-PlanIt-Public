@@ -1,7 +1,7 @@
 from PIL import Image
 
 from uwsgiutils.tasks import run_attachment_checks
-from web.comments.models import Attachment
+from web.attachments.models import Attachment
 
 import logging
 log = logging.getLogger(__name__)
