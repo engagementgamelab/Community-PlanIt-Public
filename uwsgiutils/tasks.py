@@ -1,5 +1,9 @@
 import time
-import uwsgi
+
+try:
+    import uwsgi
+except ImportError:
+    pass
 from .uwsgidecorators import spool, timer
 
 from django.core import management
