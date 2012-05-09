@@ -14,6 +14,10 @@ def change_code_gracefull_reload(sig):
     if autoreload.code_changed():
         uwsgi.reload()
 
+@timer(30, target='spooler')
+def hello_world(signum):
+    print("30 seconds elapsed")
+
 @spool
 def run_attachment_checks(arguments):
     # need to give some time for the attachment to be saved
