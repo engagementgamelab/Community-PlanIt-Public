@@ -15,7 +15,7 @@ from comments.forms import CommentForm
 from comments.models import Comment
 from reports.actions import PointsAssigner
 #from responses.comment.forms import CommentAttachmentResponseForm
-from core.utils import _fake_latest, instance_from_request
+from core.utils import _fake_latest
 
 from PIL import Image
 
@@ -139,7 +139,7 @@ def decline(request, id):
 
 @login_required
 def add(request):
-    current_instance = instance_from_request(request)
+    current_instance = request.current_instance
     if current_instance.is_expired():
         return HttpResponseRedirect(reverse('challenges:index'))
 
@@ -285,7 +285,7 @@ def comment(request, id):
 
 @login_required
 def all(request):
-    current_instance = instance_from_request(request)
+    current_instance = request.current_instance
     new_challenges = current_instance.challenges.available(request.user)
     tmpl = loader.get_template('challenges/all.html')
     return HttpResponse(tmpl.render(RequestContext(request, {
