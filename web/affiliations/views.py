@@ -27,7 +27,14 @@ def affiliation(request, slug, template='affiliations/affiliation.html'):
     if not hasattr(request, 'current_game'):
         raise Http404("could not locate a valid game")
 
-    affiliation = get_object_or_404(Affiliation, slug=slug)
+    #affiliation = get_object_or_404(Affiliation, slug=slug)
+
+    qs = Affiliation.objects.filter(slug=slug)
+    if qs.count() > 0:
+        affiliation = qs[0]
+    else:
+        raise Http404("Affiliation could not be found.")
+
     leaderboard_entry = AffiliationLeaderboard.objects.get(instance=request.current_game, affiliation=affiliation)
     players = affiliation.user_profiles_per_instance.filter(instance=request.current_game).order_by('user_profile__user__first_name')
 
