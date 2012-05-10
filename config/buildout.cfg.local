@@ -17,7 +17,6 @@ download-cache = ${buildout:download_cache_dir}/cache
 uwsgi-run-dir = /var/local/run/uwsgi
 uwsgi-spool-dir = /var/local/uwsgi_spool/${buildout:project_name}
 
-
 eggs += 
        ipdb
        ipython
@@ -54,6 +53,8 @@ single-interpreter=true
 master=True
 eggs=Django
 versions=versions
+logto=${buildout:directory}/log/uwsgi.log
+log-master=true
 spooler = ${buildout:uwsgi-spool-dir}
 import=uwsgiutils.tasks
 #import=uwsgiutils.tasks_localdev
