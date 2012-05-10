@@ -6,7 +6,8 @@ import logging
 log = logging.getLogger(__name__)
 
 def create_video_attachment(attachment_parent, video_url, game, author):
-
+    if video_url.strip() == '':
+        return
     attachment = Attachment.objects.create(
             file=None,
             url=video_url,

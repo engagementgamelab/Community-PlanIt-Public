@@ -112,17 +112,8 @@ def ajax_create(request, comment_form=CommentForm):
         if form.is_valid():
             cd = form.cleaned_data
             log.debug("processed comment_form. cleaned_data: %s" % cd)
-            # convert this to work for other types of parent objects
-            parent_type = cd.get('parent_type')
-            if parent_type == 'user_profile':
-                comment_parent  = get_object_or_404(UserProfilePerInstance, id=cd.get('parent_id'))
-                stream_description = "commented on a user profile"
-            elif parent_type == 'map_the_future':
-                comment_parent  = get_object_or_404(Value, id=cd.get('parent_id'))
-                stream_description = "commented on a priority"
-            elif parent_type == 'comment':
-                comment_parent  = get_object_or_404(Comment, id=cd.get('parent_id'))
-                stream_description = "commented on a comment"
+            comment_parent  = get_object_or_404(Comment, id=cd.get('parent_id'))
+            stream_description = "commented on a comment"
             instance = comment_parent.instance
 
             c = comment_parent.comments.create(
@@ -153,29 +144,15 @@ def ajax_create(request, comment_form=CommentForm):
             #)
             # gen_badges.apply_async(args=[user_id,], kwargs=task_kwargs)
 
-            if parent_type == 'user_profile':
-                obj_response.redirect(
-                            reverse('accounts:player_profile', 
-                                    args=(comment_parent.user_profile.user.pk,)
-                            )
-                )
-
-            elif parent_type == 'map_the_future':
-                obj_response.redirect(
-                            reverse('values:detail', 
-                                    args=(comment_parent.pk,)
-                            )
-                )
-            elif parent_type == 'comment':
-                context = dict(
-                    comment = comment_parent,
-                    STATIC_URL = settings.STATIC_URL,
-                    MEDIA_URL = settings.MEDIA_URL,
-                    request = request,
-                )
-                rendered_comments = render_to_string('comments/nested_replies.html', context)
-                obj_response.html('#replies-'+str(comment_parent.pk), rendered_comments)
-                obj_response.call('init_masonry')
+            context = dict(
+                comment = comment_parent,
+                STATIC_URL = settings.STATIC_URL,
+                MEDIA_URL = settings.MEDIA_URL,
+                request = request,
+            )
+            rendered_comments = render_to_string('comments/nested_replies.html', context)
+            obj_response.html('#replies-'+str(comment_parent.pk), rendered_comments)
+            obj_response.call('init_masonry')
         else:
             log.debug("form errors: %s" % form.errors)
 
