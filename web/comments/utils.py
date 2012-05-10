@@ -1,6 +1,5 @@
 from PIL import Image
 
-from uwsgiutils.tasks import run_attachment_checks
 from web.attachments.models import Attachment
 
 import logging
@@ -17,9 +16,16 @@ def create_video_attachment(attachment_parent, video_url, game, author):
     )
     attachment_parent.attachment.add(attachment)
     log.debug("created attachment video url for parent %s. %s" % (attachment_parent.pk, attachment))
-    # uwsgi spool
 
-    run_attachment_checks.spool(attachment_id=str(attachment.pk))
+    try:
+        # uwsgi spool
+        from uwsgiutils.tasks import run_attachment_checks
+        run_attachment_checks.spool(attachment_id=str(attachment.pk))
+    except ImportError:
+        # it is not possible to import uwsgi
+        # from certain environments such as from pyshell
+        # ignoring the ImportError
+        pass
 
 def create_image_attachment(attachment_parent, image_file, game, author):
 
