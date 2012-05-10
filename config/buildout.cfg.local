@@ -47,6 +47,7 @@ uid=${server:user}
 home=${buildout:directory}
 pythonpath=${buildout:directory}/${buildout:project_name}/web
 wsgi-file=${buildout:directory}/bin/django.wsgi
+env=DJANGO_SETTINGS_MODULE=web.settings
 pidfile=${buildout:uwsgi-run-dir}/${server:host}.pid
 socket=127.0.0.1:${server:uwsgi-socket-port}
 single-interpreter=true
@@ -101,8 +102,8 @@ output = ${buildout:bin-directory}/resetdb
 mode = 755
 inline =
     sudo su postgres -c "dropdb ${server:db_name}"
-    sudo su postgres -c "createdb -O ${server:db_user} -h ${server:db_host} -D pg_default -T template_postgis -E UTF8 -l en_US.UTF-8 ${server:db_name}"
-    sudo su postgres -c "psql -U ${server:db_user} -h ${server:db_host} ${server:db_name} < $VIRTUAL_ENV/${server:db_name}.latest.sql"
+    sudo su postgres -c "createdb -O ${server:db_user} -h ${server:db_host} -D pg_default -E UTF8 -l en_US.UTF-8 ${server:db_name}"
+    sudo su postgres -c "psql -U ${server:db_user} -h ${server:db_host} ${server:db_name} < latest.sql"
 
 [supervisor-config]
 recipe = collective.recipe.template
