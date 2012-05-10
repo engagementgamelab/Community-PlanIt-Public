@@ -7,14 +7,10 @@ from django.core import management
 from django.conf import settings
 from django.utils import autoreload
 
-@timer(3)
-def change_code_gracefull_reload(sig):
-    if autoreload.code_changed():
-        uwsgi.reload()
-
-#@timer(30, target='spooler')
-#def hello_world(signum):
-#    print("30 seconds elapsed")
+#@timer(3)
+#def change_code_gracefull_reload(sig):
+#    if autoreload.code_changed():
+#        uwsgi.reload()
 
 @spool
 def run_attachment_checks(arguments):
