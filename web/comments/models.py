@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
-from attachments.models import Attachment
-from instances.models import Instance
+from web.attachments.models import Attachment
+from web.instances.models import Instance
 
 
 class Comment(models.Model):
