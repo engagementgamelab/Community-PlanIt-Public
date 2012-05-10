@@ -15,17 +15,16 @@ from cache_utils.decorators import cached
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.db import models
 from django.dispatch import receiver
-from django.db.models.signals import pre_delete, post_save
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
 from web.attachments.models import Attachment
 from web.comments.models import Comment
-from web.missions.models import Mission, invalidate_mission
+from web.missions.models import Mission, invalidate_mission, invalidate_activities_for_mission
 from web.reports.models import Activity
 from web.instances.models import Instance
 #from web.accounts.models import invalidate_prof_per_instance
@@ -358,3 +357,6 @@ post_save.connect(invalidate_mission, PlayerEmpathyActivity)
 #post_save.connect(invalidate_prof_per_instance, PlayerMapActivity)
 #post_save.connect(invalidate_prof_per_instance, PlayerEmpathyActivity)
 
+post_delete.connect(invalidate_activities_for_mission, PlayerActivity)
+post_delete.connect(invalidate_activities_for_mission, PlayerMapActivity)
+post_delete.connect(invalidate_activities_for_mission, PlayerEmpathyActivity)
