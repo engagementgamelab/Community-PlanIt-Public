@@ -474,15 +474,6 @@ def profile(request, id, template_name="accounts/profile.html"):
                 )
             )
 
-            #elif parent_type == 'map_the_future':
-            #    obj_response.redirect(
-            #                reverse('values:detail', 
-            #                        args=(comment_parent.pk,)
-            #                )
-            #    )
-        else:
-            log.debug("user profile comment form errors: %s" % form.errors)
-
     my_games = Instance.objects.exclude(is_disabled=True).filter(
                     pk__in=
                     UserProfilePerInstance.objects.filter(
