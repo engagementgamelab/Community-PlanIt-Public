@@ -444,24 +444,24 @@ def profile(request, id, template_name="accounts/profile.html"):
                 stream_description = "commented on a priority"
             instance = comment_parent.instance
 
-            c = comment_parent.comments.create(
+            comment = comment_parent.comments.create(
                 content_object=comment_parent,
                 message=cd.get(u'message'),
                 user=request.user,
                 instance=request.current_game,
             )
             if request.POST.has_key('video-url') and request.POST.get('video-url') != '':
-                create_video_attachment(c, request.POST.get('video-url'), request.current_game, request.user)
+                create_video_attachment(comment, request.POST.get('video-url'), request.current_game, request.user)
 
             if request.FILES.has_key('picture'):
-                create_image_attachment(c, request.FILES.get('picture'), request.current_game, request.user)
+                create_image_attachment(comment, request.FILES.get('picture'), request.current_game, request.user)
 
             stream_verb = 'commented'
             stream_utils.action.send(
                             request.user,
                             stream_verb,
                             target=comment_parent,
-                            action_object=c,
+                            action_object=comment,
                             description=stream_description
             )
             if request.user != comment_parent.user_profile.user:
