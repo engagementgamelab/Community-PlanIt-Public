@@ -108,7 +108,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 
     # 3rd party
-    'djcelery',
+    #'djcelery',
     'endless_pagination',
     'stream',
     'django_mailer',
@@ -294,19 +294,21 @@ ENDLESS_PAGINATE_PLAYERS_PER_PAGE = 16
 ENDLESS_PAGINATION_PREVIOUS_LABEL = '''<div class="pagination-previous"></div>'''
 ENDLESS_PAGINATION_NEXT_LABEL = '''<div class="pagination-next"></div>'''
 
+REBUILD_LEADERBOARD_SLEEP_SECONDS = 60*30
+
+# celery disabled
+# using uwsgi spoooler, timer decorator for now
+
 # django-celery
-import djcelery
-djcelery.setup_loader()
+#import djcelery
+#djcelery.setup_loader()
+#CELERY_IMPORTS = ('badges.tasks',)
 
-CELERY_IMPORTS = ('badges.tasks',)
-
-
-BROKER_HOST = "localhost"
-BROKER_PORT = 5672
-BROKER_USER = "guest"
-BROKER_PASSWORD = "guest"
-BROKER_VHOST = "/"
-
+#BROKER_HOST = "localhost"
+#BROKER_PORT = 5672
+#BROKER_USER = "guest"
+#BROKER_PASSWORD = "guest"
+#BROKER_VHOST = "/"
 
 #
 # Community PlanIT settings
