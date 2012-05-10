@@ -1,3 +1,7 @@
+__all__ = (
+    'City', 'Language', 'Instance', 'PointsAssignment', 'NotificationRequest', 'Affiliation',
+)
+
 import os.path
 import datetime
 
@@ -18,11 +22,10 @@ from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
 from south.modelsinspector import add_introspection_rules
 
-add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
+import logging
+log = logging.getLogger(__name__)
 
-__all__ = (
-    'City', 'Language', 'Instance', 'PointsAssignment', 'NotificationRequest', 'Affiliation',
-)
+add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
 def determine_path(instance, filename):
     return os.path.join('uploads/cities/', str(instance.domain), filename)
@@ -66,7 +69,7 @@ class Language(models.Model):
 
 
 class Affiliation(models.Model):
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=10, blank=True, default='')
 

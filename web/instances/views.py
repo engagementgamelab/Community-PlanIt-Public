@@ -110,10 +110,19 @@ def leaderboard(request, template='instances/leaderboard.html'):
     players_leaderboard = PlayerLeaderboard.objects.for_game(request.current_game)
 
     try:
+        prof_per_instance = UserProfilePerInstance.objects.get(
+                    instance=request.current_game, 
+                    user_profile=request.user.get_profile()
+        )
+    except UserProfilePerInstance.DoesNotExist:
+        raise Http404("user for this game is not registered")
+
+    try:
         all_names = list(players_leaderboard.values_list('screen_name', flat=True))
         my_name = request.user.get_profile().screen_name 
         my_rank = all_names.index(my_name)+1
-        my_total_points = UserProfilePerInstance.objects.total_points_for_profile(request.current_game, request.user.get_profile())
+        #my_total_points = UserProfilePerInstance.objects.total_points_for_profile(request.current_game, request.user.get_profile())
+        my_total_points = prof_per_instance.total_points
     except:
         my_rank = 0
         my_total_points = 0

@@ -116,23 +116,23 @@ def ajax_create(request, comment_form=CommentForm):
             stream_description = "commented on a comment"
             instance = comment_parent.instance
 
-            c = comment_parent.comments.create(
+            comment = comment_parent.comments.create(
                 content_object=comment_parent,
                 message=cd.get(u'message'),
                 user=request.user,
                 instance=instance,
             )
-            log.debug("comment created. %s" % vars(c))
+            log.debug("comment created. %s" % vars(comment))
 
             stream_verb = 'commented'
             stream_utils.action.send(
                             request.user,
                             stream_verb,
                             target=comment_parent,
-                            action_object=c,
+                            action_object=comment,
                             description=stream_description
             )
-            notify_author(request, comment_parent, c)
+            notify_author(request, comment_parent, comment)
 
             #from celery.execute import send_task
             #result = send_task("badges.tasks.gen_badges", [request.user.pk, stream_verb, action_object_])

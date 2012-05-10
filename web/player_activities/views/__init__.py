@@ -10,7 +10,6 @@ from django.shortcuts import redirect
 
 from web.comments.forms import *
 from web.comments.utils import create_video_attachment, create_image_attachment
-from web.accounts.models import UserProfilePerInstance
 
 import logging
 log = logging.getLogger(__name__)
@@ -42,11 +41,22 @@ def comment_fun(answer, request, form=None, message=''):
     )
     log.debug("challenge attachments %s" % request.FILES.keys())
 
-    if request.POST.has_key('video-url'):
-        create_video_attachment(comment, request.POST.get('video-url'), request.current_game, request.user)
+    if request.POST.has_key('video-url') and \
+            request.POST.get('video-url') != '':
+        create_video_attachment(
+                        comment, 
+                        request.POST.get('video-url'), 
+                        request.current_game, 
+                        request.user
+        )
 
     if request.FILES.has_key('picture'):
-        create_image_attachment(comment, request.FILES.get('picture'), request.current_game, request.user)
+        create_image_attachment(
+                        comment, 
+                        request.FILES.get('picture'), 
+                        request.current_game, 
+                        request.user
+        )
 
 def log_activity_and_redirect(request, activity, action_msg):
 
@@ -77,7 +87,5 @@ def log_activity_and_redirect(request, activity, action_msg):
     # TODO only invalidate by one UserProfilePerInstance instance
     #cache.invalidate_group('my_progress_data')
     my_prof = request.user.get_profile()
-    UserProfilePerInstance.objects.progress_data_for_mission.invalidate(request.current_game, activity.mission, my_prof)
-    UserProfilePerInstance.objects.total_points_for_profile.invalidate(request.current_game, my_prof)
     return redirect(activity.get_overview_url())
 

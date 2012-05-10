@@ -434,16 +434,7 @@ def profile(request, id, template_name="accounts/profile.html"):
         if form.is_valid():
             cd = form.cleaned_data
             log.debug("processed comment_form. cleaned_data: %s" % cd)
-            # convert this to work for other types of parent objects
-            parent_type = cd.get('parent_type')
-            if parent_type == 'user_profile':
-                comment_parent  = get_object_or_404(UserProfilePerInstance, id=cd.get('parent_id'))
-                stream_description = "commented on a user profile"
-            elif parent_type == 'map_the_future':
-                comment_parent  = get_object_or_404(Value, id=cd.get('parent_id'))
-                stream_description = "commented on a priority"
-            instance = comment_parent.instance
-
+            comment_parent  = get_object_or_404(UserProfilePerInstance, id=cd.get('parent_id'))
             comment = comment_parent.comments.create(
                 content_object=comment_parent,
                 message=cd.get(u'message'),
@@ -462,7 +453,7 @@ def profile(request, id, template_name="accounts/profile.html"):
                             stream_verb,
                             target=comment_parent,
                             action_object=comment,
-                            description=stream_description
+                            description="commented on a user profile",
             )
             if request.user != comment_parent.user_profile.user:
                 message = '%s commented on your profile.' % request.user.get_profile().screen_name
