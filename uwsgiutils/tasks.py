@@ -23,3 +23,11 @@ def run_attachment_checks(arguments):
 def rebuild_leaderboards(signum):
     management.call_command('rebuild_leaderboards', interactivity=False)
 
+
+@timer(settings.CRON_MAIL_SLEEP_SECONDS, target='spooler')
+def django_mailer_send_mail(signum):
+    management.call_command('send_mail', interactivity=False)
+
+@timer(settings.CRON_MAIL_RETRY_DEFERRED_SLEEP_SECONDS, target='spooler')
+def django_mailer_retry_deferred(signum):
+    management.call_command('retry_deferred', interactivity=False)
