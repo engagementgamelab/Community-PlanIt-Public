@@ -5,6 +5,7 @@ import urlparse
 from sijax import Sijax
 
 from stream.models import Action
+from stream import utils as stream_utils
 
 from localeurl.models import reverse
 
@@ -35,6 +36,7 @@ from web.core.utils import missions_bar_context
 from web.answers.models import Answer
 from web.challenges.models import Challenge, PlayerChallenge
 from web.comments.forms import CommentForm
+from web.comments.utils import create_video_attachment, create_image_attachment
 from web.instances.models import Instance, Affiliation
 from web.missions.models import Mission
 from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
@@ -415,28 +417,71 @@ def ajax_search(request, search_form, request_uri=None):
 
 @login_required
 def profile(request, id, template_name="accounts/profile.html"):
+    context={}
     player = get_object_or_404(User, id=id)
-    current_game = request.current_game
-    stream = Action.objects.get_for_actor(
-            player
-    ).exclude(verb='user_logged_in').order_by('-datetime')[:10]
+    kwargs={}
+    kwargs['instance']=request.current_game
+    kwargs['user_profile'] = request.user.get_profile() if request.user == player else player.get_profile()
+    try:
+        prof_per_instance = UserProfilePerInstance.objects.get(**kwargs)
+    except UserProfilePerInstance.DoesNotExist:
+        raise Http404("user for this game is not registered")
 
-    if request.user == player:
-        try:
-            profile_per_instance = UserProfilePerInstance.objects.get(
-                        instance=request.current_game, 
-                        user_profile=request.user.get_profile()
+    if request.method == 'POST':
+        this_page = reverse('accounts:player_profile', args=(id,))
+
+        form = CommentForm(data=request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            log.debug("processed comment_form. cleaned_data: %s" % cd)
+            # convert this to work for other types of parent objects
+            parent_type = cd.get('parent_type')
+            if parent_type == 'user_profile':
+                comment_parent  = get_object_or_404(UserProfilePerInstance, id=cd.get('parent_id'))
+                stream_description = "commented on a user profile"
+            elif parent_type == 'map_the_future':
+                comment_parent  = get_object_or_404(Value, id=cd.get('parent_id'))
+                stream_description = "commented on a priority"
+            instance = comment_parent.instance
+
+            c = comment_parent.comments.create(
+                content_object=comment_parent,
+                message=cd.get(u'message'),
+                user=request.user,
+                instance=request.current_game,
             )
-        except UserProfilePerInstance.DoesNotExist:
-            raise Http404("user for this game is not registered")
-    else:
-        try:
-            profile_per_instance = UserProfilePerInstance.objects.get(
-                        user_profile = player.get_profile(),
-                        instance = request.current_game,
+            if request.POST.has_key('video-url') and request.POST.get('video-url') != '':
+                create_video_attachment(c, request.POST.get('video-url'), request.current_game, request.user)
+
+            if request.FILES.has_key('picture'):
+                create_image_attachment(c, request.FILES.get('picture'), request.current_game, request.user)
+
+            stream_verb = 'commented'
+            stream_utils.action.send(
+                            request.user,
+                            stream_verb,
+                            target=comment_parent,
+                            action_object=c,
+                            description=stream_description
             )
-        except UserProfilePerInstance.DoesNotExist:
-            raise Http404("user for this game is not registered")
+            if request.user != comment_parent.user_profile.user:
+                message = '%s commented on your profile.' % request.user.get_profile().screen_name
+                comment_parent.user_profile.user.notifications.create(content_object=comment, message=message)
+
+            redirect(
+                reverse('accounts:player_profile', 
+                        args=(comment_parent.user_profile.user.pk,)
+                )
+            )
+
+            #elif parent_type == 'map_the_future':
+            #    obj_response.redirect(
+            #                reverse('values:detail', 
+            #                        args=(comment_parent.pk,)
+            #                )
+            #    )
+        else:
+            log.debug("user profile comment form errors: %s" % form.errors)
 
     my_games = Instance.objects.exclude(is_disabled=True).filter(
                     pk__in=
@@ -444,26 +489,33 @@ def profile(request, id, template_name="accounts/profile.html"):
                             user_profile = player.get_profile()
                     ).values_list('instance__pk', flat=True)
     )
+    stream = Action.objects.get_for_actor( player).\
+            exclude(verb='user_logged_in').order_by('-datetime')[:10]
 
-    context = {
+
+    context.update({
         'player': player,
-        'profile_per_instance' : profile_per_instance,
+        'profile_per_instance' : prof_per_instance,
         'stream': stream,
-        'affiliations': profile_per_instance.affils.all(),
+        'affiliations': prof_per_instance.affils.all(),
         'my_games': my_games,
-    }
-
-    create_comment_sijax = Sijax()
-    create_comment_sijax.set_request_uri(reverse('comments:ajax-create'))
-    context.update(
-            {
-                'create_comment_sijax_js' : create_comment_sijax.get_js(),
-        }
-    )
+    })
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
     context.update(missions_bar_context(request))
     return render(request, template_name, context)
+
+"""
+@login_required
+def ajax_profile_comment_submit(request, prof_per_instance_id):
+    files = {}
+    sijax_instance = Sijax()
+    sijax_instance.set_request_uri(reverse('accounts:ajax-profile-comment-submit', args=(prof_per_instance_id,)))
+    register_upload_callback(sijax_instance, 'id_comment-form-'+prof_per_instance_id, profile_comment_handler, args_extra=[files])
+
+    if sijax_instance.is_sijax_request:
+        return HttpResponse(sijax_instance.process_request())
+"""
 
 @login_required
 def dashboard(request, template_name='accounts/dashboard.html'):
