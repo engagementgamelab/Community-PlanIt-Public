@@ -2,22 +2,15 @@ import datetime
 
 from stream import utils as stream_utils
 from stream.models import Action
-from celery.execute import send_task
 
 from django.conf import settings
 from django.db.models import Q
 from django.core.cache import cache
-#from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
-#from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import redirect
 
-#from web.attachments.tasks import run_attachment_checks
 from web.comments.forms import *
 from web.comments.utils import create_video_attachment, create_image_attachment
 from web.accounts.models import UserProfilePerInstance
-#from player_activities.models import PlayerActivity
-#from reports.models import ActivityLogger
-#from core.utils import instance_from_request
 
 import logging
 log = logging.getLogger(__name__)
@@ -86,22 +79,5 @@ def log_activity_and_redirect(request, activity, action_msg):
     my_prof = request.user.get_profile()
     UserProfilePerInstance.objects.progress_data_for_mission.invalidate(request.current_game, activity.mission, my_prof)
     UserProfilePerInstance.objects.total_points_for_profile.invalidate(request.current_game, my_prof)
-    return HttpResponseRedirect(activity.get_overview_url())
-
-# NOT USED
-"""
-def getComments(answers, ModelType, activity=None):
-    comments = None
-    if activity:
-        act_type = ContentType.objects.get_for_model(PlayerActivity)
-        comments = Comment.objects.filter(content_type=act_type, object_id=activity.pk)
-
-    answer_type = ContentType.objects.get_for_model(ModelType)
-    for answer in answers:
-        if comments == None:
-            comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-        else:
-            comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-    return comments
-"""
+    return redirect(activity.get_overview_url())
 
