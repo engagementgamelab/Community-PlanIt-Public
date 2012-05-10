@@ -294,7 +294,10 @@ ENDLESS_PAGINATE_PLAYERS_PER_PAGE = 16
 ENDLESS_PAGINATION_PREVIOUS_LABEL = '''<div class="pagination-previous"></div>'''
 ENDLESS_PAGINATION_NEXT_LABEL = '''<div class="pagination-next"></div>'''
 
+#CommunityPlanIt uwsgi tasks settings
 REBUILD_LEADERBOARD_SLEEP_SECONDS = 60*30
+CRON_MAIL_SLEEP_SECONDS = 60*3
+CRON_MAIL_RETRY_DEFERRED_SLEEP_SECONDS = 60*20
 
 # celery disabled
 # using uwsgi spoooler, timer decorator for now
