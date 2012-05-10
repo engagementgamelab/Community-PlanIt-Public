@@ -67,40 +67,35 @@ def notify_author(request, comment_parent, comment):
     message = None
     recipient = None
 
-    if isinstance(comment_parent, UserProfilePerInstance):
-        if request.user != comment_parent.user_profile.user:
-            recipient = comment_parent.user_profile.user
-            message = '%s commented on your profile.' % request.user.get_profile().screen_name
-
-    elif isinstance(comment_parent, Comment):
-        if request.user != comment_parent.user:
-            topic = comment_parent.topic
-            #if isinstance(topic, Challenge):
-            #    message = "%s replied to a comment on %s" % (
-            #        request.user.get_profile().screen_name,
-            #        topic
-            #    )
-            #    recipient = topic.user
-            #elif isinstance(topic, UserProfile):
-            #    message = "%s replied to a comment on your profile" % (
-            #        request.user.get_profile().screen_name
-            #    )
-            #    recipient = topic.user
-            #else:
-            #    message = "%s replied to your comment on %s" % (
-            #        request.user.get_profile().screen_name,
-            #        topic
-            #    )
-            #    recipient = parent_comment.user
-            if isinstance(topic, Answer) or isinstance(topic, AnswerMultiChoice):
-                message = "%s replied to your answer %s" %(
-                    request.user.get_profile().screen_name,
-                    topic
-                )
-                try:
-                    recipient = topic.answerUser
-                except AttributeError:
-                    recipient = topic.user
+    if isinstance(comment_parent, Comment) and \
+            request.user != comment_parent.user:
+        topic = comment_parent.topic
+        #if isinstance(topic, Challenge):
+        #    message = "%s replied to a comment on %s" % (
+        #        request.user.get_profile().screen_name,
+        #        topic
+        #    )
+        #    recipient = topic.user
+        #elif isinstance(topic, UserProfile):
+        #    message = "%s replied to a comment on your profile" % (
+        #        request.user.get_profile().screen_name
+        #    )
+        #    recipient = topic.user
+        #else:
+        #    message = "%s replied to your comment on %s" % (
+        #        request.user.get_profile().screen_name,
+        #        topic
+        #    )
+        #    recipient = parent_comment.user
+        if isinstance(topic, Answer) or isinstance(topic, AnswerMultiChoice):
+            message = "%s replied to your answer %s" %(
+                request.user.get_profile().screen_name,
+                topic
+            )
+            try:
+                recipient = topic.answerUser
+            except AttributeError:
+                recipient = topic.user
 
     if recipient is not None and message is not None:
         recipient.notifications.create(content_object=comment, message=message)
@@ -137,6 +132,7 @@ def ajax_create(request, comment_form=CommentForm):
                 instance=instance,
             )
             log.debug("comment created. %s" % vars(c))
+
             stream_verb = 'commented'
             stream_utils.action.send(
                             request.user,
