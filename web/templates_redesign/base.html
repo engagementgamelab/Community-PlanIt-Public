@@ -72,6 +72,7 @@
         {% block top_nav %}
         <div id="top-nav">
             <ul>
+                <li><a href="{% url howtoplay %}">How to Play</a></li>
                 {% if request.current_game and mission %}<li><a href="{% url missions:mission mission.slug %}">My Game</a></li>{% endif %}
                 {% if user.is_authenticated %}
                     <li><a href="{% url accounts:logout %}">Sign Out</a></li>

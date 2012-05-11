@@ -25,3 +25,101 @@
             list-style: disc;
             margin: 5px 0px 5px 20px;
         }
+        
+
+#howtoplay {}
+    
+    #howtoplay .question {
+        position: relative;
+        display: inline-block;
+        background: #e3f1ea;
+        padding: 20px;
+        margin-top: 35px;
+        -webkit-border-radius: 10px;
+        -webkit-border-top-left-radius: 0;
+        -moz-border-radius: 10px;
+        -moz-border-radius-topleft: 0;
+        border-radius: 10px;
+        border-top-left-radius: 0;
+    }
+    
+        #howtoplay .question:before {
+            content:'';
+            width: 0px;
+            height: 0px;
+            position: absolute;
+            top: -30px;
+            left: 0px;
+            border: 15px solid transparent;
+            border-left: 15px solid #e3f1ea;
+            border-bottom: 15px solid #e3f1ea;
+
+        }
+    
+    #howtoplay .answer {
+        position: relative;
+        background: #eff2f2;
+        padding: 20px;
+        margin-bottom: 35px;
+        -webkit-border-radius: 10px;
+        -webkit-border-bottom-right-radius: 0;
+        -moz-border-radius: 10px;
+        -moz-border-radius-bottomright: 0;
+        border-radius: 10px;
+        border-bottom-right-radius: 0;
+    }
+        
+        #howtoplay .answer:after {
+            content:'';
+            width: 0px;
+            height: 0px;
+            position: absolute;
+            bottom: -30px;
+            right: 0px;
+            border: 15px solid transparent;
+            border-right: 15px solid #eff2f2;
+            border-top: 15px solid #eff2f2;
+        }
+
+    #howtoplay .howtoplay-img {
+        width: 200px;
+        margin: 0px 0px 0px 20px;
+        border: 2px solid #e3f1ea;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+        #howtoplay .howtoplay-img img {
+            display: block;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+        }
+
+    #howtoplay #page-links {
+        margin: 0px;
+        padding: 0px;
+    }
+    
+    #howtoplay #page-links li {
+        margin: 10px 0px;
+        list-style: none;
+        font-style: italic;
+    }
+    
+    .backtotop {
+        float: right;
+        margin: 5px 0px;
+        padding-right: 15px;
+        background: url('../img/btn-top.png') no-repeat right center;
+    }
+    
+    
+hr {
+    height: 1px;
+    background: #eff2f2;
+    border: 0px;
+    clear: both;
+}

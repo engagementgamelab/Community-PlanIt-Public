@@ -4,3 +4,21 @@
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flatpages.css">    
 {% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        $(document).ready(function() {
+
+            // Smooth Scroll, this does not seem to work in IE, TODO
+            $("a[href^='#']").click(function(e){
+                e.preventDefault();
+                console.log(this.hash);
+                $('html,body').animate({
+                    scrollTop: $('a[name='+this.hash.slice(1)+']').offset().top - 70 // minus header
+                }, 400);
+            });
+        });
+
+    </script>
+{% endblock %}
