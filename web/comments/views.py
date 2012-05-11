@@ -60,7 +60,7 @@ def ajax_like(request, id):
             request.user.get_profile().screen_name, c.content_object
         )
         c.user.notifications.create(content_object=c, message=message)
-        stream_utils.action.send(request.user, 'liked', target=c, description="liked a comment")
+        stream_utils.action.send(request.user, 'liked', target=c, description="liked the comment")
     return HttpResponse(str(c.likes.all().count()))
 
 def notify_author(request, comment_parent, comment):
