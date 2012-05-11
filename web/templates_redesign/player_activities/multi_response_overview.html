@@ -6,7 +6,7 @@
 <div>
     <div class="column-container">
 
-        <a class="btn-back" href="{{ activity.mission.get_absolute_url }}">{% trans "Return to mission" %}</a>
+        <a class="btn-back" href="{% url missions:mission activity.mission.slug %}">{% trans "Return to mission" %}</a>
         {% comment %}<a class="btn-forward" href="{# TODO #}">Next Challenge</a>{% endcomment %}
         
         <h1>{{ activity.name|safe }}<span class="points">{{ activity.get_points }}</span></h1>
