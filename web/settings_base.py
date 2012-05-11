@@ -329,7 +329,7 @@ DEFAULT_COINS = 0
 # Heatmap Threshold
 # The divisor in calculating heat map regions. 
 # higher number means harder to get "hot"
-HEATMAP_THRESHOLD = 5
+HEATMAP_THRESHOLD = 3
 
 #
 # South settings
