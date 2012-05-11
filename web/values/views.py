@@ -11,8 +11,7 @@ from stream import utils as stream_utils
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
 from django.core.cache import cache
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.utils.translation import get_language
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template import Context, RequestContext, loader
 
@@ -21,13 +20,12 @@ from django.contrib.auth.decorators import login_required
 from django.utils.datastructures import SortedDict
 
 from web.accounts.models import UserProfile, UserProfilePerInstance
-from web.attachments.models import Attachment
 from web.comments.forms import CommentForm
-from web.comments.models import Comment
+from web.comments.utils import create_video_attachment, create_image_attachment
 #from reports.models import ActivityLogger
-from web.reports.actions import PointsAssigner
-from web.values.models import *
+
 from web.core.utils import missions_bar_context
+from .models import *
 
 import logging
 log = logging.getLogger(__name__)
@@ -117,47 +115,22 @@ def detail(request, id, template='values/value.html'):
     else:
         raise Http404("could not locate a valid game")
 
-
-
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = value.comments.create(
-                content_object=value,
-                message=form.cleaned_data['message'], 
-                user=request.user,
-                instance=value.instance
+                    content_object=value,
+                    message=form.cleaned_data['message'], 
+                    user=request.user,
+                    instance=value.instance
             )
+            if request.POST.has_key('video-url') and request.POST.get('video-url') != '':
+                create_video_attachment(comment, request.POST.get('video-url'), request.current_game, request.user)
 
-            if request.POST.has_key('video-url'):
-                url = request.POST.get('video-url')
-                if url:
-                    comment.attachment.create(
-                        file=None,
-                        url=url,
-                        type='video',
-                        user=request.user,
-                        instance=value.instance
-                    )
-            file = request.FILES.get('picture')
-            if file:
-                picture = Image.open(file)
-                if (file.name.rfind(".") -1):
-                    file.name = "%s.%s" % (file.name, picture.format.lower())
-                if request.FILES.has_key('picture'):
-                    comment.attachment.create(
-                        file=request.FILES.get('picture'),
-                        user=request.user,
-                        instance=value.instance
-                    )
+            if request.FILES.has_key('picture'):
+                create_image_attachment(comment, request.FILES.get('picture'), request.current_game, request.user)
 
-            PointsAssigner().assign(request.user, 'comment_created')
-            log_url = reverse('values:detail', args=[id]) + '#comment-' + str(comment.pk)
-            #ActivityLogger().log(request.user, request, 'to value: ' + value.message[:30], 'added comment', log_url, 'value')
-            return HttpResponseRedirect(reverse('values:detail', args=[id]))
-
-    #values = value.instance.values.language(get_language())
-    #total_coins = values.aggregate(Sum('coins'))['coins__sum'] or 0
+            return redirect(value.get_absolute_url())
 
     total_flags_by_game = PlayerValue.objects.total_flags_by_game(current_instance, value)
     my_total_flags_for_value = PlayerValue.objects.total_flags_for_player(current_instance, request.user, value=value)
@@ -169,14 +142,6 @@ def detail(request, id, template='values/value.html'):
         'comments': value,
         'comment_form': CommentForm(),
     }
-    create_comment_sijax = Sijax()
-    create_comment_sijax.set_request_uri(reverse('comments:ajax-create'))
-    context.update(
-            {
-                'create_comment_sijax_js' : create_comment_sijax.get_js(),
-        }
-    )
-
     context.update(missions_bar_context(request))
     return render(request, template, context)
 
@@ -206,4 +171,4 @@ def take(request, id):
     else:
         messages.info(request, 'No coins available to take')
         
-    return HttpResponseRedirect(reverse('values:index'))
+    return redirect(reverse('values:index'))

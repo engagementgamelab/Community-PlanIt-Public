@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from web.instances.models import Instance
-from web.instances.utils import leaderboard_for_game
+from web.core.utils import leaderboard_for_game
 
 import logging
 log = logging.getLogger(__name__)

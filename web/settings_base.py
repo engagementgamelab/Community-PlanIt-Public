@@ -63,7 +63,8 @@ EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 TEMPLATE_DIRS = (
     os.path.join(ROOTDIR, 'templates_redesign'),
-    os.path.join(ROOTDIR, 'templates')
+    os.path.join(ROOTDIR, 'templates'),
+    os.path.join(ROOTDIR, '../../parts/django-nani/hvad/templates'),
 )
 
 INSTALLED_APPS = (
@@ -83,24 +84,24 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
     
-    'accounts',
-    'affiliations',
-    'answers',
-    'attachments',
-    'badges',
-    'challenges',
-    'crowds',
-    'comments',
-    'core',
-    'curator',
-    'flags',
-    'instances',
-    'lists',
-    'missions',
-    'player_activities',
-    'reports',
-    'responses',
-    'values',
+    'web.accounts',
+    'web.affiliations',
+    'web.answers',
+    'web.attachments',
+    'web.badges',
+    'web.challenges',
+    'web.crowds',
+    'web.comments',
+    'web.core',
+    'web.curator',
+    'web.flags',
+    'web.instances',
+    'web.lists',
+    'web.missions',
+    'web.player_activities',
+    'web.reports',
+    'web.responses',
+    'web.values',
 
     # Need this after web.admin because of test runner: 
     # it loads django admin tests by 'admin' app label first
@@ -108,7 +109,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 
     # 3rd party
-    'djcelery',
+    #'djcelery',
     'endless_pagination',
     'stream',
     'django_mailer',
@@ -294,19 +295,27 @@ ENDLESS_PAGINATE_PLAYERS_PER_PAGE = 16
 ENDLESS_PAGINATION_PREVIOUS_LABEL = '''<div class="pagination-previous"></div>'''
 ENDLESS_PAGINATION_NEXT_LABEL = '''<div class="pagination-next"></div>'''
 
+CPI_POINTS_FOR_COMMENT = 5
+CPI_POINTS_FOR_PLAYER_SUBMITTED_CHALLENGE = 5
+
+#CommunityPlanIt uwsgi tasks settings
+REBUILD_LEADERBOARD_SLEEP_SECONDS = 60*30
+CRON_MAIL_SLEEP_SECONDS = 60*3
+CRON_MAIL_RETRY_DEFERRED_SLEEP_SECONDS = 60*20
+
+# celery disabled
+# using uwsgi spoooler, timer decorator for now
+
 # django-celery
-import djcelery
-djcelery.setup_loader()
+#import djcelery
+#djcelery.setup_loader()
+#CELERY_IMPORTS = ('badges.tasks',)
 
-CELERY_IMPORTS = ('badges.tasks',)
-
-
-BROKER_HOST = "localhost"
-BROKER_PORT = 5672
-BROKER_USER = "guest"
-BROKER_PASSWORD = "guest"
-BROKER_VHOST = "/"
-
+#BROKER_HOST = "localhost"
+#BROKER_PORT = 5672
+#BROKER_USER = "guest"
+#BROKER_PASSWORD = "guest"
+#BROKER_VHOST = "/"
 
 #
 # Community PlanIT settings

@@ -178,8 +178,6 @@ def invalidate_mission(sender, **kwargs):
     cache.invalidate_group('missions')
     cache.invalidate_group('missions')
 
-    mission = kwargs.get('instance')
-    Mission.objects.for_instance(instance=mission.instance)
 post_save.connect(invalidate_mission, Mission)
 #post_save.connect(invalidate_prof_per_instance, Mission)
 

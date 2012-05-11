@@ -1,24 +1,15 @@
 import datetime
-from PIL import Image
 
 from stream import utils as stream_utils
 from stream.models import Action
-from celery.execute import send_task
 
 from django.conf import settings
 from django.db.models import Q
 from django.core.cache import cache
-#from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
-#from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import redirect
 
-from comments.forms import *
-from comments.models import Comment, Attachment
-from web.attachments.tasks import run_attachment_checks
-from web.accounts.models import UserProfilePerInstance
-#from player_activities.models import PlayerActivity
-#from reports.models import ActivityLogger
-#from core.utils import instance_from_request
+from web.comments.forms import *
+from web.comments.utils import create_video_attachment, create_image_attachment
 
 import logging
 log = logging.getLogger(__name__)
@@ -50,38 +41,22 @@ def comment_fun(answer, request, form=None, message=''):
     )
     log.debug("challenge attachments %s" % request.FILES.keys())
 
-    if request.POST.has_key('video-url'):
-        if request.POST.get('video-url'):
-            attachment = Attachment.objects.create(
-                    file=None,
-                    url=request.POST.get('video-url'),
-                    att_type=Attachment.ATTACHMENT_TYPE_VIDEO,
-                    user=request.user,
-                    instance=current_instance,
-            )
-            comment.attachment.add(attachment)
-            log.debug("created attachment video url for comment %s. %s" % (comment.pk, attachment))
-            #result = send_task("attachments.tasks.run_attachment_checks")
-            #log.debug(result)
-    else:
-        log.debug("no challenge attached video url %s" % request.POST.keys())
-
+    if request.POST.has_key('video-url') and \
+            request.POST.get('video-url') != '':
+        create_video_attachment(
+                        comment, 
+                        request.POST.get('video-url'), 
+                        request.current_game, 
+                        request.user
+        )
 
     if request.FILES.has_key('picture'):
-        image_file = request.FILES.get('picture')
-        picture = Image.open(image_file)
-        if (image_file.name.rfind(".") -1):
-            image_file.name = "%s.%s" % (image_file.name, picture.format.lower())
-
-        attachment = Attachment.objects.create(
-            file=image_file,
-            att_type=Attachment.ATTACHMENT_TYPE_IMAGE,
-            is_valid=True,
-            user=request.user,
-            instance=current_instance,
+        create_image_attachment(
+                        comment, 
+                        request.FILES.get('picture'), 
+                        request.current_game, 
+                        request.user
         )
-        comment.attachment.add(attachment)
-        log.debug("created attachment image for comment %s. %s" % (comment.pk, attachment))
 
 def log_activity_and_redirect(request, activity, action_msg):
 
@@ -112,24 +87,5 @@ def log_activity_and_redirect(request, activity, action_msg):
     # TODO only invalidate by one UserProfilePerInstance instance
     #cache.invalidate_group('my_progress_data')
     my_prof = request.user.get_profile()
-    UserProfilePerInstance.objects.progress_data_for_mission.invalidate(request.current_game, activity.mission, my_prof)
-    UserProfilePerInstance.objects.total_points_for_profile.invalidate(request.current_game, my_prof)
-    return HttpResponseRedirect(activity.get_overview_url())
-
-# NOT USED
-"""
-def getComments(answers, ModelType, activity=None):
-    comments = None
-    if activity:
-        act_type = ContentType.objects.get_for_model(PlayerActivity)
-        comments = Comment.objects.filter(content_type=act_type, object_id=activity.pk)
-
-    answer_type = ContentType.objects.get_for_model(ModelType)
-    for answer in answers:
-        if comments == None:
-            comments = Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-        else:
-            comments = comments | Comment.objects.filter(content_type=answer_type, object_id=answer.pk)
-    return comments
-"""
+    return redirect(activity.get_overview_url())
 

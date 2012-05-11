@@ -96,6 +96,8 @@ def _build_context(request, action, activity, user=None):
                     my_answers = mark_safe('<ul>' + ''.join(answer_dict[user]['answers']) + '</ul>')
                 for user, data in sorted(answer_dict.items()):
                     all_answers.append((user, mark_safe('<ul>' + ''.join(data['answers']) + '</ul>'), data['comments']))
+                #log.debug('overview multi my answers %s' % my_answers)
+                #log.debug('overview multi all answers %s' % all_answers)
                 context.update(
                     dict(
                         all_answers = all_answers,
@@ -331,37 +333,6 @@ def activity(request, activity_id, template=None, **kwargs):
                     PointsAssigner().assignAct(request.user, activity)
                     action_msg = 'completed'
                 return log_activity_and_redirect(request, activity, action_msg)
-
-        # all submissions on overview to be redone in ajax
-        """
-        elif action == "overview":
-            if comment_form and comment_form.is_valid():
-                comment = Comment.objects.create(
-                                    content_object=activity,
-                                    message=comment_form.cleaned_data['message'], 
-                                    user=request.user,
-                                    instance=activity.mission.instance,
-                )
-                if request.POST.has_key('video-url'):
-                    if request.POST.get('video-url'):
-                        comment.attachment.create(
-                            file=None,
-                            url=request.POST.get('video-url'),
-                            type='video',
-                            user=request.user,
-                            instance=activity.mission.instance)
-
-                if request.FILES.has_key('picture'):
-                    file = request.FILES.get('picture')
-                    picture = Image.open(file)
-                    if (file.name.rfind(".") -1):
-                        file.name = "%s.%s" % (file.name, picture.format.lower())
-                    comment.attachment.create(
-                        file=request.FILES.get('picture'),
-                        user=request.user,
-                        instance=activity.mission.instance)
-            return HttpResponseRedirect(activity.get_overview_url())
-        """
 
     user = None
     if activity.mission.is_active and not request.user.is_superuser:

@@ -84,7 +84,8 @@ def rebuild_player_leaderboard(profiles_for_game):
 
     for prof_per_instance in profiles_for_game:
         lb, created = PlayerLeaderboard.objects.get_or_create(player=prof_per_instance)
-        lb.points = UserProfilePerInstance.objects.total_points_for_profile(prof_per_instance.instance, prof_per_instance.user_profile)
+        #lb.points = UserProfilePerInstance.objects.total_points_for_profile(prof_per_instance.instance, prof_per_instance.user_profile)
+        lb.points = prof_per_instance.total_points
         lb.screen_name = prof_per_instance.user_profile.screen_name
         lb.absolute_url = prof_per_instance.get_absolute_url()
         lb.date_last_built = datetime.datetime.now()
@@ -97,7 +98,8 @@ def rebuild_affiliation_leaderboard(game, affiliations):
         lb, created = AffiliationLeaderboard.objects.get_or_create(instance=game, affiliation=affiliation)
         for prof_per_instance in UserProfilePerInstance.objects.filter(instance=game, affils=affiliation).\
                 exclude(user_profile__user__is_active=False):
-            points_for_player = UserProfilePerInstance.objects.total_points_for_profile(prof_per_instance.instance, prof_per_instance.user_profile)
+            #points_for_player = UserProfilePerInstance.objects.total_points_for_profile(prof_per_instance.instance, prof_per_instance.user_profile)
+            points_for_player = prof_per_instance.total_points
             if points_for_player == 0:
                 continue
             points+=points_for_player

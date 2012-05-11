@@ -8,15 +8,13 @@ from cache_utils.decorators import cached
 from stream import utils as stream_utils
 from stream.models import Action
 
-from django import forms
+from django.conf import settings
+from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
 from django.contrib.auth.signals import user_logged_in
-from django.db import models
 from django.utils.translation import get_language, ugettext_lazy as _ 
 
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes import generic
@@ -160,15 +158,16 @@ class UserProfilePerInstanceManager(models.Manager):
         log.debug('my games %s. ** not cached ** ' % my_games)
         return my_games
 
-    @cached(60*60*24)
-    def total_points_for_profile(self, instance, user_profile):
-        log.debug("profile manager: total_points_for_profile %s ** not cached **" % user_profile.screen_name)
-        try:
-            return self.get(instance=instance, user_profile=user_profile).total_points
-        except UserProfilePerInstance.DoesNotExist:
-            return 0
+    # deprecated. points now come from the core.PlayerLeaderboard
+    #@cached(60*60*24)
+    #def total_points_for_profile(self, instance, user_profile):
+    #    log.debug("profile manager: total_points_for_profile %s ** not cached **" % user_profile.screen_name)
+    #    try:
+    #        return self.get(instance=instance, user_profile=user_profile).total_points
+    #    except UserProfilePerInstance.DoesNotExist:
+    #        return 0
 
-    @cached(60*60*24)
+    @cached(60*60*24, 'progress_data_for_mission')
     def progress_data_for_mission(self, instance, mission, user_profile):
         return self.get(instance=instance, user_profile=user_profile).\
                 progress_percentage_by_mission(mission)
@@ -206,15 +205,9 @@ class UserProfilePerInstance(models.Model):
     def progress_percentage_by_mission(self, mission):
         mission_total_points = mission.total_points
         my_completed = self.my_completed_by_mission(mission)
-        my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))
+        #my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))
+        my_points_for_mission = self.total_points_by_mission(mission)
         percentage = int(my_points_for_mission/mission_total_points*Decimal(100))
-        #log.debug("%s/%s (%s percent). %s" % (
-        #                                    my_points_for_mission,
-        #                                    mission_total_points,
-        #                                    percentage,
-        #                                    mission.title,
-        #                                    )
-        #)
         return (my_points_for_mission, percentage)
 
     def get_user(self):
@@ -226,10 +219,35 @@ class UserProfilePerInstance(models.Model):
 
     @property
     def total_points(self):
+        return self.total_points_by_mission()
+
+    def total_points_by_mission(self, mission=None):
+        return self.total_points_for_completed_challenges(mission=mission) + \
+               self.total_points_for_comments(mission=mission) + \
+               self.total_points_for_player_submitted_challenges(mission=mission)
+
+    # TODO filter comments by mission
+    def total_points_for_comments(self, mission=None):
+        point_for_comments = Action.objects.get_for_actor(self.get_user()).filter(verb="commented").count()
+        return point_for_comments * settings.CPI_POINTS_FOR_COMMENT
+
+    def total_points_for_player_submitted_challenges(self, mission=None):
+        kwargs = {}
+        kwargs['verb'] = "activity_player_submitted"
+        if mission:
+            kwargs['action_object_playeractivity__mission'] = mission
+        points = Action.objects.get_for_actor(self.get_user()).filter(**kwargs).count()
+        return points * settings.CPI_POINTS_FOR_PLAYER_SUBMITTED_CHALLENGE
+
+    def total_points_for_completed_challenges(self, mission=None):
         my_completed = []
-        for mission in Mission.objects.for_instance(self.instance):
-            my_completed.extend(self.my_completed_by_mission(mission))
-        return Decimal(sum(activity.get_points() for activity in my_completed))
+        if mission is None:
+            for mission in Mission.objects.for_instance(instance=self.instance):
+                my_completed.extend(self.my_completed_by_mission(mission))
+        else:
+            my_completed = self.my_completed_by_mission(mission)
+        points_for_completed_challenges =  Decimal(sum(activity.get_points() for activity in my_completed))
+        return points_for_completed_challenges
 
     def my_completed_by_mission(self, mission, include_player_submitted=False):
         def activities_from_actions(actions):

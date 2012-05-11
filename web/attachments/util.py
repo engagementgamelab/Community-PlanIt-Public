@@ -84,7 +84,6 @@ def is_valid_youtube_video(video_id):
     c = httplib.HTTPConnection('gdata.youtube.com')
     c.request('HEAD', '/feeds/api/videos/' + video_id)
     r = c.getresponse()
-    log.debug(r)
     if r.status == 200:
         return True
     return False

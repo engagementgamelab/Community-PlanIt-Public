@@ -1,21 +1,12 @@
 import datetime
 from operator import attrgetter
 
-#from stream.models import Action
-
-from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404
 
-from django.contrib.auth.decorators import login_required
-
+from .models import *
 from web.core.utils import missions_bar_context
-from web.answers.models import *
-from web.comments.forms import CommentForm
-from web.comments.models import Comment
-from web.instances.models import Instance
-from web.missions.models import *
-from web.player_activities.models import *
 from web.accounts.models import UserProfilePerInstance
 
 import logging
@@ -59,7 +50,6 @@ def fetch(request, slug, include_player_submitted=False, template='missions/miss
     context = dict(
         activities = all_activities_sorted,
         my_completed = my_completed,
-        comment_form = CommentForm(),
     )
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage

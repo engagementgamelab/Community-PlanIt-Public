@@ -15,17 +15,13 @@ download_cache_dir = /var/local/buildout
 eggs-directory=${buildout:download_cache_dir}/eggs
 download-cache = ${buildout:download_cache_dir}/cache
 uwsgi-run-dir = /var/local/run/uwsgi
-
+uwsgi-spool-dir = /var/local/uwsgi_spool/${buildout:project_name}
 
 eggs += 
        ipdb
        ipython
        django_extensions
        django-debug-toolbar
-       django-devserver
-       line_profiler
-       indexer
-       django-paging
        django-template-repl
 
 [server]
@@ -45,14 +41,19 @@ recipe=eqb.recipe.uwsgi
 uid=${server:user}
 home=${buildout:directory}
 pythonpath=${buildout:directory}/${buildout:project_name}/web
-wsgi-file=${buildout:directory}/bin/django.wsgi
+wsgi-file=${buildout:bin-directory}/django.wsgi
+env=DJANGO_SETTINGS_MODULE=web.settings
 pidfile=${buildout:uwsgi-run-dir}/${server:host}.pid
 socket=127.0.0.1:${server:uwsgi-socket-port}
 single-interpreter=true
 master=True
 eggs=Django
 versions=versions
+logto=${buildout:directory}/log/uwsgi.log
+log-master=true
+spooler = ${buildout:uwsgi-spool-dir}
 import=uwsgiutils.tasks
+#import=uwsgiutils.tasks_localdev
 
 [nginx-config-local]
 recipe = collective.recipe.template
@@ -98,8 +99,8 @@ output = ${buildout:bin-directory}/resetdb
 mode = 755
 inline =
     sudo su postgres -c "dropdb ${server:db_name}"
-    sudo su postgres -c "createdb -O ${server:db_user} -h ${server:db_host} -D pg_default -T template_postgis -E UTF8 -l en_US.UTF-8 ${server:db_name}"
-    sudo su postgres -c "psql -U ${server:db_user} -h ${server:db_host} ${server:db_name} < $VIRTUAL_ENV/${server:db_name}.latest.sql"
+    sudo su postgres -c "createdb -O ${server:db_user} -h ${server:db_host} -D pg_default -E UTF8 -l en_US.UTF-8 ${server:db_name}"
+    sudo su postgres -c "psql -U ${server:db_user} -h ${server:db_host} ${server:db_name} < latest.sql"
 
 [supervisor-config]
 recipe = collective.recipe.template

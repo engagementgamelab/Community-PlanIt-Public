@@ -14,25 +14,7 @@
     {{ block.super }}
     {# masonry is required to display comments correctly #}
     <script src="{{ STATIC_URL }}js/jquery.masonry.min.js"></script>
-    <script src="{{ STATIC_URL }}js/sijax.js"></script>
     <script src="{{ STATIC_URL }}js/comments.js"></script>
-    <script>
-    jQuery(function($) {
-        {% include "js/ajax_csrf.html" %}
-        {{ create_comment_sijax_js|safe }}
-
-        $(".btn-yellow").click(function(e){
-            e.preventDefault();
-            var form = $('#id_comment-form-'+$(this).attr('id'))[0];
-            var form_data = Sijax.getFormValues('#id_comment-form-'+$(this).attr('id'));
-            Sijax.request('create_comment', [form_data]);
-            form.reset();
-        });
-
-    });
-    </script>
-
-
 {% endblock %}
 
 
@@ -178,8 +160,7 @@
             <h2>{% trans "Community Messages" %}</h2>
             <!-- Add A Comment-->
             {% with profile_per_instance.pk as profile_pk %}
-            <form id="id_comment-form-{{ profile_pk }}"
-                enctype="multipart/form-data" action="{{ comment_post_url|default:"."}}" method="POST">
+            <form id="id_comment-form-{{ profile_pk }}" enctype="multipart/form-data" action="" method="POST">
                 {% include "comments/duplicate.html" %}
                 <input type="hidden" name="parent_id" value="{{ profile_pk }}"/>
                 <input type="hidden" name="parent_type" value="user_profile"/>
