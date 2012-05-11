@@ -42,6 +42,9 @@ def get_translation_with_fallback(obj, attr):
 #        return
 
 def missions_bar_context(request, mission=None):
+    
+    if not hasattr(request, 'current_game'):
+        raise Http404("could not locate a valid game")
 
     try:
         prof_per_instance = UserProfilePerInstance.objects.get(
@@ -68,13 +71,21 @@ def missions_bar_context(request, mission=None):
     my_flags_count = prof_per_instance.flags
     my_flags_range = range(0, my_flags_count)
 
+    #try:
+    #    lb = PlayerLeaderboard.objects.get(player=prof_per_instance)
+    #except PlayerLeaderboard.DoesNotExist:
+    #    my_total_points = prof_per_instance.total_points,
+    #else:
+    #   my_total_points = lb.points
+    my_total_points = prof_per_instance.total_points
+
     context = {
         'mission': mission,
         'all_missions_for_game': all_missions_for_game,
         'my_points_for_mission': my_points_for_mission,
         'progress_percentage': progress_percentage,
         'my_flags_range': my_flags_range,
-        'my_total_points': prof_per_instance.total_points,
+        'my_total_points': my_total_points,
     }
 
     return context
