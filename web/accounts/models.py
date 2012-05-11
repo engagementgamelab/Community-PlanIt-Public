@@ -22,7 +22,6 @@ from django.contrib.contenttypes.models import ContentType
 
 from nani.models import TranslatableModel, TranslatedFields
 
-#from web.challenges.models import *
 from web.instances.models import Instance, Affiliation, Language
 from web.missions.models import Mission
 from web.values.models import PlayerValue
@@ -226,10 +225,27 @@ class UserProfilePerInstance(models.Model):
                self.total_points_for_comments(mission=mission) + \
                self.total_points_for_player_submitted_challenges(mission=mission)
 
-    # TODO filter comments by mission
     def total_points_for_comments(self, mission=None):
-        point_for_comments = Action.objects.get_for_actor(self.get_user()).filter(verb="commented").count()
-        return point_for_comments * settings.CPI_POINTS_FOR_COMMENT
+        actions = Action.objects.get_for_actor(self.get_user()).filter(verb="commented")
+        if mission is not None:
+            num_comments  = 0
+            for action in actions:
+                if isinstance(action.target, Comment):
+                    comment = action.target
+                    topic = comment.topic
+                    # TODO filter comments by mission
+                    # add the rest of the possible answers
+                    if topic.__class__.__name__ in ['AnswerOpenEnded', 
+                                                    'AnswerSingleResponse', 
+                                                    'AnswerMap']:
+                        if hasattr(topic, 'activity') and \
+                            topic.activity.mission == mission:
+                                num_comments += 1
+
+        else:
+            num_comments = actions.count()
+
+        return num_comments * settings.CPI_POINTS_FOR_COMMENT
 
     def total_points_for_player_submitted_challenges(self, mission=None):
         kwargs = {}
