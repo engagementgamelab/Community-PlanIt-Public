@@ -417,6 +417,12 @@ def ajax_search(request, search_form, request_uri=None):
 
 @login_required
 def profile(request, id, template_name="accounts/profile.html"):
+
+    if hasattr(request, 'current_game'):
+        instance = request.current_game
+    else:
+        raise Http404("could not locate a valid game")
+
     context={}
     player = get_object_or_404(User, id=id)
     kwargs={}

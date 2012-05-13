@@ -2,8 +2,8 @@ from cache_utils.decorators import cached
 
 from django.db import models
 
-from accounts.models import UserProfilePerInstance
-from instances.models import Instance, Affiliation
+from web.accounts.models import UserProfilePerInstance
+from web.instances.models import Instance, Affiliation
 
 # Create your models here.
 
