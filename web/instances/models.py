@@ -178,13 +178,9 @@ class Instance(TranslatableModel):
         return self.title
 
     def get_absolute_url(self, ssl=True):
-        #if ssl == True:
-        #    return os.path.join('https://', self.for_city.domain)
-        #return os.path.join('http://', self.for_city.domain)
-
         return os.path.join(
                 'https://' if settings.DEBUG == False else 'http://',
-                self.mission.instance.for_city.domain
+                self.for_city.domain
         )
 
     @property
