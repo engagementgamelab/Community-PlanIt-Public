@@ -13,9 +13,8 @@
     <h1>{{ activity.name }}<span class="points">{{ activity.get_points }}</span></h1>
     {% if activity.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile activity.creationUser.id %}">{% avatar activity.creationUser %}</a> created by <a href="{% url accounts:player_profile activity.creationUser.id %}">{{ activity.creationUser.get_profile.screen_name }}</a></div>{% endif %}
     
-    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post" class="narrow">
+    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post" class="narrow">{% csrf_token %}
         <div class="column-threequarter">
-            {% csrf_token %}
             <input type="hidden" name="form" value="map">
             <input type="hidden" id="max_points_input" name="max_points_input" value="{{activity.maxNumMarkers}}">
         

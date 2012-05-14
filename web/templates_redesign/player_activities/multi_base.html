@@ -14,8 +14,7 @@
     {% if activity.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile activity.creationUser.id %}">{% avatar activity.creationUser %}</a> created by <a href="{% url accounts:player_profile activity.creationUser.id %}">{{ activity.creationUser.get_profile.screen_name }}</a></div>{% endif %}
     
     
-    <form id="id_activity-form" action="" method="post">
-        {% csrf_token %}
+    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post"> {% csrf_token %}
         <div class="column-threequarter">
         
             <div class="activity-question">
