@@ -30,9 +30,10 @@ class Answer(models.Model):
         self.createDate = datetime.datetime.now()
         super(Answer, self).save(*args, **kwargs)
 
-    @models.permalink
+    #@models.permalink --> breaks in localurl
     def get_absolute_url(self):
-        return ("player_activities:overview", [self.activity.id])
+        #return ("player_activities:overview", [self.activity.id])
+        return self.activity.get_absolute_url()
 
 class AnswerSingleResponse(Answer):
     selected = models.ForeignKey(MultiChoiceActivity, related_name='singleresponse_answers')
@@ -41,6 +42,13 @@ class AnswerSingleResponse(Answer):
     def __unicode__(self):
         return _(u'an answer to %s' % self.activity)
 
+
+class AnswerMultiChoiceManager(models.Manager):
+    pass
+
+    #@cached
+    #def by_activity(self, activity)
+
 #This is nasty but it's the simple way to get many checked values
 #for the user stored
 class AnswerMultiChoice(models.Model):
@@ -48,12 +56,15 @@ class AnswerMultiChoice(models.Model):
     option = models.ForeignKey(MultiChoiceActivity, related_name='multichoice_answers')
     comments = generic.GenericRelation(Comment)
 
+    objects = AnswerMultiChoiceManager()
+
     def __unicode__(self):
         return self.option.value
 
-    @models.permalink
+    #@models.permalink --> breaks in localurl
     def get_absolute_url(self):
-        return ("player_activities:overview", [self.option.activity.id])
+        #return ("player_activities:overview", [self.option.activity.id])
+        return self.option.activity.get_absolute_url()
 
 class AnswerMap(Answer):
     map = GoogleMapsField()
@@ -62,9 +73,10 @@ class AnswerMap(Answer):
     def __unicode__(self):
         return _(u'an answer to %s' % self.activity)
 
-    @models.permalink
+    #@models.permalink --> breaks in localurl
     def get_absolute_url(self):
-        return ("player_activities:map-overview", [self.activity.id])
+        #return ("player_activities:map-overview", [self.activity.id])
+        return self.activity.get_absolute_url()
 
 class AnswerEmpathy(Answer):
     activity = models.ForeignKey(PlayerEmpathyActivity, related_name='empathy_answers')
@@ -72,9 +84,10 @@ class AnswerEmpathy(Answer):
     def __unicode__(self):
         return _(u'an answer to %s' % self.activity)
 
-    @models.permalink
+    #@models.permalink --> breaks in localurl
     def get_absolute_url(self):
-        return ("player_activities:empathy-overview", [self.activity.id])
+        #return ("player_activities:empathy-overview", [self.activity.id])
+        return self.activity.get_absolute_url()
 
 class AnswerOpenEnded(Answer):
     activity = models.ForeignKey(PlayerActivity, related_name='openended_answers')

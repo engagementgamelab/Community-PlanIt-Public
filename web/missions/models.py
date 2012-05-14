@@ -98,10 +98,6 @@ class Mission(TranslatableModel):
     	ordering = ('end_date',)
         #get_latest_by = 'start_date'
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ('missions:mission', [self.slug])
-
     @property
     def ends_in_days(self):
         delta =  self.end_date - datetime.datetime.now()
@@ -156,13 +152,14 @@ class Mission(TranslatableModel):
     def __unicode__(self):
         return self.title
 
+    @models.permalink
     def get_absolute_url(self, lang):
         redir = ""
         if lang.code in dict(settings.LANGUAGES).keys():
             #spath = strip_path(settings.LOGIN_REDIRECT_URL)[1]
             spath = '/'
-            redir = "".join([self.instance.get_absolute_url(ssl=not(settings.DEBUG)),
-                                locale_path(spath, lang.code)])
+            redir = os.path.join(self.instance.get_absolute_url(ssl=not(settings.DEBUG)),
+                                locale_path(spath, lang.code))
             # getting rid of the first slash to be used later with
             # os.path.join
             default_mission_path = strip_path(reverse('missions:mission', args=(self.slug,)))[1][1:]

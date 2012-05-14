@@ -7,6 +7,7 @@ __all__ = (
 )
 
 import datetime
+import os.path
 from stream import utils as stream_utils
 from stream.models import Action
 from nani.models import TranslatableModel, TranslatedFields
@@ -152,9 +153,15 @@ class PlayerActivity(PlayerActivityBase):
     class Meta:
         verbose_name_plural = 'Player Activities'
 
-    @models.permalink
+    #@models.permalink --> breaks in localurl
     def get_absolute_url(self):
-        return ('activities:overview', (self.pk,))
+        return os.path.join(
+                os.path.join(
+                        'https://' if settings.DEBUG == False else 'http://',
+                        self.mission.instance.for_city.domain
+                ),
+                self.get_overview_url()[1:]
+        )
 
     def get_overview_url(self):
         return reverse('activities:overview', args=(self.pk,))
@@ -200,10 +207,6 @@ class PlayerMapActivity(PlayerActivityBase):
     
     class Meta:
         verbose_name_plural = 'Player Map Activities'
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('activities:map-overview', (self.pk,))
 
     def get_overview_url(self):
         return reverse('activities:map-overview', args=(self.pk,))
@@ -281,6 +284,13 @@ class PlayerEmpathyActivity(PlayerActivityBase):
         self.type = PlayerActivityType.objects.get(type="empathy")
         super(PlayerEmpathyActivity, self).save(*args, **kwargs)
 
+class MultiChoiceActivityManager(TranslationManager):
+
+    @cached(60*60*24*7)
+    def by_activity(self, activity):
+        log.debug("getting answers for %s. ** not cached **" % activity)
+        return self.filter(activity=activity)
+
 
 class MultiChoiceActivity(TranslatableModel):
     """
@@ -297,6 +307,8 @@ class MultiChoiceActivity(TranslatableModel):
     translations = TranslatedFields(
         value = models.CharField(max_length=255),
     )
+
+    objects = MultiChoiceActivityManager()
     
     def is_completed(self, answerUser):
         return self.multi_choice_answers.filter(answerUser=answerUser).count() > 0
