@@ -30,7 +30,7 @@ class Answer(models.Model):
         self.createDate = datetime.datetime.now()
         super(Answer, self).save(*args, **kwargs)
 
-    #@models.permalink --> breaks in localurl
+    #@models.permalink --> breaks in localeurl
     def get_absolute_url(self):
         #return ("player_activities:overview", [self.activity.id])
         return self.activity.get_absolute_url()

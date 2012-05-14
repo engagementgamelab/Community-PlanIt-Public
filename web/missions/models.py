@@ -152,7 +152,7 @@ class Mission(TranslatableModel):
     def __unicode__(self):
         return self.title
 
-    @models.permalink
+    #@models.permalink --> breaks in localeurl
     def get_absolute_url(self, lang):
         redir = ""
         if lang.code in dict(settings.LANGUAGES).keys():
