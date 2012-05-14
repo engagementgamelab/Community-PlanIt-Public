@@ -69,26 +69,17 @@ def notify_author(request, comment_parent, comment):
 
     if isinstance(comment_parent, Comment) and \
             request.user != comment_parent.user:
+
         topic = comment_parent.topic
-        #if isinstance(topic, Challenge):
-        #    message = "%s replied to a comment on %s" % (
-        #        request.user.get_profile().screen_name,
-        #        topic
-        #    )
-        #    recipient = topic.user
-        #elif isinstance(topic, UserProfile):
-        #    message = "%s replied to a comment on your profile" % (
-        #        request.user.get_profile().screen_name
-        #    )
-        #    recipient = topic.user
-        #else:
-        #    message = "%s replied to your comment on %s" % (
-        #        request.user.get_profile().screen_name,
-        #        topic
-        #    )
-        #    recipient = parent_comment.user
+
+        challenge = None
+        if isinstance(topic, AnswerMultiChoice):
+            challenge = topic.option.activity
+        elif hasattr(topic, 'activity'):
+            challenge = topic.activity
+
         if isinstance(topic, Answer) or isinstance(topic, AnswerMultiChoice):
-            message = "%s replied to your answer %s" %(
+            message = "%s replied to your answer %s." %(
                 request.user.get_profile().screen_name,
                 topic
             )
@@ -97,8 +88,20 @@ def notify_author(request, comment_parent, comment):
             except AttributeError:
                 recipient = topic.user
 
-    if recipient is not None and message is not None:
-        recipient.notifications.create(content_object=comment, message=message)
+        if recipient is not None and message is not None:
+            recipient.notifications.create(content_object=comment, message=message)
+
+        for comment in comment_parent.comments.all():
+            if comment.user == request.user:
+                continue
+            message = "%s also replied to the response to %s." %(
+                    request.user.get_profile().screen_name,
+                    challenge,
+            )
+            comment.user.notifications.create(
+                    content_object=comment, 
+                    message=message
+            )
 
 
 @login_required
@@ -111,26 +114,21 @@ def ajax_create(request, comment_form=CommentForm):
         form = comment_form(data=form_data)
         if form.is_valid():
             cd = form.cleaned_data
-            log.debug("processed comment_form. cleaned_data: %s" % cd)
+            #log.debug("processed comment_form. cleaned_data: %s" % cd)
             comment_parent  = get_object_or_404(Comment, id=cd.get('parent_id'))
-            stream_description = "commented on a comment"
-            instance = comment_parent.instance
-
             comment = comment_parent.comments.create(
                 content_object=comment_parent,
                 message=cd.get(u'message'),
                 user=request.user,
-                instance=instance,
+                instance=comment_parent.instance,
             )
-            log.debug("comment created. %s" % vars(comment))
-
-            stream_verb = 'commented'
+            #log.debug("comment created. %s" % vars(comment))
             stream_utils.action.send(
-                            request.user,
-                            stream_verb,
+                            actor=request.user,
+                            verb='commented',
                             target=comment_parent,
                             action_object=comment,
-                            description=stream_description
+                            description="commented on a comment"
             )
             notify_author(request, comment_parent, comment)
 
