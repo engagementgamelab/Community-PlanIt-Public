@@ -49,11 +49,13 @@
             
             <div id="leaderboard-affiliations" class="leaderboard-container">
                 {% for lb_entry in affiliations_leaderboard %}
+                {% if lb_entry.points > 100 %}
                 <div class="leaderboard-standings">
                     <div class="leaderboard-standings-rank">{{ forloop.counter }}</div>
                     <div class="leaderboard-standings-name"><a href="{{ lb_entry.absolute_url }}">{{ lb_entry.name }}</a></div>
                     <div class="leaderboard-standings-points">{{ lb_entry.points}}</div>
                 </div>
+                {% endif %}
                 {% endfor %}
             </div>
         </div>
