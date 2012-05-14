@@ -166,7 +166,7 @@ class UserProfilePerInstanceManager(models.Manager):
     #    except UserProfilePerInstance.DoesNotExist:
     #        return 0
 
-    @cached(60*60*24, 'progress_data_for_mission')
+    #@cached(60*60*24, 'progress_data_for_mission')
     def progress_data_for_mission(self, instance, mission, user_profile):
         return self.get(instance=instance, user_profile=user_profile).\
                 progress_percentage_by_mission(mission)
