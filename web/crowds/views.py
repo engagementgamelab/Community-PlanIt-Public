@@ -204,11 +204,13 @@ def create(request):
 
     else:
         form = CrowdForm()
-    context = dict(
-            map = current_instance.location,
-            crowds = Crowd.objects.filter(instance=current_instance).order_by('start_date'),
-            form = form,
-    )
+    context = {
+        'map': current_instance.location,
+        'upcoming_crowds': Crowd.objects.upcoming().filter(instance=current_instance),
+        'past_crowds': Crowd.objects.past().filter(instance=current_instance),
+        'form': form,
+    }
+    
     context.update(missions_bar_context(request))
     return render(request, 'crowds/add.html', context)
 
@@ -321,7 +323,8 @@ def all(request, template='crowds/all.html', extra_context={}):
         raise Http404("could not locate a valid game")
     
     context = {
-        'crowds': Crowd.objects.filter(instance=current_instance).order_by('start_date'),
+        'upcoming_crowds': Crowd.objects.upcoming().filter(instance=current_instance),
+        'past_crowds': Crowd.objects.past().filter(instance=current_instance),
     }
     
     context.update(extra_context)
