@@ -1,13 +1,13 @@
 {% load i18n %}
 {% blocktrans with instance_title=instance.title %}News from {{instance_title}}{% endblocktrans %}
 
-{% for notification in user_profile.user.notifications.unread %}
-* {{notification.timestamp}}: {{notification.message}}
+{% for notification in user_prof_per_instance.user_profile.user.notifications.unread %}
+* {{notification.timestamp}}: {{notification.message|safe}}
 {% endfor %}
 
 See all your notifications here:
 
-https://{{site.domain}}{% url accounts:notifications %}
+{{ instance.get_absolute_url }}{% url accounts:notifications %}
 
 {% blocktrans with site_name=site.name %}The Community PlanIt Team{% endblocktrans %}
 {% blocktrans %}
@@ -16,5 +16,5 @@ updates. If you want to stop receiving news from Community PlanIt, just edit
 your profile:
 {% endblocktrans %}
 
-https://{{site.domain}}{% url accounts:profile_edit %}
+{{ instance.get_absolute_url }}{% url accounts:profile_edit %}
 

@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        tmpl = loader.get_template('accounts/email/notifications.html')
+        tmpl = loader.get_template('accounts/email/notifications.txt')
         cnt = 0
         for instance in Instance.objects.current():
             context = {
