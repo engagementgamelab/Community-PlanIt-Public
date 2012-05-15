@@ -218,12 +218,14 @@ class UserProfilePerInstance(models.Model):
 
     @property
     def total_points(self):
-        return self.total_points_by_mission()
+        return self.total_points_by_mission(include_comments=True)
 
-    def total_points_by_mission(self, mission=None):
-        return self.total_points_for_completed_challenges(mission=mission) + \
-               self.total_points_for_comments(mission=mission) + \
-               self.total_points_for_player_submitted_challenges(mission=mission)
+    def total_points_by_mission(self, mission=None, include_comments=False):
+        points =  self.total_points_for_completed_challenges(mission=mission) + \
+                  self.total_points_for_player_submitted_challenges(mission=mission)
+        if include_comments == True:
+            points += self.total_points_for_comments(mission=mission)
+        return points
 
     def total_points_for_comments(self, mission=None):
         actions = Action.objects.get_for_actor(self.get_user()).filter(verb="commented")
@@ -241,7 +243,9 @@ class UserProfilePerInstance(models.Model):
                         if hasattr(topic, 'activity') and \
                             topic.activity.mission == mission:
                                 num_comments += 1
-
+                    elif topic.__class__.__name__ == 'AnswerMultiChoice':
+                        if topic.option.activity.mission == mission:
+                                num_comments += 1
         else:
             num_comments = actions.count()
 
@@ -262,8 +266,7 @@ class UserProfilePerInstance(models.Model):
                 my_completed.extend(self.my_completed_by_mission(mission))
         else:
             my_completed = self.my_completed_by_mission(mission)
-        points_for_completed_challenges =  Decimal(sum(activity.get_points() for activity in my_completed))
-        return points_for_completed_challenges
+        return  Decimal(sum(activity.get_points() for activity in my_completed))
 
     def my_completed_by_mission(self, mission, include_player_submitted=False):
         def activities_from_actions(actions):
@@ -275,8 +278,8 @@ class UserProfilePerInstance(models.Model):
             return []
         # do not pass en empty list to Action.get_for_action_objects
         # it will blow up
-        actions = Action.objects.get_for_action_objects(activities_for_mission)
-        actions = actions.filter(actor_user=self.get_user(), verb='activity_completed')
+        actions = Action.objects.get_for_action_objects(activities_for_mission).\
+                filter(actor_user=self.get_user(), verb='activity_completed')
         return activities_from_actions(actions)
 
     @property
