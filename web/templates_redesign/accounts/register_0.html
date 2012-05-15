@@ -8,6 +8,21 @@
     <script src="{{ STATIC_URL }}js/sijax.js"></script>
     <script type="text/javascript">
 
+    // Read a page's GET URL variables and return them as an associative array.
+    function getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+
+
     city_change_callback = function (commandsArray) {
         Sijax.processCommands(commandsArray);
         $('#id_0-instance').change();
@@ -35,7 +50,8 @@
             e.preventDefault();
             {{ login_sijax_js|safe }}
             var form_data = Sijax.getFormValues('#id_login-form');
-            Sijax.request('login_process', [form_data]);
+            var next =  getUrlVars()["next"];
+            Sijax.request('login_process', [form_data, next]);
         });
 
         $('#id_0-city').change();

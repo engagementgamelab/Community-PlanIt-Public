@@ -50,7 +50,9 @@ log = logging.getLogger(__name__)
 @never_cache
 def login_ajax(request, authentication_form=AuthenticationForm):
 
-    def login_process(obj_response, form_data):
+    def login_process(obj_response, form_data, next=None):
+        #log.debug(form_data)
+        log.debug("next?: '%s'" % next)
         form = authentication_form(request, data=form_data)
         if form.is_valid():
             auth_login(request, form.get_user())
@@ -84,6 +86,16 @@ def login_ajax(request, authentication_form=AuthenticationForm):
             #    redir = os.path.join(redir, values_path)
             #log.debug("post login redir %s" % redir)
 
+            if next is not None:
+                return obj_response.redirect(
+                        os.path.join(
+                            'https://' if settings.DEBUG == False else 'http://',
+                            current_game.for_city.domain,
+                            next[1:],
+                        )
+                )
+
+
             active_mission = Mission.objects.default(current_game)
             if active_mission:
                 return obj_response.redirect(
@@ -109,7 +121,7 @@ def login_ajax(request, authentication_form=AuthenticationForm):
     instance = Sijax()
     instance.set_data(request.POST)
     instance.set_request_uri(reverse('accounts:login-ajax'))
-    instance.register_callback('login_process', login_process)
+    instance.register_callback('login_process', login_process, args_extra=[])
     if instance.is_sijax_request:
         return HttpResponse(instance.process_request())
     return HttpResponse("")
