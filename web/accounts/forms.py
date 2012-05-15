@@ -57,12 +57,12 @@ class RegisterFormOne(forms.Form):
 
     def clean(self):
         """Ensure that a user has not already registered an account with that email address and that game."""
-        if ('email', 'instance') in self.cleaned_data.items():
-            if UserProfilePerInstance.objects.filter(
-                        user_profile__email=self.cleaned_data['email'], 
-                        instance__pk=self.cleaned_data['instance']
-                        ).count() != 0:
-                raise forms.ValidationError(_('Account already exists for this game, please use a different email address.'))
+        #if ('email', 'instance') in self.cleaned_data.items():
+        qs = UserProfilePerInstance.objects.filter(
+                    user_profile__email=self.cleaned_data['email'], 
+                    instance=self.cleaned_data['instance'])
+        if qs.count() != 0:
+            raise forms.ValidationError(_('Account already exists for this game, please use a different email address.'))
         return self.cleaned_data
 
     def clean_password_again(self):
