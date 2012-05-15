@@ -39,7 +39,11 @@ def comment_fun(answer, request, form=None, message=''):
                     user=request.user,
                     instance=current_instance,
     )
-    log.debug("challenge attachments %s" % request.FILES.keys())
+
+    if len(request.FILES.keys()):
+        log.debug("challenge attachments for comment %s: %s" % 
+                    (comment.pk, request.FILES.keys())
+        )
 
     if request.POST.has_key('video-url') and \
             request.POST.get('video-url') != '':
@@ -67,6 +71,18 @@ def log_activity_and_redirect(request, activity, action_msg):
                                 target=request.current_game,
                                 description="%s challenge" % action_msg
         )
+        if action_msg == 'completed':
+            try:
+                # uwsgi spool
+                from uwsgiutils.tasks import uwsgi_assign_challenge_completed_badges
+                if hasattr(activity, 'mission'):
+                    mission_id = activity.mission.pk
+                    uwsgi_assign_challenge_completed_badges.spool(user_id=str(request.user.pk), mission_id=str(mission_id))
+            except ImportError:
+                # it is not possible to import uwsgi
+                # from certain environments such as from pyshell
+                # ignoring the ImportError
+                pass
     else:
         qs = Action.objects.filter(
                 verb = 'activity_completed',
@@ -86,6 +102,5 @@ def log_activity_and_redirect(request, activity, action_msg):
     # points. invalidate here.
     # TODO only invalidate by one UserProfilePerInstance instance
     #cache.invalidate_group('my_progress_data')
-    my_prof = request.user.get_profile()
     return redirect(activity.get_overview_url())
 
