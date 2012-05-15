@@ -64,6 +64,10 @@ class BadgePerPlayer(models.Model):
     def increment_level(self, n=1):
         self.level+=n
 
+    @property
+    def player_screen_name(self):
+        return self.user.get_profile().screen_name
+
     class Meta:
         unique_together = ('badge', 'user',)
 

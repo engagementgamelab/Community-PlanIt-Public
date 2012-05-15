@@ -9,6 +9,6 @@ admin.site.register(Badge, BadgeAdmin)
 
 
 class BadgePerPlayerAdmin(admin.ModelAdmin):
-    list_display = ('badge', 'user', 'level')
+    list_display = ('badge', 'player_screen_name', 'level')
     list_filter = ('badge', )
 admin.site.register(BadgePerPlayer, BadgePerPlayerAdmin)
