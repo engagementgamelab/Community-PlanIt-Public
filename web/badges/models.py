@@ -1,22 +1,14 @@
-import os.path
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.template.defaultfilters import slugify
 #from django.db.models.signals import post_save
 #from django.dispatch import receiver
-from django.utils.translation import get_language
 
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
 
-from web.comments.models import Comment
-
-def determine_path(instance, filename):
-    return os.path.join('uploads/cities/', str(instance.domain), filename)
-
-
+#from web.comments.models import Comment
 
 class Badge(TranslatableModel):
 
@@ -38,13 +30,16 @@ class Badge(TranslatableModel):
     )
     slug = models.SlugField(_("Slug"))
     title = models.CharField(_("Title"), max_length=255)
-    type = models.IntegerField(_("Badge Type"), choices=BADGE_TYPES, default=0)
+    type = models.IntegerField(_("Badge Type"), unique=True, choices=BADGE_TYPES, default=0)
 
     translations = TranslatedFields(
         name = models.CharField(max_length="100"),
         description = models.TextField(),
         #meta = {'get_latest_by': 'start_date'}
     )
+
+    def __unicode__(self):
+        return self.name
 
     def save(self, *args, **kwargs):
         if self.slug is None or self.slug == '':
@@ -76,6 +71,4 @@ class BadgePerPlayer(models.Model):
 #@receiver(post_save, sender=Comment, dispatch_uid='cpi-badges')
 #def my_callback(sender, **kwargs):
 #    print "comment created!"
-
-
 
