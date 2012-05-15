@@ -199,7 +199,7 @@ class UserProfilePerInstance(models.Model):
     objects = UserProfilePerInstanceManager()
 
     def __unicode__(self):
-        return "'%s <%s>' for: %s" % (self.user_profile.user.get_full_name(), self.user_profile.email, self.instance.title, )
+        return "%s" % (self.user_profile.user.get_full_name())
 
     def progress_percentage_by_mission(self, mission):
         mission_total_points = mission.total_points
