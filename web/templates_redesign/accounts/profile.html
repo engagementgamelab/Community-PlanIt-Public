@@ -108,38 +108,43 @@
                 <!-- Badges -->
                 <h2>{% trans "Badges Earned" %}</h2>
                 <div id="profile-badges" class="profile-detail">
-                    {# TODO: Badges #}
+                    {% for my_badge in profile_per_instance.badges %}
+
+                        {% comment %}
+                        <div class="badge-container">
+                            <div class="badge moverandshaker"></div>
+                            <div class="badge-name">Mover &amp; Shaker</div>
+                        </div>
+                        
+                        <div class="badge-container">
+                            <div class="badge crowdsourcer"></div>
+                            <div class="badge-name">Crowdsourcer</div>
+                        </div>
+                        
+                        <div class="badge-container">
+                            <div class="badge localsage"></div>
+                            <div class="badge-name">Local Safe</div>
+                        </div>
+                        {% endcomment %}
+
+                        {% if my_badge.badge.type == 5 %}
+                        <div class="badge-container">
+                            <div class="badge visionary"></div>
+                            <div class="badge-name">Visionary</div>
+                        </div>
+                        <br /><br />
+                        {% endif %}
+
+                    {% empty%}
+                        <p style="margin: 10px 0px;">
+                            {% ifequal request.user player %}
+                                {% trans "You currently do not have any badges." %}
+                            {% else %}
+                                {{player.get_profile.screen_name }} {% trans "currently does not have any badges." %}
+                            {% endifequal %}
+                            <p>
+                    {% endfor %}
                     
-                    {% comment %}
-                    <div class="badge-container">
-                        <div class="badge moverandshaker"></div>
-                        <div class="badge-name">Mover &amp; Shaker</div>
-                    </div>
-                    
-                    <div class="badge-container">
-                        <div class="badge crowdsourcer"></div>
-                        <div class="badge-name">Crowdsourcer</div>
-                    </div>
-                    
-                    <div class="badge-container">
-                        <div class="badge localsage"></div>
-                        <div class="badge-name">Local Safe</div>
-                    </div>
-                    
-                    <div class="badge-container">
-                        <div class="badge visionary"></div>
-                        <div class="badge-name">Visionary</div>
-                    </div>
-                    <br /><br />
-                    
-                    {% endcomment %}
-                    <p style="margin: 10px 0px;">
-                        {% ifequal request.user player %}
-                            {% trans "You currently do not have any badges." %}
-                        {% else %}
-                            {{player.get_profile.screen_name }} {% trans "currently does not have any badges." %}
-                        {% endifequal %}
-                        <p>
                     <a href="{% url badges:all %}" class="btn-forward">{% trans "Go to Badge Gallery" %}</a>
                     
                     {# empty #}

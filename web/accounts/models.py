@@ -25,6 +25,7 @@ from nani.models import TranslatableModel, TranslatedFields
 from web.instances.models import Instance, Affiliation, Language
 from web.missions.models import Mission
 from web.values.models import PlayerValue
+from web.badges.models import BadgePerPlayer
 from web.comments.models import Comment
 
 import logging
@@ -300,6 +301,10 @@ class UserProfilePerInstance(models.Model):
                 my_flags+=1
         my_spent_flags = PlayerValue.objects.total_flags_for_player(instance=self.instance, user=self.get_user())
         return my_flags - int(my_spent_flags)
+
+    @property
+    def badges(self):
+        return BadgePerPlayer.objects.filter(user=self.get_user)
 
     def my_last_login_from_stream(self):
         """

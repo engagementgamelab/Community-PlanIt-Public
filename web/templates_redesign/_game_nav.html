@@ -18,7 +18,7 @@
             <a id="sidebar-nav-profile" href="{% url accounts:player_profile request.user.id %}">
                 <div id="sidebar-nav-profile-avatar">{% avatar request.user %}</div>
                 <div id="sidebar-nav-profile-badges-container">
-                    <div id="sidebar-nav-profile-badges">{# TODO #}0</div>
+                    <div id="sidebar-nav-profile-badges">{{ my_badges_count }}</div>
                 </div>
                 {% if not city_header %}
                 <div id="sidebar-nav-profile-points">{{ my_total_points }}</div>
