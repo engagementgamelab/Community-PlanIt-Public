@@ -26,7 +26,7 @@ def assign_challenge_completed_badges(user_id, mission_id):
     for_mission_count = len(Mission.objects.activities_for_mission(mission.slug))
     my_completed_count = len(user_prof_per_instance.my_completed_by_mission(mission))
 
-    if for_mission_count == my_completed_count:
+    if 1: #for_mission_count == my_completed_count:
 
         try:
             visionary_badge = Badge.objects.get(type=Badge.BADGE_VISIONARY)
@@ -40,4 +40,6 @@ def assign_challenge_completed_badges(user_id, mission_id):
             log.debug("incremented level for a Visionary badge for %s" % (user.get_profile().screen_name))
         else:
             log.debug("create a Visionary badge for %s" % (user.get_profile().screen_name))
+        message = "Congratulations! You earned the %s badge." %( visionary_badge.title )
+        user.notifications.create(content_object=user_prof_per_instance, message=message)
 
