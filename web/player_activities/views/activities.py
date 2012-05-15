@@ -17,7 +17,6 @@ from web.answers.models import *
 from web.missions.models import Mission
 from web.comments.models import *
 from web.comments.forms import *
-from web.reports.actions import *
 from ..forms import *
 from ..models import *
 from ..views import _get_activity, comment_fun,\
@@ -74,7 +73,8 @@ def _build_context(request, action, activity, user=None):
             context.update(dict(answers=answers, myAnswer=myAnswer, myComment=myComment,))
 
         if activity.type.type in ['multi_response', 'single_response']:
-            choices = MultiChoiceActivity.objects.language(get_language()).filter(activity=activity)
+            #choices = MultiChoiceActivity.objects.language(get_language()).by_activity(activity=activity)
+            choices = MultiChoiceActivity.objects.by_activity(activity=activity)
             context.update({'choices': choices})
 
             if activity.type.type == "multi_response":
@@ -231,7 +231,6 @@ def activity(request, activity_id, template=None, **kwargs):
         if action in ['play', 'replay']:
             answer = None
             activity_completed_verb = "activity_completed"
-
             form_name = request.POST["form"] 
 
             if form_name == "single_response":
@@ -330,7 +329,6 @@ def activity(request, activity_id, template=None, **kwargs):
                         comment_fun(answer, request, None, message=form.cleaned_data.get('response', ''))
                     else:
                         comment_fun(answer, request, comment_form)
-                    PointsAssigner().assignAct(request.user, activity)
                     action_msg = 'completed'
                 return log_activity_and_redirect(request, activity, action_msg)
 
