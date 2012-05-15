@@ -208,6 +208,10 @@ class PlayerMapActivity(PlayerActivityBase):
     class Meta:
         verbose_name_plural = 'Player Map Activities'
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('activities:map-overview', (self.pk,))
+
     def get_overview_url(self):
         return reverse('activities:map-overview', args=(self.pk,))
 
