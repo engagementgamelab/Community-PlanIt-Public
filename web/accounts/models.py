@@ -269,11 +269,16 @@ class UserProfilePerInstance(models.Model):
         return  Decimal(sum(activity.get_points() for activity in my_completed))
 
     def my_completed_by_mission(self, mission, include_player_submitted=False):
+
         def activities_from_actions(actions):
             return [getattr(action, 'action_object_playeractivity') or \
                     getattr(action, 'action_object_playermapactivity') or \
                     getattr(action, 'action_object_playerempathyactivity') for action in actions]
-        activities_for_mission = Mission.objects.activities_for_mission(mission.slug, include_player_submitted)
+
+        activities_for_mission = Mission.objects.activities_for_mission(
+                                                mission.slug,
+                                                include_player_submitted,
+        )
         if len(activities_for_mission) == 0:
             return []
         # do not pass en empty list to Action.get_for_action_objects
