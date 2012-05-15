@@ -7,8 +7,6 @@ from django.core import management
 from django.conf import settings
 from django.utils import autoreload
 
-from web.badges.utils import assign_challenge_completed_badges
-
 #@timer(3)
 #def change_code_gracefull_reload(sig):
 #    if autoreload.code_changed():
@@ -34,5 +32,6 @@ def run_attachment_checks(arguments):
 
 @spool
 def uwsgi_assign_challenge_completed_badges(arguments):
+    from web.badges.utils import assign_challenge_completed_badges
     assign_challenge_completed_badges(arguments.get('user_id'), arguments.get('mission_id'))
 
