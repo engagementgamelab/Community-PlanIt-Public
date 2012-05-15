@@ -26,7 +26,7 @@ def assign_challenge_completed_badges(user_id, mission_id):
     for_mission_count = len(Mission.objects.activities_for_mission(mission.slug))
     my_completed_count = len(user_prof_per_instance.my_completed_by_mission(mission))
 
-    if 1: #for_mission_count == my_completed_count:
+    if for_mission_count == my_completed_count:
 
         try:
             visionary_badge = Badge.objects.get(type=Badge.BADGE_VISIONARY)
