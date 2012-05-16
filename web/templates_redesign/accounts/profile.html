@@ -165,7 +165,7 @@
             <h2>{% trans "Community Messages" %}</h2>
             <!-- Add A Comment-->
             {% with profile_per_instance.pk as profile_pk %}
-            <form id="id_comment-form-{{ profile_pk }}" enctype="multipart/form-data" action="" method="POST">
+            <form id="id_comment-form-{{ profile_pk }}" enctype="multipart/form-data" action="" method="POST">{% csrf_token %}
                 {% include "comments/duplicate.html" %}
                 <input type="hidden" name="parent_id" value="{{ profile_pk }}"/>
                 <input type="hidden" name="parent_type" value="user_profile"/>
