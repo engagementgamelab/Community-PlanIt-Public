@@ -231,7 +231,7 @@
         <div class="mapthefuture-grid">
             <div id="mapthefuture-star{{ forloop.counter }}" class="mapthefuture-star droppable">
                 <div class="mapthefuture-label-container">
-                    <div class="mapthefuture-label"><a href="{% url values:detail value.pk %}">{{ value.message }}</a></div>
+                    <div class="mapthefuture-label"><a href="{% url values:detail value.pk %}">{{ value.message }} ({{value.comments.all.count}})</a></div>
                 </div>
                 <div class="mapthefuture-flag-community">
                     <img src="{{ STATIC_URL }}values/img/flag-community.png">
