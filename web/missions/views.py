@@ -34,6 +34,7 @@ def fetch(request, slug, include_player_submitted=False, template='missions/miss
     #my_completed = set()
 
     log.debug("%s completed %s challenges" % (prof_per_instance, len(my_completed)))
+    
     my_incomplete = set(
                             Mission.objects.activities_for_mission(
                                         mission.slug, 
@@ -46,8 +47,12 @@ def fetch(request, slug, include_player_submitted=False, template='missions/miss
 
     my_incomplete.extend(my_completed)
     all_activities_sorted = my_incomplete
+    
+    all_player_submitted = set(Mission.objects.activities_for_mission(mission.slug, True))
+    
     #log.debug(all_activities_sorted)
     context = dict(
+        all_player_submitted = all_player_submitted,
         activities = all_activities_sorted,
         my_completed = my_completed,
     )

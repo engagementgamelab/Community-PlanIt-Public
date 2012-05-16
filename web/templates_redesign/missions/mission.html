@@ -4,7 +4,7 @@
 {% block activities_list %}
     <div class="column-container">
         <h1 id="btn-challenges" class="btn-tab"><a class="active">{% trans "Challenges" %}</a></h1>
-        <h1 id="btn-player-challenges" class="btn-tab"><a href="{% url missions:mission_playercreated mission.slug %}">You Pose the Challenges</a></h1>
+        <h1 id="btn-player-challenges" class="btn-tab"><a href="{% url missions:mission_playercreated mission.slug %}">You Pose the Challenges ({{ all_player_submitted|length }})</a></h1>
     </div>
     
     <div class="column-container clearfix">    

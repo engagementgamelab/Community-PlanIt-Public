@@ -11,9 +11,7 @@ https://{{site.domain}}{% url accounts:notifications %}
 
 {% blocktrans with site_name=site.name %}The Community PlanIt Team{% endblocktrans %}
 {% blocktrans %}
-We sent this message because your Community PlanIt account is set to receive 
-updates. If you want to stop receiving news from Community PlanIt, just edit 
-your profile:
+We sent this message because your Community PlanIt account is set to receive updates. If you want to stop receiving news from Community PlanIt, just edit your profile:
 {% endblocktrans %}
 
 https://{{site.domain}}{% url accounts:profile_edit %}
