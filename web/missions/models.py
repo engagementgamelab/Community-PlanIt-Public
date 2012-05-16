@@ -136,6 +136,11 @@ class Mission(TranslatableModel):
             activities = filter(lambda a: a.is_player_submitted == include_player_submitted, activities)
         return sorted(activities, key=attrgetter('name'))
 
+    @property
+    @cached(60*60*24*7)
+    def instance_city_domain(self):
+        return self.instance.for_city.domain
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]
         if not self.start_date and not self.end_date:
@@ -155,16 +160,21 @@ class Mission(TranslatableModel):
     #@models.permalink --> breaks in localeurl
     def get_absolute_url(self, lang=None):
         redir = ""
+        lang_code = ""
         if lang is not None and lang.code in dict(settings.LANGUAGES).keys():
-            return os.path.join(
-                'https://' if settings.DEBUG == False else 'http://',
-                self.instance.for_city.domain,
-                lang.code,
-                strip_path(reverse('missions:mission', args=(self.slug,)))[1][1:],
-            )
-        return redir
+            lang_code = lang.code
+
+        return os.path.join(
+            'https://' if settings.DEBUG == False else 'http://',
+            self.instance_city_domain,
+            lang_code,
+            strip_path(reverse('missions:mission', args=(self.slug,)))[1][1:],
+        )
 
 stream_utils.register_target(Mission)
+
+#ALTER TABLE stream_action ADD COLUMN action_object_mission_id integer;
+stream_utils.register_action_object(Mission)
 
 # invalidate cache for 'missions' group
 def invalidate_mission(sender, **kwargs):
