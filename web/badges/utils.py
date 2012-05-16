@@ -1,3 +1,4 @@
+from stream import utils as stream_utils
 from django.contrib.auth.models import User
 #from web.player_activities.models import 
 from web.accounts.models import UserProfilePerInstance
@@ -48,6 +49,13 @@ def assign_challenge_completed_badges(user_id, mission_id, run_for_expired_missi
             log.debug("create a Visionary badge for %s" % (user.get_profile().screen_name))
         message = "Congratulations! You earned the %s badge." %( visionary_badge.title )
         user.notifications.create(content_object=user_prof_per_instance, message=message)
+        stream_utils.action.send(
+                user, 'badge_received', 
+                action_object=mission,
+                target=mission.instance,
+                description='received a Visionary badge',
+
+        )
 
 def assign_badges_for_past_missions():
     # user this util method to assign badges for past missions

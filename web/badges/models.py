@@ -1,3 +1,4 @@
+from stream import utils as stream_utils
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
@@ -75,4 +76,9 @@ class BadgePerPlayer(models.Model):
 #@receiver(post_save, sender=Comment, dispatch_uid='cpi-badges')
 #def my_callback(sender, **kwargs):
 #    print "comment created!"
+
+
+# **** sql to add column to stream_action table
+#ALTER TABLE stream_action ADD COLUMN action_object_badgeperplayer_id integer;
+stream_utils.register_action_object(BadgePerPlayer)
 
