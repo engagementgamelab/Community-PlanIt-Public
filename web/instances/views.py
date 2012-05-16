@@ -101,6 +101,7 @@ def stream(request, template='instances/stream.html'):
                             order_by('-datetime')
     context = {
         'stream_for_game': stream_for_game[:100],
+        'stream_total_count': stream_for_game.count()
     }
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
