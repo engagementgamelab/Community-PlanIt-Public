@@ -250,6 +250,10 @@ PREFIX_DEFAULT_LOCALE = True
 #django-stream
 # see notes in web.reports.actions
 STREAM_VERBS = (
+    # ******
+    # the entire challenges app is deprecated
+    # purge the stream from the db
+    # Action.objects.filter(verb__contains='challenge').delete()
     #('challenge_created', 'created a challenge'),
     #('challenge_updated', 'updated a challenge'),
     #('challenge_accepted', 'accepted a challenge'),
@@ -260,6 +264,7 @@ STREAM_VERBS = (
     #('activity_official_response_created', 'created a response'),
     #('token_spent', 'spent token'),
     #('token_reclaimed', 'reclaimed token'),
+    # ******
 
     ('crowd_created', 'create a crowd'),
 
@@ -276,6 +281,8 @@ STREAM_VERBS = (
     ('flag_reclaimed', 'a flag was reclaimed'),
 
     ('user_logged_in', 'a user logged into the system'),
+
+    ('badge_received', 'player received a badge'),
 )
 
 REPORTS_RECIPIENTS = (
