@@ -395,7 +395,7 @@ class UserProfile(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('accounts_profile', [str(self.user.id)])
+        return ('accounts:player_profile', [str(self.user.id)])
 
     def points_progress(self):
         return self.coinPoints
