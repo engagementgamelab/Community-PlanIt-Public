@@ -158,7 +158,7 @@ class PlayerActivity(PlayerActivityBase):
         return os.path.join(
                 os.path.join(
                         'https://' if settings.DEBUG == False else 'http://',
-                        self.mission.instance_city_domain
+                        self.mission.instance_city_domain(self.mission.instance.pk)
                 ),
                 self.get_overview_url()[1:]
         )

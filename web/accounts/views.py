@@ -96,7 +96,8 @@ def login_ajax(request, authentication_form=AuthenticationForm):
                 )
 
 
-            active_mission = Mission.objects.default(current_game)
+            active_mission = Mission.objects.default(current_game.pk)
+            log.debug("redirecting %s to %s" %(prof_per_instance, active_mission))
             if active_mission:
                 return obj_response.redirect(
                             active_mission.get_absolute_url(

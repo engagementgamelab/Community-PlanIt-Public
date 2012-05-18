@@ -55,7 +55,7 @@ def missions_bar_context(request, mission=None):
         raise Http404("user for this game is not registered")
 
     if mission is None:
-        mission = Mission.objects.default(instance=request.current_game)
+        mission = Mission.objects.default(request.current_game.pk)
 
     #my_points_for_mission, progress_percentage = \
     #    UserProfilePerInstance.objects.progress_data_for_mission(

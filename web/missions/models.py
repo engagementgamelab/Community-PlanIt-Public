@@ -60,16 +60,18 @@ class MissionManager(TranslationManager):
         return self.filter(instance=instance, start_date__gt=datetime.datetime.now()).order_by('start_date')
 
     @cached(60*60*24, 'missions')
-    def default(self, instance):
+    def default(self, instance_id):
         log.debug("getting default mission ** no cache **")
-        qs =  self.active(instance)
+        qs =  self.active(instance_id)
         if qs.count() > 0:
             return qs[0]
 
-    #@cached(60*60*24, 'missions')
-    def active(self, instance):
+    @cached(60*60*24, 'missions')
+    def active(self, instance_id):
         now = datetime.datetime.now()
-        return self.filter(instance=instance, start_date__lte=now, end_date__gte=now).order_by('start_date')
+        qs = self.filter(instance__pk=instance_id, start_date__lte=now, end_date__gte=now).order_by('start_date')
+        log.debug("active missions for game %s: %s" % (instance_id, qs))
+        return qs
 
 
 class Mission(TranslatableModel):
@@ -136,9 +138,8 @@ class Mission(TranslatableModel):
             activities = filter(lambda a: a.is_player_submitted == include_player_submitted, activities)
         return sorted(activities, key=attrgetter('name'))
 
-    @property
     @cached(60*60*24*7)
-    def instance_city_domain(self):
+    def instance_city_domain(self, instance_id):
         return self.instance.for_city.domain
 
     def save(self, *args, **kwargs):
@@ -166,7 +167,7 @@ class Mission(TranslatableModel):
 
         return os.path.join(
             'https://' if settings.DEBUG == False else 'http://',
-            self.instance_city_domain,
+            self.instance_city_domain(self.instance.pk),
             lang_code,
             strip_path(reverse('missions:mission', args=(self.slug,)))[1][1:],
         )
