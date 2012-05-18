@@ -25,14 +25,14 @@ class Report(object):
         log.debug('ran with %s queries' % len(connection.queries))
         filename = self.render_to_excel()
         log.debug('saved report to %s' %filename)
-        self.notify_authors(filename)
+        #self.notify_authors(filename)
 
-    def notify_authors(self, filename):
-        subject = "report has been generated. %s" % self.notify_subject
-        site = Site.objects.all()[0]
-        url = "".join([site.domain, settings.MEDIA_ROOT, 'uploads/reports/',filename])
-        body = "report available %s" % url
-        send_mail(subject, body, settings.NOREPLY_EMAIL, settings.REPORTS_RECIPIENTS, fail_silently=False)
+    #def notify_authors(self, filename):
+    #    subject = "report has been generated. %s" % self.notify_subject
+    #    site = Site.objects.all()[0]
+    #    url = "".join([site.domain, settings.MEDIA_ROOT, 'uploads/reports/',filename])
+    #    body = "report available %s" % url
+    #    send_mail(subject, body, settings.NOREPLY_EMAIL, settings.REPORTS_RECIPIENTS, fail_silently=False)
 
     def render_to_excel(self, save_to_file=True):
 

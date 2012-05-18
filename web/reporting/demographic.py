@@ -58,9 +58,9 @@ class DemographicReport(Report):
             profile =  user_prof_per_instance.user_profile
             user =  user_prof_per_instance.user_profile.user
             all_details = (
+                    user_prof_per_instance.pk,
                     user.first_name,
                     user.last_name,
-                    user_prof_per_instance.pk,
                     get_stakes(user_prof_per_instance),
                     get_affiliations(user_prof_per_instance),
                     user_prof_per_instance.preferred_language.name,

@@ -1,3 +1,8 @@
+import glob
+import os.path
+
+from django.conf import settings
+from django.contrib.sites.models import Site
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
@@ -34,6 +39,21 @@ class ReportsMenu(Menu):
             city_menu_items.append(
                     items.MenuItem('%s' % city.name, children=game_menu_items)
             )
+
+        location = os.path.join(settings.MEDIA_ROOT, 'uploads/reports')
+        files = os.listdir(location)
+        #files.sort(key=lambda x: os.path.getmtime(x))
+        print files
+        latest_reports_menu_items = []
+        site = Site.objects.all()[0]
+        for report_file in files:
+            url = os.path.join(settings.MEDIA_URL, 'uploads/reports', report_file)
+            latest_reports_menu_items.append(
+                items.MenuItem(report_file, url)
+            )
+        city_menu_items.append(
+                items.MenuItem('Latest reports', children=latest_reports_menu_items)
+        )
 
         self.children += [
             items.MenuItem('Home', reverse('admin:index')),
