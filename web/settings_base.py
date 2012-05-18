@@ -15,7 +15,7 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 #admin_tools
 ADMIN_TOOLS_MEDIA_URL = '/static/'
-ADMIN_TOOLS_MENU = 'web.reports.admin.ReportsMenu'
+ADMIN_TOOLS_MENU = 'web.reporting.admin.ReportsMenu'
 
 MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
 MEDIA_URL = '/assets/'
@@ -100,6 +100,7 @@ INSTALLED_APPS = (
     'web.player_activities',
     'web.responses',
     'web.values',
+    'web.reporting',
 
     # Deprecated
     #'web.reports',
@@ -232,6 +233,7 @@ LOCALE_INDEPENDENT_PATHS = (
     re.compile('^/ajax/'),
     re.compile('^/rosetta/'),
     re.compile('^/ajax_select/'),
+    re.compile('^/reports/'),
     re.compile('^.*/ajax/'),
     re.compile('^/comments/'),
     re.compile('^/__debug__/'),
