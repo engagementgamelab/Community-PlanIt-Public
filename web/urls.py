@@ -47,7 +47,7 @@ urlpatterns = patterns('web',
     
     # Admin stuff
     #(r'^curator/', include('curator.urls')),
-    (r'^reports/', include('reports.urls', namespace='reports', app_name='reports')),
+    (r'^reports/', include('web.reporting.urls', namespace='reporting', app_name='reporting')),
 )
 
 urlpatterns += patterns('',
