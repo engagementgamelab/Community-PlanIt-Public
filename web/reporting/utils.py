@@ -11,8 +11,27 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.db.models import Count
 
+from web.instances.models import Instance
+
 import logging
 log = logging.getLogger()
+
+
+"""
+BEHOLD! The Spec!
+
+Reports:
+
+-- activity report by user - this report should be organized by user name and include all demographic data, number of log-ins, flag placement, badges earned, number of challenges completed, number of challenges created, number of comments liked, number of comments replied to.
+
+-- activity time by user - this report should include user name and demographic data and when they logged in.
+
+-- record of challenge activity by user - this report should include user name and demographic data and their record of all challenge activity. This should include responses to challenges (if multiple choice) and comments.
+
+-- mission report - organized by challenge; if multiple choice (summary of results); and all comments and replies.
+
+all registration data, points, badges, and flag placements, should be included in all reports organized by user.
+"""
 
 class Report(object):
 
@@ -73,10 +92,11 @@ class Report(object):
         #    return xls_to_response(xls, filename)
 
         NOW = datetime.now()
-        filename = "".join([NOW.strftime('%Y-%m-%d-%H-%M'), 
+        game = Instance.objects.get(pk=self.instance_id)
+        filename = "".join([game.slug, '-', self.notify_subject, '-', NOW.strftime('%Y-%m-%d-%H-%M'), 
                             "--", str(randint(1000, 10000)), '.xls'])
         location = os.path.join(settings.MEDIA_ROOT, 'uploads/reports', filename)
         xls.save(location)
-        print 'saved', location
+        print '%s, saved %s' % (filename, location)
         return filename
 
