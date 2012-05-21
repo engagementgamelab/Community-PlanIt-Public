@@ -20,6 +20,29 @@
     <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
     <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
     <script src="{{ STATIC_URL }}js/jsi18n.js"></script>
+
+    <script type="text/javascript" charset="utf-8">
+    jQuery(function($) {
+
+      /* Character Limit Counter */
+      var type_count = function(evt) {
+          var comment_form = $(this.form);
+          var val = this.value.replace(/\r?\n/g, 'xx');
+          var len = Math.max(0, 140 - val.length);
+          comment_form.find('.count').text(len);
+          if (len < 1) {
+              comment_form.find('.counter').addClass('limited');
+              if (!(evt.ctrlKey || evt.which < 48 && evt.which !== 9 && evt.which !== 13)) {
+                  return false;
+              }
+          }
+          comment_form.find('.reply-comment-counter').removeClass('limited');
+      }
+      $('#id_tagline').live('change keyup keydown blur', type_count).attr('maxlength', '140').change();
+
+    });
+    </script>
+
 {% endblock js%}
 
 
@@ -84,6 +107,7 @@
                             <div id="profile-editform-tagline-container">
                                 {{ profile_form.tagline }}
                             </div>
+                            <span class="reply-comment-counter counter">(<span class="count">140</span> {% trans "chars left" %})</span>
                             {{ profile_form.tagline.errors }}
                         <p>
                     </div>

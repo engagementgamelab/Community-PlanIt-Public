@@ -81,6 +81,14 @@
         margin-right: 38px;
     }
     
+    .accounts-form .counter {
+        display: block;
+        font-size: 0.8em;
+        color: #666;
+        text-align: right;
+        margin-right: 45px;
+    }
+    
 /* Account Profile Specific Styles */
 #profile-edit-btn {
     font-size: 0.4em;
@@ -287,7 +295,14 @@
             resize: none;
         }
     
-    
+    #profile-editform .counter {
+        display: block;
+        font-size: 0.8em;
+        color: #666;
+        text-align: right;
+        margin: 5px 0px;
+    }
+        
     /* Avatar */
     #profile-editform-avatar {
         margin: 10px 0px;
