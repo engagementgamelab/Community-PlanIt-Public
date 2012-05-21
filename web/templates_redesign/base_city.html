@@ -43,13 +43,13 @@
                                 {% ifequal mission current_mission %}
                                     <div class="nav-missions-endsin"> 
                                         {% if mission.is_active %}
-                                            <p class="nav-missions-endsin-label">Ends in<p> 
+                                            <p class="nav-missions-endsin-label">{% trans "Ends in" %}<p> 
                                             <p class="nav-missions-endsin-time">{{ mission.ends_in_days }} day{{ mission.ends_in_days|pluralize }}</p> 
                                         {% elif mission.is_expired %}
-                                            <p class="nav-missions-endsin-label">Ended<p> 
+                                            <p class="nav-missions-endsin-label">{% trans "Ended" %}<p> 
                                             <p class="nav-missions-endsin-time">{{ mission.end_date|date:"n/j" }}</p>
                                         {% else %}
-                                            <p class="nav-missions-endsin-label">Starts in<p> 
+                                            <p class="nav-missions-endsin-label">{% trans "Starts in" %}<p> 
                                             <p class="nav-missions-endsin-time">{{ mission.starts_in_days }} day{{ mission.ends_in_days.day|pluralize }}</p>
                                         {% endif %}
                                     </div>
@@ -71,7 +71,7 @@
             </div>
             {# MAP THE FUTURE #}
             <div id="mission-mapthefuture">
-                <a href="{% url values:index %}">Map the Future</a>
+                <a href="{% url values:index %}">{% trans "Map the Future" %}</a>
                 <div id="mission-mapthefuture-flags-container">
                     {# TODO for token in tokens #}
                     {% for i in my_flags_range %}
