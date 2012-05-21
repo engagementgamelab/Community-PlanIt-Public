@@ -751,7 +751,8 @@ a {
 
 #subfooter {
    width: 960px;
-   margin: 5px auto 20px auto;
+   padding: 5px 0px 20px 0px;
+   margin: 0px auto;
    text-align: center;
 }
 
