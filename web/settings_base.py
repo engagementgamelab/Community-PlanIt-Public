@@ -15,7 +15,7 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 #admin_tools
 ADMIN_TOOLS_MEDIA_URL = '/static/'
-ADMIN_TOOLS_MENU = 'web.reporting.admin.ReportsMenu'
+#ADMIN_TOOLS_MENU = 'web.reporting.admin.ReportsMenu'
 
 MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
 MEDIA_URL = '/assets/'

@@ -8,14 +8,20 @@ parts += uwsgi
          supervisor-config
          supervisor-config-install
          resetdb
+         spool-dir
+         run-dir
+         log-dir
 
 project_name=Community-PlanIt
-venv_dir = /var/local/venv
+
 download_cache_dir = /var/local/buildout
 eggs-directory=${buildout:download_cache_dir}/eggs
 download-cache = ${buildout:download_cache_dir}/cache
-uwsgi-run-dir = /var/local/run/uwsgi
-uwsgi-spool-dir = /var/local/uwsgi_spool/${buildout:project_name}
+
+venv_dir = /var/local/venv
+run-dir = ${buildout:directory}/var/run
+spool-dir = ${buildout:directory}/var/spool
+
 
 eggs += 
        ipdb
@@ -28,7 +34,7 @@ eggs +=
 host=pk.communityplanit.org
 venv_name=cpi
 user=www-data
-uwsgi-socket-port=7010
+socket-port=7010
 db_name = cpi
 db_user = web
 db_host = 127.0.0.1
@@ -43,17 +49,42 @@ home=${buildout:directory}
 pythonpath=${buildout:directory}/${buildout:project_name}/web
 wsgi-file=${buildout:bin-directory}/django.wsgi
 env=DJANGO_SETTINGS_MODULE=web.settings
-pidfile=${buildout:uwsgi-run-dir}/${server:host}.pid
-socket=127.0.0.1:${server:uwsgi-socket-port}
+pidfile=${buildout:run-dir}/${server:host}.pid
+socket=127.0.0.1:${server:socket-port}
 single-interpreter=true
 master=True
 eggs=Django
 versions=versions
-logto=${buildout:directory}/log/uwsgi.log
+daemonize=${buildout:directory}/log/uwsgi.log
+touch-logreopen=True
 log-master=true
-spooler = ${buildout:uwsgi-spool-dir}
+spooler = ${buildout:spool-dir}
 import=uwsgiutils.tasks
 #import=uwsgiutils.tasks_localdev
+
+#/var/log/uwsgi.log {
+#     daily
+#     rotate 10
+#     missingok
+#     notifempty
+#     compress
+#     sharedscripts
+#     postrotate
+#       [ ! -f /var/run/uwsgi.pid ] || kill -HUP `cat /var/run/uwsgi.pid`
+#     endscript
+#}
+
+[log-dir]
+recipe = z3c.recipe.mkdir
+paths = log
+
+[spool-dir]
+recipe = z3c.recipe.mkdir
+paths = var/spool
+
+[run-dir]
+recipe = z3c.recipe.mkdir
+paths = var/run
 
 [nginx-config-local]
 recipe = collective.recipe.template
@@ -70,7 +101,7 @@ inline =
             #proxy_pass http://127.0.0.1:9099/;
             #include /etc/nginx/proxy.conf;
             include uwsgi_params;
-            uwsgi_pass 127.0.0.1:${server:uwsgi-socket-port};
+            uwsgi_pass 127.0.0.1:${server:socket-port};
         }
 
         location /assets {

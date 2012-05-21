@@ -1,17 +1,19 @@
 import xlwt
-
+import StringIO
 import os
 from random import randint
 from datetime import datetime, date
 
-from django.contrib.sites.models import Site
+#from django.contrib.sites.models import Site
+#from django.core.mail import send_mail
+from django.core.files.base import ContentFile
 from django.db import connection
-from django.core.mail import send_mail
+#from django.core.files import File
 
 from django.conf import settings
-from django.db.models import Count
 
 from web.instances.models import Instance
+from .models import Report, determine_path
 
 import logging
 log = logging.getLogger()
@@ -33,12 +35,12 @@ Reports:
 all registration data, points, badges, and flag placements, should be included in all reports organized by user.
 """
 
-class Report(object):
+class XslReport(object):
 
     values_list = []
     field_titles = []
     notify_subject = None
-    id = 0
+    time_to_run = 0
 
     def run(self, *args, **kwargs):
         log.debug('ran with %s queries' % len(connection.queries))
@@ -91,12 +93,21 @@ class Report(object):
         #if not save_to_file:
         #    return xls_to_response(xls, filename)
 
-        NOW = datetime.now()
-        game = Instance.objects.get(pk=self.instance_id)
-        filename = "".join([game.slug, '-', self.notify_subject, '-', NOW.strftime('%Y-%m-%d-%H-%M'), 
-                            "--", str(randint(1000, 10000)), '.xls'])
-        location = os.path.join(settings.MEDIA_ROOT, 'uploads/reports', filename)
-        xls.save(location)
+        report = Report.objects.create(
+                title=self.notify_subject,
+                instance=Instance.objects.get(pk=self.instance_id),
+                db_queries=len(connection.queries),
+                time_to_run=self.time_to_run,
+        )
+        filename = "".join([self.notify_subject, "--", str(randint(1000, 10000)), '.xls'])
+        location = os.path.join(settings.MEDIA_ROOT, determine_path(report, filename))
+        new_dir = os.path.dirname(location)
+        if not os.path.exists(new_dir):
+            os.mkdir(new_dir)
+        output = StringIO.StringIO()
+        xls.save(output)
+        report.file.save(filename, ContentFile(output.getvalue()), save=True)
+        output.close()
         print '%s, saved %s' % (filename, location)
         return filename
 

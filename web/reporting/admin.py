@@ -1,8 +1,21 @@
+from django.contrib import admin
+from .models import Report
+
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'title', 'filesize', 'instance', 'date_added')
+    list_filter = ('instance', 'date_added',)
+
+    def save_model(self, request, obj, form, change):
+        obj.user = request.user
+        obj.save()
+
+admin.site.register(Report, ReportAdmin)
+
+"""
 import glob
 import os.path
 
 from django.conf import settings
-from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
@@ -10,7 +23,6 @@ from admin_tools.menu import items, Menu
 from admin_tools.utils import get_admin_site_name
 
 from web.instances.models import Instance, City
-
 
 class ReportsMenuItem(items.MenuItem):
     title = "Reporting"
@@ -88,3 +100,4 @@ class ReportsMenu(Menu):
                 models=('django.contrib.*',)
             ),
         ]
+"""

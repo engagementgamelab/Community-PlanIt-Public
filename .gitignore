@@ -5,6 +5,7 @@
 *designs
 
 assets/CACHE
+assets/*
 assets/uploads
 static_collected
 web/cpi.log

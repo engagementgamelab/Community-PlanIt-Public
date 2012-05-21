@@ -1,10 +1,11 @@
+import time
 from stream.models import Action
 
 from web.accounts.models import UserProfilePerInstance, UserProfile
 from web.answers.models import AnswerMultiChoice
 from web.badges.models import BadgePerPlayer
 from web.missions.models import Mission
-from .utils import Report
+from .utils import XslReport
 
 import logging
 log = logging.getLogger()
@@ -53,7 +54,7 @@ def get_demographic_details(user_prof_per_instance, profile, user, instance_id):
         profile.zip_code or "",
     )
 
-class DemographicReport(Report):
+class DemographicReport(XslReport):
     """ -- activity report by user - 
         this report should be organized by user name and 
         - include 
@@ -70,7 +71,6 @@ class DemographicReport(Report):
         self.instance_id = kwargs.get('instance_id')
         self.notify_subject = "Demographic-Report"
 
-
         self.field_titles = get_demographic_field_titles() + (
                 'number of log-ins',
                 'total flags spent for game', 
@@ -82,6 +82,7 @@ class DemographicReport(Report):
                 'comments replied to count',
         )
         self.values_list = []
+        t1 = time.time()
 
         for user_prof_per_instance in UserProfilePerInstance.objects.filter(
                                                     instance__id=self.instance_id).\
@@ -102,10 +103,12 @@ class DemographicReport(Report):
                     Action.objects.get_for_actor(user).filter(verb='commented', target_comment__instance__pk=self.instance_id).count(),
             )
             self.values_list.append(all_details)
+        t2 = time.time()
+        self.time_to_run = t2 - t1
         super(DemographicReport, self).run(*args, **kwargs)
 
 
-class LoginActivityReport(Report):
+class LoginActivityReport(XslReport):
     """
         -- activity time by user - 
         this report should include user name and demographic data and when they logged in.  """
@@ -231,7 +234,7 @@ def update_list(values_list, user=None, activity=None, answers=None, pad_columns
 
 
 
-class ChallengeActivityReport(Report):
+class ChallengeActivityReport(XslReport):
     """
         -- record of challenge activity by user - this report should include user name and demographic data and their record of all challenge activity. 
         This should include responses to challenges (if multiple choice) and comments. """
@@ -308,7 +311,7 @@ class ChallengeActivityReport(Report):
 
 
 
-class MissionReport(Report):
+class MissionReport(XslReport):
 
     """-- mission report - 
         organized by challenge; 
