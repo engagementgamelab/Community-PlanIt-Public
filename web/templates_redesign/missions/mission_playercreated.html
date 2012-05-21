@@ -4,7 +4,7 @@
 {% block activities_list %}
     <div class="column-container">
         <h1 id="btn-challenges" class="btn-tab"><a href="{% url missions:mission mission.slug %}">{% trans "Challenges" %}</a></h1>
-        <h1 id="btn-player-challenges" class="btn-tab"><a class="active">You Pose the Challenges ({{ activities|length }})</a></h1>
+        <h1 id="btn-player-challenges" class="btn-tab"><a class="active">{% trans "You Pose the Challenges" %} ({{ activities|length }})</a></h1>
     </div>
 
     <div class="column-container">
@@ -15,7 +15,7 @@
         {% if mission.is_active %}
             {% block forms %}
             <div class="tabbutton">
-                <a href="{% url player_activities:new mission.slug %}">+ Create A Challenge</a>
+                <a href="{% url player_activities:new mission.slug %}">+ {% trans "Create A Challenge" %}</a>
             </div>
             {% endblock %}
         {% endif %}

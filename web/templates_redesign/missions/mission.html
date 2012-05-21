@@ -4,7 +4,7 @@
 {% block activities_list %}
     <div class="column-container">
         <h1 id="btn-challenges" class="btn-tab"><a class="active">{% trans "Challenges" %}</a></h1>
-        <h1 id="btn-player-challenges" class="btn-tab"><a href="{% url missions:mission_playercreated mission.slug %}">You Pose the Challenges ({{ all_player_submitted|length }})</a></h1>
+        <h1 id="btn-player-challenges" class="btn-tab"><a href="{% url missions:mission_playercreated mission.slug %}">{% trans "You Pose the Challenges" %} ({{ all_player_submitted|length }})</a></h1>
     </div>
     
     <div class="column-container clearfix">    
@@ -41,7 +41,8 @@
                         {#  completed activity #}
                         <div class="activity activity-completed {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                             <a href="{{ activity.get_activity_url }}">
-                                {{ activity|trans_fallback:"name" }} ({{ completed_count }} response{{ completed_count|pluralize }})
+                                {{ activity|trans_fallback:"name" }}
+                                ({{ completed_count }} response{{ completed_count|pluralize }})
                                 <div class="mission-activity-completed"></div>
                             </a>
                         </div>
@@ -50,6 +51,7 @@
                         <div class="activity {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                             <a href="{{ activity.get_activity_url }}">
                                 {{ activity|trans_fallback:"name" }}
+                                ({{ completed_count }} response{{ completed_count|pluralize }})
                                 <div class="mission-activity-points">{{ points }}</div>
                             </a>
                         </div>
