@@ -254,9 +254,7 @@ class ChallengeActivityReport(Report):
                                                     instance__id=self.instance_id).\
                                                 exclude(
                                                     user_profile__user__is_superuser=True,
-                                                    user_profile__user__is_staff=True).\
-                                                    filter(user_profile__user__pk=877):
-
+                                                    user_profile__user__is_staff=True):
             profile =  user_prof_per_instance.user_profile
             user =  user_prof_per_instance.user_profile.user
 
