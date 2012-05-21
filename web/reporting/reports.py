@@ -164,7 +164,7 @@ def fetch_replies(answer, comment, pad_columns=None):
                         res.likes.all().count(),
                 )
             )
-            fetch_replies(a, res)
+            #fetch_replies(a, res)
     return replies
 
 def _fetch_multichoice_replies(answer, comment, mission_title, pad_columns=None):
@@ -188,7 +188,7 @@ def _fetch_multichoice_replies(answer, comment, mission_title, pad_columns=None)
                     res.likes.all().count(),
                 )
         )
-        _fetch_multichoice_replies(a, res, mission_title=mission_title)
+        #_fetch_multichoice_replies(a, res, mission_title=mission_title)
     return replies
 
 def update_list(values_list, user=None, activity=None, answers=None, pad_columns=None):
@@ -196,6 +196,8 @@ def update_list(values_list, user=None, activity=None, answers=None, pad_columns
         pad_columns=('-','-','-','-','-','-','-','-','-','-','-','-','-','-',)
     else:
         pad_columns = ()
+    if answers is None:
+        return
     answers = answers.select_related('comments')
     if user is not None:
         answers = answers.filter(answerUser=user)
@@ -222,7 +224,7 @@ def update_list(values_list, user=None, activity=None, answers=None, pad_columns
                     )
             )
             if c.comments.all().count():
-                values_list.extend(fetch_replies(a, c))
+                values_list.extend(fetch_replies(activity, c))
 
 
 
