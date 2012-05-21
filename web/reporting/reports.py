@@ -6,6 +6,9 @@ from web.badges.models import BadgePerPlayer
 from web.missions.models import Mission
 from .utils import Report
 
+import logging
+log = logging.getLogger()
+
 
 def get_demographic_field_titles():
     return (
@@ -235,6 +238,7 @@ class ChallengeActivityReport(Report):
 
     def run(self, *args, **kwargs):
         self.instance_id = kwargs.get('instance_id')
+        log.debug('running Challenge Activity Report for game id %s ' % self.instance_id)
         self.notify_subject = "Challenge-Activity-Report"
 
         self.field_titles = get_demographic_field_titles() + (
@@ -264,6 +268,8 @@ class ChallengeActivityReport(Report):
             self.values_list.append(demographic_details)
 
             actions = Action.objects.get_for_actor(user).filter(verb='activity_completed')
+            log.debug('%s completed %s challenges' % (user_prof_per_instance, actions.count()))
+
             for action in actions:
                 obj = action.action_object
                 if obj.__class__.__name__ ==  'PlayerEmpathyActivity':
