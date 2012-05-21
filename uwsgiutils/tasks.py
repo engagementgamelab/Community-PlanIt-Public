@@ -37,10 +37,17 @@ def uwsgi_assign_challenge_completed_badges(arguments):
 
 @spool
 def uwsgi_run_report(arguments):
-    from web.reporting.reports import DemographicReport, LoginActivityReport
+    from web.reporting.reports import (
+                DemographicReport,
+                LoginActivityReport,
+                ChallengeActivityReport,
+                MissionReport
+    )
     reports = {
             'demographic': DemographicReport,
             'login-activity': LoginActivityReport,
+            'challenge-activity': ChallengeActivityReport,
+            'mission': MissionReport,
     }
     d = reports.get(arguments.get('report_name'))()
     kwargs={'instance_id' : arguments.get('instance_id')}

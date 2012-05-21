@@ -29,6 +29,14 @@ class ReportsMenuItem(items.MenuItem):
                         'name': 'login-activity', 
                         'url': reverse('reporting:run-report', args=('login-activity', game.pk,)),
                     },
+                    {
+                        'name': 'challenge-activity', 
+                        'url': reverse('reporting:run-report', args=('challenge-activity', game.pk,)),
+                    },
+                    {
+                        'name': 'mission', 
+                        'url': reverse('reporting:run-report', args=('mission', game.pk,)),
+                    },
                 ]
                 reports_menu_items = []
                 for report_data in available_reports:
