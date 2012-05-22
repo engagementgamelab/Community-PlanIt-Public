@@ -28,10 +28,10 @@ class Command(BaseCommand):
 
         current_games = Instance.objects.current()
         for report_class in (
-                            #DemographicReport,
-                            #LoginActivityReport,
+                            DemographicReport,
+                            LoginActivityReport,
                             ChallengeActivityReport,
-                            #MissionReport,
+                            MissionReport,
                             ):
 
             if game_id:
