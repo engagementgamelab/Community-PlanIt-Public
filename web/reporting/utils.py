@@ -34,15 +34,12 @@ all registration data, points, badges, and flag placements, should be included i
 class XslReport(object):
 
     def __init__(self, *args, **kwargs):
-        print kwargs
         self.debug = kwargs.pop('debug', settings.DEBUG)
         self.instance_id = kwargs.pop('instance_id')
         self.values_list = []
         self.field_titles = []
         self.notify_subject = None
         self.time_to_run = 0
-
-        print "--->" + self.instance_id
 
         if self.instance_id is None:
             raise Exception("cannot run a report. No game provided")
@@ -106,6 +103,6 @@ class XslReport(object):
         xls.save(output)
         report.file.save(filename, ContentFile(output.getvalue()), save=True)
         output.close()
-        print '%s, saved %s' % (filename, location)
+        log.debug('%s, saved %s' % (filename, location))
         return filename
 
