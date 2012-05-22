@@ -4,13 +4,9 @@ import os
 from random import randint
 from datetime import datetime, date
 
-#from django.contrib.sites.models import Site
-#from django.core.mail import send_mail
+from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import connection
-#from django.core.files import File
-
-from django.conf import settings
 
 from web.instances.models import Instance
 from .models import Report, determine_path
@@ -37,23 +33,25 @@ all registration data, points, badges, and flag placements, should be included i
 
 class XslReport(object):
 
-    values_list = []
-    field_titles = []
-    notify_subject = None
-    time_to_run = 0
+    def __init__(self, *args, **kwargs):
+        print kwargs
+        self.debug = kwargs.pop('debug', settings.DEBUG)
+        self.instance_id = kwargs.pop('instance_id')
+        self.values_list = []
+        self.field_titles = []
+        self.notify_subject = None
+        self.time_to_run = 0
+
+        print "--->" + self.instance_id
+
+        if self.instance_id is None:
+            raise Exception("cannot run a report. No game provided")
 
     def run(self, *args, **kwargs):
+        log.debug('running report for game id %s' % self.instance_id)
         log.debug('ran with %s queries' % len(connection.queries))
         filename = self.render_to_excel()
         log.debug('saved report to %s' %filename)
-        #self.notify_authors(filename)
-
-    #def notify_authors(self, filename):
-    #    subject = "report has been generated. %s" % self.notify_subject
-    #    site = Site.objects.all()[0]
-    #    url = "".join([site.domain, settings.MEDIA_ROOT, 'uploads/reports/',filename])
-    #    body = "report available %s" % url
-    #    send_mail(subject, body, settings.NOREPLY_EMAIL, settings.REPORTS_RECIPIENTS, fail_silently=False)
 
     def render_to_excel(self, save_to_file=True):
 
@@ -95,7 +93,7 @@ class XslReport(object):
 
         report = Report.objects.create(
                 title=self.notify_subject,
-                instance=Instance.objects.get(pk=self.instance_id),
+                instance=Instance.objects.get(pk=int(self.instance_id)),
                 db_queries=len(connection.queries),
                 time_to_run=self.time_to_run,
         )

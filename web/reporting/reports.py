@@ -4,6 +4,7 @@ from stream.models import Action
 from web.accounts.models import UserProfilePerInstance, UserProfile
 from web.answers.models import AnswerMultiChoice
 from web.badges.models import BadgePerPlayer
+from web.instances.models import Instance
 from web.missions.models import Mission
 from .utils import XslReport
 
@@ -68,7 +69,6 @@ class DemographicReport(XslReport):
             number of comments replied to.  """
 
     def run(self, *args, **kwargs):
-        self.instance_id = kwargs.get('instance_id')
         self.notify_subject = "Demographic-Report"
 
         self.field_titles = get_demographic_field_titles() + (
@@ -81,14 +81,18 @@ class DemographicReport(XslReport):
                 'comments liked count',
                 'comments replied to count',
         )
-        self.values_list = []
         t1 = time.time()
 
-        for user_prof_per_instance in UserProfilePerInstance.objects.filter(
-                                                    instance__id=self.instance_id).\
-                                                exclude(
-                                                    user_profile__user__is_superuser=True,
-                                                    user_profile__user__is_staff=True,):
+        qs = UserProfilePerInstance.objects.filter(
+                                        instance__id=self.instance_id).\
+                                    exclude(
+                                        user_profile__user__is_superuser=True,
+                                        user_profile__user__is_staff=True,
+        )
+        if self.debug:
+            qs = qs[:30]
+
+        for user_prof_per_instance in qs:
 
             profile =  user_prof_per_instance.user_profile
             user =  user_prof_per_instance.user_profile.user
@@ -123,13 +127,10 @@ class LoginActivityReport(XslReport):
                 'number of log-ins',
                 'login dates/times',
         )
-        self.values_list = []
-
-        for user_prof_per_instance in UserProfilePerInstance.objects.filter(
-                                                    instance__id=self.instance_id).\
-                                                exclude(
-                                                    user_profile__user__is_superuser=True,
-                                                    user_profile__user__is_staff=True,):
+        qs = UserProfilePerInstance.objects.filter(instance__id=self.instance_id).exclude(user_profile__user__is_superuser=True, user_profile__user__is_staff=True)
+        if self.debug:
+            qs = qs[:30]
+        for user_prof_per_instance in qs:
 
             profile =  user_prof_per_instance.user_profile
             user =  user_prof_per_instance.user_profile.user
@@ -148,16 +149,12 @@ class LoginActivityReport(XslReport):
 
 
 
-def fetch_replies(answer, comment, pad_columns=None):
+def fetch_replies(demographic_details, answer, comment):
     replies = []
-    if pad_columns == None:
-        pad_columns=('-','-','-','-','-','-','-','-','-','-','-','-','-','-',)
-    else:
-        pad_columns = ()
     if comment.comments.all().count():
         for res in comment.comments.select_related().all():
             replies.append(
-                pad_columns+ (
+                demographic_details + (
                         res.pk,
                         answer.mission.title,
                         answer.name,
@@ -173,15 +170,11 @@ def fetch_replies(answer, comment, pad_columns=None):
             #fetch_replies(a, res)
     return replies
 
-def _fetch_multichoice_replies(answer, comment, mission_title, pad_columns=None):
-    if pad_columns == None:
-        pad_columns=('-','-','-','-','-','-','-','-','-','-','-','-','-','-',)
-    else:
-        pad_columns = ()
+def _fetch_multichoice_replies(demographic_details, answer, comment, mission_title):
     replies = []
     for res in comment.comments.all():
         replies.append(
-                pad_columns+ (
+                demographic_details + (
                     res.pk,
                     mission_title,
                     "---",
@@ -197,11 +190,7 @@ def _fetch_multichoice_replies(answer, comment, mission_title, pad_columns=None)
         #_fetch_multichoice_replies(a, res, mission_title=mission_title)
     return replies
 
-def update_list(values_list, user=None, activity=None, answers=None, pad_columns=None):
-    if pad_columns == None:
-        pad_columns=('-','-','-','-','-','-','-','-','-','-','-','-','-','-',)
-    else:
-        pad_columns = ()
+def update_list(demographic_details, values_list, user=None, activity=None, answers=None):
     if answers is None:
         return
     answers = answers.select_related('comments')
@@ -215,7 +204,7 @@ def update_list(values_list, user=None, activity=None, answers=None, pad_columns
                 answer_value = ''
 
             values_list.append(
-                    pad_columns +
+                    demographic_details +
                     (
                         c.pk, 
                         activity.mission.title,
@@ -230,7 +219,7 @@ def update_list(values_list, user=None, activity=None, answers=None, pad_columns
                     )
             )
             if c.comments.all().count():
-                values_list.extend(fetch_replies(activity, c))
+                values_list.extend(fetch_replies(demographic_details, activity, c))
 
 
 
@@ -240,7 +229,6 @@ class ChallengeActivityReport(XslReport):
         This should include responses to challenges (if multiple choice) and comments. """
 
     def run(self, *args, **kwargs):
-        self.instance_id = kwargs.get('instance_id')
         log.debug('running Challenge Activity Report for game id %s ' % self.instance_id)
         self.notify_subject = "Challenge-Activity-Report"
 
@@ -258,38 +246,41 @@ class ChallengeActivityReport(XslReport):
         )
         self.values_list = []
 
+        qs = UserProfilePerInstance.objects.filter(
+                                                instance__id=self.instance_id).\
+                                            exclude(
+                                                user_profile__user__is_superuser=True,
+                                                user_profile__user__is_staff=True)
+        if self.debug:
+            qs = qs[:30]
 
-        for user_prof_per_instance in UserProfilePerInstance.objects.filter(
-                                                    instance__id=self.instance_id).\
-                                                exclude(
-                                                    user_profile__user__is_superuser=True,
-                                                    user_profile__user__is_staff=True):
+        for user_prof_per_instance in qs:
             profile =  user_prof_per_instance.user_profile
             user =  user_prof_per_instance.user_profile.user
 
             demographic_details = get_demographic_details(user_prof_per_instance, profile, user, self.instance_id)
             self.values_list.append(demographic_details)
 
-            actions = Action.objects.get_for_actor(user).filter(verb='activity_completed')
+            actions = Action.objects.get_for_actor(user).filter(target_instance__pk=self.instance_id, verb='activity_completed')
             log.debug('%s completed %s challenges' % (user_prof_per_instance, actions.count()))
 
             for action in actions:
                 obj = action.action_object
                 if obj.__class__.__name__ ==  'PlayerEmpathyActivity':
-                    update_list(self.values_list, user, obj, getattr(obj, 'empathy_answers'))
+                    update_list(demographic_details, self.values_list, user, obj, getattr(obj, 'empathy_answers'))
                 if obj.__class__.__name__ ==  'PlayerActivity':
                     if obj.type.type == 'open_ended':
-                        update_list(self.values_list, user, obj, getattr(obj, 'openended_answers'))
+                        update_list(demographic_details, self.values_list, user, obj, getattr(obj, 'openended_answers'))
                     if obj.type.type == 'single_response':
-                        update_list(self.values_list, user, obj, getattr(obj, 'singleresponse_answers'))
+                        update_list(demographic_details, self.values_list, user, obj, getattr(obj, 'singleresponse_answers'))
                     if obj.type.type == 'multi_response':
                         answers = AnswerMultiChoice.objects.select_related().filter(option__activity=obj)
                         for answer in answers:
                             for c in answer.comments.filter(user=user):
                                 mission_title = answer.option.mission.title
                                 self.values_list.append(
+                                        demographic_details  + 
                                         (
-                                            '-','-','-','-','-','-','-','-','-','-','-','-','-','-',
                                             c.pk, 
                                             mission_title,
                                             obj.name,
@@ -303,7 +294,7 @@ class ChallengeActivityReport(XslReport):
                                         )
                                 )
                                 if c.comments.all().count():
-                                    self.values_list.extend(_fetch_multichoice_replies(answer, c, mission_title))
+                                    self.values_list.extend(_fetch_multichoice_replies(demographic_details, answer, c, mission_title))
                 if obj.__class__.__name__ == 'PlayerMapActivity':
                     update_list(obj, getattr(obj, 'map_answers'))
 
@@ -319,7 +310,6 @@ class MissionReport(XslReport):
         and all comments and replies."""
 
     def run(self, *args, **kwargs):
-        self.instance_id = kwargs.get('instance_id')
         self.notify_subject = "Mission-Report"
 
         self.field_titles = (
