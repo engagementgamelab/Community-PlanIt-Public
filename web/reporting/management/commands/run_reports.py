@@ -31,7 +31,7 @@ class Command(BaseCommand):
                             DemographicReport,
                             LoginActivityReport,
                             ChallengeActivityReport,
-                            MissionReport,
+                            #MissionReport,
                             ):
 
             if game_id:
