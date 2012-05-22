@@ -119,7 +119,6 @@ class LoginActivityReport(XslReport):
 
 
     def run(self, *args, **kwargs):
-        self.instance_id = kwargs.get('instance_id')
         self.notify_subject = "Login-Activity-Report"
 
 
