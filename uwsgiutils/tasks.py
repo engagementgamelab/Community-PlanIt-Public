@@ -7,10 +7,10 @@ from django.core import management
 from django.conf import settings
 from django.utils import autoreload
 
-@timer(3)
-def change_code_gracefull_reload(sig):
-    if autoreload.code_changed():
-        uwsgi.reload()
+#@timer(3)
+#def change_code_gracefull_reload(sig):
+#    if autoreload.code_changed():
+#        uwsgi.reload()
 
 #@timer(settings.REBUILD_LEADERBOARD_SLEEP_SECONDS, target='spooler')
 #def rebuild_leaderboards(signum):
@@ -65,21 +65,21 @@ def uwsgi_run_report(arguments):
 #def execute_me_at_three_and_fiftynine(num):
 #    print("it's 3:59 in the morning")
 
-@cron(50, 16, -1, -1, -1)
-def run_reports(num):
-    from web.reporting.reports import (
-                DemographicReport,
-                LoginActivityReport,
-                ChallengeActivityReport,
-                MissionReport
-    )
-    reports = {
-            'demographic': DemographicReport,
-            'login-activity': LoginActivityReport,
-            'challenge-activity': ChallengeActivityReport,
-            'mission': MissionReport,
-    }
-    d = reports.get('demographic')()
-    kwargs={'instance_id' : '80'}
-    d.run(**kwargs)
+#@cron(50, 16, -1, -1, -1)
+#def run_reports(num):
+#    from web.reporting.reports import (
+#                DemographicReport,
+#                LoginActivityReport,
+#                ChallengeActivityReport,
+#                MissionReport
+#    )
+#    reports = {
+#            'demographic': DemographicReport,
+#            'login-activity': LoginActivityReport,
+#            'challenge-activity': ChallengeActivityReport,
+#            'mission': MissionReport,
+#    }
+#    d = reports.get('demographic')()
+#    kwargs={'instance_id' : '80'}
+#    d.run(**kwargs)
 
