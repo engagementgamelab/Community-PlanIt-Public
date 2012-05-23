@@ -1,7 +1,7 @@
 {% load attachment_tags i18n heatmap %}
-{% if not nested %}
-<div class="thread heatmap-{{comment.comments.count|add:comment.likes.count|heatmap}}">{% endif %}
+{% if not nested %}<div class="thread heatmap-{{comment.comments.count|add:comment.likes.count|heatmap}}">{% endif %}
     <div class="comment {% if nested %}nested{% endif %}" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
+        <a name="comment-{{comment.pk}}"></a>
         {# META: FLAG AND EDIT #}
         <div class="meta">
             {% if not comment.hidden and comment.user != user and comment.instance.is_active %}
