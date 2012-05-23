@@ -314,6 +314,13 @@ REBUILD_LEADERBOARD_SLEEP_SECONDS = 60*30
 CRON_MAIL_SLEEP_SECONDS = 60*3
 CRON_MAIL_RETRY_DEFERRED_SLEEP_SECONDS = 60*20
 
+CPI_REPORTS = {
+        'demographic' : ('web.reporting.reports', 'DemographicReport'),
+        'login_activity' : ('web.reporting.reports', 'LoginActivityReport'),
+        'challenge_activity' : ('web.reporting.reports', 'ChallengeActivityReport'),
+        #'mission' : ('web.reporting.reports', 'MissionReport'),
+}
+
 # celery disabled
 # using uwsgi spoooler, timer decorator for now
 
