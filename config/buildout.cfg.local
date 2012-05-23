@@ -11,6 +11,8 @@ parts += uwsgi
          spool-dir
          run-dir
          log-dir
+         uwsgi-touch-to-reload
+         bash-aliases
 
 project_name=Community-PlanIt
 
@@ -56,7 +58,8 @@ master=True
 eggs=Django
 versions=versions
 daemonize=${buildout:directory}/log/uwsgi.log
-touch-logreopen=True
+#touch-logreopen=True
+touch-reload=${buildout:spool-dir}/touchme.to.reload
 log-master=true
 spooler = ${buildout:spool-dir}
 import=uwsgiutils.tasks
@@ -123,6 +126,21 @@ inline =
     sudo ln -s ${buildout:parts-directory}/etc/${server:host}.nginx.conf ${server:nginx-conf-path}/sites-available/${server:host}.nginx.conf
     sudo ln -s ${server:nginx-conf-path}/sites-available/${server:host}.nginx.conf  ${server:nginx-conf-path}/sites-enabled/${server:host}.nginx.conf
     sudo service nginx restart
+
+[uwsgi-touch-to-reload]
+recipe = collective.recipe.template
+output = ${buildout:spool-dir}/touchme.to.reload
+inline =
+
+[bash-aliases]
+recipe = collective.recipe.template
+output = ${buildout:parts-directory}/etc/${server:venv_name}.bash.aliases
+inline = 
+    alias run${server:venv_name}='sudo su root -c "${buildout:bin-directory}/uwsgi  --workers=1 --xml=${buildout:parts-directory}/uwsgi/uwsgi.xml"'
+    #alias restart-${server:venv_name}='sudo kill -HUP `cat ${uwsgi:pidfile}`'
+    alias restart-${server:venv_name}='touch ${buildout:spool-dir}/touchme.to.reload'
+    alias stop-${server:venv_name}='sudo kill -INT `cat ${uwsgi:pidfile}`'
+    alias tail-${server:venv_name}='multitail ${buildout:directory}/log/${server:venv_name}.log ${buildout:directory}/log/uwsgi.log'
 
 [resetdb]
 recipe = collective.recipe.template
