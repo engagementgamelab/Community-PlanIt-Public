@@ -11,6 +11,7 @@ parts += uwsgi
          spool-dir
          run-dir
          log-dir
+         set-permissions
          uwsgi-touch-to-reload
          bash-aliases
 
@@ -88,6 +89,14 @@ paths = var/spool
 [run-dir]
 recipe = z3c.recipe.mkdir
 paths = var/run
+
+[set-permissions]
+recipe = cp.recipe.cmd
+shell = /bin/bash
+install_cmd = 
+    sudo chown ${server:user} -R ${buildout:directory}/var
+    sudo chown ${server:user} -R ${buildout:directory}/log
+update_cmd = ${set-permissions:install_cmd}
 
 [nginx-config-local]
 recipe = collective.recipe.template
