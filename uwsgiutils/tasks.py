@@ -24,7 +24,6 @@ from django.utils import autoreload
 #def django_mailer_retry_deferred(signum):
 #    management.call_command('retry_deferred', interactivity=False)
 
-
 #try:
 #    from uwsgidecorators import spool
 #except ImportError:
@@ -43,43 +42,7 @@ def uwsgi_assign_challenge_completed_badges(arguments):
     from web.badges.utils import assign_challenge_completed_badges
     assign_challenge_completed_badges(arguments.get('user_id'), arguments.get('mission_id'))
 
-@spool
-def uwsgi_run_report(arguments):
-    from web.reporting.reports import (
-                DemographicReport,
-                LoginActivityReport,
-                ChallengeActivityReport,
-                MissionReport
-    )
-    reports = {
-            'demographic': DemographicReport,
-            'login-activity': LoginActivityReport,
-            'challenge-activity': ChallengeActivityReport,
-            'mission': MissionReport,
-    }
-    d = reports.get(arguments.get('report_name'))()
-    kwargs={'instance_id' : arguments.get('instance_id')}
-    d.run(**kwargs)
-
-#@cron(59, 3, -1, -1, -1)
-#def execute_me_at_three_and_fiftynine(num):
-#    print("it's 3:59 in the morning")
-
-#@cron(50, 16, -1, -1, -1)
-#def run_reports(num):
-#    from web.reporting.reports import (
-#                DemographicReport,
-#                LoginActivityReport,
-#                ChallengeActivityReport,
-#                MissionReport
-#    )
-#    reports = {
-#            'demographic': DemographicReport,
-#            'login-activity': LoginActivityReport,
-#            'challenge-activity': ChallengeActivityReport,
-#            'mission': MissionReport,
-#    }
-#    d = reports.get('demographic')()
-#    kwargs={'instance_id' : '80'}
-#    d.run(**kwargs)
-
+@cron(0, 2, -1, -1, -1)
+def run_reports(num):
+    if settings.DEBUG == False:
+        management.call_command('run_reports', interactivity=False)
