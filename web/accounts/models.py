@@ -148,14 +148,12 @@ class UserProfilePerInstanceManager(models.Manager):
 
     @cached(60*60*24, 'user_profile_per_instance_get')
     def get(self, *args, **kwargs):
-        log.debug('get prof_per_instance %s ** not cached **' % kwargs)
         return super(UserProfilePerInstanceManager, self).get(*args, **kwargs)
 
     @cached(60*60*24, 'all_games_for_profile')
     def games_for_profile(self, user_profile):
         game_pks = self.filter(user_profile=user_profile).values_list('instance__pk', flat=True)
         my_games = Instance.objects.filter(pk__in=game_pks)
-        log.debug('my games %s. ** not cached ** ' % my_games)
         return my_games
 
     # deprecated. points now come from the core.PlayerLeaderboard
@@ -514,14 +512,16 @@ class Notification(models.Model):
 #    log.debug("invalidating cache for group `prof_per_instance` ")
 #    cache.invalidate_group('prof_per_instance')
 
-def capture_user_login(sender, user, request, **kwargs):
-    # TODO
-    #   somehow capture the game the user
-    #   is logging into
-    stream_utils.action.send(
-                    actor=user,
-                    verb='user_logged_in',
-                    #target=request.current_game,
-                    description='user logged in to system'
-    )
-user_logged_in.connect(capture_user_login)
+#Deprecated
+#capturing the login in accounts.views.login_ajax
+#def capture_user_login(sender, user, request, dispatch_uid='user_logins', **kwargs):
+# TODO
+#   somehow capture the game the user
+#   is logging into
+#    stream_utils.action.send(
+#                    actor=user,
+#                    verb='user_logged_in',
+#                    #target=request.current_game,
+#                    description='user logged in to system'
+#    )
+#user_logged_in.connect(capture_user_login)
