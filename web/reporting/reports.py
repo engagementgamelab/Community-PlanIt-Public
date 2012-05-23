@@ -440,12 +440,12 @@ class ChallengeActivityReport(DemographicReport):
             for action in actions:
                 obj = action.action_object
                 if obj.__class__.__name__ ==  'PlayerEmpathyActivity':
-                    update_list(demographic_details, values_list, user, obj, getattr(obj, 'empathy_answers'))
+                    update_list(values_list, demographic_details, user, obj, getattr(obj, 'empathy_answers'))
                 if obj.__class__.__name__ ==  'PlayerActivity':
                     if obj.type.type == 'open_ended':
-                        update_list(demographic_details, values_list, user, obj, getattr(obj, 'openended_answers'))
+                        update_list(values_list, demographic_details, user, obj, getattr(obj, 'openended_answers'))
                     if obj.type.type == 'single_response':
-                        update_list(demographic_details, values_list, user, obj, getattr(obj, 'singleresponse_answers'))
+                        update_list(values_list, demographic_details, user, obj, getattr(obj, 'singleresponse_answers'))
                     if obj.type.type == 'multi_response':
                         answers = AnswerMultiChoice.objects.select_related().filter(option__activity=obj)
                         for answer in answers:
@@ -467,7 +467,7 @@ class ChallengeActivityReport(DemographicReport):
                                 if c.comments.all().count():
                                     values_list.extend(_fetch_multichoice_replies(demographic_details, answer, c, mission_title))
                 if obj.__class__.__name__ == 'PlayerMapActivity':
-                    update_list(demographic_details, values_list, user, obj, getattr(obj, 'map_answers'))
+                    update_list(values_list, demographic_details, user, obj, getattr(obj, 'map_answers'))
 
         return ReportData(
                 field_titles = field_titles,
