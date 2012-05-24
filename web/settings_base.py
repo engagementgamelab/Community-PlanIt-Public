@@ -309,11 +309,6 @@ ENDLESS_PAGINATION_NEXT_LABEL = '''<div class="pagination-next"></div>'''
 CPI_POINTS_FOR_COMMENT = 5
 CPI_POINTS_FOR_PLAYER_SUBMITTED_CHALLENGE = 5
 
-#CommunityPlanIt uwsgi tasks settings
-REBUILD_LEADERBOARD_SLEEP_SECONDS = 60*30
-CRON_MAIL_SLEEP_SECONDS = 60*3
-CRON_MAIL_RETRY_DEFERRED_SLEEP_SECONDS = 60*20
-
 CPI_REPORTS = {
         'demographic' : ('web.reporting.reports', 'DemographicReport'),
         'login_activity' : ('web.reporting.reports', 'LoginActivityReport'),
