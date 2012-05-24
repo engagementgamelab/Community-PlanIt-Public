@@ -42,6 +42,13 @@ def uwsgi_assign_challenge_completed_badges(arguments):
     from web.badges.utils import assign_challenge_completed_badges
     assign_challenge_completed_badges(arguments.get('user_id'), arguments.get('mission_id'))
 
+
+@cron(0, 6, -1, -1, -1)
+def run_reports(num):
+    if settings.DEBUG == False:
+        management.call_command('daily_email_digest', interactivity=False)
+
+
 @cron(0, 2, -1, -1, -1)
 def run_reports(num):
     if settings.DEBUG == False:
