@@ -12,15 +12,18 @@ from django.utils import autoreload
 #    if autoreload.code_changed():
 #        uwsgi.reload()
 
-@timer(settings.REBUILD_LEADERBOARD_SLEEP_SECONDS, target='spooler')
+#@timer(settings.REBUILD_LEADERBOARD_SLEEP_SECONDS, target='spooler')
+@cron(30, -1, -1, -1, -1)
 def rebuild_leaderboards(signum):
     management.call_command('rebuild_leaderboards', interactivity=False)
 
-@timer(settings.CRON_MAIL_SLEEP_SECONDS, target='spooler')
+#@timer(settings.CRON_MAIL_SLEEP_SECONDS, target='spooler')
+@cron(5, -1, -1, -1, -1)
 def django_mailer_send_mail(signum):
     management.call_command('send_mail', interactivity=False)
 
-@timer(settings.CRON_MAIL_RETRY_DEFERRED_SLEEP_SECONDS, target='spooler')
+#@timer(settings.CRON_MAIL_RETRY_DEFERRED_SLEEP_SECONDS, target='spooler')
+@cron(20, -1, -1, -1, -1)
 def django_mailer_retry_deferred(signum):
     management.call_command('retry_deferred', interactivity=False)
 
