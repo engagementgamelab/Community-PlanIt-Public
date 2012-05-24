@@ -19,12 +19,13 @@ def rebuild_leaderboards(signum):
 
 @cron(2, -1, -1, -1, -1)
 def django_mailer_send_mail(signum):
-    print("sending mail")
-    management.call_command('send_mail', interactivity=False)
+    if settings.DEBUG == False:
+        management.call_command('send_mail', interactivity=False)
 
-#@cron(20, -1, -1, -1, -1)
-#def django_mailer_retry_deferred(signum):
-#    management.call_command('retry_deferred', interactivity=False)
+@cron(20, -1, -1, -1, -1)
+def django_mailer_retry_deferred(signum):
+    if settings.DEBUG == False:
+        management.call_command('retry_deferred', interactivity=False)
 
 #try:
 #    from uwsgidecorators import spool
