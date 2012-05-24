@@ -47,7 +47,7 @@ def uwsgi_assign_challenge_completed_badges(arguments):
 
 
 @cron(0, 6, -1, -1, -1)
-def run_reports(num):
+def daily_email_digest(num):
     if settings.DEBUG == False:
         management.call_command('daily_email_digest', interactivity=False)
 
