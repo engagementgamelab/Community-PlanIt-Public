@@ -41,7 +41,7 @@ class Comment(models.Model):
 
     @property
     def likes_users(self):
-        return self.cached_likes_users(self, comment_id)
+        return self.cached_likes_users(self.pk)
 
     @cached(60*60*24*7)
     def cached_likes_users(comment_id):
