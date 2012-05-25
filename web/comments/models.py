@@ -1,5 +1,6 @@
 import datetime
 from stream import utils as stream_utils
+from cache_utils.decorators import cached
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -34,6 +35,34 @@ class Comment(models.Model):
     content_object = generic.GenericForeignKey()
 
     message = models.CharField(max_length=2000, blank=True, null=True)
+
+    @property
+    def author_screen_name(self):
+        @cached(60*60*24*30)
+        def this_screen_name(comment_pk):
+            return self.user.get_profile().screen_name
+        return this_screen_name(self.pk)
+
+    @property
+    def author_avatar(self):
+        @cached(60*60*24*30)
+        def this_avatar(comment_pk):
+            return self.user.get_profile().avatar
+        return this_avatar(self.pk)
+
+    @property
+    def author(self):
+        @cached(60*60*24*30)
+        def this_user(comment_pk):
+            return self.user
+        return this_user(self.pk)
+
+    @property
+    def is_game_active(self):
+        @cached(60*60*24*30)
+        def this_is_game_active(comment_pk):
+            return self.instance.is_active()
+        return this_is_game_active(self.pk)
 
     #@property
     #def display_user(self):

@@ -3,6 +3,7 @@ __all__ = (
 )
 
 import datetime
+from cache_utils.decorators import cached
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -44,10 +45,10 @@ class AnswerSingleResponse(Answer):
 
 
 class AnswerMultiChoiceManager(models.Manager):
-    pass
 
-    #@cached
-    #def by_activity(self, activity)
+    #@cached(60*60*24*7)
+    def by_activity(self, activity):
+        return self.filter(option__activity=activity)
 
 #This is nasty but it's the simple way to get many checked values
 #for the user stored
@@ -65,6 +66,18 @@ class AnswerMultiChoice(models.Model):
     def get_absolute_url(self):
         #return ("player_activities:overview", [self.option.activity.id])
         return self.option.activity.get_absolute_url()
+
+    def get_option_value(self):
+        @cached(60*60*24*7)
+        def this_option_value(answer_id):
+            return self.option.value
+        return this_option_value(self.pk)
+
+    def get_user(self):
+        @cached(60*60*24*7)
+        def this_user(answer_id):
+            return self.user
+        return this_user(self.pk)
 
 class AnswerMap(Answer):
     map = GoogleMapsField()

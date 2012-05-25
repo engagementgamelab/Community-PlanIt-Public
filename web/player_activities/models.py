@@ -320,6 +320,7 @@ class MultiChoiceActivity(TranslatableModel):
     class Meta:
         verbose_name = 'An Available Answer to a Single/Multiple Choice Activity'
         verbose_name_plural = 'Available Answers to Single/Multiple Choice Activities' 
+
     def __unicode__(self):
         s = self.safe_translation_getter('value', None)
         if s is None:
