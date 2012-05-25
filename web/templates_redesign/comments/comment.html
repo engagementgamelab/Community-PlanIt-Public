@@ -1,13 +1,13 @@
 {% load attachment_tags i18n heatmap %}
-{% with comment.comments.count as comments_count %}
-{% with comment.likes.count as likes_count %}
+{% with comments_count=comment.comments.count comment_id=comment.pk %}
+{% with likes_count=comment.likes_count likes_users=comment.likes_users %}
 {% if not nested %}<div class="thread heatmap-{{ comments_count|add:likes_count|heatmap}}">{% endif %}
-    <div class="comment {% if nested %}nested{% endif %}" id="comment-{{comment.pk}}" data-timestamp="{{comment.posted_date|date:"U"}}">
-        <a name="comment-{{comment.pk}}"></a>
+    <div class="comment {% if nested %}nested{% endif %}" id="comment-{{ comment_id }}" data-timestamp="{{comment.posted_date|date:"U"}}">
+        <a name="comment-{{ comment_id }}"></a>
         {# META: FLAG AND EDIT #}
         <div class="meta">
             {% if not comment.hidden and comment.author != user and comment.is_game_active %}
-                <a class="flag-comment" href="{% url flags:add 'comment' comment.id %}" title="flag comment"></a>
+                <a class="flag-comment" href="{% url flags:add 'comment' comment_id %}" title="flag comment"></a>
             {% endif %}
         </div>
         
@@ -36,24 +36,28 @@
 
                 {# Comment #}
                 {{comment.message|linebreaksbr}}
-                {# ATTACHMENTS #}
-                {% for attachment in comment.attachment.all %}
+                {# IMAGE ATTACHMENT #}
+
+                {% if comment.attachment_image_url %}
+                {% with comment.attachment_image_url as image_url %}
                 <div class="comment-message-attachments">
-                    {% if attachment.is_valid %}
-                        <div>
-                            {% if attachment.get_att_type_display == 'Video' %}
-                                <div class="comment-message-attachments-video">{% embed_video attachment.url %}</div>
-                            {% else %}
-                                {% if attachment.file %}
-                                <a class="thumbnail" href="{{attachment.file.url}}"><img src="{{attachment.file.url}}"/></a>
-                                {% endif %}
-                            {% endif %}
-                        </div>
+                    <div><a class="thumbnail" href="{{ image_url }}"><img src="{{ image_url }}"/></a></div>
+                </div>
+                {% endwith %}
+                {% endif %}
+
+                {% for valid, video_url in comment.attachment_video_url %}
+                {% if valid and video_url %}
+                <div class="comment-message-attachments">
+                    {% if valid == 'valid '%}
+                        <div class="comment-message-attachments-video">{% embed_video video_url %}</div>
                     {% else %}
                         <div class="notice">{% trans "This video will be ready soon." %}</div>
                     {% endif %}
                 </div>
+                {% endif %}
                 {% endfor %}
+
             {% endif %}
         </div>
         
@@ -61,8 +65,8 @@
             {# LIKES! #}
             <div class="likes">
                 {% if comment.is_game_active %}
-                    <div id="id_like-{{ comment.id }}" class="btn-like {% if request.user in comment.likes.all or comment.author == request.user %}active{%endif %}" title="click to say you like this" data-commentid="{{ comment.id }}" data-url="{% url comments:like comment.id %}"></div>
-                    <div id="id_likes-count-{{ comment.id }}" class="likes-count">{{ likes_count }}</div>
+                    <div id="id_like-{{ comment_id }}" class="btn-like {% if request.user.pk in likes_users or comment.author == request.user %}active{%endif %}" title="click to say you like this" data-commentid="{{ comment_id }}" data-url="{% url comments:like comment_id %}"></div>
+                    <div id="id_likes-count-{{ comment_id }}" class="likes-count">{{ likes_count }}</div>
                 {% endif %}
             </div>
         
@@ -70,14 +74,14 @@
             {% if not nested %}
             <div class="replies">
                 {# {% if comment.comments.count %} #}
-                {# <a class="togglereplies" href="#replies-{{comment.pk}}"> #}
+                {# <a class="togglereplies" href="#replies-{{ comment_id }}"> #}
                 {#     <img class="closed" src="{{MEDIA_URL}}img/icons/plus.png" alt=""/> #}
                 {#     <img class="open" src="{{MEDIA_URL}}img/icons/minus.png" alt=""/> #}
                 {# </a> #}
                 {# <span>{{ comment.comments.count }} repl{{ comment.comments.count|pluralize:"y,ies" }}</span> #}
                 {# {% endif %} #}
-                <span id="replies-count-{{ comment.pk }}" class="replies-count"> {{ comments_count }}</span>
-                <a class="btn-replies" href="#reply-{{comment.id}}"></a>
+                <span id="replies-count-{{ comment_id }}" class="replies-count"> {{ comments_count }}</span>
+                <a class="btn-replies" href="#reply-{{comment_id}}"></a>
             </div>
             {% endif %}
         </div>
@@ -106,16 +110,16 @@
                 {# if comment.instance.is_active #}
                     {# REPLY #}
                 <div class="reply-modal">
-                    <!--form enctype="multipart/form-data" method="POST" action="{# url comments:reply comment.id #}"-->
-                    <form id="id_comment-form-{{ comment.pk }}"
+                    <!--form enctype="multipart/form-data" method="POST" action="{# url comments:reply comment_id #}"-->
+                    <form id="id_comment-form-{{ comment_id }}"
                         enctype="multipart/form-data" method="POST" action=""> {% csrf_token %}
-                        <input type="hidden" name="parent_id" value="{{ comment.pk }}"/>
+                        <input type="hidden" name="parent_id" value="{{ comment_id }}"/>
                         <input type="hidden" name="parent_type" value="comment"/>
-                        <textarea name="message" class="comment-message" cols="40" rows="6" id="message-{{comment.id}}" placeholder="{% trans 'Type your response here... ' %}"></textarea>
+                        <textarea name="message" class="comment-message" cols="40" rows="6" id="message-{{comment_id}}" placeholder="{% trans 'Type your response here... ' %}"></textarea>
                         <div class="actions">
                             <span class="reply-comment-counter">(<span class="count">1000</span> {% trans "chars left" %})</span>
                             <div class="reply">
-                                <button type="submit" id="{{ comment.pk }}" class="btn-blue btn-reply">{% trans "Post" %}</button> 
+                                <button type="submit" id="{{ comment_id }}" class="btn-blue btn-reply">{% trans "Post" %}</button> 
                                 <button type="reset" class="btn-blue small btn-cancel">{% trans "cancel" %}</button>
                             </div>
                         </div>
@@ -155,8 +159,8 @@
                             }
                             comment_form.find('.reply-comment-counter').removeClass('limited');
                         }
-                        $('textarea#message-{{ comment.pk }}').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
-                        $('textarea#message-{{ comment.pk }}').limit('1000','#charsLeft');
+                        $('textarea#message-{{ comment_id }}').live('change keyup keydown blur', type_count).attr('maxlength', '1000').change();
+                        $('textarea#message-{{ comment_id }}').limit('1000','#charsLeft');
                     </script>
                 </div>
                 {# endif #}

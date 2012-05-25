@@ -99,6 +99,7 @@ def _build_context(request, action, activity, user=None):
                     all_answers.append((user, mark_safe('<ul>' + ''.join(data['answers']) + '</ul>'), data['comments']))
                 #log.debug('overview multi my answers %s' % my_answers)
                 #log.debug('overview multi all answers %s' % all_answers)
+                #print all_answers
                 context.update(
                     dict(
                         all_answers = all_answers,
