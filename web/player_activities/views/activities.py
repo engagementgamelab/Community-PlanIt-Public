@@ -78,7 +78,7 @@ def _build_context(request, action, activity, user=None):
             context.update({'choices': choices})
 
             if activity_type == "multi_response":
-                answers = AnswerMultiChoice.objects.by_activity(activity)
+                answers = AnswerMultiChoice.objects.answers_by_activity(activity)
                 my_comment = None
                 my_answers = None
                 answer_dict = {}
@@ -86,7 +86,7 @@ def _build_context(request, action, activity, user=None):
                     answer_user  = answer.get_user()
                     if not answer_dict.has_key(answer_user):
                         answer_dict[answer_user] = {'answers': [], 'comments': []}
-                    answer_dict[answer_user]['answers'].append('<li>%s</li>' % answer.get_option_value())
+                    answer_dict[answer_user]['answers'].append('<li>%s</li>' % answer.option_value)
                     for comment in answer.comments.all():
                         if user:
                             if not my_comment:
@@ -264,7 +264,7 @@ def activity(request, activity_id, template=None, **kwargs):
 
                     #cleans out all of the choices that the user selected from the check boxes
 
-                    my_answers = AnswerMultiChoice.objects.by_activity(activity).\
+                    my_answers = AnswerMultiChoice.objects.answers_by_activity(activity).\
                                             filter(user=request.user)
                     for answer in my_answers:
                         amc.comments.clear()
