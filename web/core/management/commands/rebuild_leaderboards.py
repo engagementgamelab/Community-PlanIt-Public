@@ -19,6 +19,5 @@ class Command(BaseCommand):
             t1 = time.time()
             leaderboard_for_game(game.pk)
             t2 = time.time()
-            log.debug("done rebuild leaderboard for %s in %s" % (game, str(t2-t1)))
             log.debug("done rebuilding leaderboards for %s in %s min. %s queries." % (game, (time.time()-t1)/60, len(connection.queries)))
 
