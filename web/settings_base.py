@@ -313,7 +313,7 @@ CPI_REPORTS = {
         'demographic' : ('web.reporting.reports', 'DemographicReport'),
         'login_activity' : ('web.reporting.reports', 'LoginActivityReport'),
         'challenge_activity' : ('web.reporting.reports', 'ChallengeActivityReport'),
-        #'mission' : ('web.reporting.reports', 'MissionReport'),
+        'mission' : ('web.reporting.reports', 'MissionReport'),
 }
 
 # celery disabled
