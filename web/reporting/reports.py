@@ -252,7 +252,7 @@ class DemographicReport(object):
 
         t1 = time.time()
         values_list = []
-        for prof_per_instance in self.user_profiles_per_instance_qs(game):
+        for prof_per_instance in self.qs:
 
             profile =  prof_per_instance.user_profile
             user =  prof_per_instance.user_profile.user
