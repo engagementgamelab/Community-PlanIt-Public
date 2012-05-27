@@ -211,7 +211,6 @@ class UserProfilePerInstance(models.Model):
     def get_user(self):
         @cached(60*60*24*30)
         def this_user(pk):
-            log.debug("got user for profile ** not cached **")
             return self.user_profile.user
         return this_user(self.pk)
 
