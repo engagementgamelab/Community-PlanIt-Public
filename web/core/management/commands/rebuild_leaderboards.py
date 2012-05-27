@@ -1,3 +1,4 @@
+import datetime 
 from django.core.management.base import BaseCommand
 
 from web.instances.models import Instance
@@ -10,11 +11,12 @@ class Command(BaseCommand):
     help = ''
 
     def handle(self, *args, **options):
-
         current_games = Instance.objects.current()
         for game in current_games:
-            leaderboard_for_game.invalidate(game)
-            leaderboard_for_game(game)
+            leaderboard_for_game.invalidate(game.pk)
             log.debug("rebuild leaderboard for %s" % game)
-
+            t1 = datetime.datetime.now()
+            leaderboard_for_game(game.pk)
+            t2 = datetime.datetime.now()
+            log.debug("done rebuild leaderboard for %s in %s" % (game, str(t2-t1)))
 
