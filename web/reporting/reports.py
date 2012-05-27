@@ -179,8 +179,8 @@ class DemographicReport(object):
             number of comments liked, 
             number of comments replied to.  """
 
-    def __init__(self, game, qs=None):
-        self.debug = True #settings.DEBUG
+    def __init__(self, game, qs=None, debug=False):
+        self.debug = debug
 
         if not qs:
             self.qs = UserProfilePerInstance.objects.filter(
@@ -485,8 +485,8 @@ class MissionReport():
         if multiple choice (summary of results); 
         and all comments and replies."""
 
-    def __init__(self, game, qs=None):
-        self.debug = True #settings.DEBUG
+    def __init__(self, game, qs=None, debug=False):
+        self.debug = debug
 
         if qs is None:
             self.qs = UserProfilePerInstance.objects.filter(
