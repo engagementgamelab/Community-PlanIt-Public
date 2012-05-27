@@ -121,10 +121,10 @@ class Comment(models.Model):
     #    return self.content_object.__class__.__name__ in ['PlayerActivityOfficialResponse', 'MapOfficialResponse', 'EmpathyOfficialResponse', 'ChallengeOfficialResponse']
 
     def __unicode__(self):
-        if self.message:
-            return self.message
-        else:
-            return str(self.pk)
+        #if self.message:
+        #    return self.message
+        #else:
+        return str(self.pk)
 
     def save(self, *args, **kwargs):
         if self.message is not None and len(self.message) > 1000:
