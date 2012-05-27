@@ -5,6 +5,7 @@ from stream.models import Action
 import StringIO
 from random import randint
 from datetime import datetime, date
+from operator import attrgetter
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -173,7 +174,7 @@ class DemographicReport(object):
             number of comments replied to.  """
 
     def __init__(self, *args, **kwargs):
-        self.debug = settings.DEBUG
+        self.debug = False #settings.DEBUG
 
     def get_demographic_field_titles(self):
         return (
@@ -226,7 +227,7 @@ class DemographicReport(object):
                                     exclude(
                                         user_profile__user__is_superuser=True,
                                         user_profile__user__is_staff=True,
-        )
+                                        )
         if self.debug:
             qs = qs.filter(user_profile__user__pk=877)
         return qs
@@ -325,80 +326,6 @@ class LoginActivityReport(DemographicReport):
                 query_count = len(connection.queries),
         )
 
-def fetch_replies(demographic_details, answer, comment):
-    replies = []
-    if comment.comments.all().count():
-        for res in comment.comments.select_related().all():
-            replies.append(
-                demographic_details + (
-                        res.pk,
-                        answer.mission.title,
-                        answer.name,
-                        answer.type.type,
-                        '-',
-                        res.posted_date.strftime('%Y-%m-%d %H:%M'),
-                        res.user.pk,
-                        "response to %s" %(comment.pk),
-                        res.message,
-                        res.likes.all().count(),
-                )
-            )
-            #fetch_replies(a, res)
-    return replies
-
-def _fetch_multichoice_replies(demographic_details, answer, comment, mission_title):
-    replies = []
-    for res in comment.comments.all():
-        replies.append(
-                demographic_details + (
-                    res.pk,
-                    mission_title,
-                    "---",
-                    'multichoice',
-                    '-',
-                    res.posted_date.strftime('%Y-%m-%d %H:%M'),
-                    "response to %s" %(comment.pk),
-                    res.message,
-                    res.likes.all().count(),
-                )
-        )
-        #_fetch_multichoice_replies(a, res, mission_title=mission_title)
-    return replies
-
-def update_list(values_list, demographic_details=(), user=None, activity=None, answers=None):
-
-    if answers is None:
-        return
-    answers = answers.select_related('comments')
-    if user is not None:
-        answers = answers.filter(answerUser=user)
-    for answ in answers:
-        for c in answ.comments.select_related('user', 'selected', 'likes').all():
-            if activity.type.type == 'single_response':
-                answer_value = answ.selected.value
-            elif activity.type.type == 'map':
-                if hasattr(answ, 'map'):
-                    answer_value = ", ".join(map(lambda c: str(c), answ.map.coordinates))
-            else:
-                answer_value = ''
-
-            values_list.append(
-                    demographic_details +
-                    (
-                        c.pk, 
-                        activity.mission.title,
-                        activity.name, 
-                        activity.type.type, 
-                        activity.question,
-                        c.posted_date.strftime('%Y-%m-%d %H:%M'),
-                        answer_value,
-                        c.message, 
-                        c.likes.all().count(),
-                    )
-            )
-            if c.comments.all().count():
-                values_list.extend(fetch_replies(demographic_details, activity, c))
-
 
 class ChallengeActivityReport(DemographicReport):
     """
@@ -410,70 +337,79 @@ class ChallengeActivityReport(DemographicReport):
         values_list = []
         t1 = time.time()
         field_titles = ()
-        for prof_per_instance in self.user_profiles_per_instance_qs(game):
+
+        def _gen_answer_classes():
+            answer_classes = {}
+            _module = __import__('web.answers.models',{},{},[''])
+            for ans_class, ch_class in (
+                    ('AnswerSingleResponse', 'PlayerActivity_single_response'),
+                    ('AnswerMap', 'PlayerMapActivity_map'),
+                    ('AnswerEmpathy',  'PlayerEmpathyActivity_empathy'),
+                    ('AnswerOpenEnded', 'PlayerActivity_open_ended')):
+                answer_classes[ch_class] = getattr(_module, ans_class)
+            return answer_classes
+        _answer_classes = _gen_answer_classes()
+        players = self.user_profiles_per_instance_qs(game)
+        missions = Mission.objects.for_instance(game)
+        activities = []
+        for mission in missions:
+            activities.extend(mission.get_activities(include_player_submitted=True))
+        activities = sorted(activities, key=attrgetter('mission', 'type'))
+
+        players_count = players.count()
+        field_titles = self.get_demographic_field_titles()
+
+        for obj in activities:
+            obj_pk = obj.pk
+            field_titles += (
+                    'mission %s' % obj_pk, 
+                    'challenge title/type %s' % obj_pk,
+                    'original question %s' % obj_pk,
+                    '_ddqual_response %s' % obj_pk,
+                    'likes %s' % obj_pk,
+            )
+        for i, prof_per_instance in enumerate(players):
             profile =  prof_per_instance.user_profile
             user =  prof_per_instance.user_profile.user
-
-            field_titles = self.get_demographic_field_titles()
             demographic_details = self.get_demographic_details(prof_per_instance, profile, user)
             row = demographic_details
+            completed_cnt = 0
 
-            actions = Action.objects.get_for_actor(user).filter(
-                                        target_instance=game,
-                                        verb='activity_completed',
-                                    )
-            for i, action in enumerate(actions):
-                obj = action.action_object
-                field_titles = field_titles + (
-                        'mission %s' % obj.pk, 
-                        'challenge id %s' % obj.pk,
-                        'challenge title %s' % obj.pk,
-                        'challenge type %s' % obj.pk,
-                        'original question %s' % obj.pk,
-                        '_ddqual_response %s' % obj.pk,
-                        'likes %s' % obj.pk,
-                        # keep comments in demographic report
-                        #'comment %s' % obj.pk,
-                        #'timestamp %s' % obj.pk,
-                )
-                if obj.type.type == 'multi_response':
-                    my_answers_as_str = AnswerMultiChoice.objects.my_answers_by_activity_as_str(
-                                                    obj, user,
-                    )
-                    my_answers_likes_count = AnswerMultiChoice.objects.my_answers_by_activity_likes_count(
-                                                    obj, user
-                    )
+            for activity in activities:
+                actions = Action.objects.get_for_action_object(activity).filter(actor_user=user)
+                #print "got actions %s for user %s" % (actions, user)
+                if actions.count() == 0:
+                    this_activity = ('', '', '', '', '')
                 else:
-                    rel_answers = {
-                        'PlayerEmpathyActivity_empathy': 'empathy_answers',
-                        'PlayerMapActivity_map': 'map_answers',
-                        'PlayerActivity_open_ended' :  'openended_answers',
-                        'PlayerActivity_single_response' : 'singleresponse_answers',
-                    }
-                    print obj.__class__.__name__
-                    print obj.type.type
-                    answers = getattr(obj, rel_answers.get(obj.__class__.__name__+'_'+obj.type.type)).all()
-                    if answers.count() > 0:
-                        _module = __import__('web.answers.models',{},{},[''])
-                        _class = getattr(_module, answers[0].__class__.__name__)
-                        my_answers_as_str = _class.objects.my_answers_by_activity_as_str(obj, user)
-                        my_answers_likes_count = _class.objects.my_answers_by_activity_likes_count(obj, user)
+                    completed_cnt += 1
+                    obj = actions[0].action_object
+                    obj_pk = obj.pk
+                    obj_class_name = obj.__class__.__name__
+                    obj_type = obj.activity_type_readable
+                    if obj_type == 'multi_response':
+                        my_answers_as_str = AnswerMultiChoice.objects.my_answers_by_activity_as_str(
+                                                        obj, user,
+                        )
+                        my_answers_likes_count = AnswerMultiChoice.objects.my_answers_by_activity_likes_count(
+                                                        obj, user
+                        )
+                    else:
+                        answer_class = _answer_classes.get(obj_class_name+'_'+obj_type)
+                        my_answers_as_str = answer_class.objects.my_answers_by_activity_as_str(obj, user)
+                        my_answers_likes_count = answer_class.objects.my_answers_by_activity_likes_count(obj, user)
 
-                this_activity = (
-                                    obj.mission.title,
-                                    obj.pk,
-                                    obj.name,
-                                    obj.type.type,
-                                    obj.question,
-                                    my_answers_as_str,
-                                    my_answers_likes_count,
-                                    # keep comments in demographic report
-                                    #'comment?',
-                                    #c.posted_date.strftime('%Y-%m-%d %H:%M')
-                                )
-                print this_activity
+                    this_activity = (
+                        obj.mission.title,
+                        obj.name + ' - ' + obj_type,
+                        obj.question,
+                        my_answers_as_str,
+                        my_answers_likes_count,
+                    )
                 row += this_activity
-            values_list.append(row)
+            if completed_cnt > 0:
+                print "%s of %s. %s competed %s challenges" % (i, players_count, profile.screen_name, completed_cnt)
+                values_list.append(row)
+        print "done in %s min. %s queries." % ((time.time()-t1)/60, len(connection.queries))
         return ReportData(
                 field_titles = field_titles,
                 values_list = values_list,
@@ -494,67 +430,5 @@ class MissionReport():
         self.debug = settings.DEBUG
 
     def get_report_data(self, game):
-        #_ddqual_comment1
-        #_ddqual_comment2
-        #_ddqual_reply
-        field_titles = (
-                            'mission', 
-                            'comment id', 
-                            'activity title', 
-                            'activity type', 
-                            'original question',
-                            'timestamp',
-                            'user',
-                            'response code',
-                            'comment', 
-                            'likes'
-        )
-        t1 = time.time()
-        values_list = []
-        if self.debug:
-            qs = Mission.objects.filter(slug='share-your-detroit')
-        else:
-            qs = Mission.objects.filter(instance=game)
-        for mission in qs:
-            challenges = mission.get_activities(include_player_submitted=True)
-            print "mission: %s, %s challenges" %(mission.slug, len(challenges))
-            for obj in challenges:
-                if obj.__class__.__name__ ==  'PlayerEmpathyActivity':
-                    update_list(values_list, user=None, activity=obj, answers=getattr(obj, 'empathy_answers'))
-                if obj.__class__.__name__ ==  'PlayerActivity':
-                    if obj.type.type == 'open_ended':
-                        update_list(values_list, user=None, activity=obj, answers=getattr(obj, 'openended_answers'))
-                    if obj.type.type == 'single_response':
-                        update_list(values_list, user=None, activity=obj, answers=getattr(obj, 'singleresponse_answers'))
-                    if obj.type.type == 'multi_response':
-                        answers = AnswerMultiChoice.objects.select_related().filter(option__activity=obj)
-                        for answer in answers:
-                            for c in answer.comments.all():
-                                #mission_title = answer.option.mission.title
-                                mission_title = mission.title
-                                values_list.append(
-                                        (
-                                            mission_title,
-                                            c.pk, 
-                                            obj.name,
-                                            'multichoice',
-                                            obj.question,
-                                            c.posted_date.strftime('%Y-%m-%d %H:%M'),
-                                            c.user.get_profile().screen_name,
-                                            answer.option.value,
-                                            c.message, 
-                                            c.likes.all().count(),
-                                        )
-                                )
-                                if c.comments.all().count():
-                                    values_list.extend(_fetch_multichoice_replies(answer, c, mission_title))
-                if obj.__class__.__name__ == 'PlayerMapActivity':
-                    update_list(obj, getattr(obj, 'map_answers'))
-
-        return ReportData(
-                field_titles = field_titles,
-                values_list = values_list,
-                exec_time = time.time()-t1,
-                query_count = len(connection.queries),
-        )
+        pass
 
