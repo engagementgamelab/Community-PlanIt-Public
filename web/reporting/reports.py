@@ -56,7 +56,7 @@ def get_report_instance(report_label):
     # from app.module load ReportClass and instantiate
     report_module = __import__( report_name[0],{},{},[''])
     report_class = getattr(report_module,report_name[1] )
-    return report_class()
+    return report_class
 
 
 class ReportData(object):
@@ -75,20 +75,28 @@ class ReportHandler(object):
 
     def run_reports(self):
 
-        for report_label in settings.CPI_REPORTS.keys():
-            get_report_instance(report_label)
-
         if self.game_id is not None:
             games = Instance.objects.filter(pk=self.game_id)
         else:
             games = Instance.objects.current()
 
         for report_label in settings.CPI_REPORTS.keys():
-            report_instance = get_report_instance(report_label)
 
             for game in games:
-                data = report_instance.get_report_data(game)
-                xls_report = XlsReport(data)
+                xls_report = XlsReport()
+                report_instance = get_report_instance(report_label)(game)
+                if report_instance.__class__.__name__  == 'MissionReport':
+                    for mission in game.missions.all():
+                        data = report_instance.get_report_data(game, [mission,])
+                        sheet = xls_report.wb.add_sheet(mission.title)
+                        xls_report.write_titles(sheet, data.field_titles)
+                        xls_report.write_data(sheet, data.values_list)
+                else:
+                    data = report_instance.get_report_data(game)
+                    sheet = xls_report.wb.add_sheet(report_instance.__class__.__name__)
+                    xls_report.write_titles(sheet, data.field_titles)
+                    xls_report.write_data(sheet, data.values_list)
+
                 output = xls_report.render_to_excel()
 
                 title = "".join([game.slug, '-', report_label])
@@ -108,23 +116,20 @@ class ReportHandler(object):
                 report.file.save(filename, ContentFile(output.getvalue()), save=True)
                 output.close()
                 log.debug('done with report. %s, saved %s' % (filename, location))
+                del report_instance 
 
 
 class XlsReport(object):
 
-    def __init__(self, data):
+    def __init__(self):
         #self.report_title = data.report_title
-        self.values_list = data.values_list
-        self.field_titles = data.field_titles
+        #self.values_list = data.values_list
+        #self.field_titles = data.field_titles
 
-    def render_to_excel(self, save_to_file=True):
+        self.wb = xlwt.Workbook(encoding='utf8')
+        self.default_style = xlwt.Style.default_style
 
-        wb = xlwt.Workbook(encoding='utf8')
-        sheet = wb.add_sheet('untitled')
-
-        default_style = xlwt.Style.default_style
-
-        header_style =xlwt.XFStyle()
+        self.header_style =xlwt.XFStyle()
         header_background = xlwt.Pattern()
         header_background.pattern = xlwt.Pattern.SOLID_PATTERN
         header_background.pattern_fore_colour = 22
@@ -132,31 +137,32 @@ class XlsReport(object):
         header_font = xlwt.Font()
         header_font.name = 'Calibri'
         header_font.bold = True
-        header_style.pattern = header_background
+        self.header_style.pattern = header_background
 
+    def write_titles(self, sheet, field_titles):
+        for col, val in enumerate(field_titles):
+            sheet.write(0, col, val, style=self.header_style)
 
+    def write_data(self, sheet, values_list):
         datetime_style = xlwt.easyxf(num_format_str='dd/mm/yyyy hh:mm')
         date_style = xlwt.easyxf(num_format_str='dd/mm/yyyy')
 
-        for col, val in enumerate(self.field_titles):
-            sheet.write(0, col, val, style=header_style)
-
-        for row, rowdata in enumerate(self.values_list, start=1):
+        for row, rowdata in enumerate(values_list, start=1):
             for col, val in enumerate(rowdata):
                 if isinstance(val, datetime):
                     style = datetime_style
                 elif isinstance(val, date):
                     style = date_style
                 else:
-                    style = default_style
-
+                    style = self.default_style
                 sheet.write(row, col, val, style=style)
 
         #if not save_to_file:
         #    return xls_to_response(wb, filename)
 
+    def render_to_excel(self, save_to_file=True):
         output = StringIO.StringIO()
-        wb.save(output)
+        self.wb.save(output)
         return output
 
 
@@ -173,8 +179,18 @@ class DemographicReport(object):
             number of comments liked, 
             number of comments replied to.  """
 
-    def __init__(self, *args, **kwargs):
-        self.debug = False #settings.DEBUG
+    def __init__(self, game, qs=None):
+        self.debug = True #settings.DEBUG
+
+        if not qs:
+            self.qs = UserProfilePerInstance.objects.filter(
+                                            instance=game).\
+                                        exclude(
+                                            user_profile__user__is_superuser=True,
+                                            user_profile__user__is_staff=True,
+                                            )
+        if self.debug:
+            self.qs = self.qs.filter(user_profile__user__pk=877)
 
     def get_demographic_field_titles(self):
         return (
@@ -220,17 +236,6 @@ class DemographicReport(object):
             profile.city or "",
             profile.zip_code or "",
         )
-
-    def user_profiles_per_instance_qs(self, game):
-        qs = UserProfilePerInstance.objects.filter(
-                                        instance=game).\
-                                    exclude(
-                                        user_profile__user__is_superuser=True,
-                                        user_profile__user__is_staff=True,
-                                        )
-        if self.debug:
-            qs = qs.filter(user_profile__user__pk=877)
-        return qs
 
     def get_report_data(self, game):
 
@@ -300,7 +305,7 @@ class LoginActivityReport(DemographicReport):
         )
         t1 = time.time()
         values_list = []
-        for prof_per_instance in self.user_profiles_per_instance_qs(game):
+        for prof_per_instance in self.qs:
 
             profile =  prof_per_instance.user_profile
             user =  prof_per_instance.user_profile.user
@@ -327,6 +332,82 @@ class LoginActivityReport(DemographicReport):
         )
 
 
+
+def fetch_replies(demographic_details, answer, comment):
+    replies = []
+    if comment.comments.all().count():
+        for res in comment.comments.select_related().all():
+            replies.append(
+                demographic_details + (
+                        res.pk,
+                        answer.mission.title,
+                        answer.name,
+                        answer.type.type,
+                        '-',
+                        res.posted_date.strftime('%Y-%m-%d %H:%M'),
+                        res.user.pk,
+                        "response to %s" %(comment.pk),
+                        res.message,
+                        res.likes.all().count(),
+                )
+            )
+            #fetch_replies(a, res)
+    return replies
+
+def _fetch_multichoice_replies(demographic_details, answer, comment, mission_title):
+    replies = []
+    for res in comment.comments.all():
+        replies.append(
+                demographic_details + (
+                    res.pk,
+                    mission_title,
+                    "---",
+                    'multichoice',
+                    '-',
+                    res.posted_date.strftime('%Y-%m-%d %H:%M'),
+                    "response to %s" %(comment.pk),
+                    res.message,
+                    res.likes.all().count(),
+                )
+        )
+        #_fetch_multichoice_replies(a, res, mission_title=mission_title)
+    return replies
+
+def update_list(values_list, demographic_details=(), user=None, activity=None, answers=None):
+
+    if answers is None:
+        return
+    answers = answers.select_related('comments')
+    if user is not None:
+        answers = answers.filter(answerUser=user)
+    for answ in answers:
+        for c in answ.comments.select_related('user', 'selected', 'likes').all():
+            if activity.type.type == 'single_response':
+                answer_value = answ.selected.value
+            elif activity.type.type == 'map':
+                if hasattr(answ, 'map'):
+                    answer_value = ", ".join(map(lambda c: str(c), answ.map.coordinates))
+            else:
+                answer_value = ''
+
+            values_list.append(
+                    demographic_details +
+                    (
+                        c.pk, 
+                        activity.mission.title,
+                        activity.name, 
+                        activity.type.type, 
+                        activity.question,
+                        c.posted_date.strftime('%Y-%m-%d %H:%M'),
+                        answer_value,
+                        c.message, 
+                        c.likes.all().count(),
+                    )
+            )
+            if c.comments.all().count():
+                values_list.extend(fetch_replies(demographic_details, activity, c))
+
+
 class ChallengeActivityReport(DemographicReport):
     """
         -- record of challenge activity by user 
@@ -334,6 +415,91 @@ class ChallengeActivityReport(DemographicReport):
         This should include responses to challenges (if multiple choice) and comments. """
 
     def get_report_data(self, game):
+        values_list = []
+        t1 = time.time()
+        field_titles = ()
+        for prof_per_instance in self.qs:
+            profile =  prof_per_instance.user_profile
+            user =  prof_per_instance.user_profile.user
+
+            field_titles = self.get_demographic_field_titles()
+            demographic_details = self.get_demographic_details(prof_per_instance, profile, user)
+            row = demographic_details
+
+            actions = Action.objects.get_for_actor(user).filter(
+                                        target_instance=game,
+                                        verb='activity_completed',
+                                    )
+            for i, action in enumerate(actions):
+                obj = action.action_object
+                field_titles = field_titles + (
+                        'mission %s' % obj.pk, 
+                        'challenge title/type %s' % obj.pk,
+                        'original question %s' % obj.pk,
+                        '_ddqual_response %s' % obj.pk,
+                        'likes %s' % obj.pk,
+                )
+                if obj.type.type == 'multi_response':
+                    my_answers_as_str = AnswerMultiChoice.objects.my_answers_by_activity_as_str(
+                                                    obj, user,
+                    )
+                    my_answers_likes_count = AnswerMultiChoice.objects.my_answers_by_activity_likes_count(
+                                                    obj, user
+                    )
+                else:
+                    rel_answers = {
+                        'PlayerEmpathyActivity_empathy': 'empathy_answers',
+                        'PlayerMapActivity_map': 'map_answers',
+                        'PlayerActivity_open_ended' :  'openended_answers',
+                        'PlayerActivity_single_response' : 'singleresponse_answers',
+                    }
+                    answers = getattr(obj, rel_answers.get(obj.__class__.__name__+'_'+obj.type.type)).all()
+                    if answers.count() > 0:
+                        _module = __import__('web.answers.models',{},{},[''])
+                        _class = getattr(_module, answers[0].__class__.__name__)
+                        my_answers_as_str = _class.objects.my_answers_by_activity_as_str(obj, user)
+                        my_answers_likes_count = _class.objects.my_answers_by_activity_likes_count(obj, user)
+
+                this_activity = (
+                                    obj.mission.title,
+                                    obj.name+'['+obj.type.type+']',
+                                    obj.question,
+                                    my_answers_as_str,
+                                    my_answers_likes_count,
+                                )
+                row += this_activity
+            values_list.append(row)
+        print "done in %s min. %s queries." % ((time.time()-t1)/60, len(connection.queries))
+        return ReportData(
+                field_titles = field_titles,
+                values_list = values_list,
+                exec_time = time.time()-t1,
+                query_count = len(connection.queries),
+        )
+
+
+class MissionReport():
+
+    """-- mission report - 
+        organized by challenge; 
+        if multiple choice (summary of results); 
+        and all comments and replies."""
+
+    def __init__(self, game, qs=None):
+        self.debug = True #settings.DEBUG
+
+        if qs is None:
+            self.qs = UserProfilePerInstance.objects.filter(
+                                            instance=game).\
+                                        exclude(
+                                            user_profile__user__is_superuser=True,
+                                            user_profile__user__is_staff=True,
+                                            )
+        if self.debug:
+            self.qs = self.qs.filter(user_profile__user__pk=877)
+
+
+    def get_report_data(self, game, missions=[]):
         values_list = []
         t1 = time.time()
         field_titles = ()
@@ -349,20 +515,23 @@ class ChallengeActivityReport(DemographicReport):
                 answer_classes[ch_class] = getattr(_module, ans_class)
             return answer_classes
         _answer_classes = _gen_answer_classes()
-        players = self.user_profiles_per_instance_qs(game)
-        missions = Mission.objects.for_instance(game)
+        players = self.qs
+
+        if len(missions) == 0:
+            missions = Mission.objects.for_instance(game)
+
         activities = []
         for mission in missions:
             activities.extend(mission.get_activities(include_player_submitted=True))
+            print "mission %s, activities count: %s" % (mission.title, len(activities))
         activities = sorted(activities, key=attrgetter('mission', 'type'))
 
         players_count = players.count()
-        field_titles = self.get_demographic_field_titles()
+        field_titles = ()
 
         for obj in activities:
             obj_pk = obj.pk
             field_titles += (
-                    'mission %s' % obj_pk, 
                     'challenge title/type %s' % obj_pk,
                     'original question %s' % obj_pk,
                     '_ddqual_response %s' % obj_pk,
@@ -371,15 +540,14 @@ class ChallengeActivityReport(DemographicReport):
         for i, prof_per_instance in enumerate(players):
             profile =  prof_per_instance.user_profile
             user =  prof_per_instance.user_profile.user
-            demographic_details = self.get_demographic_details(prof_per_instance, profile, user)
-            row = demographic_details
+            row = ()
             completed_cnt = 0
 
             for activity in activities:
                 actions = Action.objects.get_for_action_object(activity).filter(actor_user=user)
                 #print "got actions %s for user %s" % (actions, user)
                 if actions.count() == 0:
-                    this_activity = ('', '', '', '', '')
+                    this_activity = ('', '', '', '')
                 else:
                     completed_cnt += 1
                     obj = actions[0].action_object
@@ -399,7 +567,6 @@ class ChallengeActivityReport(DemographicReport):
                         my_answers_likes_count = answer_class.objects.my_answers_by_activity_likes_count(obj, user)
 
                     this_activity = (
-                        obj.mission.title,
                         obj.name + ' - ' + obj_type,
                         obj.question,
                         my_answers_as_str,
@@ -416,19 +583,4 @@ class ChallengeActivityReport(DemographicReport):
                 exec_time = time.time()-t1,
                 query_count = len(connection.queries),
         )
-
-
-
-class MissionReport():
-
-    """-- mission report - 
-        organized by challenge; 
-        if multiple choice (summary of results); 
-        and all comments and replies."""
-
-    def __init__(self, *args, **kwargs):
-        self.debug = settings.DEBUG
-
-    def get_report_data(self, game):
-        pass
 
