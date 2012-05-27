@@ -1,5 +1,6 @@
-import datetime 
+import time 
 from django.core.management.base import BaseCommand
+from django.db import connection
 
 from web.instances.models import Instance
 from web.core.utils import leaderboard_for_game
@@ -15,8 +16,9 @@ class Command(BaseCommand):
         for game in current_games:
             leaderboard_for_game.invalidate(game.pk)
             log.debug("rebuild leaderboard for %s" % game)
-            t1 = datetime.datetime.now()
+            t1 = time.time()
             leaderboard_for_game(game.pk)
-            t2 = datetime.datetime.now()
+            t2 = time.time()
             log.debug("done rebuild leaderboard for %s in %s" % (game, str(t2-t1)))
+            log.debug("done rebuilding leaderboards for %s in %s min. %s queries." % (game, (time.time()-t1)/60, len(connection.queries))
 
