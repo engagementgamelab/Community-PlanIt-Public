@@ -135,7 +135,8 @@ class Mission(TranslatableModel):
         activities = []
         for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
             activities.extend(getattr(self, 'player_activities_%s_related' % model_klass.lower()).all())
-            activities = filter(lambda a: a.is_player_submitted == include_player_submitted, activities)
+            if include_player_submitted == False:
+                activities = filter(lambda a: a.is_player_submitted == False, activities)
         return sorted(activities, key=attrgetter('name'))
 
     @cached(60*60*24*7)
