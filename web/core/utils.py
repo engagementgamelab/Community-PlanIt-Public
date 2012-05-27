@@ -8,7 +8,7 @@ from django.http import Http404
 from django.utils.translation import get_language
 from django.contrib.sites.models import RequestSite
 
-#from web.instances.models import Instance
+from web.instances.models import Instance
 from web.missions.models import Mission
 from web.accounts.models import UserProfilePerInstance, UserProfileVariantsForInstance
 
