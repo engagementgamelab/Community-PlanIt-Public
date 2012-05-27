@@ -15,7 +15,6 @@ class Command(BaseCommand):
         current_games = Instance.objects.current()
         for game in current_games:
             leaderboard_for_game.invalidate(game.pk)
-            log.debug("rebuild leaderboard for %s" % game)
             t1 = time.time()
             leaderboard_for_game(game.pk)
             t2 = time.time()
