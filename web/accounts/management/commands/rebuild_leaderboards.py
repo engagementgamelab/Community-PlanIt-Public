@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
         current_games = Instance.objects.current()
         for game in current_games:
-            leaderboard_for_game.invalidate(game)
+            leaderboard_for_game.invalidate(game.id)
             log.debug("rebuild leaderboard for %s" % game)
             t1 = datetime.datetime()
             leaderboard_for_game(game)
