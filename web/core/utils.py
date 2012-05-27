@@ -127,7 +127,7 @@ def leaderboard_for_game(game_id):
     # rank
     # screen_name
     # url to profile
-    game = Instance.objects.get(pk=game_id)
+    game = Instance.objects.get(pk=int(game_id))
     profiles_for_game = UserProfilePerInstance.objects.filter(instance=game).\
                                         exclude(user_profile__user__is_active=False,
                                             user_profile__user__is_superuser=True,
