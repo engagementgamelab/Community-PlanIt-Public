@@ -30,13 +30,14 @@ log = logging.getLogger(__name__)
 def _build_context(request, action, activity, user=None):
 
     context = {}
+    activity_type = activity.activity_type_readable
 
     def _get_related():        
-        if activity.type.type == 'open_ended':
+        if activity_type == 'open_ended':
             return getattr(activity, 'openended_answers')
-        elif activity.type.type == 'empathy':
+        elif activity_type == 'empathy':
             return getattr(activity, 'empathy_answers')
-        elif activity.type.type == 'multi_response':
+        elif activity_type == 'multi_response':
             return getattr(activity, 'multichoice_answers')
         else:
             for klass in ['AnswerMap', 'AnswerSingleResponse']:
@@ -54,7 +55,7 @@ def _build_context(request, action, activity, user=None):
             }
         )
 
-        if activity.type.type != 'multi_response':
+        if activity_type != 'multi_response':
             answers = activity.__class__.objects.none()
             myAnswer = None
             myComment = None
@@ -72,25 +73,25 @@ def _build_context(request, action, activity, user=None):
                         pass
             context.update(dict(answers=answers, myAnswer=myAnswer, myComment=myComment,))
 
-        if activity.type.type in ['multi_response', 'single_response']:
-            #choices = MultiChoiceActivity.objects.language(get_language()).by_activity(activity=activity)
+        if activity_type in ['multi_response', 'single_response']:
             choices = MultiChoiceActivity.objects.by_activity(activity=activity)
             context.update({'choices': choices})
 
-            if activity.type.type == "multi_response":
-                answers = AnswerMultiChoice.objects.filter(option__activity=activity)
+            if activity_type == "multi_response":
+                answers = AnswerMultiChoice.objects.answers_by_activity(activity)
                 my_comment = None
                 my_answers = None
                 answer_dict = {}
                 for answer in answers:
-                    if answer.user not in answer_dict:
-                        answer_dict[answer.user] = {'answers': [], 'comments': []}
-                    answer_dict[answer.user]['answers'].append('<li>%s</li>' % answer.option.value)
+                    answer_user  = answer.get_user()
+                    if not answer_dict.has_key(answer_user):
+                        answer_dict[answer_user] = {'answers': [], 'comments': []}
+                    answer_dict[answer_user]['answers'].append('<li>%s</li>' % answer.option_value)
                     for comment in answer.comments.all():
                         if user:
                             if not my_comment:
                                 my_comment = comment
-                        answer_dict[answer.user]['comments'].append(comment)
+                        answer_dict[answer_user]['comments'].append(comment)
                 all_answers = []
                 if user and user in answer_dict:
                     my_answers = mark_safe('<ul>' + ''.join(answer_dict[user]['answers']) + '</ul>')
@@ -98,6 +99,7 @@ def _build_context(request, action, activity, user=None):
                     all_answers.append((user, mark_safe('<ul>' + ''.join(data['answers']) + '</ul>'), data['comments']))
                 #log.debug('overview multi my answers %s' % my_answers)
                 #log.debug('overview multi all answers %s' % all_answers)
+                #print all_answers
                 context.update(
                     dict(
                         all_answers = all_answers,
@@ -105,7 +107,7 @@ def _build_context(request, action, activity, user=None):
                         my_comment = my_comment
                     )
                 )
-        elif activity.type.type == 'map':
+        elif activity_type == 'map':
             answers = AnswerMap.objects.filter(activity=activity)
             init_coords = []
             x = 0
@@ -131,17 +133,17 @@ def _build_context(request, action, activity, user=None):
             ))
 
     elif action in ['play', 'replay']:
-        if activity.type.type == 'open_ended':
+        if activity_type == 'open_ended':
             form = make_openended_form()
-        elif activity.type.type == 'empathy':
+        elif activity_type == 'empathy':
             form = make_empathy_form()
-        elif (activity.type.type == "single_response"):
+        elif (activity_type == "single_response"):
             choices = _get_mc_choices(activity)
             form = make_single_form(choices)
-        elif (activity.type.type == "multi_response"):
+        elif (activity_type == "multi_response"):
             choices = _get_mc_choices(activity)
             form = make_multi_form(choices)
-        elif (activity.type.type == "map"):
+        elif (activity_type == "map"):
             form = MapForm()
             init_coords = []
             x = 0
@@ -260,24 +262,27 @@ def activity(request, activity_id, template=None, **kwargs):
                 if _is_form_valid():
                     #this gets very very messy....
 
-                    choice_ids =  _get_mc_choice_ids(activity)
-
                     #cleans out all of the choices that the user selected from the check boxes
-                    for amc in AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=choice_ids)):
+
+                    my_answers = AnswerMultiChoice.objects.answers_by_activity(activity).\
+                                            filter(user=request.user)
+                    for answer in my_answers:
                         amc.comments.clear()
-                    AnswerMultiChoice.objects.filter(Q(user=request.user) & Q(option__in=choice_ids)).delete()
+                    my_answers.delete()
+
                     first_found = False
                     for key in request.POST.keys():
                         if key.find("response_") >= 0:
-                            new_answer = AnswerMultiChoice()
-                            new_answer.user = request.user
+                            multi_choice_option = MultiChoiceActivity.objects.get(
+                                                        id=int(request.POST[key])
+                                                    )
                             #This is tricky, the reponse: value returned object is response_$(id): id
                             #So basically if the response exists it means that checkbox was checked and the
                             # value returned will be the ID and will always be an int
-                            new_answer.option = MultiChoiceActivity.objects.language(get_language()).get(
-                                                                            id=int(request.POST[key])
+                            new_answer = AnswerMultiChoice.objects.create(
+                                                    user = request.user,
+                                                    option = multi_choice_option,
                             )
-                            new_answer.save()
                             #Yes it's a hack, only make a comment for the first response
                             if not first_found:
                                 answer = new_answer

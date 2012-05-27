@@ -51,8 +51,6 @@ log = logging.getLogger(__name__)
 def login_ajax(request, authentication_form=AuthenticationForm):
 
     def login_process(obj_response, form_data, next=None):
-        #log.debug(form_data)
-        log.debug("next?: '%s'" % next)
         form = authentication_form(request, data=form_data)
         if form.is_valid():
             auth_login(request, form.get_user())
@@ -66,6 +64,12 @@ def login_ajax(request, authentication_form=AuthenticationForm):
             current_game = form.cleaned_data.get('instance')
             request.session['current_game_slug'] = current_game.slug
             log.debug('logged in: %s <%s> to %s' % (str(user), user.email, current_game.slug))
+            stream_utils.action.send(
+                            actor=user,
+                            verb='user_logged_in',
+                            target=current_game,
+                            description='user logged in to system'
+            )
 
             prof_per_instance = UserProfilePerInstance.objects.get(
                         instance=current_game,

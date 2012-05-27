@@ -1,7 +1,11 @@
 import datetime
 from stream import utils as stream_utils
+from cache_utils.decorators import cached
+from stream.models import Action
+from stream.signals import action
 
 from django.db import models
+from django.dispatch import receiver
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
@@ -35,6 +39,79 @@ class Comment(models.Model):
 
     message = models.CharField(max_length=2000, blank=True, null=True)
 
+    @property
+    def likes_users(self):
+        return self.cached_likes_users(self.pk)
+
+    @cached(60*60*24*7)
+    def cached_likes_users(comment_id):
+        return self.likes.values_list('pk', flat=True)
+
+    @property
+    def likes_count(self):
+        return self.cached_likes_count(self.pk)
+
+    @cached(60*60*24*7)
+    def cached_likes_count(self, comment_id):
+        return self.likes.all().count()
+
+    @property
+    def attachment_video_url(self):
+        @cached(60*60*24*30)
+        def this_attachment_video_url(comment_id):
+            try:
+                att = self.attachment.get(
+                            att_type=Attachment.ATTACHMENT_TYPE_VIDEO
+                )
+            except Attachment.DoesNotExist:
+                return ('', '')
+            else:
+                return ('invalid', att.url) if not att.is_valid else ('valid', att.url)
+
+        return this_attachment_video_url(self.pk)
+
+    @property
+    def attachment_image_url(self):
+        @cached(60*60*24*30)
+        def this_attachment_image_url(comment_id):
+            try:
+                att = self.attachment.get(
+                                att_type=Attachment.ATTACHMENT_TYPE_IMAGE,
+                                file__isnull=False)
+            except Attachment.DoesNotExist:
+                return ''
+            else:
+                return att.file.url
+        return this_attachment_image_url(self.pk)
+
+    @property
+    def author_screen_name(self):
+        @cached(60*60*24*30)
+        def this_screen_name(comment_pk):
+            return self.user.get_profile().screen_name
+        return this_screen_name(self.pk)
+
+    @property
+    def author_avatar(self):
+        @cached(60*60*24*30)
+        def this_avatar(comment_pk):
+            return self.user.get_profile().avatar
+        return this_avatar(self.pk)
+
+    @property
+    def author(self):
+        @cached(60*60*24*30)
+        def this_user(comment_pk):
+            return self.user
+        return this_user(self.pk)
+
+    @property
+    def is_game_active(self):
+        @cached(60*60*24)
+        def this_is_game_active(comment_pk):
+            return self.instance.is_active()
+        return this_is_game_active(self.pk)
+
     #@property
     #def display_user(self):
     #    return not self.is_official_response
@@ -44,10 +121,10 @@ class Comment(models.Model):
     #    return self.content_object.__class__.__name__ in ['PlayerActivityOfficialResponse', 'MapOfficialResponse', 'EmpathyOfficialResponse', 'ChallengeOfficialResponse']
 
     def __unicode__(self):
-        if self.message:
-            return self.message
-        else:
-            return str(self.pk)
+        #if self.message:
+        #    return self.message
+        #else:
+        return str(self.pk)
 
     def save(self, *args, **kwargs):
         if self.message is not None and len(self.message) > 1000:
@@ -87,4 +164,16 @@ class Comment(models.Model):
 
 stream_utils.register_action_object(Comment)
 stream_utils.register_target(Comment)
+
+@receiver(action, sender=Action)
+def invalidate_likes_for_comment(sender, **kwargs):
+    action = kwargs.pop('instance')
+    if action.verb == 'liked':
+        comment_id = action.target_comment.pk
+        Comment.cached_likes_count.invalidate(comment_id)
+        Comment.cached_likes_users.invalidate(comment_id)
+
+
+
+
 

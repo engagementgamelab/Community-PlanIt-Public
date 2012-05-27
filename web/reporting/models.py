@@ -17,7 +17,7 @@ class Report(models.Model):
     instance = models.ForeignKey(Instance, blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True, editable=False)
     db_queries = models.IntegerField(default=0)
-    time_to_run = models.IntegerField(default=0)
+    exec_time = models.CharField(max_length=25, default='')
     date_added = models.DateTimeField(default=datetime.datetime.now, editable=False)
 
     @property

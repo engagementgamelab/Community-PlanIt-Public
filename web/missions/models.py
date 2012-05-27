@@ -59,14 +59,14 @@ class MissionManager(TranslationManager):
     def future(self, instance):
         return self.filter(instance=instance, start_date__gt=datetime.datetime.now()).order_by('start_date')
 
-    @cached(60*60*24, 'missions')
+    #@cached(60*60*24, 'missions')
     def default(self, instance_id):
         log.debug("getting default mission ** no cache **")
         qs =  self.active(instance_id)
         if qs.count() > 0:
             return qs[0]
 
-    @cached(60*60*24, 'missions')
+    #@cached(60*60*24, 'missions')
     def active(self, instance_id):
         now = datetime.datetime.now()
         qs = self.filter(instance__pk=instance_id, start_date__lte=now, end_date__gte=now).order_by('start_date')
@@ -135,7 +135,8 @@ class Mission(TranslatableModel):
         activities = []
         for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
             activities.extend(getattr(self, 'player_activities_%s_related' % model_klass.lower()).all())
-            activities = filter(lambda a: a.is_player_submitted == include_player_submitted, activities)
+            if include_player_submitted == False:
+                activities = filter(lambda a: a.is_player_submitted == False, activities)
         return sorted(activities, key=attrgetter('name'))
 
     @cached(60*60*24*7)

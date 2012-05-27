@@ -8,7 +8,7 @@ from django.http import Http404
 from django.utils.translation import get_language
 from django.contrib.sites.models import RequestSite
 
-#from web.instances.models import Instance
+from web.instances.models import Instance
 from web.missions.models import Mission
 from web.accounts.models import UserProfilePerInstance, UserProfileVariantsForInstance
 
@@ -123,16 +123,17 @@ def rebuild_affiliation_leaderboard(game, affiliations):
 
 
 @cached(60*60*24)
-def leaderboard_for_game(game):
+def leaderboard_for_game(game_id):
     # rank
     # screen_name
     # url to profile
-    log.debug("getting the leaderboard for %s. ** not cached **" % game)
-
+    game = Instance.objects.get(pk=int(game_id))
     profiles_for_game = UserProfilePerInstance.objects.filter(instance=game).\
-                                                    exclude(user_profile__user__is_active=False)
+                                        exclude(user_profile__user__is_active=False,
+                                            user_profile__user__is_superuser=True,
+                                            user_profile__user__is_staff=True,
+                                        )
     rebuild_player_leaderboard(profiles_for_game)
-
     variants = UserProfileVariantsForInstance.objects.get(instance=game)
     affiliations = variants.affiliation_variants.all()
     rebuild_affiliation_leaderboard(game, affiliations)
