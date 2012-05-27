@@ -17,14 +17,22 @@ class CrowdForm(forms.ModelForm):
         attrs={'placeholder': 'Let\'s finally get something done! Here\'s what we\'ll do...'}
     ))
     map = GoogleMapsField().formfield(label=_('Location'))
-    start_date = forms.SplitDateTimeField(required=False,
-                                          input_time_formats=('%I:%M %p', '%H:%M'),
-                                          label=_("When? (Start Date/Time of Event)"),
-                                         )
-    end_date = forms.SplitDateTimeField(required=False,
-                                          input_time_formats=('%I:%M %p', '%H:%M'),
-                                          label=_("Till When? (End Date/Time of Event)"),
-                                         )
+    start_date = forms.SplitDateTimeField(
+        required=True,
+        input_time_formats=('%I:%M %p', '%H:%M'),
+        label=_("When? (Start Date/Time of Event)"),
+        error_messages = {
+            'required': 'You must specify when this event starts.',
+        },
+    )
+    end_date = forms.SplitDateTimeField(
+        required=True,
+        input_time_formats=('%I:%M %p', '%H:%M'),
+        label=_("Till When? (End Date/Time of Event)"),
+        error_messages = {
+            'required': 'You must specify when this event ends.'
+        }
+    )
 
     class Meta:
         model = Crowd
@@ -42,12 +50,13 @@ class CrowdForm(forms.ModelForm):
         if len(mapDict["markers"]) == 0:
             raise forms.ValidationError("Please select a point on the map")
         return map
-
+    
     def clean(self):
         cd = self.cleaned_data
-        if cd.get('start_date') > cd.get('end_date'):
-            self._errors['start_date'] = self.error_class([_("Start Time of Event must come before End Time of Event.")])
-            del cd['start_date']
+        if cd.get('start_date') and cd.get('end_date'):
+            if cd.get('start_date') > cd.get('end_date'):
+                self._errors['start_date'] = self.error_class([_("Start Time of Event must come before End Time of Event.")])
+                del cd['start_date']
         return cd
 
 
