@@ -70,7 +70,9 @@ def missions_bar_context(request, mission=None):
                 prof_per_instance.progress_percentage_by_mission(mission)
 
         context.update({
-            'my_points_for_mission': my_points_for_mission,
+            # not displaying points for mission anymore. see
+            # base_city.html
+            #'my_points_for_mission': my_points_for_mission,
             'progress_percentage': progress_percentage,
         })
 

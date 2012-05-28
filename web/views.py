@@ -8,6 +8,7 @@ from django import forms
 from django.core.mail import send_mail
 
 from web.settings import *
+from web.missions.models import Mission
 from web.accounts.views import dashboard
 from web.accounts.forms import AccountAuthenticationForm
 from web.accounts.models import UserProfilePerInstance
@@ -36,6 +37,10 @@ def index(request, template='index.html', city_header=True):
                                         user_profile=request.user.get_profile()
         )
         log.debug('my_games: %s' % my_games)
+
+        default_mission = Mission.objects.default(request.current_game.pk)
+        if default_mission is None:
+            city_header = False
     else:
         my_games = []
 
