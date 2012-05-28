@@ -35,7 +35,7 @@
                         {# Non-started Mission #}
                         <div class="activity playercreated activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                             <div class="mission-activity-creator">{% avatar activity.creationUser %}</div>
-                            <a>{{ activity|trans_fallback:"name" }}</a>
+                            <a>{{ activity|trans_fallback:"name" }}</a> ({{ completed_count }} response{{ completed_count|pluralize }})
                         </div>
                     {% else %}
                         {# Active Mission #}
@@ -53,7 +53,7 @@
                         <div class="activity playercreated {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                             <a href="{{ activity.get_activity_url }}">
                                 <div class="mission-activity-creator">{% avatar activity.creationUser %}</div>
-                                {{ activity|trans_fallback:"name" }}
+                                {{ activity|trans_fallback:"name" }} ({{ completed_count }} response{{ completed_count|pluralize }})
                                 <div class="mission-activity-points">{{ points }}</div>
                             </a>
                         </div>
