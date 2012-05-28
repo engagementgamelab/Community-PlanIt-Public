@@ -203,8 +203,9 @@ class UserProfilePerInstance(models.Model):
     def progress_percentage_by_mission(self, mission):
         mission_total_points = mission.total_points
         my_completed = self.my_completed_by_mission(mission)
-        #my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))
-        my_points_for_mission = self.total_points_by_mission(mission)
+        # not displaying points for mission anymore. see
+        # base_city.html
+        my_points_for_mission = 0 #self.total_points_by_mission(mission)
         percentage = int(my_points_for_mission/mission_total_points*Decimal(100))
         return (my_points_for_mission, percentage)
 

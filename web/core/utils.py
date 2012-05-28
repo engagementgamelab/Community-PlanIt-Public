@@ -54,6 +54,8 @@ def missions_bar_context(request, mission=None):
     except UserProfilePerInstance.DoesNotExist:
         raise Http404("user for this game is not registered")
 
+    context = {}
+
     if mission is None:
         mission = Mission.objects.default(request.current_game.pk)
 
@@ -63,8 +65,15 @@ def missions_bar_context(request, mission=None):
     #                mission, 
     #                prof_per_instance.user_profile
     #    )
-    my_points_for_mission, progress_percentage = \
-            prof_per_instance.progress_percentage_by_mission(mission)
+    if mission is not None:
+        my_points_for_mission, progress_percentage = \
+                prof_per_instance.progress_percentage_by_mission(mission)
+
+        context.update({
+            'my_points_for_mission': my_points_for_mission,
+            'progress_percentage': progress_percentage,
+        })
+
     all_missions_for_game = Mission.objects.for_instance(instance=request.current_game)
     my_flags_count = prof_per_instance.flags
     my_badges_count = prof_per_instance.badges.count()
@@ -78,15 +87,13 @@ def missions_bar_context(request, mission=None):
     #   my_total_points = lb.points
     my_total_points = prof_per_instance.total_points
 
-    context = {
+    context.update({
         'mission': mission,
         'all_missions_for_game': all_missions_for_game,
-        'my_points_for_mission': my_points_for_mission,
-        'progress_percentage': progress_percentage,
         'my_flags_range': my_flags_range,
         'my_total_points': my_total_points,
         'my_badges_count': my_badges_count,
-    }
+    })
 
     return context
 

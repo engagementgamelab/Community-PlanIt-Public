@@ -61,7 +61,6 @@ class MissionManager(TranslationManager):
 
     #@cached(60*60*24, 'missions')
     def default(self, instance_id):
-        log.debug("getting default mission ** no cache **")
         qs =  self.active(instance_id)
         if qs.count() > 0:
             return qs[0]
