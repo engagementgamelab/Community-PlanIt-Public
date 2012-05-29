@@ -310,10 +310,10 @@ CPI_POINTS_FOR_COMMENT = 5
 CPI_POINTS_FOR_PLAYER_SUBMITTED_CHALLENGE = 5
 
 CPI_REPORTS = {
-        'demographic' : ('web.reporting.reports', 'DemographicReport'),
-        'login_activity' : ('web.reporting.reports', 'LoginActivityReport'),
-        'challenge_activity' : ('web.reporting.reports', 'ChallengeActivityReport'),
-        'mission' : ('web.reporting.reports', 'MissionReport'),
+        #'demographic' : ('web.reporting.reports', 'DemographicReport'),
+        #'login_activity' : ('web.reporting.reports', 'LoginActivityReport'),
+        'challenge_activity' : ('web.reporting.reports', 'ChallengeActivityReportOriginalFormat'),
+        #'mission' : ('web.reporting.reports', 'MissionReport'),
 }
 
 # celery disabled
