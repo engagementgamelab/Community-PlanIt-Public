@@ -209,6 +209,7 @@ class DemographicReport(object):
                 'rent/own', 
                 'city/neighborhood', 
                 'zip code', 
+                'birth_year',
         )
 
     def get_demographic_details(self, prof_per_instance, profile, user):
@@ -235,6 +236,7 @@ class DemographicReport(object):
             profile.living.situation if hasattr(profile, 'living') and profile.living is not None else "",
             profile.city or "",
             profile.zip_code or "",
+            profile.birth_year or "",
         )
 
     def get_report_data(self, game):
@@ -414,61 +416,82 @@ class ChallengeActivityReport(DemographicReport):
         - this report should include user name and demographic data and their record of all challenge activity. 
         This should include responses to challenges (if multiple choice) and comments. """
 
-    def get_report_data(self, game):
+
+
+    def get_report_data(self, game, missions=[]):
         values_list = []
         t1 = time.time()
-        field_titles = ()
-        for prof_per_instance in self.qs:
+        field_titles = self.get_demographic_field_titles() + (
+            'challenge title/type',
+            'original question',
+            '_ddqual_response',
+            'likes %s',
+        )
+
+        def _gen_answer_classes():
+            answer_classes = {}
+            _module = __import__('web.answers.models',{},{},[''])
+            for ans_class, ch_class in (
+                    ('AnswerSingleResponse', 'PlayerActivity_single_response'),
+                    ('AnswerMap', 'PlayerMapActivity_map'),
+                    ('AnswerEmpathy',  'PlayerEmpathyActivity_empathy'),
+                    ('AnswerOpenEnded', 'PlayerActivity_open_ended')):
+                answer_classes[ch_class] = getattr(_module, ans_class)
+            return answer_classes
+        _answer_classes = _gen_answer_classes()
+        players = self.qs
+
+        if len(missions) == 0:
+            missions = Mission.objects.for_instance(game)
+
+        activities = []
+        for mission in missions:
+            activities.extend(mission.activities)
+            print "mission %s, activities count: %s" % (mission.title, len(activities))
+        activities = sorted(activities, key=attrgetter('mission', 'type'))
+
+        players_count = players.count()
+
+        for i, prof_per_instance in enumerate(players):
             profile =  prof_per_instance.user_profile
             user =  prof_per_instance.user_profile.user
-
-            field_titles = self.get_demographic_field_titles()
+            row = ()
+            completed_cnt = 0
             demographic_details = self.get_demographic_details(prof_per_instance, profile, user)
-            row = demographic_details
 
-            actions = Action.objects.get_for_actor(user).filter(
-                                        target_instance=game,
-                                        verb='activity_completed',
-                                    )
-            for i, action in enumerate(actions):
-                obj = action.action_object
-                field_titles = field_titles + (
-                        'mission %s' % obj.pk, 
-                        'challenge title/type %s' % obj.pk,
-                        'original question %s' % obj.pk,
-                        '_ddqual_response %s' % obj.pk,
-                        'likes %s' % obj.pk,
-                )
-                if obj.type.type == 'multi_response':
-                    my_answers_as_str = AnswerMultiChoice.objects.my_answers_by_activity_as_str(
-                                                    obj, user,
-                    )
-                    my_answers_likes_count = AnswerMultiChoice.objects.my_answers_by_activity_likes_count(
-                                                    obj, user
-                    )
+            for activity in activities:
+                actions = Action.objects.get_for_action_object(activity).filter(actor_user=user)
+                #print "got actions %s for user %s" % (actions, user)
+                if actions.count() == 0:
+                    continue
                 else:
-                    rel_answers = {
-                        'PlayerEmpathyActivity_empathy': 'empathy_answers',
-                        'PlayerMapActivity_map': 'map_answers',
-                        'PlayerActivity_open_ended' :  'openended_answers',
-                        'PlayerActivity_single_response' : 'singleresponse_answers',
-                    }
-                    answers = getattr(obj, rel_answers.get(obj.__class__.__name__+'_'+obj.type.type)).all()
-                    if answers.count() > 0:
-                        _module = __import__('web.answers.models',{},{},[''])
-                        _class = getattr(_module, answers[0].__class__.__name__)
-                        my_answers_as_str = _class.objects.my_answers_by_activity_as_str(obj, user)
-                        my_answers_likes_count = _class.objects.my_answers_by_activity_likes_count(obj, user)
+                    completed_cnt += 1
+                    obj = actions[0].action_object
+                    obj_pk = obj.pk
+                    obj_class_name = obj.__class__.__name__
+                    obj_type = obj.activity_type_readable
+                    if obj_type == 'multi_response':
+                        my_answers_as_str = AnswerMultiChoice.objects.my_answers_by_activity_as_str(
+                                                        obj, user,
+                        )
+                        my_answers_likes_count = AnswerMultiChoice.objects.my_answers_by_activity_likes_count(
+                                                        obj, user
+                        )
+                    else:
+                        answer_class = _answer_classes.get(obj_class_name+'_'+obj_type)
+                        my_answers_as_str = answer_class.objects.my_answers_by_activity_as_str(obj, user)
+                        my_answers_likes_count = answer_class.objects.my_answers_by_activity_likes_count(obj, user)
 
-                this_activity = (
-                                    obj.mission.title,
-                                    obj.name+'['+obj.type.type+']',
-                                    obj.question,
-                                    my_answers_as_str,
-                                    my_answers_likes_count,
-                                )
-                row += this_activity
-            values_list.append(row)
+                    this_activity = (
+                        obj.name + ' - ' + obj_type,
+                        obj.question,
+                        my_answers_as_str,
+                        my_answers_likes_count,
+                    )
+                values_list.append(demographic_details + this_activity)
+            #if completed_cnt > 0:
+            #    print "%s of %s. %s competed %s challenges" % (i, players_count, profile.screen_name, completed_cnt)
+
         print "done in %s min. %s queries." % ((time.time()-t1)/60, len(connection.queries))
         return ReportData(
                 field_titles = field_titles,
@@ -522,7 +545,7 @@ class MissionReport():
 
         activities = []
         for mission in missions:
-            activities.extend(mission.get_activities(include_player_submitted=True))
+            activities.extend(mission.activities)
             print "mission %s, activities count: %s" % (mission.title, len(activities))
         activities = sorted(activities, key=attrgetter('mission', 'type'))
 
