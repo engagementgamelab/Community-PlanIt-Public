@@ -87,6 +87,11 @@
                         </div>
                     </div>
                 </div>
+                {% empty %}
+                <div>
+                    <div class="gameslist-slide-container">
+                        There are no current games going on in Detroit at the moment. Check out past games [with link to Detroit 24/7] - you can explore all the missions and even leave comments, you just can't earn any more points. Sorry.  But if you're still itching to play Community PlanIt, let us know if you have any ideas for a <a href="{% url bringcpi %}">new game</a></div>
+                </div>
                 {% endfor %}
             </div>
         </div>
