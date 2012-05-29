@@ -375,8 +375,7 @@ def _fetch_multichoice_replies(demographic_details, answer, comment, mission_tit
         #_fetch_multichoice_replies(a, res, mission_title=mission_title)
     return replies
 
-def update_list(values_list, demographic_details=(), user=None, activity=None, answers=None):
-
+def update_list(demographic_details, values_list, user=None, activity=None, answers=None):
     if answers is None:
         return
     answers = answers.select_related('comments')
@@ -386,23 +385,16 @@ def update_list(values_list, demographic_details=(), user=None, activity=None, a
         for c in answ.comments.select_related('user', 'selected', 'likes').all():
             if activity.type.type == 'single_response':
                 answer_value = answ.selected.value
-            elif activity.type.type == 'map':
-                if hasattr(answ, 'map'):
-                    answer_value = ", ".join(map(lambda c: str(c), answ.map.coordinates))
             else:
                 answer_value = ''
 
             values_list.append(
                     demographic_details +
                     (
-                        c.pk, 
-                        activity.mission.title,
-                        activity.name, 
-                        activity.type.type, 
+                        activity.name +'/ ' +activity.type.type,
                         activity.question,
-                        c.posted_date.strftime('%Y-%m-%d %H:%M'),
                         answer_value,
-                        c.message, 
+                        c.message,
                         c.likes.all().count(),
                     )
             )
@@ -410,7 +402,75 @@ def update_list(values_list, demographic_details=(), user=None, activity=None, a
                 values_list.extend(fetch_replies(demographic_details, activity, c))
 
 
-class ChallengeActivityReport(DemographicReport):
+
+
+class ChallengeActivityReportOriginalFormat(DemographicReport):
+    """
+        -- record of challenge activity by user 
+        - this report should include user name and demographic data and their record of all challenge activity. 
+        This should include responses to challenges (if multiple choice) and comments. """
+
+
+
+    def get_report_data(self, game, missions=[]):
+
+        values_list = []
+        t1 = time.time()
+        field_titles = self.get_demographic_field_titles() + (
+            'challenge title/type',
+            'original question',
+            'response',
+            '_ddqual_comment',
+            '_ddqual_replies',
+            'likes %s',
+        )
+
+        for user_prof_per_instance in self.qs:
+            profile = user_prof_per_instance.user_profile
+            user = user_prof_per_instance.user_profile.user
+            demographic_details = self.get_demographic_details(user_prof_per_instance, profile, user)
+            values_list.append(demographic_details)
+
+            actions = Action.objects.get_for_actor(user).filter(verb='activity_completed')
+            for action in actions:
+                obj = action.action_object
+                if obj.__class__.__name__ == 'PlayerEmpathyActivity':
+                    update_list(demographic_details, values_list, user, obj, getattr(obj, 'empathy_answers'))
+                if obj.__class__.__name__ == 'PlayerActivity':
+                    if obj.type.type == 'open_ended':
+                        update_list(demographic_details, values_list, user, obj, getattr(obj, 'openended_answers'))
+                    if obj.type.type == 'single_response':
+                        update_list(demographic_details, values_list, user, obj, getattr(obj, 'singleresponse_answers'))
+                    if obj.type.type == 'multi_response':
+                        answers = AnswerMultiChoice.objects.select_related().filter(option__activity=obj)
+                        for answer in answers:
+                            for c in answer.comments.filter(user=user):
+                                mission_title = answer.option.mission.title
+                                values_list.append(
+                                        demographic_details +
+                                        (
+                                            obj.name + '/ multi response',
+                                            obj.question,
+                                            answer.option.value,
+                                            c.message,
+                                            c.likes.all().count(),
+                                        )
+                                )
+                                if c.comments.all().count():
+                                    values_list.extend(_fetch_multichoice_replies(demographic_details, answer, c, mission_title))
+                if obj.__class__.__name__ == 'PlayerMapActivity':
+                    update_list(obj, getattr(obj, 'map_answers'))
+        print "done in %s min. %s queries." % ((time.time()-t1)/60, len(connection.queries))
+        return ReportData(
+                field_titles = field_titles,
+                values_list = values_list,
+                exec_time = time.time()-t1,
+                query_count = len(connection.queries),
+        )
+
+
+
+class ChallengeActivityReportNewest(DemographicReport):
     """
         -- record of challenge activity by user 
         - this report should include user name and demographic data and their record of all challenge activity. 
@@ -424,7 +484,9 @@ class ChallengeActivityReport(DemographicReport):
         field_titles = self.get_demographic_field_titles() + (
             'challenge title/type',
             'original question',
-            '_ddqual_response',
+            'response',
+            '_ddqual_comment',
+            '_ddqual_replies',
             'likes %s',
         )
 
