@@ -48,7 +48,8 @@ def fetch(request, slug, include_player_submitted=False, template='missions/miss
     my_incomplete.extend(my_completed)
     all_activities_sorted = my_incomplete
     
-    all_player_submitted = set(Mission.objects.activities_for_mission(mission.slug, True))
+    #all_player_submitted = set(Mission.objects.activities_for_mission(mission.slug, include_player_submitted=True))
+    all_player_submitted = mission.get_player_submitted_activities()
     
     #log.debug(all_activities_sorted)
     context = dict(

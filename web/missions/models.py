@@ -138,6 +138,11 @@ class Mission(TranslatableModel):
                 activities = filter(lambda a: a.is_player_submitted == False, activities)
         return sorted(activities, key=attrgetter('name'))
 
+    def get_player_submitted_activities(self):
+        activities = self.get_activities(include_player_submitted=True)
+        activities = filter(lambda a: a.is_player_submitted == True, activities)
+        return sorted(activities, key=attrgetter('name'))
+
     @cached(60*60*24*7)
     def instance_city_domain(self, instance_id):
         return self.instance.for_city.domain
