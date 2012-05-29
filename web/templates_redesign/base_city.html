@@ -64,7 +64,7 @@
                         <div id="mission-progress-marker"></div>
                         <div id="mission-progress-individual" class="{% if progress_percentage >= 100 %}mission-accomplished{% endif %}" style="width:{% if progress_percentage >= 100 %}100{% else %}{{ progress_percentage }}{% endif %}%;">
                                 {% if progress_percentage >= 100 %}{% trans "Mission Accomplished!" %}{% else %}{# my_points_for_mission #}{% endif %}
-                                {% if not current_mission %}{% trans "Mission Has Ended" %}{% endif %}
+                                {% if not current_mission %}{{ request.current_game.title }}{% trans "Has Ended" %}{% endif %}
                             <div id="mission-progress-individual-marker"></div>
                         </div>
                     </div>
