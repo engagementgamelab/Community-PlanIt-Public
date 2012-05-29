@@ -25,7 +25,7 @@ from django.contrib.contenttypes import generic
 
 from web.attachments.models import Attachment
 from web.comments.models import Comment
-from web.missions.models import Mission, invalidate_mission, invalidate_activities_for_mission
+from web.missions.models import Mission, invalidate_mission #, invalidate_activities_for_mission
 from web.reports.models import Activity
 from web.instances.models import Instance
 #from web.accounts.models import invalidate_prof_per_instance
@@ -374,6 +374,6 @@ post_save.connect(invalidate_mission, PlayerEmpathyActivity)
 #post_save.connect(invalidate_prof_per_instance, PlayerMapActivity)
 #post_save.connect(invalidate_prof_per_instance, PlayerEmpathyActivity)
 
-post_delete.connect(invalidate_activities_for_mission, PlayerActivity)
-post_delete.connect(invalidate_activities_for_mission, PlayerMapActivity)
-post_delete.connect(invalidate_activities_for_mission, PlayerEmpathyActivity)
+#post_delete.connect(invalidate_activities_for_mission, PlayerActivity)
+#post_delete.connect(invalidate_activities_for_mission, PlayerMapActivity)
+#post_delete.connect(invalidate_activities_for_mission, PlayerEmpathyActivity)

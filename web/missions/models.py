@@ -33,15 +33,6 @@ class MissionManager(TranslationManager):
         log.debug('`filter` MissionManager %s ** no cache **')
         return self.filter(instance=instance)
 
-    #def filter(self, *args, **kwargs):
-    #    log.debug('`filter` MissionManager %s ** no cache **')
-    #    log.debug('%s, %s'% (args, kwargs))
-    #    return super(MissionManager, self).filter(*args, **kwargs)
-
-    @cached(60*60*24, 'activities_for_mission')
-    def activities_for_mission(self, slug, include_player_submitted=False):
-        return self.get(slug=slug).get_activities(include_player_submitted)
-
     @cached(60*60*24, 'missions')
     def latest_by_instance(self, instance):
         missions_for_instance = self.filter(instance=instance)
@@ -128,19 +119,26 @@ class Mission(TranslatableModel):
     @cached(60*60*24, 'missions')
     def total_points(self):
         log.debug("mission total_points ** no cache **")
-        return Decimal(sum([activity.get_points() for activity in self.get_activities()]))
+        return Decimal(sum([activity.get_points() for activity in self.activities]))
 
-    def get_activities(self, include_player_submitted=False):
+    @property
+    def activities(self):
+        return self.get_activities_cached(self.pk)
+
+    @cached(60*60*24*7)
+    def get_activities_cached(self, mission_id):
         activities = []
         for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
             activities.extend(getattr(self, 'player_activities_%s_related' % model_klass.lower()).all())
-            if include_player_submitted == False:
-                activities = filter(lambda a: a.is_player_submitted == False, activities)
         return sorted(activities, key=attrgetter('name'))
 
-    def get_player_submitted_activities(self):
-        activities = self.get_activities(include_player_submitted=True)
-        activities = filter(lambda a: a.is_player_submitted == True, activities)
+    @property
+    def player_submitted_activities(self):
+        return self.get_player_submitted_activities_cached(self.pk)
+
+    @cached(60*60*24*7)
+    def get_player_submitted_activities_cached(self, mission_id):
+        activities = filter(lambda a: a.is_player_submitted == True, self.activities)
         return sorted(activities, key=attrgetter('name'))
 
     @cached(60*60*24*7)
@@ -184,15 +182,18 @@ stream_utils.register_action_object(Mission)
 
 # invalidate cache for 'missions' group
 def invalidate_mission(sender, **kwargs):
-    log.debug("invalidating cache for group `missions` ")
-    cache.invalidate_group('missions')
-    cache.invalidate_group('missions')
+    print kwargs
+    activity = kwargs.pop('instance')
+    if activity:
+        mission_id = activity.mission.pk
+        Mission.get_activities_cached.invalidate(mission_id)
+        Mission.get_player_submitted_activities_cached.invalidate(mission_id)
 
-post_save.connect(invalidate_mission, Mission)
+#post_save.connect(invalidate_mission, Mission)
 #post_save.connect(invalidate_prof_per_instance, Mission)
 
-def invalidate_activities_for_mission(sender, **kwargs):
-    activity = kwargs.get('instance')
-    log.debug("on_delete. invaliding activities_for_mission %s" %  activity)
-    Mission.objects.activities_for_mission(slug=activity.mission.slug, include_player_submitted=True)
+#def invalidate_activities_for_mission(sender, **kwargs):
+#    activity = kwargs.get('instance')
+#    log.debug("on_delete. invaliding activities_for_mission %s" %  activity)
+#    Mission.objects.activities_for_mission(slug=activity.mission.slug)
 
