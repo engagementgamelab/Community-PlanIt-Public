@@ -72,6 +72,7 @@ class ReportHandler(object):
 
     def __init__(self, *args, **kwargs):
         self.game_id = kwargs.pop('game_id')
+        self.debug = True
 
     def run_reports(self):
 
@@ -84,7 +85,7 @@ class ReportHandler(object):
 
             for game in games:
                 xls_report = XlsReport()
-                report_instance = get_report_instance(report_label)(game)
+                report_instance = get_report_instance(report_label)(game, debug=self.debug)
                 if report_instance.__class__.__name__  == 'MissionReport':
                     for mission in game.missions.all():
                         data = report_instance.get_report_data(game, [mission,])
@@ -210,6 +211,8 @@ class DemographicReport(object):
                 'city/neighborhood', 
                 'zip code', 
                 'birth_year',
+                'how discovered',
+                'how discovered (other)',
         )
 
     def get_demographic_details(self, prof_per_instance, profile, user):
@@ -237,6 +240,8 @@ class DemographicReport(object):
             profile.city or "",
             profile.zip_code or "",
             profile.birth_year or "",
+            profile.how_discovered.how if hasattr(profile, 'how_discovered') and profile.how_discovered is not None else "",
+            profile.how_discoverd_other or "",
         )
 
     def get_report_data(self, game):
@@ -476,8 +481,6 @@ class ChallengeActivityReportNewest(DemographicReport):
         - this report should include user name and demographic data and their record of all challenge activity. 
         This should include responses to challenges (if multiple choice) and comments. """
 
-
-
     def get_report_data(self, game, missions=[]):
         values_list = []
         t1 = time.time()
@@ -522,7 +525,7 @@ class ChallengeActivityReportNewest(DemographicReport):
             demographic_details = self.get_demographic_details(prof_per_instance, profile, user)
 
             for activity in activities:
-                actions = Action.objects.get_for_action_object(activity).filter(actor_user=user)
+                actions = Action.objects.get_for_action_object(activity).filter(verb='activity_completed', actor_user=user)
                 #print "got actions %s for user %s" % (actions, user)
                 if actions.count() == 0:
                     continue
