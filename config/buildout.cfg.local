@@ -14,6 +14,7 @@ parts += uwsgi
          set-permissions
          uwsgi-touch-to-reload
          bash-aliases
+         sync-prod2qa
 
 project_name=Community-PlanIt
 
@@ -151,15 +152,6 @@ inline =
     alias stop-${server:venv_name}='sudo kill -INT `cat ${uwsgi:pidfile}`'
     alias tail-${server:venv_name}='multitail ${buildout:directory}/log/${server:venv_name}.log ${buildout:directory}/log/uwsgi.log'
 
-[resetdb]
-recipe = collective.recipe.template
-output = ${buildout:bin-directory}/resetdb
-mode = 755
-inline =
-    sudo su postgres -c "dropdb ${server:db_name}"
-    sudo su postgres -c "createdb -O ${server:db_user} -h ${server:db_host} -D pg_default -E UTF8 -l en_US.UTF-8 ${server:db_name}"
-    sudo su postgres -c "psql -U ${server:db_user} -h ${server:db_host} ${server:db_name} < latest.sql"
-
 [supervisor-config]
 recipe = collective.recipe.template
 output = ${buildout:parts-directory}/etc/${server:host}.supervisor.conf
@@ -183,4 +175,33 @@ inline =
     sudo ln -s ${buildout:parts-directory}/etc/${server:host}.supervisor.conf ${server:supervisor-conf-path}/${server:host}.supervisor.conf
     sudo service supervisor stop
     sudo service supervisor start
+
+
+[resetdb]
+recipe = collective.recipe.template
+output = ${buildout:bin-directory}/resetdb
+mode = 755
+inline =
+    sudo su postgres -c "dropdb ${server:db_name}"
+    sudo su postgres -c "createdb -O ${server:db_user} -h ${server:db_host} -D pg_default -E UTF8 -l en_US.UTF-8 ${server:db_name}"
+    sudo su postgres -c "psql -U ${server:db_user} -h ${server:db_host} ${server:db_name} < latest.sql"
+
+[sync-prod2qa]
+recipe = cp.recipe.cmd
+shell = /bin/bash
+remote_host=cpi-staging
+remote_path=/home/cpi/v2_backups/sql/
+local_path=/var/local/venv/cpi/var/backups/
+db_backup_name_prefix=cpi-v2-prod
+
+install_cmd = 
+    rsync -vaz ${sync-prod2qa:remote_host}:${sync-prod2qa:remote_path} ${sync-prod2qa:local_path} 
+    gunzip -9 /var/local/venv/cpi/var/backups/cpi-v2-prod.`date +\%Y\%m\%d`.sql.gz
+    sudo su postgres -c "dropdb ${server:db_name}"
+    sudo su postgres -c "createdb -O ${server:db_user} -h 127.0.0.1 -D pg_default -E UTF8 -l en_US.UTF-8 ${server:db_name}"
+    sudo su postgres -c "psql -U ${server:db_user} -h 127.0.0.1 ${server:db_name} < ${server:local_path}/${sync-prod2qa:db_backup_name_prefix}.`date +\%Y\%m\%d`.sql"
+
+update_cmd = ${sync-prod2qa:install_cmd}
+
+
 
