@@ -23,7 +23,7 @@ class Command(BaseCommand):
                                                         instance=instance, 
                                                         user_profile__receive_email=True,
                                                         user_profile__user__is_active=True,
-                                                        ).filter(user_profile__user__pk=1220):
+                                                        ):
                 if user_prof_per_instance.user_profile.user.notifications.unread().count() == 0:
                     continue
                 context['user_prof_per_instance'] = user_prof_per_instance
