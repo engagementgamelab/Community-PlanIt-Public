@@ -56,6 +56,11 @@ class MissionManager(TranslationManager):
         if qs.count() > 0:
             return qs[0]
 
+    def first(self, instance_id):
+        qs =  self.filter(instance__pk=instance_id).order_by('start_date')
+        if qs.count() > 0:
+            return qs[0]
+
     #@cached(60*60*24, 'missions')
     def active(self, instance_id):
         now = datetime.datetime.now()

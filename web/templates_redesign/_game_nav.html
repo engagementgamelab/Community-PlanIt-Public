@@ -3,7 +3,11 @@
     <ul>
         {% if not city_header %}
         <li class="sidebar-nav-missioncontrol">
+        {% if not mission %}
+            <a href="{% url missions:mission first_mission.slug %}" id="sidebar-nav-missioncontrol">{% trans "Mission Control" %}</a>
+        {% else %}
             <a href="{% url missions:mission mission.slug %}" id="sidebar-nav-missioncontrol">{% trans "Mission Control" %}</a>
+        {% endif %}
         </li>
         {% endif %}
         {% with request.user.notifications.unread|length as unread_notifications_count %}
