@@ -12,6 +12,7 @@ class Command(BaseCommand):
     help = ''
 
     def handle(self, *args, **options):
+        log.debug("starting rebuilding leaderboards.")
         current_games = Instance.objects.current()
         for game in current_games:
             leaderboard_for_game.invalidate(game.pk)
