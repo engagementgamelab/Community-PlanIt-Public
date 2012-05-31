@@ -38,6 +38,9 @@ class Answer(models.Model):
 
 class AnswerSingleResponseManager(models.Manager):
 
+    def my_answers_by_activity(self, activity, user):
+        return self.answers_by_activity(activity).filter(answerUser=user)
+
     def my_answers_by_activity_as_str(self, activity, user):
         my_answers = self.my_answers_by_activity(activity, user)
         return ";".join([a.selected.value for a in my_answers])
@@ -50,9 +53,6 @@ class AnswerSingleResponseManager(models.Manager):
             if my_comments.count() > 0:
                 return my_comments[0].likes.all().count()
         return 0
-
-    def my_answers_by_activity(self, activity, user):
-        return self.answers_by_activity(activity).filter(answerUser=user)
 
     #@cached(60*60*24*7)
     def answers_by_activity(self, activity):
@@ -70,6 +70,9 @@ class AnswerSingleResponse(Answer):
 
 class AnswerMultiChoiceManager(models.Manager):
 
+    def my_answers_by_activity(self, activity, user):
+        return self.answers_by_activity(activity).filter(user=user)
+
     def my_answers_by_activity_as_str(self, activity, user):
         my_answers = self.my_answers_by_activity(activity, user)
         return ";".join([a.option_value for a in my_answers])
@@ -82,10 +85,6 @@ class AnswerMultiChoiceManager(models.Manager):
             if my_comments.count() > 0:
                 return my_comments[0].likes.all().count()
         return 0
-
-
-    def my_answers_by_activity(self, activity, user):
-        return self.answers_by_activity(activity).filter(user=user)
 
     #@cached(60*60*24*7)
     def answers_by_activity(self, activity):
@@ -124,6 +123,9 @@ class AnswerMultiChoice(models.Model):
 
 class AnswerMapManager(models.Manager):
 
+    def my_answers_by_activity(self, activity, user):
+        return self.answers_by_activity(activity).filter(answerUser=user)
+
     def my_answers_by_activity_as_str(self, activity, user):
         my_answers = self.my_answers_by_activity(activity, user)
         # in theory there should be one answer for each challenge
@@ -139,9 +141,6 @@ class AnswerMapManager(models.Manager):
             if my_comments.count() > 0:
                 return my_comments[0].likes.all().count()
         return 0
-
-    def my_answers_by_activity(self, activity, user):
-        return self.answers_by_activity(activity).filter(answerUser=user)
 
     #@cached(60*60*24*7)
     def answers_by_activity(self, activity):
@@ -164,6 +163,9 @@ class AnswerMap(Answer):
 
 class AnswerEmpathyManager(models.Manager):
 
+    def my_answers_by_activity(self, activity, user):
+        return self.answers_by_activity(activity).filter(answerUser=user)
+
     def my_answers_by_activity_as_str(self, activity, user):
         my_answers = self.my_answers_by_activity(activity, user)
         # in theory there should be one answer for each challenge
@@ -179,9 +181,6 @@ class AnswerEmpathyManager(models.Manager):
             if my_comments.count() > 0:
                 return my_comments[0].likes.all().count()
         return 0
-
-    def my_answers_by_activity(self, activity, user):
-        return self.answers_by_activity(activity).filter(answerUser=user)
 
     #@cached(60*60*24*7)
     def answers_by_activity(self, activity):
@@ -203,6 +202,9 @@ class AnswerEmpathy(Answer):
 
 class AnswerOpenEndedManager(models.Manager):
 
+    def my_answers_by_activity(self, activity, user):
+        return self.answers_by_activity(activity).filter(answerUser=user)
+
     def my_answers_by_activity_as_str(self, activity, user):
         my_answers = self.my_answers_by_activity(activity, user)
         if my_answers.count() > 0:
@@ -217,9 +219,6 @@ class AnswerOpenEndedManager(models.Manager):
             if my_comments.count() > 0:
                 return my_comments[0].likes.all().count()
         return 0
-
-    def my_answers_by_activity(self, activity, user):
-        return self.answers_by_activity(activity).filter(answerUser=user)
 
     #@cached(60*60*24*7)
     def answers_by_activity(self, activity):
