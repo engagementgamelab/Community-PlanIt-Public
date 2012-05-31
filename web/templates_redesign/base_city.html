@@ -32,10 +32,10 @@
             <div id="logo-container">
                 <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo_beta.png" width="80" height="51"/></a>
             </div>
+            {% with mission as current_mission %}
             <div>
                 <h1>{% trans "Missions" %} <a href="{% url missions:mission mission.slug %}">{{ mission }}</a></h1>
                 <ul id="nav-missions">
-                    {% with mission as current_mission %}
                         {% for mission in all_missions_for_game %}
                         <li>                            
                             <a {% ifequal mission current_mission %}class="active"{% endifequal %} href="{% url missions:mission mission.slug %}" title="{{ mission.title }}"> 
@@ -57,7 +57,6 @@
                             </a> 
                         </li>
                         {% endfor %}
-                    {% endwith %}
                 </ul>
                 <div id="mission-progress-container">
                     <div id="mission-progress-total" class="{% if progress_percentage >= 100 or not current_mission %}mission-accomplished{% endif %}">
@@ -70,6 +69,7 @@
                     </div>
                 </div>
             </div>
+            {% endwith %}
             {# MAP THE FUTURE #}
             <div id="mission-mapthefuture">
                 <a href="{% url values:index %}">{% trans "Map the Future" %}</a>
