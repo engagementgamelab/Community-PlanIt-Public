@@ -40,7 +40,7 @@
                 {% if answers %}
                     {% for choice in choices %}
                         <div class="activity-response-summary-choice {% ifequal choice myAnswer.selected %}my-choice{% endifequal %} {% ifequal choice activity.get_trivia_answer %}correct-answer{% else %}incorrect-answer{% endifequal %}">
-                            {{ choice }} 
+                            {% trans choice %} 
                             <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'>
                         </div>
 
@@ -78,7 +78,7 @@
                                 {% include "comments/comment.html" %}
                             {% endwith %}                        
                         {% empty %}
-                            <div id="no-comments-yet">There are no comments yet.</div>
+                            <div id="no-comments-yet">{% trans "There are no comments yet." %}</div>
                         {% endfor %}
                     {% endwith %}
                 {% endfor %}
@@ -89,7 +89,7 @@
     {% else %}
         <br />
         <h3>{% trans "Complete the activity to see everyone's responses" %}</h3>
-        <a href="{{ activity.get_activity_url }}" class="btn-blue">Play this Challenge</a>
+        <a href="{{ activity.get_activity_url }}" class="btn-blue">{% trans "Play this Challenge" %}</a>
     {% endif %}
 </div>
 {% endblock %}
