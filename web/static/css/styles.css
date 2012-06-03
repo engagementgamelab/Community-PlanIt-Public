@@ -281,7 +281,8 @@ a {
     }
     
         #nav-missions a.active {
-            background: #fff;
+            background: #fe8371;
+            color: #fff;
         }
 
          #nav-missions a:before {
@@ -297,8 +298,8 @@ a {
         }
         
              #nav-missions a.active:before {
-                 border-top: 30px solid #fff;
-                 border-bottom: 30px solid #fff;
+                 border-top: 30px solid #fe8371;
+                 border-bottom: 30px solid #fe8371;
             }
 
          #nav-missions a:after {
@@ -314,7 +315,7 @@ a {
         }
         
              #nav-missions a.active:after {
-                 border-left: 15px solid #fff;
+                 border-left: 15px solid #fe8371;
             }
   
         #nav-missions a > div {
@@ -333,7 +334,10 @@ a {
             padding: 0px 10px;
             color: #000;
         }
-
+        
+        .nav-missions-endsin {
+            color: #fff;
+        }
             .nav-missions-endsin .nav-missions-endsin-label {
                 font-size: 0.8em;
             }
@@ -342,6 +346,7 @@ a {
                 font-size: 1.2em;
                 font-weight: bold;
             }
+    
 
 /* Map the Future in the header */
 #mission-mapthefuture {
