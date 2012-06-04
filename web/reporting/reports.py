@@ -180,7 +180,7 @@ class DemographicReport(object):
             number of comments liked, 
             number of comments replied to.  """
 
-    def __init__(self, game, qs=None, debug=False):
+    def __init__(self, game, qs=None, debug=True):
         self.debug = debug
 
         if not qs:
@@ -420,17 +420,22 @@ class ChallengeActivityReport(DemographicReport):
                             )
                             values_list.append(demographic_details + comments_list)
                             for reply in c.comments.all():
+
+                                prof_per_instance = UserProfilePerInstance.objects.get(
+                                                                instance=game,
+                                                                user_profile__user=reply.user,
+                                )
+                                reply_demographic_details = self.get_demographic_details(prof_per_instance, prof_per_instance.user_profile, reply.user)
                                 reply_list = (
-                                    activity_formatted,
-                                    activity_question,
-                                    my_answers_as_str,
+                                    '', '', 
+                                    'In response to #%s' % c.pk,
                                     reply.pk,
                                     reply.posted_date.strftime('%Y-%m-%d %H:%M'),
+                                    '',
                                     reply.message,
-                                    '%s reply to #%s' % (reply.user.get_profile().screen_name, c.pk),
                                     my_answers_likes_count,
                                 )
-                                values_list.append(demographic_details + reply_list)
+                                values_list.append(reply_demographic_details + reply_list)
             #if completed_cnt > 0:
             #    print "%s of %s. %s competed %s challenges" % (i, players_count, profile.screen_name, completed_cnt)
         field_titles = self.get_demographic_field_titles() + (
@@ -440,7 +445,7 @@ class ChallengeActivityReport(DemographicReport):
             'comment id',
             'timestamp',
             '_ddqual_comment',
-            '_ddqual_replies',
+            '_ddqual_reply',
             'likes count',
         )
         log.debug("report done in %s min. %s queries." % ((time.time()-t1)/60, len(connection.queries)))
