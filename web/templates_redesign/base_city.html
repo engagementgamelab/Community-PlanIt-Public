@@ -38,7 +38,7 @@
                 <ul id="nav-missions">
                         {% for mission in all_missions_for_game %}
                         <li>                            
-                            <a {% ifequal mission current_mission %}class="active"{% endifequal %} href="{% url missions:mission mission.slug %}" title="{{ mission.title }}"> 
+                            <a class="{% ifequal mission current_mission %}active{% endifequal %} {% if not mission.is_active and not mission.is_expired %}future{% endif %}" href="{% url missions:mission mission.slug %}" title="{{ mission.title }}"> 
                                 <div class="nav-missions-number">{{ forloop.counter }}</div> 
                                 {% ifequal mission current_mission %}
                                     <div class="nav-missions-endsin"> 

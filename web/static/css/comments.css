@@ -355,7 +355,7 @@ background-color: #f6f8cf;
     position: relative;
     margin: 20px 0px;
     padding: 20px;
-    background: #eff2f2;
+    background: #E6E3DC;
     -webkit-border-radius: 10px;
     -webkit-border-bottom-right-radius: 0;
     -moz-border-radius: 10px;
@@ -379,15 +379,15 @@ background-color: #f6f8cf;
         bottom: -24px;
         right: 0px;
         border: 12px solid transparent;
-        border-top-color: #eff2f2;
-        border-right-color: #eff2f2;
+        border-top-color: #E6E3DC;
+        border-right-color: #E6E3DC;
     }
     
     .activity-response textarea,
     .comment-response textarea {
         width: 100%;
-        border: 1px solid #ddd;
-        background: #eff2f2;
+        border: 1px solid #ccc;
+        background: #E6E3DC;
         resize: none;
     }
 

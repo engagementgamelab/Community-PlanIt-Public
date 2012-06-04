@@ -127,13 +127,13 @@ hr.rainbow {
     float: left;
     margin: 0px 20px;
     background: white;
-/*    border: 1px solid black;*/
 }
     
     .games-filter {
+        position: relative;
         display: inline-block;
         width: 500px;
-        z-index: 99;
+        z-index: 20;
     }
     
         .games-filter li {
