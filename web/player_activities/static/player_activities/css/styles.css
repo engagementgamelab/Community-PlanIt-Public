@@ -46,7 +46,7 @@
         position: relative;
         padding: 20px;
         margin-top: 20px;
-        background: #e3f1ea;
+        background: #DBEEE1;
         -webkit-border-radius: 10px;
         -webkit-border-top-left-radius: 0;
         -moz-border-radius: 10px;
@@ -63,8 +63,8 @@
             top: -24px;
             left: 0px;
             border: 12px solid transparent;
-            border-bottom-color: #e3f1ea;
-            border-left-color: #e3f1ea;
+            border-bottom-color: #DBEEE1;
+            border-left-color: #DBEEE1;
         }
         
         
@@ -93,8 +93,8 @@
                 top: 0px;
                 left: -24px;
                 border: 12px solid transparent;
-                border-top-color: #e3f1ea;
-                border-right-color: #e3f1ea;
+                border-top-color: #DBEEE1;
+                border-right-color: #DBEEE1;
             }
         
         #player-activities .empathy .bio {
@@ -128,7 +128,7 @@
         display: block;
         width: 100%;
         height: 25px;
-        background: #e3f1ea;
+        background: #DBEEE1;
         -webkit-border-bottom-right-radius: 10px;
         -webkit-border-bottom-left-radius: 10px;
         -moz-border-radius-bottomright: 10px;
@@ -141,12 +141,12 @@
             display: block;
             margin: 2px 0px;
             padding: 15px 20px;
-            background: #e3f1ea;
+            background: #DBEEE1;
             cursor: pointer;
         }
     
             #player-activities .activity-question-options label:hover {
-                background: #eff2f2;
+                background: #E6E3DC;
             }
         
             #player-activities .activity-question-options label input[type='radio'],
@@ -215,7 +215,7 @@
             top: 0px;
             left: 0px;
             height: 100%;
-            background: #E3F1EA;
+            background: #E6E3DC;
             z-index: -1;
         }
 
