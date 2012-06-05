@@ -8,6 +8,7 @@ from localeurl.utils import strip_path
 from cache_utils.decorators import cached
 from stream import utils as stream_utils
 
+from django.utils.translation import get_language
 from django.conf import settings
 from django.core.cache import cache
 from localeurl.models import reverse
@@ -124,26 +125,27 @@ class Mission(TranslatableModel):
     @cached(60*60*24, 'missions')
     def total_points(self):
         log.debug("mission total_points ** no cache **")
-        return Decimal(sum([activity.get_points() for activity in self.activities]))
+        return Decimal(sum([activity.get_points() for activity in self.activities(get_language())]))
 
-    @property
-    def activities(self):
-        return self.get_activities_cached(self.pk)
+    def activities(self, lang='en-us'):
+        return self.get_activities_cached(self.pk, lang=lang)
 
     @cached(60*60*24*7)
-    def get_activities_cached(self, mission_id):
+    def get_activities_cached(self, mission_id, lang='en-us'):
         activities = []
+        mission_translated = self.translate(lang)
         for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
-            activities.extend(getattr(self, 'player_activities_%s_related' % model_klass.lower()).all())
+            activities.extend(
+                        getattr(mission_translated, 
+                                'player_activities_%s_related' % model_klass.lower()).language(lang).all())
         return sorted(activities, key=attrgetter('name'))
 
-    @property
-    def player_submitted_activities(self):
-        return self.get_player_submitted_activities_cached(self.pk)
+    def player_submitted_activities(self, lang='en-us'):
+        return self.get_player_submitted_activities_cached(self.pk, lang=lang)
 
     @cached(60*60*24*7)
-    def get_player_submitted_activities_cached(self, mission_id):
-        activities = filter(lambda a: a.is_player_submitted == True, self.activities)
+    def get_player_submitted_activities_cached(self, mission_id, lang='en-us'):
+        activities = filter(lambda a: a.is_player_submitted == True, self.activities(lang=lang))
         return sorted(activities, key=attrgetter('name'))
 
     @cached(60*60*24*7)
