@@ -32,31 +32,16 @@ def fetch(request, slug, player_submitted_only=False, template='missions/mission
     # TODO: Should only return non-player-created challenges
     mission = get_object_or_404(Mission, slug=slug)
     player_submitted = set(mission.player_submitted_activities(lang=get_language()))
-    print 'player_submitted'
-    for a in player_submitted:
-        print (a.pk, a.name, a.language_code)
     all_activities = player_submitted if player_submitted_only == True else \
             set(mission.activities(lang=get_language())) - player_submitted
-    print 'all_submitted'
-    for a in all_activities:
-        print (a.pk, a.name, a.language_code)
 
     my_completed = set(prof_per_instance.my_completed_by_mission(mission, player_submitted_only))
     my_incomplete = all_activities - my_completed
-    #my_incomplete = map(lambda activity: activity.translate(get_language()), list(my_incomplete))
     my_incomplete = sorted(my_incomplete, key=attrgetter('name'))
-
-    #my_completed = map(lambda activity: activity.translate(get_language()), list(my_completed))
     my_completed = sorted(list(my_completed), key=attrgetter('name'))
 
     my_incomplete.extend(my_completed)
     all_activities_sorted = my_incomplete
-
-
-    print 'all_activities_sorted'
-    for a in all_activities_sorted:
-        print (a.pk, a.name, a.language_code)
-
 
     context = dict(
         activities = all_activities_sorted,

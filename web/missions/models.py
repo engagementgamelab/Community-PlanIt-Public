@@ -31,7 +31,6 @@ class MissionManager(TranslationManager):
 
     @cached(60*60*24, 'missions_for_instance')
     def for_instance(self, instance):
-        log.debug('`filter` MissionManager %s ** no cache **')
         return self.filter(instance=instance)
 
     @cached(60*60*24, 'missions')
@@ -66,7 +65,6 @@ class MissionManager(TranslationManager):
     def active(self, instance_id):
         now = datetime.datetime.now()
         qs = self.filter(instance__pk=instance_id, start_date__lte=now, end_date__gte=now).order_by('start_date')
-        log.debug("active missions for game %s: %s" % (instance_id, qs))
         return qs
 
 
@@ -124,7 +122,6 @@ class Mission(TranslatableModel):
     @property
     @cached(60*60*24, 'missions')
     def total_points(self):
-        log.debug("mission total_points ** no cache **")
         return Decimal(sum([activity.get_points() for activity in self.activities(get_language())]))
 
     def activities(self, lang='en-us'):
@@ -133,11 +130,11 @@ class Mission(TranslatableModel):
     @cached(60*60*24*7)
     def get_activities_cached(self, mission_id, lang='en-us'):
         activities = []
-        mission_translated = self.translate(lang)
         for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
             activities.extend(
-                        getattr(mission_translated, 
-                                'player_activities_%s_related' % model_klass.lower()).language(lang).all())
+                        getattr(self, 
+                                'player_activities_%s_related' % model_klass.lower()).language(lang).all()
+            )
         return sorted(activities, key=attrgetter('name'))
 
     def player_submitted_activities(self, lang='en-us'):
@@ -189,7 +186,6 @@ stream_utils.register_action_object(Mission)
 
 # invalidate cache for 'missions' group
 def invalidate_mission(sender, **kwargs):
-    print kwargs
     activity = kwargs.pop('instance')
     if activity:
         mission_id = activity.mission.pk

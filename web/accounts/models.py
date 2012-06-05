@@ -28,6 +28,12 @@ from web.values.models import PlayerValue
 from web.badges.models import BadgePerPlayer
 from web.comments.models import Comment
 
+from web.player_activities.models import (
+        PlayerActivity, 
+        PlayerEmpathyActivity,
+        PlayerMapActivity,
+)
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -279,10 +285,32 @@ class UserProfilePerInstance(models.Model):
                 filter(actor_user=self.get_user(), verb='activity_completed')
 
         def activities_from_actions(actions):
+            # retrieving a list of challenges from action stream
+            #
+            translated_activities = []
             activities = [getattr(action, 'action_object_playeractivity') or \
-                    getattr(action, 'action_object_playermapactivity') or \
-                    getattr(action, 'action_object_playerempathyactivity') for action in actions]
-            return map(lambda activity: activity.translate(get_language()), activities)
+                          getattr(action, 'action_object_playermapactivity') or \
+                          getattr(action, 'action_object_playerempathyactivity') for action in actions]
+            # this is a horifically inefficient way to get
+            # translated versions of the challenge
+            # since we have a list to work with instead of a
+            # translation aware manager, have no other choice but to do
+            # the extra lookups for each challenge
+            for activity in activities:
+                if isinstance(activity, PlayerActivity):
+                    translated_activities.append(
+                            PlayerActivity.objects.language(get_language()).get(pk=activity.pk)
+                    )
+                elif isinstance(activity, PlayerMapActivity):
+                    translated_activities.append(
+                            PlayerMapActivity.objects.language(get_language()).get(pk=activity.pk)
+                    )
+                elif isinstance(activity, PlayerMapActivity):
+                    translated_activities.append(
+                            PlayerMapActivity.objects.language(get_language()).get(pk=activity.pk)
+                    )
+            return translated_activities
+
         return activities_from_actions(actions)
 
     @property
