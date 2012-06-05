@@ -7,10 +7,11 @@ from django.core import management
 from django.conf import settings
 from django.utils import autoreload
 
-#@timer(3)
-#def change_code_gracefull_reload(sig):
-#    if autoreload.code_changed():
-#        uwsgi.reload()
+@timer(3)
+def change_code_gracefull_reload(sig):
+    if settings.DEBUG == True:
+        if autoreload.code_changed():
+            uwsgi.reload()
 
 #@cron(30, -1, -1, -1, -1)
 #def rebuild_leaderboards(signum):
