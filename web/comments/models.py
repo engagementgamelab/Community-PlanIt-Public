@@ -135,6 +135,7 @@ class Comment(models.Model):
     # URL resolution cribbed from django's contrib comments
     #
     def get_absolute_url(self, anchor_pattern="#comment-%(id)s"):
+        print self.get_content_object_url() + (anchor_pattern % self.__dict__)
         return self.get_content_object_url() + (anchor_pattern % self.__dict__)
 
     @property

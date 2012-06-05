@@ -44,6 +44,7 @@ class Attachment(models.Model):
 
     is_slideshow = models.BooleanField(verbose_name=_("Display as part of a Slideshow"), default=False)
     is_resource_center = models.BooleanField(verbose_name=_("Display as part of the Resource Center"), default=False)
+    is_post_game = models.BooleanField(verbose_name=_("Display as part of Post Game Breakdown"), default=False)
 
     # we try to validate URLs, but it's expensive -- you don't want to 
     # check every comment attachment when loading a page with a discussion --

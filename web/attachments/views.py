@@ -24,6 +24,20 @@ def index(request, slug=None, template='attachments/index.html', extra_context={
     context.update(missions_bar_context(request))
     return render(request, template, context)
 
+def post_game(request, template='attachments/post_game.html', extra_context={}):
+    context = {}
+    
+    attachments = Attachment.objects.filter(instance__for_city=request.current_city, instance__is_disabled=False, is_post_game=True)
+    
+    context.update({
+        'attachments': attachments,
+    })
+
+    context.update(missions_bar_context(request))
+    return render(request, template, context)
+    
+    
+
 def attachment(request, slug=None, attachment_id=None, template='attachments/attachment.html', extra_context={}):
 
     attachment = get_object_or_404(Attachment, pk=attachment_id)
