@@ -276,7 +276,7 @@ class UserProfilePerInstance(models.Model):
 
     def my_completed_by_mission(self, mission, player_submitted_only=False):
 
-        activities_for_mission = mission.player_submitted_activities(lang=get_language()) if player_submitted_only == True else mission.activities(lang=get_language())
+        activities_for_mission = mission.player_submitted_activities if player_submitted_only == True else mission.activities
         if len(activities_for_mission) == 0:
             return []
 
@@ -286,12 +286,13 @@ class UserProfilePerInstance(models.Model):
                 filter(actor_user=self.get_user(), verb='activity_completed')
 
         def activities_from_actions(actions):
-            return map(lambda a: \
-                        combine(get_translation(a, language_code=get_language())),
-                    [getattr(action, 'action_object_playeractivity') or \
-                     getattr(action, 'action_object_playermapactivity') or \
-                     getattr(action, 'action_object_playerempathyactivity') for action in actions]
-            )
+            return []
+            #return map(lambda a: \
+            #            combine(get_translation(a, language_code=get_language())),
+            #        [getattr(action, 'action_object_playeractivity') or \
+            #         getattr(action, 'action_object_playermapactivity') or \
+            #         getattr(action, 'action_object_playerempathyactivity') for action in actions]
+            #)
         return activities_from_actions(actions)
 
     @property

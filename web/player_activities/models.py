@@ -16,6 +16,7 @@ from cache_utils.decorators import cached
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.translation import get_language
 from django.db.models.signals import post_save, post_delete
 from django.db import models
 from django.dispatch import receiver
@@ -32,6 +33,7 @@ from web.instances.models import Instance
 
 import logging
 log = logging.getLogger(__name__)
+
 
 def determine_path(instance, filename):
     return 'uploads/'+ str(instance.creationUser.id) +'/'+ filename
@@ -177,11 +179,13 @@ class PlayerActivity(PlayerActivityBase):
         return self.__unicode__()
 
     def __unicode__(self):
-        s = self.safe_translation_getter('name', None)
-        if s is None:
-            translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
-            s = translated.safe_translation_getter('name', str(self.pk))
-        return s
+        return self.safe_translation_getter('name', str(self.pk))
+        #s = self.safe_translation_getter('name', None)
+        #if s is None:
+        #    translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
+        #    s = translated.safe_translation_getter('name', str(self.pk))
+        #return s
+        #return "player activity %s" % self.pk
 
     @property
     def stream_action_title(self):
@@ -226,11 +230,12 @@ class PlayerMapActivity(PlayerActivityBase):
         return self.__unicode__()
 
     def __unicode__(self):
-        s = self.safe_translation_getter('name', None)
-        if s is None:
-            translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
-            s = translated.safe_translation_getter('name', str(self.pk))
-        return s
+        return self.safe_translation_getter('name', str(self.pk))
+        #s = self.safe_translation_getter('name', None)
+        #if s is None:
+        #    translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
+        #    s = translated.safe_translation_getter('name', str(self.pk))
+        #return s
 
     def save(self, *args, **kwargs):
         if not self.createDate:
@@ -258,11 +263,13 @@ class PlayerEmpathyActivity(PlayerActivityBase):
         return ('activities:empathy-overview', (self.pk,))
 
     def __unicode__(self):
-        s = self.safe_translation_getter('name', None)
-        if s is None:
-            translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
-            s = translated.safe_translation_getter('name', str(self.pk))
-        return s
+        return self.safe_translation_getter('value', str(self.pk))
+        #s = self.safe_translation_getter('name', None)
+        #if s is None:
+        #    translated = self.__class__.objects.language(get_language()).get(pk=self.pk)
+        #    s = translated.safe_translation_getter('name', str(self.pk))
+        #return s
+        #return "player empathy activity %s" % self.pk
 
     @property
     def stream_action_title(self):
@@ -318,11 +325,12 @@ class MultiChoiceActivity(TranslatableModel):
         verbose_name_plural = 'Available Answers to Single/Multiple Choice Activities' 
 
     def __unicode__(self):
-        s = self.safe_translation_getter('value', None)
-        if s is None:
-            translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
-            s = translated.safe_translation_getter('value', str(self.pk))
-        return s
+        return self.safe_translation_getter('value', str(self.pk))
+        #if s is None:
+        #    translated = self.__class__.objects.language(get_language()).get(pk=self.pk)
+        #    s = translated.safe_translation_getter('value', str(self.pk))
+        #return s
+        #return "multi choice activity option %s" % self.pk
 
     @property
     def activity_type(self):
@@ -339,7 +347,6 @@ class MultiChoiceActivity(TranslatableModel):
     @property
     def mission_title(self):
         return self.activity.mission.title
-
 
 #django-stream registrations
 stream_utils.register_action_object(PlayerActivity)
@@ -361,7 +368,7 @@ stream_utils.register_target(PlayerEmpathyActivity)
 #    instance = kwargs['instance']
 #    Activity.objects.filter(url=instance.get_activity_url()).update(url='')
 
-# invalidate cache for 'missions' group
+# invalidate cache for 'missions' 
 post_save.connect(invalidate_mission, PlayerActivity)
 post_save.connect(invalidate_mission, PlayerMapActivity)
 post_save.connect(invalidate_mission, PlayerEmpathyActivity)

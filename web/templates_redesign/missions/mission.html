@@ -23,7 +23,7 @@
                 {% if mission.is_expired %}
                     <div class="activity  activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                         <a href="{{ activity.get_overview_url }}">
-                            {{ activity|trans_fallback:"name" }}
+                            {{ activity.name }}
                             ({{ completed_count }} response{{ completed_count|pluralize }})
                         </a>
                     </div>
@@ -32,7 +32,7 @@
                         {# Non-started Mission #}
                         <div class="activity activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                             <a>
-                            {{ activity|trans_fallback:"name" }}
+                            {{ activity.name }}
                             </a>
                         </div>
                     {% else %}
@@ -41,7 +41,7 @@
                         {#  completed activity #}
                         <div class="activity activity-completed {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                             <a href="{{ activity.get_activity_url }}">
-                                {{ activity|trans_fallback:"name" }}
+                                {{ activity.name }}
                                 ({{ completed_count }} response{{ completed_count|pluralize }})
                                 <div class="mission-activity-completed"></div>
                             </a>
@@ -50,7 +50,7 @@
                         {# fresh activity #}
                         <div class="activity {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
                             <a href="{{ activity.get_activity_url }}">
-                                {{ activity|trans_fallback:"name" }}
+                                {{ activity.name }}
                                 ({{ completed_count }} response{{ completed_count|pluralize }})
                                 <div class="mission-activity-points">{{ points }}</div>
                             </a>

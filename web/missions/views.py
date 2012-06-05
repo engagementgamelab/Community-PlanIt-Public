@@ -31,16 +31,16 @@ def fetch(request, slug, player_submitted_only=False, template='missions/mission
     
     # TODO: Should only return non-player-created challenges
     mission = get_object_or_404(Mission, slug=slug)
-    player_submitted = set(mission.player_submitted_activities(lang=get_language()))
+    player_submitted = set(mission.player_submitted_activities)
     all_activities = player_submitted if player_submitted_only == True else \
-            set(mission.activities(lang=get_language())) - player_submitted
+            set(mission.activities) - player_submitted
 
     my_completed = set(prof_per_instance.my_completed_by_mission(mission, player_submitted_only))
-    my_incomplete = all_activities - my_completed
-    my_incomplete = sorted(my_incomplete, key=attrgetter('name'))
-    my_completed = sorted(list(my_completed), key=attrgetter('name'))
+    my_incomplete = list(all_activities - my_completed)
+    #my_incomplete = sorted(my_incomplete, key=attrgetter('name'))
+    #my_completed = sorted(list(my_completed), key=attrgetter('name'))
 
-    my_incomplete.extend(my_completed)
+    my_incomplete.extend(list(my_completed))
     all_activities_sorted = my_incomplete
 
     context = dict(

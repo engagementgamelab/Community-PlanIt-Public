@@ -19,7 +19,9 @@ from django.contrib import admin
 
 from nani.models import TranslatableModel, TranslatedFields
 from nani.manager import TranslationManager
+from nani.utils import get_translation, combine
 
+from web.player_activities.utils import get_activity_instance
 from web.instances.models import Instance
 #from web.accounts.models import invalidate_prof_per_instance
 
@@ -122,28 +124,64 @@ class Mission(TranslatableModel):
     @property
     @cached(60*60*24, 'missions')
     def total_points(self):
-        return Decimal(sum([activity.get_points() for activity in self.activities(get_language())]))
+        return Decimal(sum([activity.get_points() for activity in self.activities]))
 
-    def activities(self, lang='en-us'):
-        return self.get_activities_cached(self.pk, lang=lang)
+    @property
+    def activities(self):
+        return self.get_activities_cached(self.pk)
 
-    @cached(60*60*24*7)
-    def get_activities_cached(self, mission_id, lang='en-us'):
+    #@cached(60*60*24*7)
+    def get_activities_cached(self, mission_id):
         activities = []
-        for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
+        lang_codes = list(self.instance.languages.exclude(code='en-us').values_list('code', flat=True))
+        this_lang = get_language()
+        codes = []
+        if this_lang != u'en-us':
+            lang_codes.remove(this_lang)
+            codes.insert(0, this_lang)
+            codes.insert(1, u'en-us')
+        else:
+            codes.insert(0, u'en-us')
+        codes.extend(lang_codes)
+        #print codes
+
+        for label in ['player_activity', 'player_map_activity', 'player_empathy_activity']:
+            klass = get_activity_instance(label)
             activities.extend(
-                        getattr(self, 
-                                'player_activities_%s_related' % model_klass.lower()).language(lang).all()
+                        klass.objects.untranslated().\
+                                filter(mission=self).use_fallbacks(*tuple(codes))
             )
-        return sorted(activities, key=attrgetter('name'))
+        for a in activities:
+            print a.name
 
-    def player_submitted_activities(self, lang='en-us'):
-        return self.get_player_submitted_activities_cached(self.pk, lang=lang)
-
-    @cached(60*60*24*7)
-    def get_player_submitted_activities_cached(self, mission_id, lang='en-us'):
-        activities = filter(lambda a: a.is_player_submitted == True, self.activities(lang=lang))
+        #for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
+        #    activities.extend(
+        #                getattr(self, 
+        #                        'player_activities_%s_related' % model_klass.lower()).untranslated().all()
+        #    )
+        #for a in activities:
+        #    for code in lang_codes:
+        #        try:
+        #            combine(get_translation(a, language_code=code))
+        #        except a._meta.translations_model.DoesNotExist:
+        #            pass
+        #activities = map(
+        #        lambda a: combine(get_translation(a, language_code=get_language())),
+        #        activities
+        #)
+        #print activities
         return sorted(activities, key=attrgetter('name'))
+        #return activities
+
+    @property
+    def player_submitted_activities(self):
+        return self.get_player_submitted_activities_cached(self.pk)
+
+    #@cached(60*60*24*7)
+    def get_player_submitted_activities_cached(self, mission_id):
+        activities = filter(lambda a: a.is_player_submitted == True, self.activities)
+        return activities
+        #return sorted(activities, key=attrgetter('name'))
 
     @cached(60*60*24*7)
     def instance_city_domain(self, instance_id):
@@ -188,6 +226,7 @@ stream_utils.register_action_object(Mission)
 def invalidate_mission(sender, **kwargs):
     activity = kwargs.pop('instance')
     if activity:
+        print 'invalidating missions'
         mission_id = activity.mission.pk
         Mission.get_activities_cached.invalidate(mission_id)
         Mission.get_player_submitted_activities_cached.invalidate(mission_id)
