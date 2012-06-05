@@ -21,6 +21,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
 from nani.models import TranslatableModel, TranslatedFields
+from nani.utils import get_translation, combine
 
 from web.instances.models import Instance, Affiliation, Language
 from web.missions.models import Mission
@@ -285,32 +286,12 @@ class UserProfilePerInstance(models.Model):
                 filter(actor_user=self.get_user(), verb='activity_completed')
 
         def activities_from_actions(actions):
-            # retrieving a list of challenges from action stream
-            #
-            translated_activities = []
-            activities = [getattr(action, 'action_object_playeractivity') or \
-                          getattr(action, 'action_object_playermapactivity') or \
-                          getattr(action, 'action_object_playerempathyactivity') for action in actions]
-            # this is a horifically inefficient way to get
-            # translated versions of the challenge
-            # since we have a list to work with instead of a
-            # translation aware manager, have no other choice but to do
-            # the extra lookups for each challenge
-            for activity in activities:
-                if isinstance(activity, PlayerActivity):
-                    translated_activities.append(
-                            PlayerActivity.objects.language(get_language()).get(pk=activity.pk)
-                    )
-                elif isinstance(activity, PlayerMapActivity):
-                    translated_activities.append(
-                            PlayerMapActivity.objects.language(get_language()).get(pk=activity.pk)
-                    )
-                elif isinstance(activity, PlayerMapActivity):
-                    translated_activities.append(
-                            PlayerMapActivity.objects.language(get_language()).get(pk=activity.pk)
-                    )
-            return translated_activities
-
+            return map(lambda a: \
+                        combine(get_translation(a, language_code=get_language())),
+                    [getattr(action, 'action_object_playeractivity') or \
+                     getattr(action, 'action_object_playermapactivity') or \
+                     getattr(action, 'action_object_playerempathyactivity') for action in actions]
+            )
         return activities_from_actions(actions)
 
     @property
