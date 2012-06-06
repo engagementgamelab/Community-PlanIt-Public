@@ -8,6 +8,7 @@ from stream.models import Action
 from stream import utils as stream_utils
 
 from localeurl.models import reverse
+from localeurl.utils import strip_path
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -98,8 +99,6 @@ def login_ajax(request, authentication_form=AuthenticationForm):
                             next[1:],
                         )
                 )
-
-
             active_mission = Mission.objects.default(current_game.pk)
             log.debug("redirecting %s to %s" %(prof_per_instance, active_mission))
             if active_mission:
@@ -108,14 +107,14 @@ def login_ajax(request, authentication_form=AuthenticationForm):
                                 lang=prof_per_instance.preferred_language
                             )
                 )
-
-            return obj_response.redirect(
-                    "".join([
-                                current_game.get_absolute_url(ssl=not(settings.DEBUG)), 
-                                settings.LOGIN_REDIRECT_URL
-                            ]
-                    ),
-            )
+            else:
+                redir = os.path.join(
+                            'https://' if settings.DEBUG == False else 'http://',
+                            current_game.for_city.domain,
+                            prof_per_instance.preferred_language.code,
+                            strip_path(reverse('attachments:post-game'))[1][1:],
+                )
+                return obj_response.redirect(redir)
         else:
             log.debug('form invalid %s' % form.errors)
             msg = ""
