@@ -91,7 +91,6 @@ def missions_bar_context(request, mission=None):
 
     context.update({
         'mission': mission, 
-        'first_mission': Mission.objects.first(instance_id=request.current_game.pk),
         'all_missions_for_game': all_missions_for_game,
         'my_flags_range': my_flags_range,
         'my_total_points': my_total_points,
