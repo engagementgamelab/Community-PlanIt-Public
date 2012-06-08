@@ -31,6 +31,8 @@ urlpatterns = patterns('web',
     url(r'^500$', direct_to_template, { 'template': '500.html', 'extra_context': { 'cities': City.objects.all } }, name='404'),
     
 
+    url(r'^detroit-247-postgame-demographics/$', direct_to_template, { 'template': 'static/detroit_post_demographic/index.html' }, name='detroit-247-postgame-demographics'),
+
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),
     (r'^resource-center/', include('attachments.urls', namespace='attachments', app_name='attachments')),
     (r'^comments/', include('comments.urls', namespace='comments', app_name='comments')),

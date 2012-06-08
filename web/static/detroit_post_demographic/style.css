@@ -1,0 +1,73 @@
+body {
+    font-size: 1em;
+    background: #333 url("img/bg.png");
+    margin:0;
+	font-family: 'Ropa Sans', sans-serif;
+}
+#logo{
+	position:absolute;
+	z-index:999;
+	top:0;
+	right:15px;
+}
+#map{
+	position:absolute;
+	z-index:-99;
+	top:100px;
+	left:0;
+	margin:0;
+	width:100%;
+	text-align:center;
+}
+#map img{
+	width:800px;
+}
+.theCanvas{
+	position:absolute;
+	z-index:998;
+	top:120px;
+	left:0;
+	outline:none;
+}
+#filters{
+	position:absolute;
+	z-index:99999;
+	top:40px;
+	left:20px;
+}
+#labels{
+	position:absolute;
+	top:15px;
+	left:10px;
+}
+#labels p{
+	width:100px;
+	display: inline;
+	color: #222;
+	margin-right:20px;
+}
+table{
+	text-align:left;
+	color: #222;
+	margin-left:5px;
+}
+table td tr p{
+	text-align:left;
+}
+#description{
+	color: #222;
+	position: absolute;
+	top:80px;
+	left:10px;
+	z-index:999999;
+
+}
+#detroitTitle{
+	color:#208AFA;
+	font-size:1.5em;
+	text-shadow:1px 1px 3px #333;
+	width:128px;
+	position:absolute;
+	top:110px;
+	left:500px;
+}

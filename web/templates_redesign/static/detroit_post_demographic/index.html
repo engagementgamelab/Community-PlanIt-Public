@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+	<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<script src="{{ STATIC_URL }}detroit_post_demographic/js/processing.js" type="text/javascript"></script>
+		<script src="{{ STATIC_URL }}detroit_post_demographic/js/jquery.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}detroit_post_demographic/js/control.js"></script>
+		<link rel="stylesheet" href="{{ STATIC_URL }}detroit_post_demographic/style.css">
+    <title>Community Planit</title>
+	</head>
+	<body>
+		<p id="map"><img src="{{ STATIC_URL }}detroit_post_demographic/img/map.png" alt="map"/></p>
+		<p id="logo"><img src="{{ STATIC_URL }}detroit_post_demographic/img/logo.png" alt="logo"/></p>
+  <table>
+    <tr>
+      <td> 
+        <p>Gender</p>
+      </td>
+      <td>
+        <p>Age</p>  
+      </td>
+      <td>
+        <p>Race</p>
+      </td>
+      <td>
+        <p>Income</p>
+      </td>
+      <td>
+        <p>Stake</p>
+      </td>
+      <td>
+        <input type="checkbox" name="vehicle" value="0" /> Include Lurkers
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <select id="gender">
+        <option value="-1">All</option>
+        <option value="0">Female</option>
+        <option value="1">Male</option>
+        <option value="2">Not Specified</option>
+    </select>
+      </td>
+      <td>
+        <select id="age">
+        <option value="-1">All</option>
+        <option value="0">17 and under</option>
+        <option value="1">18 to 34</option>
+        <option value="2">35 to 54</option>
+        <option value="3">55 to 74</option>
+        <option value="4">75 and over</option>
+        <option value="5">Not Specified</option>
+    </select>
+      </td>
+      <td>
+        <select id="race">
+        <option value="-1">All</option>
+        <option value="0">White</option>
+        <option value="1">Black or African American</option>
+        <option value="2">Hispanic, Latino or Spanish</option>
+        <option value="3">Asian</option>
+        <option value="4">Multiracial</option>
+        <option value="5">American Indian or Alaskan Native</option>
+        <option value="6">Other</option>
+        <option value="7">Not Specified</option>  
+    </select>
+
+      </td>
+      <td>
+          <select id="income">
+        <option value="-1">All</option>
+        <option value="0">$0 to $25000</option>
+        <option value="1">$25000 to $50000</option>
+        <option value="2">$50000 to $75000</option>
+        <option value="3">$75000 to $100000</option>
+        <option value="4">over $100000</option>
+        <option value="5">Not Specified</option>  
+    </select>
+      </td>
+      <td>
+          <select id="stake">
+        <option value="-1">All</option>
+        <option value="0">Live in Detroit</option>
+        <option value="1">Work in Detroit</option>
+        <option value="2">Business Owner</option>
+        <option value="3">Religious Leader</option>
+        <option value="4">Community Organizer/Activist</option>
+        <option value="5">Government/Civic Employee</option>
+        <option value="6">Student</option>
+        <option value="7">Parent</option>
+        <option value="8">Volunteer</option>
+        <option value="9">Observer/Other</option>
+        <option value="10">Not Specified</option>
+    </select>
+      </td>
+      <td>
+        <button id="reset">
+          Reset
+        </button>
+    </tr>
+	 </table>
+   <p id="description">All Users (excluding lurkers)</p>
+   <p id="detroitTitle">Detroit 24/7<p>
+     <canvas id="viz" data-processing-sources="{{ STATIC_URL }}detroit_post_demographic/js/viz.pde"></canvas>
+	</body>
+</html>
