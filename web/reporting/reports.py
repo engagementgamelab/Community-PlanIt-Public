@@ -366,7 +366,7 @@ class ChallengeActivityReport(DemographicReport):
 
         activities = []
         for mission in missions:
-            activities.extend(mission.activities)
+            activities.extend(mission.activities())
             log.debug("mission %s, activities count: %s" % (mission.title, len(activities)))
         activities = sorted(activities, key=attrgetter('mission', 'type'))
 
@@ -482,7 +482,7 @@ class MissionReport(DemographicReport):
 
         activities = []
         for mission in missions:
-            activities.extend(mission.activities)
+            activities.extend(mission.activities())
             print "mission %s, activities count: %s" % (mission.title, len(activities))
         activities = sorted(activities, key=attrgetter('mission', 'type'))
 
