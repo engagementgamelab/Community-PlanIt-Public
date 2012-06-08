@@ -40,7 +40,7 @@
                 {% if answers %}
                     {% for choice in choices %}
                         <div class="activity-response-summary-choice {% ifequal choice myAnswer.selected %}my-choice{% endifequal %} {% ifequal choice activity.get_trivia_answer %}correct-answer{% else %}incorrect-answer{% endifequal %}">
-                            {% blocktrans %}{{ choice }}{% endblocktrans %} 
+                            {{ choice }}
                             <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'>
                         </div>
 
