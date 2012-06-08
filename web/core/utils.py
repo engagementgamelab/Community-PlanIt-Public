@@ -89,12 +89,17 @@ def missions_bar_context(request, mission=None):
     #   my_total_points = lb.points
     my_total_points = prof_per_instance.total_points
 
+    game_ended = True if Mission.objects.default(
+                            request.current_game.pk
+                        ) is None else False
+
     context.update({
         'mission': mission, 
         'all_missions_for_game': all_missions_for_game,
         'my_flags_range': my_flags_range,
         'my_total_points': my_total_points,
         'my_badges_count': my_badges_count,
+        'game_ended': game_ended,
     })
 
     return context

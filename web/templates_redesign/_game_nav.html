@@ -3,7 +3,7 @@
     <ul>
         {% if not city_header %}
         <li class="sidebar-nav-missioncontrol">
-        {% if not mission %}
+        {% if game_ended %}
             <a href="{% url attachments:post-game %}" id="sidebar-nav-missioncontrol">{% trans "Mission Control" %}</a>
         {% else %}
             <a href="{% url missions:mission mission.slug %}" id="sidebar-nav-missioncontrol">{% trans "Mission Control" %}</a>
