@@ -29,7 +29,7 @@ def assign_challenge_completed_badges(user_id, mission_id, run_for_expired_missi
         return
 
     user_prof_per_instance = UserProfilePerInstance.objects.get(instance=mission.instance, user_profile__user__pk=user_id)
-    for_mission_count = len(mission.activities)
+    for_mission_count = len(mission.activities())
     my_completed_count = len(user_prof_per_instance.my_completed_by_mission(mission))
 
     log.debug("completed %s out of %s challenges" % (my_completed_count, for_mission_count))
