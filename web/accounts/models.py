@@ -121,7 +121,8 @@ class UserProfileRace(UserProfileOptionBase):
         verbose_name_plural = "User Profile Race options"
 
     def __unicode__(self):
-        return self.race
+        return "race id %s" %self.pk
+
 
 class UserProfileStake(UserProfileOptionBase):
     """
@@ -138,7 +139,7 @@ class UserProfileStake(UserProfileOptionBase):
         verbose_name_plural = "User Profile Stake options"
 
     def __unicode__(self):
-        return self.stake
+        return "stake id %s" %self.pk
 
 class CPIUser(User):
 
@@ -382,7 +383,7 @@ class UserProfile(models.Model):
         verbose_name_plural = "User Profiles"
 
     def __unicode__(self):
-        return "%s's profile <%s>" % (self.screen_name, self.user.email)
+        return "%s's profile" % (self.screen_name)
 
     #@property
     #def active_instance(self):
