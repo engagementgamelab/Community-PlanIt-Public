@@ -153,9 +153,9 @@ class CPIUser(User):
 
 class UserProfilePerInstanceManager(models.Manager):
 
-    @cached(60*60*24, 'user_profile_per_instance_get')
-    def get(self, *args, **kwargs):
-        return super(UserProfilePerInstanceManager, self).get(*args, **kwargs)
+    #@cached(60*60*24, 'user_profile_per_instance_get')
+    #def get(self, *args, **kwargs):
+    #    return super(UserProfilePerInstanceManager, self).get(*args, **kwargs)
 
     @cached(60*60*24, 'all_games_for_profile')
     def games_for_profile(self, user_profile):
