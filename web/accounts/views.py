@@ -35,7 +35,7 @@ from .forms import *
 from .models import Notification, UserProfile, UserProfileVariantsForInstance
 from web.core.utils import missions_bar_context
 from web.answers.models import Answer
-from web.challenges.models import Challenge, PlayerChallenge
+#from web.challenges.models import Challenge, PlayerChallenge
 from web.comments.forms import CommentForm
 from web.comments.utils import create_video_attachment, create_image_attachment
 from web.instances.models import Instance, Affiliation
@@ -526,6 +526,8 @@ def ajax_profile_comment_submit(request, prof_per_instance_id):
         return HttpResponse(sijax_instance.process_request())
 """
 
+# DASHBOARD deprecated
+"""
 @login_required
 def dashboard(request, template_name='accounts/dashboard.html'):
 # def dashboard(request, template_name='city.html'):
@@ -616,6 +618,7 @@ def dashboard(request, template_name='accounts/dashboard.html'):
         active_past= instance.missions.past(),
     )
     return render(request, template_name, context)
+"""
 
 @login_required
 def admin_instance_email(request, instance_id=None):
