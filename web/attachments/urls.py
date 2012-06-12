@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from django.views.generic.simple import direct_to_template
 from web.attachments.views import *
 
 urlpatterns = patterns('web.attachments.views',
@@ -13,4 +14,10 @@ urlpatterns = patterns('web.attachments.views',
             'city_header': True,
         }
     }, name='attachment'),
+    # templates dir is defined in settings_base.py
+    # in TEMPLATE_DIRS
+    url(r'^post-game/visualizations/detroit_demographic.html$', direct_to_template,
+                { 'template': 'detroit_demographic.html' },
+        name='detroit-247-postgame-demographics'),
+
 )
