@@ -15,7 +15,6 @@ from django.conf import settings
 from web.accounts.models import UserProfile, UserProfilePerInstance
 from web.reports.actions import PointsAssigner
 from web.answers.models import Answer, AnswerMultiChoice
-from web.challenges.models import Challenge
 from web.values.models import Value
 from .forms import *
 from .models import Comment
@@ -179,13 +178,13 @@ def reply(request, id):
 
     recipient = None
     if request.user != parent_comment.user:
-        if isinstance(topic, Challenge):
-            message = "%s replied to a comment on %s" % (
-                request.user.get_profile().screen_name,
-                topic
-            )
-            recipient = topic.user
-        elif isinstance(topic, UserProfile):
+        #if isinstance(topic, Challenge):
+        #    message = "%s replied to a comment on %s" % (
+        #        request.user.get_profile().screen_name,
+        #        topic
+        #    )
+        #    recipient = topic.user
+        if isinstance(topic, UserProfile):
             message = "%s replied to a comment on your profile" % (
                 request.user.get_profile().screen_name
             )
