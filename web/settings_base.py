@@ -63,6 +63,7 @@ EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 TEMPLATE_DIRS = (
     os.path.join(ROOTDIR, 'templates_redesign'),
+    os.path.join(ROOTDIR, 'CPI-visualizations'),
     os.path.join(ROOTDIR, 'templates'),
     os.path.join(ROOTDIR, '../../parts/django-nani/hvad/templates'),
 )
@@ -104,7 +105,6 @@ INSTALLED_APPS = (
 
     # Deprecated
     #'web.reports',
-    #'web.challenges',
 
     # Need this after web.admin because of test runner: 
     # it loads django admin tests by 'admin' app label first
@@ -144,6 +144,7 @@ STATIC_URL = '/static/'
 # Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(DIRNAME, 'static'),
+    os.path.join(DIRNAME, 'CPI-visualizations/static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -252,21 +253,6 @@ PREFIX_DEFAULT_LOCALE = True
 #django-stream
 # see notes in web.reports.actions
 STREAM_VERBS = (
-    # ******
-    # the entire challenges app is deprecated
-    # purge the stream from the db
-    # Action.objects.filter(verb__contains='challenge').delete()
-    #('challenge_created', 'created a challenge'),
-    #('challenge_updated', 'updated a challenge'),
-    #('challenge_accepted', 'accepted a challenge'),
-    #('challenge_declined', 'declined a challenge'),
-    #('challenge_deleted', 'deleted a challenge'),
-    #('challenge_commented', 'commented on a challenge'),
-    #('challenge_completed', 'completed a challenge'),
-    #('activity_official_response_created', 'created a response'),
-    #('token_spent', 'spent token'),
-    #('token_reclaimed', 'reclaimed token'),
-    # ******
 
     ('crowd_created', 'create a crowd'),
 
