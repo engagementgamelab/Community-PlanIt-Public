@@ -9,7 +9,6 @@ from django.core.mail import send_mail
 
 from web.settings import *
 from web.missions.models import Mission
-from web.accounts.views import dashboard
 from web.accounts.forms import AccountAuthenticationForm
 from web.accounts.models import UserProfilePerInstance
 from web.instances.models import Instance, City
