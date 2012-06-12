@@ -1,6 +1,6 @@
 from web.flags.models import PlayerFlag
 from web.comments.models import Comment
-from web.challenges.models import Challenge
+#from web.challenges.models import Challenge
 
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
@@ -25,12 +25,12 @@ def add(request, app, id):
         c.flagged += 1
         c.save()
 
-    elif app == 'challenge':
-        c = Challenge.objects.get(id=id)
-        label = c.name
+    #elif app == 'challenge':
+    #    c = Challenge.objects.get(id=id)
+    #    label = c.name
 
-        c.flagged += 1
-        c.save()
+    #    c.flagged += 1
+    #    c.save()
 
     if len(PlayerFlag.objects.filter(app=app, id=id, user=request.user)) == 0:
         pf = PlayerFlag(
