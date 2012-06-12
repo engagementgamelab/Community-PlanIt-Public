@@ -124,6 +124,10 @@ inline =
             alias "${server:project_dir}/web/static_collected";
         }
 
+        location /visualizations/static {
+            alias "${server:project_dir}/web/CPI-visualizations/static";
+        }
+
     }
 
 [nginx-config-local-install]
