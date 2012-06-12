@@ -213,7 +213,7 @@ def ajax_load_languages_by_game(request, instance_id):
 
     def load_options(obj_response, instance_id):
         game = Instance.objects.get(pk=instance_id)
-        langs = game.languages.values_list('pk', 'name').distinct().order_by('name')
+        langs = game.languages.values_list('pk', 'name').distinct().order_by('code')
         out = ""
         for id, name in langs:
             out+='<option value="%s">%s</option>' %(id, name)

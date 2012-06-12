@@ -66,7 +66,7 @@ class Language(models.Model):
         return self.name
 
     class Meta:
-        ordering = ('name',)
+        ordering = ('code',)
 
 
 class Affiliation(models.Model):

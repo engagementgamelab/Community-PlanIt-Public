@@ -1,4 +1,6 @@
 from sijax import Sijax
+from localeurl.utils import strip_path
+
 from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
@@ -80,10 +82,17 @@ class RegisterFormTwo(forms.Form):
         super(RegisterFormTwo, self).__init__(*args, **kwargs)
         self.chosen_game = chosen_game
         self.fields['avatar'] = forms.ImageField(required=False)
+
+        # TODO need to figure out a way of displaying the 
+        # current language stakes with a way to include the default
+        # language as well
         self.fields['stakes'] = forms.ModelMultipleChoiceField(
                                     label=_(u'Stake in the community'),
                                     required=False,
-                                    queryset=self.chosen_game.user_profile_variants.stake_variants.all().order_by("pos")
+                                    queryset=self.chosen_game.user_profile_variants.\
+                                            stake_variants.language(
+                                                    settings.LANGUAGE_CODE
+                                            ).all().order_by("pos")
         )
         self.fields['affiliations'] = forms.ModelMultipleChoiceField(
                                     label=_(u'Affiliations'),
@@ -193,7 +202,12 @@ class RegistrationWizard(SessionWizardView):
             #TODO is there another way to get
             #TODO to the data of the previous steps data
             chosen_game_id = self.storage.data.get('step_data')['0']['0-instance'][0]
-            chosen_game = Instance.objects.language(get_language()).get(id=chosen_game_id)
+
+            try:
+                chosen_game = Instance.objects.language(get_language()).get(id=chosen_game_id)
+            except Instance._meta.translations_model.DoesNotExist:
+                chosen_game = Instance.objects.language(settings.LANGUAGE_CODE).get(id=chosen_game_id)
+
             return {'chosen_game' : chosen_game}
         if step == '0':
             return {'domain' : self.request.current_site.domain}
@@ -221,7 +235,10 @@ class RegistrationWizard(SessionWizardView):
             )
         elif self.steps.current == '1':
             chosen_game_id = self.storage.data.get('step_data')['0']['0-instance'][0]
-            chosen_game = Instance.objects.language(get_language()).get(id=chosen_game_id)
+            try:
+                chosen_game = Instance.objects.language(get_language()).get(id=chosen_game_id)
+            except Instance._meta.translations_model.DoesNotExist:
+                chosen_game = Instance.objects.language(settings.LANGUAGE_CODE).get(id=chosen_game_id)
             context.update( {'chosen_game' : chosen_game})
 
         return context
@@ -305,14 +322,13 @@ class RegistrationWizard(SessionWizardView):
         # set the game we are logging the user into
         #
         self.request.session['current_game_slug'] = game.slug
-
-        page = reverse('accounts:dashboard')
-
         return redirect(
-                        ''.join(
-                                [ game.get_absolute_url(ssl=not(settings.DEBUG)), page ]
-                            ),
-                        permanent=True,
+                os.path.join(
+                            'https://' if settings.DEBUG == False else 'http://',
+                            game.for_city.domain,
+                            user_profile_per_instance.preferred_language.code,
+                            strip_path(reverse('accounts:dashboard'))[1][1:],
+                )
         )
 
 

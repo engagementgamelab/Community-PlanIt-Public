@@ -121,7 +121,7 @@ class UserProfileRace(UserProfileOptionBase):
         verbose_name_plural = "User Profile Race options"
 
     def __unicode__(self):
-        return "race id %s" %self.pk
+        return self.lazy_translation_getter('race', 'race %s' % self.pk)
 
 
 class UserProfileStake(UserProfileOptionBase):
@@ -139,7 +139,7 @@ class UserProfileStake(UserProfileOptionBase):
         verbose_name_plural = "User Profile Stake options"
 
     def __unicode__(self):
-        return "stake id %s" %self.pk
+        return self.lazy_translation_getter('stake', 'stake %s' % self.pk)
 
 class CPIUser(User):
 

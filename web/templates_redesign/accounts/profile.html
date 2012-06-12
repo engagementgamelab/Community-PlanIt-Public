@@ -93,7 +93,11 @@
             <h2>Latest Activity</h2>
             <div id="profile-stream">
                 {% for action in stream %}
-                    <div class="stream-event-action"><span class="stream-event-actor">{% ifequal request.user player %}You{% else %}<a href="{% url accounts:player_profile action.actor.pk %}">{{ action.actor.get_profile.screen_name }}</a>{% endifequal %}</span> <span class="stream-event-description">{{ action.description }}</span> <a href="{{ action.action_object.get_absolute_url }}">{{ action.action_object }}</a></div>
+                <div class="stream-event-action">
+                    <span class="stream-event-actor">{% ifequal request.user player %}You{% else %}<a href="{% url accounts:player_profile action.actor.pk %}">{{ action.actor.get_profile.screen_name }}</a>{% endifequal %}</span> 
+                    <span class="stream-event-description">{{ action.description }}</span> 
+                    <a href="{{ action.action_object.get_absolute_url }}">{{ action.action_object }}</a>
+                </div>
                 {% endfor %}
             </div>
         </div>
