@@ -22,82 +22,6 @@ import logging
 log = logging.getLogger(__name__)
 
 @login_required
-def crowd(request, id, template='crowds/base.html'):
-    if hasattr(request, 'current_game'):
-        current_instance = request.current_game
-    else:
-        raise Http404("could not locate a valid game")
-
-    try:
-        crowd = Crowd.objects.select_related().get(pk=id)
-    except Crowd.DoesNotExist:
-        return Http404("Crowd could not be found")
-
-    if request.method == 'POST':
-
-        if current_instance.is_expired():
-            return HttpResponseRedirect(reverse('crowds:index'))
-
-        form = PlayerChallengeForm(request.POST)
-        if form.is_valid():
-            if not pc:
-                pc = PlayerChallenge.objects.create(response = None, 
-                        player=request.user,
-                        challenge=challenge,
-                        completed = True)
-            comment = pc.comments.create(
-                content_object=pc,
-                message=form.cleaned_data['message'],
-                user=request.user,
-                instance=request.user.get_profile().instance,
-            )
-
-            if request.POST.has_key('video-url'):
-                if request.POST.get('video-url'):
-                    comment.attachment.create(
-                            file=None,
-                            url=request.POST.get('video-url'),
-                            type='video',
-                            user=request.user,
-                            instance=instance)
-
-            if request.FILES.has_key('picture'):
-                file = request.FILES.get('picture')
-                picture = Image.open(file)
-                if (file.name.rfind(".") -1):
-                    file.name = "%s.%s" % (file.name, picture.format.lower())
-                comment.attachment.create(
-                    file=request.FILES.get('picture'),
-                    user=request.user,
-                    instance=request.user.get_profile().instance)
-                #ActivityLogger().log(request.user, request, 'a challenge: ' + challenge.name[:30], 'completed', reverse('challenges:challenge', args=[id]), 'challenge')
-                #stream_utils.action.send(request.user, 'challenge_completed', target=instance, action_object=challenge, description="A challenge was completed")
-            PointsAssigner().assign(request.user, 'challenge_completed')
-
-            if pc.player != challenge.user:
-                message = "%s completed %s" % (
-                    request.user.get_profile().screen_name,
-                    challenge.name
-                )
-                challenge.user.notifications.create(content_object=challenge, message=message)
-
-
-            return HttpResponseRedirect(reverse('challenges:challenge', args=[id]))
-    else:
-        form = PlayerChallengeForm()
-
-    context = {
-        'challenge': challenge,
-        'player_challenge': pc,
-        'instance': challenge.instance,
-        #'comment_form': CommentForm(),
-        'response_form': form,
-    }
-
-    context.update(missions_bar_context(request))
-    return render(request, template, context)
-
-@login_required
 def view_crowd(request, id, template='crowds/crowd.html'):
 
     if hasattr(request, 'current_game'):
@@ -214,30 +138,6 @@ def create(request):
     context.update(missions_bar_context(request))
     return render(request, 'crowds/add.html', context)
 
-
-
-@login_required
-def delete(request, id):
-
-    instance = request.user.get_profile().instance
-    if instance.is_expired():
-        return HttpResponseRedirect(reverse('challenges:index'))
-
-    try:
-        pc = PlayerChallenge.objects.get(challenge__id=id)
-        pc.delete()
-
-        challenge = Challenge.objects.get(id=id)
-        challenge.delete()
-
-        #ActivityLogger.log(request.user, request, 'a challenge: ' + challenge.name[:30], 'deleted', 'challenge')
-        stream_utils.action.send(request.user, 'challenge_deleted', target=instance, action_object=challenge, 
-                                    description="A challenge was deleted"
-        )
-    except:
-        pass
-
-    return HttpResponseRedirect('/challenge')
 
 @login_required
 def update(request):

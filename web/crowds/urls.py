@@ -8,7 +8,7 @@ urlpatterns = patterns('web.crowds.views',
     url(r'^(?P<id>\d+)/leave/$', 'leave_crowd', name='leave'),
     url(r'^(?P<id>\d+)/comment/$', 'comment', name='comment'),
     url(r'^create/$', 'create', name='create'),
-    url(r'^remove/$', 'delete', name='delete'),
+    #url(r'^remove/$', 'delete', name='delete'),
     url(r'^$', 'all', name='index'),
     
     # city page versions of these views, hide the city header by passing extra context    # 
