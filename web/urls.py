@@ -31,15 +31,12 @@ urlpatterns = patterns('web',
     url(r'^500$', direct_to_template, { 'template': '500.html', 'extra_context': { 'cities': City.objects.all } }, name='404'),
     
 
-    url(r'^detroit-247-postgame-demographics/$', direct_to_template, { 'template': 'static/detroit_post_demographic/index.html' }, name='detroit-247-postgame-demographics'),
-
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),
     (r'^resource-center/', include('attachments.urls', namespace='attachments', app_name='attachments')),
     (r'^comments/', include('comments.urls', namespace='comments', app_name='comments')),
     (r'^missions/', include('missions.urls', namespace='missions', app_name='missions')),
     (r'^communities/', include('instances.urls', namespace='instances', app_name='instances')),
     (r'^affiliations/', include('affiliations.urls', namespace='affiliations', app_name='affiliations')),
-    (r'^challenges/', include('challenges.urls', namespace='challenges', app_name='challenges')),
     (r'^get-together/', include('crowds.urls', namespace='crowds', app_name='crowds')),
     (r'^values/', include('values.urls', namespace='values', app_name='values')),
     (r'^lists/', include('lists.urls', namespace='lists', app_name='lists')),
