@@ -64,7 +64,7 @@
             {# LIKES! #}
             <div class="likes">
                 {% if comment.is_game_active %}
-                    <div id="id_like-{{ comment_id }}" class="btn-like {% if request.user.pk in likes_users or comment.author == request.user %}active{%endif %}" title="click to say you like this" data-commentid="{{ comment_id }}" data-url="{% url comments:like comment_id %}"></div>
+                    <div id="id_like-{{ comment_id }}" class="btn-like {% if request.user.pk in likes_users or comment.author == request.user %}active{%endif %}" title="click to say you like this" data-commentid="{{ comment_id }}" data-url="{% url comments:ajax_like comment_id %}"></div>
                     <div id="id_likes-count-{{ comment_id }}" class="likes-count">{{ likes_count }}</div>
                 {% endif %}
             </div>

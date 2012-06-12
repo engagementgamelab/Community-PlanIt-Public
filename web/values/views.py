@@ -142,6 +142,9 @@ def detail(request, id, template='values/value.html'):
         'comments': value,
         'comment_form': CommentForm(),
     }
+    create_comment_sijax = Sijax()
+    create_comment_sijax.set_request_uri(reverse('comments:ajax-create'))
+    context.update({ 'create_comment_sijax_js' : create_comment_sijax.get_js(),})
     context.update(missions_bar_context(request))
     return render(request, template, context)
 

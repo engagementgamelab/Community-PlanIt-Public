@@ -7,7 +7,14 @@
     {{ block.super }}
     {# masonry is required to display comments correctly #}
     <script src="{{ STATIC_URL }}js/jquery.masonry.min.js"></script>
+    <script src="{{ STATIC_URL }}js/sijax.js"></script>
     <script src="{{ STATIC_URL }}js/comments.js"></script>
+    <script>
+        jQuery(function($) {
+            {% include "js/ajax_csrf.html" %}
+            {{ create_comment_sijax_js|safe }}
+        });
+    </script>
 {% endblock %}
 
 {% block game_content %}

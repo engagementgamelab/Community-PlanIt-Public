@@ -303,7 +303,6 @@ def edit(request, template_name='accounts/profile_edit.html'):
         raise Http404("you are have not property authenticated")
 
 
-
     prof_for_game = UserProfilePerInstance.objects.get(
                                             user_profile=profile,
                                             instance=request.current_game
@@ -362,13 +361,14 @@ def edit(request, template_name='accounts/profile_edit.html'):
         'profile_form': profile_form,
         'change_password_form': change_password_form,
     }
-
     context.update(missions_bar_context(request))
     return render(request, template_name, context)
 
 @login_required
 def all(request, template='accounts/all.html'):
-    profiles_for_game =  UserProfilePerInstance.objects.select_related().filter(instance=request.current_game
+    profiles_for_game =  UserProfilePerInstance.objects.select_related().\
+            filter(
+                instance=request.current_game
         ).exclude(user_profile__user__is_active=False
         ).order_by('-date_created')
     filter_by_variants = Sijax()
@@ -501,6 +501,9 @@ def profile(request, id, template_name="accounts/profile.html"):
     stream = Action.objects.get_for_actor( player).\
             exclude(verb='user_logged_in').order_by('-datetime')[:10]
 
+    create_comment_sijax = Sijax()
+    create_comment_sijax.set_request_uri(reverse('comments:ajax-create'))
+    context.update({ 'create_comment_sijax_js' : create_comment_sijax.get_js(),})
 
     context.update({
         'player': player,

@@ -29,7 +29,6 @@ def create_video_attachment(attachment_parent, video_url, game, author):
         pass
 
 def create_image_attachment(attachment_parent, image_file, game, author):
-
     picture = Image.open(image_file)
     if (image_file.name.rfind(".") -1):
         image_file.name = "%s.%s" % (image_file.name, picture.format.lower())
@@ -43,4 +42,3 @@ def create_image_attachment(attachment_parent, image_file, game, author):
     )
     attachment_parent.attachment.add(attachment)
     log.debug("created attachment image for parent %s. %s" % (attachment_parent.pk, attachment))
-
