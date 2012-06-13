@@ -120,8 +120,8 @@ INSTALLED_APPS = (
     'gmapsfield',
     'gmapsfield.templatetags',
     'nani',
-    #'dilla',
     'rosetta',
+    'sorl.thumbnail',
     # django-ajax-selects
     'ajax_select',
     'django_extensions',

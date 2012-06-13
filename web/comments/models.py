@@ -71,6 +71,20 @@ class Comment(models.Model):
         return this_attachment_video_url(self.pk)
 
     @property
+    def attachment_image(self):
+        @cached(60*60*24*30)
+        def this_attachment_image(comment_id):
+            try:
+                att = self.attachment.get(
+                                att_type=Attachment.ATTACHMENT_TYPE_IMAGE,
+                                file__isnull=False)
+            except Attachment.DoesNotExist:
+                return
+            else:
+                return att.file
+        return this_attachment_image(self.pk)
+
+    @property
     def attachment_image_url(self):
         @cached(60*60*24*30)
         def this_attachment_image_url(comment_id):
@@ -135,7 +149,7 @@ class Comment(models.Model):
     # URL resolution cribbed from django's contrib comments
     #
     def get_absolute_url(self, anchor_pattern="#comment-%(id)s"):
-        print self.get_content_object_url() + (anchor_pattern % self.__dict__)
+        #print self.get_content_object_url() + (anchor_pattern % self.__dict__)
         return self.get_content_object_url() + (anchor_pattern % self.__dict__)
 
     @property

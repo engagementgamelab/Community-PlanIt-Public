@@ -1,4 +1,4 @@
-{% load static %}
+{% load static thumbnail %}
 
 {% comment %}
 Avatars require this styling to adjust size
@@ -26,7 +26,10 @@ Avatars require this styling to adjust size
 
 <div class="avatar">
     <div class="avatar-content">
-        <img src="{% if user.get_profile.avatar %}{% get_media_prefix %}{% else %}{% get_static_prefix %}{% endif %}{% firstof user.get_profile.avatar '/img/avatar-blank.png' %}" />
-
+        {% thumbnail user.get_profile.avatar "164x164" crop="center" as im %}
+        <img src="{{ im.url }}">
+        {% empty %}
+        <img src="{% get_static_prefix %}img/avatar-blank.png"/>
+        {% endthumbnail %}
     </div>
 </div>

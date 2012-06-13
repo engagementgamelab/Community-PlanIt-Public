@@ -1,5 +1,5 @@
 {% extends 'accounts/base_game.html' %}
-{% load i18n cpi_tags avatar %}
+{% load i18n cpi_tags avatar static thumbnail %}
 
 {% block title %}{% trans "Profile" %}{% endblock %}
 
@@ -181,7 +181,11 @@
                 <input type="hidden" name="parent_id" value="{{ profile_pk }}"/>
                 <input type="hidden" name="parent_type" value="user_profile"/>
                 <div class="comment-response-submit">
-                    <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="36" height="36" />
+                    {% thumbnail request.user.get_profile.avatar "36x36" crop="center" as im %}
+                    <img src="{{ im.url }}">
+                    {% empty %}
+                    <img src="{% get_static_prefix %}img/avatar-blank.png" width="36" height="36"/>
+                    {% endthumbnail %}
                     <input type="submit" id="{{ profile_pk }}" class="btn-yellow submit" value="Submit" />
                 </div>
             </form>

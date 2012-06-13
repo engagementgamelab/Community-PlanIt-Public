@@ -1,4 +1,4 @@
-{% load attachment_tags i18n heatmap %}
+{% load attachment_tags i18n heatmap static thumbnail %}
 {% with comments_count=comment.comments.count comment_id=comment.pk %}
 {% with likes_count=comment.likes_count likes_users=comment.likes_users %}
 {% if not nested %}<div class="thread heatmap-{{ comments_count|add:likes_count|heatmap}}">{% endif %}
@@ -13,7 +13,11 @@
         {# HEADER #}
         <div class="comment-header">
             <div class="comment-header-avatar">
-                <img src="{% if comment.author_avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof comment.author_avatar 'img/avatar-blank.png' %}" width="48" height="48" />
+                {% thumbnail comment.author_avatar "48x48" crop="center" as im %}
+                <img src="{{ im.url }}">
+                {% empty %}
+                <img src="{% get_static_prefix %}img/avatar-blank.png" width="48" height="48"/>
+                {% endthumbnail %}
             </div>
             <div class="comment-header-meta">
                 <div class="comment-author">{% trans "From" %} <a href="{% url accounts:player_profile comment.author.id %}">{{ comment.author_screen_name }}</a></div>
@@ -97,7 +101,11 @@
                 {# HEADER #}
                 <div class="comment-header">
                     <div class="comment-header-avatar">
-                        <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="48" height="48" />
+                        {% thumbnail request.user.get_profile.avatar "48x48" crop="center" as im %}
+                        <img src="{{ im.url }}">
+                        {% empty %}
+                        <img src="{% get_static_prefix %}img/avatar-blank.png" width="48" height="48"/>
+                        {% endthumbnail %}
                     </div>
                     <div class="comment-header-meta">
                         <div class="comment-author">{% trans "My response..." %}</div>

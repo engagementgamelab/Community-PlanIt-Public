@@ -8,6 +8,8 @@ from cache_utils.decorators import cached
 from stream import utils as stream_utils
 from stream.models import Action
 
+from sorl.thumbnail import ImageField
+
 from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -345,7 +347,7 @@ class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='user_profiles_list', through=UserProfilePerInstance)
 
-    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
+    avatar = ImageField(upload_to=determine_path, null=True, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
     receive_email = models.BooleanField(default=True)
     city = models.CharField(max_length=128, blank=True, default='')
