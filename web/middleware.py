@@ -18,7 +18,7 @@ class CurrentDomainMiddleware(object):
 
         request.current_site = RequestSite(request)
         try:
-            current_city = City.objects.for_domain(domain=request.current_site)
+            current_city = City.objects.get(domain=request.current_site)
         except City.DoesNotExist:
             current_city = None
         request.current_city = current_city
