@@ -1,14 +1,16 @@
 import os
 import xlwt
 import time
+import tempfile
 from stream.models import Action
 import StringIO
+import zipfile
 from random import randint
 from datetime import datetime, date
 from operator import attrgetter
 
 from django.conf import settings
-from django.core.files.base import ContentFile
+from django.core.files import File
 from django.db import connection
 
 from web.accounts.models import UserProfilePerInstance, UserProfile
@@ -80,45 +82,43 @@ class ReportHandler(object):
             games = Instance.objects.filter(pk=self.game_id)
         else:
             games = Instance.objects.current()
-
-        for report_label in settings.CPI_REPORTS.keys():
-
-            for game in games:
-                xls_report = XlsReport()
-                report_instance = get_report_instance(report_label)(game, debug=self.debug)
-                if report_instance.__class__.__name__  == 'MissionReport':
-                    for mission in game.missions.all():
-                        data = report_instance.get_report_data(game, [mission,])
-                        sheet = xls_report.wb.add_sheet(mission.title)
+        NOW = datetime.now()
+        now_str = NOW.strftime('%Y-%m-%d-%H-%M')
+        report_labels = settings.CPI_REPORTS.keys()
+        for game in games:
+            report = Report.objects.create(
+                    title='%s reports' % game.title,
+                    instance=game,
+            )
+            zf_filename= "".join([now_str, '-', game.slug,'.zip']) 
+            temp = tempfile.NamedTemporaryFile()
+            with zipfile.ZipFile(temp, mode='w', compression=zipfile.ZIP_DEFLATED, ) \
+                    as zf:
+                for report_label in report_labels:
+                    xls_report = XlsReport()
+                    report_instance = get_report_instance(report_label)(game, debug=self.debug)
+                    if report_instance.__class__.__name__  == 'MissionReport':
+                        for mission in game.missions.all():
+                            data = report_instance.get_report_data(game, [mission,])
+                            sheet = xls_report.wb.add_sheet(mission.title)
+                            xls_report.write_titles(sheet, data.field_titles)
+                            xls_report.write_data(sheet, data.values_list)
+                    else:
+                        data = report_instance.get_report_data(game)
+                        sheet = xls_report.wb.add_sheet(report_instance.__class__.__name__)
                         xls_report.write_titles(sheet, data.field_titles)
                         xls_report.write_data(sheet, data.values_list)
-                else:
-                    data = report_instance.get_report_data(game)
-                    sheet = xls_report.wb.add_sheet(report_instance.__class__.__name__)
-                    xls_report.write_titles(sheet, data.field_titles)
-                    xls_report.write_data(sheet, data.values_list)
 
-                output = xls_report.render_to_excel()
-
-                title = "".join([game.slug, '-', report_label])
-                report = Report.objects.create(
-                        title=title,
-                        instance=game,
-                        db_queries=data.query_count,
-                        exec_time=data.exec_time,
-                )
-                NOW = datetime.now()
-                filename = "".join([NOW.strftime('%Y-%m-%d-%H-%M'), '-', title, '.xls'])
-                location = os.path.join(settings.MEDIA_ROOT, determine_path(report, filename))
-                new_dir = os.path.dirname(location)
-                if not os.path.exists(new_dir):
-                    os.mkdir(new_dir)
-
-                report.file.save(filename, ContentFile(output.getvalue()), save=True)
-                output.close()
-                log.debug('done with report. %s, saved %s' % (filename, location))
-                del report_instance 
-
+                    output = xls_report.render_to_excel()
+                    filename = "".join([now_str, '-', 
+                                        "".join([game.slug, '-', report_label]),
+                                        '.xls']
+                    )
+                    zf.writestr(filename, output.getvalue())
+                    output.close()
+                    del report_instance 
+            report.file.save(zf_filename, File(temp))
+            temp.close()
 
 class XlsReport(object):
 
