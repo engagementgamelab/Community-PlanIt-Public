@@ -22,5 +22,8 @@ urlpatterns = patterns('web.attachments.views',
     url(r'^post-game/visualizations/detroit_cloud.html$', direct_to_template,
                 { 'template': 'detroit_cloud.html' },
         name='detroit-247-postgame-cloud'),
+    url(r'^post-game/visualizations/noquwo_cloud.html$', direct_to_template,
+                { 'template': 'noquwo_cloud.html' },
+        name='noquwo-postgame-cloud'),
 
 )
