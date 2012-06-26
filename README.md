@@ -23,3 +23,6 @@ Dependencies and server configurations are available via [buildout](http://www.b
 ## Initial Data ##
 
 ## Server Configuration ##
+
+# Multilingual #
+Community PlanIt supports multilingual translations using [django locale urls](http://packages.python.org/django-localeurl/) and [django-nani](http://readthedocs.org/docs/django-nani/en/0.0.3/index.html). 
