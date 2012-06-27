@@ -15,6 +15,8 @@ Dependencies and server configurations are available via [buildout](http://www.b
 
 ### Buildout ###
 - `wget http://svn.zope.org/*checkout*/zc.buildout/trunk/bootstrap/bootstrap.py`
+- Create an `eggs` folder: `mkdir eggs`
+- `mkdir log; touch log/cpi.log`
 - `python bootstrap.py`
 - `ln -s config/buildout.cfg.local buildout.cfg`
 - `buildout [-c buildout.cfg]`
