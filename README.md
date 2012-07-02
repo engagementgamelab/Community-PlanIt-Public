@@ -1,7 +1,7 @@
 # Community PlanIt Documentation #
-Community PlanIt is a community engagement platform for local planning efforts. Bringing together the interactivity of social networks and the incentives of online games, Community PlanIt transforms participatory planning into a fun, engaging activity for all ages. Players participate planning-themed time-based missions to earn game coins, which they spend on the the causes and charities most important to them. The community joins together at the end of the process to discuss the results and plan for the future.
+Community PlanIt is a community engagement platform for local planning efforts. Bringing together the interactivity of social networks and the incentives of online games, Community PlanIt transforms participatory planning into a fun, engaging activity for all ages. Players participate in planning-themed time-based missions to earn game coins, which they spend on the local causes most important to them. The community joins together at the end of the process to discuss the results with decision-makers and plan for the future.
 
-This project is currently maintained by Emerson College's [Engagement Game Lab](http://engagementgamelab.org/ "Engagement Game Lab").
+This project is currently maintained by the [Engagement Game Lab](http://engagementgamelab.org/ "Engagement Game Lab") at Emerson College.
 
 ----------
 # Development Environment Setup #
