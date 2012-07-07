@@ -1,4 +1,3 @@
-# -- coding: utf-8 --
 import os
 import sys
 import re
@@ -8,14 +7,11 @@ ROOTDIR = os.path.dirname(os.path.realpath(__file__))
 DIRNAME = os.path.dirname(__file__)
 PARENT_DIR = os.path.dirname(os.path.abspath(DIRNAME))
 
-#
-# Standard Django settings
-#
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
-#admin_tools
+# admin_tools
 ADMIN_TOOLS_MEDIA_URL = '/static/'
-#ADMIN_TOOLS_MENU = 'web.reporting.admin.ReportsMenu'
+# ADMIN_TOOLS_MENU = 'web.reporting.admin.ReportsMenu'
 
 MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
 MEDIA_URL = '/assets/'
@@ -59,12 +55,12 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    # localeurl should be first
-    'localeurl',   
+    'localeurl', # localeurl needs to be first
     'admin_tools',
     'admin_tools.theming',
     'admin_tools.menu',
     'admin_tools.dashboard',
+    
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.auth',
@@ -92,10 +88,8 @@ INSTALLED_APPS = (
     'web.responses',
     'web.values',
     'web.reporting',
-
-    # Deprecated
-    #'web.reports',
-
+    #'web.reports', # deprecated
+    
     # Need this after web.admin because of test runner: 
     # it loads django admin tests by 'admin' app label first
     'django.contrib.admin',
@@ -255,7 +249,7 @@ AJAX_LOOKUP_CHANNELS = {
     'affiliations': ('accounts.lookups', 'AffiliationsLookup'),
 }
 
-#django_endless_pagination
+# django_endless_pagination
 ENDLESS_PAGINATION_ADD_NOFOLLOW = True
 ENDLESS_PAGINATE_PLAYERS_PER_PAGE = 16
 ENDLESS_PAGINATION_PREVIOUS_LABEL = '''<div class="pagination-previous"></div>'''
@@ -275,16 +269,16 @@ CPI_REPORTS = {
 # using uwsgi spoooler, timer decorator for now
 
 # django-celery
-#import djcelery
-#djcelery.setup_loader()
-#CELERY_IMPORTS = ('badges.tasks',)
+# import djcelery
+# djcelery.setup_loader()
+# CELERY_IMPORTS = ('badges.tasks',)
 
-#BROKER_HOST = "localhost"
-#BROKER_PORT = 5672
-#BROKER_USER = "guest"
-#BROKER_PASSWORD = "guest"
-#BROKER_VHOST = "/"
-
+# BROKER_HOST = "localhost"
+# BROKER_PORT = 5672
+# BROKER_USER = "guest"
+# BROKER_PASSWORD = "guest"
+# BROKER_VHOST = "/"
+  
 #
 # Community PlanIT settings
 #
