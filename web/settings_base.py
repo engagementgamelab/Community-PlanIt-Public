@@ -53,9 +53,8 @@ INTERNAL_IPS = ('127.0.0.1',)
 EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 TEMPLATE_DIRS = (
-    os.path.join(ROOTDIR, 'templates_redesign'),
-    os.path.join(ROOTDIR, 'CPI-visualizations'),
     os.path.join(ROOTDIR, 'templates'),
+    os.path.join(ROOTDIR, 'CPI-visualizations'),
     os.path.join(ROOTDIR, '../../parts/django-nani/hvad/templates'),
 )
 
