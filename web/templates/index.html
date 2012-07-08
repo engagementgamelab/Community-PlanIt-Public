@@ -54,28 +54,13 @@
     </div>
     {% endcomment %}
     <div>
-        <h1>Games Going On</h1>
+        <h1>Recent Games</h1>
         <ul>
             {% for instance in instances %}
-                <li><a href="{{ instance.get_absolute_url }}">{{ instance }}</a></li>
+                <li><a href="{{ instance.get_absolute_url }}">{{ instance }}</a> ({{ instance.for_city.name }})</li>
             {% endfor %}
         </ul>
     </div>
     
-    
-    <div class="row">
-        <div class="span4">
-            <h3>In The News</h3>
-        
-        </div>
-        <div class="span4">
-            <h3>Tweets</h3>
-        </div>
-        <div class="span4">
-            <h3>Bring Community PlanIt to You!</h3>
-            <a href="{% url bringcpi %}" class="btn">Bring Community PlanIt to you!</a>
-        </div>    
-    </div>
-
 </div>
 {% endblock %}
