@@ -56,8 +56,8 @@
     <div>
         <h1>Games Going On</h1>
         <ul>
-            {% for city in cities %}
-                <li><a href="http://{{ city.domain }}">{{city.name }}</a></li>
+            {% for instance in instances %}
+                <li><a href="{{ instance.get_absolute_url }}">{{ instance }}</a></li>
             {% endfor %}
         </ul>
     </div>

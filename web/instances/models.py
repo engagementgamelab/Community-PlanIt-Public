@@ -13,6 +13,7 @@ from django.conf import settings
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
+from django.core.urlresolvers import reverse
 
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -177,11 +178,11 @@ class Instance(TranslatableModel):
     def __unicode__(self):
         return self.title
 
-    def get_absolute_url(self, ssl=True):
-        return os.path.join(
-                'https://' if settings.DEBUG == False else 'http://',
-                self.for_city.domain
-        )
+    @models.permalink
+    def get_absolute_url(self):
+        return ('instances:instance', (), {
+            'slug': self.slug,
+        })
 
     @property
     def stream_action_title(self):

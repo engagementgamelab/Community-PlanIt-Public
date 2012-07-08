@@ -33,46 +33,22 @@ from core.utils import get_translation_with_fallback
 import logging
 log = logging.getLogger(__name__)
 
+def instance(request, slug, template='instances/instance_future.html'):
+    instance = get_object_or_404(Instance, slug=slug)
 
-#TODO: this does not fail nicely, it should 
-def region(request, slug):
-    community = get_object_or_404(Instance, slug=slug)
+    attachments = Attachment.objects.filter(instance=instance)
 
-    if request.method == 'POST':
-        notification_form = NotificationRequestForm(community, request.POST)
-        if notification_form.is_valid():
-            notification_request = notification_form.save(commit=False)
-            try:
-                # if we have one, we can still give them the success message
-                existing_request = NotificationRequest.objects.get(instance=community, email=notification_request.email)
-            except NotificationRequest.DoesNotExist:
-                # good
-                notification_request.instance = community
-                notification_request.save()
-            messages.success(request, _("We'll let you know when {0} is active. Thanks for your interest!").format(community))
-            return redirect(reverse('instances'))
-    else:
-        notification_form = NotificationRequestForm(community)
-
-    #userProfiles = UserProfile.objects.filter(instance=community)
-    #users = []
-    #for userProfile in userProfiles:
-    #    users.append(userProfile.user)
-    #leaderboard = []
-    #for userProfile in userProfiles.order_by("-totalPoints"):
-    #    leaderboard.append(userProfile.user)
-    #log = Activity.objects.filter(instance=community).order_by('-date')[:100]
-    attachments = Attachment.objects.filter(instance=community).exclude(file='')
-
-    data = {
-        'notification_form': notification_form,
-        'community': community,
-        #'users': users,
-        #'leaderboard': leaderboard,
-        #'log': log,
+    context = {
+        'instance': instance,
         'attachments': attachments,
     }
-    return render(request, 'instances/base.html', data)
+    
+    if instance.is_active:
+        template='instances/instance_active.html'
+    elif instance.is_expired:
+        template='instances/instance_past.html'
+        
+    return render(request, template, context)
 
 def all(request):
     kwargs=dict(

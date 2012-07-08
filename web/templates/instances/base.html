@@ -1,7 +1,13 @@
-{% extends "base_city.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 
-{% block css %}
-    {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}instances/css/styles.css">    
+
+{% block content %}
+    <h1>{{ instance }}</h1>
+    <a class="btn btn-large btn-primary">Join Game</a>
+    <p>{{ instance.description }}</p>
+    
+    <h2>Causes</h2>
+    
+    <h2>Resources</h2>
 {% endblock %}

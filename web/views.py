@@ -18,40 +18,13 @@ import logging
 log = logging.getLogger(__name__)
 
 def index(request, template='index.html', city_header=True):
-    domain = request.current_site.domain
-    try:
-        current_city = City.objects.for_domain(domain=domain)
-    except City.DoesNotExist:
-        # No city,
-        current_city = None
-    else:
-        # City exists, send them to city page
-        template = 'city.html'
-
-    # if user logged in to a game
-    # expecting the `current_game
-    # to be set in the middleware
-    if hasattr(request, 'current_game'):
-        my_games = UserProfilePerInstance.objects.games_for_profile(
-                                        user_profile=request.user.get_profile()
-        )
-        log.debug('my_games: %s' % my_games)
-
-        default_mission = Mission.objects.default(request.current_game.pk)
-        if default_mission is None:
-            city_header = False
-    else:
-        my_games = []
-
-    context = dict(
-        instances_past = Instance.objects.past(for_city=current_city),
-        instances_active = Instance.objects.active(for_city=current_city),
-        instances_future = Instance.objects.future(for_city=current_city),
-        instances_current = Instance.objects.current(for_city=current_city),
-        current_city = current_city,
-        my_games = my_games,
-        cities = City.objects.all(),
-    )
+    context = {
+        'instances': Instance.objects.all(),
+        'instances_past': Instance.objects.past(),
+        'instances_active': Instance.objects.active(),
+        'instances_future': Instance.objects.future(),
+        'instances_current': Instance.objects.current(),
+    }
     context.update({
         'city_header': city_header
     })
