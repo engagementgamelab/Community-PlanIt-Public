@@ -4,6 +4,8 @@
 
 {% block content %}
     <h1>{{ instance }}</h1>
+    <h6>A game in the {{ instance.for_city.name }} area.</h6>
+    <p>Game State: pre-game / during-game / post-game</p>
     
     <br><br>
     
@@ -11,6 +13,7 @@
         <div class="span6">
             <h2>About This Game</h2>
             <p>{{ instance.description }}</p>
+            
         </div>
         <div class="span6">
             <h2>Causes</h2>        
