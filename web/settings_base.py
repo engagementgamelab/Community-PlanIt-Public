@@ -29,7 +29,7 @@ STATICFILES_FINDERS = (
 )
 
 STATICFILES_STORAGE = (
-    # 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
+    'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
 )
 
 ADMINS = ( ('philip.kalinsky', 'eloquentbits.com'), )
