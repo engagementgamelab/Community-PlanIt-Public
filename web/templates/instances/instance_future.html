@@ -1,1 +1,19 @@
 {% extends 'instances/base.html' %}
+
+{% block content %}
+    {{ block.super }}
+    
+    <br><br>
+    
+    <div class="well">
+        future
+        <p>This game starts on {{ instance.start_date }} <a class="btn btn-large btn-primary">Join Game</a></p>
+        
+        <p>You're all signed up to play this game. It starts on {{ instance.start_date }}, but don't worry... we'll send you a reminder email before then!</p>
+    </div>
+    
+    <br><br>
+    
+    <h2>Resources</h2>
+
+{% endblock %}

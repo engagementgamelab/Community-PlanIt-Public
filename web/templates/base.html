@@ -69,7 +69,9 @@
                             <li><a href="{% url home %}">{% trans "Home" %}</a></li>
                             <li><a href="#">{% trans "All Games" %}</a></li>
                             <li><a href="{% url howtoplay %}">{% trans "How to Play" %}</a></li>
-                            {% if request.current_game and mission %}<li><a href="{% url missions:mission mission.slug %}">{% trans "My Game" %}</a></li>{% endif %}
+
+                            
+                            <li><a href="">({{ request.user }})</a></li>
                             {% if user.is_authenticated %}
                                 <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
                             {% else %}

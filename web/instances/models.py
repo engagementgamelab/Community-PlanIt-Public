@@ -106,22 +106,17 @@ class InstanceManager(TranslationManager):
     def common_excludes(self):
         return self.exclude(is_disabled=True)
 
-    def past(self, for_city=None):
+    def future(self):
         qs = self.language(get_language()).exclude(is_disabled=True)
-        if for_city:
-            qs = qs.filter(for_city=for_city)
+        return qs.filter(start_date__gt=self.now).distinct()
+
+    def present(self):
+        qs = self.language(get_language()).exclude(is_disabled=True)
+        return qs.filter(start_date__lte=self.now, missions__end_date__gte=self.now).language(get_language()).distinct()
+
+    def past(self):
+        qs = self.language(get_language()).exclude(is_disabled=True)
         return qs.exclude(missions__end_date__gte=self.now).distinct()
-
-    def future(self, for_city=None):
-        qs = self.language(get_language()).exclude(is_disabled=True)
-        qs = qs.filter(start_date__gt=self.now)
-        if for_city:
-            qs = qs.filter(for_city=for_city,)
-        return qs.distinct()
-
-    def active(self, for_city=None):
-        qs = self.language(get_language()).exclude(is_disabled=True)
-        return qs.filter(start_date__lte=self.now).language(get_language()).distinct()
 
     @cached(60*60*24)
     def current(self, for_city=None):
@@ -204,7 +199,8 @@ class Instance(TranslatableModel):
     #                                            prof.email, u.username)
     #        )
     #    return out
-        
+    
+    @property
     def end_date(self):
         missions = self.missions.order_by('-end_date')
         if missions:
@@ -212,18 +208,26 @@ class Instance(TranslatableModel):
             return last_mission.end_date
         return None
     
+    
+    def is_future(self):
+        ''' Instance is not yet running (pre-game)'''
+        return self in Instance.objects.future()
+        
+    def is_present(self):
+        ''' Instance is currently running (during-game) '''
+        return self in Instance.objects.present()
+
+    def is_past(self):
+        ''' Instance is finished running (post-game)'''
+        return self in Instance.objects.past()
+
+    def is_started(self):
+        ''' Active and Expired Games '''
+        return datetime.datetime.now() >= self.start_date
+    
     def time_until_start(self):
         return self.start_date - datetime.datetime.now()
     
-    def is_active(self):
-        return self in Instance.objects.active()
-
-    def is_expired(self):
-        return self in Instance.objects.past()
-    
-    def is_started(self):
-        return datetime.datetime.now() >= self.start_date
-
     def rebuild_mission_dates(self):
         # this will reset all start_date, end_date fields on 
         # this instances missions

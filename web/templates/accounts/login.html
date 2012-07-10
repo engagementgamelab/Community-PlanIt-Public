@@ -4,28 +4,18 @@
 {% block title %}{% trans "Login" %}{% endblock %}
 
 {% block content %}
-<div>
-    <div id="registration-container">
-        <div class="column-half">
-            <div class="column-container">
-                <h1>Log In</h1>
-                {% csrf_token %}
-                <form class="accounts-form" action="{% url accounts:login %}" method="post">
-                    {% csrf_token %}
+    <h1>Log In</h1>
+    {% csrf_token %}
+    <form action="{% url accounts:login %}" method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <a href="{# url accounts:forgot_password #}">Forgot password?</a>
         
-                    {{ form.as_p}}
-            
-                    <div class="clear">
-                        <input class="button submit" type="submit" value="Get back to playing!">
-                    </div>
-                </form>
-            </div>
+        <div>
+            <input class="btn btn-primary" type="submit" value="Get back to playing!"> Not registered? Register now!
         </div>
-        <div class="column-half">
-            <div class="column-container">
-                <h1>Sign Up</h>
-            </div>
-        </div>
-    </div>
-</div>
+    </form>
+
 {% endblock %}
