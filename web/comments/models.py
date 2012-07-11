@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
-from web.attachments.models import Attachment
+from web.attachments_v2.models import Attachment
 from web.instances.models import Instance
 
 
