@@ -74,7 +74,7 @@ INSTALLED_APPS = (
     'web.accounts',
     'web.affiliations',
     'web.answers',
-    'web.attachments',
+    'web.attachment_types',
     'web.badges',
     'web.crowds',
     'web.comments',
@@ -86,6 +86,8 @@ INSTALLED_APPS = (
     'web.missions',
     'web.player_activities',
     'web.responses',
+    'web.attachments_v2',
+    'web.attachment_types',
     'web.values',
     'web.reporting',
     #'web.reports', # deprecated
@@ -99,6 +101,7 @@ INSTALLED_APPS = (
     #'djcelery',
     'endless_pagination',
     'stream',
+    'attachments',
     'django_mailer',
     'django_extensions',
     'gmapsfield',
@@ -128,7 +131,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
-    'web.middleware.CurrentDomainMiddleware',
+    #'web.middleware.CurrentDomainMiddleware',
 )
 
 NOREPLY_EMAIL = 'noreply@communityplanit.org'
