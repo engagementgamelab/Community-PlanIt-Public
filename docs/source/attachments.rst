@@ -29,6 +29,11 @@ attachments.Attachment. Inlines in use by the admin are defined for each
 of the new attachment models are defined as well.
 
 
+to query for the new attachment subclasses use the `select_subclasses`
+model_utils.managers.InheritanceManager method
+
+Attachment.objects.filter().select_subclasses('attachmentvideo')
+
 ************
 Attachments
 ************
