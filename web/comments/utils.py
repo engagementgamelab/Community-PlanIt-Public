@@ -1,6 +1,6 @@
 from PIL import Image
 
-from web.attachments.models import Attachment
+from web.attachments_v2.models import Attachment
 
 import logging
 log = logging.getLogger(__name__)
