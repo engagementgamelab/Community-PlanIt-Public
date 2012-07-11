@@ -32,7 +32,8 @@ urlpatterns = patterns('web',
     
 
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),
-    (r'^resource-center/', include('attachments.urls', namespace='attachments', app_name='attachments')),
+    #(r'^resource-center/', include('attachments.urls', namespace='attachments', app_name='attachments')),
+
     (r'^comments/', include('comments.urls', namespace='comments', app_name='comments')),
     (r'^missions/', include('missions.urls', namespace='missions', app_name='missions')),
     (r'', include('instances.urls', namespace='instances', app_name='instances')),
@@ -76,6 +77,10 @@ if 'ajax_select' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         (r'^ajax_select/', include('ajax_select.urls')),
     )
+
+if 'attachments' in settings.INSTALLED_APPS:
+    (r'^attachments/', include('attachments.urls')),
+
 
 #urlpatterns += patterns('core.memcached_status',
 #    url(r'^status/cache/$', 'view'),
