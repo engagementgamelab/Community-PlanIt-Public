@@ -1,4 +1,5 @@
 from django.contrib import admin
+from attachment_types.models import VideoAttachmentInlines, AttachmentWithThumbnailInlines
 
 from web.comments.models import *
 
@@ -8,6 +9,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('posted_date', 'subject', 'user_name', 'flagged', 'hidden') # could not be used with nani:, 'message')
 
     actions = ['hide_selected', 'reveal_selected']
+    inlines = [VideoAttachmentInlines, AttachmentWithThumbnailInlines]
 
     def get_actions(self, request):
         actions = super(CommentAdmin, self).get_actions(request)
