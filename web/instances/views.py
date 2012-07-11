@@ -33,7 +33,7 @@ from core.utils import get_translation_with_fallback
 import logging
 log = logging.getLogger(__name__)
 
-def instance(request, slug, template='instances/instance_future.html'):
+def instance(request, slug, template='instances/base.html'):
     instance = get_object_or_404(Instance, slug=slug)
 
     attachments = Attachment.objects.filter(instance=instance)
@@ -43,9 +43,11 @@ def instance(request, slug, template='instances/instance_future.html'):
         'attachments': attachments,
     }
     
-    if instance.is_active:
-        template='instances/instance_active.html'
-    elif instance.is_expired:
+    if instance.is_future():
+        template='instances/instance_future.html'
+    elif instance.is_present():
+        template='isntance/instance_present.html'
+    elif instance.is_past():
         template='instances/instance_past.html'
         
     return render(request, template, context)

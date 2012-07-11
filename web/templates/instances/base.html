@@ -4,30 +4,32 @@
 
 {% block content %}
     <h1>{{ instance }}</h1>
+    <h6>A game in the {{ instance.for_city.name }} area.</h6>
     
+    <p>
+        Game State: 
+        <span class="badge badge-info">
+            {% if instance.is_future %}
+                future (pre-game)
+            {% elif instance.is_present %}
+                present (during-game)
+            {% elif instance.is_past %}
+                past (post-game)
+            {% endif %}
+        </span>
+    </p>
+        
     <br><br>
     
     <div class="row">
         <div class="span6">
             <h2>About This Game</h2>
             <p>{{ instance.description }}</p>
+            
         </div>
         <div class="span6">
             <h2>Causes</h2>        
         </div>
     </div>
-    
-    <br><br>
-    
-    <div class="well">
-        <p>This game starts on {{ instance.start_date }} <a class="btn btn-large btn-primary">Join Game</a></p>
-        
-        <p>You're all signed up to play this game. It starts on {{ instance.start_date }}, but don't worry... we'll send you a reminder email before then!</p>
-        
-        <p>This game has finished! <a class="btn btn-large disabled">Join Game</a> <a class="btn btn-large btn-danger">See Results</a></p>
-    </div>
-    
-    <br><br>
-    
-    <h2>Resources</h2>
+
 {% endblock %}

@@ -21,13 +21,11 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(DIRNAME, 'static'),
-    os.path.join(DIRNAME, 'CPI-visualizations/static'),
 )
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 )
 
 STATICFILES_STORAGE = (
@@ -50,7 +48,6 @@ EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 TEMPLATE_DIRS = (
     os.path.join(ROOTDIR, 'templates'),
-    os.path.join(ROOTDIR, 'CPI-visualizations'),
     os.path.join(ROOTDIR, '../../parts/django-nani/hvad/templates'),
 )
 

@@ -15,7 +15,7 @@
     <div>
         {% if not user.is_authenticated %}
         <div id="login-container" class="btn-arrow">
-            <a class="btn" href="{% url accounts:login %}">{% trans "Register To Play Now!" %}</a>
+            <a class="btn" href="{% url accounts:register %}">{% trans "Register To Play Now!" %}</a>
             {% trans "Already registered?" %}<a href="{% url accounts:login %}">{% trans "Sign In" %}</a>
         </div>
         {% endif %}
@@ -57,7 +57,19 @@
         <h1>Recent Games</h1>
         <ul>
             {% for instance in instances %}
-                <li><a href="{{ instance.get_absolute_url }}">{{ instance }}</a> ({{ instance.for_city.name }})</li>
+                <li>
+                    <a href="{{ instance.get_absolute_url }}">{{ instance }}</a> ({{ instance.for_city.name }})
+                    ({{ instance.start_date|date:"F j, Y" }} - {{ instance.end_date|date:"F j, Y" }})
+                    <span class="badge badge-info">
+                        {% if instance.is_future %}
+                            future (pre-game)
+                        {% elif instance.is_present %}
+                            present (during-game)
+                        {% elif instance.is_past %}
+                            past (post-game)
+                        {% endif %}
+                    </span>
+                </li>
             {% endfor %}
         </ul>
     </div>

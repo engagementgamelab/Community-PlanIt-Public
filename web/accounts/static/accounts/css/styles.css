@@ -27,7 +27,7 @@
             width: 13px;
             height: 17px;
             margin: 0px -13px 0px 0px;
-            background: url('../../../../static/img/icon-private.png') no-repeat;
+            background: url('    /static/img/icon-private.png') no-repeat;
         }
     .accounts-form label {
         display: block;
@@ -380,7 +380,7 @@
             height: 8px;
             margin: 8px 0px;
             text-indent: -3000px;
-            background: url('../../../../static/img/btn-forward.png');
+            background: url('    /static/img/btn-forward.png');
         }
         
         #id_affiliations_remove_link,
@@ -390,7 +390,7 @@
             height: 8px;
             margin: 8px 0px;
             text-indent: -3000px;
-            background: url('../../../../static/img/btn-back.png');
+            background: url('    /static/img/btn-back.png');
         }
     
         #id_affiliations_add_all_link,
@@ -489,7 +489,7 @@
         font-size: 1.2em;
         margin: 10px 0px;
         padding-left: 20px;
-        background: url('../../../../static/img/icon-findplayers.png') no-repeat left 2px;
+        background: url('    /static/img/icon-findplayers.png') no-repeat left 2px;
     }
         
     .profile-container .profile-stakes {

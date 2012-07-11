@@ -1,1 +1,17 @@
 {% extends 'instances/base.html' %}
+
+{% block content %}
+    {{ block.super }}
+    
+    <br><br>
+    
+    <div class="well">
+        past
+        <p>This game has finished! <a class="btn btn-large disabled">Join Game</a> <a class="btn btn-large btn-danger">See Results</a></p>
+    </div>
+    
+    <br><br>
+    
+    <h2>Post-game Breakdown</h2>
+
+{% endblock %}

@@ -20,10 +20,6 @@ log = logging.getLogger(__name__)
 def index(request, template='index.html', city_header=True):
     context = {
         'instances': Instance.objects.all(),
-        'instances_past': Instance.objects.past(),
-        'instances_active': Instance.objects.active(),
-        'instances_future': Instance.objects.future(),
-        'instances_current': Instance.objects.current(),
     }
     context.update({
         'city_header': city_header

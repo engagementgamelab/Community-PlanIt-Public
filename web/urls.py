@@ -36,7 +36,6 @@ urlpatterns = patterns('web',
 
     (r'^comments/', include('comments.urls', namespace='comments', app_name='comments')),
     (r'^missions/', include('missions.urls', namespace='missions', app_name='missions')),
-    (r'', include('instances.urls', namespace='instances', app_name='instances')),
     (r'^affiliations/', include('affiliations.urls', namespace='affiliations', app_name='affiliations')),
     (r'^get-together/', include('crowds.urls', namespace='crowds', app_name='crowds')),
     (r'^values/', include('values.urls', namespace='values', app_name='values')),
@@ -87,3 +86,7 @@ if 'attachments' in settings.INSTALLED_APPS:
 #)
 
 urlpatterns += staticfiles_urlpatterns()
+
+urlpatterns += patterns('web', 
+    (r'', include('instances.urls', namespace='instances', app_name='instances')),
+)
