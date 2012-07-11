@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from attachments.models import Attachment
+from attachments_v2.models import Attachment
 from comments.models import Comment
 
 class Response(models.Model):

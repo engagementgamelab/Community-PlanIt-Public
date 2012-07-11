@@ -23,7 +23,7 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from web.attachments.models import Attachment
+from web.attachments_v2.models import Attachment
 from web.comments.models import Comment
 from web.missions.models import Mission, invalidate_mission #, invalidate_activities_for_mission
 from web.reports.models import Activity
