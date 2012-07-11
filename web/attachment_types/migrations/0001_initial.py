@@ -1,46 +1,62 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
-        # Adding model 'Attachment'
-        db.create_table('attachments_attachment', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('file', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
-            ('url', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=45)),
-            ('flagged', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
-            ('instance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['instances.Instance'], null=True, blank=True)),
-            ('is_valid', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('last_validity_check', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+        # Adding model 'AttachmentWithThumbnail'
+        db.create_table('attachment_types_attachmentwiththumbnail', (
+            ('attachment_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['attachments.Attachment'], unique=True, primary_key=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True)),
+            ('thumbnail', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
         ))
-        db.send_create_signal('attachments', ['Attachment'])
+        db.send_create_signal('attachment_types', ['AttachmentWithThumbnail'])
+
+        # Adding model 'AttachmentVideo'
+        db.create_table('attachment_types_attachmentvideo', (
+            ('attachment_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['attachments.Attachment'], unique=True, primary_key=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True)),
+            ('url', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
+            ('is_valid', self.gf('django.db.models.fields.BooleanField')(default=False)),
+        ))
+        db.send_create_signal('attachment_types', ['AttachmentVideo'])
 
 
     def backwards(self, orm):
-        
-        # Deleting model 'Attachment'
-        db.delete_table('attachments_attachment')
+        # Deleting model 'AttachmentWithThumbnail'
+        db.delete_table('attachment_types_attachmentwiththumbnail')
+
+        # Deleting model 'AttachmentVideo'
+        db.delete_table('attachment_types_attachmentvideo')
 
 
     models = {
+        'attachment_types.attachmentvideo': {
+            'Meta': {'ordering': "['-created']", 'object_name': 'AttachmentVideo', '_ormbases': ['attachments.Attachment']},
+            'attachment_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['attachments.Attachment']", 'unique': 'True', 'primary_key': 'True'}),
+            'is_valid': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'title': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
+            'url': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
+        },
+        'attachment_types.attachmentwiththumbnail': {
+            'Meta': {'ordering': "['-created']", 'object_name': 'AttachmentWithThumbnail', '_ormbases': ['attachments.Attachment']},
+            'attachment_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['attachments.Attachment']", 'unique': 'True', 'primary_key': 'True'}),
+            'thumbnail': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'})
+        },
         'attachments.attachment': {
-            'Meta': {'object_name': 'Attachment'},
-            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'flagged': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'Meta': {'ordering': "['-created']", 'object_name': 'Attachment'},
+            'attachment_file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'created_attachments'", 'to': "orm['auth.User']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['instances.Instance']", 'null': 'True', 'blank': 'True'}),
-            'is_valid': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'last_validity_check': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
-            'url': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'})
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {})
         },
         'auth.group': {
             'Meta': {'object_name': 'Group'},
@@ -77,26 +93,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'instances.instance': {
-            'Meta': {'object_name': 'Instance'},
-            'city': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'curators': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False'}),
-            'days_for_mission': ('django.db.models.fields.IntegerField', [], {'default': '7'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'languages': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['instances.Language']", 'symmetrical': 'False'}),
-            'location': ('gmapsfield.fields.GoogleMapsField', [], {}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
-            'start_date': ('django.db.models.fields.DateTimeField', [], {}),
-            'state': ('django.db.models.fields.CharField', [], {'max_length': '2'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'instances.language': {
-            'Meta': {'object_name': 'Language'},
-            'code': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         }
     }
 
-    complete_apps = ['attachments']
+    complete_apps = ['attachment_types']

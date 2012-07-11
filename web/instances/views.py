@@ -24,7 +24,7 @@ from web.core.models import PlayerLeaderboard, AffiliationLeaderboard
 from web.core.utils import missions_bar_context
 from web.accounts.forms import *
 from web.accounts.models import *
-from web.attachments.models import Attachment
+from web.attachments_v2.models import Attachment
 #from web.challenges.models import *
 from web.missions.models import *
 from web.reports.models import Activity 
