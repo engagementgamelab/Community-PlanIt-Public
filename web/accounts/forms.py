@@ -483,3 +483,64 @@ class AdminInstanceEmailForm(forms.Form):
     subject = forms.CharField()
     email = forms.CharField(widget=forms.Textarea(attrs={"rows": 6, "cols": 40}))
 
+
+# Passwords
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.contrib.auth.tokens import default_token_generator
+from django.template.loader import get_template, render_to_string
+from django.contrib.sites.models import get_current_site
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm, PasswordChangeForm
+from django.utils.http import int_to_base36
+
+class PasswordResetForm(PasswordResetForm):
+    '''
+    A Password Reset form for sending out HTML emails
+    '''
+    email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder':'Email'}))
+
+    # override django.contrib.auth.form.PasswordResetForm's default save method to allow HTML emails.
+    def save(self, domain_override=None,
+             subject_template_name='registration/password_reset_subject.txt',
+             email_template_name='registration/password_reset_email.html',
+             use_https=False, token_generator=default_token_generator,
+             from_email=None, request=None):
+        """
+        Generates a one-use only link for resetting password and sends to the
+        user.
+        """
+        from django.core.mail import send_mail
+        for user in self.users_cache:
+            if not domain_override:
+                current_site = get_current_site(request)
+                site_name = current_site.name
+                domain = current_site.domain
+            else:
+                site_name = domain = domain_override
+            c = {
+                'email': user.email,
+                'domain': domain,
+                'site_name': site_name,
+                'uid': int_to_base36(user.id),
+                'user': user,
+                'token': token_generator.make_token(user),
+                'protocol': use_https and 'https' or 'http',
+            }
+            # Email subject *must not* contain newlines
+            subject = 'Password Reset Requested with %s' % site_name
+            from_email = ''
+            to = [user.email,]
+            message = ''
+            html_template = render_to_string(email_template_name, c)
+            email = EmailMultiAlternatives(subject, message, from_email, to)
+            email.attach_alternative(html_template, "text/html")
+            email.send()
+
+class SetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'New Password'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'Confirm New Password'}))
+
+class PasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'Current Password'}))
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'New Password'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'Confirm New Password'}))
+    
