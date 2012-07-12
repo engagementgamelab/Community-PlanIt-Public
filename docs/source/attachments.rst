@@ -3,16 +3,25 @@ Attachments
 ############
 
 
-************
 Requirements
+------------
+
+* `django-attachments`_
+
+* `django-model-utils`_
+
+.. note:: 
+
+    forked version of `django-attachments`_ with an added dependency for django-model-utils.     AttachmentManager extends model_utils.managers.InheritanceManager. 
+    https://github.com/bartTC/django-attachments
+
+
+
+.. _django-attachments: https://github.com/psychotechnik/django-attachments
+.. _django-model-utils: http://pypi.python.org/pypi/django-model-utils
+
 ************
-
-`django-attachments` - forked version of `django-attachments` with an added dependency for django-model-utils. AttachmentManager extends model_utils.managers.InheritanceManager. https://github.com/bartTC/django-attachments
-
-`django-model-utils`
-
-************
-Upgrade Instructions from cpi version 2
+Upgrade Instructions from Community PlanIt V2
 ************
 
 the legacy attachments app was renamed to attachments_v2 until the
@@ -22,21 +31,22 @@ removed.
 the legacy attachments table was renamed to attachments_v2_attachment.
 this needs to be done manually.
 
-    ALTER TABLE attachments_attachment RENAME TO attachments_v2_attachment
+    ALTER TABLE attachments_attachment RENAME TO attachments_v2_attachment;
 
+Usage
+-----
 the new attachment-types defines attachment models that inherit from
 attachments.Attachment. Inlines in use by the admin are defined for each
 of the new attachment models are defined as well.
 
 
-to query for the new attachment subclasses use the `select_subclasses`
-model_utils.managers.InheritanceManager method
+To query for the new attachment subclasses use ``model_utils.managers.InheritanceManager.select_subclasses``::
 
-Attachment.objects.filter().select_subclasses('attachmentvideo')
+Example::
+
+    Attachment.objects.filter().select_subclasses('attachmentvideo')
 
 ************
 Attachments
 ************
 
-.. _django-attachments: https://github.com/psychotechnik/django-attachments
-.. _django-model-utils: http://pypi.python.org/pypi/django-model-utils
