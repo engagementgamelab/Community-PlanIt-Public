@@ -1,5 +1,4 @@
 from django.conf.urls.defaults import *
-
 from django.contrib.auth.views import logout
 
 from .forms import (
@@ -57,13 +56,14 @@ urlpatterns += patterns('accounts.views',
 
 
 from accounts.forms import PasswordResetForm, SetPasswordForm, PasswordChangeForm
-
+from django.core.urlresolvers import reverse_lazy
 urlpatterns += patterns('django.contrib.auth.views', 
     # Forgot Password
     url(r'^password-reset/$', 'password_reset', {
         'template_name': 'accounts/password_reset.html',
-        'email_template_name': 'accounts/email_templates/password_reset_email.html',
+        'email_template_name': 'accounts/email/password_reset_email.html',
         'password_reset_form': PasswordResetForm,
+        'post_reset_redirect': reverse_lazy('accounts:password_reset_done'),
     }, name='password_reset'),
     url(r'^password-reset-done/$', 'password_reset_done', {
         'template_name': 'accounts/password_reset_done.html',
@@ -74,17 +74,18 @@ urlpatterns += patterns('django.contrib.auth.views',
     'password_reset_confirm', {
         'template_name': 'accounts/password_reset_confirm.html',
         'set_password_form': SetPasswordForm,
+        'post_reset_redirect': reverse_lazy('accounts:password_reset_complete'),
     }, name='password_reset_confirm'),
     url(r'^password-reset-complete/$', 'password_reset_complete', {
         'template_name': 'accounts/password_reset_complete.html',
     }, name='password_reset_complete'),
     
     # Change Password
-    url(r'^password-change/$', 'password_change', {
-        'template_name': 'accounts/password_change_form.html',
-        'password_change_form': PasswordChangeForm
-    }, name='password_change'),
-    url(r'^password-change-done/$', 'password_change_done', {
-        'template_name': 'accounts/password_change_done.html',
-    }, name='password_change_done'),
+    # url(r'^password-change/$', 'password_change', {
+    #     'template_name': 'accounts/password_change_form.html',
+    #     'password_change_form': PasswordChangeForm
+    # }, name='password_change'),
+    # url(r'^password-change-done/$', 'password_change_done', {
+    #     'template_name': 'accounts/password_change_done.html',
+    # }, name='password_change_done'),
 )

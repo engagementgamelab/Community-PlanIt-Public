@@ -11,10 +11,10 @@
 
         {{ form.as_p }}
 
-        <a href="{# url accounts:forgot_password #}">Forgot password?</a>
+        <a href="{% url accounts:password_reset %}">Forgot password?</a>
         
         <div>
-            <input class="btn btn-primary" type="submit" value="Get back to playing!"> Not registered? Register now!
+            <input class="btn btn-primary" type="submit" value="Get back to playing!"> New to Community PlanIt? <a href="{% url accounts:register %}">Sign up now</a>!
         </div>
     </form>
 
