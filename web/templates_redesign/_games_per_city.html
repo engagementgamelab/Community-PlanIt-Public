@@ -114,9 +114,9 @@
                 {% endfor %}
             </ul>
             <div class="gameslist-details slides_container">
+                        {% for instance in instances_past %}
                 <div>
                     <div class="gameslist-slide-container">
-                        {% for instance in instances_past %}
                         <div class="gameslist-countdown-container"></div>
                         <div class="gameslist-details-container">
                             <div class="gameslist-detail-attachment">
@@ -130,9 +130,9 @@
                             </div>
                             <p class="gameslist-detail-description">{# instance.description|truncatewords:20 #}{{ instance.description }}</p>
                         </div>
-                        {% endfor %}
                     </div>
                 </div>
+                        {% endfor %}
             </div>
         </div>
     </div>
