@@ -83,6 +83,7 @@ INSTALLED_APPS = (
     'web.missions',
     'web.player_activities',
     'web.responses',
+    'web.attachments_v2',
     'web.attachment_types',
     'web.values',
     'web.reporting',
