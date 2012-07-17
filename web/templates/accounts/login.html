@@ -6,14 +6,11 @@
 {% block content %}
     <h1>Log In</h1>
     {% csrf_token %}
-    <form action="{% url accounts:login %}" method="post"> {% csrf_token %}
+    <form action="." method="post"> {% csrf_token %}
         {{ form.as_p }}
         <a href="{% url accounts:password_reset %}">Forgot password?</a>
         <div>
-            <input class="btn btn-primary" type="submit" value="Get back to playing!"> New to Community PlanIt? <a href="{% url accounts:register %}">Sign up now</a>!
-        </div>
-        <div class="clear">
-            <input class="btn-blue submit" id="id_login-form-submit" type="submit" value="Get back to playing!">
+            <input class="btn btn-primary" type="submit" value="Get back to playing!"> New to Community PlanIt? <a href="{# url accounts:register #}">Sign up now</a>!
         </div>
     </form>
         </div>

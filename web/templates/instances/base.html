@@ -2,6 +2,10 @@
 {% load i18n %}
 
 
+{% block game_login %}
+    <li><a href="{% url instances:login instance.slug %}" class="btn">{% trans "Sign In" %}</a></li>
+{% endblock %}
+
 {% block content %}
     <h1>{{ instance }}</h1>
     <h6>A game in the {{ instance.for_city.name }} area.</h6>

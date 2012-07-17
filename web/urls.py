@@ -16,6 +16,8 @@ handler500 = 'web.views.server_error'
 urlpatterns = patterns('web',
     url(r'^$', 'views.index', name='home'),
 
+    url(r'games/', include('instances.urls', namespace='instances', app_name='instances')),
+
     url(r'^faq/', direct_to_template, { 'template': 'static/faq.html', 
         #'extra_context': { 'instances': Instance.objects.all } 
         }, name='faq'),
@@ -86,7 +88,3 @@ if 'attachments' in settings.INSTALLED_APPS:
 #)
 
 urlpatterns += staticfiles_urlpatterns()
-
-urlpatterns += patterns('web', 
-    (r'', include('instances.urls', namespace='instances', app_name='instances')),
-)

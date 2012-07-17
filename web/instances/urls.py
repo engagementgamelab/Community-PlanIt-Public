@@ -1,7 +1,16 @@
 from django.conf.urls.defaults import *
-from django.contrib.auth.views import login, logout
 
-urlpatterns = patterns('instances.views',
+from accounts.views import login
+from accounts.forms import AccountAuthenticationForm
+
+urlpatterns = patterns('accounts.views',
+    url(r'^(?P<game_slug>[-\w]+)/login/$', login, {'template_name': 'accounts/login.html',
+                            'authentication_form': AccountAuthenticationForm}, name='login'),
+    url(r'^(?P<game_slug>[-\w]+)/profile/edit/$', 'edit', name='profile_edit'),
+)
+
+urlpatterns += patterns('instances.views',
+
     # temporarily putting activity stream (what's happening) and leaderboard (check the standings) here...
     url(r'^news/$', 'stream', name='stream'),
     url(r'^leaderboard/$', 'leaderboard', name='leaderboard'),

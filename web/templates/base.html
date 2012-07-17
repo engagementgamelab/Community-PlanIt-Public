@@ -69,13 +69,11 @@
                             <li><a href="{% url home %}">{% trans "Home" %}</a></li>
                             <li><a href="#">{% trans "All Games" %}</a></li>
                             <li><a href="{% url howtoplay %}">{% trans "How to Play" %}</a></li>
-
-                            
-                            <li><a href="">({{ request.user }})</a></li>
                             {% if user.is_authenticated %}
+                                <li><a href="">({{ request.user }})</a></li>
                                 <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
                             {% else %}
-                                <li><a href="{% url accounts:login %}" class="btn">{% trans "Sign In" %}</a></li>
+                                {% block game_login %}{% endblock %}
                             {% endif %}
                         </ul>
                     </div>

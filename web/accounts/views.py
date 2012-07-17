@@ -11,6 +11,7 @@ from localeurl.models import reverse
 from localeurl.utils import strip_path
 
 from django.conf import settings
+from django.contrib.sites.models import RequestSite
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404, HttpResponseServerError
@@ -140,7 +141,7 @@ def login_ajax(request, authentication_form=AuthenticationForm):
 def login(request, template_name='registration/login.html',
           redirect_field_name=REDIRECT_FIELD_NAME,
           authentication_form=AuthenticationForm,
-          current_app=None, extra_context=None):
+          current_app=None, extra_context=None, game_slug=''):
     """
     Displays the login form and handles the login action.
     """
@@ -168,37 +169,31 @@ def login(request, template_name='registration/login.html',
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
 
-            lang = user.get_profile().preferred_language
             # set the game we are logging the user into
             #
-            current_game = form.cleaned_data.get('instance')
-            request.session['current_game_slug'] = current_game.slug
+            current_game_slug = form.cleaned_data.get('game_slug')
+            current_game = get_object_or_404(Instance, slug=current_game_slug)
 
-            if lang.code in dict(settings.LANGUAGES).keys():
-                spath = strip_path(redirect_to)[1]
-                return redirect(
-                        "".join(
-                                [
-                                    current_game.get_absolute_url(ssl=not(settings.DEBUG)),
-                                    locale_path(spath, lang.code)
-                                ]
-                        ),
-                        permantent=True,
-                )
 
-            return redirect(
-                    "".join([
-                                current_game.get_absolute_url(ssl=not(settings.DEBUG)), 
-                                redirect_to
-                            ]
-                    ),
-                        permantent=True,
+            prof_per_instance = UserProfilePerInstance.objects.get(
+                        instance=current_game,
+                        user_profile=user.get_profile()
             )
+            lang = prof_per_instance.preferred_language
+            #if lang.code in dict(settings.LANGUAGES).keys():
+            redir = os.path.join(
+                        'https://' if settings.DEBUG == False else 'http://',
+                        RequestSite(request).domain,
+                        prof_per_instance.preferred_language.code,
+                        strip_path(reverse('instances:instance', args=(current_game_slug,)))[1][1:],
+            )
+            return redirect(redir)
+
         else:
             log.debug('form invalid %s' % form.errors)
 
     else:
-        form = authentication_form(request)
+        form = authentication_form(request, initial={'game_slug': game_slug})
 
     request.session.set_test_cookie()
 

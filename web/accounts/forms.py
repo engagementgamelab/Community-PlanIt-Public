@@ -30,6 +30,33 @@ import logging
 log = logging.getLogger(__name__)
 
 
+class AccountAuthenticationForm(AuthenticationForm):
+    """
+    Base class for authenticating users. Extend this to get a form that accepts
+    username/password logins.
+    """
+    def __init__(self, request, *args, **kwargs):
+        super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
+        if not request:
+            raise RuntimeError("request obj is missing")
+        self.fields['username'] = forms.CharField(label=_("Email"), max_length=300)
+        self.fields['game_slug'] = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+
+    def clean(self, *args, **kwargs):
+        super(AccountAuthenticationForm, self).clean(*args, **kwargs)
+        try:
+            UserProfilePerInstance.objects.get(
+                        instance__slug=self.cleaned_data.get('game_slug'),
+                        user_profile__user__email=self.cleaned_data.get('username', '')
+            )
+        except UserProfilePerInstance.DoesNotExist:
+            raise forms.ValidationError(_("You have not registered for this instance."))
+
+        return self.cleaned_data
+
+
+
 class RegisterFormOne(forms.Form):
 
     first_name = forms.CharField(required=True, max_length=30, label=_("First Name"))
@@ -444,34 +471,6 @@ class SearchPlayersByKeywordsForm(forms.Form):
             )
         return qs.exclude(user_profile__user__is_active=False)
 
-
-class AccountAuthenticationForm(AuthenticationForm):
-    """
-    Base class for authenticating users. Extend this to get a form that accepts
-    username/password logins.
-    """
-    def __init__(self, request, *args, **kwargs):
-        super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
-        if not request:
-            raise RuntimeError("request obj is missing")
-        self.fields['username'] = forms.CharField(label=_("Email"), max_length=300)
-
-        #queryset=Instance.objects.exclude(is_disabled=True)
-        #if hasattr(request, 'current_city') and request.current_city is not None:
-        #    queryset = queryset.filter(for_city=request.current_city)
-        #self.fields['instance'] = forms.ModelChoiceField(label=_("Select your game"), queryset=queryset)
-
-    #def clean(self, *args, **kwargs):
-    #    super(AccountAuthenticationForm, self).clean(*args, **kwargs)
-    #    try:
-    #        UserProfilePerInstance.objects.get(
-    #                    instance=self.cleaned_data.get('instance'),
-    #                    user_profile__user__email=self.cleaned_data.get('username', '')
-    #        )
-    #    except UserProfilePerInstance.DoesNotExist:
-    #        raise forms.ValidationError(_("You have not registered for this instance."))
-
-    #    return self.cleaned_data
 
 class AdminInstanceEmailForm(forms.Form):
     subject = forms.CharField()

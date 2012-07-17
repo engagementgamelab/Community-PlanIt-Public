@@ -15,8 +15,11 @@
     <div>
         {% if not user.is_authenticated %}
         <div id="login-container" class="btn-arrow">
-            <a class="btn" href="{% url accounts:register %}">{% trans "Register To Play Now!" %}</a>
+            <a class="btn" href="{# url accounts:register #}">{% trans "Register To Play Now!" %}</a>
+            {% comment %}
+            {# login form only exists on the game page #}
             {% trans "Already registered?" %}<a href="{% url accounts:login %}">{% trans "Sign In" %}</a>
+            {% endcomment %}
         </div>
         {% endif %}
     </div>

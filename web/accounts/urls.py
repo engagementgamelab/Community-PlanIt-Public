@@ -10,9 +10,6 @@ from .forms import (
             #SearchPlayersByKeywordsForm,
 )
 
-
-from accounts.views import login
-
 urlpatterns = patterns('',
     url(r'^logout/', logout, {'next_page': '/'}, name='logout'),
     #url(r'^login/$', RegistrationWizard.as_view(
@@ -33,11 +30,16 @@ urlpatterns = patterns('',
 urlpatterns += patterns('accounts.views',
     url(r'^$', 'all', name='all'),
     url(r'^notifications/$', 'notifications', name='notifications'),
-    url(r'^profile/edit/$', 'edit', name='profile_edit'),
     url(r'^player/(?P<id>\d+)/$', 'profile', name='player_profile'),
     url(r'^forgot/$', 'forgot', name='forgot'),
-    url(r'^login/$', login, {'template_name': 'accounts/login.html',
-                            'authentication_form': AccountAuthenticationForm}, name='login'),
+
+    #****************
+    # profile edit and login are served by the instances app
+    #url(r'^profile/edit/$', 'edit', name='profile_edit'),
+    #url(r'^login/$', login, {'template_name': 'accounts/login.html',
+    #                        'authentication_form': AccountAuthenticationForm}, name='login'),
+    #****************
+
     #url(r'^ajax/login/$', 'login_ajax', 
     #                        {'authentication_form': AccountAuthenticationForm},
     #                            name='login-ajax'),
