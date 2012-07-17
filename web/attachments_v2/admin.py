@@ -1,4 +1,4 @@
-from web.attachments.models import *
+from web.attachments_v2.models import *
 from django.contrib import admin
 
 class AttachmentAdmin(admin.ModelAdmin):

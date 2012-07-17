@@ -76,3 +76,6 @@ class Attachment(models.Model):
           return self.file.url[:25]
           
         return 'None'
+
+    class Meta:
+        db_table = 'attachments_v2_attachment'

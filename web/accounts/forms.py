@@ -456,28 +456,22 @@ class AccountAuthenticationForm(AuthenticationForm):
             raise RuntimeError("request obj is missing")
         self.fields['username'] = forms.CharField(label=_("Email"), max_length=300)
 
-        #games_for_domain = Instance.objects.for_city(request.current_site.domain)
+        #queryset=Instance.objects.exclude(is_disabled=True)
+        #if hasattr(request, 'current_city') and request.current_city is not None:
+        #    queryset = queryset.filter(for_city=request.current_city)
+        #self.fields['instance'] = forms.ModelChoiceField(label=_("Select your game"), queryset=queryset)
 
-        #if games_for_domain.count():
-        #    self.fields['instance'] = forms.ModelChoiceField(queryset=games_for_domain)
-        #else:
+    #def clean(self, *args, **kwargs):
+    #    super(AccountAuthenticationForm, self).clean(*args, **kwargs)
+    #    try:
+    #        UserProfilePerInstance.objects.get(
+    #                    instance=self.cleaned_data.get('instance'),
+    #                    user_profile__user__email=self.cleaned_data.get('username', '')
+    #        )
+    #    except UserProfilePerInstance.DoesNotExist:
+    #        raise forms.ValidationError(_("You have not registered for this instance."))
 
-        queryset=Instance.objects.exclude(is_disabled=True)
-        if hasattr(request, 'current_city') and request.current_city is not None:
-            queryset = queryset.filter(for_city=request.current_city)
-        self.fields['instance'] = forms.ModelChoiceField(label=_("Select your game"), queryset=queryset)
-
-    def clean(self, *args, **kwargs):
-        super(AccountAuthenticationForm, self).clean(*args, **kwargs)
-        try:
-            UserProfilePerInstance.objects.get(
-                        instance=self.cleaned_data.get('instance'),
-                        user_profile__user__email=self.cleaned_data.get('username', '')
-            )
-        except UserProfilePerInstance.DoesNotExist:
-            raise forms.ValidationError(_("You have not registered for this instance."))
-
-        return self.cleaned_data
+    #    return self.cleaned_data
 
 class AdminInstanceEmailForm(forms.Form):
     subject = forms.CharField()

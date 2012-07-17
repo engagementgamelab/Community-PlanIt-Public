@@ -27,7 +27,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.sites.models import get_current_site
 
 from PIL import Image
 
@@ -135,87 +134,80 @@ def login_ajax(request, authentication_form=AuthenticationForm):
         return HttpResponse(instance.process_request())
     return HttpResponse("")
 
-# ==========================================================
-# only ajax login is enabled at the moment
-
+#==========================================================
 @csrf_protect
 @never_cache
 def login(request, template_name='registration/login.html',
-         redirect_field_name=REDIRECT_FIELD_NAME,
-         authentication_form=AuthenticationForm,
-         current_app=None, extra_context=None):
-   """
-   Displays the login form and handles the login action.
-   """
-   redirect_to = request.REQUEST.get(redirect_field_name, '')
+          redirect_field_name=REDIRECT_FIELD_NAME,
+          authentication_form=AuthenticationForm,
+          current_app=None, extra_context=None):
+    """
+    Displays the login form and handles the login action.
+    """
+    redirect_to = request.REQUEST.get(redirect_field_name, '')
 
-   if request.method == "POST":
-       form = authentication_form(request, data=request.POST)
-       if form.is_valid():
-           netloc = urlparse.urlparse(redirect_to)[1]
+    if request.method == "POST":
+        form = authentication_form(request, data=request.POST)
+        if form.is_valid():
+            netloc = urlparse.urlparse(redirect_to)[1]
 
-           # Use default setting if redirect_to is empty
-           if not redirect_to:
-               redirect_to = settings.LOGIN_REDIRECT_URL
+            # Use default setting if redirect_to is empty
+            if not redirect_to:
+                redirect_to = settings.LOGIN_REDIRECT_URL
 
-           # Security check -- don't allow redirection to a different
-           # host.
-           elif netloc and netloc != request.get_host():
-               redirect_to = settings.LOGIN_REDIRECT_URL
+            # Security check -- don't allow redirection to a different
+            # host.
+            elif netloc and netloc != request.get_host():
+                redirect_to = settings.LOGIN_REDIRECT_URL
 
-           # Okay, security checks complete. Log the user in.
-           auth_login(request, form.get_user())
-           user = form.get_user()
-           log.debug('logged in: %s <%s>' % (str(user), user.email))
+            # Okay, security checks complete. Log the user in.
+            auth_login(request, form.get_user())
+            user = form.get_user()
+            log.debug('logged in: %s <%s>' % (str(user), user.email))
 
-           if request.session.test_cookie_worked():
-               request.session.delete_test_cookie()
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
 
-           lang = user.get_profile().preferred_language
-           # set the game we are logging the user into
-           #
-           current_game = form.cleaned_data.get('instance')
-           request.session['current_game_slug'] = current_game.slug
+            lang = user.get_profile().preferred_language
+            # set the game we are logging the user into
+            #
+            current_game = form.cleaned_data.get('instance')
+            request.session['current_game_slug'] = current_game.slug
 
-           if lang.code in dict(settings.LANGUAGES).keys():
-               spath = strip_path(redirect_to)[1]
-               return redirect(
-                       "".join(
-                               [
-                                   current_game.get_absolute_url(ssl=not(settings.DEBUG)),
-                                   locale_path(spath, lang.code)
-                               ]
-                       ),
-                       permantent=True,
-               )
+            if lang.code in dict(settings.LANGUAGES).keys():
+                spath = strip_path(redirect_to)[1]
+                return redirect(
+                        "".join(
+                                [
+                                    current_game.get_absolute_url(ssl=not(settings.DEBUG)),
+                                    locale_path(spath, lang.code)
+                                ]
+                        ),
+                        permantent=True,
+                )
 
-           return redirect(
-                   "".join([
-                               current_game.get_absolute_url(ssl=not(settings.DEBUG)), 
-                               redirect_to
-                           ]
-                   ),
-                       permantent=True,
-           )
-       else:
-           log.debug('form invalid %s' % form.errors)
+            return redirect(
+                    "".join([
+                                current_game.get_absolute_url(ssl=not(settings.DEBUG)), 
+                                redirect_to
+                            ]
+                    ),
+                        permantent=True,
+            )
+        else:
+            log.debug('form invalid %s' % form.errors)
 
-   else:
-       form = authentication_form(request)
+    else:
+        form = authentication_form(request)
 
-   request.session.set_test_cookie()
+    request.session.set_test_cookie()
 
-   current_site = get_current_site(request)
-
-   context = {
-       'form': form,
-       redirect_field_name: redirect_to,
-       'site': current_site,
-       'site_name': current_site.name,
-   }
-   context.update(extra_context or {})
-   return render(request, template_name, context)
-
+    context = {
+        'form': form,
+        redirect_field_name: redirect_to,
+    }
+    context.update(extra_context or {})
+    return render(request, template_name, context)
 
 
 # This function is used for registration and forgot password as they are very similar.
