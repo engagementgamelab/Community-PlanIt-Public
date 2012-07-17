@@ -1,15 +1,9 @@
-{% extends "layouts/base.html" %}
+{% extends "accounts/base.html" %}
 {% load i18n %}
-
-{% block section %}accounts{% endblock %}
 
 {% block title %}{% trans "Registration" %}{% endblock %}
 
-{% block page_title %}
-<h2 id="page_title">{% blocktrans %}Registration: Step {{step}} of {{step_count}}{% endblocktrans %}</h2>
-{% endblock %}
-
-{% block aside %}
+{% block content %}
 <div>
     <h2>{% trans "Thanks for your interest in Community PlanIt!" %}</h2>
 </div>

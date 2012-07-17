@@ -49,6 +49,94 @@ log = logging.getLogger(__name__)
 
 @csrf_protect
 @never_cache
+def register(request, game_slug=None, extra_context=None, template_name='accounts/register.html'):
+    if game_slug is not None:
+        for_game = get_object_or_404(Instance, slug=game_slug)
+
+    if request.method == "POST":
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            pass
+
+    else:
+        form = RegistrationForm(initial={'game_slug': game_slug})
+
+    context = {
+        'form': form,
+    }
+    context.update(extra_context or {})
+    return render(request, template_name, context)
+
+@csrf_protect
+@never_cache
+def login(request, template_name='registration/login.html',
+          redirect_field_name=REDIRECT_FIELD_NAME,
+          authentication_form=AuthenticationForm,
+          current_app=None, extra_context=None, game_slug=None):
+    """
+    Displays the login form and handles the login action.
+    """
+    redirect_to = request.REQUEST.get(redirect_field_name, '')
+
+    if request.method == "POST":
+        form = authentication_form(request, data=request.POST)
+        if form.is_valid():
+            netloc = urlparse.urlparse(redirect_to)[1]
+
+            # Use default setting if redirect_to is empty
+            if not redirect_to:
+                redirect_to = settings.LOGIN_REDIRECT_URL
+
+            # Security check -- don't allow redirection to a different
+            # host.
+            elif netloc and netloc != request.get_host():
+                redirect_to = settings.LOGIN_REDIRECT_URL
+
+            # Okay, security checks complete. Log the user in.
+            auth_login(request, form.get_user())
+            user = form.get_user()
+            log.debug('logged in: %s <%s>' % (str(user), user.email))
+
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
+
+            # set the game we are logging the user into
+            #
+            current_game_slug = form.cleaned_data.get('game_slug')
+            current_game = get_object_or_404(Instance, slug=current_game_slug)
+
+
+            prof_per_instance = UserProfilePerInstance.objects.get(
+                        instance=current_game,
+                        user_profile=user.get_profile()
+            )
+            lang = prof_per_instance.preferred_language
+            #if lang.code in dict(settings.LANGUAGES).keys():
+            redir = os.path.join(
+                        'https://' if settings.DEBUG == False else 'http://',
+                        RequestSite(request).domain,
+                        prof_per_instance.preferred_language.code,
+                        strip_path(reverse('instances:instance', args=(current_game_slug,)))[1][1:],
+            )
+            return redirect(redir)
+
+        else:
+            log.debug('form invalid %s' % form.errors)
+
+    else:
+        form = authentication_form(request, initial={'game_slug': game_slug})
+
+    request.session.set_test_cookie()
+
+    context = {
+        'form': form,
+        redirect_field_name: redirect_to,
+    }
+    context.update(extra_context or {})
+    return render(request, template_name, context)
+
+@csrf_protect
+@never_cache
 def login_ajax(request, authentication_form=AuthenticationForm):
 
     def login_process(obj_response, form_data, next=None):
@@ -136,74 +224,6 @@ def login_ajax(request, authentication_form=AuthenticationForm):
     return HttpResponse("")
 
 #==========================================================
-@csrf_protect
-@never_cache
-def login(request, template_name='registration/login.html',
-          redirect_field_name=REDIRECT_FIELD_NAME,
-          authentication_form=AuthenticationForm,
-          current_app=None, extra_context=None, game_slug=''):
-    """
-    Displays the login form and handles the login action.
-    """
-    redirect_to = request.REQUEST.get(redirect_field_name, '')
-
-    if request.method == "POST":
-        form = authentication_form(request, data=request.POST)
-        if form.is_valid():
-            netloc = urlparse.urlparse(redirect_to)[1]
-
-            # Use default setting if redirect_to is empty
-            if not redirect_to:
-                redirect_to = settings.LOGIN_REDIRECT_URL
-
-            # Security check -- don't allow redirection to a different
-            # host.
-            elif netloc and netloc != request.get_host():
-                redirect_to = settings.LOGIN_REDIRECT_URL
-
-            # Okay, security checks complete. Log the user in.
-            auth_login(request, form.get_user())
-            user = form.get_user()
-            log.debug('logged in: %s <%s>' % (str(user), user.email))
-
-            if request.session.test_cookie_worked():
-                request.session.delete_test_cookie()
-
-            # set the game we are logging the user into
-            #
-            current_game_slug = form.cleaned_data.get('game_slug')
-            current_game = get_object_or_404(Instance, slug=current_game_slug)
-
-
-            prof_per_instance = UserProfilePerInstance.objects.get(
-                        instance=current_game,
-                        user_profile=user.get_profile()
-            )
-            lang = prof_per_instance.preferred_language
-            #if lang.code in dict(settings.LANGUAGES).keys():
-            redir = os.path.join(
-                        'https://' if settings.DEBUG == False else 'http://',
-                        RequestSite(request).domain,
-                        prof_per_instance.preferred_language.code,
-                        strip_path(reverse('instances:instance', args=(current_game_slug,)))[1][1:],
-            )
-            return redirect(redir)
-
-        else:
-            log.debug('form invalid %s' % form.errors)
-
-    else:
-        form = authentication_form(request, initial={'game_slug': game_slug})
-
-    request.session.set_test_cookie()
-
-    context = {
-        'form': form,
-        redirect_field_name: redirect_to,
-    }
-    context.update(extra_context or {})
-    return render(request, template_name, context)
-
 
 # This function is used for registration and forgot password as they are very similar.
 # It will take a form and determine if the email address is valid and then generate

@@ -55,6 +55,44 @@ class AccountAuthenticationForm(AuthenticationForm):
 
         return self.cleaned_data
 
+attrs_dict = { 'class': 'required' }
+
+class RegistrationForm(forms.Form):
+
+    first_name  = forms.CharField(required=True, max_length=30, label=_("First Name"))
+    last_name = forms.CharField(required=True, max_length=30, label=_("Last Name"))
+    email = forms.EmailField(widget=forms.TextInput(attrs=dict(attrs_dict,
+                                                               maxlength=75)),
+                             label=_(u'email address'))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
+                                label=_(u'password'))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs=attrs_dict, render_value=False),
+                                label=_(u'password (again)'))
+    game_slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    def clean(self):
+        """
+        Verifiy that the values entered into the two password fields
+        match. Note that an error here will end up in
+        ``non_field_errors()`` because it doesn't apply to a single
+        field.
+        
+        """
+        if 'password1' in self.cleaned_data and 'password2' in self.cleaned_data:
+            if self.cleaned_data['password1'] != self.cleaned_data['password2']:
+                raise forms.ValidationError(_(u'You must type the same password each time'))
+        return self.cleaned_data
+
+    def clean_email(self):
+        """
+        Validate that the supplied email address is unique for the
+        site.
+        
+        """
+        if User.objects.filter(email__iexact=self.cleaned_data['email']):
+            raise forms.ValidationError(_(u'This email address is already in use. Please supply a different email address.'))
+        return self.cleaned_data['email']
+
 
 
 class RegisterFormOne(forms.Form):

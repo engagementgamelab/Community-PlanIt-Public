@@ -208,15 +208,17 @@ class Instance(TranslatableModel):
             return last_mission.end_date
         return None
     
-    
+    @property 
     def is_future(self):
         ''' Instance is not yet running (pre-game)'''
         return self in Instance.objects.future()
         
+    @property 
     def is_present(self):
         ''' Instance is currently running (during-game) '''
         return self in Instance.objects.present()
 
+    @property 
     def is_past(self):
         ''' Instance is finished running (post-game)'''
         return self in Instance.objects.past()

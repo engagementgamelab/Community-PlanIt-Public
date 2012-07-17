@@ -70,7 +70,7 @@
                             <li><a href="#">{% trans "All Games" %}</a></li>
                             <li><a href="{% url howtoplay %}">{% trans "How to Play" %}</a></li>
                             {% if user.is_authenticated %}
-                                <li><a href="">({{ request.user }})</a></li>
+                                <li><a href="">({{ request.user.get_profile.screen_name }})</a></li>
                                 <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
                             {% else %}
                                 {% block game_login %}{% endblock %}

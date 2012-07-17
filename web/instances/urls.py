@@ -1,11 +1,12 @@
 from django.conf.urls.defaults import *
 
-from accounts.views import login
+from accounts.views import login, register
 from accounts.forms import AccountAuthenticationForm
 
 urlpatterns = patterns('accounts.views',
     url(r'^(?P<game_slug>[-\w]+)/login/$', login, {'template_name': 'accounts/login.html',
                             'authentication_form': AccountAuthenticationForm}, name='login'),
+    url(r'^(?P<game_slug>[-\w]+)/join/$', register, name='join'),
     url(r'^(?P<game_slug>[-\w]+)/profile/edit/$', 'edit', name='profile_edit'),
 )
 
