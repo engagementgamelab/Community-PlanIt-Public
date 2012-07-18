@@ -1,6 +1,7 @@
 import os.path
 import datetime
 import urlparse
+from uuid import uuid4 as uuid
 
 from sijax import Sijax
 
@@ -26,7 +27,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
-from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
+from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 
 from PIL import Image
@@ -50,14 +51,32 @@ log = logging.getLogger(__name__)
 @csrf_protect
 @never_cache
 def register(request, game_slug=None, extra_context=None, template_name='accounts/register.html'):
+    for_game = None
     if game_slug is not None:
         for_game = get_object_or_404(Instance, slug=game_slug)
+
+    #if for_game is not None and request.user.is_authenticated():
 
     if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            pass
-
+            cd = form.cleaned_data
+            new_user = User.objects.create_user(
+                            str(uuid().hex)[:30], 
+                            email=cd.get('email'), 
+                            password=cd.get('password1'),
+            )
+            new_user.first_name = cd.get('first_name')
+            new_user.last_name = cd.get('last_name')
+            new_user.save()
+            player = authenticate(
+                        username=new_user.email,
+                        password=cd.get('password1'),
+            )
+            auth_login(request, player)
+            return redirect(reverse('home'))
+        else:
+            log.debug(form.errors)
     else:
         form = RegistrationForm(initial={'game_slug': game_slug})
 
