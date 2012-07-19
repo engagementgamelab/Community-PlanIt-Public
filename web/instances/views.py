@@ -3,6 +3,10 @@ import datetime
 from sijax import Sijax
 from stream.models import Action
 
+
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
+
 from django.contrib import auth
 #from django.views.decorators.csrf import ensure_csrf_cookie
 #from django.core.mail import send_mail
@@ -33,6 +37,22 @@ from core.utils import get_translation_with_fallback
 import logging
 log = logging.getLogger(__name__)
 
+
+#class InstanceDetail(DetailView):
+#    model = Instance
+
+class InstanceList(ListView):
+    model = Instance
+    template_name = "instances/all.html"
+
+    #def get_context_data(self, **kwargs):
+    #    context = super(InstanceList, self).get_context_data(
+    #        **kwargs)
+    #    context[''] = ''
+    #    return context
+
+
+"""
 def instance(request, slug, template='instances/base.html', extra_context={}):
     instance = get_object_or_404(Instance, slug=slug)
     context = {
@@ -66,6 +86,7 @@ def all(request):
         'past': past,
     }
     return render(request, 'instances/all.html', context)
+"""
 
 @login_required
 def stream(request, template='instances/stream.html'):

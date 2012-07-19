@@ -24,9 +24,6 @@ def index(request, template='index.html', city_header=True):
     context.update({
         'city_header': city_header
     })
-    if hasattr(request, 'current_game'): 
-        context.update(missions_bar_context(request))
-    
     return render(request, template, context)
 
 class BringCpiForm(forms.Form):
