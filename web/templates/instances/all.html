@@ -1,0 +1,81 @@
+{%extends "instances/base.html"%}
+{% load i18n %}
+
+{% block title %}{% trans "Welcome" %}{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/citypages.css"> 
+{% endblock %}
+
+{% block body_id %}public-index{% endblock %}
+
+{% block content %}
+<div>
+    <div>
+        {% if not user.is_authenticated %}
+        <div id="login-container" class="btn-arrow">
+            <a class="btn" href="{% url accounts:registration_register %}">{% trans "Register To Play Now!" %}</a>
+            {% comment %}
+            {# login form only exists on the game page #}
+            {% trans "Already registered?" %}<a href="{% url accounts:login %}">{% trans "Sign In" %}</a>
+            {% endcomment %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% comment %}
+    <div>
+        <div>                
+            <iframe class="walkthrough-media" src="http://player.vimeo.com/video/40255999?title=0&amp;byline=0&amp;portrait=0" width="450" height="259" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            {# <p><a href="http://vimeo.com/40255999">ROUGH CPI Homepage Video</a> from <a href="http://vimeo.com/user11255512">Community PlanIt</a> on <a href="http://vimeo.com">Vimeo</a>.</p> #}
+            <div>
+                <h1>Community PlanIt is an online engagement game that gives everyone the power to help shape their community's future</h1>
+            </div>
+        </div>
+        <div>
+            <img class="walkthrough-media" src="{{ STATIC_URL }}img/walkthrough-map.png" />
+            <div>
+                <h1>Map the Future</h1>
+                <p>Complete challenges and accomplish missions to influence the overall priorities of the planning process in your community</p>
+            </div>
+        </div>
+        <div>
+            <img src="{{ STATIC_URL }}img/walkthrough-explore.png" />
+            <div>
+                <h1>Explore the Issues</h1>
+                <p>Learn about your community and the planning going on by exploring resources and using your knowledge to provide input and solutions to key planning challenges</p>
+            </div>
+        </div>
+        <div>
+            <img src="{{ STATIC_URL }}img/walkthrough-community.png" />
+            <div>
+                <h1>Connect With Your Community</h1>
+                <p>Connect with community members of all ages and backgrounds to playfully and thoughtfully work together in making your community a better place to live</p>
+            </div>
+        </div>
+    </div>
+    {% endcomment %}
+    <div>
+        <h1>Recent Games</h1>
+        <ul>
+            {% for instance in instance_list %}
+                <li>
+                    <a href="{{ instance.get_absolute_url }}">{{ instance }}</a> ({{ instance.for_city.name }})
+                    ({{ instance.start_date|date:"F j, Y" }} - {{ instance.end_date|date:"F j, Y" }})
+                    <span class="badge badge-info">
+                        {% if instance.is_future %}
+                            future (pre-game)
+                        {% elif instance.is_present %}
+                            present (during-game)
+                        {% elif instance.is_past %}
+                            past (post-game)
+                        {% endif %}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+</div>
+{% endblock %}
