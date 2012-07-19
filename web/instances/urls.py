@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 
 from accounts.views import login, register
 from accounts.forms import AccountAuthenticationForm
+from instances.views import InstanceList #, InstanceDetail
 
 urlpatterns = patterns('accounts.views',
     url(r'^(?P<game_slug>[-\w]+)/login/$', login, {'template_name': 'accounts/login.html',
@@ -12,14 +13,12 @@ urlpatterns = patterns('accounts.views',
 
 urlpatterns += patterns('instances.views',
 
-    # temporarily putting activity stream (what's happening) and leaderboard (check the standings) here...
-    url(r'^news/$', 'stream', name='stream'),
-    url(r'^leaderboard/$', 'leaderboard', name='leaderboard'),
+    url(r'^$', InstanceList.as_view(), name='instances'),
+    #url(r'^(?P<slug>[-\w]+)/$', InstanceDetail.as_view(), name='instance'),
 
-    url(r'^$', 'all', name='instances'),
-    url(r'^(?P<slug>[-\w]+)/$', 'instance', name='instance'),
-    #url(r"^ajax/load-games-by-city/(?P<for_city_id>\d+)/$", "ajax_load_games_by_city", name="ajax-load-games-by-city"),
-    #url(r"^ajax/load-languages-by-game/(?P<instance_id>\d+)/$", "ajax_load_languages_by_game", name="ajax-load-languages-by-game"),
+    # temporarily putting activity stream (what's happening) and leaderboard (check the standings) here...
+    #url(r'^news/$', 'stream', name='stream'),
+    #url(r'^leaderboard/$', 'leaderboard', name='leaderboard'),
 
 
 )

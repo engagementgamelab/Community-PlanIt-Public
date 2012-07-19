@@ -52,7 +52,7 @@
         {% include '_games_per_city.html' %}
             
         {% if user.is_authenticated %}
-            {% include '_game_nav.html' %}
+            {# include '_game_nav.html' #}
         {% else %}
             <div id="login-container" class="btn-arrow">
                 <a href="{% url accounts:login %}">Sign In</a>
