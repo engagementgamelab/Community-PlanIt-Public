@@ -15,14 +15,11 @@ log = logging.getLogger(__name__)
 
 @login_required
 def fetch(request, slug, player_submitted_only=False, template='missions/mission.html'):
-    # expecting the current game to be 
-    # set by middleware
-    if not hasattr(request, 'current_game'):
-        raise Http404("could not locate a valid game")
 
+    mission = get_object_or_404(Mission, slug=slug)
     try:
         prof_per_instance = UserProfilePerInstance.objects.get(
-                    instance=request.current_game, 
+                    instance=mission.instance,
                     user_profile=request.user.get_profile()
         )
     except UserProfilePerInstance.DoesNotExist:
@@ -30,7 +27,6 @@ def fetch(request, slug, player_submitted_only=False, template='missions/mission
 
     
     # TODO: Should only return non-player-created challenges
-    mission = get_object_or_404(Mission, slug=slug)
     player_submitted = set(mission.player_submitted_activities(lang=get_language()))
     all_activities = player_submitted if player_submitted_only == True else \
             set(mission.activities(lang=get_language())) - player_submitted
@@ -50,5 +46,5 @@ def fetch(request, slug, player_submitted_only=False, template='missions/mission
     )
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
-    context.update(missions_bar_context(request, mission))
+    #context.update(missions_bar_context(request, mission))
     return render(request, template, context)

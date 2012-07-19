@@ -180,6 +180,10 @@ class Instance(TranslatableModel):
         })
 
     @property
+    def default_language(self):
+        return Language.objects.get(code=settings.LANGUAGE_CODE)
+
+    @property
     def stream_action_title(self):
         return self.title
 
@@ -223,6 +227,7 @@ class Instance(TranslatableModel):
         ''' Instance is finished running (post-game)'''
         return self in Instance.objects.past()
 
+    @property
     def is_started(self):
         ''' Active and Expired Games '''
         return datetime.datetime.now() >= self.start_date

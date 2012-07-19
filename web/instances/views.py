@@ -33,19 +33,23 @@ from core.utils import get_translation_with_fallback
 import logging
 log = logging.getLogger(__name__)
 
-def instance(request, slug, template='instances/base.html'):
+def instance(request, slug, template='instances/base.html', extra_context={}):
     instance = get_object_or_404(Instance, slug=slug)
+    context = {
+        'instance': instance,
+    }
+    context.update(extra_context or {})
 
+    post_reg = False
     if instance.is_future:
         template='instances/instance_future.html'
+        post_reg = bool(request.GET.get('post-reg'))
     elif instance.is_present:
         template='instances/instance_present.html'
     elif instance.is_past:
         template='instances/instance_past.html'
 
-    context = {
-        'instance': instance,
-    }
+    context.update({ 'post_reg': post_reg })
     return render(request, template, context)
 
 def all(request):

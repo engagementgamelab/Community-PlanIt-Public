@@ -51,12 +51,6 @@ log = logging.getLogger(__name__)
 @csrf_protect
 @never_cache
 def register(request, game_slug=None, extra_context=None, template_name='accounts/register.html'):
-    for_game = None
-    if game_slug is not None:
-        for_game = get_object_or_404(Instance, slug=game_slug)
-
-    #if for_game is not None and request.user.is_authenticated():
-
     if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -69,12 +63,41 @@ def register(request, game_slug=None, extra_context=None, template_name='account
             new_user.first_name = cd.get('first_name')
             new_user.last_name = cd.get('last_name')
             new_user.save()
-            player = authenticate(
-                        username=new_user.email,
-                        password=cd.get('password1'),
-            )
-            auth_login(request, player)
-            return redirect(reverse('home'))
+
+            for_game = None
+            if game_slug is not None:
+                for_game = get_object_or_404(Instance, slug=game_slug)
+                user_profile_per_instance = UserProfilePerInstance.objects.create(
+                                                user_profile=new_user.get_profile(),
+                                                instance=for_game,
+                                                preferred_language=for_game.default_language,
+                )
+            if not for_game.is_future:
+                player = authenticate(
+                            username=new_user.email,
+                            password=cd.get('password1'),
+                )
+                auth_login(request, player)
+
+            tmpl = loader.get_template('accounts/email/welcome.html')
+            context = { 'instance': for_game }
+            body = tmpl.render(RequestContext(request, context))
+            send_mail(ugettext('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [new_user.email], fail_silently=False)
+            messages.success(request, _("Thanks for signing up!"))
+
+            if for_game.is_future:
+                redir = reverse('instances:instance', args=(game_slug,))
+                if instance.is_future:
+                    redir+='?post-reg=true'
+            elif for_game.is_present:
+                slug = None
+                active_missions = Mission.objects.active(for_game.pk)
+                if active_missions.count():
+                    mission = active_missions[0]
+                else:
+                    raise Http404("could not locate an active mission for %s" % for_game.title)
+                redir = reverse('missions:mission', args=(mission.slug,))
+            return redirect(redir)
         else:
             log.debug(form.errors)
     else:
