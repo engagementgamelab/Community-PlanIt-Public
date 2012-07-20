@@ -1,21 +1,22 @@
-{% extends "accounts/register_base.html" %}
+{% extends "accounts/base.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Register" %}{% endblock %}
 
 {% block content %}
-{{ block.super }}
-    <h1>Register</h1>{% csrf_token %}
-    <div>
-        
-        {% if form.errors %}
-        <div id="id_reg-form-errors" style="color:red;">{{ form.errors }}</div>
-        {% endif %}
-        <form action="." method="post"> {% csrf_token %}
-            {{ form.as_p }}
-            <div>
-                <input class="btn btn-primary" type="submit" value="Register">
-            </div>
-        </form>
-    </div>
+    <h1>Register and join the {{ instance }} game</h1>{% csrf_token %}
+    
+    
+    <p>Already have an account? <a href="{% url instances:login game_slug=instance.slug %}">Log in here</a>.</p>
+    
+    {% if form.errors %}
+    <div id="id_reg-form-errors" style="color:red;">{{ form.errors }}</div>
+    {% endif %}
+    <form action="." method="post"> {% csrf_token %}
+        {{ form.as_p }}
+        <p>By registering an account with us, you agree to abide by our <a href="{% url privacy %}" target="new">{% trans "Privacy Policy" %}</a> and <a href="{% url terms %}" target="new">{% trans "Terms of Use" %}</a>.</p>
+        <div>
+            <input class="btn btn-primary" type="submit" value="Register">
+        </div>
+    </form>
 {% endblock %}

@@ -51,6 +51,11 @@ log = logging.getLogger(__name__)
 @csrf_protect
 @never_cache
 def register(request, game_slug=None, extra_context=None, template_name='accounts/register.html'):
+    
+    for_game = None
+    if game_slug:
+        for_game = get_object_or_404(Instance, slug=game_slug)
+        
     if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -64,18 +69,17 @@ def register(request, game_slug=None, extra_context=None, template_name='account
             new_user.last_name = cd.get('last_name')
             new_user.save()
 
-            for_game = None
-            if game_slug is not None:
-                for_game = get_object_or_404(Instance, slug=game_slug)
+            if for_game:
                 user_profile_per_instance = UserProfilePerInstance.objects.create(
-                                                user_profile=new_user.get_profile(),
-                                                instance=for_game,
-                                                preferred_language=for_game.default_language,
+                    user_profile=new_user.get_profile(),
+                    instance=for_game,
+                    preferred_language=for_game.default_language,
                 )
+
             if not for_game.is_future:
                 player = authenticate(
-                            username=new_user.email,
-                            password=cd.get('password1'),
+                    username=new_user.email,
+                    password=cd.get('password1'),
                 )
                 auth_login(request, player)
 
@@ -105,6 +109,7 @@ def register(request, game_slug=None, extra_context=None, template_name='account
 
     context = {
         'form': form,
+        'instance': for_game,
     }
     context.update(extra_context or {})
     return render(request, template_name, context)
