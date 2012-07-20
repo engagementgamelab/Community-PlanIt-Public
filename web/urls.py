@@ -28,7 +28,7 @@ urlpatterns = patterns('web',
     url(r'^how-to-play/', direct_to_template, { 'template': 'static/howtoplay.html', 'extra_context': { 'instances': Instance.objects.all } }, name='howtoplay'),
     url(r'^features/', direct_to_template, { 'template': 'static/features.html', 'extra_context': { 'instances': Instance.objects.all } }, name='features'),    
     url(r'^bring-cpi-to-you/$', 'views.bringcpi', name='bringcpi'),
-    url(r'^bring-cpi-to-you/thanks/', direct_to_template, { 'template': 'bringcpi_thanks.html', 'extra_context': { 'cities': City.objects.all } }, name='bringcpi-thanks'),
+    url(r'^bring-cpi-to-you/thanks/', direct_to_template, { 'template': 'static/bringcpi_thanks.html', 'extra_context': { 'cities': City.objects.all } }, name='bringcpi-thanks'),
     url(r'^404$', direct_to_template, { 'template': '404.html', 'extra_context': { 'cities': City.objects.all } }, name='404'),
     url(r'^500$', direct_to_template, { 'template': '500.html', 'extra_context': { 'cities': City.objects.all } }, name='404'),
     
