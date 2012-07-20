@@ -1,8 +1,6 @@
 from django.conf.urls.defaults import *
 from django.contrib.auth.views import logout
 
-from .forms import  AccountAuthenticationForm
-
 urlpatterns = patterns('',
     url(r'^logout/', logout, {'next_page': '/'}, name='logout'),
     url(r'^dashboard/$', 'web.views.index', name='dashboard'),

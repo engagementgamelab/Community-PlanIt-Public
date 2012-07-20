@@ -28,7 +28,7 @@ from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, authenticate
-from django.contrib.auth.forms import AuthenticationForm
+from accounts.forms import AuthenticationForm
 
 from PIL import Image
 
@@ -111,7 +111,7 @@ def register(request, game_slug=None, extra_context=None, template_name='account
 
 @csrf_protect
 @never_cache
-def login(request, template_name='registration/login.html',
+def login(request, template_name='accounts/login.html',
           redirect_field_name=REDIRECT_FIELD_NAME,
           authentication_form=AuthenticationForm,
           current_app=None, extra_context=None, game_slug=None):

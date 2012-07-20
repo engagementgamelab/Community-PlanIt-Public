@@ -30,21 +30,21 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class AccountAuthenticationForm(AuthenticationForm):
+class AuthenticationForm(AuthenticationForm):
     """
     Base class for authenticating users. Extend this to get a form that accepts
     username/password logins.
     """
-    def __init__(self, request, *args, **kwargs):
-        super(AccountAuthenticationForm, self).__init__(*args, **kwargs)
-        if not request:
-            raise RuntimeError("request obj is missing")
-        self.fields['username'] = forms.CharField(label=_("Email"), max_length=300)
-        self.fields['game_slug'] = forms.CharField(widget=forms.HiddenInput(), required=False)
-
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'placeholder': 'Email',
+    }), label=_("Email"), max_length=300)
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'placeholder': 'Password',
+    }), label=_("Password"))
+    game_slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     def clean(self, *args, **kwargs):
-        super(AccountAuthenticationForm, self).clean(*args, **kwargs)
+        super(AuthenticationForm, self).clean(*args, **kwargs)
         try:
             UserProfilePerInstance.objects.get(
                         instance__slug=self.cleaned_data.get('game_slug'),
@@ -320,7 +320,7 @@ class RegistrationWizard(SessionWizardView):
                     dict(
                         load_games_sijax_js = load_games_sijax.get_js(),
                         login_sijax_js = login_sijax.get_js(),
-                        form = AccountAuthenticationForm(self.request),
+                        form = AuthenticationForm(self.request),
                     )
             )
         elif self.steps.current == '1':
