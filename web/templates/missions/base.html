@@ -1,4 +1,4 @@
-{% extends "base_city.html" %}
+{% extends "base.html" %}
 {% load gmap i18n game_extras cpi_tags %}
 
 {% block css %}
@@ -10,7 +10,11 @@
 
 {% block body_class %}{{ block.super }} section-missions{% endblock %}
 
-{% block game_content %}
+{% block game_login %}
+    <li><a href="{% url instances:login instance.slug %}" class="btn">{% trans "Sign In" %}</a></li>
+{% endblock %}
+
+{% block content %}
 <div>
     <div class="column-container">
         <h1>{{ mission.title }}</h1>

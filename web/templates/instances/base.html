@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-
 {% block game_login %}
     <li><a href="{% url instances:login instance.slug %}" class="btn">{% trans "Sign In" %}</a></li>
 {% endblock %}

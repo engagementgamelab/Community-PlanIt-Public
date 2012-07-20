@@ -3,7 +3,6 @@ import datetime
 from sijax import Sijax
 from stream.models import Action
 
-
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
@@ -38,10 +37,45 @@ import logging
 log = logging.getLogger(__name__)
 
 
-#class InstanceDetail(DetailView):
-#    model = Instance
+class InstanceDetailView(DetailView):
+    model = Instance
+    queryset = Instance.objects.exclude(is_disabled=True)
 
-class InstanceList(ListView):
+    def get_context_data(self, **kwargs):
+        context = super(InstanceDetail, self).get_context_data(
+            **kwargs)
+        game = kwargs['object']#self.get_object()
+        if game.is_future:
+            self.template_name = 'instances/instance_future.html'
+            post_reg = bool(request.GET.get('post-reg'))
+        elif game.is_present:
+            self.template_name = 'instances/instance_present.html'
+        elif game.is_past:
+            self.template_name = 'instances/instance_past.html'
+        context['game_profile_exists'] = UserProfilePerInstance.objects.filter(
+                                            user_profile=self.request.user.get_profile(),
+                                            instance=game,
+                                        ).exists()
+
+        active_missions = Mission.objects.active(instance_id=game.pk)
+        current_mission = None
+        if active_missions.count():
+            current_mission = active_missions[0]
+        context['current_mission'] = current_mission
+
+        if settings.DEBUG == True:
+            if self.request.user.is_authenticated():
+                my_profiles = UserProfilePerInstance.objects.filter(
+                        user_profile__user=self.request.user
+                )
+                my_profile = self.request.user.get_profile()
+                context['my_games'] = ['I am signed up for: ']+[prof.instance.title for prof in my_profiles]
+                context['my_profile_data'] = "".join([my_profile.screen_name, "<", self.request.user.email, '>'])
+
+        return context
+
+
+class InstanceListView(ListView):
     model = Instance
     template_name = "instances/all.html"
 
@@ -51,42 +85,6 @@ class InstanceList(ListView):
     #    context[''] = ''
     #    return context
 
-
-"""
-def instance(request, slug, template='instances/base.html', extra_context={}):
-    instance = get_object_or_404(Instance, slug=slug)
-    context = {
-        'instance': instance,
-    }
-    context.update(extra_context or {})
-
-    post_reg = False
-    if instance.is_future:
-        template='instances/instance_future.html'
-        post_reg = bool(request.GET.get('post-reg'))
-    elif instance.is_present:
-        template='instances/instance_present.html'
-    elif instance.is_past:
-        template='instances/instance_past.html'
-
-    context.update({ 'post_reg': post_reg })
-    return render(request, template, context)
-
-def all(request):
-    kwargs=dict(
-            for_city__domain=request.current_site.domain,
-    )
-    active = Instance.objects.active().filter(**kwargs)
-    future = Instance.objects.future().filter(**kwargs)
-    past = Instance.objects.past().filter(**kwargs)
-
-    context = {
-        'active': active,
-        'future': future,
-        'past': past,
-    }
-    return render(request, 'instances/all.html', context)
-"""
 
 @login_required
 def stream(request, template='instances/stream.html'):
