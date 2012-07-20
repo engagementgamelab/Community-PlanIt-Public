@@ -42,7 +42,7 @@ class InstanceDetailView(DetailView):
     queryset = Instance.objects.exclude(is_disabled=True)
 
     def get_context_data(self, **kwargs):
-        context = super(InstanceDetail, self).get_context_data(
+        context = super(InstanceDetailView, self).get_context_data(
             **kwargs)
         game = kwargs['object']#self.get_object()
         if game.is_future:
@@ -80,7 +80,7 @@ class InstanceListView(ListView):
     template_name = "instances/all.html"
 
     #def get_context_data(self, **kwargs):
-    #    context = super(InstanceList, self).get_context_data(
+    #    context = super(InstanceListView, self).get_context_data(
     #        **kwargs)
     #    context[''] = ''
     #    return context
