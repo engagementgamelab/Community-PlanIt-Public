@@ -4,29 +4,11 @@
 {% block title %}{% trans "Contact" %}{% endblock %}
 
 {% block content %}
-<div class="column-half">
-    <div class="column-container">
-        <h1>{% trans "Contact Us" %}</h1>
-        <p>{% trans "We would love to hear from you and answer any questions you have about the project!" %}</p>
-        <p>{% trans "For comments or questions, please contact us at" %} <a href="mailto:admin@communityplanit.org">admin@communityplanit.org</a>.</p>
-    </div>
-</div>
+<h1>{% trans "Contact Us" %}</h1>
+<p>{% trans "We would love to hear from you and answer any questions you have about the project!" %}</p>
+<p>{% trans "For comments or questions, please contact us at" %} <a href="mailto:admin@communityplanit.org">admin@communityplanit.org</a>.</p>
 
-<div class="column-half">
-    <div class="column-container">
-        <h1>{% trans "Follow Us" %}</h1>
-        <p>
-        {% blocktrans %}
-        Learn more about the Engagement Game Lab at our <a href="http://engagementgamelab.org">website</a>.
-        {% endblocktrans %}
-        </p>
-        <p>
-        {% blocktrans %}
-        You can also follow us on <a href="http://twitter.com/communityplanit">Twitter</a> and <a href="http://www.facebook.com/CommunityPlanIt">Facebook</a>.
-        {% endblocktrans %}
-        </p>
-    </div>
-</div>
-
-<div class="clearfix"></div>
+<h1>{% trans "Follow Us" %}</h1>
+<p>{% blocktrans %}Learn more about the Engagement Game Lab at our <a href="http://engagementgamelab.org">website</a>.{% endblocktrans %}</p>
+<p>{% blocktrans %}You can also follow us on <a href="http://twitter.com/communityplanit">Twitter</a> and <a href="http://www.facebook.com/CommunityPlanIt">Facebook</a>.{% endblocktrans %}</p>
 {% endblock %}
