@@ -18,9 +18,9 @@ urlpatterns = patterns('web',
 
     url(r'games/', include('instances.urls', namespace='instances', app_name='instances')),
 
-    url(r'^faq/', direct_to_template, { 'template': 'static/faq.html', 
+    url(r'^faqs/', direct_to_template, { 'template': 'static/faqs.html', 
         #'extra_context': { 'instances': Instance.objects.all } 
-        }, name='faq'),
+        }, name='faqs'),
     url(r'^about/', direct_to_template, { 'template': 'static/about.html', 'extra_context': { 'instances': Instance.objects.all } }, name='about'),
     url(r'^contact/', direct_to_template, { 'template': 'static/contact.html', 'extra_context': { 'instances': Instance.objects.all } }, name='contact'),
     url(r'^privacy/', direct_to_template, { 'template': 'static/privacy.html', 'extra_context': { 'instances': Instance.objects.all } }, name='privacy'),

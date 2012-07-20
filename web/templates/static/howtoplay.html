@@ -3,132 +3,79 @@
 
 {% block title %}{% trans "How to Play" %}{% endblock %}
 
-{% block css %}
-    {{ block.super }}
-    <style>
-        #content h2 {
-            font-style: italic;
-        }
-    </style>
-{% endblock %}
-
-{% block body_id %}howtoplay{% endblock %}
-
 {% block content %}
-<div class="column-onequarter">
-    &nbsp;
-</div>
-<div class="column-threequarter">
-    <div class="column-container">
-        <h1 class="btn-tab">How to Play</h1>
-        <h1 class="btn-tab"><a href="{% url features %}">Features</a></h1>
-        <h1 class="btn-tab"><a href="{% url faq %}">FAQs</a></h1>
-        <hr />
-    </div>
-</div>
 
+<ul class="nav nav-pills">
+    <li class="active"><a href="{% url howtoplay %}">How to Play</a></li>
+    <li><a href="{% url features %}">Features</a></li>
+    <li><a href="{% url faqs %}">FAQs</a></li>
+</ul>
 
-<div class="column-onequarter clearfix">
-    <div class="column-container">
-        <ul id="page-links">
-            <li><a href="#what-is-community-planit">What is Community PlanIt?</a></li>
-            <li><a href="#getting-started">Getting Started</a></li>
-            <li><a href="#mapping-the-future">Mapping the Future</a></li>
-            <li><a href="#accomplishing-missions">Accomplishing Missions</a></li>
-            <li><a href="#the-finale">The Finale</a></li>
-        </ul>
-    </div>
-</div>
+<ul>
+    <li><a href="#what-is-community-planit">What is Community PlanIt?</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#mapping-the-future">Mapping the Future</a></li>
+    <li><a href="#accomplishing-missions">Accomplishing Missions</a></li>
+    <li><a href="#the-finale">The Finale</a></li>
+</ul>
+
 <div class="column-threequarter">
     <a name="top"></a>
-    <div class="column-container">
+    <div>
+
         <!-- What is Community PlanIt? -->
         <a name="what-is-community-planit"></a>
-        <h2 class="question">What is Community PlanIt?</h2><br />
-        <div class="column-twothird">
+        <h2 class="question">What is Community PlanIt?</h2>
+        <div>
             <div class="answer">
                 <p>Community PlanIt is a game about your community. </p>
-                <p>We believe that most people want to have a say in how their communities work and how they plan for the future. We also know that this is often easier said than done. </p>
-                <p>Showing up to a town hall meeting on a Tuesday at 6PM is, let’s face it, tough enough to discourage most people from ever trying. And for those who do make it—how many times have you found yourselves drowned out in the noise? How often have you been unable to articulate in front of the large crowd how you really feel? And does it seem as if, more often than not, your comment gets lost in the wind?  </p>
-                <p>The goal of Community PlanIt is simple: to provide ordinary people with a way to meaningfully engage with the planning process in their community... and, dare we say, make the process fun. </p>
+                <p>We believe that most people want to have a say in how their communities work and how they plan for the future. We also know that this is often easier said than done.</p>
+                <p>Showing up to a town hall meeting on a Tuesday at 6PM is, let’s face it, tough enough to discourage most people from ever trying. And for those who do make it—how many times have you found yourselves drowned out in the noise? How often have you been unable to articulate in front of the large crowd how you really feel? And does it seem as if, more often than not, your comment gets lost in the wind?</p>
+                <p>The goal of Community PlanIt is simple: to provide ordinary people with a way to meaningfully engage with the planning process in their community... and, dare we say, make the process fun.</p>
                 <p>Here’s how it works:</p>  
             </div>
         </div>
-        <div class="column-third">
-            {# <div class="howtoplay-img"><img src="{{ STATIC_URL }}img/howtoplay-1.jpg" width="200" height="218"></div> #}
-        </div>
-        <a href="#top" class="backtotop clearfix">Back to Top</a>
-        <hr />
-        
+
         <!-- Getting Started -->
         <a name="getting-started"></a>
-        <h2 class="question">Getting Started</h2><br />
-        <div class="column-twothird">
-            <div class="answer">
-                <p>Sign up for a game! Games are organized by the cities and metro areas in which they take place. The content, feedback, and analysis of a game are curated by the principle institution, agency, or organization heading the planning process in your community. Any info you provide about yourself during sign-up or during the game will assist planners and decision makers in analyzing the results and getting a clearer sense of the people in the community they serve (see the <a href="{% url privacy %}">Privacy Policy</a> for more info).</p>
-                <p>So select your game, fill in some basic info, upload a photo, and <em>voila</em>—you’re in!</p>
-            </div>
+        <h2 class="question">Getting Started</h2>
+        <div class="answer">
+            <p>Sign up for a game! Games are organized by the cities and metro areas in which they take place. The content, feedback, and analysis of a game are curated by the principle institution, agency, or organization heading the planning process in your community. Any info you provide about yourself during sign-up or during the game will assist planners and decision makers in analyzing the results and getting a clearer sense of the people in the community they serve (see the <a href="{% url privacy %}">Privacy Policy</a> for more info).</p>
+            <p>So select your game, fill in some basic info, upload a photo, and <em>voila</em>—you’re in!</p>
         </div>
-        <div class="column-third">
-            {# <div class="howtoplay-img"><img src="{{ STATIC_URL }}img/howtoplay-2.jpg" width="200" height="218"></div> #}
-        </div>
-        
-        <a href="#top" class="backtotop clearfix">Back to Top</a>
-        <hr />
-        
+                        
         <!-- Map the Future -->
         <a name="mapping-the-future"></a>
-        <h2 class="question">Mapping the Future</h2><br />
-        <div class="column-twothird">
-            <div  class="answer">
+        <h2 class="question">Mapping the Future</h2>
+        <div>
+            <div class="answer">
             <p>The goal of Community PlanIt is to earn as many planning flags as possible and use them to Map the Future. This is your chance to contribute to the voice of the community and inform the decisions that get made.<p>
-
             <p>Simply plant your flags on your priorities for the current planning process. The size of your flag on the map will grow and shrink to reflect how many flags you’ve placed there. Next to your flag, you’ll see the community’s flag, which represents the total number of flags planted there by all players.</p>
-
-            <p>You start off with as many flags as there are missions. So, if there are five missions, you start with five flags. Then, every time you accomplish a mission, you earn another flag.  By completing most of the challenges within each mission, you can double your planning flags!</p>
+            <p>You start off with as many flags as there are missions. So, if there are five missions, you start with five flags. Then, every time you accomplish a mission, you earn another flag. By completing most of the challenges within each mission, you can double your planning flags!</p>
             </div>
         </div>
-        <div class="column-third">
-            {# <div class="howtoplay-img"><img src="{{ STATIC_URL }}img/howtoplay-3.jpg" width="200" height="218"></div> #}
-        </div>
-        
-        <a href="#top" class="backtotop clearfix">Back to Top</a>
-        <hr />
+
         
         <!-- Accomplishing Missions -->
         <a name="accomplishing-missions"></a>
-        <h2 class="question">Accomplishing Missions</h2><br />
-        <div class="column-twothird">
-            <div class="answer">
-                <p>Every Community PlanIt game is divided up into multiple missions, or themes, that last only a few days each. To accomplish a mission, you need to earn points by completing Challenges.  You know you’ve succeeded when your mission progress bar makes it all the way to the end!</p>
-
-                <p><strong>What are challenges?</strong> Challenges are questions, prompts, activities, and dilemmas that give you a chance to get involved in the very same issues that planners and other decision-makers are trying to tackle. You might be asked to provide a solution to a dilemma, make tradeoffs to get something done, pinpoint a location on a map, or share a personal experience. Next to the challenge you can see how many points its worth. The more difficult the challenge, the more points you earn for completing it. But completing challenges doesn’t only earn you points; it also opens up the response page, where everyone can see and comment on each other’s responses and further the conversation.    </p>
-
-                <p>And if that weren’t enough, you can earn badges for all sorts of things during the game. Go to the badge gallery in your profile to see the possibilities.</p>
-
-                <p>Have a burning question you’d like to pose? Well go right ahead by clicking on You Pose the Challenge! Here you can create a challenge for the rest of the community and answer ones that have already been made. </p>
-
-                <p><strong>Remember</strong>, missions last just a few days. Though you can always go back and look at challenges from previous missions, you will not have another opportunity to complete a challenge and earn its points. So make sure to keep your eye on the clock!</p>
-            </div>
+        <h2 class="question">Accomplishing Missions</h2>
+        <div class="answer">
+            <p>Every Community PlanIt game is divided up into multiple missions, or themes, that last only a few days each. To accomplish a mission, you need to earn points by completing Challenges.  You know you’ve succeeded when your mission progress bar makes it all the way to the end!</p>
+            <p><strong>What are challenges?</strong> Challenges are questions, prompts, activities, and dilemmas that give you a chance to get involved in the very same issues that planners and other decision-makers are trying to tackle. You might be asked to provide a solution to a dilemma, make tradeoffs to get something done, pinpoint a location on a map, or share a personal experience. Next to the challenge you can see how many points its worth. The more difficult the challenge, the more points you earn for completing it. But completing challenges doesn’t only earn you points; it also opens up the response page, where everyone can see and comment on each other’s responses and further the conversation.    </p>
+            <p>And if that weren’t enough, you can earn badges for all sorts of things during the game. Go to the badge gallery in your profile to see the possibilities.</p>
+            <p>Have a burning question you’d like to pose? Well go right ahead by clicking on You Pose the Challenge! Here you can create a challenge for the rest of the community and answer ones that have already been made. </p>
+            <p><strong>Remember</strong>, missions last just a few days. Though you can always go back and look at challenges from previous missions, you will not have another opportunity to complete a challenge and earn its points. So make sure to keep your eye on the clock!</p>
         </div>
-        
-        <a href="#top" class="backtotop clearfix">Back to Top</a>
-        <hr />
         
         <!--The Finale -->
         <a name="the-finale"></a>
-        <h2 class="question">The Finale</h2><br />
-        <div class="column-twothird">
-            <div  class="answer">
-                <p>When a game ends, everyone is invited to a face-to-face meeting of planners, decision makers, and players to celebrate the winners, discuss the results of the game, and decide together how the planning process should move forward. </p>
-
-                <p>The best way to get a sense of Community PlanIt is to try it yourself.. If there are no Community PlanIt games in your area, then let us know if you have any ideas for one! (have hyperlink to “Bring Community PlanIt to my area”) </p>
-
-                <p>Community planning is an important, serious matter. But there’s no reason why it has to be a drag. So take a minute, or ten, or 60, to play the game, and plan the future. </p>
-            </div>
+        <h2 class="question">The Finale</h2>
+        <div  class="answer">
+            <p>When a game ends, everyone is invited to a face-to-face meeting of planners, decision makers, and players to celebrate the winners, discuss the results of the game, and decide together how the planning process should move forward. </p>
+            <p>The best way to get a sense of Community PlanIt is to try it yourself.. If there are no Community PlanIt games in your area, then let us know if you have any ideas for one! (have hyperlink to “Bring Community PlanIt to my area”) </p>
+            <p>Community planning is an important, serious matter. But there’s no reason why it has to be a drag. So take a minute, or ten, or 60, to play the game, and plan the future.</p>
         </div>
-        <a href="#top" class="backtotop clearfix">Back to Top</a>
-        
+                
     </div>
 </div>
 {% endblock %}
