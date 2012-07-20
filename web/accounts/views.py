@@ -96,7 +96,7 @@ def register(request, game_slug=None, extra_context=None, template_name='account
                     mission = active_missions[0]
                 else:
                     raise Http404("could not locate an active mission for %s" % for_game.title)
-                redir = reverse('missions:mission', args=(mission.slug,))
+                redir = reverse('missions:mission-with-demographic-form', args=(mission.slug,))
             return redirect(redir)
         else:
             log.debug(form.errors)
