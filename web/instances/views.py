@@ -52,10 +52,16 @@ class InstanceDetailView(DetailView):
             self.template_name = 'instances/instance_present.html'
         elif game.is_past:
             self.template_name = 'instances/instance_past.html'
-        context['game_profile_exists'] = UserProfilePerInstance.objects.filter(
-                                            user_profile=self.request.user.get_profile(),
-                                            instance=game,
-                                        ).exists()
+
+        game_profile_exists = False
+
+        if self.request.user.is_authenticated():
+            UserProfilePerInstance.objects.filter(
+                                        user_profile=self.request.user.get_profile(),
+                                        instance=game,
+                                    ).exists()
+
+        context['game_profile_exists'] = game_profile_exists
 
         active_missions = Mission.objects.active(instance_id=game.pk)
         current_mission = None
