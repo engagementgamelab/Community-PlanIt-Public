@@ -4,8 +4,11 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
+        <meta name="description" content="{% block meta_description %}{% endblock %}">
+        <meta name="keywords" content="">
+            
         <title>{% block title %}{% endblock %} | Community PlanIt</title>
-    
+        
         {% block css %}
             <link rel="stylesheet" href="{% static '/static/bootstrap/css/bootstrap.min.css' %}" type="text/css" media="screen">
             <link rel="stylesheet/less"  href="{% static '/static/css/styles.less' %}" type="text/css" media="screen">
