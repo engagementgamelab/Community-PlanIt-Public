@@ -1,6 +1,12 @@
 {% extends 'instances/base.html' %}
 {% load static from staticfiles %}
 
+
+{% block game_login %}
+    <li><a href="{% url instances:login instance.slug %}" class="btn">{% trans "Sign In" %}</a></li>
+{% endblock %}
+
+
 {% block js %}
 {{ block.super }}
     <script src="{% static '/static/js/bootstrap-modal.js' %}" type="text/javascript"></script>
