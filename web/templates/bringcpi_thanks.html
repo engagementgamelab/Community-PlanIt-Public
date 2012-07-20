@@ -1,21 +1,10 @@
-{% extends 'index.html' %}
+{% extends 'base.html' %}
+{% load i18n %}
 
-{% load i18n cpi_tags %}
+{% block content %}
+<a href="{% url home %}">{% trans "Back to Games" %}</a>
 
-
-{% block games %}
-
-<div id="games" class="games">
-    <div>
-        <a href="{% url home %}" class="btn-back">{% trans "Back to Games" %}</a>
-    </div>
-    <h1>{% trans "Bring Community PlanIt to You!" %}</h1>
-        
-
-    
-    <p class="instructions">{% trans "Thank you for leaving a message with us. We will review your idea and get in contact with you as soon as possible." %}</p>
-    
-    <a href="{% url home %}" class="btn-blue">Back to Games</a>
-</div>
+<h1>{% trans "Bring Community PlanIt to You!" %}</h1>
+<p>{% trans "Thank you for leaving a message with us. We will review your idea and get in contact with you as soon as possible." %}</p>
 {% endblock %}
 
