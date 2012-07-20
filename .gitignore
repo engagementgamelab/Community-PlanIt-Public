@@ -2,6 +2,7 @@
 *.swp
 *.tests
 *.sass-cache
+.DS_Store
 *designs
 
 assets/CACHE
