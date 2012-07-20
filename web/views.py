@@ -32,7 +32,7 @@ class BringCpiForm(forms.Form):
     role = forms.CharField(max_length=255)
     message = forms.CharField(widget=forms.Textarea)
 
-def bringcpi(request, template='bringcpi.html'):
+def bringcpi(request, template='static/bringcpi.html'):
     if request.method == 'POST': 
         form = BringCpiForm(request.POST)
         if form.is_valid(): 
