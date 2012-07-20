@@ -1,5 +1,32 @@
 {% extends 'missions/base.html' %}
 {% load gmap i18n game_extras cpi_tags %}
+{% load static from staticfiles %}
+
+{% block js %}
+{{ block.super }}
+    <script src="{% static '/static/js/bootstrap-modal.js' %}" type="text/javascript"></script>
+{% endblock js %}
+
+
+{% block css %}
+{{ block.super }}
+<style type="text/css">
+    .modal-body{ max-height: 700px; }
+</style>
+{% endblock css %}
+
+
+{% block extra_head %}
+
+    {% if show_demog_form %}
+    <script>
+        $(function(){
+            $('#myModal').modal('toggle');
+        });
+    </script>
+    {% endif %}
+
+{% endblock extra_head %}
 
 {% block activities_list %}
     <div class="column-container">
@@ -64,4 +91,56 @@
         {% endfor %}
     
     </div>
+
+    {% if show_demog_form %}
+    <div class="modal hide" id="myModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            <h3>Demographic Data</h3>
+        </div>
+        <div class="modal-body">
+            <p>Welcome... fill out the following form</p>
+        <div id="registration-container">
+            <div class="column-container">
+                
+                <form class="accounts-form" action="" method="post" enctype="multipart/form-data"> {% csrf_token %}
+                    <div class="column-third">
+                        <div class="column-container-40">
+                            <img src="{{ STATIC_URL }}img/avatar-blank.png" width="220" height="220">
+                            <p>Upload an image to use as your avatar</p>
+                            <p>{{ form.avatar }} {{ form.avatar.errors }}</p>
+                        
+                            <p id="accounts-form-avatar-disclaimer">By uploading a file you certify that you have the right to distribute this picture and that it does not violate the <a href="{% url terms %}"  target="new">Terms of Use</a>.</p>
+                        </div>
+                    </div>
+                    <div class="column-third">
+                        <div class="column-container">
+                            <p>{{form.stakes.label_tag}} 
+                                <label>Hold down "Control", or "&#8984;" on a Mac, to add or select more than one.</label>
+                                {{form.stakes}} {{form.stakes.errors}}</p>
+                            
+                            <p>{{ form.affiliations.label_tag }} 
+                                <label>Hold down "Control", or "&#8984;" on a Mac, to add or select more than one.</label>
+                                {{ form.affiliations }} {{ form.affiliations.errors }}</p>
+                            
+                            <p>{{ form.affiliations_other.label_tag }} 
+                                {{ form.affiliations_other }} {{ form.affiliations_other.errors }}</p>
+                            
+                            <p>
+                                {{form.tagline.label_tag}} {{form.tagline}} {{form.tagline.errors}}
+                                <span class="reply-comment-counter counter">(<span class="count">140</span> {% trans "chars left" %})</span>
+                            </p>
+                            
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn" data-dismiss="modal">Close</a>
+            <a href="#" class="btn btn-primary">Save changes</a>
+        </div>
+    </div>
+    {% endif %}
+
 {% endblock %}

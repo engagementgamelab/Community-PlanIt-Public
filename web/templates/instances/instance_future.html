@@ -5,15 +5,17 @@
 {{ block.super }}
     <script src="{% static '/static/js/bootstrap-modal.js' %}" type="text/javascript"></script>
 {% endblock js %}
+
+
 {% block extra_head %}
 
-{% if post_reg %}
-<script>
-    $(function(){
-        $('#myModal').modal('toggle');
-    });
-</script>
-{% endif %}
+    {% if post_reg %}
+    <script>
+        $(function(){
+            $('#myModal').modal('toggle');
+        });
+    </script>
+    {% endif %}
 
 {% endblock extra_head %}
 
@@ -22,7 +24,10 @@
     
     <br><br>
     
+    {% if debug %}
     future template
+    {% include "instances/debug.html" %}
+    {% endif %}
     
     <div class="well">    
 

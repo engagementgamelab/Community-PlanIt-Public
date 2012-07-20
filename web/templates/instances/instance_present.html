@@ -1,15 +1,25 @@
 {% extends 'instances/base.html' %}
+{% load static from staticfiles %}
 
 {% block content %}
     {{ block.super }}
     
     <br><br>
-    
-    present template
-    
     <div class="well">
-        <p>This game is live! <a class="btn btn-large btn-primary" href="{% url instances:join instance.slug %}">Join Game</a></p>
-        <p>You're signed up for this game <a class="btn btn-large btn-primary">Continue Game</a></p>
+
+        {% if debug %}
+            present template
+            {% include "instances/debug.html" %}
+        {% endif %}
+
+        <p>This game is live! 
+            {% if not game_profile_exists %}
+            <a class="btn btn-large btn-primary" href="{% url instances:join instance.slug %}">Join Game</a>
+            {% endif %}
+        </p>
+        {% if game_profile_exists %}
+        <p>You're signed up for this game <a class="btn btn-large btn-primary" href="{{ current_mission.get_absolute_url }}">Continue Game</a></p>
+        {% endif %}
     </div>
 
 {% endblock %}

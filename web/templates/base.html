@@ -67,7 +67,7 @@
                     <div class="span9">
                         <ul class="nav nav-pills">
                             <li><a href="{% url home %}">{% trans "Home" %}</a></li>
-                            <li><a href="#">{% trans "All Games" %}</a></li>
+                            <li><a href="{% url instances:instances %}">{% trans "All Games" %}</a></li>
                             <li><a href="{% url howtoplay %}">{% trans "How to Play" %}</a></li>
                             {% if user.is_authenticated %}
                                 <li><a href="">({{ request.user.get_profile.screen_name }})</a></li>

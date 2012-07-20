@@ -5,7 +5,10 @@
     
     <br><br>
     
+    {% if debug %}
     past template
+    {% include "instances/debug.html" %}
+    {% endif %}
     
     <div class="well">
         <p>This game has finished! <a class="btn btn-large disabled">Join Game</a> <a class="btn btn-large btn-danger">See Results</a></p>

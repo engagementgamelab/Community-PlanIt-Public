@@ -94,6 +94,31 @@ class RegistrationForm(forms.Form):
         return self.cleaned_data['email']
 
 
+class DemographicForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super(DemographicForm, self).__init__(*args, **kwargs)
+        self.current_game = kwargs['initial'].get('current_game')
+        ['current_game']
+        self.fields['avatar'] = forms.ImageField(required=False)
+
+        self.fields['stakes'] = forms.ModelMultipleChoiceField(
+                                    label=_(u'Stake in the community'),
+                                    required=False,
+                                    queryset=self.current_game.user_profile_variants.\
+                                            stake_variants.language(
+                                                    settings.LANGUAGE_CODE
+                                            ).all().order_by("pos")
+        )
+        self.fields['affiliations'] = forms.ModelMultipleChoiceField(
+                                    label=_(u'Affiliations'),
+                                    required=False,
+                                    queryset=self.current_game.user_profile_variants.\
+                                            affiliation_variants.all().order_by("name")
+        )
+        self.fields['affiliations_other'] = forms.CharField(required=False, 
+               label=_("Don't see your affiliation? Enter it here. Please place a comma between each affiliation."))
+
 
 class RegisterFormOne(forms.Form):
 
