@@ -84,14 +84,15 @@ mission_detail_player_created = MissionDetailPlayerCreated.as_view()
 
 class MissionDetailWithDemographicForm(MissionDetail, FormView):
 
-    initial = {
-            'current_game': Instance.objects.get(pk=83)
-    }
     form_class = DemographicForm
 
     def get_context_data(self, **kwargs):
         context = super(MissionDetailWithDemographicForm, self).get_context_data(
             **kwargs)
+        mission = kwargs['object']
+        # the current game is being used by the DemographicForm to set
+        # select variants
+        self.initial['current_game'] = mission.instance
 
         context['show_demog_form'] = True
 
