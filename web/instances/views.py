@@ -56,7 +56,7 @@ class InstanceDetailView(DetailView):
         game_profile_exists = False
 
         if self.request.user.is_authenticated():
-            UserProfilePerInstance.objects.filter(
+            game_profile_exists = UserProfilePerInstance.objects.filter(
                                         user_profile=self.request.user.get_profile(),
                                         instance=game,
                                     ).exists()
