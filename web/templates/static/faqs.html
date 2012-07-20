@@ -1,0 +1,89 @@
+{%extends "static/base.html"%}
+{% load i18n %}
+
+{% block title %}{% trans "Frequently Asked Questions" %}{% endblock %}
+
+{% block content %}
+
+<ul class="nav nav-pills">
+    <li><a href="{% url howtoplay %}">How to Play</a></li>
+    <li><a href="{% url features %}">Features</a></li>
+    <li class="active"><a href="{% url faqs %}">FAQs</a></li>
+</ul>
+
+<ul>
+    <li><a href="#question-1">Who is Community PlanIt for?</a></li>
+    <li><a href="#question-2">How does a Community PlanIt game influence the planning process?</a></li>
+    <li><a href="#question-3">How is my personal information used?</a></li>
+    <li><a href="#question-4">Community PlanIt is a game... so how do I win?</a></li>
+    <li><a href="#question-5">So what exactly is this Map the Future thing?</a></li>
+    <li><a href="#question-6">How are points assigned to challenges?</a></li>
+    <li><a href="#question-7">What if I think there are important issues being left out of the mix?</a></li>
+    <li><a href="#question-8">What can I do with Community PlanIt after my game has ended?</a></li>
+    <li><a href="#question-9">Who runs Community PlanIt</a></li>
+    <li><a href="#question-10">What now?</a></li>
+</ul>
+
+        <a name="question-1"></a>
+        <h2 class="question">Who’s Community PlanIt for?</h2>
+        <div class="answer">
+            <p>Community PlanIt is for anyone interested in helping to shape their community. It is for activists who want more opportunities to engage and speak out. It is for the person who has never been to a town hall meeting but has an idea for how the community should be. It is for the busy adult with only a few minutes to spare and for the passionate high school student with a free hour on a Saturday afternoon. It is for the city planner, who wants to connect with citizens in an easier, more civil manner. It is for the mayor who wants to know what citizens are truly thinking. Community PlanIt is for everyone.</p>
+        </div>
+        
+        <a name="question-2"></a>
+        <h2 class="question">How does a Community PlanIt game influence the planning process?</h2>
+        <div class="answer">
+            <p>Every Community PlanIt game is created and curated by those running an actual planning process in your community. Every challenge you complete and every comment you make is carefully looked at and analyzed by planners and researches to get a precise picture of the community and its wants and needs.</p>
+        </div>
+        
+        <a name="question-3"></a>
+        <h2 class="question">How is my personal information used?</h2>
+        <div class="answer">
+            <p>When you register for a game, we ask that you provide some basic info about yourself. This information helps planners and researchers get a fuller picture of the community. All the information you provide is made anonymous and used only for research and planning purposes. No information will be sold to third parties. See our Privacy Policy for more information.</p>
+        </div>
+        
+        <a name="question-4"></a>
+        <h2 class="question">Community PlanIt is a game...so how do I win?</h2>
+        <div class="answer">
+            <p>There are a few ways to win in Community PlanIt. For starters, the player with the most points at the end of the game will be celebrated with praise, prizes, and the Hometown Hero badge at the final meeting. Additional community-specific prizes will also be rewarded for accomplishments throughout the game. The highest point-earning affiliation will also be celebrated as the winning affiliation. And remember, you are not just playing Community PlanIt for yourself—you are playing to promote certain values and priorities you believe to be essential for your community’s future. So earn as many planning flags as you can and try to convince others to help you make the planning priorities you care about the most prominent by the end of the game. The highest-ranked priority will take special focus in the planning process moving forward.</p>
+        </div>
+
+        <a name="question-5"></a>
+        <h2 class="question">So what exactly is this Map the Future thing?</h2>
+        <div class="answer">
+            <p>An essential piece of the planning process is making sure planners and decision makers know the overall issues a community cares about. And all planning involves making tradeoffs—since there’s never an infinite amount of money, time, and resources, we need to do the best we can with what we have. Map the Future allows you to be an important and influential part of the prioritization process. The map reflects a list of priorities created by the planner leading the process. While there is not an opportunity to create your own priority, you can help shape the meaning of the ones that are there. Simply click on the priority’s name and share what you think.</p>
+        </div>
+
+        <a name="question-6"></a>
+        <h2 class="question">How are points assigned to challenges?</h2>
+        <div class="answer">
+            <p>The points for challenges reflect the difficulty or level of effort involved in completing them. The challenges that are quick and easy to complete—selecting the method of transportation you usually use, for instance—are often worth 25 points. The more difficult challenges that require you to problem solve complex issues or do something out in your neighborhood can be worth up to 100 points. </p>
+        </div>
+
+        <a name="question-7"></a>
+        <h2 class="question">What if I think there are important issues being left out of the mix?</h2>
+        <div class="answer">
+            <p>Speak out! Community PlanIt is designed to make conversation around difficult issues as easy and as civil as possible. If there’s a perspective on an issue not being addressed, then add it to the mix by clicking on Pose Your Own Challenge from Mission Control.  You get 10 points for posing challenges, and you get 10 points for completing challenges posed by other users. Players should play the game  in whatever way they feel is most effective to tackling real issues in the community.. </p>
+        </div>
+        
+        <a name="question-8"></a>
+        <h2 class="question">What can I do with Community PlanIt after my game has ended?</h2>
+        <div class="answer">
+            <p>When your game ends, stay tuned for information about the town hall meeting. Here you will be able to meet your fellow players, discuss the results of the game, and engage with planners and decision makers. After the meeting, you will be able to review all the results of the game and continue to engage by staying in touch with other players, creating and attending Get Togethers, and participating in other games about your community. </p>
+        </div>
+                
+        <a name="question-9"></a>
+        <h2 class="question">Who runs Community PlanIt?</h2>
+        <div class="answer">
+            <p>Community PlanIt was created by the Engagement Game Lab, an applied research lab at Emerson College focusing on the development and study of games and social media to enhance civic life. We design play that matters. If you have any thoughts or concerns about the system, please don’t hesitate to let us know.  Community PlanIt is an open source platform, and we’re working hard to make it great. If you’re a programmer and want to help, please fork the code and join the cause of making community planning fun and effective!</p>
+        </div>
+        
+        <a name="question-10"></a>
+        <h2 class="question">What now?</h2>
+        <div class="answer">
+            <p>Play the game! Make a difference! But Community PlanIt is only one way to engage in your community—whether it’s forming a social network online or getting together with neighbors to plant crops at an urban farm, there are so many opportunities you have for improving and influencing the future of your community. Community PlanIt aims simply to be one tool among many for making your community—and your planet—a better place to live.</p>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
