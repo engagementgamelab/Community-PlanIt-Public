@@ -11,7 +11,7 @@ from django.contrib import auth
 #from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 #from django.template import Context, RequestContext, loader
 from django.utils.translation import ugettext as _
 from django.db.models import Sum
@@ -80,6 +80,8 @@ class InstanceDetailView(DetailView):
 
         return context
 
+instance_detail_view = InstanceDetailView.as_view()
+
 
 class InstanceListView(ListView):
     model = Instance
@@ -90,6 +92,8 @@ class InstanceListView(ListView):
     #        **kwargs)
     #    context[''] = ''
     #    return context
+
+instance_list_view = InstanceListView.as_view()
 
 
 @login_required
