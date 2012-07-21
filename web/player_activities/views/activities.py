@@ -1,5 +1,8 @@
 from sijax import Sijax
 
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
@@ -18,6 +21,8 @@ from ..forms import *
 from ..models import *
 from ..views import comment_fun,\
                     log_activity_and_redirect
+
+from web.core.views import LoginRequiredMixin
 
 import logging
 log = logging.getLogger(__name__)
@@ -170,6 +175,18 @@ def _get_mc_choices(activity):
 
 def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
+
+
+class ChallengeDetail(LoginRequiredMixin, DetailView):
+    model = PlayerActivity
+    #template_name = 'player_activities/challenge.html'
+    #queryset = Instance.objects.exclude(is_disabled=True)
+
+    def get_context_data(self, **kwargs):
+        context = super(ChallengeDetail, self).get_context_data(
+            **kwargs)
+        challenge = kwargs['object']
+
 
 @login_required
 def activity(request, activity_id, template=None, **kwargs):
