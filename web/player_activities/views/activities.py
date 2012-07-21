@@ -127,7 +127,7 @@ def _build_context(request, action, activity, user=None):
                 map = map,
             ))
 
-    elif action in ['play', 'replay']:
+    elif action == 'play':
         if activity_type == 'open_ended':
             form = make_openended_form()
         elif activity_type == 'empathy':
@@ -160,10 +160,6 @@ def _build_context(request, action, activity, user=None):
     
     if user:
         context['is_completed'] = activity.is_completed(user)
-    # is_completed variable is checked for displaying responses.
-    # admin should be able to see the responses even if he had not completed an activity
-    if request.user.is_superuser:
-        context['is_completed'] = True
     return context
 
 def _get_mcqs(activity):
@@ -194,12 +190,6 @@ def activity(request, activity_id, template=None, **kwargs):
     if not activity:
         raise Http404("Challenge with id %s could not be located" % activity_id)
 
-    if request.user.is_superuser and action != 'overview' :
-        return redirec(activity.get_overview_url())
-
-    if action=='replay' and activity.mission.is_expired():
-        return redirec(activity.get_overview_url())
-
     if action=='play' and activity.is_completed(request.user):
         return redirec(activity.get_overview_url())
 
@@ -219,15 +209,12 @@ def activity(request, activity_id, template=None, **kwargs):
     def _update_errors():        
         if form.errors:
             errors.update(form.errors)
-        if action != 'replay':        
-            if comment_form and comment_form.errors:
-                errors.update(comment_form.errors)        
+        if comment_form and comment_form.errors:
+            errors.update(comment_form.errors)        
         context.update({'errors': errors})
 
     def _is_form_valid():
         is_valid = form.is_valid()
-        if action == 'replay':
-            return is_valid
         if comment_form:
             if not activity.comment_required:
                 comment_form.fields['message'].required = False
@@ -236,7 +223,7 @@ def activity(request, activity_id, template=None, **kwargs):
 
     if request.method == "POST":
 
-        if action in ['play', 'replay']:
+        if action == 'play':
             answer = None
             activity_completed_verb = "activity_completed"
             form_name = request.POST["form"] 
@@ -262,6 +249,7 @@ def activity(request, activity_id, template=None, **kwargs):
                         )
                 else:
                     _update_errors()
+
             elif form_name == "multi_response":
                 choices = _get_mc_choices(activity)
                 form = make_multi_form(choices)(request.POST)
@@ -295,6 +283,7 @@ def activity(request, activity_id, template=None, **kwargs):
                                 first_found = True
                 else:
                     _update_errors()
+
             elif form_name == "map":
                 form = MapForm(request.POST)
                 if _is_form_valid():
@@ -316,6 +305,7 @@ def activity(request, activity_id, template=None, **kwargs):
                     answer, created = AnswerOpenEnded.objects.get_or_create(activity=activity, answerUser=request.user)
                 else:
                     _update_errors()
+
             elif request.POST["form"] == "empathy":
                 form = make_empathy_form()(request.POST)
                 if _is_form_valid():
@@ -324,18 +314,7 @@ def activity(request, activity_id, template=None, **kwargs):
                     _update_errors()
 
             if answer is not None:
-                if action == 'replay':
-                    # for open_ended/empathy update the message 
-                    # for the submitted comment with the response to the
-                    # question
-                    if activity.type.type in ['open_ended', 'empathy']:
-                        my_comments = answer.comments.all().order_by('posted_date')
-                        if my_comments.count():
-                            myComment = my_comments[0]
-                            myComment.message=form.cleaned_data.get('response', '')
-                            myComment.save()
-                    action_msg = 'replayed'
-                elif action == 'play':
+                if action == 'play':
                     if activity.type.type in ['open_ended', 'empathy']:
                         comment_fun(answer, request, None, message=form.cleaned_data.get('response', ''))
                     else:
@@ -343,15 +322,11 @@ def activity(request, activity_id, template=None, **kwargs):
                     action_msg = 'completed'
                 return log_activity_and_redirect(request, activity, action_msg)
 
-    user = None
-    if activity.mission.is_active and not request.user.is_superuser:
-        user = request.user
-
-    context.update(_build_context(request, action, activity, user=user))
+    context.update(_build_context(request, action, activity, user=request.user))
     template = "player_activities/" + activity.type.type
     if action == 'play':
         template = template + "_response.html"
-    elif action in ['replay', 'overview']:
+    elif action == 'overview':
         template= "".join([template, "_", action, ".html"])
     return render_to_response(template, RequestContext(request, context))
 
