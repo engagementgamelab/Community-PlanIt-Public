@@ -14,16 +14,6 @@ from web.comments.utils import create_video_attachment, create_image_attachment
 import logging
 log = logging.getLogger(__name__)
 
-def _get_activity(pk, model_klass):
-    trans_model = model_klass.objects.translations_model()
-    try:
-        return model_klass.objects.get(pk=pk)
-    except trans_model.DoesNotExist:
-        try:
-            return model_klass.objects.language(settings.LANGUAGE_CODE).get(pk=pk)
-        except trans_model.DoesNotExist:
-            raise model_klass.DoesNotExist("activity translation could not be located. fallback does not exist.")
-
 def comment_fun(answer, request, form=None, message=''):
 
     if hasattr(request, 'current_game'):

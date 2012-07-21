@@ -1,28 +1,23 @@
 from sijax import Sijax
-from PIL import Image
 
 from django.conf import settings
-from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, render
+from django.db.models import get_model
+from django.http import HttpResponse, Http404
+from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
-from web.core.utils import missions_bar_context
 from web.answers.models import *
 from web.missions.models import Mission
 from web.comments.models import *
 from web.comments.forms import *
 from ..forms import *
 from ..models import *
-from ..views import _get_activity, comment_fun,\
-    log_activity_and_redirect
-
-from django.db.models import get_model
+from ..views import comment_fun,\
+                    log_activity_and_redirect
 
 import logging
 log = logging.getLogger(__name__)
@@ -184,18 +179,29 @@ def _get_mc_choice_ids(activity):
 def activity(request, activity_id, template=None, **kwargs):
     model = kwargs.pop('model')
     action = kwargs.pop('action')
+
+    def _get_activity(pk, model_klass):
+        trans_model = model_klass.objects.translations_model()
+        try:
+            return model_klass.objects.get(pk=pk)
+        except trans_model.DoesNotExist:
+            try:
+                return model_klass.objects.language(settings.LANGUAGE_CODE).get(pk=pk)
+            except trans_model.DoesNotExist:
+                raise model_klass.DoesNotExist("Translation for Challenge with id %s could not be located. Fallback does not exist." % pk)
+
     activity = _get_activity(activity_id, get_model(*(model.split('.'))))
     if not activity:
-        raise Http404("unknown activity type")
+        raise Http404("Challenge with id %s could not be located" % activity_id)
 
     if request.user.is_superuser and action != 'overview' :
-        return HttpResponseRedirect(activity.get_overview_url())
+        return redirec(activity.get_overview_url())
 
     if action=='replay' and activity.mission.is_expired():
-        return HttpResponseRedirect(activity.get_overview_url())
+        return redirec(activity.get_overview_url())
 
     if action=='play' and activity.is_completed(request.user):
-        return HttpResponseRedirect(activity.get_overview_url())
+        return redirec(activity.get_overview_url())
 
     comment_form = None
     if activity.type.type not in ['open_ended', 'empathy']:
@@ -342,12 +348,7 @@ def activity(request, activity_id, template=None, **kwargs):
         user = request.user
 
     context.update(_build_context(request, action, activity, user=user))
-    # this line here updates the context with 
-    # mission, my_points_for_mission and progress_percentage
-    context.update(missions_bar_context(request, activity.mission))
-
     template = "player_activities/" + activity.type.type
-
     if action == 'play':
         template = template + "_response.html"
     elif action in ['replay', 'overview']:
