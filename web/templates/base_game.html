@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block header %}
+<div id="header">
+    <div>
+        
+        <div class="row">
+            <!-- Logo -->
+            <div class="span2">
+                <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo_beta.png" width="75" height="50" alt="Community PlanIt logo" /></a>
+            </div>
+            <!-- Navigation -->
+            <div class="span10">
+                {% block nav %}
+                <div class="navbar">
+                </div>
+                {% endblock nav %}
+            </div>
+        </div>
+
+        <!-- Game Nav -->
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container">
+                    <ul class="nav">
+                        <li class="active"><a href="{% url home %}">{% trans "Leave Game" %}</a></li>
+                        <li><a href="{% url instances:instances %}">{% trans "Dashboard (Missions)" %}</a></li>
+                        <li><a href="">{% trans "Ask Around" %}</a></li>                
+                        <li><a href="">Bank</a></li>
+                    </ul>
+                    <ul class="nav pull-right">
+                        <li class="divider-vertical"></li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                {{ request.user.get_profile.screen_name }}
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="nav-header">Games you're in</li>
+                                <li><a>Detroit 24-7 Game</a></li>
+                                <li class="divider"></li>
+
+                                <li><a>Account Settings</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

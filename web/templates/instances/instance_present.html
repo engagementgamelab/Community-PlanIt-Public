@@ -3,7 +3,7 @@
 {% load static from staticfiles %}
 
 {% block game_login %}
-    <li><a href="{% url instances:login instance.slug %}" class="btn">{% trans "Sign In" %}</a></li>
+    <a href="{% url instances:login instance.slug %}" class="btn btn-primary">{% trans "Sign In" %}</a>
 {% endblock %}
 
 
