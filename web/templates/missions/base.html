@@ -15,25 +15,11 @@
 {% endblock %}
 
 {% block content %}
-<div>
-    <div class="column-container">
-        <h1>{{ mission.title }}</h1>
-    </div>
-    <div id="mission-intro">
-        <div class="column-missionintro">
-            <div class="column-container">
-                <p>{{ mission.description }}</p>
-            </div>
-        </div>
-        <div class="column-missionvideo">
-            <div class="column-container">
-                <div id="mission-video-container">{# embed_video mission.video #}</div>
-            </div>
-        </div>
-    </div>
-    
-    {% block activities_list %}
+    <h1>{{ mission.title }}</h1>
 
-    {% endblock %}
-</div>
+    <p>{{ mission.description }}</p>
+
+    {# {% embed_video mission.video %} #}
+    
+    {% block activities_list %}{% endblock %}
 {% endblock %}
