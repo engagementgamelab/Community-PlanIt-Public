@@ -1,4 +1,9 @@
 {% extends 'instances/base.html' %}
+{% load i18n %}
+
+{% block game_login %}
+    <a href="{% url instances:login instance.slug %}" class="btn btn-primary">{% trans "Sign In" %}</a>
+{% endblock %}
 
 {% block content %}
     {{ block.super }}

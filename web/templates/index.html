@@ -1,29 +1,28 @@
 {%extends "base.html"%}
+{% load static from staticfiles %}
 {% load i18n %}
 
 {% block title %}{% trans "Welcome" %}{% endblock %}
 
-{% block css %}
+{% block js %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/citypages.css"> 
+    <script src="{% static '/static/js/bootstrap-carousel.js' %}" type="text/javascript"></script>
+    <script>
+        $(function(){
+            $('.carousel').carousel();
+        });
+    </script>
 {% endblock %}
 
 {% block body_id %}public-index{% endblock %}
 
 {% block content %}
 <div>
-    <div>
-        {% if not user.is_authenticated %}
-        <div id="login-container" class="btn-arrow">
-            <a class="btn" href="{% url accounts:registration_register %}">{% trans "Register To Play Now!" %}</a>
-            {% comment %}
-            {# login form only exists on the game page #}
-            {% trans "Already registered?" %}<a href="{% url accounts:login %}">{% trans "Sign In" %}</a>
-            {% endcomment %}
-        </div>
-        {% endif %}
-    </div>
-
+    <p>Community PlanIt is an online engagement game that gives everyone the power to help shape their community's future</p>
+    
+    <p>... You should not able to <a href="" class="btn disabled">Register</a> frin here, but we should have to copy to tell them to check out the games below... hmmm</p>
+    
+    <p>I don't think <a href="" class="btn disabled">Sign In</a> should be tied to a game... (we will need to do some magic to figure out what game they are registered for)</p>
     {% comment %}
     <div>
         <div>                
@@ -56,25 +55,27 @@
         </div>
     </div>
     {% endcomment %}
+    
     <div>
-        <h1>Recent Games</h1>
-        <ul>
+        <h1 class="center">Recent Games</h1>
+        <div class="row instance-container">
             {% for instance in instances %}
-                <li>
-                    <a href="{{ instance.get_absolute_url }}">{{ instance }}</a> ({{ instance.for_city.name }})
-                    ({{ instance.start_date|date:"F j, Y" }} - {{ instance.end_date|date:"F j, Y" }})
+                <div class="instance span4">
                     <span class="badge badge-info">
                         {% if instance.is_future %}
-                            future (pre-game)
+                            Starts soon!
                         {% elif instance.is_present %}
-                            present (during-game)
+                            In Progress!
                         {% elif instance.is_past %}
-                            past (post-game)
+                            Game Ended!
                         {% endif %}
                     </span>
-                </li>
+                    <h3><a href="{{ instance.get_absolute_url }}">{{ instance }}</a></h3>
+                    <h4>({{ instance.for_city.name }})</h4>
+                    ({{ instance.start_date|date:"F j, Y" }} - {{ instance.end_date|date:"F j, Y" }})
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
     
 </div>
