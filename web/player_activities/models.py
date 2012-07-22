@@ -43,7 +43,7 @@ class PlayerActivityType(models.Model):
     defaultPoints = models.IntegerField(default=10)
 
     class Meta:
-        verbose_name_plural = 'Player Activity Types'
+        verbose_name_plural = 'Challenge Types'
 
     def __unicode__(self):
         return self.type
@@ -65,6 +65,9 @@ class PlayerActivityBase(TranslatableModel):
 
     #objects = PlayerActivityManager()
 
+    class Meta:
+        abstract = True
+
     #def get_children(self):
     #    rel_objs = self._meta.get_all_related_objects()
     #    return [getattr(self, x.get_accessor_name()) for x in rel_objs if x.model != type(self)]
@@ -84,8 +87,8 @@ class PlayerActivityBase(TranslatableModel):
 
     def is_completed(self, answerUser):
         if self.type.type == 'multi_response':
-            answers = MultiChoiceActivity.objects.filter(multichoice_answers__user=answerUser, activity=self).count()
-            return answers > 0
+            return MultiChoiceActivity.objects.\
+                    filter(multichoice_answers__user=answerUser, activity=self).exists()
         else:
             for answer_klass_name in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse', 'AnswerOpenEnded']:
                 related_name = answer_klass_name.replace('Answer', '').lower() + '_answers'
@@ -137,8 +140,6 @@ class PlayerActivityBase(TranslatableModel):
     def is_past(self):
         return self.mission.end_date < datetime.datetime.now()
 
-    class Meta:
-        abstract = True
 
 class PlayerActivity(PlayerActivityBase):
 
@@ -151,7 +152,7 @@ class PlayerActivity(PlayerActivityBase):
     )
 
     class Meta:
-        verbose_name_plural = 'Player Activities'
+        verbose_name_plural = 'Challenges'
 
     #@models.permalink --> breaks in localurl
     def get_absolute_url(self):
@@ -195,7 +196,6 @@ class PlayerActivity(PlayerActivityBase):
 
 class PlayerMapActivity(PlayerActivityBase):
     maxNumMarkers = models.IntegerField(default=5)
-    #django-nani complains that no translated fields exist on a sublclass of TraslatableModel
 
     translations = TranslatedFields(
         name = models.CharField(max_length=255),
@@ -204,9 +204,9 @@ class PlayerMapActivity(PlayerActivityBase):
         addInstructions = models.CharField(max_length=255, null=True, blank=True),
         meta = {'ordering': ['name']},
     )
-    
+
     class Meta:
-        verbose_name_plural = 'Player Map Activities'
+        verbose_name_plural = 'Player Map Challenges'
 
     @models.permalink
     def get_absolute_url(self):
@@ -242,16 +242,16 @@ class PlayerMapActivity(PlayerActivityBase):
 
 class PlayerEmpathyActivity(PlayerActivityBase):
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
-    translations = TranslatedFields(        
+    translations = TranslatedFields(
         bio = models.TextField(max_length=1000),
         name = models.CharField(max_length=255),
         question = models.CharField(max_length=1000),
         instructions = models.CharField(max_length=255, null=True, blank=True),
         addInstructions = models.CharField(max_length=255, null=True, blank=True),
     )
-    
+
     class Meta:
-        verbose_name_plural = 'Player Empathy Activities'
+        verbose_name_plural = 'Player Empathy Challenges'
 
     @models.permalink
     def get_absolute_url(self):
@@ -309,13 +309,13 @@ class MultiChoiceActivity(TranslatableModel):
     )
 
     objects = MultiChoiceActivityManager()
-    
+
     def is_completed(self, answerUser):
         return self.multi_choice_answers.filter(answerUser=answerUser).count() > 0
 
     class Meta:
-        verbose_name = 'An Available Answer to a Single/Multiple Choice Activity'
-        verbose_name_plural = 'Available Answers to Single/Multiple Choice Activities' 
+        verbose_name = 'An Available Answer to a Single/Multiple Choice Challenge'
+        verbose_name_plural = 'Available Answers to Single/Multiple Choice Challenges' 
 
     def __unicode__(self):
         s = self.safe_translation_getter('value', None)

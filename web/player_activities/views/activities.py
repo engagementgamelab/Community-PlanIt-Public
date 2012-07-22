@@ -1,28 +1,28 @@
 from sijax import Sijax
-from PIL import Image
+
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView
 
 from django.conf import settings
-from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, render
+from django.db.models import get_model
+from django.http import HttpResponse, Http404
+from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
-from web.core.utils import missions_bar_context
 from web.answers.models import *
 from web.missions.models import Mission
 from web.comments.models import *
 from web.comments.forms import *
 from ..forms import *
 from ..models import *
-from ..views import _get_activity, comment_fun,\
-    log_activity_and_redirect
+from ..views import comment_fun,\
+                    log_activity_and_redirect
 
-from django.db.models import get_model
+from web.core.views import LoginRequiredMixin
 
 import logging
 log = logging.getLogger(__name__)
@@ -132,7 +132,7 @@ def _build_context(request, action, activity, user=None):
                 map = map,
             ))
 
-    elif action in ['play', 'replay']:
+    elif action == 'play':
         if activity_type == 'open_ended':
             form = make_openended_form()
         elif activity_type == 'empathy':
@@ -165,10 +165,6 @@ def _build_context(request, action, activity, user=None):
     
     if user:
         context['is_completed'] = activity.is_completed(user)
-    # is_completed variable is checked for displaying responses.
-    # admin should be able to see the responses even if he had not completed an activity
-    if request.user.is_superuser:
-        context['is_completed'] = True
     return context
 
 def _get_mcqs(activity):
@@ -180,22 +176,39 @@ def _get_mc_choices(activity):
 def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
 
+
+class ChallengeDetail(LoginRequiredMixin, DetailView):
+    model = PlayerActivity
+    #template_name = 'player_activities/challenge.html'
+    #queryset = Instance.objects.exclude(is_disabled=True)
+
+    def get_context_data(self, **kwargs):
+        context = super(ChallengeDetail, self).get_context_data(
+            **kwargs)
+        challenge = kwargs['object']
+
+
 @login_required
 def activity(request, activity_id, template=None, **kwargs):
     model = kwargs.pop('model')
     action = kwargs.pop('action')
+
+    def _get_activity(pk, model_klass):
+        trans_model = model_klass.objects.translations_model()
+        try:
+            return model_klass.objects.get(pk=pk)
+        except trans_model.DoesNotExist:
+            try:
+                return model_klass.objects.language(settings.LANGUAGE_CODE).get(pk=pk)
+            except trans_model.DoesNotExist:
+                raise model_klass.DoesNotExist("Translation for Challenge with id %s could not be located. Fallback does not exist." % pk)
+
     activity = _get_activity(activity_id, get_model(*(model.split('.'))))
     if not activity:
-        raise Http404("unknown activity type")
-
-    if request.user.is_superuser and action != 'overview' :
-        return HttpResponseRedirect(activity.get_overview_url())
-
-    if action=='replay' and activity.mission.is_expired():
-        return HttpResponseRedirect(activity.get_overview_url())
+        raise Http404("Challenge with id %s could not be located" % activity_id)
 
     if action=='play' and activity.is_completed(request.user):
-        return HttpResponseRedirect(activity.get_overview_url())
+        return redirec(activity.get_overview_url())
 
     comment_form = None
     if activity.type.type not in ['open_ended', 'empathy']:
@@ -213,15 +226,12 @@ def activity(request, activity_id, template=None, **kwargs):
     def _update_errors():        
         if form.errors:
             errors.update(form.errors)
-        if action != 'replay':        
-            if comment_form and comment_form.errors:
-                errors.update(comment_form.errors)        
+        if comment_form and comment_form.errors:
+            errors.update(comment_form.errors)        
         context.update({'errors': errors})
 
     def _is_form_valid():
         is_valid = form.is_valid()
-        if action == 'replay':
-            return is_valid
         if comment_form:
             if not activity.comment_required:
                 comment_form.fields['message'].required = False
@@ -230,7 +240,7 @@ def activity(request, activity_id, template=None, **kwargs):
 
     if request.method == "POST":
 
-        if action in ['play', 'replay']:
+        if action == 'play':
             answer = None
             activity_completed_verb = "activity_completed"
             form_name = request.POST["form"] 
@@ -256,6 +266,7 @@ def activity(request, activity_id, template=None, **kwargs):
                         )
                 else:
                     _update_errors()
+
             elif form_name == "multi_response":
                 choices = _get_mc_choices(activity)
                 form = make_multi_form(choices)(request.POST)
@@ -289,6 +300,7 @@ def activity(request, activity_id, template=None, **kwargs):
                                 first_found = True
                 else:
                     _update_errors()
+
             elif form_name == "map":
                 form = MapForm(request.POST)
                 if _is_form_valid():
@@ -310,6 +322,7 @@ def activity(request, activity_id, template=None, **kwargs):
                     answer, created = AnswerOpenEnded.objects.get_or_create(activity=activity, answerUser=request.user)
                 else:
                     _update_errors()
+
             elif request.POST["form"] == "empathy":
                 form = make_empathy_form()(request.POST)
                 if _is_form_valid():
@@ -318,18 +331,7 @@ def activity(request, activity_id, template=None, **kwargs):
                     _update_errors()
 
             if answer is not None:
-                if action == 'replay':
-                    # for open_ended/empathy update the message 
-                    # for the submitted comment with the response to the
-                    # question
-                    if activity.type.type in ['open_ended', 'empathy']:
-                        my_comments = answer.comments.all().order_by('posted_date')
-                        if my_comments.count():
-                            myComment = my_comments[0]
-                            myComment.message=form.cleaned_data.get('response', '')
-                            myComment.save()
-                    action_msg = 'replayed'
-                elif action == 'play':
+                if action == 'play':
                     if activity.type.type in ['open_ended', 'empathy']:
                         comment_fun(answer, request, None, message=form.cleaned_data.get('response', ''))
                     else:
@@ -337,20 +339,11 @@ def activity(request, activity_id, template=None, **kwargs):
                     action_msg = 'completed'
                 return log_activity_and_redirect(request, activity, action_msg)
 
-    user = None
-    if activity.mission.is_active and not request.user.is_superuser:
-        user = request.user
-
-    context.update(_build_context(request, action, activity, user=user))
-    # this line here updates the context with 
-    # mission, my_points_for_mission and progress_percentage
-    context.update(missions_bar_context(request, activity.mission))
-
+    context.update(_build_context(request, action, activity, user=request.user))
     template = "player_activities/" + activity.type.type
-
     if action == 'play':
         template = template + "_response.html"
-    elif action in ['replay', 'overview']:
+    elif action == 'overview':
         template= "".join([template, "_", action, ".html"])
     return render_to_response(template, RequestContext(request, context))
 
