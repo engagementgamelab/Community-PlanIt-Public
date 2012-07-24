@@ -2,12 +2,13 @@
 {% load i18n %}
 
 {% block game_login %}
-    <a href="{% url instances:login instance.slug %}" class="btn btn-primary">{% trans "Sign In" %}</a>
+    <a href="{% url instances:login instance.slug %}" class="btn btn-large btn-primary">{% trans "Sign In" %}</a>
 {% endblock %}
 
 {% block content %}
-    {{ block.super }}
-    
+{{ block.super }}
+<div class="wrapper">
+
     <br><br>
     
     {% if debug %}
@@ -22,5 +23,5 @@
     <br><br>
     
     <h2>Post-game Breakdown</h2>
-
+</div>
 {% endblock %}

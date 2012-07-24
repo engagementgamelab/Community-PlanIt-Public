@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block content %}
+<div class="wrapper">
     <h1>{{ instance }}</h1>
     <h6>A game in the {{ instance.for_city.name }} area.</h6>
     
@@ -30,5 +31,6 @@
             <h2>Causes</h2>        
         </div>
     </div>
-
+    
+</div>
 {% endblock %}

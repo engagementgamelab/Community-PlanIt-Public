@@ -63,65 +63,66 @@
         
         {% block header %}
         <div id="header">
-            <div>
+            <div class="wrapper">
                 <div class="row">
-                    <!-- Logo -->
+                    <!-- Site Navigation -->
                     <div class="span2">
                         <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo_beta.png" width="75" height="50" alt="Community PlanIt logo" /></a>
                     </div>
-                    <!-- Navigation -->
-                    <div class="span10">
-                        {% block nav %}
-                        <div class="navbar">
-                            <div class="navbar-inner">
-                                <div class="container">
-                                    <ul class="nav">
-                                        <li class="active"><a href="{% url home %}">{% trans "Home" %}</a></li>
-                                        <li><a href="{% url instances:instances %}">{% trans "All Games" %}</a></li>
-                                        <li><a href="{% url howtoplay %}">{% trans "How to Play" %}</a></li>
-                                    </ul>
-                                    <ul class="nav pull-right">
-                                        <li class="divider-vertical"></li>
-                                        {% if user.is_authenticated %}
-                                            <li class="dropdown">
-                                                <a class="dropdown-toggle" data-toggle="dropdown">
-                                                    {{ request.user.get_profile.screen_name }}
-                                                    <b class="caret"></b>
-                                                </a>
-                                                <ul class="dropdown-menu">
-                                                    <li class="nav-header">Games you're in</li>
-                                                    <li><a>Detroit 24-7 Game</a></li>
-                                                    <li class="divider"></li>
-                                                    <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
-                                                </ul>
-                                            </li>
-                                        {% else %}
-                                            {% block game_login %}<a class="btn disabled">Sign In</a>{% endblock %}
-                                        {% endif %}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        {% endblock nav %}
+                    {% block nav %}
+                    <div class="span8">
+                        <ul class="nav nav-pills">
+                            <li class="active"><a href="{% url home %}">{% trans "Home" %}</a></li>
+                            <li><a href="{% url instances:instances %}">{% trans "All Games" %}</a></li>
+                            <li><a href="{% url howtoplay %}">{% trans "How to Play" %}</a></li>
+                        </ul>
                     </div>
                 </div>
-            </div>
+                    <!-- Authenticated Nav -->
+                    <div>
+                        {% if user.is_authenticated %}
+                            <div class="navbar"><div class="navbar-inner"><div class="container">
+                                <ul class="nav pull-right">
+                                    <li class="dropdown">
+                                        <a class="dropdown-toggle" data-toggle="dropdown">
+                                            {{ request.user.get_profile.screen_name }}
+                                            <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="nav-header">Current Game</li>
+                                            <li><a>Detroit 24-7 Game</a></li>
+                                            <li class="divider"></li>
+                                            <li class="nav-header">Switch Game</li>
+                                            <li><a>NoQuWu</a></li>
+                                            <li><a>Boston Public Schools</a></li>
+                                            
+                                            <li class="divider"></li>
+                                            <li><a>Account Settings</a>
+                                            <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div></div></div><!-- navbar, navbar-inner, container -->
+                        {% else %}
+                            {% block game_login %}<a class="btn btn-large disabled">Sign In</a>{% endblock %}
+                        {% endif %}
+                    </div>
+                    {% endblock nav %}
+                </div>
         </div>
         {% endblock %}
     
         {% block page %}
             <div id="body">
-                <div>
-                    <!-- Content -->
-                    {% block content %}{% endblock %}
-                </div>
+                <!-- Content -->
+                {% block content %}{% endblock %}
             </div>
         {% endblock %}
         
         <!-- Footer -->
         {% block footer %}
             <div id="footer">
-                <div>
+                <div class="wrapper">
                     <div class="row">
                         <div class="span6">
                             <h3>In The News</h3>

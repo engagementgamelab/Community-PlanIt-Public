@@ -4,56 +4,60 @@
 {% block title %}{% trans "Features" %}{% endblock %}
 
 {% block content %}
-<ul class="nav nav-pills">
-    <li><a href="{% url howtoplay %}">How to Play</a></li>
-    <li class="active"><a href="{% url features %}">Features</a></li>
-    <li><a href="{% url faqs %}">FAQs</a></li>
-</ul>
+<div class="wrapper">
 
-<ul>
-    <li><a href="#become-an-expert">Become an Expert</a></li>
-    <li><a href="#see-whats-happening">See What's Happening</a></li>
-    <li><a href="#check-the-standings">Check the Standings</a></li>
-    <li><a href="#find-players">Find Players</a></li>
-    <li><a href="#get-together">Get Together</a></li>
-</ul>
+    <ul class="nav nav-pills">
+        <li><a href="{% url howtoplay %}">How to Play</a></li>
+        <li class="active"><a href="{% url features %}">Features</a></li>
+        <li><a href="{% url faqs %}">FAQs</a></li>
+    </ul>
 
-<div>
-    <p>In addition to giving you an engaging way to connect with the planning in your community, Community PlanIt also aims to give players all the information, latest news, and tools necessary for being as well-informed and up-to-date as possible. So during a game, make sure you take a bit of time and...</p>
+    <ul>
+        <li><a href="#become-an-expert">Become an Expert</a></li>
+        <li><a href="#see-whats-happening">See What's Happening</a></li>
+        <li><a href="#check-the-standings">Check the Standings</a></li>
+        <li><a href="#find-players">Find Players</a></li>
+        <li><a href="#get-together">Get Together</a></li>
+    </ul>
+
+    <div>
+        <p>In addition to giving you an engaging way to connect with the planning in your community, Community PlanIt also aims to give players all the information, latest news, and tools necessary for being as well-informed and up-to-date as possible. So during a game, make sure you take a bit of time and...</p>
     
-    <a name="become-an-expert"></a>
-    <h2 class="question">Become an Expert</h2>
-    <div class="answer">
-        <p>Become an Expert by exploring all the resources, information, and media about the planning in your community.</p>
-    </div>
+        <a name="become-an-expert"></a>
+        <h2 class="question">Become an Expert</h2>
+        <div class="answer">
+            <p>Become an Expert by exploring all the resources, information, and media about the planning in your community.</p>
+        </div>
 
 
-    <!-- See What's Happening -->
-    <a name="see-whats-happening"></a>
-    <h2 class="question">See What’s Happening</h2>
-    <div class="answer">
-        <p>See What’s Happening by browsing the very latest activity occurring on Community PlanIt.</p>
-    </div>
+        <!-- See What's Happening -->
+        <a name="see-whats-happening"></a>
+        <h2 class="question">See What’s Happening</h2>
+        <div class="answer">
+            <p>See What’s Happening by browsing the very latest activity occurring on Community PlanIt.</p>
+        </div>
 
-    <!-- Check the Standings -->
-    <a name="check-the-standings"></a>
-    <h2 class="question">Check the Standings</h2>
-    <div class="answer">
-        <p>Check the Standings and see not only the top players, but also the top point-earning affiliations—and the exact rank you currently hold.</p>
-    </div>
+        <!-- Check the Standings -->
+        <a name="check-the-standings"></a>
+        <h2 class="question">Check the Standings</h2>
+        <div class="answer">
+            <p>Check the Standings and see not only the top players, but also the top point-earning affiliations—and the exact rank you currently hold.</p>
+        </div>
             
-    <!-- Find Players -->
-    <a name="find-players"></a>
-    <h2 class="question">Find Players</h2>
-    <div class="answer">
-        <p>Find Players by browsing, searching or filtering. And while you’re at it, connect with people by checking out their accomplishments, commenting on their profiles, and joining their affiliations.</p>
-    </div>
+        <!-- Find Players -->
+        <a name="find-players"></a>
+        <h2 class="question">Find Players</h2>
+        <div class="answer">
+            <p>Find Players by browsing, searching or filtering. And while you’re at it, connect with people by checking out their accomplishments, commenting on their profiles, and joining their affiliations.</p>
+        </div>
     
-    <!-- Get Together! -->
-    <a name="get-together"></a>
-    <h2 class="question">Get Together!</h2>
-    <div class="answer">
-        <p>And Get Together! with other players. Create or join events in the world to bring people together, rally for a cause, or take direct action to improve your community.</p>
+        <!-- Get Together! -->
+        <a name="get-together"></a>
+        <h2 class="question">Get Together!</h2>
+        <div class="answer">
+            <p>And Get Together! with other players. Create or join events in the world to bring people together, rally for a cause, or take direct action to improve your community.</p>
+        </div>
     </div>
+
 </div>
 {% endblock %}
