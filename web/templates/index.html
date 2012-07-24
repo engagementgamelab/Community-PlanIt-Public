@@ -55,10 +55,15 @@
         </div>
     </div>
     {% endcomment %}
-    
-    <div>
-        <h1 class="center">Recent Games</h1>
-        <div class="row instance-container">
+</div>
+<div id="header-featured">
+    <div class="wrapper">
+        <h1>{% trans "Featured Games" %}</h1>
+    </div>
+</div>
+<div id="featured">
+    <div class="wrapper">
+        <div class="row featured-container">
             {% for instance in instances %}
                 <div class="instance span4">
                     <span class="badge badge-info">
@@ -77,6 +82,5 @@
             {% endfor %}
         </div>
     </div>
-    
 </div>
 {% endblock %}

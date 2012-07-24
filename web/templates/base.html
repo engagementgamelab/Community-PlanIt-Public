@@ -124,7 +124,7 @@
         
         <!-- Footer -->
         {% block footer %}
-            <div id="footer">
+            <div id="footer-fat">
                 <div class="wrapper">
                     <div class="row">
                         <div class="span6">
@@ -133,24 +133,41 @@
                         <div class="span3">
                             <h3>Sponsors</h3>
                             <ul>
-                                <li><a href="http://engagementgamelab.org/" target="_new">Engagement Game Lab</a></li>
-                                <li><a href="http://www.knightfoundation.org/" target="_new">Knight Foundation</a></li>
-                                <li><a href="http://www.emerson.edu/" target="_new">Emerson College</a></li>
+                                <li><a href="http://engagementgamelab.org/" target="new">Engagement Game Lab</a></li>
+                                <li><a href="http://www.knightfoundation.org/" target="new">Knight Foundation</a></li>
+                                <li><a href="http://www.emerson.edu/" target="new">Emerson College</a></li>
                             </ul>
                         </div>
-                        <div class="span3">
-                            <h3>A Community Organizer?</h3>
-                            <a href="{% url bringcpi %}" class="btn">Bring Community PlanIt to you!</a>
+                        <div class="span3 social align-right">
+                            <a class="social-facebook" href="https://www.facebook.com/CommunityPlanIt" target="new"></a>
+                            <a class="social-twitter" href="https://twitter.com/communityplanit" target="new"></a>
                         </div>
                     </div>
-                    {% comment %}
-                        <ul>
-                            <li><a href="{% url about %}">{% trans "About" %}</a></li>
-                            <li><a href="{% url contact %}">{% trans "Contact" %}</a></li>
-                            <li><a href="{% url privacy %}">{% trans "Privacy Policy" %}</a></li>
-                            <li><a href="{% url terms %}">{% trans "Terms of Use" %}</a></li>
-                        </ul>
-                    {% endcomment %}
+                </div>
+            </div>
+            <div id="footer">
+                <div class="wrapper row">
+                    <div id="copyright-icon">&copy;</div>
+                    <div>
+                        <div id="copyright">This website and all contents copyright Community PlanIt.</div>
+                        <div class="row-fluid">
+                            <div class="span8">
+                                <ul id="nav-footer-left" class="nav-inline">
+                                    <li><a href="{% url about %}">{% trans "About" %}</a></li>
+                                    <li><a href="{% url contact %}">{% trans "Contact" %}</a></li>
+                                        {# <a href="{% url bringcpi %}" class="btn">Bring Community PlanIt to you!</a> #}
+                                    <li><a href="{% url privacy %}">{% trans "Privacy Policy" %}</a></li>
+                                    <li><a href="{% url terms %}">{% trans "Terms of Use" %}</a></li>
+                                </ul>
+                            </div>
+                            <div class="span4">
+                                <ul id="nav-footer-right" class="nav-inline">
+                                    <li><a href="">{% trans "Register" %}</a></li>
+                                    <li><a href="">{% trans "Login" %}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         {% endblock %}
