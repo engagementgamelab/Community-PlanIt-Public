@@ -196,6 +196,8 @@ class SingleResponseForm(forms.ModelForm):
 
         self.fields['selected'] = forms.ModelChoiceField(
                     widget=RadioSelect,
+                    required=True,
+                    empty_label=None,
                     queryset=MultiChoiceActivity.objects.\
                             language(get_language()).\
                             filter(activity=activity).distinct()
