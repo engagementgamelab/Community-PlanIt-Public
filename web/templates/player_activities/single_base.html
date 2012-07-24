@@ -2,7 +2,7 @@
 {% load i18n avatar %}
 {% block title %}{{ block.super }} | Single Response{% endblock %}
 
-{% block game_content %}
+{% block content %}
 <div class="single-response column-container">
     {% if activity.is_player_submitted %}
         <a href="{% url missions:mission_playercreated activity.mission.slug %}" class="btn-back">{% trans "Return" %}</a>
@@ -13,27 +13,27 @@
     <h1>{{ activity.name|safe }}<span class="points">{{ activity.get_points }}</span></h1>
     {% if activity.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile activity.creationUser.id %}">{% avatar activity.creationUser %}</a> created by <a href="{% url accounts:player_profile activity.creationUser.id %}">{{ activity.creationUser.get_profile.screen_name }}</a></div>{% endif %}
     
-    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">
+    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">{% csrf_token %}
         <div class="column-threequarter">
             <div class="activity-question">
-                {% include "player_activities/attachments.html" %}
+                {# include "player_activities/attachments.html" #}
                 <div>{{ activity.question|safe }}</div>
                 <br class="clearfix" />
                 {% if errors.response %}
                     {{ errors.response }}
                 {% endif %}
             </div>
-        
-                {% csrf_token %}
             <input type="hidden" name="form" value="single_response">
-    
-    
-            <div>
-                <ul class="activity-question-options">
-                    {% for choice in form.response.field.choices %}
+            <div class="activity-question-options">
+                    {{ form.selected }}
+            {% comment %}
+                <ul class="activity-question-options"> 
+
+                    {% for choice in form.selected.field.choices %}
                         <li><label for="response_{{choice.0}}"><input id="response_{{choice.0}}" type="radio" name="response" value="{{choice.0}}"> {{choice.1}}</label></li>
                     {% endfor %}
                 </ul>
+            {% endcomment %}
             </div>
 
             {% block comment %}{% endblock %}
@@ -42,13 +42,8 @@
                 <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="36" height="36" />
                 <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
             </div>
-        
-            
-    
         </div>
-        <div class="column-onequarter">
-    
-        </div>
+        <div class="column-onequarter"></div>
     </form>
     <p class="clearfix">Once you are done, you will be able to view everyone's responses.</p>
 </div>

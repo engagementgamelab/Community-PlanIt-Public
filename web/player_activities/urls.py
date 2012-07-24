@@ -8,6 +8,11 @@ urlpatterns = patterns('player_activities.views',
         NewActivityWizard.as_view([SelectNewActivityForm,]),
         name = "new"),
 
+    url(r"^single-response/(?P<challenge_id>\d+)/play/$",
+            "activities.single_response_play_view", 
+            name="single-response-play",
+    ),
+
     url(r"^(?P<activity_id>\d+)/$",
             "activities.activity",
             dict(

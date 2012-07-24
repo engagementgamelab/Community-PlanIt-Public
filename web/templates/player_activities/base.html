@@ -1,4 +1,4 @@
-{% extends "base_city.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 
 {% block css %}
@@ -22,7 +22,7 @@
     <script>
     jQuery(function($) {
         
-        {% include "js/ajax_csrf.html" %}
+        {# include "js/ajax_csrf.html" #}
         /* Summary Graph */
         /* calculate total */
         var activity_response_total = 0;

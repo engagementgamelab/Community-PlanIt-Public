@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.http import HttpResponse, Http404
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
@@ -186,6 +186,70 @@ class ChallengeDetail(LoginRequiredMixin, DetailView):
         context = super(ChallengeDetail, self).get_context_data(
             **kwargs)
         challenge = kwargs['object']
+
+
+class SingleResponseForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        activity = kwargs.get('initial')['activity']
+        super(SingleResponseForm, self).__init__(*args, **kwargs)
+
+        self.fields['selected'] = forms.ModelChoiceField(
+                    widget=RadioSelect,
+                    queryset=MultiChoiceActivity.objects.\
+                            language(get_language()).\
+                            filter(activity=activity).distinct()
+        )
+
+    class Meta:
+        model = AnswerSingleResponse
+        exclude = ('answerUser', 'activity')
+
+
+class SingleResponseCreateView(LoginRequiredMixin, CreateView):
+    form_class = SingleResponseForm
+    model = None
+    context_object_name = 'single_response_answer'
+    template_name = "player_activities/single_base.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.activity = get_object_or_404(PlayerActivity, pk=kwargs['challenge_id'])
+
+        if AnswerSingleResponse.objects.\
+                        filter(answerUser=request.user,
+                               activity=self.activity).\
+                                       exists():
+            return redirect(self.activity.get_overview_url())
+
+        self.initial.update({'activity': self.activity,}
+        )
+        return super(SingleResponseCreateView, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.answerUser = self.request.user
+        self.object.activity = self.activity
+        self.object.save()
+        return redirect(self.activity.get_overview_url())
+        #return log_activity_and_redirect(self.request, self.activity, action_msg)
+
+    def form_invalid(self, form):
+        print form.errors
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(SingleResponseCreateView, self).\
+                get_context_data(*args, **kwargs)
+        context_data.update(
+                {
+                    'activity': self.activity,
+                }
+        )
+        print context_data
+        return context_data
+
+single_response_play_view = SingleResponseCreateView.as_view()
 
 
 @login_required
