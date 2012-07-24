@@ -168,7 +168,9 @@ class PlayerActivity(PlayerActivityBase):
         return reverse('activities:overview', args=(self.pk,))
 
     def get_activity_url(self):
-        return reverse('activities:activity', args=(self.pk,))
+        return reverse('activities:%s' % self.type.type.replace('_', '-')+'-play',
+                            args=(self.pk,)
+        )
 
     def get_replay_url(self):
         return reverse('activities:replay', args=(self.pk,))
