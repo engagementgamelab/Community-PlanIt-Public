@@ -8,8 +8,9 @@
 {% endblock %}
 
 {% block content %}
+<div class="wrapper">
     <h1>Log In</h1>
-    <div>
+
     <form action="." method="post"> 
         {% csrf_token %}
         
@@ -34,5 +35,6 @@
             <input class="btn btn-primary" type="submit" value="Get back to playing!"> New to Community PlanIt? <a href="{# url accounts:register #}">Sign up now</a>!
         </div>
     </form>
-    </div>
+
+</div>
 {% endblock %}

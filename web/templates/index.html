@@ -59,11 +59,12 @@
 <div id="header-featured">
     <div class="wrapper">
         <h1>{% trans "Featured Games" %}</h1>
+        <p class="ux">(featured games will show all active and future games that we want to spotlight and drive traffic to, incase users come to the home page and get lost)</p>
     </div>
 </div>
 <div id="featured">
     <div class="wrapper">
-        <div class="row featured-container">
+        <div class="row featured-container drop-shadow-container">
             {% for instance in instances %}
                 <div class="instance span4">
                     <span class="badge badge-info">
