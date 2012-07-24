@@ -214,16 +214,14 @@ class SingleResponseCreateView(LoginRequiredMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.activity = get_object_or_404(PlayerActivity, pk=kwargs['challenge_id'])
-
         if AnswerSingleResponse.objects.\
-                        filter(answerUser=request.user,
-                               activity=self.activity).\
-                                       exists():
+                filter(answerUser=request.user, activity=self.activity).\
+                exists():
             return redirect(self.activity.get_overview_url())
 
         self.initial.update({'activity': self.activity,}
         )
-        return super(SingleResponseCreateView, self).dispatch(*args, **kwargs)
+        return super(SingleResponseCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
