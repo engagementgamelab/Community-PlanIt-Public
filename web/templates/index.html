@@ -17,10 +17,10 @@
 {% block body_id %}public-index{% endblock %}
 
 {% block content %}
-<div>
+<div class="wrapper">
     <p>Community PlanIt is an online engagement game that gives everyone the power to help shape their community's future</p>
     
-    <p>... You should not able to <a href="" class="btn disabled">Register</a> frin here, but we should have to copy to tell them to check out the games below... hmmm</p>
+    <p>... You should not able to <a href="" class="btn disabled">Register</a> from here, but we should have to copy to tell them to check out the games below... hmmm</p>
     
     <p>I don't think <a href="" class="btn disabled">Sign In</a> should be tied to a game... (we will need to do some magic to figure out what game they are registered for)</p>
     {% comment %}
@@ -55,10 +55,16 @@
         </div>
     </div>
     {% endcomment %}
-    
-    <div>
-        <h1 class="center">Recent Games</h1>
-        <div class="row instance-container">
+</div>
+<div id="header-featured">
+    <div class="wrapper">
+        <h1>{% trans "Featured Games" %}</h1>
+        <p class="ux">(featured games will show all active and future games that we want to spotlight and drive traffic to, incase users come to the home page and get lost)</p>
+    </div>
+</div>
+<div id="featured">
+    <div class="wrapper">
+        <div class="row featured-container drop-shadow-container">
             {% for instance in instances %}
                 <div class="instance span4">
                     <span class="badge badge-info">
@@ -77,6 +83,5 @@
             {% endfor %}
         </div>
     </div>
-    
 </div>
 {% endblock %}

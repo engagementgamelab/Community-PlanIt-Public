@@ -2,16 +2,18 @@
 {% load i18n %}
 
 {% block content %}
-<a href="{% url home %}">{% trans "Back to Games" %}</a>
-<h1>{% trans "Bring Community PlanIt to You!" %}</h1>
+<div class="wrapper">
+    <a href="{% url home %}">{% trans "Back to Games" %}</a>
+    <h1>{% trans "Bring Community PlanIt to You!" %}</h1>
     
-<p>{% trans "Is your city or metro area not listed? Do you have an idea for a Community PlanIt game in your community? Let us know! Provide your name, your role in your community, your email address and your idea for a Community PlanIt game." %}</p>
+    <p>{% trans "Is your city or metro area not listed? Do you have an idea for a Community PlanIt game in your community? Let us know! Provide your name, your role in your community, your email address and your idea for a Community PlanIt game." %}</p>
 
-<form action="{% url bringcpi %}" method="POST">
-    {% csrf_token %}
+    <form action="{% url bringcpi %}" method="POST">
+        {% csrf_token %}
 
-    {{ form.as_p }}
-    <input type="submit" class="btn btn-primary" />
-</form>
+        {{ form.as_p }}
+        <input type="submit" class="btn btn-primary" />
+    </form>
+</div>
 {% endblock %}
 
