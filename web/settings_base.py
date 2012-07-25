@@ -70,7 +70,6 @@ INSTALLED_APPS = (
     
     'web.accounts',
     'web.affiliations',
-    'web.answers',
     'web.attachment_types',
     'web.badges',
     'web.crowds',
@@ -81,7 +80,7 @@ INSTALLED_APPS = (
     'web.instances',
     'web.lists',
     'web.missions',
-    'web.player_activities',
+    'web.challenges',
     'web.responses',
     'web.attachments_v2',
     'web.attachment_types',

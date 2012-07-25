@@ -92,5 +92,5 @@ def log_activity_and_redirect(request, activity, action_msg):
     # points. invalidate here.
     # TODO only invalidate by one UserProfilePerInstance instance
     #cache.invalidate_group('my_progress_data')
-    return redirect(activity.get_overview_url())
+    return redirect(activity.overview_url)
 

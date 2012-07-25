@@ -13,7 +13,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
-from web.answers.models import *
 from web.missions.models import Mission
 from web.comments.models import *
 from web.comments.forms import *
@@ -177,15 +176,36 @@ def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
 
 
-class ChallengeDetail(LoginRequiredMixin, DetailView):
+class FetchAnswersMixin(object):
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super(FetchAnswersMixin, self).\
+                get_context_data(*args, **kwargs)
+        print '1) %s get_ctx' % self.__class__.__name__
+        return ctx
+
+
+class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
     model = PlayerActivity
-    #template_name = 'player_activities/challenge.html'
+    template_name = 'player_activities/single_response_overview.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
+    pk_url_kwarg = 'challenge_id'
+    context_object_name = 'activity'
 
     def get_context_data(self, **kwargs):
-        context = super(ChallengeDetail, self).get_context_data(
-            **kwargs)
-        challenge = kwargs['object']
+        ctx = super(SingleResponseDetailView, self).\
+                get_context_data(**kwargs)
+        ctx.update(
+                {
+                    #'activity' : kwargs['activity'],
+                    'is_completed': True,
+                }
+        )
+        print ctx
+        print '2) %s get_ctx' % self.__class__.__name__
+        return ctx
+
+single_response_detail_view = SingleResponseDetailView.as_view()
 
 
 class SingleResponseForm(forms.ModelForm):
@@ -208,7 +228,23 @@ class SingleResponseForm(forms.ModelForm):
         exclude = ('answerUser', 'activity')
 
 
-class SingleResponseCreateView(LoginRequiredMixin, CreateView):
+class RedirectToChallengeOverviewMixin(object):
+
+    def dispatch(self, request, *args, **kwargs):
+
+        print 'disp redir'
+        if AnswerSingleResponse.objects.\
+                filter(answerUser=request.user, activity=self.activity).\
+                exists():
+            return redirect(self.activity.overview_url)
+
+        return super(RedirectToChallengeOverviewMixin, self).dispatch(request,
+            *args, **kwargs)
+
+
+class SingleResponseCreateView(LoginRequiredMixin, 
+                               RedirectToChallengeOverviewMixin, 
+                               CreateView):
     form_class = SingleResponseForm
     model = None
     context_object_name = 'single_response_answer'
@@ -216,13 +252,14 @@ class SingleResponseCreateView(LoginRequiredMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.activity = get_object_or_404(PlayerActivity, pk=kwargs['challenge_id'])
-        if AnswerSingleResponse.objects.\
-                filter(answerUser=request.user, activity=self.activity).\
-                exists():
-            return redirect(self.activity.get_overview_url())
+        #if AnswerSingleResponse.objects.\
+        #        filter(answerUser=request.user, activity=self.activity).\
+        #        exists():
+        #    return redirect(self.activity.overview_url)
 
-        self.initial.update({'activity': self.activity,}
-        )
+        self.initial.update({'activity': self.activity,})
+        print 'dispatch create'
+
         return super(SingleResponseCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -230,13 +267,12 @@ class SingleResponseCreateView(LoginRequiredMixin, CreateView):
         self.object.answerUser = self.request.user
         self.object.activity = self.activity
         self.object.save()
-        return redirect(self.activity.get_overview_url())
+        return redirect(self.activity.overview_url)
         #return log_activity_and_redirect(self.request, self.activity, action_msg)
 
     def form_invalid(self, form):
         print form.errors
         return self.render_to_response(self.get_context_data(form=form))
-
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(SingleResponseCreateView, self).\
@@ -246,7 +282,7 @@ class SingleResponseCreateView(LoginRequiredMixin, CreateView):
                     'activity': self.activity,
                 }
         )
-        print context_data
+        print '%s get_ctx' % self.__class__.__name__
         return context_data
 
 single_response_play_view = SingleResponseCreateView.as_view()

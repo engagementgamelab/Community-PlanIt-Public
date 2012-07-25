@@ -90,7 +90,9 @@
                                 <ul class="nav pull-right">
                                     <li class="dropdown">
                                         <a class="dropdown-toggle" data-toggle="dropdown">
+                                            {% if user.is_authenticated %}
                                             {{ request.user.get_profile.screen_name }}
+                                            {% endif %}
                                             <b class="caret"></b>
                                         </a>
                                         <ul class="dropdown-menu">

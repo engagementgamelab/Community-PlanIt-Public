@@ -12,10 +12,9 @@ from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from .models import PlayerActivity, PlayerMapActivity, PlayerActivityType, MultiChoiceActivity
+from .models import *
 from web.instances.models import Instance
 from web.missions.models import Mission
-from web.answers.models import *
 from web.core.utils import missions_bar_context
 
 import logging
@@ -81,7 +80,7 @@ class SelectNewActivityForm(forms.Form):
     }), required=True, max_length=255, label=_("Name"))
     type = forms.ModelChoiceField(required=True,
                                 label = _("Select Type of Challenge"),
-                                queryset = PlayerActivityType.objects.filter(
+                                queryset = ChallengeType.objects.filter(
                                         type__in=['open_ended', 'multi_response', 'map']
                                         )  #.values_list('type', 'displayType')
     )
@@ -89,7 +88,7 @@ class SelectNewActivityForm(forms.Form):
         'placeholder':'Described your Challenge...'
     }), required=True, max_length=1000, label=_("Question"))
     #type = forms.ChoiceField(
-    #            choices=PlayerActivityType.objects.filter(
+    #            choices=ChallengeType.objects.filter(
     #                    type__in=['open_ended', 'multi_response', 'map']
     #                    ).values_list('type', 'displayType')
     #)
@@ -159,14 +158,14 @@ class NewActivityWizard(SessionWizardView):
 
         form_one = form_list[0]
 
-        type = PlayerActivityType.objects.get(type=form_one.cleaned_data.get('type'))
+        type = ChallengeType.objects.get(type=form_one.cleaned_data.get('type'))
         mission = Mission.objects.get(slug=mission_slug)
         q = form_one.cleaned_data.get('question', '')
 
         if type.type == 'map':
             activity_cls = PlayerMapActivity
         elif type.type in ['multi_response', 'open_ended']:
-            activity_cls = PlayerActivity
+            activity_cls = Challenge
 
         create_kwargs =dict( 
                 mission=mission,

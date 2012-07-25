@@ -31,12 +31,6 @@ from web.values.models import PlayerValue
 from web.badges.models import BadgePerPlayer
 from web.comments.models import Comment
 
-from web.player_activities.models import (
-        PlayerActivity, 
-        PlayerEmpathyActivity,
-        PlayerMapActivity,
-)
-
 import logging
 log = logging.getLogger(__name__)
 

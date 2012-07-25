@@ -14,7 +14,7 @@ from django.conf import settings
 
 from web.accounts.models import UserProfile, UserProfilePerInstance
 from web.reports.actions import PointsAssigner
-from web.answers.models import Answer, AnswerMultiChoice
+from web.challenges.models import Answer, AnswerMultiChoice
 from web.values.models import Value
 from .forms import *
 from .models import Comment

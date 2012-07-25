@@ -41,7 +41,7 @@
     {% with activity.get_points as points and activity.completed_count as completed_count and activity.activity_type_readable as activity_type %}
         {% if mission.is_expired %}
             <div class="activity  activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
-                <a href="{{ activity.get_overview_url }}">
+                <a href="{{ activity.overview_url }}">
                     {{ activity|trans_fallback:"name" }}
                     ({{ completed_count }} response{{ completed_count|pluralize }})
                 </a>
@@ -59,7 +59,7 @@
                 {% if activity in my_completed %}
                 {#  completed activity #}
                 <div class="activity activity-completed {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
-                    <a href="{{ activity.get_activity_url }}">
+                    <a href="{{ activity.play_url }}">
                         {{ activity|trans_fallback:"name" }}
                         ({{ completed_count }} response{{ completed_count|pluralize }})
                         <div class="mission-activity-completed"></div>
@@ -68,7 +68,7 @@
                 {% else %}
                 {# fresh activity #}
                 <div class="activity {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
-                    <a href="{{ activity.get_activity_url }}">
+                    <a href="{{ activity.play_url }}">
                         {{ activity|trans_fallback:"name" }}
                         ({{ completed_count }} response{{ completed_count|pluralize }})
                         <div class="mission-activity-points">{{ points }}</div>

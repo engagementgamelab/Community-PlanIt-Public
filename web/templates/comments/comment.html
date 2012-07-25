@@ -1,4 +1,4 @@
-{% load attachment_tags i18n heatmap static thumbnail %}
+{% load i18n heatmap static thumbnail %}
 {% with comments_count=comment.comments.count comment_id=comment.pk %}
 {% with likes_count=comment.likes_count likes_users=comment.likes_users %}
 {% if not nested %}<div class="thread heatmap-{{ comments_count|add:likes_count|heatmap}}">{% endif %}
@@ -40,7 +40,7 @@
                 {# Comment #}
                 {{comment.message|linebreaksbr}}
                 {# IMAGE ATTACHMENT #}
-
+                {% comment %}
                 {% if comment.attachment_image_url %}
                 {% with comment.attachment_image_url as image_url %}
                 <div class="comment-message-attachments">
@@ -60,6 +60,7 @@
                 </div>
                 {% endif %}
                 {% endfor %}
+                {% endcomment %}
 
             {% endif %}
         </div>

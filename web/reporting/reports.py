@@ -14,7 +14,7 @@ from django.core.files import File
 from django.db import connection
 
 from web.accounts.models import UserProfilePerInstance, UserProfile
-from web.answers.models import AnswerMultiChoice
+from web.challenges.models import AnswerMultiChoice
 from web.badges.models import BadgePerPlayer
 from web.instances.models import Instance
 from web.missions.models import Mission

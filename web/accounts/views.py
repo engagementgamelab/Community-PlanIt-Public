@@ -35,13 +35,10 @@ from PIL import Image
 from .forms import *
 from .models import Notification, UserProfile, UserProfileVariantsForInstance
 from web.core.utils import missions_bar_context
-from web.answers.models import Answer
-#from web.challenges.models import Challenge, PlayerChallenge
 from web.comments.forms import CommentForm
 from web.comments.utils import create_video_attachment, create_image_attachment
 from web.instances.models import Instance, Affiliation
 from web.missions.models import Mission
-from web.player_activities.models import PlayerActivity, PlayerEmpathyActivity, PlayerMapActivity
 from web.reports.models import Activity
 from web.values.models import *
 
