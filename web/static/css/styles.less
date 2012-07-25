@@ -7,10 +7,54 @@ html, body {
 }
 
 #header {
-    margin: 25px 0 50px 0;
+    .wrapper {
+    }
+    #nav-site-container {
+        padding: 20px 0px;
+        float: left;
+        width: 720px;
+        #logo-container {
+            float: left;
+            width: 100px;
+            text-align: center;
+        }
+        #nav-site {
+            float: right;
+            width: 618px;
+            ul {
+                margin: 8px 0 8px 30px;
+                li {
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+    
+    #nav-game {
+        padding: 20px 0px;
+        float: right;
+        width: 220px;
+        margin-top: 5px;
+        .navbar {
+            margin: 0px;
+        }
+    }
+    
+}
+
+.in-game {
+    #nav-site-container {
+        padding-bottom: 0px !important;
+        margin-top: -70px;
+    }
+    #nav-game {
+        width: 940px !important;
+        clear: left;
+    }        
 }
 
 #body {
+    clear: both;
     background: #fff;
 }
 
@@ -77,12 +121,6 @@ html, body {
     box-sizing: border-box;
     .drop-shadow;
     .lifted
-}
-
-/* In-game Navigation */
-.in-game #nav-game {
-    width: 100% !important;
-    clear: left;
 }
 
 /* Index Page */

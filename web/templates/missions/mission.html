@@ -25,107 +25,77 @@
     {% endif %}
 {% endblock extra_head %}
 
-{% block activities_list %}
-<ul class="nav nav-pills">
-    <li class="active"><a href="">{% trans "Challenges" %}</a></li>
-    <li><a href="{% url missions:mission_playercreated mission.slug %}">{% trans "You Pose the Challenges" %} ({{ all_player_submitted_cnt }})</a></li>
-</ul>
-
-<p>{% trans "By answering challenge questions you are helping plan your community, and you are earning points that move you towards accomplishing the mission." %}</p>
-
-{% if activities and mission.is_active %}
-    {{ my_completed|length }}/{{ activities|length }} {% trans "challenges completed" %}
-{% endif %}
-
-{% for activity in activities %}
-    {% with activity.get_points as points and activity.completed_count as completed_count and activity.activity_type_readable as activity_type %}
-        {% if mission.is_expired %}
-            <div class="activity  activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
-                <a href="{{ activity.get_overview_url }}">
-                    {{ activity|trans_fallback:"name" }}
-                    ({{ completed_count }} response{{ completed_count|pluralize }})
-                </a>
+{% block content %}
+<div class="wrapper">
+    <div class="row">
+        <div class="span8">
+            <h1>{{ mission.title }}</h1>
+            <p>{# {% embed_video mission.video %} #}</p>
+            <p>{{ mission.description }}</p>
+    
+            <a href="" class="btn btn-primary btn-large">Resume Mission</a>
+        </div>
+        <div class="span4">
+            <a href="" class="btn btn-primary btn-large">Bank</a><br><br>
+            <a href="" class="btn btn-primary">Community</a>
+            <a href="" class="btn btn-primary">Resources</a><br><br>
+            
+            <div class="well">
+                <h1>Recent Activity</h1>
+                <ul>
+                    <li>Activity</li>
+                    <li>Activity</li>
+                    <li>Activity</li>
+                    
+                </ul>
             </div>
-        {% else %}
-            {% if mission.is_future %}
-                {# Non-started Mission #}
-                <div class="activity activity-inactive {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
-                    <a>
-                    {{ activity|trans_fallback:"name" }}
-                    </a>
-                </div>
-            {% else %}
-                {# Active Mission #}
-                {% if activity in my_completed %}
-                {#  completed activity #}
-                <div class="activity activity-completed {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
-                    <a href="{{ activity.get_activity_url }}">
-                        {{ activity|trans_fallback:"name" }}
-                        ({{ completed_count }} response{{ completed_count|pluralize }})
-                        <div class="mission-activity-completed"></div>
-                    </a>
-                </div>
-                {% else %}
-                {# fresh activity #}
-                <div class="activity {% if activity.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %}">
-                    <a href="{{ activity.get_activity_url }}">
-                        {{ activity|trans_fallback:"name" }}
-                        ({{ completed_count }} response{{ completed_count|pluralize }})
-                        <div class="mission-activity-points">{{ points }}</div>
-                    </a>
-                </div>
-                {% endif %}
-            {% endif %}
-        {% endif %}
-    {% endwith %}
-{% empty %}
-    {% trans "There are currently no activities for this mission. Check back later." %}
-{% endfor %}
-
-    {% if show_demog_form %}
-    <div class="modal hide" id="myModal">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">×</button>
-            <h1>Welcome to Community PlanIt</h1>
-        </div>
-        <div class="modal-body">
-            <p>You're almost there! Community PlanIt is a planning platform used to help the community plan... Why don't you tell us a little bit about yourself?</p>
-            <form class="accounts-form" action="" method="post" enctype="multipart/form-data"> {% csrf_token %}            
-                <img src="{{ STATIC_URL }}img/avatar-blank.png" width="220" height="220">
-                <p>
-                    <label>Upload an image to use as your avatar</label>
-                    {{ form.avatar }}
-                    {{ form.avatar.errors }}
-                </p>
-                <p> 
-                    <label>What's your stake in the community?</label>
-                    {{ form.stakes }}
-                    {{ form.stakes.errors }}
-                </p>
-                <p>
-                    {{ form.affiliations.label_tag }} 
-                    <label>What groups are you affiliated with?</label>
-                    {{ form.affiliations }}
-                    {{ form.affiliations.errors }}
-                </p>
-                <p>
-                    {{ form.affiliations_other.label_tag }} 
-                    {{ form.affiliations_other }} 
-                    {{ form.affiliations_other.errors }}
-                </p>
-                <p>
-                    {{form.tagline.label_tag}}
-                    {{form.tagline}}
-                    {{form.tagline.errors}}
-                    <span class="reply-comment-counter counter">(<span class="count">140</span> {% trans "chars left" %})</span>
-                </p>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <a href="#" class="btn" data-dismiss="modal">Close</a>
-            <a href="#" class="btn btn-primary">Save changes</a>
         </div>
     </div>
-    {% endif %}
+</div>
 
+{% if show_demog_form %}
+<div class="modal hide" id="myModal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h1>Welcome to Community PlanIt</h1>
+    </div>
+    <div class="modal-body">
+        <p>You're almost there! Community PlanIt is a planning platform used to help the community plan... Why don't you tell us a little bit about yourself?</p>
+        <form class="accounts-form" action="" method="post" enctype="multipart/form-data"> {% csrf_token %}            
+            <img src="{{ STATIC_URL }}img/avatar-blank.png" width="220" height="220">
+            <p>
+                <label>Upload an image to use as your avatar</label>
+                {{ form.avatar }}
+                {{ form.avatar.errors }}
+            </p>
+            <p> 
+                <label>What's your stake in the community?</label>
+                {{ form.stakes }}
+                {{ form.stakes.errors }}
+            </p>
+            <p>
+                {{ form.affiliations.label_tag }} 
+                <label>What groups are you affiliated with?</label>
+                {{ form.affiliations }}
+                {{ form.affiliations.errors }}
+            </p>
+            <p>
+                {{ form.affiliations_other.label_tag }} 
+                {{ form.affiliations_other }} 
+                {{ form.affiliations_other.errors }}
+            </p>
+            <p>
+                {{form.tagline.label_tag}}
+                {{form.tagline}}
+                {{form.tagline.errors}}
+                <span class="reply-comment-counter counter">(<span class="count">140</span> {% trans "chars left" %})</span>
+            </p>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+        <a href="#" class="btn btn-primary">Save changes</a>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
