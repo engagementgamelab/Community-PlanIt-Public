@@ -56,9 +56,25 @@ class ChallengeType(models.Model):
 
 class ChallengeBase(TranslatableModel):
 
+    (SINGLE_RESPONSE, MULTI_RESPONSE, MAP, EMPATHY, OPEN_ENDED) = xrange(5)
+
+    CHALLENGE_TYPES = (
+        (SINGLE_RESPONSE, 'Single Response'),
+        (MULTI_RESPONSE, 'Multiple Responses'),
+        (MAP, 'Map'),
+        (EMPATHY, 'Empathy'),
+        (OPEN_ENDED, 'Open Ended'),
+    )
+
     creationUser = models.ForeignKey(User, verbose_name="created by")
     mission = models.ForeignKey(Mission, related_name='%(app_label)s_%(class)s_related')
+
+    # type field is marked for deletion
+    # run the datamigration `merge_challenge_types` to convert to the
+    # field `challenge_type`
     type = models.ForeignKey(ChallengeType)
+
+    challenge_type = models.IntegerField(max_length=1, choices=CHALLENGE_TYPES, null=True)
     createDate = models.DateTimeField(editable=False)
     points = models.IntegerField(blank=True, null=True, default=None)
     attachment = models.ManyToManyField(Attachment, blank=True, null=True)
