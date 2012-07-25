@@ -2,8 +2,9 @@ from django.conf.urls.defaults import *
 from .forms import SelectNewActivityForm, NewActivityWizard
 
 urlpatterns = patterns('challenges.views',
-    # Need to import all URLs from activities
-    #url(r"^$", "index", name="all"),
+
+    url(r'^$', 'activities.challenge_list_view', name='challenges'),
+
     url(r"^(?P<mission_slug>[-\w]+)/new/$",
         NewActivityWizard.as_view([SelectNewActivityForm,]),
         name = "new"),

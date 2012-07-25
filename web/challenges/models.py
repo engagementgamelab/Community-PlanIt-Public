@@ -234,7 +234,7 @@ class MapChallenge(ChallengeBase):
         instructions = models.CharField(max_length=255, null=True, blank=True),
         addInstructions = models.CharField(max_length=255, null=True, blank=True),
         meta = {'ordering': ['name'],
-                'db_table': ['player_activities_playermapactivity_translation']
+                'db_table': 'player_activities_playermapactivity_translation',
         },
     )
 

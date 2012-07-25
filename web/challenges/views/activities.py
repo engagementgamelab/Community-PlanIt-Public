@@ -1,6 +1,7 @@
 from sijax import Sijax
 
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
 
 from django.conf import settings
@@ -184,9 +185,21 @@ class FetchAnswersMixin(object):
         print '1) %s get_ctx' % self.__class__.__name__
         return ctx
 
+class ChallengeListView(ListView):
+    model = Challenge
+    template_name = "challenges/all.html"
+
+    #def get_context_data(self, **kwargs):
+    #    context = super(InstanceListView, self).get_context_data(
+    #        **kwargs)
+    #    context[''] = ''
+    #    return context
+
+challenge_list_view = ChallengeListView.as_view()
+
 
 class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
-    model = PlayerActivity
+    model = Challenge
     template_name = 'player_activities/single_response_overview.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
@@ -251,7 +264,7 @@ class SingleResponseCreateView(LoginRequiredMixin,
     template_name = "player_activities/single_base.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.activity = get_object_or_404(PlayerActivity, pk=kwargs['challenge_id'])
+        self.activity = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
         #if AnswerSingleResponse.objects.\
         #        filter(answerUser=request.user, activity=self.activity).\
         #        exists():
