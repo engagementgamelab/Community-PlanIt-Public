@@ -254,7 +254,7 @@ challenge_list_view = ChallengeListView.as_view()
 
 class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
     model = Challenge
-    template_name = 'player_activities/single_response_overview.html'
+    template_name = 'challenges/single_response_overview.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
     context_object_name = 'activity'
@@ -315,7 +315,7 @@ class SingleResponseCreateView(LoginRequiredMixin,
     form_class = SingleResponseForm
     model = None
     context_object_name = 'single_response_answer'
-    template_name = "player_activities/single_base.html"
+    template_name = "challenges/single_base.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.activity = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
@@ -507,7 +507,7 @@ def activity(request, activity_id, template=None, **kwargs):
                 return log_activity_and_redirect(request, activity, action_msg)
 
     context.update(_build_context(request, action, activity, user=request.user))
-    template = "player_activities/" + activity.type.type
+    template = "challenges/" + activity.type.type
     if action == 'play':
         template = template + "_response.html"
     elif action == 'overview':
