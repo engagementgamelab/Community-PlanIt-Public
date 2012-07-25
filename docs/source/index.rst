@@ -15,6 +15,7 @@ Contents:
 
    installation
    attachments
+   upgrade_player_activities
 
 
 
