@@ -13,16 +13,3 @@
 {% block game_login %}
     <li><a href="{% url instances:login instance.slug %}" class="btn">{% trans "Sign In" %}</a></li>
 {% endblock %}
-
-{% block content %}
-<div class="wrapper">
-
-    <h1>{{ mission.title }}</h1>
-
-    <p>{{ mission.description }}</p>
-
-    {# {% embed_video mission.video %} #}
-    
-    {% block activities_list %}{% endblock %}
-</div>
-{% endblock %}

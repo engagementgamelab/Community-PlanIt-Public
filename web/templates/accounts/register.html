@@ -4,8 +4,8 @@
 {% block title %}{% trans "Register" %}{% endblock %}
 
 {% block content %}
+<div class="wrapper">
     <h1>Register and join the {{ instance }} game</h1>{% csrf_token %}
-    
     
     <p>Already have an account? <a href="{% url instances:login game_slug=instance.slug %}">Log in here</a>.</p>
     
@@ -19,4 +19,5 @@
             <input class="btn btn-primary" type="submit" value="Register">
         </div>
     </form>
+</div>
 {% endblock %}

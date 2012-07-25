@@ -3,9 +3,24 @@
 
 {% block body_class %}{{ block.super }} in-game{% endblock %}
 
+{% block js %}
+{{ block.super }}
+<script>
+    $(function(){
+        $('#toggle-nav-site').click(function(e){
+            e.preventDefault();
+            $('#nav-site-container').animate({
+                'margin-top': '0px',
+            }, 400);
+        });
+    });
+</script>
+    
+{% endblock %}
+
 {% block nav_game_links %}
 <ul class="nav">
-    <li class="active"><a href="{% url home %}">{% trans "Leave Game" %}</a></li>
+    <li><a href="#" id="toggle-nav-site">{% trans "Leave" %}</a></li>
     <li><a href="{% url instances:instances %}">{% trans "Dashboard (Missions)" %}</a></li>
     <li><a href="">{% trans "Ask Around" %}</a></li>                
     <li><a href="">Bank</a></li>
