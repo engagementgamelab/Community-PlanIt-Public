@@ -31,7 +31,6 @@ urlpatterns = patterns('web',
     url(r'^bring-cpi-to-you/thanks/', direct_to_template, { 'template': 'static/bringcpi_thanks.html', 'extra_context': { 'cities': City.objects.all } }, name='bringcpi-thanks'),
     url(r'^404$', direct_to_template, { 'template': '404.html', 'extra_context': { 'cities': City.objects.all } }, name='404'),
     url(r'^500$', direct_to_template, { 'template': '500.html', 'extra_context': { 'cities': City.objects.all } }, name='404'),
-    
 
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),
     #(r'^resource-center/', include('attachments.urls', namespace='attachments', app_name='attachments')),
@@ -43,7 +42,6 @@ urlpatterns = patterns('web',
     (r'^values/', include('values.urls', namespace='values', app_name='values')),
     (r'^lists/', include('lists.urls', namespace='lists', app_name='lists')),
     (r'^flags/', include('flags.urls', namespace='flags', app_name='flags')),
-    (r'^challenges/', include("challenges.urls", namespace='challenges', app_name='challenges')),
     (r'^badges/', include('badges.urls', namespace='badges', app_name='badges')),
     
     # Admin stuff
@@ -61,18 +59,13 @@ urlpatterns += patterns('',
     url(r'^gr/(\d+)/(.+)/$', 'django.contrib.contenttypes.views.shortcut', name='generic_redirect'),
 )
 
-#if 'rosetta' in settings.INSTALLED_APPS:
-#    urlpatterns += patterns('',
-#        url(r'^rosetta/$', include('rosetta.urls')),
-#    )
-
-urlpatterns += patterns('rosetta.views',
-   url(r'^rosetta/$', 'home', name='rosetta-home'),
-   url(r'^rosetta/pick/$', 'list_languages', name='rosetta-pick-file'), 
-    url(r'^rosetta/download/$', 'download_file', name='rosetta-download-file'),
-    url(r'^rosetta/select/(?P<langid>[\w\-]+)/(?P<idx>\d+)/$', 'lang_sel', name='rosetta-language-selection'),
-)
-
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('rosetta.views',
+    url(r'^rosetta/$', 'home', name='rosetta-home'),
+    url(r'^rosetta/pick/$', 'list_languages', name='rosetta-pick-file'), 
+        url(r'^rosetta/download/$', 'download_file', name='rosetta-download-file'),
+        url(r'^rosetta/select/(?P<langid>[\w\-]+)/(?P<idx>\d+)/$', 'lang_sel', name='rosetta-language-selection'),
+    )
 
 if 'ajax_select' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
@@ -81,7 +74,6 @@ if 'ajax_select' in settings.INSTALLED_APPS:
 
 if 'attachments' in settings.INSTALLED_APPS:
     (r'^attachments/', include('attachments.urls')),
-
 
 #urlpatterns += patterns('core.memcached_status',
 #    url(r'^status/cache/$', 'view'),

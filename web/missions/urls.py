@@ -6,6 +6,10 @@ urlpatterns = patterns('missions.views',
          'template': 'missions/mission_playercreated.html',}, name='mission_playercreated'),
 
     # the order of the two following patterns matters. not sure why...
-    url(r'^(?P<slug>.*)/demographic/$', 'mission_detail_with_demographic_form_view', name='mission-with-demographic-form'),
-    url(r'^(?P<slug>.*)/$', 'mission_detail_view', name='mission'),
+    url(r'^(?P<mission_id>\d+)/demographic/$', 'mission_detail_with_demographic_form_view', name='mission-with-demographic-form'),
+    url(r'^(?P<mission_id>\d+)/$', 'mission_detail_view', name='mission'),
+
+    (r'^(?P<mission_id>\d+)/challenges/', include("challenges.urls", namespace='challenges', app_name='challenges')),
+
+
 )
