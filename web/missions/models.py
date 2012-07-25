@@ -122,28 +122,29 @@ class Mission(TranslatableModel):
     @property
     @cached(60*60*24, 'missions')
     def total_points(self):
-        return Decimal(sum([activity.get_points() for activity in self.activities(get_language())]))
+        return Decimal(sum([challenge.get_points() for challenge in self.challenges(get_language())]))
 
-    def activities(self, lang='en-us'):
-        return self.get_activities_cached(self.pk, lang=lang)
+    def challenges(self, lang='en-us'):
+        return self.get_challenges_cached(self.pk, lang=lang)
 
     @cached(60*60*24*7)
-    def get_activities_cached(self, mission_id, lang='en-us'):
-        activities = []
-        for model_klass in ['PlayerActivity', 'PlayerEmpathyActivity', 'PlayerMapActivity']:
-            activities.extend(
+    def get_challenges_cached(self, mission_id, lang='en-us'):
+        challenges = []
+        for model_klass in ['Challenge', 'EmpathyChallenge', 'MapChallenge']:
+            print model_klass.lower()
+            challenges.extend(
                         getattr(self, 
-                                'player_activities_%s_related' % model_klass.lower()).language(lang).all()
+                                'challenges_%s_related' % model_klass.lower()).language(lang).all()
             )
-        return sorted(activities, key=attrgetter('name'))
+        return sorted(challenges, key=attrgetter('name'))
 
-    def player_submitted_activities(self, lang='en-us'):
+    def player_submitted_challenges(self, lang='en-us'):
         return self.get_player_submitted_activities_cached(self.pk, lang=lang)
 
     @cached(60*60*24*7)
     def get_player_submitted_activities_cached(self, mission_id, lang='en-us'):
-        activities = filter(lambda a: a.is_player_submitted == True, self.activities(lang=lang))
-        return sorted(activities, key=attrgetter('name'))
+        challenges = filter(lambda a: a.is_player_submitted == True, self.challenges(lang=lang))
+        return sorted(challenges, key=attrgetter('name'))
 
     @cached(60*60*24*7)
     def instance_city_domain(self, instance_id):
@@ -176,7 +177,7 @@ class Mission(TranslatableModel):
             'https://' if settings.DEBUG == False else 'http://',
             self.instance_city_domain(self.instance.pk),
             lang_code,
-            strip_path(reverse('missions:mission', args=(self.slug,)))[1][1:],
+            strip_path(reverse('missions:mission', args=(self.pk,)))[1][1:],
         )
 
 stream_utils.register_target(Mission)
@@ -189,7 +190,7 @@ def invalidate_mission(sender, **kwargs):
     activity = kwargs.pop('instance')
     if activity:
         mission_id = activity.mission.pk
-        Mission.get_activities_cached.invalidate(mission_id)
+        Mission.get_challenges_cached.invalidate(mission_id)
         Mission.get_player_submitted_activities_cached.invalidate(mission_id)
 
 #post_save.connect(invalidate_mission, Mission)

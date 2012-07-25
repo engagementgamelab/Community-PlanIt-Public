@@ -23,6 +23,7 @@ class MissionDetail(LoginRequiredMixin, DetailView):
     model = Mission
     template_name = 'missions/mission.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
+    pk_url_kwarg = 'mission_id'
 
     def get_context_data(self, **kwargs):
         context = super(MissionDetail, self).get_context_data(
@@ -45,9 +46,9 @@ class MissionDetail(LoginRequiredMixin, DetailView):
         player_submitted_only = False
 
         # TODO: Should only return non-player-created challenges
-        player_submitted = set(mission.player_submitted_activities(lang=get_language()))
+        player_submitted = set(mission.player_submitted_challenges(lang=get_language()))
         all_activities = player_submitted if player_submitted_only == True else \
-                set(mission.activities(lang=get_language())) - player_submitted
+                set(mission.challenges(lang=get_language())) - player_submitted
 
         my_completed = set(prof_per_instance.my_completed_by_mission(mission, player_submitted_only))
         my_incomplete = all_activities - my_completed
