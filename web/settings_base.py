@@ -71,6 +71,7 @@ INSTALLED_APPS = (
     'web.accounts',
     'web.affiliations',
     'web.attachment_types',
+    'web.attachments_v2',
     'web.badges',
     'web.crowds',
     'web.comments',
@@ -82,11 +83,8 @@ INSTALLED_APPS = (
     'web.missions',
     'web.challenges',
     'web.responses',
-    'web.attachments_v2',
-    'web.attachment_types',
     'web.values',
     'web.reporting',
-    #'web.reports', # deprecated
     
     # Need this after web.admin because of test runner: 
     # it loads django admin tests by 'admin' app label first
