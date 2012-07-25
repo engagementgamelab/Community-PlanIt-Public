@@ -30,39 +30,6 @@ class MissionDetail(LoginRequiredMixin, DetailView):
             **kwargs)
         mission = kwargs['object']
         game = mission.instance
-        context['game_profile_exists'] = UserProfilePerInstance.objects.filter(
-                                            user_profile=self.request.user.get_profile(),
-                                            instance=game,
-                                        ).exists()
-        try:
-            prof_per_instance = UserProfilePerInstance.objects.get(
-                                                user_profile=self.request.user.get_profile(),
-                                                instance=game,
-            )
-        except UserProfilePerInstance.DoesNotExist:
-            raise Http404("You are not registered for Game <%s>" % game.title)
-
-
-        player_submitted_only = False
-
-        # TODO: Should only return non-player-created challenges
-        player_submitted = set(mission.player_submitted_challenges(lang=get_language()))
-        all_activities = player_submitted if player_submitted_only == True else \
-                set(mission.challenges(lang=get_language())) - player_submitted
-
-        my_completed = set(prof_per_instance.my_completed_by_mission(mission, player_submitted_only))
-        my_incomplete = all_activities - my_completed
-        my_incomplete = sorted(my_incomplete, key=attrgetter('name'))
-        my_completed = sorted(list(my_completed), key=attrgetter('name'))
-
-        my_incomplete.extend(my_completed)
-        all_activities_sorted = my_incomplete
-
-        context.update(dict(
-            activities = all_activities_sorted,
-            my_completed = my_completed,
-            all_player_submitted_cnt = len(player_submitted),
-        ))
 
         #if settings.DEBUG == True:
         #    if self.request.user.is_authenticated():

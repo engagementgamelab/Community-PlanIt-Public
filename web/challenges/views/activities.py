@@ -1,3 +1,5 @@
+from operator import attrgetter
+
 from sijax import Sijax
 
 from django.views.generic.detail import DetailView
@@ -15,6 +17,7 @@ from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
 from web.missions.models import Mission
+from web.accounts.models import UserProfilePerInstance
 from web.comments.models import *
 from web.comments.forms import *
 from ..forms import *
@@ -186,14 +189,65 @@ class FetchAnswersMixin(object):
         return ctx
 
 class ChallengeListView(ListView):
-    model = Challenge
-    template_name = "challenges/all.html"
+    #model = Challenge
+    template_name = 'challenges/all.html'
+    context_object_name = 'challenges'
 
-    #def get_context_data(self, **kwargs):
-    #    context = super(InstanceListView, self).get_context_data(
-    #        **kwargs)
-    #    context[''] = ''
-    #    return context
+    def dispatch(self, request, *args, **kwargs):
+
+        self.mission = get_object_or_404(Mission, pk=kwargs['mission_id'])
+        self.game = self.mission.instance
+        try:
+            self.prof_per_instance = UserProfilePerInstance.objects.get(
+                                                user_profile=request.user.get_profile(),
+                                                instance=self.game,
+            )
+        except UserProfilePerInstance.DoesNotExist:
+            raise Http404("You are not registered for Game <%s>" % self.game.title)
+
+        return super(ChallengeListView, self).\
+                dispatch(request, *args, **kwargs)
+
+
+    def get_queryset(self):
+
+        player_submitted_only = False
+
+        # TODO: Should only return non-player-created challenges
+        player_submitted = set(self.mission.player_submitted_challenges(lang=get_language()))
+        all_activities = player_submitted if player_submitted_only == True else \
+                set(self.mission.challenges(lang=get_language())) - player_submitted
+
+        my_completed = set(
+                        self.prof_per_instance.my_completed_by_mission(
+                                    self.mission,
+                                    player_submitted_only
+                        )
+                    )
+        my_incomplete = all_activities - my_completed
+        my_incomplete = sorted(my_incomplete, key=attrgetter('name'))
+        my_completed = sorted(list(my_completed), key=attrgetter('name'))
+
+        my_incomplete.extend(my_completed)
+        all_activities_sorted = my_incomplete
+
+        #context.update(dict(
+        #    activities = all_activities_sorted,
+        #    my_completed = my_completed,
+        #    all_player_submitted_cnt = len(player_submitted),
+        #))
+        return all_activities_sorted
+
+
+    def get_context_data(self, **kwargs):
+        ctx = super(ChallengeListView, self).\
+                get_context_data( **kwargs)
+        ctx['game_profile_exists'] = UserProfilePerInstance.objects.filter(
+                                            user_profile=self.request.user.get_profile(),
+                                            instance=self.game,
+                                        ).exists()
+        print ctx
+        return ctx
 
 challenge_list_view = ChallengeListView.as_view()
 
