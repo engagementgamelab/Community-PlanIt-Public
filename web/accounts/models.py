@@ -273,23 +273,23 @@ class UserProfilePerInstance(models.Model):
 
     def my_completed_by_mission(self, mission, player_submitted_only=False):
 
-        activities_for_mission = mission.player_submitted_activities(lang=get_language()) if player_submitted_only == True else mission.activities(lang=get_language())
-        if len(activities_for_mission) == 0:
+        challenges_for_mission = mission.player_submitted_challenges(lang=get_language()) if player_submitted_only == True else mission.challenges(lang=get_language())
+        if len(challenges_for_mission) == 0:
             return []
 
         # do not pass en empty list to Action.get_for_action_objects
         # it will blow up
-        actions = Action.objects.get_for_action_objects(activities_for_mission).\
+        actions = Action.objects.get_for_action_objects(challenges_for_mission).\
                 filter(actor_user=self.get_user(), verb='activity_completed')
 
-        def activities_from_actions(actions):
+        def challenges_from_actions(actions):
             return map(lambda a: \
                         combine(get_translation(a, language_code=get_language())),
                     [getattr(action, 'action_object_playeractivity') or \
                      getattr(action, 'action_object_playermapactivity') or \
                      getattr(action, 'action_object_playerempathyactivity') for action in actions]
             )
-        return activities_from_actions(actions)
+        return challenges_from_actions(actions)
 
     @property
     def flags(self):
