@@ -5,10 +5,6 @@ from nani.admin import TranslatableAdmin, TranslatableStackedInline
 
 from web.challenges.models import *
 
-class ChallengeTypeAdmin(ModelAdmin):
-    list_display = ('type', 'defaultPoints',)
-
-
 class MultiChoiceActivityInline(TranslatableStackedInline):
 	model = MultiChoiceActivity
 
@@ -17,21 +13,24 @@ class ChallengeAdmin(TranslatableAdmin):
     list_filter = ('type', 'mission__instance', 'mission', 'is_player_submitted' )
     ordering = ('mission', 'type',)
     inlines = [MultiChoiceActivityInline,]
+    exclude = ('attachment', 'type')
 
 class EmpathyChallengeAdmin(TranslatableAdmin):
     list_display = ('__str__', 'mission', 'type', 'all_translations')
     list_filter = ('mission', 'type')
+    exclude = ('attachment', 'type')
+
+class MapChallengeAdmin(TranslatableAdmin):
+    list_display = ('__str__', 'mission', 'type', 'all_translations')
+    list_filter = ('mission__instance', 'mission', 'is_player_submitted' )
+    exclude = ('attachment', 'type')
 
 class MultiChoiceActivityAdmin(TranslatableAdmin):
     list_display = ('activity', 'activity_type', 'activity_points', 'mission_title', 'all_translations')
     list_filter = ('activity__type', 'trivia_correct_answer')
 
-class MapChallengeAdmin(TranslatableAdmin):
-    list_display = ('__str__', 'mission', 'type', 'all_translations')
-    list_filter = ('mission__instance', 'mission', 'is_player_submitted' )
 
 admin.site.register(Challenge, ChallengeAdmin)
-admin.site.register(ChallengeType, ChallengeTypeAdmin)
 admin.site.register(MultiChoiceActivity, MultiChoiceActivityAdmin)
 admin.site.register(MapChallenge, MapChallengeAdmin)
 admin.site.register(EmpathyChallenge, EmpathyChallengeAdmin)
