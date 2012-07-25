@@ -1,7 +1,6 @@
 from django import template
 
-from instances.models import PointsAssignment
-from player_activities.models import PlayerActivityBase
+from web.instances.models import PointsAssignment
 
 register = template.Library()
 
