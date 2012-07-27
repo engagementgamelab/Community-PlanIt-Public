@@ -50,10 +50,9 @@ class MultiResponseForm(forms.ModelForm):
         challenge = kwargs.get('initial')['challenge']
         super(MultiResponseForm, self).__init__(*args, **kwargs)
 
-        self.fields['selected'] = forms.ModelChoiceField(
+        self.fields['selected'] = forms.ModelMultipleChoiceField(
                     widget=CheckboxSelectMultiple,
                     required=True,
-                    empty_label=None,
                     queryset=MultiChoiceActivity.objects.\
                             language(get_language()).\
                             filter(activity=challenge).distinct()

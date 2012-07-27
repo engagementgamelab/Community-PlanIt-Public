@@ -43,7 +43,7 @@ class MapDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
 map_detail_view = MapDetailView.as_view()
 
 
-class MapForm(forms.Form):
+class MapForm(forms.ModelForm):
     map = GoogleMapsField().formfield()
 
     def clean_map(self):
@@ -54,6 +54,10 @@ class MapForm(forms.Form):
         if len(mapDict["markers"]) == 0:
             raise forms.ValidationError("Please select a point on the map")
         return map
+
+    class Meta:
+        model = AnswerMap
+        exclude = ('answerUser', 'activity')
 
 class MultiResponseForm(forms.ModelForm):
 
@@ -72,14 +76,14 @@ class MultiResponseForm(forms.ModelForm):
 
     class Meta:
         model = AnswerMap
-        exclude = ('user',)
+        exclude = ('answerUser',)
 
 
 class RedirectToChallengeOverviewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         if AnswerMap.objects.\
-                filter(user=request.user).\
+                filter(answerUser=request.user).\
                 exists():
             return redirect(self.challenge.overview_url)
 

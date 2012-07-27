@@ -43,7 +43,7 @@ class OpenEndedDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
 open_ended_detail_view = OpenEndedDetailView.as_view()
 
 
-class OpenEndedForm(forms.Form):
+class OpenEndedForm(forms.ModelForm):
     response = forms.CharField(widget=forms.Textarea)
 
     def __init__(self, *args, **kwargs):
@@ -73,7 +73,7 @@ class OpenEndedCreateView(LoginRequiredMixin,
     form_class = OpenEndedForm
     model = None
     context_object_name = 'open_ended_answer'
-    template_name = "challenges/open_ended_base.html"
+    template_name = "challenges/open_base.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])

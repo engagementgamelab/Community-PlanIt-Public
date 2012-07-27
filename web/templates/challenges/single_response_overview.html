@@ -1,31 +1,31 @@
 {% extends "challenges/base.html" %}
 {% load gmap i18n avatar %}
-{% block title %}{{activity.name}} | Single Response Overview{% endblock %}
+{% block title %}{{challenge.name}} | Single Response Overview{% endblock %}
 
 {% block content %}
 <div class="column-container">
     
     {# HEADERS #} 
-    <a class="btn-back" href="{% url missions:mission activity.mission.slug %}">{% trans "Return to mission" %}</a>
+    <a class="btn-back" href="{% url missions:mission challenge.mission.pk %}">{% trans "Return to mission" %}</a>
     {% comment %}<a class="btn-forward" href="{# TODO #}">Next Challenge</a>{% endcomment %}
 
     {# include "player_activities/official_responses.html" #}
-    <h1>{{ activity.name|safe }}<span class="points">{{ activity.get_points }}</span></h1>
-    {% if activity.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile activity.creationUser.id %}">{% avatar activity.creationUser %}</a> created by <a href="{% url accounts:player_profile activity.creationUser.id %}">{{ activity.creationUser.get_profile.screen_name }}</a></div>{% endif %}
+    <h1>{{ challenge.name|safe }}<span class="points">{{ challenge.get_points }}</span></h1>
+    {% if challenge.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile challenge.creationUser.id %}">{% avatar challenge.creationUser %}</a> created by <a href="{% url accounts:player_profile challenge.creationUser.id %}">{{ challenge.creationUser.get_profile.screen_name }}</a></div>{% endif %}
                         
     {# QUESTION AND YOUR RESPONSE #}
     <div class="column-threequarter">            
         <div class="activity-question">
             {# include "player_activities/attachments.html" #}
             <div>
-                {{ activity.question|safe }}
+                {{ challenge.question|safe }}
             </div>
-            {% if activity.is_trivia and is_completed %}
+            {% if challenge.is_trivia and is_completed %}
                 <div class="activity-question-trivia-result">
-                    {% ifequal myAnswer.selected activity.get_trivia_answer %}
-                        <span class="activity-question-trivia-correct">{{ activity.get_trivia_answer }}</span> is correct! You just earned {{ activity.get_pointed }} points!
+                    {% ifequal myAnswer.selected challenge.get_trivia_answer %}
+                        <span class="activity-question-trivia-correct">{{ challenge.get_trivia_answer }}</span> is correct! You just earned {{ challenge.get_pointed }} points!
                     {% else %}
-                        Sorry! <span class="activity-question-trivia-incorrect">{{ myAnswer.selected }}</span> is incorrect. The correct answer is <span class="activity-question-trivia-correct">{{ activity.get_trivia_answer }}</span>
+                        Sorry! <span class="activity-question-trivia-incorrect">{{ myAnswer.selected }}</span> is incorrect. The correct answer is <span class="activity-question-trivia-correct">{{ challenge.get_trivia_answer }}</span>
                     {% endifequal %}
                 </div>
             {% endif %}
@@ -33,13 +33,13 @@
         </div>
         
         
-        {% if is_completed or activity.is_past %}
+        {% if is_completed or challenge.is_past %}
             {# RESPONSE SUMMARY #}
             {% if myAnswer %}
-                <div id="activity-response-summary" class="{% if activity.is_trivia %}activity-type-trivia{% endif %}">
+                <div id="activity-response-summary" class="{% if challenge.is_trivia %}activity-type-trivia{% endif %}">
                 {% if answers %}
                     {% for choice in choices %}
-                        <div class="activity-response-summary-choice {% ifequal choice myAnswer.selected %}my-choice{% endifequal %} {% ifequal choice activity.get_trivia_answer %}correct-answer{% else %}incorrect-answer{% endifequal %}">
+                        <div class="activity-response-summary-choice {% ifequal choice myAnswer.selected %}my-choice{% endifequal %} {% ifequal choice challenge.get_trivia_answer %}correct-answer{% else %}incorrect-answer{% endifequal %}">
                             {{ choice }}
                             <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'>
                         </div>
@@ -51,26 +51,18 @@
             {% endif %}
         {% endif %}
         
-        {% if not activity.mission.is_expired and not activity.is_trivia%}
-            {% if myAnswer %}
-                {# Replay #}
-                <div class="activity-response-submit">
-                    <a class="btn-blue" href="{% url activities:replay activity.id %}">{% trans 'Replay' %}</a>
-                </div>
-            {% endif %}
-        {% endif %}
     </div>
     
     <br class="clearfix" />
 
     
-    {% if is_completed or activity.is_past %}
+    {% if is_completed or challenge.is_past %}
         
         {% if answers.count %}
             {# COMMENTS #}
             <h2>{% trans "Responses" %}</h2>
             <div class="comments embedded">
-                {% include 'player_activities/_corner_stamp.html' %}
+                {% include 'challenges/_corner_stamp.html' %}
                 {% for answer in answers %}
                     {% with comments=answer.comments %}
                         {% for comment in comments.all reversed %}
@@ -89,7 +81,7 @@
     {% else %}
         <br />
         <h3>{% trans "Complete the activity to see everyone's responses" %}</h3>
-        <a href="{{ activity.get_activity_url }}" class="btn-blue">{% trans "Play this Challenge" %}</a>
+        <a href="{{ challenge.get_activity_url }}" class="btn-blue">{% trans "Play this Challenge" %}</a>
     {% endif %}
 </div>
 {% endblock %}
