@@ -22,7 +22,7 @@ class FetchAnswersMixin(object):
 
 class OpenEndedDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
     model = Challenge
-    template_name = 'challenges/empthy_overview.html'
+    template_name = 'challenges/empathy_overview.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
     context_object_name = 'challenge'
