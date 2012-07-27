@@ -89,14 +89,16 @@ class ChallengeBase(TranslatableModel):
     class Meta:
         abstract = True
 
-    #def get_children(self):
-    #    rel_objs = self._meta.get_all_related_objects()
-    #    return [getattr(self, x.get_accessor_name()) for x in rel_objs if x.model != type(self)]
-
     def get_url_by_action(self, action):
-        return reverse('missions:challenges:%s' % \
+        challenge_types = {
+                'EmpathyChallenge': 'empathy',
+                'MapChallenge': 'map'
+        }
+        challenge_type_short = challenge_types.get(self.__class__.__name__,
                 slugify(self.get_challenge_type_display())
-                +'-%s' % action,
+        )
+        return reverse('missions:challenges:%s' % \
+                '%s-%s' % (challenge_type_short, action),
                         args=(self.mission.pk, self.pk,))
     @property
     def overview_url(self):
@@ -112,13 +114,6 @@ class ChallengeBase(TranslatableModel):
         def this_type(pk):
             return self.type.type
         return this_type(self.pk)
-
-    @classmethod
-    def get_display_type_by_const(self, const):
-        """ lookup on challenge types """
-        for type_pair in self.CHALLENGE_TYPES:
-            if type_pair[0] == const:
-                return slugify(type_pair[1])
 
     def get_points(self):
         @cached(60*60*168, 'activity_points')

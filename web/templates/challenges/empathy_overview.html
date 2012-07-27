@@ -1,55 +1,50 @@
-{% extends "player_activities/base.html" %}
-{% load gmap attachment_tags i18n %}
-{% block title %}{{ activity.name }} | Empathy Response Overview{% endblock %}
+{% extends "challenges/base.html" %}
+{% load gmap i18n %}
+{# attachment_tags #}
+{% block title %}{{ challenge.name }} | Empathy Response Overview{% endblock %}
 
-{% block game_content %}
+{% block content %}
 
 <div class="empathy column-container">
     
-    <a class="btn-back" href="{% url missions:mission activity.mission.slug %}">{% trans "Return to mission" %}</a>
+    <a class="btn-back" href="{% url missions:mission challenge.mission.pk %}">{% trans "Return to mission" %}</a>
     {% comment %}<a class="btn-forward" href="{# TODO #}">Next Challenge</a>{% endcomment %}
     
     <div class="column-threequarter clearfix">
         
-        <h1>{{activity.name}}<span class="points">{{ activity.get_points }}</span></h1>
+        <h1>{{challenge.name}}<span class="points">{{ challenge.get_points }}</span></h1>
         <div class="column-third">
-            {% if activity.avatar %}<img class="left avatar" src="{{ MEDIA_URL }}/{{activity.avatar}}" width="128" height="128">{% endif %}
+            {% if challenge.avatar %}<img class="left avatar" src="{{ MEDIA_URL }}/{{challenge.avatar}}" width="128" height="128">{% endif %}
         </div>
         
         <div class="column-twothird">
             <div class="activity-question">
-                {% include "player_activities/attachments.html" %}
-                <p class="bio">{{ activity.bio }}</p>
-                <p class="question">{{activity.question|safe}}</p>
+                {# include "player_activities/attachments.html" #}
+                <p class="bio">{{ challenge.bio }}</p>
+                <p class="question">{{challenge.question|safe}}</p>
                 <br class="clearfix" />
             </div>
         </div>
         
         <br class="clearfix" />
         
-        {% include "player_activities/official_responses.html" %}
-        
-        {% if not activity.mission.is_expired and myComment %}
+        {% if not challenge.mission.is_expired and myComment %}
         <div class="activity-response">
             {{ myComment.message }}
         </div>
         {% endif %}
         
-        {# Replay #}
-        <div class="activity-response-submit">
-            <a class="btn-blue" href="{% url activities:empathy-replay activity.id %}">{% trans 'Replay' %}</a>
-        </div>
     </div>
 
     <br class="clearfix">
     
-    {% if is_completed or activity.is_past %}
+    {% if is_completed or challenge.is_past %}
         {% if answers %}
         <h2>{% trans "Responses" %}</h2>
         <div class="comments embedded"> 
-            {% include 'player_activities/_corner_stamp.html' %}
+            {% include 'challenges/_corner_stamp.html' %}
             {% for answer in answers %}
-                {% with instance=activity.mission.instance %}
+                {% with instance=challenge.mission.instance %}
                     {% for comment in answer.comments.select_related.all reversed %}
                         {% with extra_message=answer.selected.value %}
                             {% include "comments/comment.html" %}
@@ -62,7 +57,7 @@
     {% else %}
         <br />
         <h3>{% trans "Complete the activity to see everyone's responses" %}</h3>
-        <a href="{{ activity.get_activity_url }}" class="btn-blue">Play this Challenge</a>
+        <a href="{{ challenge.play_url }}" class="btn-blue">Play this Challenge</a>
     {% endif %}
     
 </div>

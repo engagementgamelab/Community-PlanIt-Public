@@ -214,9 +214,9 @@ class ChallengeListView(ListView):
                     )
         my_incomplete = all_activities - my_completed
         my_incomplete = sorted(my_incomplete, key=attrgetter('name'))
-        my_completed = sorted(list(my_completed), key=attrgetter('name'))
+        self.my_completed = sorted(list(my_completed), key=attrgetter('name'))
 
-        my_incomplete.extend(my_completed)
+        my_incomplete.extend(self.my_completed)
         all_activities_sorted = my_incomplete
 
         #context.update(dict(
@@ -224,6 +224,8 @@ class ChallengeListView(ListView):
         #    my_completed = my_completed,
         #    all_player_submitted_cnt = len(player_submitted),
         #))
+        for ch in all_activities_sorted:
+            print ch.play_url, ch.overview_url
         return all_activities_sorted
 
 
@@ -235,6 +237,7 @@ class ChallengeListView(ListView):
                                             instance=self.game,
                                         ).exists()
         ctx['mission'] = self.mission
+        ctx['my_completed'] = self.my_completed
         print ctx
         return ctx
 

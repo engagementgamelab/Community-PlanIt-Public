@@ -3,10 +3,17 @@ from django.template.defaultfilters import slugify
 from .models import Challenge
 from .forms import SelectNewActivityForm, NewActivityWizard
 
-single_response_slug = Challenge.get_display_type_by_const(Challenge.SINGLE_RESPONSE)
-multi_response_slug = Challenge.get_display_type_by_const(Challenge.MULTI_RESPONSE)
-map_slug = Challenge.get_display_type_by_const(Challenge.MAP)
-empathy_slug = Challenge.get_display_type_by_const(Challenge.EMPATHY)
+def get_display_type_by_const(const):
+    """ lookup on challenge types """
+    for type_pair in Challenge.CHALLENGE_TYPES:
+        if type_pair[0] == const:
+            return slugify(type_pair[1])
+
+single_response_slug = get_display_type_by_const(Challenge.SINGLE_RESPONSE)
+multi_response_slug = get_display_type_by_const(Challenge.MULTI_RESPONSE)
+open_ended_slug = get_display_type_by_const(Challenge.OPEN_ENDED)
+map_slug = get_display_type_by_const(Challenge.MAP)
+empathy_slug = get_display_type_by_const(Challenge.EMPATHY)
 
 urlpatterns = patterns('challenges.views',
     url(r'^$', 'activities.challenge_list_view', name='challenges'),
@@ -45,6 +52,14 @@ urlpatterns = patterns('challenges.views',
     url(r"^"+empathy_slug+"/(?P<challenge_id>\d+)/overview/$",
             "empathy.empathy_detail_view", 
             name="empathy-overview",
+    ),
+    url(r"^"+open_ended_slug+"/(?P<challenge_id>\d+)/play/$",
+            "open_ended.open_ended_play_view", 
+            name="open-ended-play",
+    ),
+    url(r"^"+open_ended_slug+"/(?P<challenge_id>\d+)/overview/$",
+            "open_ended.open_ended_detail_view", 
+            name="open-ended-overview",
     ),
 
     #url(r"^(?P<activity_id>\d+)/$",

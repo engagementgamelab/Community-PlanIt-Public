@@ -1,16 +1,16 @@
-{% extends "player_activities/base.html" %}
+{% extends "challenges/base.html" %}
 {% load i18n %}
 {% block title %}{{ block.super }} | Empathy Response{% endblock %}
 
-{% block game_content %}
+{% block content %}
 <div class="empathy column-container">
-    {% if activity.is_player_submitted %}
-        <a href="{% url missions:mission_playercreated activity.mission.slug %}" class="btn-back">{% trans "Return" %}</a>
+    {% if challenge.is_player_submitted %}
+        <a href="{% url missions:mission_playercreated challenge.mission.pk %}" class="btn-back">{% trans "Return" %}</a>
     {% else %}
-        <a href="{% url missions:mission activity.mission.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
+        <a href="{% url missions:mission challenge.mission.pk %}" class="btn-back">{% trans "Back to Mission" %}</a>
     {% endif %}
     
-    <h1>{{activity.name}}<span class="points">{{ activity.get_points }}</span></h1>
+    <h1>{{challenge.name}}<span class="points">{{ challenge.get_points }}</span></h1>
 
     
     <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">
@@ -19,13 +19,13 @@
             <input type="hidden" name="form" value="empathy">
         
             <div class="column-third">
-                {% if activity.avatar %}<img class="left avatar" src="{{ MEDIA_URL }}/{{activity.avatar}}" width="128" height="128">{% endif %}
+                {% if challenge.avatar %}<img class="left avatar" src="{{ MEDIA_URL }}/{{challenge.avatar}}" width="128" height="128">{% endif %}
             </div>
             <div class="column-twothird">
                 <div class="activity-question">
-                    {% include "player_activities/attachments.html" %}
-                    <p class="bio">{{activity.bio}}</p>
-                    <p class="question">{{activity.question|safe}}</p>
+                    {# include "player_activities/attachments.html" #}
+                    <p class="bio">{{challenge.bio}}</p>
+                    <p class="question">{{challenge.question|safe}}</p>
                     <br class="clearfix" />
                 </div>
             </div>

@@ -20,15 +20,15 @@ class FetchAnswersMixin(object):
         return ctx
 
 
-class EmpathyDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
-    model = EmpathyChallenge
-    template_name = 'challenges/empathy_overview.html'
+class OpenEndedDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
+    model = Challenge
+    template_name = 'challenges/empthy_overview.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
     context_object_name = 'challenge'
 
     def get_context_data(self, **kwargs):
-        ctx = super(EmpathyDetailView, self).\
+        ctx = super(OpenEndedDetailView, self).\
                 get_context_data(**kwargs)
         ctx.update(
                 {
@@ -40,26 +40,26 @@ class EmpathyDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
         print '2) %s get_ctx' % self.__class__.__name__
         return ctx
 
-empathy_detail_view = EmpathyDetailView.as_view()
+open_ended_detail_view = OpenEndedDetailView.as_view()
 
 
-class EmpathyForm(forms.ModelForm):
+class OpenEndedForm(forms.Form):
     response = forms.CharField(widget=forms.Textarea)
 
     def __init__(self, *args, **kwargs):
         challenge = kwargs.get('initial')['challenge']
-        super(EmpathyForm, self).__init__(*args, **kwargs)
+        super(OpenEndedForm, self).__init__(*args, **kwargs)
 
     class Meta:
-        model = AnswerEmpathy
-        exclude = ('answerUser', 'activity')
+        model = AnswerOpenEnded
+        exclude = ('user',)
 
 
 class RedirectToChallengeOverviewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
-        if AnswerEmpathy.objects.\
-                filter(answerUser=request.user).\
+        if AnswerOpenEnded.objects.\
+                filter(user=request.user).\
                 exists():
             return redirect(self.challenge.overview_url)
 
@@ -67,23 +67,23 @@ class RedirectToChallengeOverviewMixin(object):
             *args, **kwargs)
 
 
-class EmpathyCreateView(LoginRequiredMixin, 
+class OpenEndedCreateView(LoginRequiredMixin, 
                                RedirectToChallengeOverviewMixin, 
                                CreateView):
-    form_class = EmpathyForm
+    form_class = OpenEndedForm
     model = None
-    context_object_name = 'empathy_answer'
-    template_name = "challenges/empathy_base.html"
+    context_object_name = 'open_ended_answer'
+    template_name = "challenges/open_ended_base.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.challenge = get_object_or_404(EmpathyChallenge, pk=kwargs['challenge_id'])
+        self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
         self.initial.update({'challenge': self.challenge,})
-        return super(EmpathyCreateView, self).dispatch(request, *args, **kwargs)
+        return super(OpenEndedCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.answerUser = self.request.user
-        self.object.activity = self.challenge
+        self.object.user = self.request.user
+        #self.object.challenge = self.challenge
         self.object.save()
         return redirect(self.challenge.overview_url)
         #return log_activity_and_redirect(self.request, self.challenge, action_msg)
@@ -93,7 +93,7 @@ class EmpathyCreateView(LoginRequiredMixin,
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(EmpathyCreateView, self).\
+        context_data = super(OpenEndedCreateView, self).\
                 get_context_data(*args, **kwargs)
         context_data.update(
                 {
@@ -103,4 +103,4 @@ class EmpathyCreateView(LoginRequiredMixin,
         print '%s get_ctx' % self.__class__.__name__
         return context_data
 
-empathy_play_view = EmpathyCreateView.as_view()
+open_ended_play_view = OpenEndedCreateView.as_view()
