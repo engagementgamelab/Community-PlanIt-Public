@@ -17,6 +17,8 @@ from nani.manager import TranslationManager
 from cache_utils.decorators import cached
 
 from django.conf import settings
+from django.template.defaultfilters import slugify
+from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save, post_delete
 from django.db import models
@@ -91,12 +93,32 @@ class ChallengeBase(TranslatableModel):
     #    rel_objs = self._meta.get_all_related_objects()
     #    return [getattr(self, x.get_accessor_name()) for x in rel_objs if x.model != type(self)]
 
+    def get_url_by_action(self, action):
+        return reverse('missions:challenges:%s' % \
+                slugify(self.get_challenge_type_display())
+                +'-%s' % action,
+                        args=(self.mission.pk, self.pk,))
+    @property
+    def overview_url(self):
+        return self.get_url_by_action('overview')
+
+    @property
+    def play_url(self):
+        return self.get_url_by_action('play')
+
     @property
     def activity_type_readable(self):
         @cached(60*60*168)
         def this_type(pk):
             return self.type.type
         return this_type(self.pk)
+
+    @classmethod
+    def get_display_type_by_const(self, const):
+        """ lookup on challenge types """
+        for type_pair in self.CHALLENGE_TYPES:
+            if type_pair[0] == const:
+                return slugify(type_pair[1])
 
     def get_points(self):
         @cached(60*60*168, 'activity_points')
@@ -193,24 +215,6 @@ class Challenge(ChallengeBase):
                 ),
                 self.get_overview_url()[1:]
         )
-
-    @property
-    def view_name_from_type(self):
-        """ this property composes the named url """
-        return self.type.type.replace('_', '-')
-
-    @property
-    def overview_url(self):
-        return reverse('activities:%s' % self.view_name_from_type+'-overview',
-                            args=(self.pk,)
-        )
-
-    @property
-    def play_url(self):
-        return reverse('activities:%s' % self.view_name_from_type+'-play',
-                            args=(self.pk,)
-        )
-
     @property
     def stream_action_title(self):
         return self.__unicode__()
@@ -250,16 +254,6 @@ class MapChallenge(ChallengeBase):
         verbose_name_plural = 'Player Map Challenges'
         db_table = 'player_activities_playermapactivity'
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ('activities:map-overview', (self.pk,))
-
-    def get_overview_url(self):
-        return reverse('activities:map-overview', args=(self.pk,))
-
-    def get_activity_url(self):
-        return reverse('activities:map-activity', args=(self.pk,))
-
     @property
     def stream_action_title(self):
         return self.__unicode__()
@@ -267,8 +261,8 @@ class MapChallenge(ChallengeBase):
     def save(self, *args, **kwargs):
         if not self.createDate:
             self.createDate = datetime.datetime.now()
-
-        self.type = ChallengeType.objects.get(type="map")
+        if self.challenge_type is None:
+            self.challenge_type = Challenge.MAP
         super(MapChallenge, self).save(*args, **kwargs)
 
 
@@ -296,25 +290,20 @@ class EmpathyChallenge(ChallengeBase):
         return ('activities:empathy-overview', (self.pk,))
 
     class Meta:
-        verbose_name_plural = 'Player Empathy Challenges'
+        verbose_name_plural = 'Empathy Challenges'
         db_table = 'player_activities_playerempathyactivity'
 
     @property
     def stream_action_title(self):
         return self.__unicode__()
 
-    def get_overview_url(self):
-        return reverse('activities:empathy-overview', args=(self.pk,))
-
-    def get_activity_url(self):
-        return reverse('activities:empathy-activity', args=(self.pk,))
-
     def save(self, *args, **kwargs):
         if not self.createDate:
             self.createDate = datetime.datetime.now()
-
-        self.type = ChallengeType.objects.get(type="empathy")
+        if self.challenge_type is None:
+            self.challenge_type = Challenge.EMPATHY
         super(EmpathyChallenge, self).save(*args, **kwargs)
+
 
 class MultiChoiceActivityManager(TranslationManager):
 

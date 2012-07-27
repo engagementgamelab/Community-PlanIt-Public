@@ -4,20 +4,20 @@
 
 {% block content %}
 <div class="single-response column-container">
-    {% if activity.is_player_submitted %}
-        <a href="{% url missions:mission_playercreated activity.mission.pk %}" class="btn-back">{% trans "Return" %}</a>
+    {% if challenge.is_player_submitted %}
+        <a href="{% url missions:mission_playercreated challenge.mission.pk %}" class="btn-back">{% trans "Return" %}</a>
     {% else %}
-        <a href="{% url missions:mission activity.mission.pk %}" class="btn-back">{% trans "Back to Mission" %}</a>
+        <a href="{% url missions:mission challenge.mission.pk %}" class="btn-back">{% trans "Back to Mission" %}</a>
     {% endif %}
     
-    <h1>{{ activity.name|safe }}<span class="points">{{ activity.get_points }}</span></h1>
-    {% if activity.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile activity.creationUser.id %}">{% avatar activity.creationUser %}</a> created by <a href="{% url accounts:player_profile activity.creationUser.id %}">{{ activity.creationUser.get_profile.screen_name }}</a></div>{% endif %}
+    <h1>{{ challenge.name|safe }}<span class="points">{{ challenge.get_points }}</span></h1>
+    {% if challenge.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile challenge.creationUser.id %}">{% avatar challenge.creationUser %}</a> created by <a href="{% url accounts:player_profile challenge.creationUser.id %}">{{ challenge.creationUser.get_profile.screen_name }}</a></div>{% endif %}
     
     <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">{% csrf_token %}
         <div class="column-threequarter">
             <div class="activity-question">
                 {# include "player_activities/attachments.html" #}
-                <div>{{ activity.question|safe }}</div>
+                <div>{{ challenge.question|safe }}</div>
                 <br class="clearfix" />
                 {% if errors.response %}
                     {{ errors.response }}

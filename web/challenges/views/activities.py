@@ -2,9 +2,7 @@ from operator import attrgetter
 
 from sijax import Sijax
 
-from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -25,7 +23,6 @@ from ..models import *
 from ..views import comment_fun,\
                     log_activity_and_redirect
 
-from web.core.views import LoginRequiredMixin
 
 import logging
 log = logging.getLogger(__name__)
@@ -180,14 +177,6 @@ def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
 
 
-class FetchAnswersMixin(object):
-
-    def get_context_data(self, *args, **kwargs):
-        ctx = super(FetchAnswersMixin, self).\
-                get_context_data(*args, **kwargs)
-        print '1) %s get_ctx' % self.__class__.__name__
-        return ctx
-
 class ChallengeListView(ListView):
     #model = Challenge
     template_name = 'challenges/all.html'
@@ -207,7 +196,6 @@ class ChallengeListView(ListView):
 
         return super(ChallengeListView, self).\
                 dispatch(request, *args, **kwargs)
-
 
     def get_queryset(self):
 
@@ -246,113 +234,11 @@ class ChallengeListView(ListView):
                                             user_profile=self.request.user.get_profile(),
                                             instance=self.game,
                                         ).exists()
+        ctx['mission'] = self.mission
         print ctx
         return ctx
 
 challenge_list_view = ChallengeListView.as_view()
-
-
-class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
-    model = Challenge
-    template_name = 'challenges/single_response_overview.html'
-    #queryset = Instance.objects.exclude(is_disabled=True)
-    pk_url_kwarg = 'challenge_id'
-    context_object_name = 'activity'
-
-    def get_context_data(self, **kwargs):
-        ctx = super(SingleResponseDetailView, self).\
-                get_context_data(**kwargs)
-        ctx.update(
-                {
-                    #'activity' : kwargs['activity'],
-                    'is_completed': True,
-                }
-        )
-        print ctx
-        print '2) %s get_ctx' % self.__class__.__name__
-        return ctx
-
-single_response_detail_view = SingleResponseDetailView.as_view()
-
-
-class SingleResponseForm(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        activity = kwargs.get('initial')['activity']
-        super(SingleResponseForm, self).__init__(*args, **kwargs)
-
-        self.fields['selected'] = forms.ModelChoiceField(
-                    widget=RadioSelect,
-                    required=True,
-                    empty_label=None,
-                    queryset=MultiChoiceActivity.objects.\
-                            language(get_language()).\
-                            filter(activity=activity).distinct()
-        )
-
-    class Meta:
-        model = AnswerSingleResponse
-        exclude = ('answerUser', 'activity')
-
-
-class RedirectToChallengeOverviewMixin(object):
-
-    def dispatch(self, request, *args, **kwargs):
-
-        print 'disp redir'
-        if AnswerSingleResponse.objects.\
-                filter(answerUser=request.user, activity=self.activity).\
-                exists():
-            return redirect(self.activity.overview_url)
-
-        return super(RedirectToChallengeOverviewMixin, self).dispatch(request,
-            *args, **kwargs)
-
-
-class SingleResponseCreateView(LoginRequiredMixin, 
-                               RedirectToChallengeOverviewMixin, 
-                               CreateView):
-    form_class = SingleResponseForm
-    model = None
-    context_object_name = 'single_response_answer'
-    template_name = "challenges/single_base.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        self.activity = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
-        #if AnswerSingleResponse.objects.\
-        #        filter(answerUser=request.user, activity=self.activity).\
-        #        exists():
-        #    return redirect(self.activity.overview_url)
-
-        self.initial.update({'activity': self.activity,})
-        print 'dispatch create'
-
-        return super(SingleResponseCreateView, self).dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.answerUser = self.request.user
-        self.object.activity = self.activity
-        self.object.save()
-        return redirect(self.activity.overview_url)
-        #return log_activity_and_redirect(self.request, self.activity, action_msg)
-
-    def form_invalid(self, form):
-        print form.errors
-        return self.render_to_response(self.get_context_data(form=form))
-
-    def get_context_data(self, *args, **kwargs):
-        context_data = super(SingleResponseCreateView, self).\
-                get_context_data(*args, **kwargs)
-        context_data.update(
-                {
-                    'activity': self.activity,
-                }
-        )
-        print '%s get_ctx' % self.__class__.__name__
-        return context_data
-
-single_response_play_view = SingleResponseCreateView.as_view()
 
 
 @login_required
