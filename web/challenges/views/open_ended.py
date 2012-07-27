@@ -59,7 +59,7 @@ class RedirectToChallengeOverviewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         if AnswerOpenEnded.objects.\
-                filter(user=request.user).\
+                filter(answerUser=request.user).\
                 exists():
             return redirect(self.challenge.overview_url)
 
