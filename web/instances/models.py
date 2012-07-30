@@ -1,5 +1,5 @@
 __all__ = (
-    'City', 'Language', 'Instance', 'PointsAssignment', 'NotificationRequest', 'Affiliation',
+    'Language', 'Instance', 'PointsAssignment', 'NotificationRequest', 'Affiliation',
 )
 
 import os.path
@@ -31,32 +31,6 @@ add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
 def determine_path(instance, filename):
     return os.path.join('uploads/cities/', str(instance.domain), filename)
-
-class CityManager(models.Manager):
-
-    @cached(60*60*24*7, 'cities')
-    def for_domain(self, domain):
-        return City.objects.get(domain=domain)
-
-class City(models.Model):
-    slug = models.SlugField(default='')
-    name = models.CharField(max_length=100)
-    domain = models.CharField(max_length=100)
-    description = models.TextField(null=False, blank=True, default='')
-    image = models.ImageField(upload_to=determine_path, null=True, blank=True)
-
-    objects = CityManager()
-
-    def __unicode__(self):
-        return "%s at <%s>" %(self.name, self.domain)
-
-    def save(self, *args, **kwargs):
-        if self.slug is None or self.slug == '':
-            self.slug = slugify(self.name)[:30]
-        super(City, self).save()
-
-    class Meta:
-        verbose_name_plural = 'Cities'
 
 
 class Language(models.Model):
@@ -119,16 +93,10 @@ class InstanceManager(TranslationManager):
         return qs.exclude(missions__end_date__gte=self.now).distinct()
 
     @cached(60*60*24)
-    def current(self, for_city=None):
+    def current(self):
         # basically, active and future
         qs = self.language(get_language()).exclude(is_disabled=True)
-        if for_city:
-            qs = qs.filter(for_city=for_city)
         return qs.filter(missions__end_date__gte=self.now).distinct()
-
-    #@cached(60*60*24, 'instances')
-    #def for_city(self, domain):
-    #    return self.filter(for_city__domain=domain)
 
     def latest_for_city_domain(self, domain):
         #looks like `latest` qs method is broken in django-nani
@@ -145,6 +113,15 @@ class InstanceManager(TranslationManager):
 
 
 class Instance(TranslatableModel):
+
+    (BOSTON, DETROIT, PHILADELPHIA, NYC) = xrange(4)
+    INSTANCE_CITIES = (
+            (BOSTON, 'Boston'),
+            (DETROIT, 'Detroit'),
+            (PHILADELPHIA, 'Philadelphia'),
+            (NYC, 'New York City'),
+    )
+
     slug = models.SlugField()
     title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
     state = models.CharField(max_length=2)
@@ -153,7 +130,7 @@ class Instance(TranslatableModel):
     curators = models.ManyToManyField(User, blank=True)
     languages = models.ManyToManyField(Language)
     days_for_mission = models.IntegerField(default=7)
-    for_city = models.ForeignKey(City, null=True, related_name='instances')
+    city = models.CharField(max_length=2, choices=INSTANCE_CITIES, null=True)
 
 
     translations = TranslatedFields(

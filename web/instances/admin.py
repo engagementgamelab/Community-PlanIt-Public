@@ -10,13 +10,8 @@ class UserProfileVariantsForInstanceInline(admin.StackedInline):
     filter_horizontal = ('affiliation_variants', 'stake_variants',)
     model = UserProfileVariantsForInstance
 
-class CityAdmin(admin.ModelAdmin):
-    list_display = ('name','domain',)
-    ordering = ('name',)
-    search_fields = ('name', 'domain')
-
 class InstanceAdmin(TranslatableAdmin):
-    list_display = ('title', 'start_date', 'for_city', 'is_disabled')
+    list_display = ('title', 'start_date', 'city', 'is_disabled')
     list_filter = ('is_disabled',)
     filter_horizontal = ('curators', 'languages',)
     inlines = [
@@ -35,7 +30,6 @@ class AffiliationAdmin(admin.ModelAdmin):
 admin.site.register(Instance, InstanceAdmin)
 admin.site.register(Language)
 admin.site.register(Affiliation, AffiliationAdmin)
-admin.site.register(City, CityAdmin)
 admin.site.register(NotificationRequest, NotificationRequestAdmin)
 #admin.site.register(PointsAssignmentAction)
 admin.site.register(PointsAssignment, PointsAssignmentAdmin)

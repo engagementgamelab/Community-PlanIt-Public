@@ -5,7 +5,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from django.contrib import admin
 
-from web.instances.models import Instance, City
+from web.instances.models import Instance
 
 # Setup admin
 admin.autodiscover()
@@ -28,9 +28,9 @@ urlpatterns = patterns('web',
     url(r'^how-to-play/', direct_to_template, { 'template': 'static/howtoplay.html', 'extra_context': { 'instances': Instance.objects.all } }, name='howtoplay'),
     url(r'^features/', direct_to_template, { 'template': 'static/features.html', 'extra_context': { 'instances': Instance.objects.all } }, name='features'),    
     url(r'^bring-cpi-to-you/$', 'views.bringcpi', name='bringcpi'),
-    url(r'^bring-cpi-to-you/thanks/', direct_to_template, { 'template': 'static/bringcpi_thanks.html', 'extra_context': { 'cities': City.objects.all } }, name='bringcpi-thanks'),
-    url(r'^404$', direct_to_template, { 'template': '404.html', 'extra_context': { 'cities': City.objects.all } }, name='404'),
-    url(r'^500$', direct_to_template, { 'template': '500.html', 'extra_context': { 'cities': City.objects.all } }, name='404'),
+    url(r'^bring-cpi-to-you/thanks/', direct_to_template, { 'template': 'static/bringcpi_thanks.html', 'extra_context': {} }, name='bringcpi-thanks'),
+    url(r'^404$', direct_to_template, { 'template': '404.html', 'extra_context': {}}, name='404'),
+    url(r'^500$', direct_to_template, { 'template': '500.html', 'extra_context': {}}, name='404'),
 
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),
     #(r'^resource-center/', include('attachments.urls', namespace='attachments', app_name='attachments')),

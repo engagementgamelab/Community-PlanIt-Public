@@ -10,7 +10,7 @@ from django.core.mail import send_mail
 from web.settings import *
 from web.missions.models import Mission
 from web.accounts.models import UserProfilePerInstance
-from web.instances.models import Instance, City
+from web.instances.models import Instance
 from web.core.utils import missions_bar_context
 
 import logging
@@ -47,7 +47,6 @@ def bringcpi(request, template='static/bringcpi.html'):
 
     context = {
         'form': form,
-        'cities': City.objects.all(),
     }
     
     if hasattr(request, 'current_game'): 
