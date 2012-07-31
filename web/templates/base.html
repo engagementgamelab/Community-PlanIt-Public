@@ -88,18 +88,16 @@
                     <div id="nav-game">
                         {% if user.is_authenticated %}
                             {% block nav_game %}
-                            <div class="navbar"><div class="navbar-inner"><div class="container">
                                 {% block nav_game_links %}{% endblock %}
-                                <ul class="nav pull-right">
-                                    <li class="dropdown">
-                                        <a class="dropdown-toggle" data-toggle="dropdown">
-                                            {% if user.is_authenticated %}
-                                            {{ request.user.get_profile.screen_name }}
-                                            {% endif %}
+                                    <div class="btn-group">
+                                        <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown">
+                                            <i class="icon-user icon-white"></i>
                                             <b class="caret"></b>
                                         </a>
                                         <ul class="dropdown-menu">
+                                            <li>{{ request.user.get_profile.screen_name }}</li>
                                             <li class="nav-header">Current Game</li>
+                                            <li><a>Account Settings</a></li>
                                             <li><a>Detroit 24-7 Game</a></li>
                                             <li class="divider"></li>
                                             <li class="nav-header">Switch Game</li>
@@ -107,12 +105,9 @@
                                             <li><a>Boston Public Schools</a></li>
                                         
                                             <li class="divider"></li>
-                                            <li><a>Account Settings</a>
                                             <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
                                         </ul>
-                                    </li>
-                                </ul>
-                            </div></div></div><!-- navbar, navbar-inner, container -->
+                                    </div>
                             {% endblock %}
                         {% else %}
                             {% block game_login %}<a class="btn btn-large disabled">Sign In</a>{% endblock %}

@@ -30,10 +30,16 @@
     <div class="row">
         <div class="span8">
             <h1>{{ mission.title }}</h1>
-            <p>{# {% embed_video mission.video %} #}</p>
+            <p>
+                <a href="#" class="thumbnail">
+                    <img src="http://placehold.it/610x343" alt="">
+                </a>
+                {# {% embed_video mission.video %} #}
+            </p>
             <p>{{ mission.description }}</p>
-    
-            <a href="{% url missions:challenges:challenges mission.pk %}" class="btn btn-primary btn-large">Resume Mission</a>
+
+            <p class="align-center"><a href="{% url missions:challenges:challenges mission.pk %}" class="btn btn-primary btn-large">Resume Mission</a></p>
+
         </div>
         <div class="span4">
             <a href="" class="btn btn-primary btn-large">Bank</a><br><br>
