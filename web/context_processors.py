@@ -1,22 +1,18 @@
 from django.contrib.sites.models import RequestSite
 
 from web.instances.models import Instance
-
-#from web.core.utils import instance_from_request as utils_instance_from_request 
+from web.accounts.models import UserProfilePerInstance
 
 import logging
 log = logging.getLogger(__name__)
 
-#def instance_from_request(request):
-#    instance = None
-#    if request and request.user.is_authenticated():
-#        instance = utils_instance_from_request(request)
-#        log.debug('city %s, user: %s,  current_instance: %s' % (instance.for_city.domain, str(request.user), str(instance)))
-#    return { 'instance' : instance, }
-
-
-from django.contrib.sites.models import Site
-def site(request):
-    return {
-        'top_level_domain': Site.objects.get_current()
-    }
+def game_nav(request):
+    ctx = {}
+    if request.user.is_authenticated() and \
+                    request.session.has_key('my_active_game'):
+        ctx.update({
+            'my_non_active_game_profiles': UserProfilePerInstance.objects.\
+                        filter(user_profile=request.user.get_profile()).\
+                        exclude(instance=request.session.get('my_active_game'))
+        })
+    return ctx

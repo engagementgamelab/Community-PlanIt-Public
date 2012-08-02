@@ -149,7 +149,8 @@ def login(request, template_name='accounts/login.html',
             current_game_slug = form.cleaned_data.get('game_slug')
             current_game = get_object_or_404(Instance, slug=current_game_slug)
 
-
+            # set some session variables
+            request.session['my_active_game'] = current_game
             prof_per_instance = UserProfilePerInstance.objects.get(
                         instance=current_game,
                         user_profile=user.get_profile()
