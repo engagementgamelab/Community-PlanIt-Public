@@ -64,7 +64,7 @@
 </div>
 <div id="featured">
     <div class="wrapper">
-        <div class="row featured-container drop-shadow-container">
+        <div class="row featured-container box-shadow-container">
             {% for instance in instances %}
                 <div class="instance span4">
                     <span class="badge badge-info">
@@ -77,7 +77,7 @@
                         {% endif %}
                     </span>
                     <h3><a href="{{ instance.get_absolute_url }}">{{ instance }}</a></h3>
-                    <h4>({{ instance.for_city.name }})</h4>
+                    <h4>({{ instance.city }})</h4>
                     ({{ instance.start_date|date:"F j, Y" }} - {{ instance.end_date|date:"F j, Y" }})
                 </div>
             {% endfor %}

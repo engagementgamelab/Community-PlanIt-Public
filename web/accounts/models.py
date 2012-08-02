@@ -285,9 +285,9 @@ class UserProfilePerInstance(models.Model):
         def challenges_from_actions(actions):
             return map(lambda a: \
                         combine(get_translation(a, language_code=get_language())),
-                    [getattr(action, 'action_object_playeractivity') or \
-                     getattr(action, 'action_object_playermapactivity') or \
-                     getattr(action, 'action_object_playerempathyactivity') for action in actions]
+                    [getattr(action, 'action_object_challenge') or \
+                     getattr(action, 'action_object_mapchallenge') or \
+                     getattr(action, 'action_object_playerempathychallenge') for action in actions]
             )
         return challenges_from_actions(actions)
 

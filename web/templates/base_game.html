@@ -21,8 +21,8 @@
 {% block nav_game_links %}
 <ul class="nav nav-pills">
     <li><a href="#" id="toggle-nav-site">{% trans "Leave" %}</a></li>
-    <li><a href="{% url instances:instances %}">{% trans "Dashboard (Missions)" %}</a></li>
-    <li><a href="">{% trans "Ask Around" %}</a></li>                
+    <li><a href="{{ mission.get_absolute_url }}">{% trans "Dashboard" %} ({{ mission }})</a></li>
+    <li><a href="">{% trans "Ask Around" %}</a></li>
     <li><a href="">Bank</a></li>
 </ul>
 {% endblock %}

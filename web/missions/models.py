@@ -166,19 +166,16 @@ class Mission(TranslatableModel):
     def __unicode__(self):
         return self.title
 
-    #@models.permalink --> breaks in localeurl
-    def get_absolute_url(self, lang=None):
-        redir = ""
-        lang_code = ""
-        if lang is not None and lang.code in dict(settings.LANGUAGES).keys():
-            lang_code = lang.code
+    @models.permalink
+    def get_absolute_url(self):
+        # redir = ""
+        # lang_code = ""
+        # if lang is not None and lang.code in dict(settings.LANGUAGES).keys():
+            # lang_code = lang.code
 
-        return os.path.join(
-            'https://' if settings.DEBUG == False else 'http://',
-            self.instance_city_domain(self.instance.pk),
-            lang_code,
-            strip_path(reverse('missions:mission', args=(self.pk,)))[1][1:],
-        )
+        return ('missions:mission', (), {
+            'mission_id': self.pk
+        })
 
 stream_utils.register_target(Mission)
 
