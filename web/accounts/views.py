@@ -47,6 +47,28 @@ from web.values.models import *
 import logging
 log = logging.getLogger(__name__)
 
+def switch_games(request, game_slug=None):
+    """
+    set the my_active_game session var and 
+    redirect the user to the active game detail view
+    """
+    for_game = get_object_or_404(Instance, slug=game_slug)
+    request.session['my_active_game'] = for_game
+    return redirect(for_game.get_absolute_url())
+
+def join(request, game_slug=None):
+    """
+    create a game profile for currently logged-in user
+    and redirect him to that game detail view.
+    """
+    for_game = get_object_or_404(Instance, slug=game_slug)
+    UserProfilePerInstance.objects.create(
+            user_profile=request.user.get_profile(),
+            instance=for_game,
+            preferred_language=for_game.default_language,
+    )
+    request.session['my_active_game'] = for_game
+    return redirect(for_game.get_absolute_url())
 
 class GameProfileCreateView(CreateView):
     form_class = RegistrationForm

@@ -26,6 +26,5 @@ def game_nav(context):
                         filter(user_profile=profile).\
                         exclude(instance=my_active_game)
         })
-    print ctx
     return ctx
     
