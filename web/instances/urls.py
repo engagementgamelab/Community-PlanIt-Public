@@ -1,10 +1,11 @@
 from django.conf.urls.defaults import *
 
-from accounts.views import login, register
+from accounts.views import login, game_profile_create_view
 
 urlpatterns = patterns('accounts.views',
     url(r'^(?P<game_slug>[-\w]+)/login/$', login, name='login'),
-    url(r'^(?P<game_slug>[-\w]+)/join/$', register, name='join'),
+    url(r'^(?P<game_slug>[-\w]+)/register/$', game_profile_create_view, name='register'),
+    #url(r'^(?P<game_slug>[-\w]+)/join/$', 'join', name='join'),
     url(r'^(?P<game_slug>[-\w]+)/profile/edit/$', 'edit', name='profile_edit'),
 )
 

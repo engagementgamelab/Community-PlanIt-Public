@@ -18,6 +18,10 @@ def game_nav(context):
             'screen_name': screen_name,
             'player_id': user.pk,
             'my_active_game': my_active_game,
+            'my_active_game_profile': UserProfilePerInstance.objects.\
+                                            get(user_profile=profile,
+                                                instance=my_active_game),
+
             'my_non_active_game_profiles': UserProfilePerInstance.objects.\
                         filter(user_profile=profile).\
                         exclude(instance=my_active_game)

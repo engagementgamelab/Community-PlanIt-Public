@@ -149,6 +149,12 @@ class Instance(TranslatableModel):
     def __unicode__(self):
         return self.title
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('instances:instance', (), {
+            'slug': self.slug,
+        })
+
     @property
     def default_language(self):
         return Language.objects.get(code=settings.LANGUAGE_CODE)

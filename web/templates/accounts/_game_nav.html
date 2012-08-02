@@ -8,8 +8,8 @@
     <ul class="dropdown-menu">
         <li>{{ screen_name }}</li>
         <li class="nav-header">Current Game</li>
-        <li><a href="{% url accounts:player_profile player_id %}">Account Settings</a></li>
-        <li><a href="{% url instances:instance my_active_game.slug %}">{{ my_active_game.title }}</a></li>
+        <li><a href="{{ my_active_game_profile }}">Account Settings</a></li>
+        <li><a href="{{ my_active_game.get_absolute_url }}">{{ my_active_game.title }}</a></li>
         {% if my_non_active_game_profiles %}
         <li class="divider"></li>
         <li class="nav-header">Switch Game</li>

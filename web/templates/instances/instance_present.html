@@ -21,7 +21,10 @@
 
         <p>This game is live! 
             {% if not game_profile_exists %}
-            <a class="btn btn-large btn-primary" href="{% url instances:join instance.slug %}">Join Game</a>
+
+            <a class="btn btn-large btn-primary" 
+                href="{% url instances:register instance.slug %}">Join Game</a>
+
             {% endif %}
         </p>
         {% if game_profile_exists %}

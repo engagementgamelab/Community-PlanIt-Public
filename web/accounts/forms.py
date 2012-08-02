@@ -56,9 +56,9 @@ class AuthenticationForm(AuthenticationForm):
         return self.cleaned_data
 
 
-class RegistrationForm(forms.Form):
+class RegistrationForm(forms.ModelForm):
 
-    first_name  = forms.CharField(widget=forms.TextInput(attrs={
+    first_name = forms.CharField(widget=forms.TextInput(attrs={
         'placeholder': 'First Name',
     }), required=True, max_length=30, label=_("First Name"))
     last_name = forms.CharField(widget=forms.TextInput(attrs={
@@ -95,6 +95,19 @@ class RegistrationForm(forms.Form):
         if User.objects.filter(email__iexact=self.cleaned_data['email']):
             raise forms.ValidationError(_(u'This email address is already in use. Please supply a different email address.'))
         return self.cleaned_data['email']
+
+    class Meta:
+        model = UserProfilePerInstance
+        exclude = (
+                'instance',
+                'user_profile',
+                'stake',
+                'stakes',
+                'affils',
+                'preferred_language',
+                'comments',
+                'date_created'
+        )
 
 
 class DemographicForm(forms.Form):

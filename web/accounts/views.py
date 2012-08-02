@@ -11,6 +11,8 @@ from stream import utils as stream_utils
 from localeurl.models import reverse
 from localeurl.utils import strip_path
 
+from django.views.generic.edit import CreateView
+
 from django.conf import settings
 from django.contrib.sites.models import RequestSite
 from django.core.mail import send_mail
@@ -34,7 +36,7 @@ from PIL import Image
 
 from .forms import *
 from .models import Notification, UserProfile, UserProfileVariantsForInstance
-from web.core.utils import missions_bar_context
+from web.core.views import LoginRequiredMixin
 from web.comments.forms import CommentForm
 from web.comments.utils import create_video_attachment, create_image_attachment
 from web.instances.models import Instance, Affiliation
@@ -44,6 +46,84 @@ from web.values.models import *
 
 import logging
 log = logging.getLogger(__name__)
+
+
+class GameProfileCreateView(CreateView):
+    form_class = RegistrationForm
+    model = UserProfilePerInstance
+    #context_object_name = 'game_profile'
+    template_name = 'accounts/register.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.for_game = get_object_or_404(Instance, slug=kwargs['game_slug'])
+        self.initial.update({'game_slug': kwargs['game_slug'],})
+        return super(GameProfileCreateView, self).dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.game_profile = form.save(commit=False)
+
+        cd = form.cleaned_data
+        new_user = User.objects.create_user(
+                        str(uuid().hex)[:30], 
+                        email=cd.get('email'), 
+                        password=cd.get('password1'),
+        )
+        new_user.first_name = cd.get('first_name')
+        new_user.last_name = cd.get('last_name')
+        new_user.save()
+
+        self.game_profile.user_profile = new_user.get_profile()
+        self.game_profile.instance = self.for_game
+        self.game_profile.preferred_language = self.for_game.default_language
+        self.game_profile.save()
+
+        if not self.for_game.is_future:
+            player = authenticate(
+                username=new_user.email,
+                password=cd.get('password1'),
+            )
+            auth_login(self.request, player)
+
+        # store the active game in session post-reg
+        self.request.session['my_active_game'] = self.for_game
+
+        tmpl = loader.get_template('accounts/email/welcome.html')
+        context = { 'instance': self.for_game }
+        body = tmpl.render(RequestContext(self.request, context))
+        send_mail(ugettext('Welcome to Community PlanIt!'), body, settings.NOREPLY_EMAIL, [new_user.email], fail_silently=False)
+        messages.success(self.request, _("Thanks for signing up!"))
+
+        if self.for_game.is_future:
+            redir = self.for_game.get_absolute_url()
+            #if instance.is_future:
+            #    redir+='?post-reg=true'
+        elif self.for_game.is_present:
+            slug = None
+            active_missions = Mission.objects.active(self.for_game.pk)
+            if active_missions.count():
+                mission = active_missions[0]
+            else:
+                raise Http404("could not locate an active mission for %s" % self.for_game.title)
+            redir = reverse('missions:mission-with-demographic-form', args=(mission.pk,))
+
+        return redirect(redir)
+
+    def form_invalid(self, form):
+        print form.errors
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(GameProfileCreateView, self).\
+                get_context_data(*args, **kwargs)
+        context_data.update(
+                {
+                    'instance': self.for_game,
+                }
+        )
+        return context_data
+
+game_profile_create_view = GameProfileCreateView.as_view()
+
 
 @csrf_protect
 @never_cache
@@ -225,7 +305,7 @@ def notifications(request):
         notification.read = True
         notification.save()
 
-    context.update(missions_bar_context(request))
+    #context.update(missions_bar_context(request))
     return render(request, 'accounts/notifications.html', context)
 
 # Forgot your password
@@ -323,7 +403,7 @@ def edit(request, template_name='accounts/profile_edit.html'):
         'profile_form': profile_form,
         'change_password_form': change_password_form,
     }
-    context.update(missions_bar_context(request))
+    #context.update(missions_bar_context(request))
     return render(request, template_name, context)
 
 @login_required
@@ -347,7 +427,7 @@ def all(request, template='accounts/all.html'):
         'search_by_kw_sijax_js': search_by_kw.get_js(),
         'paginate_players_per_page' : settings.ENDLESS_PAGINATE_PLAYERS_PER_PAGE,
     }
-    context.update(missions_bar_context(request))
+    #context.update(missions_bar_context(request))
 
     return render(request, template, context)
 
@@ -476,7 +556,7 @@ def profile(request, id, template_name="accounts/profile.html"):
     })
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
-    context.update(missions_bar_context(request))
+    #context.update(missions_bar_context(request))
     return render(request, template_name, context)
 
 """

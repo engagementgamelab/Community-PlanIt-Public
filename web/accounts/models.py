@@ -204,6 +204,14 @@ class UserProfilePerInstance(models.Model):
     def __unicode__(self):
         return "%s's profile" % (self.user_profile.screen_name)
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('accounts:player_profile', [str(self.get_user().pk)])
+
+    class Meta:
+        unique_together = ('user_profile', 'instance',)
+        ordering = ('date_created', 'user_profile__user__last_name', )
+
     def progress_percentage_by_mission(self, mission):
         mission_total_points = mission.total_points
         my_completed = self.my_completed_by_mission(mission)
@@ -323,14 +331,6 @@ class UserProfilePerInstance(models.Model):
     @property
     def user_profile_email(self):
         return self.user_profile.email or self.user_profile.user.email 
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('accounts:player_profile', [str(self.get_user().pk)])
-
-    class Meta:
-        unique_together = ('user_profile', 'instance',)
-        ordering = ('date_created', 'user_profile__user__last_name', )
 
 stream_utils.register_target(UserProfilePerInstance)
 
