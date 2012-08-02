@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n game_nav_tags %}
 {% load static from staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
@@ -87,27 +87,7 @@
                         {% if user.is_authenticated %}
                             {% block nav_game %}
                                 {% block nav_game_links %}{% endblock %}
-                                    <div class="btn-group">
-                                        <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown">
-                                            <i class="icon-user icon-white"></i>
-                                            <b class="caret"></b>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li>{{ request.user.get_profile.screen_name }}</li>
-                                            <li class="nav-header">Current Game</li>
-                                            <li><a>Account Settings</a></li>
-                                            <li><a>{{ request.session.my_active_game.title }}</a></li>
-                                            {% if my_non_active_game_profiles %}
-                                            <li class="divider"></li>
-                                            <li class="nav-header">Switch Game</li>
-                                            {% for game_profile in my_non_active_game_profiles %}
-                                            <li><a>{{ game_profile.instance.title }}</a></li>
-                                            {% endfor %}
-                                            {% endif %}
-                                            <li class="divider"></li>
-                                            <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
-                                        </ul>
-                                    </div>
+                                {% game_nav %}
                             {% endblock %}
                         {% else %}
                             {% block game_login %}<a class="btn btn-large disabled">Sign In</a>{% endblock %}

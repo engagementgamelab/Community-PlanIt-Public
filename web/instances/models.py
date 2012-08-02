@@ -132,7 +132,6 @@ class Instance(TranslatableModel):
     days_for_mission = models.IntegerField(default=7)
     city = models.IntegerField(max_length=2, choices=INSTANCE_CITIES, null=True)
 
-
     translations = TranslatedFields(
         description = models.TextField(),
         #meta = {'get_latest_by': 'start_date'}
@@ -150,12 +149,6 @@ class Instance(TranslatableModel):
     def __unicode__(self):
         return self.title
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ('instances:instance', (), {
-            'slug': self.slug,
-        })
-
     @property
     def default_language(self):
         return Language.objects.get(code=settings.LANGUAGE_CODE)
@@ -167,20 +160,6 @@ class Instance(TranslatableModel):
     def coin_count(self):
         return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
 
-    #def dump_users(self):
-    #    from accounts.models import UserProfile
-    #    profiles = UserProfile.objects.filter(instance=self)
-    #    out = ["Instance: %s" % self.title,]
-    #    for prof in profiles:
-    #        u = prof.user
-    #        prefix = u""
-    #        if u in self.curators.all():
-    #            prefix = u"CURATOR: "
-    #        out.append(u"%s %s %s <%s>, username: %s" %(prefix, u.first_name.capitalize(), u.last_name.capitalize(), 
-    #                                            prof.email, u.username)
-    #        )
-    #    return out
-    
     @property
     def end_date(self):
         missions = self.missions.order_by('-end_date')
@@ -188,12 +167,12 @@ class Instance(TranslatableModel):
             last_mission = missions[0]
             return last_mission.end_date
         return None
-    
+
     @property 
     def is_future(self):
         ''' Instance is not yet running (pre-game)'''
         return self in Instance.objects.future()
-        
+
     @property 
     def is_present(self):
         ''' Instance is currently running (during-game) '''
@@ -208,10 +187,10 @@ class Instance(TranslatableModel):
     def is_started(self):
         ''' Active and Expired Games '''
         return datetime.datetime.now() >= self.start_date
-    
+
     def time_until_start(self):
         return self.start_date - datetime.datetime.now()
-    
+
     def rebuild_mission_dates(self):
         # this will reset all start_date, end_date fields on 
         # this instances missions
@@ -231,7 +210,7 @@ class Instance(TranslatableModel):
     def get_slideshow_attachment(self):
         attachments = self.attachment_set.all()
         return attachments.filter(is_slideshow=True)[0] if attachments.filter(is_slideshow=True) else None
-        
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)[:50]
         super(Instance,self).save()

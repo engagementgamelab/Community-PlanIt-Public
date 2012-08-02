@@ -152,7 +152,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.request',
-    'web.context_processors.game_nav',
+    #'web.context_processors.game_nav',
 )
 
 TIME_ZONE = 'America/New_York'
