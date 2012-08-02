@@ -130,7 +130,7 @@ class Instance(TranslatableModel):
     curators = models.ManyToManyField(User, blank=True)
     languages = models.ManyToManyField(Language)
     days_for_mission = models.IntegerField(default=7)
-    city = models.CharField(max_length=2, choices=INSTANCE_CITIES, null=True)
+    city = models.IntegerField(max_length=2, choices=INSTANCE_CITIES, null=True)
 
 
     translations = TranslatedFields(
