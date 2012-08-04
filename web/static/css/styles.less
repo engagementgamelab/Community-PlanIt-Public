@@ -14,8 +14,39 @@ html, body {
     margin: 0px auto;
 }
 
+.faux-modal {
+    position: relative;
+    padding: 20px 20px;
+    .drop-shadow(0px, 0px, 6px, 0px, #ccc);
+    .border-radius(2px);
+    &:before {
+        content:'';
+        position: absolute;
+        left: -252px;
+        top: 0px;
+        width: 250px;
+        height: 500px;
+        border: 1px dashed #eee;
+
+    }
+
+    &:after {
+        content:'';
+        position: absolute;
+        right: -252px;
+        top: 0px;
+        width: 250px;
+        height: 500px;
+        border: 1px dashed #eee;
+
+
+    }
+
+}
+
 #header {
     border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
     .clearfix;
     #nav-site-container {
         padding: 20px 0px;
