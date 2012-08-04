@@ -4,21 +4,17 @@
 {% block title %}{{ challenge.name }} | Empathy Response Overview{% endblock %}
 
 {% block content %}
-
-<div class="empathy column-container">
+<div class="wrapper challenge challenge-empathy">
+    <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
     
-    <a class="btn-back" href="{% url missions:mission challenge.mission.pk %}">{% trans "Return to mission" %}</a>
-    {% comment %}<a class="btn-forward" href="{# TODO #}">Next Challenge</a>{% endcomment %}
-    
-    <div class="column-threequarter clearfix">
-        
+    <div class="question">    
         <h1>{{challenge.name}}<span class="points">{{ challenge.get_points }}</span></h1>
-        <div class="column-third">
+        <div>
             {% if challenge.avatar %}<img class="left avatar" src="{{ MEDIA_URL }}/{{challenge.avatar}}" width="128" height="128">{% endif %}
         </div>
         
-        <div class="column-twothird">
-            <div class="activity-question">
+        <div>
+            <div>
                 {# include "player_activities/attachments.html" #}
                 <p class="bio">{{ challenge.bio }}</p>
                 <p class="question">{{challenge.question|safe}}</p>

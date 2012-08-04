@@ -3,13 +3,11 @@
 {% block title %}{{challenge.name}} | Single Response Overview{% endblock %}
 
 {% block content %}
-<div class="column-container">
+<div class="wrapper challenge challenge-single">
     
     {# HEADERS #} 
-    <a class="btn-back" href="{% url missions:mission challenge.mission.pk %}">{% trans "Return to mission" %}</a>
-    {% comment %}<a class="btn-forward" href="{# TODO #}">Next Challenge</a>{% endcomment %}
+    <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
 
-    {# include "player_activities/official_responses.html" #}
     <h1>{{ challenge.name|safe }}<span class="points">{{ challenge.get_points }}</span></h1>
     {% if challenge.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile challenge.creationUser.id %}">{% avatar challenge.creationUser %}</a> created by <a href="{% url accounts:player_profile challenge.creationUser.id %}">{{ challenge.creationUser.get_profile.screen_name }}</a></div>{% endif %}
                         

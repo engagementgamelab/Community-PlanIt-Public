@@ -1,21 +1,21 @@
-{% extends "player_activities/base.html" %}
+{% extends "challenges/base.html" %}
 {% load gmap attachment_tags i18n avatar %}
 {% block title %}{{challenge.name}} | Multi Response Overview{% endblock %}
 
 {% block game_content %}
-<div>
-    <div class="column-container">
+<div class="wrapper challenge challenge-multi">
+    <div>
 
-        <a class="btn-back" href="{% url missions:mission challenge.mission.slug %}">{% trans "Return to mission" %}</a>
-        {% comment %}<a class="btn-forward" href="{# TODO #}">Next Challenge</a>{% endcomment %}
+        <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
+
         
         <h1>{{ challenge.name|safe }}<span class="points">{{ challenge.get_points }}</span></h1>
         {% if challenge.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile challenge.creationUser.id %}">{% avatar challenge.creationUser %}</a> created by <a href="{% url accounts:player_profile challenge.creationUser.id %}">{{ challenge.creationUser.get_profile.screen_name }}</a></div>{% endif %}
-        {% include "player_activities/official_responses.html" %}
+
         <div class="column-threequarter">
         
             <div class="activity-question">
-                {% include "player_activities/attachments.html" %}
+                {% include "challenges/attachments.html" %}
                 <div>{{ challenge.question|safe }}</div>
                 <br class="clearfix" />
             </div>
@@ -42,7 +42,7 @@
             {% if all_answers %}                
                 <h2>{% trans "Responses" %}</h2>
                 <div class="comments embedded">
-                {% include 'player_activities/_corner_stamp.html' %}
+                {% include 'challenges/_corner_stamp.html' %}
                 {% with instance=challenge.mission.instance %}
                     {% for user, answers, comments in all_answers %}
                         {% if comments %}

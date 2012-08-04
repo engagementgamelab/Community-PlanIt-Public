@@ -1,22 +1,20 @@
-{% extends "player_activities/base.html" %}
+{% extends "challenges/base.html" %}
 {% load gmap attachment_tags i18n avatar %}
 {% block title %}{{activity.name}} | Open-Ended Response Overview{% endblock %}
 
 {% block game_content %}
-<div class="column-container">
+<div class="wrapper challenge challenge-open">
 
     {# HEADERS #}
-    <a class="btn-back" href="{% url missions:mission activity.mission.slug %}">{% trans "Return to mission" %}</a>
-    {% comment %}<a class="btn-forward" href="{# TODO #}">Next Challenge</a>{% endcomment %}
+    <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
 
-    {% include "player_activities/official_responses.html" %}
     <h1>{{activity.name}}<span class="points">{{ activity.get_points }}</span></h1>
     {% if activity.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile activity.creationUser.id %}">{% avatar activity.creationUser %}</a> created by <a href="{% url accounts:player_profile activity.creationUser.id %}">{{ activity.creationUser.get_profile.screen_name }}</a></div>{% endif %}
     
     {# QUESTION AND YOUR RESPONSE #}
     <div class="column-threequarter">
         <div class="activity-question">
-            {% include "player_activities/attachments.html" %}
+            {% include "challenges/attachments.html" %}
             <div>{{ activity.question|safe }}</div>
             <br class="clearfix" />
         </div>
@@ -41,7 +39,7 @@
         {% if answers.count %}
             <h2>{% trans "Responses" %}</h2>
             <div class="comments embedded">
-                {% include 'player_activities/_corner_stamp.html' %}
+                {% include 'challenges/_corner_stamp.html' %}
                 {% for answer in answers %}
                     {% with instance=activity.mission.instance comments=answer.comments %}
                         {% for comment in comments.all %}
