@@ -5,16 +5,30 @@
         <i class="icon-user icon-white"></i>
         <b class="caret"></b>
     </a>
-    <ul class="dropdown-menu">
-        <li>{{ screen_name }}</li>
-        <li class="nav-header">Current Game</li>
-        <li><a href="{{ my_active_game_profile.get_absolute_url }}">Account Settings</a></li>
-        <li><a href="{{ my_active_game.get_absolute_url }}">{{ my_active_game.title }}</a></li>
-        {% if my_non_active_game_profiles %}
+    <ul id="nav-game-account" class="dropdown-menu">
+        <li><a>{{ screen_name }}</a></li>
+        <li>
+            <a href="">
+                {% trans "Demographics" %}
+                {# TODO: if not yet filled out #}
+                <span class="label label-warning">&nbsp;!&nbsp;</span>
+            </a>
+        </li>
+        <li><a href="{{ my_active_game_profile.get_absolute_url }}">{% trans "Account Settings" %}</a></li>
         <li class="divider"></li>
-        <li class="nav-header">Switch Game</li>
+        <!-- Current Game -->
+        <li class="game game-active">
+            <a href="{{ my_active_game.get_absolute_url }}">{{ my_active_game.title }}</a>
+        </li>
+        <!-- Switch Games, if any -->
+        {% if my_non_active_game_profiles %}
         {% for game_profile in my_non_active_game_profiles %}
-        <li><a href="{% url instances:switch game_profile.instance.slug %}">{{ game_profile.instance.title }}</a></li>
+        <li class="game">
+            <a href="{% url instances:switch game_profile.instance.slug %}">
+                {{ game_profile.instance.title }}
+                <span class="label switch-game">{% trans "Switch" %}</span>
+            </a>
+        </li>
         {% endfor %}
         {% endif %}
         <li class="divider"></li>

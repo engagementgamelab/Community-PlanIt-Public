@@ -1,5 +1,7 @@
 @import "less-boilerplate/utils.less";
 
+@blue: rgb(0, 136, 204);
+
 /* Structure */
 html, body {
     background: #fff;
@@ -13,6 +15,8 @@ html, body {
 }
 
 #header {
+    border-bottom: 1px solid #eee;
+    .clearfix;
     #nav-site-container {
         padding: 20px 0px;
         float: left;
@@ -42,6 +46,18 @@ html, body {
         .navbar {
             margin: 0px;
         }
+        .game {
+            & > a {
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+            &.game-active a {
+                color: #fff;
+                font-weight: bold;
+                background-color: @blue;
+                .inner-shadow;
+            }
+        }    
     }
     
 }
