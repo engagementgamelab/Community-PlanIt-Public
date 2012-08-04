@@ -19,6 +19,7 @@ html, body {
     padding: 20px 20px;
     .drop-shadow(0px, 0px, 6px, 0px, #ccc);
     .border-radius(2px);
+    z-index: 0;
     &:before {
         content:'';
         position: absolute;
@@ -27,7 +28,6 @@ html, body {
         width: 250px;
         height: 500px;
         border: 1px dashed #eee;
-
     }
 
     &:after {
@@ -38,8 +38,32 @@ html, body {
         width: 250px;
         height: 500px;
         border: 1px dashed #eee;
+    }
 
-
+    .close-faux-modal {
+        position: absolute;
+        top: -12px;
+        right: -12px;
+        display: inline-block;
+        border: 3px solid white;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 15px;
+        color: white;
+        background: black;
+        z-index: 1;
+        .drop-shadow;
+        .border-radius(20px);
+        .opacity(1);
+        & > a {
+            text-decoration: none;
+            text-shadow: none;
+            color: white;
+            &:hover {
+                color: white;
+            }
+        }
     }
 
 }
