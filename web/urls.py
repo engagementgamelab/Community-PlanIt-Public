@@ -1,3 +1,5 @@
+from filebrowser.sites import site
+
 from django.conf import settings
 from django.conf.urls.defaults import include, patterns, url
 from django.views.generic.simple import direct_to_template
@@ -49,8 +51,20 @@ urlpatterns = patterns('web',
     (r'^reports/', include('web.reporting.urls', namespace='reporting', app_name='reporting')),
 )
 
+#if 'admin_tools' in settings.INSTALLED_APPS:
+#    url(r'^admin_tools/', include('admin_tools.urls')),
+
+if 'grappelli' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^grappelli/', include('grappelli.urls')),
+    )
+
+if 'filebrowser' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+    url(r'^admin/filebrowser/', include(site.urls)),
+    )
+
 urlpatterns += patterns('',
-    url(r'^admin_tools/', include('admin_tools.urls')),
     (r'^admin/gmapsfield/admin/(?P<file>.*)$', 'gmapsfield.views.serve'),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     #(r'^admin/', include("admin.urls", namespace='admin')),

@@ -10,7 +10,7 @@ PARENT_DIR = os.path.dirname(os.path.abspath(DIRNAME))
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # admin_tools
-ADMIN_TOOLS_MEDIA_URL = '/static/'
+#ADMIN_TOOLS_MEDIA_URL = '/static/'
 # ADMIN_TOOLS_MENU = 'web.reporting.admin.ReportsMenu'
 
 MEDIA_ROOT = os.path.join(DIRNAME, '../assets')
@@ -53,10 +53,12 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'localeurl', # localeurl needs to be first
-    'admin_tools',
-    'admin_tools.theming',
-    'admin_tools.menu',
-    'admin_tools.dashboard',
+    'grappelli',
+    'filebrowser',
+    #'admin_tools',
+    #'admin_tools.theming',
+    #'admin_tools.menu',
+    #'admin_tools.dashboard',
     
     'django.contrib.admin',
     'django.contrib.admindocs',
