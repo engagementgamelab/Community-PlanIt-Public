@@ -15,6 +15,7 @@ def game_nav(context):
         profile = user.get_profile()
         screen_name = profile.screen_name
         ctx.update({
+            'profile': profile,
             'screen_name': screen_name,
             'player_id': user.pk,
             'my_active_game': my_active_game,
