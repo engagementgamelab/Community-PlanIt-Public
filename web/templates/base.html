@@ -84,7 +84,7 @@
                             {% if user.is_authenticated %}
                                 {% block nav_site_account %}<div class="nav-site-account">{% game_nav %}</div>{% endblock %}
                             {% else %}
-                                {% block game_login %}<a class="btn btn-large disabled">Sign In</a>{% endblock %}
+                                <div class="nav-site-account">{% block game_login %}<a class="btn btn-large disabled">Sign In</a>{% endblock %}</div>
                             {% endif %}
                         </div>
                         {% block nav_site_toggle %}{% endblock %}
