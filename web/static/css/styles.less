@@ -151,7 +151,7 @@ html, body {
             border-top: none;
             background: #f3f3f3; /* url('../img/icon-navsitetoggle.png');*/
             text-align: center;
-            line-height: 125px;
+            line-height: 105px;
             .gradient(#f9f9f9, #f3f3f3);
             .drop-shadow(0px, 1px, 2px, 0, rgba(0, 0, 0, 0.2));
             i {
@@ -263,15 +263,59 @@ html, body {
 }
 
 /* Challenges */
-.challenges-container {
-    .clearfix;
-    .challenge {
-        padding: 20px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        min-height: 200px;
-        box-sizing: border-box;
-        .box-shadow;
-        .lifted;
+#challenges {
+    width: 100%;
+    padding: 50px 0px;
+    background: url('../img/bg-crosshatch.png') repeat #e9e9e9;
+    overflow: hidden;
+    .inner-shadow(0, 0, 4px);
+}
+
+.carousel {
+    width: 100%;
+    position: relative;
+    
+    .carousel-controls {
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        margin-top: -32px;
+        top: 50%;
+        background: #ddd;
+        border: 3px solid white;
+        cursor: pointer;
+        z-index: 2;
+        .border-radius(100px);
+        &:hover {
+            background: #ccc;
+        }
+        &.carousel-controls-previous {
+            left: 10px;
+        }
+        &.carousel-controls-next {
+            right: 10px;
+        }
+    }
+
+    .carousel-clip {
+        border: 1px dashed #ccc;
+        .carousel-slide{
+            width: 10000%;
+            margin-left: -20px;
+        }
     }
 }
+    
+    .challenges-container {
+        .clearfix;
+        .challenge {
+            padding: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            min-height: 300px;
+            box-sizing: border-box;
+            .box-shadow;
+            .lifted;
+        }
+    }
+

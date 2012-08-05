@@ -4,26 +4,25 @@
 {% block body_class %}{{ block.super }} in-game{% endblock %}
 
 {% block js %}
-{{ block.super }}
-<script>
-    $(function(){
-        $('#nav-site-container').css('margin-top', '-90px');
-        $('#nav-site-toggle').click(function(e){
-            e.preventDefault();
-            var $nav_site = $('#nav-site-container');
-            if($nav_site.hasClass('open')){
-                $nav_site.animate({
-                    'margin-top': '-90px',
-                }, 400).toggleClass('open');
-            } else {
-                $nav_site.animate({
-                    'margin-top': '0px',
-                }, 400).toggleClass('open');
-            }
+    {{ block.super }}
+    <script>
+        $(function(){
+            $('#nav-site-container').css('margin-top', '-90px');
+            $('#nav-site-toggle').click(function(e){
+                e.preventDefault();
+                var $nav_site = $('#nav-site-container');
+                if($nav_site.hasClass('open')){
+                    $nav_site.animate({
+                        'margin-top': '-90px',
+                    }, 400).toggleClass('open');
+                } else {
+                    $nav_site.animate({
+                        'margin-top': '0px',
+                    }, 400).toggleClass('open');
+                }
+            });
         });
-    });
-</script>
-    
+    </script>
 {% endblock %}
 
 {% block nav_site_account %}{# Hide the nav-site's account menu #}{% endblock %}
