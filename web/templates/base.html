@@ -67,10 +67,11 @@
         
         {% block header %}
         <div id="header">
-            <div class="wrapper">
-                    {% block nav %}
+            {% block nav %}
+                {% block nav_site %}
+                <div id="nav-site-container">
                     <!-- Site Navigation -->
-                    <div id="nav-site-container">
+                    <div class="wrapper nav-site-wrapper">
                         <div id="logo-container">
                             <a href="{% url home %}"><img src="{{ STATIC_URL }}img/logo_beta.png" width="75" height="50" alt="Community PlanIt logo" /></a>
                         </div>
@@ -80,23 +81,20 @@
                                 <li><a href="{% url instances:instances %}">{% trans "All Games" %}</a></li>
                                 <li><a href="{% url howtoplay %}">{% trans "How to Play" %}</a></li>
                             </ul>
+                            {% if user.is_authenticated %}
+                                {% block nav_site_account %}<div class="nav-site-account">{% game_nav %}</div>{% endblock %}
+                            {% else %}
+                                {% block game_login %}<a class="btn btn-large disabled">Sign In</a>{% endblock %}
+                            {% endif %}
                         </div>
+                        {% block nav_site_toggle %}{% endblock %}
                     </div>
-                    <!-- Authenticated Nav -->
-                    <div id="nav-game">
-                        {% if user.is_authenticated %}
-                            {% block nav_game %}
-                                {% block nav_game_links %}{% endblock %}
-                                {% game_nav %}
-                            {% endblock %}
-                        {% else %}
-                            {% block game_login %}<a class="btn btn-large disabled">Sign In</a>{% endblock %}
-                        {% endif %}
-                    </div>
-                    {% endblock nav %}
+                </div>
+                {% endblock %}
 
-
-            </div>
+                <!-- Authenticated Nav -->
+                {% block nav_game %}{% endblock %}
+            {% endblock nav %}
         </div>
         {% endblock %}
     

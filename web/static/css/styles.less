@@ -8,11 +8,18 @@ html, body {
     color: #343434;
 }
 
+#body {
+    clear: both;
+    background: #fff;
+}
+
 .wrapper {
     width: 940px;
     padding: 0px 20px;
     margin: 0px auto;
 }
+
+/* Faux Modal */
 
 .faux-modal {
     position: relative;
@@ -68,38 +75,50 @@ html, body {
 
 }
 
+/* Headers and Navigation */
+
 #header {
     border-bottom: 1px solid #eee;
     margin-bottom: 20px;
     .clearfix;
-    #nav-site-container {
+
+    .nav-site-wrapper {
+        position: relative;
         padding: 20px 0px;
-        float: left;
-        width: 720px;
         #logo-container {
             float: left;
             width: 100px;
             text-align: center;
         }
         #nav-site {
-            float: right;
-            width: 618px;
-            ul {
+            float: left;
+            width: 840px;
+            &>ul {
+                float: left;
                 margin: 8px 0 8px 30px;
                 li {
                     margin-left: 10px;
                 }
             }
+            .nav-site-account {
+                float: right;
+                margin-top: 5px;
+            }
         }
+        .clearfix;
     }
     
     #nav-game {
-        padding: 20px 0px;
-        float: right;
-        width: 220px;
-        margin-top: 5px;
-        .navbar {
-            margin: 0px;
+        clear: both;
+        padding: 30px 0;
+        .nav-game-account {
+            float: right;
+        }
+    }
+
+    .nav-account {
+        li {
+            display: inline;
         }
         .game {
             & > a {
@@ -110,28 +129,43 @@ html, body {
                 color: #fff;
                 font-weight: bold;
                 background-color: @blue;
-                .inner-shadow;
+                .inner-shadow(0, 0, 4px);
             }
         }    
-    }
-    
+    }    
 }
 
-.in-game {
+.in-game #header {
     #nav-site-container {
-        padding-bottom: 0px !important;
-        margin-top: -70px;
+        background: #f9f9f9;
+        .inner-shadow(0, -1px, 1px, 0, rgba(0, 0, 0, 0.2));
+        .clearfix;
+        #nav-site-toggle {
+            position: absolute;
+            bottom: -85px;
+            left: -80px;
+            border: 1px solid #ddd;
+            width: 35px;
+            height: 85px;
+            border: 2px solid white;
+            border-top: none;
+            background: #f3f3f3; /* url('../img/icon-navsitetoggle.png');*/
+            text-align: center;
+            line-height: 125px;
+            .gradient(#f9f9f9, #f3f3f3);
+            .drop-shadow(0px, 1px, 2px, 0, rgba(0, 0, 0, 0.2));
+            i {
+                .opacity(0.5);
+                .transform(scaleX(-1));
+            }
+            &:hover i {
+                .opacity(0.75);
+            }
+        }
     }
-    #nav-game {
-        width: 940px !important;
-        clear: left;
-    }        
 }
 
-#body {
-    clear: both;
-    background: #fff;
-}
+/* Footer */
 
 #footer-fat {
     margin: 25px 0;
@@ -186,6 +220,7 @@ html, body {
         float: right;
     }
 }
+
 /* Specific Styles */
 
 .instance {

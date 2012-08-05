@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n game_nav_tags %}
 
 {% block body_class %}{{ block.super }} in-game{% endblock %}
 
@@ -7,22 +7,34 @@
 {{ block.super }}
 <script>
     $(function(){
-        $('#toggle-nav-site').click(function(e){
+        $('#nav-site-container').css('margin-top', '-90px');
+        $('#nav-site-toggle').click(function(e){
             e.preventDefault();
-            $('#nav-site-container').animate({
-                'margin-top': '0px',
-            }, 400);
+            var $nav_site = $('#nav-site-container');
+            if($nav_site.hasClass('open')){
+                $nav_site.animate({
+                    'margin-top': '-90px',
+                }, 400).toggleClass('open');
+            } else {
+                $nav_site.animate({
+                    'margin-top': '0px',
+                }, 400).toggleClass('open');
+            }
         });
     });
 </script>
     
 {% endblock %}
 
-{% block nav_game_links %}
-<ul class="nav nav-pills">
-    <li><a href="#" id="toggle-nav-site">{% trans "Leave" %}</a></li>
-    <li><a href="{{ mission.get_absolute_url }}">{% trans "Dashboard" %} ({{ mission }})</a></li>
-    <li><a href="">{% trans "Ask Around" %}</a></li>
-    <li><a href="">Bank</a></li>
-</ul>
+{% block nav_site_account %}{# Hide the nav-site's account menu #}{% endblock %}
+{% block nav_site_toggle %}<a href="#" id="nav-site-toggle"><i class="icon-share-alt"></i></a>{% endblock %}
+{% block nav_game %}
+<div id="nav-game">
+    <div class="wrapper wrapper-nav-game">
+        <a href="{{ mission.get_absolute_url }}" class="btn btn-primary btn-large"><i class="icon-star-empty icon-white"></i> {% trans "Mission" %}</a>
+        <a href="" class="btn btn-primary btn-large"><i class="icon-comment icon-white"></i> {% trans "Ask Around" %}</a>
+        <a href="" class="btn btn-primary btn-large"><i class="icon-certificate icon-white"></i> Bank</a>
+        <div class="nav-game-account">{% game_nav %}</div>
+    </div>
+</div>
 {% endblock %}

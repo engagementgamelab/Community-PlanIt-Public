@@ -1,11 +1,11 @@
 {% load i18n thumbnail %}
 
-<div class="btn-group">
+<div class="btn-group nav-account">
     <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown">
-        <i class="icon-user icon-white"></i>
+        <i class="icon-user icon-white"></i> {{ screen_name }}
         <b class="caret"></b>
     </a>
-    <ul id="nav-game-account" class="dropdown-menu">
+    <ul class="dropdown-menu">
         <li>
             <a>
                 {% thumbnail profile.avatar "64x64" crop="center" as avatar %}
