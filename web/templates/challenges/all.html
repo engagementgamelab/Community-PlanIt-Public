@@ -6,21 +6,47 @@
 {% block js %}
     {{ block.super }}
     <script>
+
         $(function(){
+            var $carousel = $('.carousel');
+            var $clip = $carousel.find('.carousel-clip');
+            var $slide = $carousel.find('.carousel-slide');
+            var $challenges = $slide.find('.challenge');
+
+            var $minimap = $('.minimap');
+
+            $slide.find('.challenge').first().next().addClass('active');
+
+            $('.minimap .challenge').click(function(){
+                var index = $(this).index();
+                goto_challenge($challenges.eq(index));
+            });
+
             $('.carousel-controls-previous').click(function(){
-                $this = $(this);
-                var $slide = $this.parent().find('.carousel-slide');
-                $slide.animate({
-                    'margin-left': '+=320',
-                });
+                var prev_challenge = get_current_challenge().prev();
+                goto_challenge(prev_challenge);
             });
+
             $('.carousel-controls-next').click(function(){
-                $this = $(this);
-                var $slide = $this.parent().find('.carousel-slide');
-                $slide.animate({
-                    'margin-left': '-=320',
-                });
+                var next_challenge = get_current_challenge().next();
+                goto_challenge(next_challenge);
+
             });
+
+            var get_current_challenge = function(){
+                return $slide.find('.challenge.active');
+            };
+
+            var goto_challenge = function (challenge){
+                if(challenge.length){
+                    $slide.find('.challenge').removeClass('active');
+                    challenge.addClass('active');
+                    $slide.animate({
+                        'margin-left': $clip.width()/2 - challenge.width()/2 - 40 - challenge.position().left,
+                    });                    
+                }
+            };
+
         });
     </script>
 {% endblock %}
@@ -46,6 +72,7 @@
                 {% endif %}
             </div>
         {% endfor %}
+        <span class="badge">Mission 2</span>
     </div>
 
 </div>
