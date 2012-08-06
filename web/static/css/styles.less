@@ -268,7 +268,7 @@ html, body {
         background: #fff;
         cursor: pointer;
 
-        /* Challenge Types */
+        /* Challenge States */
         &.challenge-locked {
             background: #f1f1f1;
         }
@@ -303,6 +303,19 @@ html, body {
             box-sizing: border-box;
             .box-shadow;
             .lifted;
+
+            /* Challenge States */
+            &.challenge-locked {
+                background: #f1f1f1;
+            }
+
+            &.challenge-barrier {
+                background: #e9e9e9;
+            }
+
+            &.challenge-final {
+                background: #e9e9e9;
+            }
 
             .action {
                 position: absolute;
