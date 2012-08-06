@@ -40,7 +40,7 @@
                 {% if forloop.last %}
                     <i class="icon-flag"></i>
                 {% elif forloop.counter|divisibleby:4 %}
-                    <i class="icon-exclamation-sign"></i>
+                    <i class="glyphicon-flash"></i>
                 {% elif forloop.counter > 4 %}
                     <i class="icon-lock"></i>
                 {% endif %}
@@ -67,7 +67,7 @@
                 <div class="challenge {% if challenge.is_trivia %}challenge-trivia{% else %}{{ activity_type }}{% endif %} span4">
                     <h2>{{ challenge|trans_fallback:"name" }}</2>
                     <div>{{ activity_type }}</div>
-                    <div class="meta"><i class="icon-comment"></i> {{ completed_count }}</div>
+                    <div class="meta"><i class="glyphicon-credit"></i> {{ points }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
                     <div class="action"><a href="{{ challenge.overview_url }}" class="btn btn-primary">Review</a></div>
                 </div>
             {% elif mission.is_future %}
@@ -75,7 +75,7 @@
                     <div class="challenge challenge-inactive {% if challenge.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %} span4">
                         <h3>{{ challenge|trans_fallback:"name" }}</div>
                         <div>{{ activity_type }}</div>
-                        <div><a>{{ activity|trans_fallback:"name" }}</a></div>
+                        <div class="meta"><i class="glyphicon-credit"></i> {{ points }} </div>
                     </div>
             {% else %}
                     {# Active Mission #}
@@ -84,7 +84,7 @@
                     <div class="challenge challenge-completed {% if challenge.is_trivia %}challenge-trivia{% else %}{{ activity_type }}{% endif %} span4">
                         <h3>{{ challenge|trans_fallback:"name" }}</h3>
                         <div>{{ activity_type }}</div>
-                        <div class="meta"><i class="icon-comment"></i> {{ completed_count }}</div>
+                        <div class="meta"><i class="glyphicon-credit"></i> {{ points }} &nbsp;&nbsp;<i class="icon-comment"></i> {{ completed_count }}</div>
                         <div class="action"><a href="{{ challenge.overview_url }}" class="btn btn-primary">Review</a></div>
                     </div>
                     {% else %}
@@ -92,7 +92,7 @@
                     <div class="challenge {% if challenge.is_trivia %}challenge-trivia{% else %}{{ activity_type }}{% endif %} span4">
                         <h3>{{ challenge|trans_fallback:"name" }}</h3>
                         <div>{{ activity_type }}</div>
-                        <div class="meta"><i class="icon-comment"></i> {{ completed_count }}</div>
+                        <div class="meta"><i class="glyphicon-credit"></i> {{ points }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
                         <div class="action"><a href="{{ challenge.play_url }}" class="btn btn-primary">View Challenge</a></div>
                     </div>
                     {% endif %}
