@@ -246,12 +246,81 @@ html, body {
 }
 
 /* Challenges */
+
+.minimap {
+    background: #eee;
+    margin: 20px 0px;
+    padding: 5px 0px;
+    text-align: center;
+    line-height: 0px;
+    background: url('../img/bg-crosshatch.png') repeat #e9e9e9;
+    .inner-shadow(0, 0, 4px);
+    .clearfix;
+
+    .challenge {
+        display: inline-block;
+        vertical-align: middle;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        margin: 0px;
+        border: 1px solid #ccc;
+        background: #fff;
+        cursor: pointer;
+
+        /* Challenge Types */
+        &.challenge-locked {
+            background: #f1f1f1;
+        }
+
+        &.challenge-barrier {
+            background: #e9e9e9;
+        }
+
+        &.challenge-final {
+            background: #e9e9e9;
+        }
+
+    }
+}
+
+
 #challenges {
     width: 100%;
     padding: 50px 0px;
     background: url('../img/bg-crosshatch.png') repeat #e9e9e9;
     overflow: hidden;
     .inner-shadow(0, 0, 4px);
+
+    .challenges-container {
+        .clearfix;
+        .challenge {
+            position: relative;
+            padding: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            min-height: 300px;
+            box-sizing: border-box;
+            .box-shadow;
+            .lifted;
+
+            .action {
+                position: absolute;
+                bottom: 50px;
+                left: 0;
+                width: 100%;
+                text-align: center;
+            }
+            .meta {
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                text-align: right;
+            }
+        }
+    }
+
+
 }
 
 .carousel {
@@ -288,55 +357,3 @@ html, body {
         }
     }
 }
-
-.minimap-challenges {
-    background: #eee;
-    margin: 20px 0px;
-    padding: 5px 0px;
-    text-align: center;
-    line-height: 0px;
-    background: url('../img/bg-crosshatch.png') repeat #e9e9e9;
-    .inner-shadow(0, 0, 4px);
-    .clearfix;
-
-    .minimap-challenge {
-        display: inline-block;
-        vertical-align: middle;
-        width: 36px;
-        height: 36px;
-        line-height: 36px;
-        margin: 0px;
-        border: 1px solid #ccc;
-        background: #fff;
-        cursor: pointer;
-    }
-}
-    
-.challenges-container {
-    .clearfix;
-    .challenge {
-        position: relative;
-        padding: 20px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        min-height: 300px;
-        box-sizing: border-box;
-        .box-shadow;
-        .lifted;
-
-        .action {
-            position: absolute;
-            bottom: 50px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-        }
-        .meta {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            text-align: right;
-        }
-    }
-}
-

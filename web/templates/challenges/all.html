@@ -26,16 +26,16 @@
 {% endblock %}
 
 {% block content %}
-<div class="wrapper section-challenges">
+<div class="wrapper">
     
     <h1>{{mission}}</h1>
     <div>
         <p>{% trans "By answering challenge questions you are helping plan your community, and you are earning points that move you towards accomplishing the mission." %}</p>
     </div>
     
-    <div class="minimap-challenges">
+    <div class="minimap">
         {% for challenge in challenges %}
-            <div class="minimap-challenge">
+            <div class="challenge {% if forloop.last %}challenge-final challenge-locked{% elif forloop.counter|divisibleby:4 %}challenge-barrier challenge-locked{% elif forloop.counter > 4 %}challenge-locked{% endif %}">
                 {# Examples #}
                 {% if forloop.last %}
                     <i class="icon-flag"></i>
@@ -44,7 +44,6 @@
                 {% elif forloop.counter > 4 %}
                     <i class="icon-lock"></i>
                 {% endif %}
-
             </div>
         {% endfor %}
     </div>
