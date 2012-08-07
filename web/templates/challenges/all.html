@@ -14,9 +14,38 @@
             var $challenges = $slide.find('.challenge');
 
             var $minimap = $('.minimap');
+            var $minimap_challenges = $minimap.find('.challenge');
 
-            $slide.find('.challenge').first().next().addClass('active');
+            var get_current_challenge = function(){
+                return $slide.find('.challenge.active');
+            };
 
+            var goto_challenge = function (challenge){
+                if(challenge[0] == $challenges.first()[0]){
+                    goto_challenge(challenge.next());
+                } else if (challenge[0] == $challenges.last()[0]){
+                    goto_challenge(challenge.prev());
+                } else if(challenge.length){
+
+                    /* clear active classes */
+                    $slide.find('.challenge').removeClass('active');
+                    $minimap.find('.challenge').removeClass('active');
+
+
+                    challenge.addClass('active');
+                    $minimap.find('.challenge').eq(challenge.index()).addClass('active');
+
+                    $slide.animate({
+                        'margin-left': $clip.width()/2 - challenge.outerWidth()/2 - 20 - challenge.position().left,
+                    });
+
+                    $minimap.find('.window').animate({
+                        'margin-left': $minimap.find('.challenge.active').position().left + $minimap.find('.challenge.active').width()/2 - $minimap.find('.window').width()/2,
+                    });
+                }
+            };
+
+            /* Init */
             $('.minimap .challenge').click(function(){
                 var index = $(this).index();
                 goto_challenge($challenges.eq(index));
@@ -33,19 +62,9 @@
 
             });
 
-            var get_current_challenge = function(){
-                return $slide.find('.challenge.active');
-            };
 
-            var goto_challenge = function (challenge){
-                if(challenge.length){
-                    $slide.find('.challenge').removeClass('active');
-                    challenge.addClass('active');
-                    $slide.animate({
-                        'margin-left': $clip.width()/2 - challenge.width()/2 - 40 - challenge.position().left,
-                    });                    
-                }
-            };
+            $slide.find('.challenge').eq(2).addClass('active');
+            goto_challenge($slide.find('.challenge').first().next());
 
         });
     </script>
@@ -73,6 +92,7 @@
             </div>
         {% endfor %}
         <span class="badge">Mission 2</span>
+        <div class="window"></div>
     </div>
 
 </div>
