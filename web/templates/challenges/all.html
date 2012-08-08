@@ -1,5 +1,5 @@
 {% extends "base_game.html" %}
-{% load i18n cpi_tags %}
+{% load i18n cpi_tags thumbnail%}
 
 {% block title %}Challenges{% endblock %}
 
@@ -138,7 +138,11 @@
                         <h3>{{ challenge|trans_fallback:"name" }}</h3>
                         <div>{{ activity_type }}</div>
 
-                        {% if forloop.first %}<i class="avatar-eric"></i>{% endif %}
+                        {% if forloop.first %}
+                            {% thumbnail request.user.get_profile.avatar "64x64" crop="center" as avatar %}
+                                <img class="avatar" src="{{ avatar.url }}" width="{{ avatar.width }}" height="{{ avatar.height }}">
+                            {% endthumbnail %}
+                        {% endif %}
 
                         <div class="meta"><i class="glyphicon-credit"></i> {{ points }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
                         <div class="action"><a href="{% if forloop.counter < 4 %}{{ challenge.play_url }}{% endif %}" class="btn {% if forloop.counter > 4 %}disabled{% else %}btn-primary{% endif %}">{% if forloop.counter > 4 %}Locked{% else %}View Challenge{% endif %}</a></div>
