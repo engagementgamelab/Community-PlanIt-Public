@@ -1,47 +1,38 @@
-__all__ = (
-    'Language', 'Instance', 'PointsAssignment', 'NotificationRequest', 'Affiliation',
-)
-
 import os.path
 import datetime
 
 from stream import utils as stream_utils
 from cache_utils.decorators import cached
-
-from django.db import models
-from django.conf import settings
-from django.template.defaultfilters import slugify
-from django.utils.safestring import mark_safe
-from django.utils.translation import get_language
-from django.core.urlresolvers import reverse
-
-from django.contrib import admin
-from django.contrib.auth.models import User
-
+from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
 from dateutil.relativedelta import relativedelta
 from gmapsfield.fields import GoogleMapsField
-from nani.models import TranslatableModel, TranslatedFields
-from nani.manager import TranslationManager
 from south.modelsinspector import add_introspection_rules
+
+from django.conf import settings
+from django.db import models
+from django.utils.translation import ugettext as _
+from django.template.defaultfilters import slugify
+from django.contrib.auth.models import User
 
 import logging
 log = logging.getLogger(__name__)
 
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
 
-def determine_path(instance, filename):
-    return os.path.join('uploads/cities/', str(instance.domain), filename)
 
+# A base model for the tree:
 
-class Language(models.Model):
-    code = models.CharField(max_length=10)
-    name = models.CharField(max_length=100)
-
-    def __unicode__(self):
-        return self.name
+class BaseTreeNode(PolymorphicMPTTModel):
+    parent = PolymorphicTreeForeignKey('self', blank=True, null=True, related_name='children', verbose_name=_('parent'))
+    title = models.CharField(_("Title"), max_length=200)
 
     class Meta:
-        ordering = ('code',)
+        verbose_name = _("Tree node")
+        verbose_name_plural = _("Tree nodes")
+
+
+def determine_path(instance, filename):
+    return os.path.join('uploads/cities/', str(instance.domain), filename)
 
 
 class Affiliation(models.Model):
@@ -65,8 +56,8 @@ class Affiliation(models.Model):
         ordering = ('name',)
 
 
-
-class InstanceManager(TranslationManager):
+"""
+class InstanceManager(models.Manager):
 
     def __init__(self, *args, **kwargs):
         super(InstanceManager, self).__init__(*args, **kwargs)
@@ -81,21 +72,21 @@ class InstanceManager(TranslationManager):
         return self.exclude(is_disabled=True)
 
     def future(self):
-        qs = self.language(get_language()).exclude(is_disabled=True)
+        qs = self.exclude(is_disabled=True)
         return qs.filter(start_date__gt=self.now).distinct()
 
     def present(self):
-        qs = self.language(get_language()).exclude(is_disabled=True)
-        return qs.filter(start_date__lte=self.now, missions__end_date__gte=self.now).language(get_language()).distinct()
+        qs = self.exclude(is_disabled=True)
+        return qs.filter(start_date__lte=self.now, missions__end_date__gte=self.now).distinct()
 
     def past(self):
-        qs = self.language(get_language()).exclude(is_disabled=True)
+        qs = self.exclude(is_disabled=True)
         return qs.exclude(missions__end_date__gte=self.now).distinct()
 
     @cached(60*60*24)
     def current(self):
         # basically, active and future
-        qs = self.language(get_language()).exclude(is_disabled=True)
+        qs = self.exclude(is_disabled=True)
         return qs.filter(missions__end_date__gte=self.now).distinct()
 
     def latest_for_city_domain(self, domain):
@@ -110,9 +101,10 @@ class InstanceManager(TranslationManager):
         )
         qs = self.filter(**kwargs)
         return _fake_latest(Instance, qs)
+"""
 
 
-class Instance(TranslatableModel):
+class Instance(BaseTreeNode):
 
     (BOSTON, DETROIT, PHILADELPHIA, NYC) = xrange(4)
     INSTANCE_CITIES = (
@@ -121,26 +113,19 @@ class Instance(TranslatableModel):
             (PHILADELPHIA, 'Philadelphia'),
             (NYC, 'New York City'),
     )
-
     slug = models.SlugField()
-    title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
     state = models.CharField(max_length=2)
     start_date = models.DateTimeField()
-    location = GoogleMapsField()
+    location = GoogleMapsField(blank=True)
     curators = models.ManyToManyField(User, blank=True)
-    languages = models.ManyToManyField(Language)
     days_for_mission = models.IntegerField(default=7)
     city = models.IntegerField(max_length=2, choices=INSTANCE_CITIES, null=True)
-
-    translations = TranslatedFields(
-        description = models.TextField(),
-        #meta = {'get_latest_by': 'start_date'}
-    )
+    description = models.TextField()
 
     # prevent the game from being visible on the site
     is_disabled = models.BooleanField(default=False, verbose_name="Disable the game from being visible on the site")
 
-    objects = InstanceManager()
+    #objects = InstanceManager()
 
     class Meta:
         get_latest_by = 'start_date'
@@ -154,10 +139,6 @@ class Instance(TranslatableModel):
         return ('instances:instance', (), {
             'slug': self.slug,
         })
-
-    @property
-    def default_language(self):
-        return Language.objects.get(code=settings.LANGUAGE_CODE)
 
     @property
     def stream_action_title(self):
@@ -197,62 +178,13 @@ class Instance(TranslatableModel):
     def time_until_start(self):
         return self.start_date - datetime.datetime.now()
 
-    def rebuild_mission_dates(self):
-        # this will reset all start_date, end_date fields on 
-        # this instances missions
-
-        def _reset_fields(m, starton=None):
-            if not starton:
-                starton = m.instance.start_date
-            m.start_date = starton
-            m.end_date = m.start_date + relativedelta(days=+m.instance.days_for_mission, hour=23, minute=59, second=59)
-            m.save()
-            return m.end_date
-
-        starton = None
-        for m in  self.missions.all().distinct().order_by('date_created'):
-            starton = _reset_fields(m, starton) + relativedelta(seconds=+1)
-
     def get_slideshow_attachment(self):
         attachments = self.attachment_set.all()
         return attachments.filter(is_slideshow=True)[0] if attachments.filter(is_slideshow=True) else None
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)[:50]
-        super(Instance,self).save()
-        if self.start_date:
-            self.rebuild_mission_dates()
+        if self.slug is None:
+            self.slug = slugify(self.title)[:50]
+        super(Instance, self).save()
 
 stream_utils.register_target(Instance)
-
-class PointsAssignmentAction(models.Model):
-    action = models.CharField(max_length=260)
-
-    class Meta:
-        ordering = ('action',)
-
-    def __unicode__(self):
-        return self.action[:50]
-
-class PointsAssignment(models.Model):
-    action = models.ForeignKey(PointsAssignmentAction, related_name='points_assignments')
-    points = models.IntegerField(default=0)
-
-    instance = models.ForeignKey(Instance, related_name='points_assignments')
-
-    class Meta:
-        ordering = ('action__action', 'instance', 'points')
-
-    def __unicode__(self):
-        return '%d: %s' % (self.points, self.action)
-
-class NotificationRequest(models.Model):
-    instance = models.ForeignKey(Instance, related_name='notification_requests')
-    email = models.EmailField()
-
-    class Meta:
-        unique_together = ['instance', 'email']
-
-    def __unicode__(self):
-        return '{0}: {1}'.format(self.instance, self.email)
-

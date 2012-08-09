@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from django.template.defaultfilters import slugify
 from .models import Challenge
-from .forms import SelectNewActivityForm, NewActivityWizard
+#from .forms import SelectNewActivityForm, NewActivityWizard
 
 def get_display_type_by_const(const):
     """ lookup on challenge types """

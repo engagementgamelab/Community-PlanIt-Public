@@ -8,16 +8,26 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'Instance.city'
-        db.delete_column('instances_instance', 'city')
+        # Deleting field 'Mission.slug'
+        db.delete_column('missions_mission', 'slug')
 
+
+        # Changing field 'Mission.end_date'
+        db.alter_column('missions_mission', 'end_date', self.gf('django.db.models.fields.DateTimeField')(null=True))
+
+        # Changing field 'Mission.start_date'
+        db.alter_column('missions_mission', 'start_date', self.gf('django.db.models.fields.DateTimeField')(null=True))
 
     def backwards(self, orm):
-        # Adding field 'Instance.city'
-        db.add_column('instances_instance', 'city',
-                      self.gf('django.db.models.fields.CharField')(max_length=2, null=True),
-                      keep_default=False)
 
+        # User chose to not deal with backwards NULL issues for 'Mission.slug'
+        raise RuntimeError("Cannot reverse this migration. 'Mission.slug' and its values cannot be restored.")
+
+        # User chose to not deal with backwards NULL issues for 'Mission.end_date'
+        raise RuntimeError("Cannot reverse this migration. 'Mission.end_date' and its values cannot be restored.")
+
+        # User chose to not deal with backwards NULL issues for 'Mission.start_date'
+        raise RuntimeError("Cannot reverse this migration. 'Mission.start_date' and its values cannot be restored.")
 
     models = {
         'auth.group': {
@@ -56,57 +66,39 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'instances.affiliation': {
-            'Meta': {'ordering': "('name',)", 'object_name': 'Affiliation'},
-            'code': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10', 'blank': 'True'}),
+        'instances.basetreenode': {
+            'Meta': {'object_name': 'BaseTreeNode'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'})
+            'level': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
+            'lft': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
+            'parent': ('polymorphic_tree.models.PolymorphicTreeForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': "orm['instances.BaseTreeNode']"}),
+            'polymorphic_ctype': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'polymorphic_instances.basetreenode_set'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
+            'rght': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'tree_id': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'})
         },
         'instances.instance': {
-            'Meta': {'ordering': "('start_date',)", 'object_name': 'Instance'},
+            'Meta': {'ordering': "('start_date',)", 'object_name': 'Instance', '_ormbases': ['instances.BaseTreeNode']},
+            'basetreenode_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['instances.BaseTreeNode']", 'unique': 'True', 'primary_key': 'True'}),
+            'city': ('django.db.models.fields.IntegerField', [], {'max_length': '2', 'null': 'True'}),
             'curators': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False', 'blank': 'True'}),
             'days_for_mission': ('django.db.models.fields.IntegerField', [], {'default': '7'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {}),
             'is_disabled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'languages': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['instances.Language']", 'symmetrical': 'False'}),
-            'location': ('gmapsfield.fields.GoogleMapsField', [], {}),
+            'location': ('gmapsfield.fields.GoogleMapsField', [], {'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50'}),
             'start_date': ('django.db.models.fields.DateTimeField', [], {}),
-            'state': ('django.db.models.fields.CharField', [], {'max_length': '2'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+            'state': ('django.db.models.fields.CharField', [], {'max_length': '2'})
         },
-        'instances.instancetranslation': {
-            'Meta': {'unique_together': "[('language_code', 'master')]", 'object_name': 'InstanceTranslation', 'db_table': "'instances_instance_translation'"},
-            'description': ('django.db.models.fields.TextField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'language_code': ('django.db.models.fields.CharField', [], {'max_length': '15', 'db_index': 'True'}),
-            'master': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'translations'", 'null': 'True', 'to': "orm['instances.Instance']"})
-        },
-        'instances.language': {
-            'Meta': {'ordering': "('code',)", 'object_name': 'Language'},
-            'code': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'instances.notificationrequest': {
-            'Meta': {'unique_together': "(['instance', 'email'],)", 'object_name': 'NotificationRequest'},
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'notification_requests'", 'to': "orm['instances.Instance']"})
-        },
-        'instances.pointsassignment': {
-            'Meta': {'ordering': "('action__action', 'instance', 'points')", 'object_name': 'PointsAssignment'},
-            'action': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'points_assignments'", 'to': "orm['instances.PointsAssignmentAction']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'points_assignments'", 'to': "orm['instances.Instance']"}),
-            'points': ('django.db.models.fields.IntegerField', [], {'default': '0'})
-        },
-        'instances.pointsassignmentaction': {
-            'Meta': {'ordering': "('action',)", 'object_name': 'PointsAssignmentAction'},
-            'action': ('django.db.models.fields.CharField', [], {'max_length': '260'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        'missions.mission': {
+            'Meta': {'ordering': "('end_date',)", 'object_name': 'Mission', '_ormbases': ['instances.BaseTreeNode']},
+            'basetreenode_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['instances.BaseTreeNode']", 'unique': 'True', 'primary_key': 'True'}),
+            'created_date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'instance': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'missions'", 'to': "orm['instances.Instance']"}),
+            'start_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'video': ('django.db.models.fields.TextField', [], {'blank': 'True'})
         }
     }
 
-    complete_apps = ['instances']
+    complete_apps = ['missions']

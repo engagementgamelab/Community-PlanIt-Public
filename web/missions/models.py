@@ -4,30 +4,24 @@ from decimal import Decimal
 from operator import attrgetter
 from dateutil.relativedelta import relativedelta
 
-from localeurl.utils import strip_path
+from model_utils.managers import InheritanceManager
 from cache_utils.decorators import cached
 from stream import utils as stream_utils
 
-from django.utils.translation import get_language
 from django.conf import settings
 from django.core.cache import cache
 from localeurl.models import reverse
-from django.template.defaultfilters import slugify
-from django.db.models.signals import post_save
+#from django.db.models.signals import post_save
 from django.db import models
 from django.contrib import admin
 
-from nani.models import TranslatableModel, TranslatedFields
-from nani.manager import TranslationManager
-
-from web.instances.models import Instance
-#from web.accounts.models import invalidate_prof_per_instance
-
+from web.instances.models import Instance, BaseTreeNode
 
 import logging
 log = logging.getLogger(__name__)
 
-class MissionManager(TranslationManager):
+"""
+class MissionManager(TreeManager):
 
     @cached(60*60*24, 'missions_for_instance')
     def for_instance(self, instance):
@@ -66,39 +60,29 @@ class MissionManager(TranslationManager):
         now = datetime.datetime.now()
         qs = self.filter(instance__pk=instance_id, start_date__lte=now, end_date__gte=now).order_by('start_date')
         return qs
+"""
 
 
-class Mission(TranslatableModel):
+class Mission(BaseTreeNode):
 
-    # percentage for total points per mission
-    # earned toward a mission flag 
-    MISSION_FLAG_PERCENTAGE = 80
-
-    title = models.CharField(max_length=255, verbose_name="Title (non-translatable)")
+    description = models.TextField(blank=True),
     instance = models.ForeignKey(Instance, related_name='missions')
-    slug = models.SlugField()
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    start_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
     video = models.TextField(blank=True)
-    date_created = models.DateTimeField(auto_now_add=True)
+    created_date = models.DateTimeField(auto_now_add=True)
 
-    translations = TranslatedFields(
-        name = models.CharField(max_length=255, blank=True),
-        description = models.TextField(blank=True),
-        #meta = {'get_latest_by': 'start_date'}
-    )
-
-    objects = MissionManager()
+    #objects = MissionManager()
 
     class Meta:
-    	ordering = ('end_date',)
+        ordering = ('end_date',)
         #get_latest_by = 'start_date'
 
     @property
     def ends_in_days(self):
         delta =  self.end_date - datetime.datetime.now()
         return delta.days
-        
+
     @property
     def starts_in_days(self):
         delta = self.start_date - datetime.datetime.now()
@@ -131,12 +115,12 @@ class Mission(TranslatableModel):
     def get_challenges_cached(self, mission_id, lang='en-us'):
         challenges = []
         for model_klass in ['Challenge', 'EmpathyChallenge', 'MapChallenge']:
-            print model_klass.lower()
             challenges.extend(
-                        getattr(self, 
-                                'challenges_%s_related' % model_klass.lower()).language(lang).all()
+                getattr(self,
+                        'challenges_%s_related' % model_klass.lower()
+                ).language(lang).all()
             )
-        return sorted(challenges, key=attrgetter('name'))
+        return sorted(challenges, key=attrgetter('name_translated'))
 
     def player_submitted_challenges(self, lang='en-us'):
         return self.get_player_submitted_activities_cached(self.pk, lang=lang)
@@ -144,24 +128,11 @@ class Mission(TranslatableModel):
     @cached(60*60*24*7)
     def get_player_submitted_activities_cached(self, mission_id, lang='en-us'):
         challenges = filter(lambda a: a.is_player_submitted == True, self.challenges(lang=lang))
-        return sorted(challenges, key=attrgetter('name'))
+        return sorted(challenges, key=attrgetter('name_translated'))
 
     @cached(60*60*24*7)
     def instance_city_domain(self, instance_id):
         return self.instance.for_city.domain
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)[:50]
-        if not self.start_date and not self.end_date:
-            latest = Mission.objects.latest_by_instance(self.instance)
-            if latest:
-                self.start_date = latest.end_date
-                self.end_date = latest.end_date + relativedelta(days=+self.instance.days_for_mission+1, hour=0, minute=0, second=0)
-            else:
-                self.start_date = datetime.datetime.now()
-                self.end_date = self.start_date + relativedelta(days=+self.instance.days_for_mission+1, hour=0, minute=0, second=0)
-
-        super(Mission, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.title
@@ -176,6 +147,7 @@ class Mission(TranslatableModel):
         return ('missions:mission', (), {
             'mission_id': self.pk
         })
+
 
 stream_utils.register_target(Mission)
 

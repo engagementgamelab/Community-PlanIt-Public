@@ -48,18 +48,14 @@ EMAIL_BACKEND = 'django_mailer.smtp_queue.EmailBackend'
 
 TEMPLATE_DIRS = (
     os.path.join(ROOTDIR, 'templates'),
-    os.path.join(ROOTDIR, '../../parts/django-nani/hvad/templates'),
+    #os.path.join(ROOTDIR, '../../parts/django-nani/hvad/templates'),
+    #'/var/local/buildout/eggs/django_mptt-0.5.2-py2.7.egg/mptt/templates',
 )
 
 INSTALLED_APPS = (
-    'localeurl', # localeurl needs to be first
     'grappelli',
     'filebrowser',
-    #'admin_tools',
-    #'admin_tools.theming',
-    #'admin_tools.menu',
-    #'admin_tools.dashboard',
-    
+
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.auth',
@@ -69,7 +65,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    
+
     'web.accounts',
     'web.affiliations',
     'web.attachment_types',
@@ -87,7 +83,7 @@ INSTALLED_APPS = (
     'web.responses',
     'web.values',
     'web.reporting',
-    
+
     # Need this after web.admin because of test runner: 
     # it loads django admin tests by 'admin' app label first
     'django.contrib.admin',
@@ -95,14 +91,15 @@ INSTALLED_APPS = (
 
     # 3rd party
     #'djcelery',
-    'endless_pagination',
+    'polymorphic_tree',
+    'polymorphic',
+    'mptt',
+    'hvad',
     'stream',
     'attachments',
     'django_mailer',
-    'django_extensions',
     'gmapsfield',
     'gmapsfield.templatetags',
-    'nani',
     'rosetta',
     'sorl.thumbnail',
     # django-ajax-selects
@@ -119,7 +116,6 @@ MANAGERS = ADMINS
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 MIDDLEWARE_CLASSES = (
-    'localeurl.middleware.LocaleURLMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -178,39 +174,14 @@ LANGUAGE_CODE = 'en-us'
 LOCALE_PATHS = (
         os.path.join(ROOTDIR, 'locale'),
 )
-
 ugettext = lambda s: s
 LANGUAGES = (
   ('en-us', ugettext('English')),
-  ('es', ugettext(u'Spanish')),
-  ('zh-cn', ugettext(u'Chinese')),
-  ('ht', ugettext(u'Haitian Creole')),
 )
+
 #django-rosetta
 ROSETTA_UWSGI_AUTO_RELOAD = True
 ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS = True
-
-#django-localeurl
-LOCALE_INDEPENDENT_PATHS = (
-    #re.compile('^/$'),
-    re.compile('^/ajax/'),
-    re.compile('^/rosetta/'),
-    re.compile('^/ajax_select/'),
-    re.compile('^/reports/'),
-    re.compile('^.*/ajax/'),
-    re.compile('^/comments/'),
-    re.compile('^/__debug__/'),
-    re.compile('^/assets/'),
-    re.compile('^/accounts/logout/'),
-    re.compile('^/static/'),
-    re.compile('^/gr/'),
-    re.compile('^/admin/'),
-    re.compile('^/admin-media/'),
-    re.compile('^/status/cache/'),
-    re.compile('^/favicon.ico$'),
-)
-LOCALE_INDEPENDENT_MEDIA_URL = True
-PREFIX_DEFAULT_LOCALE = True
 
 #django-stream
 # see notes in web.reports.actions

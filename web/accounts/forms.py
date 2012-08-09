@@ -22,7 +22,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.formtools.wizard.views import SessionWizardView
 
 from .models import *
-from web.instances.models import Instance, Language, Affiliation
+from web.instances.models import Instance, Affiliation
 
 from web.core.utils import get_translation_with_fallback
 

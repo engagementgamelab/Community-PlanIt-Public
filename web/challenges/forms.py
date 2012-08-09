@@ -70,6 +70,8 @@ class MapForm(forms.Form):
 # =========================================
 # player submitted activity wizard and forms
 
+"""
+
 class SelectNewActivityForm(forms.Form):
 
     #mission = forms.ModelChoiceField(
@@ -78,12 +80,6 @@ class SelectNewActivityForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={
         'placeholder':'Title of your Challenge...'
     }), required=True, max_length=255, label=_("Name"))
-    type = forms.ModelChoiceField(required=True,
-                                label = _("Select Type of Challenge"),
-                                queryset = ChallengeType.objects.filter(
-                                        type__in=['open_ended', 'multi_response', 'map']
-                                        )  #.values_list('type', 'displayType')
-    )
     question = forms.CharField(widget=forms.Textarea(attrs={
         'placeholder':'Described your Challenge...'
     }), required=True, max_length=1000, label=_("Question"))
@@ -196,3 +192,4 @@ class NewActivityWizard(SessionWizardView):
                                 description='created the Challenge',
         )
         return redirect(reverse("missions:mission_playercreated", args=(mission.slug,)))
+"""

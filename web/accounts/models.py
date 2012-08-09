@@ -15,7 +15,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
 from django.contrib.auth.signals import user_logged_in
-from django.utils.translation import get_language, ugettext_lazy as _ 
+from django.utils.translation import ugettext_lazy as _ 
 
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User, Group, Permission
@@ -25,7 +25,7 @@ from django.contrib.contenttypes.models import ContentType
 from nani.models import TranslatableModel, TranslatedFields
 from nani.utils import get_translation, combine
 
-from web.instances.models import Instance, Affiliation, Language
+from web.instances.models import Instance, Affiliation
 from web.missions.models import Mission
 from web.values.models import PlayerValue
 from web.badges.models import BadgePerPlayer
@@ -192,7 +192,6 @@ class UserProfilePerInstance(models.Model):
 
     stakes = models.ManyToManyField(UserProfileStake, blank=True, null=True, related_name='stakes')
     affils = models.ManyToManyField(Affiliation, blank=True, null=True, related_name='user_profiles_per_instance')
-    preferred_language = models.ForeignKey(Language)
 
     # comments on the profile from others
     comments = generic.GenericRelation(Comment)
@@ -281,7 +280,7 @@ class UserProfilePerInstance(models.Model):
 
     def my_completed_by_mission(self, mission, player_submitted_only=False):
 
-        challenges_for_mission = mission.player_submitted_challenges(lang=get_language()) if player_submitted_only == True else mission.challenges(lang=get_language())
+        challenges_for_mission = mission.player_submitted_challenges() if player_submitted_only == True else mission.challenges()
         if len(challenges_for_mission) == 0:
             return []
 
@@ -291,12 +290,13 @@ class UserProfilePerInstance(models.Model):
                 filter(actor_user=self.get_user(), verb='activity_completed')
 
         def challenges_from_actions(actions):
-            return map(lambda a: \
-                        combine(get_translation(a, language_code=get_language())),
-                    [getattr(action, 'action_object_challenge') or \
-                     getattr(action, 'action_object_mapchallenge') or \
-                     getattr(action, 'action_object_playerempathychallenge') for action in actions]
-            )
+            pass
+            #return map(lambda a: \
+            #            combine(get_translation(a, language_code=get_language())),
+            #        [getattr(action, 'action_object_challenge') or \
+            #         getattr(action, 'action_object_mapchallenge') or \
+            #         getattr(action, 'action_object_playerempathychallenge') for action in actions]
+            #)
         return challenges_from_actions(actions)
 
     @property
@@ -324,9 +324,9 @@ class UserProfilePerInstance(models.Model):
         """
         return Action.objects.get_for_actor(self.get_user()).filter(verb='user_logged_in').latest('datetime')
 
-    @property
-    def format_stakes(self):
-        return ", ".join(self.stakes.language(get_language()).all().values_list('stake', flat=True))
+    #@property
+    #def format_stakes(self):
+    #    return ", ".join(self.stakes.language(get_language()).all().values_list('stake', flat=True))
 
     @property
     def user_profile_email(self):

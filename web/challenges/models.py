@@ -1,19 +1,9 @@
-#__all__ = ( 
-#    'PlayerActivityType',
-#    'PlayerActivity', 
-#    'PlayerMapActivity', 
-#    'PlayerEmpathyActivity', 
-#    'MultiChoiceActivity', 
-#)
-
 import datetime
 import os.path
 
 from gmapsfield.fields import GoogleMapsField
 from stream import utils as stream_utils
 from stream.models import Action
-from nani.models import TranslatableModel, TranslatedFields
-from nani.manager import TranslationManager
 from cache_utils.decorators import cached
 
 from django.conf import settings
@@ -27,38 +17,18 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-from web.attachments_v2.models import Attachment
-from web.comments.models import Comment
-from web.missions.models import Mission, invalidate_mission #, invalidate_activities_for_mission
-#from web.accounts.models import invalidate_prof_per_instance
+#from web.attachments_v2.models import Attachment
+#from web.comments.models import Comment
+from web.missions.models import Mission
+from web.instances.models import BaseTreeNode
 
 import logging
 log = logging.getLogger(__name__)
 
-def determine_path(instance, filename):
-    return 'uploads/'+ str(instance.creationUser.id) +'/'+ filename
 
+class Challenge(BaseTreeNode):
 
-class ChallengeType(models.Model):
-    type = models.CharField(max_length=255)
-    displayType = models.CharField(max_length=255)
-    defaultPoints = models.IntegerField(default=10)
-
-    class Meta:
-        verbose_name_plural = 'Challenge Types'
-
-    def __unicode__(self):
-        return self.type
-
-    class Meta:
-        db_table = 'player_activities_playeractivitytype'
-
-#class PlayerActivityManager(TranslationManager):
-#    pass
-
-class ChallengeBase(TranslatableModel):
-
-    (SINGLE_RESPONSE, MULTI_RESPONSE, MAP, EMPATHY, OPEN_ENDED) = xrange(5)
+    (SINGLE_RESPONSE, MULTI_RESPONSE, MAP, EMPATHY, OPEN_ENDED, BARRIER, FINAL_BARRIER) = xrange(7)
 
     CHALLENGE_TYPES = (
         (SINGLE_RESPONSE, 'Single Response'),
@@ -66,40 +36,21 @@ class ChallengeBase(TranslatableModel):
         (MAP, 'Map'),
         (EMPATHY, 'Empathy'),
         (OPEN_ENDED, 'Open Ended'),
+        (BARRIER, 'Barrier'),
+        (FINAL_BARRIER, 'Final Barrier'),
     )
-
-    creationUser = models.ForeignKey(User, verbose_name="created by")
-    mission = models.ForeignKey(Mission, related_name='%(app_label)s_%(class)s_related')
-
-    # type field is marked for deletion
-    # run the datamigration `merge_challenge_types` to convert to the
-    # field `challenge_type`
-    type = models.ForeignKey(ChallengeType)
-
+    question = models.CharField(max_length=1000, default='')
     challenge_type = models.IntegerField(max_length=1, choices=CHALLENGE_TYPES, null=True)
-    createDate = models.DateTimeField(editable=False)
-    points = models.IntegerField(blank=True, null=True, default=None)
-    attachment = models.ManyToManyField(Attachment, blank=True, null=True)
-    comments = generic.GenericRelation(Comment)
-    comment_required = models.BooleanField('comment required', default=True)
+    mission = models.ForeignKey(Mission, related_name='%(app_label)s_%(class)s_related')
     is_player_submitted = models.BooleanField("is player submitted?", default=False)
 
-    #objects = PlayerActivityManager()
+    created_by = models.ForeignKey(User, verbose_name="created by")
+    created_date = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        abstract = True
+    #objects = ChallengeManager()
+    def __unicode__(self):
+        return self.question
 
-    def get_url_by_action(self, action):
-        challenge_types = {
-                'EmpathyChallenge': 'empathy',
-                'MapChallenge': 'map'
-        }
-        challenge_type_short = challenge_types.get(self.__class__.__name__,
-                slugify(self.get_challenge_type_display())
-        )
-        return reverse('missions:challenges:%s' % \
-                '%s-%s' % (challenge_type_short, action),
-                        args=(self.mission.pk, self.pk,))
     @property
     def overview_url(self):
         return self.get_url_by_action('overview')
@@ -107,31 +58,6 @@ class ChallengeBase(TranslatableModel):
     @property
     def play_url(self):
         return self.get_url_by_action('play')
-
-    @property
-    def activity_type_readable(self):
-        @cached(60*60*168)
-        def this_type(pk):
-            return self.type.type
-        return this_type(self.pk)
-
-    def get_points(self):
-        @cached(60*60*168, 'activity_points')
-        def this_activity_points(pk):
-            return self.type.defaultPoints if self.points == None else self.points
-        return this_activity_points(self.pk)
-
-    def is_completed(self, answerUser):
-        if self.type.type == 'multi_response':
-            return MultiChoiceActivity.objects.\
-                    filter(multichoice_answers__user=answerUser, activity=self).exists()
-        else:
-            for answer_klass_name in ['AnswerEmpathy', 'AnswerMap', 'AnswerSingleResponse', 'AnswerOpenEnded']:
-                related_name = answer_klass_name.replace('Answer', '').lower() + '_answers'
-                if hasattr(self, related_name):
-                    if getattr(self, related_name).filter(answerUser=answerUser).count():
-                        return True
-        return False
 
     def trivia_answers(self):
         return filter(lambda c: c.trivia_correct_answer is True, self.answer_choices.all() if hasattr(self, 'answer_choices') else [])
@@ -151,21 +77,6 @@ class ChallengeBase(TranslatableModel):
             return len(self.trivia_answers()) > 0
         return is_trivia_by_pk(self.pk)
 
-    #@property
-    #def completed_user_count(self):
-    #    # the count of users completing an activity
-    #    # comes from the activity stream
-    #    d = {
-    #        'empathy':'action_object_playerempathyactivity',
-    #        'map':'action_object_playermapactivity',
-    #    }
-    #    action_object = d.get(self.type.type, 'action_object_playeractivity')
-    #    kwargs={
-    #        'verb':'activity_completed', 
-    #        action_object:self,
-    #    }
-    #    return Action.objects.filter(**kwargs).count()
-
     @property
     def completed_count(self):
         actions = Action.objects.get_for_action_object(self)
@@ -176,419 +87,156 @@ class ChallengeBase(TranslatableModel):
     def is_past(self):
         return self.mission.end_date < datetime.datetime.now()
 
-
-class Challenge(ChallengeBase):
-
-    translations = TranslatedFields(
-        name = models.CharField(max_length=255),
-        question = models.CharField(max_length=1000),
-        instructions = models.CharField(max_length=255, null=True, blank=True),
-        addInstructions = models.CharField(max_length=255, null=True, blank=True),
-        meta = {'ordering': ['name'],
-                'db_table': 'player_activities_playeractivity_translation',
-               },
-    )
-
-    def __unicode__(self):
-        return "challenge #%s" % self.pk
-        #s = self.safe_translation_getter('name', None)
-        #if s is None:
-        #    translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
-        #    s = translated.safe_translation_getter('name', str(self.pk))
-        #return s
-
-    class Meta:
-        verbose_name_plural = 'Challenges'
-        db_table = 'player_activities_playeractivity'
-
-    #@models.permalink --> breaks in localurl
-    def get_absolute_url(self):
-        return os.path.join(
-                os.path.join(
-                        'https://' if settings.DEBUG == False else 'http://',
-                        self.mission.instance_city_domain(self.mission.instance.pk)
-                ),
-                self.get_overview_url()[1:]
-        )
-    @property
-    def stream_action_title(self):
-        return self.__unicode__()
-
-    @property
-    def stream_action_title(self):
-        return self.__unicode__()
+class SingleResponseChallenge(Challenge):
 
     def save(self, *args, **kwargs):
-        if not self.createDate:
-            self.createDate = datetime.datetime.now()
-        super(Challenge, self).save(*args, **kwargs)
+        if self.challenge_type is None:
+            self.challenge_type = Challenge.SINGLE_RESPONSE
+        super(SingleResponseChallenge, self).save(*args, **kwargs)
 
 
-class MapChallenge(ChallengeBase):
+class MultiResponseChallenge(Challenge):
+
+    def save(self, *args, **kwargs):
+        if self.challenge_type is None:
+            self.challenge_type = Challenge.MULTI_RESPONSE
+        super(MultiResponseChallenge, self).save(*args, **kwargs)
+
+
+class BarrierChallenge(Challenge):
+
+    def save(self, *args, **kwargs):
+        if self.challenge_type is None:
+            self.challenge_type = Challenge.MULTI_RESPONSE
+        super(BarrierChallenge, self).save(*args, **kwargs)
+
+class MapChallenge(Challenge):
+
     maxNumMarkers = models.IntegerField(default=5)
 
-    translations = TranslatedFields(
-        name = models.CharField(max_length=255),
-        question = models.CharField(max_length=1000),
-        instructions = models.CharField(max_length=255, null=True, blank=True),
-        addInstructions = models.CharField(max_length=255, null=True, blank=True),
-        meta = {'ordering': ['name'],
-                'db_table': 'player_activities_playermapactivity_translation',
-        },
-    )
-
-    def __unicode__(self):
-        return "map challenge #%s" % self.pk
-        #s = self.safe_translation_getter('name', None)
-        #if s is None:
-        #    translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
-        #    s = translated.safe_translation_getter('name', str(self.pk))
-        #return s
-
     class Meta:
-        verbose_name_plural = 'Player Map Challenges'
-        db_table = 'player_activities_playermapactivity'
+        pass
 
     @property
     def stream_action_title(self):
         return self.__unicode__()
 
     def save(self, *args, **kwargs):
-        if not self.createDate:
-            self.createDate = datetime.datetime.now()
         if self.challenge_type is None:
             self.challenge_type = Challenge.MAP
         super(MapChallenge, self).save(*args, **kwargs)
 
 
-class EmpathyChallenge(ChallengeBase):
-    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
-    translations = TranslatedFields(
-        bio = models.TextField(max_length=1000),
-        name = models.CharField(max_length=255),
-        question = models.CharField(max_length=1000),
-        instructions = models.CharField(max_length=255, null=True, blank=True),
-        addInstructions = models.CharField(max_length=255, null=True, blank=True),
-        meta = {'db_table': 'player_activities_playerempathyactivity_translation', },
-    )
+class EmpathyChallenge(Challenge):
 
-    def __unicode__(self):
-        return "empathy challenge #%s" % self.pk
-        #s = self.safe_translation_getter('name', None)
-        #if s is None:
-        #    translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
-        #    s = translated.safe_translation_getter('name', str(self.pk))
-        #return s
+    def determine_path(instance, filename):
+        return 'uploads/'+ str(instance.creationUser.id) +'/'+ filename
+
+    bio_text = models.TextField(verbose_name="Bio", max_length=1000, default='')
+    avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
 
     @models.permalink
     def get_absolute_url(self):
-        return ('activities:empathy-overview', (self.pk,))
+        return ''
 
     class Meta:
-        verbose_name_plural = 'Empathy Challenges'
-        db_table = 'player_activities_playerempathyactivity'
+        pass
 
     @property
     def stream_action_title(self):
         return self.__unicode__()
 
     def save(self, *args, **kwargs):
-        if not self.createDate:
-            self.createDate = datetime.datetime.now()
         if self.challenge_type is None:
             self.challenge_type = Challenge.EMPATHY
         super(EmpathyChallenge, self).save(*args, **kwargs)
 
 
-class MultiChoiceActivityManager(TranslationManager):
+class AnswerChoiceManager(models.Manager):
 
     @cached(60*60*24*7)
-    def by_activity(self, activity):
-        log.debug("getting answers for %s. ** not cached **" % activity)
-        return self.filter(activity=activity)
+    def by_challenge(self, challenge):
+        return self.filter(challenge=challenge)
 
 
-class MultiChoiceActivity(TranslatableModel):
-    """
-    This seems to be misnamed. These are answers to activities with multiple
-    choices.
-    """
-    activity = models.ForeignKey(Challenge, related_name='answer_choices')
+class AnswerChoice(models.Model):
+    """ These are answer choices to single/multi response challenges """
+
+    challenge = models.ForeignKey(Challenge, related_name='answer_choices')
+    value = models.CharField(max_length=255)
 
     # this field signifies that the multi-response question is of type
     # `Trivia`.
     #
     trivia_correct_answer = models.BooleanField(default=False, verbose_name="The correct answer to a trivia question")
 
-    translations = TranslatedFields(
-        value = models.CharField(max_length=255),
-        meta = {'db_table': 'player_activities_multichoiceactivity_translation', },
-    )
-
-    objects = MultiChoiceActivityManager()
-
-    def is_completed(self, answerUser):
-        return self.multi_choice_answers.filter(answerUser=answerUser).count() > 0
-
-    class Meta:
-        verbose_name = 'An Available Answer to a Single/Multiple Choice Challenge'
-        verbose_name_plural = 'Available Answers to Single/Multiple Choice Challenges' 
-        db_table = 'player_activities_multichoiceactivity'
+    objects = AnswerChoiceManager()
 
     def __unicode__(self):
-        return "multichoice option #%s" % self.pk
-        #s = self.safe_translation_getter('value', None)
-        #if s is None:
-        #    translated = self.__class__.objects.language(settings.LANGUAGE_CODE).get(pk=self.pk)
-        #    s = translated.safe_translation_getter('value', str(self.pk))
-        #return s
-
-    @property
-    def activity_type(self):
-        return self.activity.type
-
-    @property
-    def activity_points(self):
-        return self.activity.points
-
-    @property
-    def mission(self):
-        return self.activity.mission
-
-    @property
-    def mission_title(self):
-        return self.activity.mission.title
-
+        return self.value
 
 class Answer(models.Model):
-    answerUser = models.ForeignKey(User, editable=False, related_name='answers')
-    comments = generic.GenericRelation(Comment)
-    createDate = models.DateTimeField(editable=False)
+    """ user submitted response to a challenge """
+
+    user = models.ForeignKey(User, editable=False, related_name='answers')
+    created_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ('-createDate',)
-        db_table = 'answers_answer'
+        pass
 
-    def save(self, *args, **kwargs):
-        self.createDate = datetime.datetime.now()
-        super(Answer, self).save(*args, **kwargs)
-
-    #@models.permalink --> breaks in localeurl
+    @models.permalink
     def get_absolute_url(self):
-        #return ("player_activities:overview", [self.activity.id])
-        return self.activity.get_absolute_url()
+        return ""
 
-class AnswerSingleResponseManager(models.Manager):
 
-    def my_answers_by_activity(self, activity, user):
-        return self.answers_by_activity(activity).filter(answerUser=user)
+class AnswerWithChoices(Answer):
+    """ user submitted response to a single response challenge """
 
-    def my_answers_by_activity_as_str(self, activity, user):
-        my_answers = self.my_answers_by_activity(activity, user)
-        return ";".join([a.selected.value for a in my_answers])
-
-    def my_answers_by_activity_likes_count(self, activity, user):
-        my_answers = self.my_answers_by_activity(activity, user)
-        # in theory there should be one answer for each challenge
-        if my_answers.count() > 0:
-            my_comments = my_answers[0].comments.all()
-            if my_comments.count() > 0:
-                return my_comments[0].likes.all().count()
-        return 0
-
-    #@cached(60*60*24*7)
-    def answers_by_activity(self, activity):
-        return self.filter(activity=activity)
-
-class AnswerSingleResponse(Answer):
-    selected = models.ForeignKey(MultiChoiceActivity, related_name='singleresponse_answers')
+    selected = models.ManyToManyField(AnswerChoice, related_name='singleresponse_answers')
     activity = models.ForeignKey(Challenge, related_name='singleresponse_answers')
 
-    objects = AnswerSingleResponseManager()
+    #objects = AnswerSingleResponseManager()
 
     def __unicode__(self):
         return _(u'an answer to %s' % self.activity)
-
-    class Meta:
-        db_table = 'answers_answersingleresponse'
-
-
-class AnswerMultiChoiceManager(models.Manager):
-
-    def my_answers_by_activity(self, activity, user):
-        return self.answers_by_activity(activity).filter(user=user)
-
-    def my_answers_by_activity_as_str(self, activity, user):
-        my_answers = self.my_answers_by_activity(activity, user)
-        return ";".join([a.option_value for a in my_answers])
-
-    def my_answers_by_activity_likes_count(self, activity, user):
-        my_answers = self.my_answers_by_activity(activity, user)
-        # in theory there should be one answer for each challenge
-        if my_answers.count() > 0:
-            my_comments = my_answers[0].comments.all()
-            if my_comments.count() > 0:
-                return my_comments[0].likes.all().count()
-        return 0
-
-    #@cached(60*60*24*7)
-    def answers_by_activity(self, activity):
-        return self.filter(option__activity=activity)
-
-#This is nasty but it's the simple way to get many checked values
-#for the user stored
-class AnswerMultiChoice(models.Model):
-    user = models.ForeignKey(User)
-    option = models.ForeignKey(MultiChoiceActivity, related_name='multichoice_answers')
-    comments = generic.GenericRelation(Comment)
-
-    objects = AnswerMultiChoiceManager()
-
-    def __unicode__(self):
-        return self.option.value
-
-    class Meta:
-        db_table = 'answers_answermultichoice'
-
-    #@models.permalink --> breaks in localurl
-    def get_absolute_url(self):
-        #return ("player_activities:overview", [self.option.activity.id])
-        return self.option.activity.get_absolute_url()
-
-    @property
-    def option_value(self):
-        @cached(60*60*24*7)
-        def this_option_value(answer_id):
-            return self.option.value
-        return this_option_value(self.pk)
-
-    def get_user(self):
-        @cached(60*60*24*7)
-        def this_user(answer_id):
-            return self.user
-        return this_user(self.pk)
-
-
-class AnswerMapManager(models.Manager):
-
-    def my_answers_by_activity(self, activity, user):
-        return self.answers_by_activity(activity).filter(answerUser=user)
-
-    def my_answers_by_activity_as_str(self, activity, user):
-        my_answers = self.my_answers_by_activity(activity, user)
-        # in theory there should be one answer for each challenge
-        if my_answers.count() > 0:
-            return ", ".join(map(lambda c: str(c), my_answers[0].map.coordinates))
-        return ''
-
-    def my_answers_by_activity_likes_count(self, activity, user):
-        my_answers = self.my_answers_by_activity(activity, user)
-        # in theory there should be one answer for each challenge
-        if my_answers.count() > 0:
-            my_comments = my_answers[0].comments.all()
-            if my_comments.count() > 0:
-                return my_comments[0].likes.all().count()
-        return 0
-
-    #@cached(60*60*24*7)
-    def answers_by_activity(self, activity):
-        return self.filter(activity=activity)
 
 
 class AnswerMap(Answer):
     map = GoogleMapsField()
-    activity = models.ForeignKey(MapChallenge, related_name='map_answers')
+    challenge = models.ForeignKey(MapChallenge, related_name='map_answers')
 
-    objects = AnswerMapManager()
+    #objects = AnswerMapManager()
 
     def __unicode__(self):
         return _(u'an answer to %s' % self.activity)
 
-    class Meta:
-        db_table = 'answers_answermap'
-
-    #@models.permalink --> breaks in localurl
+    @models.permalink
     def get_absolute_url(self):
-        #return ("player_activities:map-overview", [self.activity.id])
-        return self.activity.get_absolute_url()
+        return ''
 
-class AnswerEmpathyManager(models.Manager):
-
-    def my_answers_by_activity(self, activity, user):
-        return self.answers_by_activity(activity).filter(answerUser=user)
-
-    def my_answers_by_activity_as_str(self, activity, user):
-        my_answers = self.my_answers_by_activity(activity, user)
-        # in theory there should be one answer for each challenge
-        if my_answers.count() > 0:
-            return ", ".join(my_answers[0].comments.values_list('message', flat=True))
-        return ""
-
-    def my_answers_by_activity_likes_count(self, activity, user):
-        my_answers = self.my_answers_by_activity(activity, user)
-        # in theory there should be one answer for each challenge
-        if my_answers.count() > 0:
-            my_comments = my_answers[0].comments.all()
-            if my_comments.count() > 0:
-                return my_comments[0].likes.all().count()
-        return 0
-
-    #@cached(60*60*24*7)
-    def answers_by_activity(self, activity):
-        return self.filter(activity=activity)
 
 class AnswerEmpathy(Answer):
-    activity = models.ForeignKey(EmpathyChallenge, related_name='empathy_answers')
+    value = models.TextField(verbose_name="Answer Empathy", max_length=1000, default='')
+    challenge = models.ForeignKey(EmpathyChallenge, related_name='empathy_answers')
 
-    objects = AnswerEmpathyManager()
+    #objects = AnswerEmpathyManager()
 
     def __unicode__(self):
         return _(u'an answer to %s' % self.activity)
 
-    class Meta:
-        db_table = 'answers_answerempathy'
-
-    #@models.permalink --> breaks in localurl
+    @models.permalink
     def get_absolute_url(self):
-        #return ("player_activities:empathy-overview", [self.activity.id])
-        return self.activity.get_absolute_url()
-
-
-class AnswerOpenEndedManager(models.Manager):
-
-    def my_answers_by_activity(self, activity, user):
-        return self.answers_by_activity(activity).filter(answerUser=user)
-
-    def my_answers_by_activity_as_str(self, activity, user):
-        my_answers = self.my_answers_by_activity(activity, user)
-        if my_answers.count() > 0:
-            return ", ".join(my_answers[0].comments.values_list('message', flat=True))
         return ""
-
-    def my_answers_by_activity_likes_count(self, activity, user):
-        my_answers = self.my_answers_by_activity(activity, user)
-        # in theory there should be one answer for each challenge
-        if my_answers.count() > 0:
-            my_comments = my_answers[0].comments.all()
-            if my_comments.count() > 0:
-                return my_comments[0].likes.all().count()
-        return 0
-
-    #@cached(60*60*24*7)
-    def answers_by_activity(self, activity):
-        return self.filter(activity=activity)
 
 
 class AnswerOpenEnded(Answer):
-    activity = models.ForeignKey(Challenge, related_name='openended_answers')
+    value = models.TextField(verbose_name="Answer Open Ended", max_length=1000, default='')
+    challenge = models.ForeignKey(Challenge, related_name='openended_answers')
 
-    objects = AnswerOpenEndedManager()
+    #objects = AnswerOpenEndedManager()
 
     def __unicode__(self):
         return _(u'an answer to %s' % self.activity)
-
-    class Meta:
-        db_table = 'answers_answeropenended'
 
 
 #django-stream registrations
@@ -612,9 +260,9 @@ stream_utils.register_target(EmpathyChallenge)
 #    Activity.objects.filter(url=instance.get_activity_url()).update(url='')
 
 # invalidate cache for 'missions' group
-post_save.connect(invalidate_mission, Challenge)
-post_save.connect(invalidate_mission, MapChallenge)
-post_save.connect(invalidate_mission, EmpathyChallenge)
+#post_save.connect(invalidate_mission, Challenge)
+#post_save.connect(invalidate_mission, MapChallenge)
+#post_save.connect(invalidate_mission, EmpathyChallenge)
 
 #post_save.connect(invalidate_prof_per_instance, Challenge)
 #post_save.connect(invalidate_prof_per_instance, PlayerMapActivity)

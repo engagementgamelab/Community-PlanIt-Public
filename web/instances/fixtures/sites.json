@@ -1,1 +1,0 @@
-[{"pk": 2, "model": "sites.site", "fields": {"domain": "boston.pk.communityplanit.org", "name": "Boston CommunityPlanIt"}}, {"pk": 1, "model": "sites.site", "fields": {"domain": "communityplanit.org", "name": "communityplanit.org"}}, {"pk": 3, "model": "sites.site", "fields": {"domain": "detroit.pk.communityplanit.org", "name": "Detroit CommunityPlanIt"}}]
