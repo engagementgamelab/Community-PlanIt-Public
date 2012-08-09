@@ -1,4 +1,5 @@
-@import "less-boilerplate/utils.less";
+@import "../less-boilerplate/utils.less";
+@import "../less-boilerplate/glyphicons.less";
 
 @blue: rgb(0, 136, 204);
 
@@ -9,6 +10,7 @@ html, body {
 }
 
 #body {
+    position: relative;
     clear: both;
     background: #fff;
 }
@@ -26,26 +28,7 @@ html, body {
     padding: 20px 20px;
     .drop-shadow(0px, 0px, 6px, 0px, #ccc);
     .border-radius(2px);
-    z-index: 0;
-    &:before {
-        content:'';
-        position: absolute;
-        left: -252px;
-        top: 0px;
-        width: 250px;
-        height: 500px;
-        border: 1px dashed #eee;
-    }
 
-    &:after {
-        content:'';
-        position: absolute;
-        right: -252px;
-        top: 0px;
-        width: 250px;
-        height: 500px;
-        border: 1px dashed #eee;
-    }
 
     .close-faux-modal {
         position: absolute;
@@ -263,12 +246,113 @@ html, body {
 }
 
 /* Challenges */
+
+.minimap {
+    position: relative;
+    background: #eee;
+    margin: 20px 0px;
+    padding: 5px 0px;
+    text-align: center;
+    line-height: 0px;
+    background: url('../img/bg-crosshatch.png') repeat #e9e9e9;
+    z-index: 0;
+    .inner-shadow(0, 0, 4px);
+    .clearfix;
+
+
+    .window {
+            position: absolute;
+            left: center; top: 50%;
+            margin-top: -21px;
+            margin-left: -2px;
+            width: 124px; height: 40px;
+            border: 1px solid #aaa;
+            z-index: -1;
+        }
+
+    .challenge {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        margin: 0px;
+        border: 1px solid #ccc;
+        background: #fff;
+        cursor: pointer;
+        /* Challenge States */
+        &.challenge-locked {
+            background: #f1f1f1;
+        }
+
+        &.challenge-barrier {
+        }
+
+        &.challenge-final {
+            background: #e9e9e9;
+        }
+
+        &:hover {
+            background: #e1e1e1;
+        }
+    }
+}
+
+
 #challenges {
     width: 100%;
     padding: 50px 0px;
     background: url('../img/bg-crosshatch.png') repeat #e9e9e9;
     overflow: hidden;
     .inner-shadow(0, 0, 4px);
+
+    .challenges-container {
+        .clearfix;
+        .challenge {
+            position: relative;
+            padding: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            min-height: 300px;
+            box-sizing: border-box;
+            .box-shadow;
+            .lifted;
+
+            /* Challenge States */
+            &.challenge-locked {
+                background: url('../img/icon-challenge-locked_large.png') no-repeat center center #f1f1f1;
+            }
+
+            &.challenge-barrier {
+                margin-top: -15px;
+                min-height: 350px;
+
+            }
+
+            &.challenge-final {
+                margin-top: -15px;
+                min-height: 350px;
+                background-color: #e9e9e9;
+            }
+
+            .action {
+                position: absolute;
+                bottom: 50px;
+                left: 0;
+                width: 100%;
+                text-align: center;
+            }
+            .meta {
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                text-align: right;
+            }
+        }
+    }
+
+
 }
 
 .carousel {
@@ -305,17 +389,14 @@ html, body {
         }
     }
 }
-    
-    .challenges-container {
-        .clearfix;
-        .challenge {
-            padding: 20px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            min-height: 300px;
-            box-sizing: border-box;
-            .box-shadow;
-            .lifted;
-        }
-    }
 
+.avatar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -32px;
+    margin-top: -38px;
+    display: inline-block;
+    .border-radius(100px);
+    .drop-shadow;
+}

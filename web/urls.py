@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.defaults import include, patterns, url
 from django.views.generic.simple import direct_to_template
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
+from django.conf import settings
 from django.contrib import admin
 
 from web.instances.models import Instance
@@ -94,3 +94,9 @@ if 'attachments' in settings.INSTALLED_APPS:
 #)
 
 urlpatterns += staticfiles_urlpatterns()
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^assets/(?P<path>.*)$', 'django.views.static.serve', {
+            'document_root': settings.MEDIA_ROOT,
+        }),
+   )

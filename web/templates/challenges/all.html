@@ -1,86 +1,154 @@
 {% extends "base_game.html" %}
-{% load i18n cpi_tags %}
+{% load i18n cpi_tags thumbnail%}
 
 {% block title %}Challenges{% endblock %}
 
 {% block js %}
     {{ block.super }}
     <script>
+
         $(function(){
+            var $carousel = $('.carousel');
+            var $clip = $carousel.find('.carousel-clip');
+            var $slide = $carousel.find('.carousel-slide');
+            var $challenges = $slide.find('.challenge');
+
+            var $minimap = $('.minimap');
+            var $minimap_challenges = $minimap.find('.challenge');
+
+            var get_current_challenge = function(){
+                return $slide.find('.challenge.active');
+            };
+
+            var goto_challenge = function (challenge){
+                if(challenge[0] == $challenges.first()[0]){
+                    goto_challenge(challenge.next());
+                } else if (challenge[0] == $challenges.last()[0]){
+                    goto_challenge(challenge.prev());
+                } else if(challenge.length){
+
+                    /* clear active classes */
+                    $slide.find('.challenge').removeClass('active');
+                    $minimap.find('.challenge').removeClass('active');
+
+
+                    challenge.addClass('active');
+                    $minimap.find('.challenge').eq(challenge.index()).addClass('active');
+
+                    $slide.animate({
+                        'margin-left': $clip.width()/2 - challenge.outerWidth()/2 - 20 - challenge.position().left,
+                    });
+
+                    $minimap.find('.window').animate({
+                        'margin-left': $minimap.find('.challenge.active').position().left + $minimap.find('.challenge.active').width()/2 - $minimap.find('.window').width()/2,
+                    });
+                }
+            };
+
+            /* Init */
+            $('.minimap .challenge').click(function(){
+                var index = $(this).index();
+                goto_challenge($challenges.eq(index));
+            });
+
             $('.carousel-controls-previous').click(function(){
-                $this = $(this);
-                var $slide = $this.parent().find('.carousel-slide');
-                $slide.animate({
-                    'margin-left': '+=320',
-                });
+                var prev_challenge = get_current_challenge().prev();
+                goto_challenge(prev_challenge);
             });
+
             $('.carousel-controls-next').click(function(){
-                $this = $(this);
-                var $slide = $this.parent().find('.carousel-slide');
-                $slide.animate({
-                    'margin-left': '-=320',
-                });
+                var next_challenge = get_current_challenge().next();
+                goto_challenge(next_challenge);
+
             });
+
+
+            $slide.find('.challenge').eq(2).addClass('active');
+            goto_challenge($slide.find('.challenge').first().next());
+
         });
     </script>
 {% endblock %}
 
 {% block content %}
-<div class="wrapper section-challenges">
+<div class="wrapper">
     
     <h1>{{mission}}</h1>
     <div>
         <p>{% trans "By answering challenge questions you are helping plan your community, and you are earning points that move you towards accomplishing the mission." %}</p>
     </div>
+    
+    <div class="minimap">
+        {% for challenge in challenges %}
+            <div class="challenge {% if forloop.last %}challenge-final{% endif %} {% if forloop.counter|divisibleby:4 %}challenge-barrier{% endif %} {% if forloop.counter > 4 %}challenge-locked{% endif %}">
+                {# Examples #}
+                {% if forloop.first %}
+                    <i class="icon-user"></i>
+                {% endif %}
+                {% if forloop.last %}
+                    <i class="icon-flag"></i>
+                {% elif forloop.counter|divisibleby:4 %}
+                    <i class="glyphicon-flash"></i>
+                {% elif forloop.counter > 4 %}
+                    <i class="icon-lock"></i>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <span class="badge">Mission 2</span>
+        <div class="window"></div>
+    </div>
+
 </div>
 
+
+
 <div id="challenges" class="carousel">
+    <!-- Carousel Controls -->
     <div class="carousel-controls carousel-controls-previous"></div>
     <div class="carousel-controls carousel-controls-next"></div>
+    <!-- Carousel Clip -->
     <div class="wrapper carousel-clip">
+        <!-- Carousel Slide -->
         <div class="row box-shadow-container challenges-container carousel-slide">
         {% for challenge in challenges %}
             {% with challenge.get_points as points and challenge.completed_count as completed_count and challenge.activity_type_readable as activity_type %}
-
-            {% if mission.is_expired %}
-                <div class="challenge {% if challenge.is_trivia %}challenge-trivia{% else %}{{ activity_type }}{% endif %} span4">
-                    <h2>{{ challenge|trans_fallback:"name" }}</2>
-                    <div>{{ activity_type }}</div>
-                    <div><i class="icon-comment"></i> {{ completed_count }}</div>
-                    <div><a href="{{ challenge.overview_url }}" class="btn btn-primary">Review</a></div>
-                </div>
-            {% else %}
-                {% if mission.is_future %}
-                    {# Non-started Mission #}
-                    <div class="challenge challenge-inactive {% if challenge.is_trivia %}trivia{% else %}{{ activity_type }}{% endif %} span4">
+                {% if mission.is_expired %}
+                    {# mission expired, only allow review #}
+                    <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ activity_type }}{% endif %} span4">
+                        <h2>{{ challenge|trans_fallback:"name" }}</2>
+                        <div>{{ activity_type }}</div>
+                        <div class="meta"><i class="glyphicon-credit"></i> {{ points }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
+                        <div class="action"><a href="{{ challenge.overview_url }}" class="btn btn-primary">Review</a></div>
+                    </div>
+                {% elif mission.is_future %}
+                    {# Non-started mission, lock everything #}
+                    <div class="challenge challenge-locked {% if challenge.is_trivia %}challenge-barrier{% else %}{{ activity_type }}{% endif %} span4">
                         <h3>{{ challenge|trans_fallback:"name" }}</div>
                         <div>{{ activity_type }}</div>
-                        <div><a>{{ ctivity|trans_fallback:"name" }}</a></div>
+                        <div class="meta"><i class="glyphicon-credit"></i> {{ points }} </div>
                     </div>
                 {% else %}
                     {# Active Mission #}
-                    {% if challenge in my_completed %}
-                    {#  completed challenge #}
-                    <div class="challenge challenge-completed {% if challenge.is_trivia %}challenge-trivia{% else %}{{ activity_type }}{% endif %} span4">
+                    {% if challenge in my_completed %}{% endif %}
+                    {% comment %} Real one
+                    <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ activity_type }}{% endif %} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
+                    {% endcomment %}
+                    <div class="challenge {% if forloop.last %}challenge-final{% endif %} {% if forloop.counter > 4 %}challenge-locked{% endif %} {% if forloop.counter|divisibleby:4 %}challenge-barrier{% endif %} span4">
+
                         <h3>{{ challenge|trans_fallback:"name" }}</h3>
                         <div>{{ activity_type }}</div>
-                        <div><i class="icon-comment"></i> {{ completed_count }}</div>
-                        <div><a href="{{ challenge.overview_url }}" class="btn btn-primary">Review</a></div>
+
+                        {% if forloop.first %}
+                            {% thumbnail request.user.get_profile.avatar "64x64" crop="center" as avatar %}
+                                <img class="avatar" src="{{ avatar.url }}" width="{{ avatar.width }}" height="{{ avatar.height }}">
+                            {% endthumbnail %}
+                        {% endif %}
+
+                        <div class="meta"><i class="glyphicon-credit"></i> {{ points }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
+                        <div class="action"><a href="{% if forloop.counter < 4 %}{{ challenge.play_url }}{% endif %}" class="btn {% if forloop.counter > 4 %}disabled{% else %}btn-primary{% endif %}">{% if forloop.counter > 4 %}Locked{% else %}View Challenge{% endif %}</a></div>
                     </div>
-                    {% else %}
-                    {# fresh activity #}
-                    <div class="challenge {% if challenge.is_trivia %}challenge-trivia{% else %}{{ activity_type }}{% endif %} span4">
-                        <h3>{{ challenge|trans_fallback:"name" }}</h3>
-                        <div>{{ activity_type }}</div>
-                        <div><i class="icon-comment"></i> {{ completed_count }}</div>
-                        <div><a href="{{ challenge.play_url }}" class="btn btn-primary">View Challenge</a></div>
-                    </div>
-                    {% endif %}
                 {% endif %}
-            {% endif %}
             {% endwith %}
-        {% empty %}
-            {% trans "There are currently no activities for this mission. Check back later." %}
         {% endfor %}
         </div>
     </div>
