@@ -4,6 +4,8 @@ import datetime
 from stream import utils as stream_utils
 from cache_utils.decorators import cached
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
+from polymorphic_tree.managers import PolymorphicMPTTModelManager
+#from polymorphic import PolymorphicManager
 from dateutil.relativedelta import relativedelta
 from gmapsfield.fields import GoogleMapsField
 from south.modelsinspector import add_introspection_rules
@@ -18,21 +20,6 @@ import logging
 log = logging.getLogger(__name__)
 
 add_introspection_rules([], ["^gmapsfield\.fields\.GoogleMapsField"])
-
-
-# A base model for the tree:
-
-class BaseTreeNode(PolymorphicMPTTModel):
-    parent = PolymorphicTreeForeignKey('self', blank=True, null=True, related_name='children', verbose_name=_('parent'))
-    title = models.CharField(_("Title"), max_length=200)
-
-    class Meta:
-        verbose_name = _("Tree node")
-        verbose_name_plural = _("Tree nodes")
-
-
-def determine_path(instance, filename):
-    return os.path.join('uploads/cities/', str(instance.domain), filename)
 
 
 class Affiliation(models.Model):
@@ -56,13 +43,7 @@ class Affiliation(models.Model):
         ordering = ('name',)
 
 
-"""
-class InstanceManager(models.Manager):
-
-    def __init__(self, *args, **kwargs):
-        super(InstanceManager, self).__init__(*args, **kwargs)
-        self.now = datetime.datetime.now()
-
+class InstanceManager(PolymorphicMPTTModelManager):
 
     @cached(60*60*24*7)
     def for_slug(self, slug):
@@ -89,19 +70,18 @@ class InstanceManager(models.Manager):
         qs = self.exclude(is_disabled=True)
         return qs.filter(missions__end_date__gte=self.now).distinct()
 
-    def latest_for_city_domain(self, domain):
-        #looks like `latest` qs method is broken in django-nani
-        #applying a workaround for now.
-        #TODO fix
-        from core.utils import _fake_latest
-        kwargs = dict(
-                for_city__domain=domain,
-                start_date__lte=self.now,
-                missions__end_date__gte=self.now,
-        )
-        qs = self.filter(**kwargs)
-        return _fake_latest(Instance, qs)
-"""
+# A base model for the tree:
+
+class BaseTreeNode(PolymorphicMPTTModel):
+    parent = PolymorphicTreeForeignKey('self', blank=True, null=True, related_name='children', verbose_name=_('parent'))
+    title = models.CharField(_("Title"), max_length=200)
+
+    inst = InstanceManager()
+
+    class Meta:
+        verbose_name = _("Tree node")
+        verbose_name_plural = _("Tree nodes")
+
 
 
 class Instance(BaseTreeNode):
@@ -125,7 +105,6 @@ class Instance(BaseTreeNode):
     # prevent the game from being visible on the site
     is_disabled = models.BooleanField(default=False, verbose_name="Disable the game from being visible on the site")
 
-    #objects = InstanceManager()
 
     class Meta:
         get_latest_by = 'start_date'

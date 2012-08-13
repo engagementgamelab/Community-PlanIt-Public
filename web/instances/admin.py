@@ -55,18 +55,33 @@ class BarrierChallengeAdmin(ChallengeAdminBase):
 class MapChallengeAdmin(ChallengeAdminBase):
     pass
 
+
 class EmpathyChallengeAdmin(ChallengeAdminBase):
     pass
 
 
 class MissionAdmin(BaseChildAdmin):
     readonly_fields = ('start_date', 'end_date')
+    exclude = ('instance',)
+
+
+    def save_model(self, request, obj, form, change):
+        #TODO should only save these fields
+        # if adding a new instance
+        if isinstance(obj.parent, game_models.Instance):
+            obj.instance = obj.parent
+            obj.save()
+
+
+class GameAdmin(BaseChildAdmin):
+    filter_horizontal = ('curators',)
+    #readonly_fields = ('start_date', 'end_date')
 
 # Create the parent admin that combines it all:
-
 class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
     base_model = game_models.BaseTreeNode
     child_models = (
+        (game_models.Instance, GameAdmin),
         (mission_models.Mission, MissionAdmin),
         (challenge_models.SingleResponseChallenge, SingleResponseChallengeAdmin),
         (challenge_models.MultiResponseChallenge, MultiResponseChallengeAdmin),
@@ -81,6 +96,16 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
         css = {
             'all': ('admin/treenode/admin.css',)
         }
+
+    def queryset(self, request):
+        qs = super(TreeNodeParentAdmin, self).queryset(request)
+        #curators=request.user
+        qs = qs.filter()
+        return qs
+        #from web.instances.models import Instance
+        #print request.user
+        #return qs.instance_of(Instance)
+
 
 admin.site.register(game_models.BaseTreeNode, TreeNodeParentAdmin)
 

@@ -21,7 +21,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 
-from .forms import NotificationRequestForm
 from .models import *
 from web.core.models import PlayerLeaderboard, AffiliationLeaderboard
 from web.core.utils import missions_bar_context
