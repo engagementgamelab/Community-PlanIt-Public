@@ -22,7 +22,7 @@ class FetchAnswersMixin(object):
 
 
 class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
-    model = Challenge
+    model = SingleResponseChallenge
     template_name = 'challenges/single_response_overview.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
@@ -54,13 +54,12 @@ class SingleResponseForm(forms.ModelForm):
                     widget=RadioSelect,
                     required=True,
                     empty_label=None,
-                    queryset=MultiChoiceActivity.objects.\
-                            language(get_language()).\
+                    queryset=AnswerChoice.objects.\
                             filter(activity=challenge).distinct()
         )
 
     class Meta:
-        model = AnswerSingleResponse
+        model = AnswerWithChoices
         exclude = ('answerUser', 'activity')
 
 

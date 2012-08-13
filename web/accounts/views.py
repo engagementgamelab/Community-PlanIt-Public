@@ -254,17 +254,10 @@ def login(request, template_name='accounts/login.html',
             # set some session variables
             request.session['my_active_game'] = current_game
             my_game_profile = UserProfilePerInstance.objects.get(
-                        instance=current_game,
-                        user_profile=user.get_profile()
+                                                instance=current_game,
+                                                user_profile=user.get_profile()
             )
-            lang = my_game_profile.preferred_language
-            #if lang.code in dict(settings.LANGUAGES).keys():
-            redir = os.path.join(
-                        'https://' if settings.DEBUG == False else 'http://',
-                        RequestSite(request).domain,
-                        my_game_profile.preferred_language.code,
-                        strip_path(reverse('instances:instance', args=(current_game_slug,)))[1][1:],
-            )
+            redir = reverse('instances:instance', args=(current_game_slug,))
             return redirect(redir)
 
         else:
