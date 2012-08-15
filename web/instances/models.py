@@ -76,7 +76,7 @@ class BaseTreeNode(PolymorphicMPTTModel):
     parent = PolymorphicTreeForeignKey('self', blank=True, null=True, related_name='children', verbose_name=_('parent'))
     title = models.CharField(_("Title"), max_length=200)
 
-    inst = InstanceManager()
+    #objects = InstanceManager()
 
     class Meta:
         verbose_name = _("Tree node")
@@ -137,17 +137,27 @@ class Instance(BaseTreeNode):
     @property 
     def is_future(self):
         ''' Instance is not yet running (pre-game)'''
-        return self in Instance.objects.future()
+        qs = Instance.objects.exclude(is_disabled=True)
+        return self in qs.filter(start_date__gt=datetime.datetime.now()).distinct()
 
     @property 
     def is_present(self):
         ''' Instance is currently running (during-game) '''
-        return self in Instance.objects.present()
+        missions_count = self.get_children().count()
+        NOW = datetime.datetime.now()
+        if missions_count == 0:
+            return False
+        return self.start_date < NOW and \
+                            NOW <=  self.start_date + datetime.timedelta(
+                                        days=missions_count * self.days_for_mission
+                                    )
 
     @property 
     def is_past(self):
         ''' Instance is finished running (post-game)'''
-        return self in Instance.objects.past()
+        qs = Instance.objects.exclude(is_disabled=True)
+        return self in qs.exclude(missions__end_date__gte=datetime.datetime.now()).distinct()
+
 
     @property
     def is_started(self):

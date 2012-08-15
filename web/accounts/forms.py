@@ -104,7 +104,6 @@ class RegistrationForm(forms.ModelForm):
                 'stake',
                 'stakes',
                 'affils',
-                'preferred_language',
                 'comments',
                 'date_created'
         )
@@ -118,19 +117,24 @@ class DemographicForm(forms.Form):
         ['current_game']
         self.fields['avatar'] = forms.ImageField(required=False)
 
+        try:
+            variants = self.current_game.user_profile_variants
+        except UserProfileVariantsForInstance.DoesNotExist:
+            stakes = UserProfileStake.objects.none()
+            affiliations = UserProfileStake.objects.none()
+        else:
+            stakes = variants.stake_variants.all().order_by("pos")
+            affiliations = variants.affiliation_variants.all().order_by("name")
+
         self.fields['stakes'] = forms.ModelMultipleChoiceField(
                                     label=_(u'Stake in the community'),
                                     required=False,
-                                    queryset=self.current_game.user_profile_variants.\
-                                            stake_variants.language(
-                                                    settings.LANGUAGE_CODE
-                                            ).all().order_by("pos")
+                                    queryset=stakes,
         )
         self.fields['affiliations'] = forms.ModelMultipleChoiceField(
                                     label=_(u'Affiliations'),
                                     required=False,
-                                    queryset=self.current_game.user_profile_variants.\
-                                            affiliation_variants.all().order_by("name")
+                                    queryset=affiliations,
         )
         self.fields['affiliations_other'] = forms.CharField(required=False, 
                label=_("Don't see your affiliation? Enter it here. Please place a comma between each affiliation."))

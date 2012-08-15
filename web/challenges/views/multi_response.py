@@ -22,7 +22,7 @@ class FetchAnswersMixin(object):
 
 
 class MultiResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
-    model = Challenge
+    model = MultiResponseChallenge
     template_name = 'challenges/multi_response_overview.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
@@ -53,20 +53,19 @@ class MultiResponseForm(forms.ModelForm):
         self.fields['selected'] = forms.ModelMultipleChoiceField(
                     widget=CheckboxSelectMultiple,
                     required=True,
-                    queryset=MultiChoiceActivity.objects.\
-                            language(get_language()).\
+                    queryset=AnswerChocie.objects.\
                             filter(activity=challenge).distinct()
         )
 
     class Meta:
-        model = AnswerMultiChoice
+        model = AnswerWithChoices
         exclude = ('user',)
 
 
 class RedirectToChallengeOverviewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
-        if AnswerMultiChoice.objects.\
+        if AnswerWithChoices.objects.\
                 filter(user=request.user).\
                 exists():
             return redirect(self.challenge.overview_url)
@@ -84,7 +83,7 @@ class MultiResponseCreateView(LoginRequiredMixin,
     template_name = "challenges/multi_base.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
+        self.challenge = get_object_or_404(MultiResponseChallenge, pk=kwargs['challenge_id'])
         self.initial.update({'challenge': self.challenge,})
         return super(MultiResponseCreateView, self).dispatch(request, *args, **kwargs)
 

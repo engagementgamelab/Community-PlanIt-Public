@@ -1,6 +1,6 @@
 from django import template
 
-from web.instances.models import PointsAssignment
+#from web.instances.models import PointsAssignment
 
 register = template.Library()
 
@@ -12,11 +12,14 @@ class GetPointsNode(template.Node):
     def render(self, context):
         instance = context['instance']
 
-        try:
-            points_assignment = PointsAssignment.objects.get(instance=instance, action__action=self.action)
-            points = points_assignment.points
-        except:
-            points = 0
+        #try:
+        #    points_assignment = PointsAssignment.objects.get(
+        #            instance=instance, action__action=self.action
+        #    )
+        #    points = points_assignment.points
+        #except:
+        #    points = 0
+        points = 0
         
         if self.var:
             context[self.var] = points

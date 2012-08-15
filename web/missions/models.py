@@ -139,11 +139,6 @@ class Mission(BaseTreeNode):
 
     @models.permalink
     def get_absolute_url(self):
-        # redir = ""
-        # lang_code = ""
-        # if lang is not None and lang.code in dict(settings.LANGUAGES).keys():
-            # lang_code = lang.code
-
         return ('missions:mission', (), {
             'mission_id': self.pk
         })

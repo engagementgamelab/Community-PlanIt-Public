@@ -62,11 +62,17 @@ class InstanceDetailView(DetailView):
 
         context['game_profile_exists'] = game_profile_exists
 
-        active_missions = Mission.objects.active(instance_id=game.pk)
+        #active_missions = Mission.objects.active(instance_id=game.pk)
+        now = datetime.datetime.now()
+        #active_missions = Mission.objects.filter(
+        #                        instance__pk=game.pk, 
+        #                        start_date__lte=now, 
+        #                        end_date__gte=now).order_by('start_date')
+        active_missions = game.get_children()
         current_mission = None
         if active_missions.count():
             current_mission = active_missions[0]
-        context['current_mission'] = current_mission
+        context['current_mission'] = current_mission.get_real_instance()
 
         if settings.DEBUG == True:
             if self.request.user.is_authenticated():
