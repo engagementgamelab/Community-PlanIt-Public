@@ -8,14 +8,11 @@ from sijax import Sijax
 from stream.models import Action
 from stream import utils as stream_utils
 
-from localeurl.models import reverse
-from localeurl.utils import strip_path
-
 from django.views.generic.edit import CreateView
 
 from django.conf import settings
-from django.contrib.sites.models import RequestSite
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 from django.http import HttpResponse, Http404, HttpResponseServerError
 from django.shortcuts import get_object_or_404, render, redirect
@@ -65,7 +62,6 @@ def join(request, game_slug=None):
     UserProfilePerInstance.objects.create(
             user_profile=request.user.get_profile(),
             instance=for_game,
-            preferred_language=for_game.default_language,
     )
     request.session['my_active_game'] = for_game
     return redirect(for_game.get_absolute_url())
@@ -96,7 +92,6 @@ class GameProfileCreateView(CreateView):
 
         self.game_profile.user_profile = new_user.get_profile()
         self.game_profile.instance = self.for_game
-        self.game_profile.preferred_language = self.for_game.default_language
         self.game_profile.save()
 
         if not self.for_game.is_future:
@@ -121,14 +116,11 @@ class GameProfileCreateView(CreateView):
             #    redir+='?post-reg=true'
         elif self.for_game.is_present:
             slug = None
-            active_missions = Mission.objects.active(self.for_game.pk)
-            if active_missions.count():
-                mission = active_missions[0]
-            else:
-                raise Http404("could not locate an active mission for %s" % self.for_game.title)
-            redir = reverse('missions:mission-with-demographic-form', args=(mission.pk,))
-
-        return redirect(redir)
+        return redirect(
+            reverse('missions:mission-with-demographic-form',
+                                args=(self.for_game.active_mission.pk,)
+            )
+        )
 
     def form_invalid(self, form):
         print form.errors
@@ -172,7 +164,6 @@ def register(request, game_slug=None, extra_context=None, template_name='account
                 user_profile_per_instance = UserProfilePerInstance.objects.create(
                     user_profile=new_user.get_profile(),
                     instance=for_game,
-                    preferred_language=for_game.default_language,
                 )
 
             if not for_game.is_future:
@@ -368,7 +359,6 @@ def edit(request, template_name='accounts/profile_edit.html'):
     change_password_form = ChangePasswordForm()
     profile_form = UserProfileForm(request=request,
                                    initial={
-                                        'preferred_language': prof_for_game.preferred_language,
                                         'tagline': profile.tagline,
                                         'affiliations': prof_for_game.affils.all(),
                                         'stakes': prof_for_game.stakes.all(),
@@ -391,9 +381,6 @@ def edit(request, template_name='accounts/profile_edit.html'):
             if profile_form.is_valid():
                 cd = profile_form.cleaned_data
                 profile.tagline = cd['tagline']
-
-                if cd.has_key('preferred_language'):
-                    prof_for_game.preferred_language = cd.get('preferred_language')
 
                 prof_for_game.stakes = cd.get('stakes')
                 prof_for_game.affils = cd.get('affiliations')

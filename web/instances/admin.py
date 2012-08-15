@@ -61,8 +61,8 @@ class EmpathyChallengeAdmin(ChallengeAdminBase):
 
 
 class MissionAdmin(BaseChildAdmin):
-    readonly_fields = ('start_date', 'end_date')
-    exclude = ('instance',)
+    #readonly_fields = ('start_date', 'end_date')
+    exclude = ('instance', 'start_date', 'end_date')
 
 
     def save_model(self, request, obj, form, change):

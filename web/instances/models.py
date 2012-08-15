@@ -1,5 +1,5 @@
 import os.path
-import datetime
+from datetime import datetime, timedelta
 
 from stream import utils as stream_utils
 from cache_utils.decorators import cached
@@ -134,38 +134,47 @@ class Instance(BaseTreeNode):
             return last_mission.end_date
         return None
 
-    @property 
-    def is_future(self):
-        ''' Instance is not yet running (pre-game)'''
-        qs = Instance.objects.exclude(is_disabled=True)
-        return self in qs.filter(start_date__gt=datetime.datetime.now()).distinct()
-
-    @property 
-    def is_present(self):
-        ''' Instance is currently running (during-game) '''
-        missions_count = self.get_children().count()
-        NOW = datetime.datetime.now()
-        if missions_count == 0:
-            return False
-        return self.start_date < NOW and \
-                            NOW <=  self.start_date + datetime.timedelta(
-                                        days=missions_count * self.days_for_mission
-                                    )
-
-    @property 
-    def is_past(self):
-        ''' Instance is finished running (post-game)'''
-        qs = Instance.objects.exclude(is_disabled=True)
-        return self in qs.exclude(missions__end_date__gte=datetime.datetime.now()).distinct()
-
-
     @property
     def is_started(self):
         ''' Active and Expired Games '''
-        return datetime.datetime.now() >= self.start_date
+        return datetime.now() >= self.start_date
+
+    @property
+    def last_mission_ends_dt(self):
+        missions_count = self.get_children().count()
+        return self.start_date + timedelta(
+                    days=missions_count * self.days_for_mission)
+    @property
+    def active_mission(self):
+        if not self.is_present:
+            return
+        mission_start = self.start_date
+        for node in self.get_children():
+            mission_start+=timedelta(
+                    days=self.days_for_mission
+            )
+            if datetime.now() > mission_start:
+                return node.get_real_instance()
+
+    @property
+    def is_future(self):
+        ''' Instance is not yet running (pre-game)'''
+        return self.start_date > datetime.now()
+
+    @property
+    def is_present(self):
+        ''' Instance is currently running (during-game) '''
+        return self.is_started and \
+            datetime.now() <=  self.last_mission_ends_dt
+
+    @property
+    def is_past(self):
+        ''' Instance is finished running (post-game)'''
+        return self.is_started and \
+               datetime.now() > self.last_mission_ends_dt
 
     def time_until_start(self):
-        return self.start_date - datetime.datetime.now()
+        return self.start_date - datetime.now()
 
     def get_slideshow_attachment(self):
         attachments = self.attachment_set.all()
