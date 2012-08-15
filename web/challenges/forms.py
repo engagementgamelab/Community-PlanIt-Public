@@ -1,4 +1,3 @@
-from localeurl.models import reverse
 from stream import utils as stream_utils
 from gmapsfield.fields import *
 

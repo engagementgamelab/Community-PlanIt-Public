@@ -10,7 +10,6 @@ from stream import utils as stream_utils
 
 from django.conf import settings
 from django.core.cache import cache
-from localeurl.models import reverse
 #from django.db.models.signals import post_save
 from django.db import models
 from django.contrib import admin

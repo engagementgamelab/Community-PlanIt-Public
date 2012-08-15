@@ -1,8 +1,5 @@
 import datetime
 
-from localeurl.utils import locale_url
-from localeurl.templatetags.localeurl_tags import rmlocale
-
 from gmapsfield.fields import GoogleMapsField
 
 from django.dispatch import receiver
@@ -24,7 +21,7 @@ class Activity(models.Model):
 
     user = models.ForeignKey(User, blank=True, null=True)
     instance = models.ForeignKey(Instance, blank=True, null=True, editable=False)
-    
+
     class Meta:
         verbose_name = 'Activity'
         verbose_name_plural = 'Activities'
@@ -32,12 +29,6 @@ class Activity(models.Model):
     def __unicode__(self):
         label = self.action +' - '+ self.data
         return label
-    
-    def get_url(self):
-        if self.url:            
-            url = rmlocale(self.url)            
-            return locale_url(url, translation.get_language())
-        return None
 
 
 class ActivityLogger:
