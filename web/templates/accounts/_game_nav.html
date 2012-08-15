@@ -1,4 +1,4 @@
-{% load i18n thumbnail %}
+{% load i18n avatar%}
 
 <div class="btn-group nav-account pull-right">
     <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown">
@@ -8,10 +8,7 @@
     <ul class="dropdown-menu">
         <li>
             <a>
-                {% thumbnail profile.avatar "64x64" crop="center" as avatar %}
-                    <img src="{{ avatar.url }}" width="{{ avatar.width }}" height="{{ avatar.height }}">
-                {% endthumbnail %}
-                {# <img src="{{ profile.avatar }}" width="64" height="64"> #}
+                {% avatar user "64x64" %}
                 {{ screen_name }}
             </a>
         </li>
@@ -32,7 +29,7 @@
         {% if my_non_active_game_profiles %}
         {% for game_profile in my_non_active_game_profiles %}
         <li class="game">
-            <a href="{% url instances:switch game_profile.instance.slug %}">
+            <a href="">
                 {{ game_profile.instance.title }}
                 <span class="label switch-game">{% trans "Switch" %}</span>
             </a>

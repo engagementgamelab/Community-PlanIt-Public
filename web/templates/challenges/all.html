@@ -1,5 +1,5 @@
 {% extends "base_game.html" %}
-{% load i18n cpi_tags thumbnail%}
+{% load i18n cpi_tags avatar %}
 
 {% block title %}Challenges{% endblock %}
 
@@ -139,9 +139,7 @@
                         <div>{{ activity_type }}</div>
 
                         {% if forloop.first %}
-                            {% thumbnail request.user.get_profile.avatar "64x64" crop="center" as avatar %}
-                                <img class="avatar" src="{{ avatar.url }}" width="{{ avatar.width }}" height="{{ avatar.height }}">
-                            {% endthumbnail %}
+                            {% avatar request.user "64x64" %}
                         {% endif %}
 
                         <div class="meta"><i class="glyphicon-credit"></i> {{ points }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
