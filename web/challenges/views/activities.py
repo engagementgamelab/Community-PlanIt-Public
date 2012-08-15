@@ -202,31 +202,33 @@ class ChallengeListView(ListView):
         player_submitted_only = False
 
         # TODO: Should only return non-player-created challenges
-        player_submitted = set(self.mission.player_submitted_challenges(lang=get_language()))
-        all_activities = player_submitted if player_submitted_only == True else \
-                set(self.mission.challenges(lang=get_language())) - player_submitted
+        #player_submitted = set(self.mission.player_submitted_challenges(lang=get_language()))
+        #all_activities = player_submitted if player_submitted_only == True else \
+        #        set(self.mission.challenges()) - player_submitted
 
-        my_completed = set(
-                        self.prof_per_instance.my_completed_by_mission(
-                                    self.mission,
-                                    player_submitted_only
-                        )
-                    )
-        my_incomplete = all_activities - my_completed
-        my_incomplete = sorted(my_incomplete, key=attrgetter('name'))
-        self.my_completed = sorted(list(my_completed), key=attrgetter('name'))
+        #my_completed = set(
+        #                self.prof_per_instance.my_completed_by_mission(
+        #                            self.mission,
+        #                            player_submitted_only
+        #                )
+        #            )
+        #my_incomplete = all_activities - my_completed
+        #my_incomplete = sorted(my_incomplete, key=attrgetter('name'))
+        #self.my_completed = sorted(list(my_completed), key=attrgetter('name'))
 
-        my_incomplete.extend(self.my_completed)
-        all_activities_sorted = my_incomplete
+        #my_incomplete.extend(self.my_completed)
+        #all_activities_sorted = my_incomplete
 
         #context.update(dict(
         #    activities = all_activities_sorted,
         #    my_completed = my_completed,
         #    all_player_submitted_cnt = len(player_submitted),
         #))
-        for ch in all_activities_sorted:
-            print ch.play_url, ch.overview_url
-        return all_activities_sorted
+        #for ch in all_activities_sorted:
+        #    print ch.play_url, ch.overview_url
+        #return all_activities_sorted
+        self.my_completed = []
+        return self.mission.get_children()
 
 
     def get_context_data(self, **kwargs):

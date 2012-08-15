@@ -64,8 +64,8 @@ class MissionManager(TreeManager):
 
 class Mission(BaseTreeNode):
 
-    description = models.TextField(blank=True),
     instance = models.ForeignKey(Instance, related_name='missions')
+    description = models.TextField(blank=True)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     video = models.TextField(blank=True)
