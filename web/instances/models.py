@@ -1,6 +1,8 @@
 import os.path
 from datetime import datetime, timedelta
 
+from dateutil.rrule import *
+
 from stream import utils as stream_utils
 from cache_utils.decorators import cached
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
@@ -12,6 +14,7 @@ from south.modelsinspector import add_introspection_rules
 
 from django.conf import settings
 from django.db import models
+from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
@@ -70,8 +73,8 @@ class InstanceManager(PolymorphicMPTTModelManager):
         qs = self.exclude(is_disabled=True)
         return qs.filter(missions__end_date__gte=self.now).distinct()
 
-# A base model for the tree:
 
+# A base model for the tree:
 class BaseTreeNode(PolymorphicMPTTModel):
     parent = PolymorphicTreeForeignKey('self', blank=True, null=True, related_name='children', verbose_name=_('parent'))
     title = models.CharField(_("Title"), max_length=200)
@@ -120,19 +123,19 @@ class Instance(BaseTreeNode):
         })
 
     @property
-    def stream_action_title(self):
-        return self.title
-
-    def coin_count(self):
-        return self.user_profiles.aggregate(models.Sum('currentCoins')).get('currentCoins', 0)
+    def _mission_recurrences(self):
+        """all mission recurrences within this game """
+        return rrule(DAILY, interval=self.days_for_mission, 
+            count=self.get_children().count(),
+            dtstart=self.start_date)
 
     @property
-    def end_date(self):
-        missions = self.missions.order_by('-end_date')
-        if missions:
-            last_mission = missions[0]
-            return last_mission.end_date
-        return None
+    def _missions_by_start_date(self):
+        return SortedDict(
+                zip(list(self._mission_recurrences),
+                    map(lambda n: n.get_real_instance(), 
+                                    self.get_children()))
+        )
 
     @property
     def is_started(self):
@@ -140,32 +143,27 @@ class Instance(BaseTreeNode):
         return datetime.now() >= self.start_date
 
     @property
-    def last_mission_ends_dt(self):
-        missions_count = self.get_children().count()
-        return self.start_date + timedelta(
-                    days=missions_count * self.days_for_mission)
+    def last_mission_ends(self):
+        return self._missions_by_start_date.keys()[-1] + \
+                timedelta(days=self.days_for_mission)
+
+    @property
+    def is_present(self):
+        '''Instance is currently running (during-game)'''
+        return self.is_started and \
+            datetime.now() <=  self.last_mission_ends
+
     @property
     def active_mission(self):
-        if not self.is_present:
-            return
-        mission_start = self.start_date
-        for node in self.get_children():
-            mission_start+=timedelta(
-                    days=self.days_for_mission
-            )
-            if datetime.now() > mission_start:
-                return node.get_real_instance()
+        return self._missions_by_start_date.get(
+                self._mission_recurrences.before(
+                    datetime.now(), inc=True)
+        )
 
     @property
     def is_future(self):
         ''' Instance is not yet running (pre-game)'''
         return self.start_date > datetime.now()
-
-    @property
-    def is_present(self):
-        ''' Instance is currently running (during-game) '''
-        return self.is_started and \
-            datetime.now() <=  self.last_mission_ends_dt
 
     @property
     def is_past(self):
@@ -175,6 +173,10 @@ class Instance(BaseTreeNode):
 
     def time_until_start(self):
         return self.start_date - datetime.now()
+
+    @property
+    def stream_action_title(self):
+        return self.title
 
     def get_slideshow_attachment(self):
         attachments = self.attachment_set.all()

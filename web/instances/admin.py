@@ -61,8 +61,7 @@ class EmpathyChallengeAdmin(ChallengeAdminBase):
 
 
 class MissionAdmin(BaseChildAdmin):
-    #readonly_fields = ('start_date', 'end_date')
-    exclude = ('instance', 'start_date', 'end_date')
+    exclude = ('instance',)
 
     def save_model(self, request, obj, form, change):
         #TODO should only save these fields

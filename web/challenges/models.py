@@ -51,14 +51,6 @@ class Challenge(BaseTreeNode):
     def __unicode__(self):
         return self.question
 
-    @property
-    def overview_url(self):
-        return self.get_url_by_action('overview')
-
-    @property
-    def play_url(self):
-        return self.get_url_by_action('play')
-
     def trivia_answers(self):
         return filter(lambda c: c.trivia_correct_answer is True, self.answer_choices.all() if hasattr(self, 'answer_choices') else [])
 
@@ -79,13 +71,13 @@ class Challenge(BaseTreeNode):
 
     @property
     def completed_count(self):
-        actions = Action.objects.get_for_action_object(self)
-        all_completed = filter(lambda a: a.verb == "activity_completed", actions)
+        #TODO
+        #actions = Action.objects.get_for_action_object(self)
+        #all_completed = filter(lambda a: a.verb == "activity_completed", actions)
         #log.debug("%s completed %s" % (self.__unicode__(), len(all_completed)))
-        return len(all_completed)
+        #return len(all_completed)
+        return 0
 
-    def is_past(self):
-        return self.mission.end_date < datetime.datetime.now()
 
 class SingleResponseChallenge(Challenge):
 

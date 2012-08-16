@@ -1,8 +1,7 @@
 import os.path
-import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from operator import attrgetter
-from dateutil.relativedelta import relativedelta
 
 from model_utils.managers import InheritanceManager
 from cache_utils.decorators import cached
@@ -66,72 +65,45 @@ class Mission(BaseTreeNode):
 
     instance = models.ForeignKey(Instance, related_name='missions')
     description = models.TextField(blank=True)
-    start_date = models.DateTimeField(blank=True, null=True)
-    end_date = models.DateTimeField(blank=True, null=True)
     video = models.TextField(blank=True)
+    challenge_coin_value = models.IntegerField(verbose_name="coin value for challenge", default=0)
     created_date = models.DateTimeField(auto_now_add=True)
 
     #objects = MissionManager()
 
-    class Meta:
-        ordering = ('end_date',)
-        #get_latest_by = 'start_date'
+    @property 
+    def start_date(self):
+        for dt, m in self.parent._missions_by_start_date.\
+                iteritems():
+            if m == self:
+                return dt
+
+    @property 
+    def end_date(self):
+        return self.start_date + \
+            timedelta(days=self.parent.days_for_mission)
 
     @property
     def ends_in_days(self):
-        delta =  self.end_date - datetime.datetime.now()
+        delta =  self.end_date - datetime.now()
         return delta.days
 
     @property
     def starts_in_days(self):
-        delta = self.start_date - datetime.datetime.now()
+        delta = self.start_date - datetime.now()
         return delta.days
 
+    @property
     def is_active(self):
-        now = datetime.datetime.now()
-        return self.start_date <= now and now <= self.end_date
-
-    def is_expired(self):
-        return datetime.datetime.now() > self.end_date
+        return self == self.instance.active_mission
 
     @property
-    def is_started(self):
-        return datetime.datetime.now() >= self.start_date
+    def is_expired(self):
+        return datetime.now() > self.end_date
 
     @property
     def is_future(self):
-        return datetime.datetime.now() <= self.start_date
-
-    @property
-    @cached(60*60*24, 'missions')
-    def total_points(self):
-        return Decimal(sum([challenge.get_points() for challenge in self.challenges(get_language())]))
-
-    def challenges(self, lang='en-us'):
-        return self.get_challenges_cached(self.pk, lang=lang)
-
-    @cached(60*60*24*7)
-    def get_challenges_cached(self, mission_id, lang='en-us'):
-        challenges = []
-        for model_klass in ['Challenge', 'EmpathyChallenge', 'MapChallenge']:
-            challenges.extend(
-                getattr(self,
-                        'challenges_%s_related' % model_klass.lower()
-                ).language(lang).all()
-            )
-        return sorted(challenges, key=attrgetter('name_translated'))
-
-    def player_submitted_challenges(self, lang='en-us'):
-        return self.get_player_submitted_activities_cached(self.pk, lang=lang)
-
-    @cached(60*60*24*7)
-    def get_player_submitted_activities_cached(self, mission_id, lang='en-us'):
-        challenges = filter(lambda a: a.is_player_submitted == True, self.challenges(lang=lang))
-        return sorted(challenges, key=attrgetter('name_translated'))
-
-    @cached(60*60*24*7)
-    def instance_city_domain(self, instance_id):
-        return self.instance.for_city.domain
+        return datetime.now() <= self.start_date
 
     def __unicode__(self):
         return self.title
