@@ -114,7 +114,7 @@
             {% with challenge.mission.challenge_coin_value as coins and challenge.completed_count as completed_count and challenge.get_challenge_type_display as challenge_type %}
                 {% if mission.is_expired %}
                     {# mission expired, only allow review #}
-                    <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge_type }}{% endif %} span4">
+                    <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge.challenge_type_shortcut }}{% endif %} span4">
                         <h2>{{ challenge.title }}</2>
                         <div>{{ challenge_type }}</div>
                         <div class="meta"><i class="glyphicon-credit"></i> {{ coins }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
@@ -122,7 +122,7 @@
                     </div>
                 {% elif mission.is_future %}
                     {# Non-started mission, lock everything #}
-                    <div class="challenge challenge-locked {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge_type }}{% endif %} span4">
+                    <div class="challenge challenge-locked {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge.challenge_type_shortcut }}{% endif %} span4">
                         <h3>{{ challenge.title }}</div>
                         <div>{{ challenge_type }}</div>
                         <div class="meta"><i class="glyphicon-credit"></i> {{ coins }} </div>
@@ -131,7 +131,7 @@
                     {# Active Mission #}
                     {% if challenge in my_completed %}{% endif %}
                     {% comment %} Real one
-                    <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge_type }}{% endif %} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
+                    <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge.challenge_type_shortcut }}{% endif %} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
                     {% endcomment %}
                     <div class="challenge {% if forloop.last %}challenge-final{% endif %} {% if forloop.counter > 4 %}challenge-locked{% endif %} {% if forloop.counter|divisibleby:4 %}challenge-barrier{% endif %} span4">
 

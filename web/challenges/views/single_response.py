@@ -33,7 +33,7 @@ class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView
                 get_context_data(**kwargs)
         ctx.update(
                 {
-                    #'activity' : kwargs['activity'],
+                    #'challenge' : kwargs['challenge'],
                     'is_completed': True,
                 }
         )
@@ -55,19 +55,19 @@ class SingleResponseForm(forms.ModelForm):
                     required=True,
                     empty_label=None,
                     queryset=AnswerChoice.objects.\
-                            filter(activity=challenge).distinct()
+                            filter(challenge=challenge).distinct()
         )
 
     class Meta:
         model = AnswerWithChoices
-        exclude = ('answerUser', 'activity')
+        exclude = ('user', 'challenge')
 
 
 class RedirectToChallengeOverviewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
-        if AnswerSingleResponse.objects.\
-                filter(answerUser=request.user, activity=self.challenge).\
+        if AnswerWithChoices.objects.\
+                filter(user=request.user, challenge=self.challenge).\
                 exists():
             return redirect(self.challenge.overview_url)
 
@@ -91,11 +91,11 @@ class SingleResponseCreateView(LoginRequiredMixin,
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.answerUser = self.request.user
-        self.object.activity = self.challenge
+        self.object.user = self.request.user
+        self.object.challenge = self.challenge
         self.object.save()
         return redirect(self.challenge.overview_url)
-        #return log_activity_and_redirect(self.request, self.activity, action_msg)
+        #return log_activity_and_redirect(self.request, self.challenge, action_msg)
 
     def form_invalid(self, form):
         print form.errors

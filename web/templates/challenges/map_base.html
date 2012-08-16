@@ -12,7 +12,9 @@
     {% endif %}
     
     <h1>{{ challenge.name }}<span class="points">{{ challenge.get_points }}</span></h1>
-    {% if challenge.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile challenge.creationUser.id %}">{% avatar challenge.creationUser %}</a> created by <a href="{% url accounts:player_profile challenge.creationUser.id %}">{{ challenge.creationUser.get_profile.screen_name }}</a></div>{% endif %}
+    {% comment %}
+    {% if challenge.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile challenge.user.id %}">{% avatar challenge.user %}</a> created by <a href="{% url accounts:player_profile challenge.user.id %}">{{ challenge.user.get_profile.screen_name }}</a></div>{% endif %}
+    {% endcomment %}
     
     <form id="id_activity-form" enctype="multipart/form-data" action="" method="post" class="narrow">{% csrf_token %}
         <div class="column-threequarter">

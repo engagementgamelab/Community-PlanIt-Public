@@ -1,5 +1,5 @@
 {% extends "challenges/base.html" %}
-{% load gmap attachment_tags i18n avatar %}
+{% load gmap i18n avatar %}
 {% block title %}{{challenge.name}} | Multi Response Overview{% endblock %}
 
 {% block game_content %}
@@ -10,12 +10,14 @@
 
         
         <h1>{{ challenge.name|safe }}<span class="points">{{ challenge.get_points }}</span></h1>
-        {% if challenge.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile challenge.creationUser.id %}">{% avatar challenge.creationUser %}</a> created by <a href="{% url accounts:player_profile challenge.creationUser.id %}">{{ challenge.creationUser.get_profile.screen_name }}</a></div>{% endif %}
+        {% comment %}
+        {% if challenge.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile challenge.user.id %}">{% avatar challenge.user %}</a> created by <a href="{% url accounts:player_profile challenge.user.id %}">{{ challenge.user.get_profile.screen_name }}</a></div>{% endif %}
+        {% endcomment %}
 
         <div class="column-threequarter">
         
             <div class="activity-question">
-                {% include "challenges/attachments.html" %}
+                {# include "challenges/attachments.html" #}
                 <div>{{ challenge.question|safe }}</div>
                 <br class="clearfix" />
             </div>

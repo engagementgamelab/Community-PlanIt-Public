@@ -1,3 +1,4 @@
+import simplejson 
 from django import forms
 from django.utils.translation import get_language
 from django.shortcuts import render_to_response, redirect, get_object_or_404
@@ -57,7 +58,7 @@ class MapForm(forms.ModelForm):
 
     class Meta:
         model = AnswerMap
-        exclude = ('answerUser', 'activity')
+        exclude = ('user', 'challenge')
 
 class MultiResponseForm(forms.ModelForm):
 
@@ -76,14 +77,14 @@ class MultiResponseForm(forms.ModelForm):
 
     class Meta:
         model = AnswerMap
-        exclude = ('answerUser',)
+        exclude = ('user',)
 
 
 class RedirectToChallengeOverviewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         if AnswerMap.objects.\
-                filter(answerUser=request.user).\
+                filter(user=request.user).\
                 exists():
             return redirect(self.challenge.overview_url)
 

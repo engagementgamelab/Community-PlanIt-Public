@@ -51,6 +51,24 @@ class Challenge(BaseTreeNode):
     def __unicode__(self):
         return self.question
 
+    @property
+    def challenge_type_shortcut(self):
+        return slugify(self.get_challenge_type_display())
+
+    @property
+    def play_url(self):
+        return reverse(
+                'missions:challenges:'+self.challenge_type_shortcut+'-play',
+                args=(self.mission.pk, self.pk)
+        )
+
+    @property
+    def overview_url(self):
+        return reverse(
+                'missions:challenges:'+self.challenge_type_shortcut+'-overview',
+                args=(self.mission.pk, self.pk)
+        )
+
     def trivia_answers(self):
         return filter(lambda c: c.trivia_correct_answer is True, self.answer_choices.all() if hasattr(self, 'answer_choices') else [])
 
@@ -58,7 +76,7 @@ class Challenge(BaseTreeNode):
         # This will work for multi_response activities only
         # which is what the requirements are for now
         # in the future may need to update to work for other
-        # activity types
+        # challenge types
         trivia_answers = self.trivia_answers()
         if len(trivia_answers) > 0:
             return trivia_answers[0]
@@ -185,12 +203,12 @@ class AnswerWithChoices(Answer):
     """ user submitted response to a single response challenge """
 
     selected = models.ManyToManyField(AnswerChoice, related_name='singleresponse_answers')
-    activity = models.ForeignKey(Challenge, related_name='singleresponse_answers')
+    challenge = models.ForeignKey(Challenge, related_name='singleresponse_answers')
 
     #objects = AnswerSingleResponseManager()
 
     def __unicode__(self):
-        return _(u'an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.challenge)
 
 
 class AnswerMap(Answer):
@@ -200,7 +218,7 @@ class AnswerMap(Answer):
     #objects = AnswerMapManager()
 
     def __unicode__(self):
-        return _(u'an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.challenge)
 
     @models.permalink
     def get_absolute_url(self):
@@ -214,7 +232,7 @@ class AnswerEmpathy(Answer):
     #objects = AnswerEmpathyManager()
 
     def __unicode__(self):
-        return _(u'an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.challenge)
 
     @models.permalink
     def get_absolute_url(self):
@@ -228,7 +246,7 @@ class AnswerOpenEnded(Answer):
     #objects = AnswerOpenEndedManager()
 
     def __unicode__(self):
-        return _(u'an answer to %s' % self.activity)
+        return _(u'an answer to %s' % self.challenge)
 
 
 #django-stream registrations
