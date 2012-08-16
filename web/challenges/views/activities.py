@@ -228,7 +228,8 @@ class ChallengeListView(ListView):
         #    print ch.play_url, ch.overview_url
         #return all_activities_sorted
         self.my_completed = []
-        return self.mission.get_children()
+        return map(lambda n: n.get_real_instance(),
+                   self.mission.get_children())
 
 
     def get_context_data(self, **kwargs):

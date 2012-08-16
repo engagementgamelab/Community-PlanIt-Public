@@ -169,7 +169,7 @@ class Instance(BaseTreeNode):
     def is_past(self):
         ''' Instance is finished running (post-game)'''
         return self.is_started and \
-               datetime.now() > self.last_mission_ends_dt
+               datetime.now() > self.last_mission_ends
 
     def time_until_start(self):
         return self.start_date - datetime.now()

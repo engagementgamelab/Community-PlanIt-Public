@@ -1,5 +1,5 @@
+#from datetime import datetime
 import os.path
-import datetime
 import urlparse
 from uuid import uuid4 as uuid
 
