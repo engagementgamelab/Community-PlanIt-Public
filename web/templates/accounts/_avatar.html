@@ -1,7 +1,7 @@
 {% load static thumbnail %}
 
-{% thumbnail user.get_profile.avatar dimensions crop="center" as image %}
+{% thumbnail user.get_profile.avatar geometry crop="center" as image %}
     <img class="avatar" src="{{ image.url }}" width="{{ image.width }}" height="{{ image.height }}">
 {% empty %}
-    <img class="avatar avatar-blank" src="{% get_static_prefix %}img/avatar-blank.png" width="{{ image.width }}" height="{{ image.height }}"/>
+    <img class="avatar avatar-blank" src="{% get_static_prefix %}img/avatar-blank.png" width="{{ geometry_width }}" height="{{ geometry_height }}"/>
 {% endthumbnail %}
