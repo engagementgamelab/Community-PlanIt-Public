@@ -3,51 +3,44 @@
 {% block title %}{{ block.super }} | Single Response{% endblock %}
 
 {% block content %}
-<div class="single-response column-container">
-    {% if challenge.is_player_submitted %}
-        <a href="{% url missions:mission_playercreated challenge.mission.pk %}" class="btn-back">{% trans "Return" %}</a>
-    {% else %}
-        <a href="{% url missions:mission challenge.mission.pk %}" class="btn-back">{% trans "Back to Mission" %}</a>
-    {% endif %}
-    
-    <h1>{{ challenge.name|safe }}<span class="points">{{ challenge.get_points }}</span></h1>
+{{ block.super }}
 
-    {% comment %}
-    {% if challenge.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile challenge.user.id %}">{% avatar challenge.user %}</a> created by <a href="{% url accounts:player_profile challenge.user.id %}">{{ challenge.user.get_profile.screen_name }}</a></div>{% endif %}
-    {% endcomment %}
+<div id="challenges">
+    <div class="wrapper box-shadow-container">
+        <div class="challenge">
+            <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
 
-    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">{% csrf_token %}
-        <div class="column-threequarter">
-            <div class="activity-question">
-                {# include "player_activities/attachments.html" #}
-                <div>{{ challenge.question|safe }}</div>
-                <br class="clearfix" />
-                {% if errors.response %}
-                    {{ errors.response }}
-                {% endif %}
-            </div>
-            <input type="hidden" name="form" value="single_response">
-            <div class="activity-question-options">
-                    {{ form.selected }}
-            {% comment %}
-                <ul class="activity-question-options"> 
-
-                    {% for choice in form.selected.field.choices %}
-                        <li><label for="response_{{choice.0}}"><input id="response_{{choice.0}}" type="radio" name="response" value="{{choice.0}}"> {{choice.1}}</label></li>
-                    {% endfor %}
-                </ul>
-            {% endcomment %}
-            </div>
-
-            {% block comment %}{% endblock %}
+            <h1>{{ challenge.name|safe }}</h1>
+            <h2>{{ challenge.get_points }} points</h2>
             
-            <div class="activity-response-submit">
-                <img src="{% if request.user.get_profile.avatar %}{{ MEDIA_URL }}{% else %}{{ STATIC_URL }}{% endif %}/{% firstof request.user.get_profile.avatar 'img/avatar-blank.png' %}" width="36" height="36" />
-                <input type="submit" id="id_activity-btn-submit" class="btn-yellow submit" value="Submit" />
+
+            <div class="row-fluid">
+                <div class="span9">
+                    <div>{{ challenge.question|safe }}</div>
+
+                    {% block response %}
+                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">{% csrf_token %}
+                    <input type="hidden" name="form" value="single_response">
+                    {{ errors.response }}
+                    {{ form.selected }}
+                    {% block comment %}
+                        {% include "comments/duplicate.html" %}
+                    {% endblock %}                    
+                    {% avatar request.user "28x28" %}
+                    <input type="submit" id="id_activity-btn-submit" class="btn btn-primary" value="Submit" />
+                    </form>
+                    {% endblock %}
+                </div>
+                <div class="span3 well">
+                        <h3>Resources</h3>
+                </div>
             </div>
+
+            <h2>Discussion</h2>
+            {% block comments %}
+            <p>Once you are done, you will be able to view everyone's responses.</p>
+            {% endblock %}
         </div>
-        <div class="column-onequarter"></div>
-    </form>
-    <p class="clearfix">Once you are done, you will be able to view everyone's responses.</p>
+    </div>
 </div>
 {%endblock%}

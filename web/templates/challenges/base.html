@@ -4,6 +4,8 @@
 
 {% block js %}
     {{ block.super }}
+    {% comment %}
+    DO NOT DELETE, temp commented
     {# masonry is required to display comments correctly #}
     <script src="{{ STATIC_URL }}js/jquery.masonry.min.js"></script>
     <script src="{{ STATIC_URL }}js/sijax.js"></script>
@@ -32,6 +34,32 @@
         
     });
     </script>
+    {% endcomment %}
+{% endblock %}
 
-    
+
+{% block content %}
+<div class="wrapper">
+    <h1>{{ mission }}</h1>
+
+    <div class="minimap">
+        {% for challenge in challenges %}
+            <div class="challenge {% if forloop.last %}challenge-final{% endif %} {% if forloop.counter|divisibleby:4 %}challenge-barrier{% endif %} {% if forloop.counter > 4 %}challenge-locked{% endif %}">
+                {# Examples #}
+                {% if forloop.first %}
+                    <i class="icon-user"></i>
+                {% endif %}
+                {% if forloop.last %}
+                    <i class="icon-flag"></i>
+                {% elif forloop.counter|divisibleby:4 %}
+                    <i class="glyphicon-flash"></i>
+                {% elif forloop.counter > 4 %}
+                    <i class="icon-lock"></i>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <span class="badge">{{ mission.title }}</span>
+        <div class="window"></div>
+    </div>
+</div>
 {% endblock %}

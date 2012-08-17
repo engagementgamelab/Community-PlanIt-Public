@@ -1,4 +1,4 @@
-{% extends "base_game.html" %}
+{% extends "challenges/base.html" %}
 {% load i18n cpi_tags avatar %}
 
 {% block title %}Challenges{% endblock %}
@@ -73,36 +73,7 @@
 {% block body_id %}page-challenge-list{% endblock %}
 
 {% block content %}
-<div class="wrapper">
-    
-    <h1>{{mission}}</h1>
-    <div>
-        <p>{% trans "By answering challenge questions you are helping plan your community, and you are earning coins that move you towards accomplishing the mission." %}</p>
-    </div>
-    
-    <div class="minimap">
-        {% for challenge in challenges %}
-            <div class="challenge {% if forloop.last %}challenge-final{% endif %} {% if forloop.counter|divisibleby:4 %}challenge-barrier{% endif %} {% if forloop.counter > 4 %}challenge-locked{% endif %}">
-                {# Examples #}
-                {% if forloop.first %}
-                    <i class="icon-user"></i>
-                {% endif %}
-                {% if forloop.last %}
-                    <i class="icon-flag"></i>
-                {% elif forloop.counter|divisibleby:4 %}
-                    <i class="glyphicon-flash"></i>
-                {% elif forloop.counter > 4 %}
-                    <i class="icon-lock"></i>
-                {% endif %}
-            </div>
-        {% endfor %}
-        <span class="badge">{{ mission.title }}</span>
-        <div class="window"></div>
-    </div>
-
-</div>
-
-
+{{ block.super }}
 
 <div id="challenges" class="carousel">
     <!-- Carousel Controls -->
