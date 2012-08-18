@@ -98,7 +98,7 @@ class MapCreateView(LoginRequiredMixin,
     form_class = MapForm
     model = None
     context_object_name = 'map_answer'
-    template_name = "challenges/map_base.html"
+    template_name = "challenges/map.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(MapChallenge, pk=kwargs['challenge_id'])

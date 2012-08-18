@@ -106,7 +106,7 @@
                     {% comment %} Real one
                     <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge.challenge_type_shortcut }}{% endif %} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
                     {% endcomment %}
-                    <div class="challenge {% if forloop.last %}challenge-final{% endif %} {% if forloop.counter > 4 %}challenge-locked{% endif %} {% if forloop.counter|divisibleby:4 %}challenge-barrier{% endif %} span4">
+                    <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge.challenge_type_shortcut }}{% endif %} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
 
                         <h3>{{ challenge.title }}</h3>
                         <div>{{ challenge_type }}</div>
@@ -116,7 +116,7 @@
                         {% endif %}
 
                         <div class="meta"><i class="glyphicon-credit"></i> {{ coins }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
-                        <div class="action"><a href="{% if forloop.counter < 4 %}{{ challenge.play_url }}{% endif %}" class="btn {% if forloop.counter > 4 %}disabled{% else %}btn-primary{% endif %}">{% if forloop.counter > 4 %}Locked{% else %}View Challenge{% endif %}</a></div>
+                        <div class="action"><a href="{{ challenge.play_url }}" class="btn btn-primary">{% if challenge.is_locked %}Locked{% else %}View Challenge{% endif %}</a></div>
                     </div>
                 {% endif %}
             {% endwith %}

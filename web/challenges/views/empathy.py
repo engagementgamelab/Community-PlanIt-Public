@@ -73,7 +73,7 @@ class EmpathyCreateView(LoginRequiredMixin,
     form_class = EmpathyForm
     model = None
     context_object_name = 'empathy_answer'
-    template_name = "challenges/empathy_base.html"
+    template_name = "challenges/empathy.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(EmpathyChallenge, pk=kwargs['challenge_id'])

@@ -23,7 +23,7 @@ class FetchAnswersMixin(object):
 
 class MultiResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
     model = MultiResponseChallenge
-    template_name = 'challenges/multi_response_overview.html'
+    template_name = 'challenges/multi_overview.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
     context_object_name = 'challenge'
@@ -80,7 +80,7 @@ class MultiResponseCreateView(LoginRequiredMixin,
     form_class = MultiResponseForm
     model = None
     context_object_name = 'multi_response_answer'
-    template_name = "challenges/multi_base.html"
+    template_name = "challenges/multi.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(MultiResponseChallenge, pk=kwargs['challenge_id'])

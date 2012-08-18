@@ -13,22 +13,25 @@
             <h1>{{ challenge.name|safe }}</h1>
             <h2>{{ challenge.get_points }} points</h2>
             
-
             <div class="row-fluid">
                 <div class="span9">
                     <div>{{ challenge.question|safe }}</div>
 
                     {% block response %}
-                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">{% csrf_token %}
-                    <input type="hidden" name="form" value="single_response">
-                    {{ errors.response }}
-                    {{ form.selected }}
-                    {% block comment %}
-                        {% include "comments/duplicate.html" %}
-                    {% endblock %}                    
-                    {% avatar request.user "28x28" %}
-                    <input type="submit" id="id_activity-btn-submit" class="btn btn-primary" value="Submit" />
-                    </form>
+                    <div class="response">
+                        <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="form" value="single_response">
+                            {{ errors.response }}
+                            {{ form.selected }}
+                            
+                            <div class="response-comment">{% include "comments/duplicate.html" %}</div>
+                            <div class="response-submit">
+                                {% avatar request.user "28x28" %}
+                                <input type="submit" id="id_activity-btn-submit" class="btn btn-primary" value="Submit" />
+                            </div>
+                        </form>
+                    </div>
                     {% endblock %}
                 </div>
                 <div class="span3 well">
@@ -38,7 +41,7 @@
 
             <h2>Discussion</h2>
             {% block comments %}
-            <p>Once you are done, you will be able to view everyone's responses.</p>
+                <p>Once you are done, you will be able to view everyone's responses.</p>
             {% endblock %}
         </div>
     </div>

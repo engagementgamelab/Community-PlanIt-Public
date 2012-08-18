@@ -1,0 +1,65 @@
+{% extends "challenges/base.html" %}
+{% load i18n gmap avatar %}
+{% block title %}{{ block.super }} | Map Response{% endblock %}
+
+{% block content %}
+{{ block.super }}
+
+<div id="challenges">
+    <div class="wrapper box-shadow-container">
+        <div class="challenge">
+            <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
+
+            <h1>{{ challenge.name|safe }}</h1>
+            <h2>{{ challenge.get_points }} points</h2>
+            
+
+            <div class="row-fluid">
+                <div class="span9">
+                    <div>{{ challenge.question|safe }}</div>
+
+                    {% block response %}
+                    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post" class="narrow">{% csrf_token %}
+                        <div class="map-controls form-inline">
+                            <input type="text" name="google_search" id="google_search" placeholder="Search for a company or an address" />
+                            <button class="btn btn-primary add">{% trans "Add Point" %}</button>
+                            <button class="btn btn-primary rm">{% trans "Clear All Points" %}</button>
+                        </div>
+                        
+                        <div>
+                            {% for x, lat, lon in init_coords %}
+                                <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
+                            {% endfor %}
+                            {{ form.map.errors }}
+                            <div id="map" class="google-map" data-type="Point"></div>
+                        </div>
+                    </form>
+                    {% endblock %}
+                </div>
+                <div class="span3 well">
+                        <h3>Resources</h3>
+                </div>
+            </div>
+
+            <h2>Discussion</h2>
+            {% block comments %}
+                <p>Once you are done, you will be able to view everyone's responses.</p>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+{%endblock%}
+
+
+{% block js %}
+    {{ block.super }}
+    <script src="http://maps.google.com/maps/api/js?sensor=false&libraries=places" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/mapit.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        jQuery(function($) {
+            $(".google-map").mapit({{map|safe|escape}});
+            $(".remove-map").remove();
+        });
+    </script>
+{% endblock %}

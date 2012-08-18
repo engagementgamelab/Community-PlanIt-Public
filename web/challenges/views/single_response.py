@@ -23,7 +23,7 @@ class FetchAnswersMixin(object):
 
 class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
     model = SingleResponseChallenge
-    template_name = 'challenges/single_response_overview.html'
+    template_name = 'challenges/single_overview.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
     context_object_name = 'challenge'
@@ -81,7 +81,7 @@ class SingleResponseCreateView(LoginRequiredMixin,
     form_class = SingleResponseForm
     model = None
     context_object_name = 'single_response_answer'
-    template_name = "challenges/single_base.html"
+    template_name = "challenges/single.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
