@@ -1,6 +1,7 @@
 {% load i18n %}
 
 {% with comment_heading=comment_heading|default:"Comments" %}
+	{% if comments %}<a href="#" class="btn btn-primary btn-small">View My Response</a>{% endif %}
 	{% for comment in comments.all reversed %}
 		<ul class="comment_list">
 		    {% include "comments/comment.html" %}
