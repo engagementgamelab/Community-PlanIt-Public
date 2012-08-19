@@ -148,6 +148,28 @@ html, body {
             }
         }
     }
+
+    #nav-game-logo {
+        position: absolute;
+        top: -160px;
+        left: 50%;
+        margin-left: -100px;
+        background: @light-light-gray;
+        width: 200px;
+        height: 200px;
+        border: 2px solid white;
+        .drop-shadow(0px, 0px, 2px, 0, rgba(0, 0, 0, 0.2));
+        .border-radius(100px);
+
+        img {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            margin-left: -25px;
+            width: 50px;
+            height: 33px;
+        }
+    }
 }
 
 /* Footer */
@@ -426,7 +448,7 @@ html, body {
     }
 
     .carousel-clip {
-        border: 1px dashed #ccc;
+        // border: 1px dashed #ccc;
         .carousel-slide{
             width: 10000%;
             margin-left: -20px;

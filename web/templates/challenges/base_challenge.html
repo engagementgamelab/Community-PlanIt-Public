@@ -10,7 +10,7 @@
                 <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
 
                 <h1>{{ challenge.name|safe }}</h1>
-                <span class="badge">{{ challenge.get_points }} points</span>
+                <span><i class="glyphicon-credit"></i> {{ challenge.mission.challenge_coin_value }}</span>
                 
                 {% block content_challenge %}
                 {% endblock %}

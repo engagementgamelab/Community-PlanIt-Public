@@ -11,14 +11,25 @@
             $('#nav-site-toggle').click(function(e){
                 e.preventDefault();
                 var $nav_site = $('#nav-site-container');
+                var $nav_game_logo = $('#nav-game-logo');
+
                 if($nav_site.hasClass('open')){
                     $nav_site.animate({
                         'margin-top': '-90px',
+                    }, 400).toggleClass('open');
+
+                    $nav_game_logo.animate({
+                        'margin-top': '0px'
                     }, 400).toggleClass('open');
                 } else {
                     $nav_site.animate({
                         'margin-top': '0px',
                     }, 400).toggleClass('open');
+
+                    $nav_game_logo.animate({
+                        'margin-top': '-44px'
+                    }, 400).toggleClass('open');
+
                 }
             });
         });
@@ -37,5 +48,11 @@
 
         <div class="nav-game-account">{% game_nav %}</div>
     </div>
+</div>
+{% endblock %}
+
+{% block nav_game_logo %}
+<div id="nav-game-logo">
+    <a><img src="{{ STATIC_URL }}img/logo_beta.png" width="75" height="50" alt="Community PlanIt logo" /></a>
 </div>
 {% endblock %}
