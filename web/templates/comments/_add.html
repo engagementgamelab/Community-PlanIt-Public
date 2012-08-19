@@ -1,0 +1,27 @@
+{% load avatar i18n %}
+<div class="comment-add">
+	{% if activity.type.displayType != 'Open Ended' and activity.type.displayType != 'Empathy' %}
+	    {{ comment_form.message.errors }}
+	    <textarea id="message_area" name="message" class="comment_message" cols="80" rows="6"></textarea>
+	    <div class="comment-response-counter counter">(<span class="count">1000</span> characters left)</div>
+	{% endif %}
+
+	{# ATTACHMENT A PICTURE OR VIDEO #}
+	<div class="comment-add-attachments">
+	    <a class="attachments-instructions">{% trans "Add a photo or video to your response." %}</a>
+	    <div class="attachments-container">
+	        <div class="add-comment-video form">
+	        	<i class="icon-film"></i>
+	            <input name="video-url" type="text" maxlength="255" placeholder="Paste a Youtube or Vimeo URL here." />
+	        </div> 
+	        <div class="add-comment-picture form">
+	        	<i class="icon-picture"></i>
+	            <input name="picture" type="file">
+	        </div>
+	    </div>
+	</div>
+	<div class="comment-add-submit-container">
+		{% avatar request.user "28x28" %}
+		<input type="submit" id="id_activity-btn-submit" class="btn btn-primary" value="Submit" />
+	</div>
+</div>

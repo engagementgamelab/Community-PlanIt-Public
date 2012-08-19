@@ -1,7 +1,5 @@
 {% extends "challenges/single.html" %}
 {% load gmap i18n avatar %}
-{% block title %}{{challenge.name}} | Single Response Overview{% endblock %}
-
 
 {% block response %}
     {% if challenge.is_trivia and is_completed %}
@@ -31,4 +29,8 @@
             </div>
         {% endif %}
     {% endif %}
+{% endblock %}
+
+{% block comments %}
+    {% include 'comments/comments.html' %}
 {% endblock %}

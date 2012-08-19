@@ -1,49 +1,28 @@
-{% extends "challenges/base.html" %}
+{% extends "challenges/base_challenge.html" %}
 {% load i18n avatar %}
-{% block title %}{{ block.super }} | Open Response{% endblock %}
 
-{% block content %}
-{{ block.super }}
+{% block content_challenge %}
+    <div class="row-fluid">
+        <div class="span9">
+            <p class="bio">{{challenge.bio}}</p>
+            <div>{{ challenge.question|safe }}</div>
 
-<div id="challenges">
-    <div class="wrapper box-shadow-container">
-        <div class="challenge">
-            <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
+            {% block response %}
+                <div class="response">
+                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="form" value="open_response">
 
-            <h1>{{ challenge.name|safe }}</h1>
-            <h2>{{ challenge.get_points }} points</h2>
-            
-            <div class="row-fluid">
-                <div class="span9">
-                    <div>{{ challenge.question|safe }}</div>
+                        {{ errors.response }}
+                        {{ form.response }}
+                        {% include 'comments/_add.html' %}
 
-                    {% block response %}
-                    <div class="response">
-                        <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="form" value="single_response">
-                            {{ errors.response }}
-                            {{ form.response }}
-                            
-                            <div class="response-comment">{% include "comments/duplicate.html" %}</div>
-                            <div class="response-submit">
-                                {% avatar request.user "28x28" %}
-                                <input type="submit" id="id_activity-btn-submit" class="btn btn-primary" value="Submit" />
-                            </div>
-                        </form>
-                    </div>
-                    {% endblock %}
+                    </form>
                 </div>
-                <div class="span3 well">
-                        <h3>Resources</h3>
-                </div>
-            </div>
-
-            <h2>Discussion</h2>
-            {% block comments %}
-            <p>Once you are done, you will be able to view everyone's responses.</p>
             {% endblock %}
         </div>
+        <div class="span3">
+            {% include 'challenges/_resources.html' %}
+        </div>
     </div>
-</div>
-{%endblock%}
+{% endblock %}

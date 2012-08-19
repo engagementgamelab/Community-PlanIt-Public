@@ -1,42 +1,28 @@
-{% extends "challenges/base.html" %}
-{% load i18n %}
-{% block title %}{{ block.super }} | Empathy Response{% endblock %}
+{% extends "challenges/base_challenge.html" %}
+{% load i18n avatar %}
 
-{% block content %}
-<div class="wrapper challenge challenge-empathy">
-    
-    <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
-    
-    <h1>{{challenge.name}}<span class="points">{{ challenge.get_points }}</span></h1>
+{% block content_challenge %}
+    <div class="row-fluid">
+        <div class="span9">
+            <p class="bio">{{challenge.bio}}</p>
+            <div>{{ challenge.question|safe }}</div>
 
-    
-    <form id="id_activity-form" enctype="multipart/form-data" action="" method="post">
-        <div class="row">
-            {% csrf_token %}
-            <input type="hidden" name="form" value="empathy">
-            <div class="span3">
-                {% if challenge.avatar %}<img class="left avatar" src="{{ MEDIA_URL }}/{{challenge.avatar}}" width="128" height="128">{% endif %}
-            </div>
-            <div class="span9">
-                <div class="activity-question">
-                    {# include "player_activities/attachments.html" #}
-                    <p class="bio">{{challenge.bio}}</p>
-                    <p class="question">{{challenge.question|safe}}</p>
+            {% block response %}
+                <div class="response">
+                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="form" value="empathy">
+
+                        {{ errors.response }}
+                        {{ form.response }}
+                        {% include 'comments/_add.html' %}
+
+                    </form>
                 </div>
-                {% block response %}
-                <div class="activity-response">
-                    {{ errors.response }}
-                    {{ form.response }}
-                    <div class="comment-response-counter counter">(<span class="count">1000</span> characters left)</div>
-
-
-                </div>
-
-                {% endblock %}
-            </div>
+            {% endblock %}
         </div>
-        <p>Once you are done, you will be able to view everyone's responses.</p>
+        <div class="span3">
+            {% include 'challenges/_resources.html' %}
         </div>
-    </form>
-</div>
+    </div>
 {% endblock %}

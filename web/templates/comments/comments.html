@@ -1,11 +1,11 @@
 {% load i18n %}
-{% with comment_heading=comment_heading|default:"Comments" %}
 
-<ul class="comment_list">
-    {% for comment in comments.all reversed %}
-        {% include "comments/comment.html" %}
-    {% empty %}
-        <div id="no-comments-yet">There are no comments yet.</div>
-    {% endfor %}
-</ul>
+{% with comment_heading=comment_heading|default:"Comments" %}
+	{% for comment in comments.all reversed %}
+		<ul class="comment_list">
+		    {% include "comments/comment.html" %}
+		</ul>
+		{% empty %}
+	    <div>There are no comments yet.</div>
+	{% endfor %}
 {% endwith %}

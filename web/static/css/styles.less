@@ -3,6 +3,8 @@
 
 @blue: rgb(0, 136, 204);
 @light-gray: #ddd;
+@light-light-gray: #f3f3f3;
+
 /* Structure */
 html, body {
     background: #fff;
@@ -379,6 +381,22 @@ html, body {
             text-align: right;
         }
     }
+
+    .challenge-prev {
+        position: absolute;
+        width: 300px;
+        margin: 0px;
+        top: 0;
+        left: -300px;
+    }
+
+    .challenge-next {
+        position: absolute;
+        width: 300px;
+        margin: 0px;
+        top: 0;
+        right: -300px;
+    }
 }
 
 .carousel {
@@ -437,14 +455,25 @@ html, body {
 }
 
 
-.response {
+.comment-add {
     position: relative;
-    padding: 20px;
-    border: 1px solid @light-gray;
     margin-bottom: 40px;
+    padding: 20px;
+    background: @light-light-gray;
     .border-radius;
-    .clearfix;
-    .response-submit {
+
+    &:after {
+        content:'';
+        position: absolute;
+        width: 0; height: 0;
+        bottom: -20px;
+        right: 108px;
+        border: 10px solid transparent;
+        border-right-color: @light-light-gray;
+        border-top-color: @light-light-gray;
+    }
+
+    .comment-add-submit-container {
         position: absolute;
         bottom: -40px;
         right: 0px;

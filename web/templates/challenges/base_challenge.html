@@ -1,0 +1,27 @@
+{% extends "challenges/base.html" %}
+{% load i18n avatar %}
+{% block title %}{{ challenge.get_challenge_type_display }}{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+    <div id="challenges">
+        <div class="wrapper box-shadow-container">
+            <div class="challenge">
+                <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
+
+                <h1>{{ challenge.name|safe }}</h1>
+                <h2>{{ challenge.get_points }} points</h2>
+                
+                {% block content_challenge %}
+                {% endblock %}
+
+                <h2>Discussion</h2>
+                {% block comments %}
+                    <p>Once you are done, you will be able to view everyone's responses.</p>
+                {% endblock %}
+            </div>
+            <div class="challenge challenge-prev"></div>
+            <div class="challenge challenge-next"></div>
+        </div>
+    </div>
+{%endblock%}

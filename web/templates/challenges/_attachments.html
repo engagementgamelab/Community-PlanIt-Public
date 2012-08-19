@@ -2,8 +2,6 @@
 
 {% for attachment in activity.attachment.all %}
     <div class="attachments attachments-type_{{ attachment.get_att_type_display }}">
-        {# TODO: DISABLED FOR TESTING #}
-        {# {% if attachment.is_valid %} #}
             <div>
                 {% if attachment.get_att_type_display == 'Video' %}
                     {% embed_video attachment.url %}
@@ -11,8 +9,5 @@
                     <a class="thumbnail" href="{{ attachment.file.url }}"><img src="{{ attachment.file.url }}"/></a>
                 {% endif %}
             </div>
-        {# {% else %} #}
-            {# <div class="notice">This content is currently unavailable.</div> #}
-        {# {% endif %} #}
     </div>
 {% endfor %}
