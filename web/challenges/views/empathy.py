@@ -19,7 +19,6 @@ class FetchAnswersMixin(object):
         print '1) %s get_ctx' % self.__class__.__name__
         return ctx
 
-
 class EmpathyDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
     model = EmpathyChallenge
     template_name = 'challenges/empathy_overview.html'
@@ -34,6 +33,7 @@ class EmpathyDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
                 {
                     #'activity' : kwargs['activity'],
                     'is_completed': True,
+                    'mission': self.object.mission,
                 }
         )
         print ctx
@@ -98,6 +98,7 @@ class EmpathyCreateView(LoginRequiredMixin,
         context_data.update(
                 {
                     'challenge': self.challenge,
+                    'mission': self.challenge.mission,
                 }
         )
         print '%s get_ctx' % self.__class__.__name__

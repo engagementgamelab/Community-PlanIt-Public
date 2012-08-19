@@ -34,6 +34,7 @@ class OpenEndedDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
                 {
                     #'activity' : kwargs['activity'],
                     'is_completed': True,
+                    'mission': self.object.mission,
                 }
         )
         print ctx
@@ -98,7 +99,8 @@ class OpenEndedCreateView(LoginRequiredMixin,
         context_data.update(
                 {
                     'challenge': self.challenge,
-                }
+                    'mission': self.challenge.mission,
+            }
         )
         print '%s get_ctx' % self.__class__.__name__
         return context_data

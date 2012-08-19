@@ -176,7 +176,6 @@ def _get_mc_choices(activity):
 def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
 
-
 class ChallengeListView(ListView):
     #model = Challenge
     template_name = 'challenges/all.html'

@@ -10,7 +10,7 @@
                 <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
 
                 <h1>{{ challenge.name|safe }}</h1>
-                <h2>{{ challenge.get_points }} points</h2>
+                <span class="badge">{{ challenge.get_points }} points</span>
                 
                 {% block content_challenge %}
                 {% endblock %}
@@ -20,8 +20,8 @@
                     <p>Once you are done, you will be able to view everyone's responses.</p>
                 {% endblock %}
             </div>
-            <div class="challenge challenge-prev"></div>
-            <div class="challenge challenge-next"></div>
+            <a href="{{ challenge.get_prev_challenge.play_url }}" class="challenge challenge-prev"></a>
+            <a href="{{ challenge.get_prev_challenge.play_url }}" class="challenge challenge-next"></a>
         </div>
     </div>
 {%endblock%}
