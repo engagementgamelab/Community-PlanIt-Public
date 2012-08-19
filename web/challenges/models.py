@@ -117,7 +117,7 @@ class BarrierChallenge(Challenge):
 
     def save(self, *args, **kwargs):
         if self.challenge_type is None:
-            self.challenge_type = Challenge.MULTI_RESPONSE
+            self.challenge_type = Challenge.BARRIER
         super(BarrierChallenge, self).save(*args, **kwargs)
 
 class MapChallenge(Challenge):

@@ -44,18 +44,20 @@
 
     <div class="minimap">
         {% for challenge in challenges %}
-            <div class="challenge {% if forloop.last %}challenge-final{% endif %} {% if forloop.counter|divisibleby:4 %}challenge-barrier{% endif %} {% if forloop.counter > 4 %}challenge-locked{% endif %}">
+            <div class="challenge challenge-{{ challenge.challenge_type_shortcut }}">
                 {# Examples #}
                 {% if forloop.first %}
                     <i class="icon-user"></i>
                 {% endif %}
-                {% if forloop.last %}
-                    <i class="icon-flag"></i>
-                {% elif forloop.counter|divisibleby:4 %}
-                    <i class="glyphicon-flash"></i>
-                {% elif forloop.counter > 4 %}
+                {% if challenge.is_locked %}
                     <i class="icon-lock"></i>
                 {% endif %}
+                {% ifequal challenge.challenge_type_shortcut 'final_barrier' %}
+                    <i class="icon-flag"></i>
+                {% endifequal %}
+                {% ifequal challenge.challenge_type_shortcut 'barrier' %}
+                    <i class="glyphicon-flash"></i>
+                {% endifequal %}
             </div>
         {% endfor %}
         <span class="badge">{{ mission.title }}</span>

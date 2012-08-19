@@ -106,13 +106,13 @@
                     {% comment %} Real one
                     <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge.challenge_type_shortcut }}{% endif %} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
                     {% endcomment %}
-                    <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge.challenge_type_shortcut }}{% endif %} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
+                    <div class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
 
                         <h3>{{ challenge.title }}</h3>
-                        <div>{{ challenge_type }}</div>
+                        <span class="badge">{{ challenge_type }}</span>
 
                         {% if forloop.first %}
-                            {% avatar request.user "64x64" %}
+                            <div>{% avatar request.user "64x64" %}</div>
                         {% endif %}
 
                         <div class="meta"><i class="glyphicon-credit"></i> {{ coins }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
