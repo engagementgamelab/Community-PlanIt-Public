@@ -10,6 +10,4 @@ urlpatterns = patterns('missions.views',
     url(r'^(?P<mission_id>\d+)/$', 'mission_detail_view', name='mission'),
 
     (r'^(?P<mission_id>\d+)/challenges/', include("challenges.urls", namespace='challenges', app_name='challenges')),
-
-
 )

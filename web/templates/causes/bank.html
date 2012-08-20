@@ -1,0 +1,69 @@
+{% extends 'causes/base.html' %}
+{% load i18n %}
+
+{% block body_id %}page-causes-bank{% endblock %}
+
+{% block content %}
+<div class="wrapper faux-modal">
+    <div class="close close-faux-modal"><a href="">×</a></div>
+    <div class="row">
+    	<div class="span9">
+    		<div>
+    			<h2>Causes</h2>
+    			<div>
+	    			<a class="btn btn-primary">Sort By</a>
+	    			<a class="btn btn-primary pull-right">Add</a>
+	    		</div>
+
+                <br><br>
+
+                {% for cause in causes %}
+	    		<div class="cause row-fluid">
+                    <div class="span3">
+                        <img src="http://placehold.it/164x100" alt="">
+                        <div>Coins: 10,000</div>
+                        <div>Rank: {{ forloop.counter }}</div>
+                    </div>
+                    <div class="span6">
+                        <h3><a href="{{ cause.get_game_url }}">{{ cause.message }}</a></h3>
+                        <div>
+                            <i class="glyphicon-facebook"></i>
+                            <i class="glyphicon-twitter-t"></i>
+                            Started By <a href="">Yuan Ma</a>
+                        </div>
+                        <p>{{ cause.description }}</p>
+                    </div>
+                    <div class="span3 well">
+                        <h3>Give</h3>
+                        <input type="text" class="span12" placeholder="Enter Amount" />
+                        <a class="btn btn-primary btn-small">Give</a>
+                    </div>
+	    		</div>
+                {% endfor %}
+            </div>
+        </div>
+    	<div class="span3">
+    		<div>
+    			<h2>Your Stuff</h2>
+                <div class="well">
+        			<h3>Mission Earnings</h3>
+        			
+        			Mission 1: 450<br>
+        			Mission 2: 0<br>
+
+        			Earned: 450<br>
+        			Spent: 0<br>
+
+        			Remaining: <br>
+
+        			<h3>Causes Supported</h3>
+                    <ol>
+                        <li>Yuan</li>
+                    </ol>
+                </div>
+    		</div>
+    	</div>
+    </div>
+</div>
+
+{% endblock %}

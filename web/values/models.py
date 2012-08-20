@@ -39,7 +39,15 @@ class Value(TranslatableModel):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('values:detail', [str(self.id)])
+        return self.get_public_url()
+
+    @models.permalink
+    def get_game_url(self):
+        return ('causes:detail_game', (), {'id': self.id})
+
+    @models.permalink
+    def get_public_url(self):
+        return ('causes:detail_public', (), {'id': self.id})
 
 stream_utils.register_target(Value)
 stream_utils.register_action_object(Value)
