@@ -32,7 +32,7 @@
     <div class="close close-faux-modal"><a href="{% url missions:challenges:challenges mission.pk %}">×</a></div>
     <div class="row">
         <div class="span1">
-            <a id="mission-details-prev"></a>
+            <a href="{{ mission.get_previous_mission.get_absolute_url }}" id="mission-details-prev"></a>
         </div>
         <div class="span7">
             <h1>{{ mission.title }}</h1>
@@ -62,7 +62,7 @@
                 </ul>
             </div>
         </div>
-        <div class="span1"><a id="mission-details-next"></a></div>
+        <div class="span1"><a href="{{ mission.get_next_mission.get_absolute_url }}" id="mission-details-next"></a></div>
     </div>
 </div>
 

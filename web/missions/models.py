@@ -114,6 +114,11 @@ class Mission(BaseTreeNode):
             'mission_id': self.pk
         })
 
+    def get_next_mission(self):
+        return self.get_next_sibling()
+
+    def get_previous_mission(self):
+        return self.get_previous_sibling()
 
 stream_utils.register_target(Mission)
 
