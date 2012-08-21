@@ -43,6 +43,7 @@
     <h1>{{ mission }}</h1>
 
     <div class="minimap">
+        {% if mission.get_previous_mission %}<a href="{% url missions:challenges:challenges mission.get_previous_mission.id %}" class="badge">Previous Mission</a>{% endif %}
         {% for challenge in challenges %}
             <div class="challenge challenge-{{ challenge.challenge_type_shortcut }}">
                 {# Examples #}
@@ -60,7 +61,7 @@
                 {% endifequal %}
             </div>
         {% endfor %}
-        <span class="badge">{{ mission.title }}</span>
+        {% if mission.get_next_mission %}<a href="{% url missions:challenges:challenges mission.get_next_mission.id %}" class="badge">Next Mission</a>{% endif %}
         <div class="window"></div>
     </div>
 </div>

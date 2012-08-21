@@ -40,7 +40,7 @@
 
 			<div>
 			{% with cause.comments.all as comments%}
-				{# {% include 'comments/comments.html' %} #}
+				{% include 'comments/comments.html' %}
 			{% endwith %}
 			</div>
 	    </div>
