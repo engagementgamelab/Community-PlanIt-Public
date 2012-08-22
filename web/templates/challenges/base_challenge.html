@@ -9,7 +9,7 @@
             <div class="challenge">
                 <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
 
-                <h1>{{ challenge.name|safe }}</h1>
+                <h1>{{ challenge.title|safe }}</h1>
                 <span><i class="glyphicon-credit"></i> {{ challenge.mission.challenge_coin_value }}</span>
                 
                 {% block content_challenge %}
@@ -21,13 +21,13 @@
                     <p>Once you are done, you will be able to view everyone's responses.</p>
                 {% endblock %}
 
-                {% if request.user.is_staff %}
+                {% if request.user in challenge.mission.instance.curators.all %}
                     <a href="{{ challenge.overview_url }}" class="btn btn-inverse">Overview</a>
                 {% endif %}
                 
             </div>
-            <a href="{{ challenge.get_prev_challenge.play_url }}" class="challenge challenge-prev"></a>
-            <a href="{{ challenge.get_prev_challenge.play_url }}" class="challenge challenge-next"></a>
+            <a href="{{ challenge.get_previous_challenge.play_url }}" class="challenge challenge-prev">{{ challenge.get_previous_challenge }}</a>
+            <a href="{{ challenge.get_next_challenge.play_url }}" class="challenge challenge-next">{{ challenge.get_next_challenge }}</a>
         </div>
     </div>
 {%endblock%}
