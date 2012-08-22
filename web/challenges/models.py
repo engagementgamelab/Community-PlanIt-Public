@@ -96,6 +96,11 @@ class Challenge(BaseTreeNode):
         #return len(all_completed)
         return 0
 
+    def get_previous_challenge(self):
+        return self.get_previous_sibling()
+
+    def get_next_challenge(self):
+        return self.get_next_sibling()
 
 class SingleResponseChallenge(Challenge):
 

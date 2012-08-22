@@ -1,67 +1,18 @@
 {% extends "challenges/map.html" %}
-{% load gmap attachment_tags i18n avatar %}
+{% load gmap i18n avatar %}
 {% block title %}{{ activity.name }} | Map Response Overview{% endblock %}
 
-{% block game_content %}
-<div class="wrapper challenge challengetype-map">
-    <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
-
-    
-    {% include "challenges/official_responses.html" %}
-    <h1>{{ activity.name }}<span class="points">{{ activity.get_points }}</span></h1>
-    {% if activity.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile activity.creationUser.id %}">{% avatar activity.creationUser %}</a> created by <a href="{% url accounts:player_profile activity.creationUser.id %}">{{ activity.creationUser.get_profile.screen_name }}</a></div>{% endif %}
-    
-    <div class="column-threequarter">
-        
-        <div class="activity-question">
-            {% include "challenges/attachments.html" %}
-            <div>{{ activity.question|safe }}</div>
-            <br class="clearfix" />
-        </div>
+{% block response %}
         
         <input type="hidden" id="dragable" name="dragable" value="false">
         {% for x, lat, lon, message, player in init_coords %}
         <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}" message="{{message}}" player="{{player}}"/>
         {% endfor %}
-        <br />
-        
-        <div id="map" class="google-map" data-type="Point" data-state="overview"></div>
-        
-        {%if not activity.mission.is_expired %}
-            <div class="activity-response-submit">
-                <a class="btn-blue" href="{% url activities:map-replay activity.id %}">{% trans 'Replay' %}</a>
-            </div>
-        {% endif %}
-    
-    </div>
-    
-    <br class="clearfix">
-
-    {% if is_completed or activity.is_past %}        
-        <h2>{% trans "Responses" %}</h2>
-        <div class="comments embedded">
-        {% include 'challenges/_corner_stamp.html' %}
-        {% for answer in answers %}   
-            {% with instance=activity.mission.instance comment_heading=answer.answerUser.get_profile.screen_name comments=answer.comments %}
-                {% for comment in comments.all %}
-                    {% with extra_message=answer.selected.value %}
-                        {% include "comments/comment.html" %}
-                    {% endwith %}
-                {% empty %}
-                    <div class="comment">{% trans "There are no comments for this activity yet." %}</div>
-                {% endfor %}
-            {% endwith %}
-        {% endfor %}
-        </div>
-    {% else %}    
-        <br />
-        <h3>{% trans "Complete the activity to see everyone's responses" %}</h3>
-        <a href="{{ activity.get_activity_url }}" class="btn-blue">Play this Challenge</a>
-    {% endif %}
-</div>
-
 {% endblock %}
 
+{% block comments %}
+    {% include 'comments/comments.html' %}
+{% endblock %}
 
 {% block js %}
     {{ block.super }}

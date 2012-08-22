@@ -1,7 +1,7 @@
 {% extends "challenges/base_challenge.html" %}
 {% load i18n avatar gmap %}
 
-{% block content_challenge %}
+{% block challenge_content %}
     <div class="row-fluid">
         <div class="span9">
             <div>{{ challenge.question|safe }}</div>
@@ -27,8 +27,12 @@
         <div class="span3">
             {% include 'challenges/_resources.html' %}
         </div>
+
+
     </div>
 {% endblock %}
+
+
 
 
 {% block js %}

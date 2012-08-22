@@ -1,62 +1,12 @@
 {% extends "challenges/empathy.html" %}
 {% load gmap i18n %}
-{# attachment_tags #}
 {% block title %}{{ challenge.name }} | Empathy Response Overview{% endblock %}
 
-{% block content %}
-<div class="wrapper challenge challenge-empathy">
-    <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
+{% block response %}
     
-    <div class="question">    
-        <h1>{{challenge.name}}<span class="points">{{ challenge.get_points }}</span></h1>
-        <div>
-            {% if challenge.avatar %}<img class="left avatar" src="{{ MEDIA_URL }}/{{challenge.avatar}}" width="128" height="128">{% endif %}
-        </div>
-        
-        <div>
-            <div>
-                {# include "player_activities/attachments.html" #}
-                <p class="bio">{{ challenge.bio }}</p>
-                <p class="question">{{challenge.question|safe}}</p>
-                <br class="clearfix" />
-            </div>
-        </div>
-        
-        <br class="clearfix" />
-        
-        {% if not challenge.mission.is_expired and myComment %}
-        <div class="activity-response">
-            {{ myComment.message }}
-        </div>
-        {% endif %}
-        
-    </div>
+{% endblock %}
 
-    <br class="clearfix">
-    
-    {% if is_completed or challenge.is_past %}
-        {% if answers %}
-        <h2>{% trans "Responses" %}</h2>
-        <div class="comments embedded"> 
-            {% include 'challenges/_corner_stamp.html' %}
-            {% for answer in answers %}
-                {% with instance=challenge.mission.instance %}
-                    {% for comment in answer.comments.select_related.all reversed %}
-                        {% with extra_message=answer.selected.value %}
-                            {% include "comments/comment.html" %}
-                        {% endwith %}
-                    {% endfor %}
-                {% endwith %}
-            {% endfor %}
-        </div>
-        {% endif %}
-    {% else %}
-        <br />
-        <h3>{% trans "Complete the activity to see everyone's responses" %}</h3>
-        <a href="{{ challenge.play_url }}" class="btn-blue">Play this Challenge</a>
-    {% endif %}
-    
-</div>
 
-    
+{% block comments %}
+    {% include 'comments/comments.html' %}
 {% endblock %}

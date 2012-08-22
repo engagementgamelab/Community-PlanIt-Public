@@ -5,7 +5,7 @@
     <div class="row-fluid">
         <div class="span9">
             <p class="bio">{{challenge.bio_text}}</p>
-            <div>{{ challenge.question|safe }}</div>
+            <p>{{ challenge.question|safe }}</p>
 
             {% block response %}
                 <div class="response">
