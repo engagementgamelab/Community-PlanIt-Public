@@ -54,8 +54,8 @@ class MultiResponseForm(forms.ModelForm):
         self.fields['selected'] = forms.ModelMultipleChoiceField(
                     widget=CheckboxSelectMultiple,
                     required=True,
-                    queryset=AnswerChocie.objects.\
-                            filter(activity=challenge).distinct()
+                    queryset=AnswerChoice.objects.\
+                            filter(challenge=challenge).distinct()
         )
 
     class Meta:
@@ -67,7 +67,7 @@ class RedirectToChallengeOverviewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         if AnswerWithChoices.objects.\
-                filter(user=request.user).\
+                filter(user=request.user, challenge=self.challenge).\
                 exists():
             return redirect(self.challenge.overview_url)
 

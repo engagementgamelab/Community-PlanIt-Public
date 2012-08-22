@@ -2,72 +2,21 @@
 {% load gmap i18n avatar %}
 {% block title %}{{challenge.name}} | Multi Response Overview{% endblock %}
 
-{% block game_content %}
-<div class="wrapper challenge challenge-multi">
-    <div>
-
-        <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
-
-        
-        <h1>{{ challenge.name|safe }}<span class="points">{{ challenge.get_points }}</span></h1>
-        {% comment %}
-        {% if challenge.is_player_submitted %}<div id="created-by"><a href="{% url accounts:player_profile challenge.user.id %}">{% avatar challenge.user %}</a> created by <a href="{% url accounts:player_profile challenge.user.id %}">{{ challenge.user.get_profile.screen_name }}</a></div>{% endif %}
-        {% endcomment %}
-
-        <div class="column-threequarter">
-        
-            <div class="activity-question">
-                {# include "challenges/attachments.html" #}
-                <div>{{ challenge.question|safe }}</div>
-                <br class="clearfix" />
-            </div>
-        
-        
-            {% if is_completed or challenge.is_past %}
-                {# RESPONSE SUMMARY #}
-                <div id="activity-response-summary">
-                    {% for choice in choices %}
-                        <div class="activity-response-summary-choice {% if choice.value in my_answers %}my-choice{% endif %}">
-                            {{ choice }}
-                            <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.multichoice_answers.count }}'>
-                        </div>
-
-                        </div>
-                    {% endfor %}
+{% block response %}        
+    {% if is_completed or challenge.is_past %}
+        <div id="activity-response-summary">
+            <h2>Response Summary</h2>
+            {% for choice in choices %}
+                <div class="activity-response-summary-choice {% if choice.value in my_answers %}my-choice{% endif %}">
+                    {{ choice }}
+                    <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.multichoice_answers.count }}'>
                 </div>
-            {% endif %}
-            
+                </div>
+            {% endfor %}
         </div>
-        <br class="clearfix"/>
-        
-        {% if is_completed  or challenge.is_past %}
-            {% if all_answers %}                
-                <h2>{% trans "Responses" %}</h2>
-                <div class="comments embedded">
-                {% include 'challenges/_corner_stamp.html' %}
-                {% with instance=challenge.mission.instance %}
-                    {% for user, answers, comments in all_answers %}
-                        {% if comments %}
-                            {% with extra_message=answers %}
-                                {% for comment in comments %}
-                                    {% include "comments/comment.html" %}
-                                {% empty %}
-                                    <div class="comment">{% trans "There are no comments for this challenge yet." %}</div>
-                                {% endfor %}
-                            {% endwith %}
-                        {% endif %}
-                    {% endfor %}
-                {% endwith %}
-                </div>
-            {% else %}
-                <div id="no-comments-yet">There are no comments yet.</div>
-            {% endif %}
-        {% else %}
-            <br />
-            <h3>{% trans "Complete the challenge to see everyone's responses" %}</h3>
-            <a href="{{ challenge.challenge_url }}" class="btn-blue">Play this Challenge</a>
-        {% endif %}
-    </div>
-</div>
+    {% endif %}            
 {% endblock %}
 
+{% block comments %}
+    {% include 'comments/comments.html' %}
+{% endblock %}

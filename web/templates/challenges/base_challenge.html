@@ -15,10 +15,16 @@
                 {% block content_challenge %}
                 {% endblock %}
 
+
                 <h2>Discussion</h2>
                 {% block comments %}
                     <p>Once you are done, you will be able to view everyone's responses.</p>
                 {% endblock %}
+
+                {% if request.user.is_staff %}
+                    <a href="{{ challenge.overview_url }}" class="btn btn-inverse">Overview</a>
+                {% endif %}
+                
             </div>
             <a href="{{ challenge.get_prev_challenge.play_url }}" class="challenge challenge-prev"></a>
             <a href="{{ challenge.get_prev_challenge.play_url }}" class="challenge challenge-next"></a>
