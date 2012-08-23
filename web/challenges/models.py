@@ -142,6 +142,14 @@ class MapChallenge(Challenge):
         super(MapChallenge, self).save(*args, **kwargs)
 
 
+class OpenEndedChallenge(Challenge):
+
+    def save(self, *args, **kwargs):
+        if self.challenge_type is None:
+            self.challenge_type = Challenge.OPEN_ENDED
+        super(OpenEndedChallenge, self).save(*args, **kwargs)
+
+
 class EmpathyChallenge(Challenge):
 
     def determine_path(instance, filename):
@@ -246,7 +254,7 @@ class AnswerEmpathy(Answer):
 
 class AnswerOpenEnded(Answer):
     value = models.TextField(verbose_name="Answer Open Ended", max_length=1000, default='')
-    challenge = models.ForeignKey(Challenge, related_name='openended_answers')
+    challenge = models.ForeignKey(OpenEndedChallenge, related_name='openended_answers')
 
     #objects = AnswerOpenEndedManager()
 

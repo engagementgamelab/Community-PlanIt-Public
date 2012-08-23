@@ -51,6 +51,8 @@ class MultiResponseChallengeAdmin(ChallengeAdminBase):
 class BarrierChallengeAdmin(ChallengeAdminBase):
     inlines = [AnswerChoiceInline,]
 
+class OpenEndedChallengeAdmin(ChallengeAdminBase):
+    pass
 
 class MapChallengeAdmin(ChallengeAdminBase):
     pass
@@ -85,6 +87,7 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
         (challenge_models.MultiResponseChallenge, MultiResponseChallengeAdmin),
         (challenge_models.MapChallenge, MapChallengeAdmin),  # custom admin allows custom edit/delete view.
         (challenge_models.EmpathyChallenge, EmpathyChallengeAdmin),
+        (challenge_models.OpenEndedChallenge, OpenEndedChallengeAdmin),
         (challenge_models.BarrierChallenge, BarrierChallengeAdmin),
     )
 
