@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
+from attachments.admin import AttachmentInlines
 
 from web.instances.models import *
+#from web.attachment_types.models import *
 
 from . import models as game_models
 from web.missions import models as mission_models
@@ -30,6 +32,7 @@ class AnswerChoiceInline(admin.StackedInline):
 class ChallengeAdminBase(BaseChildAdmin):
     readonly_fields = ('is_player_submitted', 'created_by')
     exclude = ('challenge_type', 'mission',)
+    inlines = [AttachmentInlines,]
 
     def save_model(self, request, obj, form, change):
         #TODO should only save these fields
@@ -41,15 +44,15 @@ class ChallengeAdminBase(BaseChildAdmin):
 
 
 class SingleResponseChallengeAdmin(ChallengeAdminBase):
-    inlines = [AnswerChoiceInline,]
+    pass
 
 
 class MultiResponseChallengeAdmin(ChallengeAdminBase):
-    inlines = [AnswerChoiceInline,]
+    pass
 
 
 class BarrierChallengeAdmin(ChallengeAdminBase):
-    inlines = [AnswerChoiceInline,]
+    pass
 
 class OpenEndedChallengeAdmin(ChallengeAdminBase):
     pass

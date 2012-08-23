@@ -1,5 +1,5 @@
 from django.contrib import admin
-from attachment_types.models import VideoAttachmentInlines, AttachmentWithThumbnailInlines
+from web.attachment_types.models import VideoAttachmentInlines, AttachmentWithThumbnailInlines
 
 from web.comments.models import *
 

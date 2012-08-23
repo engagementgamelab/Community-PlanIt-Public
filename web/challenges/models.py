@@ -112,6 +112,8 @@ class SingleResponseChallenge(Challenge):
 
 class MultiResponseChallenge(Challenge):
 
+    require_comment = models.BooleanField(default=False, verbose_name="Require players to submit a comment")
+
     def save(self, *args, **kwargs):
         if self.challenge_type is None:
             self.challenge_type = Challenge.MULTI_RESPONSE
