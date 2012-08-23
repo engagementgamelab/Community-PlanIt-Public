@@ -1,0 +1,20 @@
+/* TEAM */
+
+    Philip Kalinsky 
+    Developer
+    philip.kalinsky at eloquentbits.com
+    @pkalinsky
+    Brooklyn, NY
+
+    Yuan Ma
+    Developer
+    yuan @ yuanyma.com
+    @yuanyma
+    New York, NY
+
+/* TECHNOLOGY COLOPHON */
+
+    HTML5, CSS3
+    Twitter Bootstrap
+    less, jQuery, Modernizr
+    Python / Django, Postgres, Ubuntu

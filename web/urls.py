@@ -33,6 +33,7 @@ urlpatterns = patterns('web',
     url(r'^bring-cpi-to-you/thanks/', direct_to_template, { 'template': 'static/bringcpi_thanks.html', 'extra_context': {} }, name='bringcpi-thanks'),
     url(r'^404$', direct_to_template, { 'template': '404.html', 'extra_context': {}}, name='404'),
     url(r'^500$', direct_to_template, { 'template': '500.html', 'extra_context': {}}, name='404'),
+    url(r'^humans.txt$', direct_to_template, { 'template': 'humans.txt', 'extra_context': {}}, name='humans'),
 
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),
     #(r'^resource-center/', include('attachments.urls', namespace='attachments', app_name='attachments')),
