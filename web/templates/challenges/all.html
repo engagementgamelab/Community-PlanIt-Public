@@ -111,7 +111,7 @@
                             <div>{% avatar request.user "64x64" %}</div>
                         {% endif %}
 
-                        <div class="meta"><i class="glyphicon-credit"></i> {{ coins }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
+                        <div class="meta"><i class="glyphicon-credit"></i> {% ifequal challenge.challenge_type_shortcut 'final-barrier' %}?{% else %}{{ coins }}{% endifequal %} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
                         <div class="action"><a href="{{ challenge.play_url }}" class="btn btn-primary">{% if challenge.is_locked %}Locked{% else %}View Challenge{% endif %}</a></div>
                     </div>
                 {% endif %}

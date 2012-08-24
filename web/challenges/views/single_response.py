@@ -82,7 +82,7 @@ class SingleResponseCreateView(LoginRequiredMixin,
     form_class = SingleResponseForm
     model = None
     context_object_name = 'single_response_answer'
-    template_name = "challenges/barrier.html"
+    template_name = "challenges/single.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])

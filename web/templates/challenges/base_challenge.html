@@ -26,8 +26,12 @@
                 {% endif %}
                 
             </div>
-            <a href="{{ challenge.get_previous_challenge.play_url }}" class="challenge challenge-prev">{{ challenge.get_previous_challenge }}</a>
-            <a href="{{ challenge.get_next_challenge.play_url }}" class="challenge challenge-next">{{ challenge.get_next_challenge }}</a>
+            <a href="{{ challenge.get_previous_challenge.play_url }}" class="challenge challenge-prev">
+                <h3>{{ challenge.get_previous_challenge.title }}</h3>
+            </a>
+            <a href="{{ challenge.get_next_challenge.play_url }}" class="challenge challenge-next">
+                <h3>{{ challenge.get_next_challenge.title }}</h3>
+            </a>
         </div>
     </div>
 {%endblock%}
