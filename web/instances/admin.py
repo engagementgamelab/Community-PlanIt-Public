@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
-from attachments.admin import AttachmentInlines
+from attachments.models import Attachment
 
 from web.instances.models import *
-#from web.attachment_types.models import *
+from web.attachment_types.models import *
 
 from . import models as game_models
 from web.missions import models as mission_models
@@ -32,7 +32,6 @@ class AnswerChoiceInline(admin.StackedInline):
 class ChallengeAdminBase(BaseChildAdmin):
     readonly_fields = ('is_player_submitted', 'created_by')
     exclude = ('challenge_type', 'mission',)
-    inlines = [AttachmentInlines,]
 
     def save_model(self, request, obj, form, change):
         #TODO should only save these fields
@@ -42,27 +41,38 @@ class ChallengeAdminBase(BaseChildAdmin):
             obj.created_by = request.user
             obj.save()
 
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for instance in instances:
+            if isinstance(instance, Attachment):
+                if isinstance(instance, AttachmentVideo):
+                    instance.attachment_file = ''
+
+                instance.creator = request.user
+                instance.save()
+
+
 
 class SingleResponseChallengeAdmin(ChallengeAdminBase):
-    pass
+    inlines = [CPIAttachmentInlines, VideoAttachmentInlines]
 
 
 class MultiResponseChallengeAdmin(ChallengeAdminBase):
-    pass
+    inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
 
 
 class BarrierChallengeAdmin(ChallengeAdminBase):
-    pass
+    inlines = [CPIAttachmentInlines, VideoAttachmentInlines, ]
 
 class OpenEndedChallengeAdmin(ChallengeAdminBase):
-    pass
+    inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
 
 class MapChallengeAdmin(ChallengeAdminBase):
-    pass
+    inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
 
 
 class EmpathyChallengeAdmin(ChallengeAdminBase):
-    pass
+    inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
 
 
 class MissionAdmin(BaseChildAdmin):
@@ -78,6 +88,7 @@ class MissionAdmin(BaseChildAdmin):
 
 class GameAdmin(BaseChildAdmin):
     filter_horizontal = ('curators',)
+    inlines = [VideoAttachmentInlines,]
     #readonly_fields = ('start_date', 'end_date')
 
 # Create the parent admin that combines it all:

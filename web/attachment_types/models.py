@@ -1,9 +1,22 @@
-from attachments.models import Attachment
+from attachments import models as attachment_models 
+from attachments.admin import AttachmentInlines
 
 from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils.translation import ugettext as _
 
+class Attachment(attachment_models.Attachment):
+
+    class Meta:
+        proxy = True
+
+    def __unicode__(self):
+        return '%s' % (self.attachment_file.name)
+
+
+class CPIAttachmentInlines(AttachmentInlines):
+    model = Attachment
+    readonly_fields = ('creator',)
 
 class AttachmentWithThumbnail(Attachment):
 
@@ -14,6 +27,7 @@ class AttachmentWithThumbnail(Attachment):
 class AttachmentWithThumbnailInlines(generic.GenericStackedInline):
     model = AttachmentWithThumbnail
     extra = 1
+    readonly_fields = ('creator',)
 
 
 class AttachmentVideo(Attachment):
@@ -30,3 +44,5 @@ class AttachmentVideo(Attachment):
 class VideoAttachmentInlines(generic.GenericStackedInline):
     model = AttachmentVideo
     extra = 1
+    readonly_fields = ('creator',)
+    exclude = ('attachment_file',)
