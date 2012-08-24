@@ -127,6 +127,13 @@ class BarrierChallenge(Challenge):
             self.challenge_type = Challenge.BARRIER
         super(BarrierChallenge, self).save(*args, **kwargs)
 
+class FinalBarrierChallenge(Challenge):
+
+    def save(self, *args, **kwargs):
+        if self.challenge_type is None:
+            self.challenge_type = Challenge.FINAL_BARRIER
+        super(FinalBarrierChallenge, self).save(*args, **kwargs)
+
 class MapChallenge(Challenge):
 
     maxNumMarkers = models.IntegerField(default=5)

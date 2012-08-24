@@ -54,22 +54,22 @@ class ChallengeAdminBase(BaseChildAdmin):
 
 
 class SingleResponseChallengeAdmin(ChallengeAdminBase):
-    inlines = [CPIAttachmentInlines, VideoAttachmentInlines]
-
+    inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
 
 class MultiResponseChallengeAdmin(ChallengeAdminBase):
-    inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
-
+    inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
 
 class BarrierChallengeAdmin(ChallengeAdminBase):
-    inlines = [CPIAttachmentInlines, VideoAttachmentInlines, ]
+    inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
+
+class FinalBarrierChallengeAdmin(ChallengeAdminBase):
+    inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
 
 class OpenEndedChallengeAdmin(ChallengeAdminBase):
     inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
 
 class MapChallengeAdmin(ChallengeAdminBase):
     inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
-
 
 class EmpathyChallengeAdmin(ChallengeAdminBase):
     inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
@@ -103,6 +103,7 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
         (challenge_models.EmpathyChallenge, EmpathyChallengeAdmin),
         (challenge_models.OpenEndedChallenge, OpenEndedChallengeAdmin),
         (challenge_models.BarrierChallenge, BarrierChallengeAdmin),
+        (challenge_models.FinalBarrierChallenge, FinalBarrierChallengeAdmin),
     )
 
     list_display = ('title', 'actions_column',)

@@ -21,42 +21,34 @@ class FetchAnswersMixin(object):
         return ctx
 
 
-class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
-    model = SingleResponseChallenge
-    template_name = 'challenges/single_overview.html'
-    #queryset = Instance.objects.exclude(is_disabled=True)
+class BarrierDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
+    model = BarrierChallenge
+    template_name = 'challenges/barrier_overview.html'
     pk_url_kwarg = 'challenge_id'
     context_object_name = 'challenge'
 
     def get_context_data(self, **kwargs):
-        ctx = super(SingleResponseDetailView, self).\
-                get_context_data(**kwargs)
-        ctx.update(
-                {
-                    #'challenge' : kwargs['challenge'],
-                    'is_completed': True,
-                    'mission': self.object.mission,
-                }
-        )
-        print ctx
-        print '2) %s get_ctx' % self.__class__.__name__
+        ctx = super(BarrierDetailView, self).get_context_data(**kwargs)
+        ctx.update({
+            'is_completed': True,
+            'mission': self.object.mission,
+        })
         return ctx
 
-single_response_detail_view = SingleResponseDetailView.as_view()
+barrier_detail_view = BarrierDetailView.as_view()
 
 
-class SingleResponseForm(forms.ModelForm):
+class BarrierForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         challenge = kwargs.get('initial')['challenge']
-        super(SingleResponseForm, self).__init__(*args, **kwargs)
+        super(BarrierForm, self).__init__(*args, **kwargs)
 
         self.fields['selected'] = forms.ModelChoiceField(
-                    widget=RadioSelect,
-                    required=True,
-                    empty_label=None,
-                    queryset=AnswerChoice.objects.\
-                            filter(challenge=challenge).distinct()
+            widget=RadioSelect,
+            required=True,
+            empty_label=None,
+            queryset=AnswerChoice.objects.filter(challenge=challenge).distinct()
         )
 
     class Meta:
@@ -67,28 +59,23 @@ class SingleResponseForm(forms.ModelForm):
 class RedirectToChallengeOverviewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
-        if AnswerWithChoices.objects.\
-                filter(user=request.user, challenge=self.challenge).\
-                exists():
+        if AnswerWithChoices.objects.filter(user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
 
-        return super(RedirectToChallengeOverviewMixin, self).dispatch(request,
-            *args, **kwargs)
+        return super(RedirectToChallengeOverviewMixin, self).dispatch(request, *args, **kwargs)
 
 
-class SingleResponseCreateView(LoginRequiredMixin, 
-                               RedirectToChallengeOverviewMixin, 
-                               CreateView):
-    form_class = SingleResponseForm
+class BarrierCreateView(LoginRequiredMixin, RedirectToChallengeOverviewMixin, CreateView):
+    form_class = BarrierForm
     model = None
-    context_object_name = 'single_response_answer'
+    context_object_name = 'barrier_answer'
     template_name = "challenges/barrier.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
 
         self.initial.update({'challenge': self.challenge,})
-        return super(SingleResponseCreateView, self).dispatch(request, *args, **kwargs)
+        return super(BarrierCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -103,15 +90,11 @@ class SingleResponseCreateView(LoginRequiredMixin,
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(SingleResponseCreateView, self).\
-                get_context_data(*args, **kwargs)
-        context_data.update(
-                {
-                    'challenge': self.challenge,
-                    'mission': self.challenge.mission,
-                }
-        )
-        print '%s get_ctx' % self.__class__.__name__
+        context_data = super(BarrierCreateView, self).get_context_data(*args, **kwargs)
+        context_data.update({
+            'challenge': self.challenge,
+            'mission': self.challenge.mission,
+        })
         return context_data
 
-single_response_play_view = SingleResponseCreateView.as_view()
+barrier_play_view = BarrierCreateView.as_view()

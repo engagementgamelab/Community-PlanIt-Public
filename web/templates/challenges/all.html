@@ -102,10 +102,6 @@
                     </div>
                 {% else %}
                     {# Active Mission #}
-                    {% if challenge in my_completed %}{% endif %}
-                    {% comment %} Real one
-                    <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge.challenge_type_shortcut }}{% endif %} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
-                    {% endcomment %}
                     <div class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
 
                         <h3>{{ challenge.title }}</h3>

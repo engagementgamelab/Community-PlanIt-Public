@@ -14,6 +14,9 @@ multi_response_slug = get_display_type_by_const(Challenge.MULTI_RESPONSE)
 open_ended_slug = get_display_type_by_const(Challenge.OPEN_ENDED)
 map_slug = get_display_type_by_const(Challenge.MAP)
 empathy_slug = get_display_type_by_const(Challenge.EMPATHY)
+barrier_slug = get_display_type_by_const(Challenge.BARRIER)
+final_barrier_slug = get_display_type_by_const(Challenge.FINAL_BARRIER)
+
 
 urlpatterns = patterns('challenges.views',
     url(r'^$', 'activities.challenge_list_view', name='challenges'),
@@ -61,6 +64,25 @@ urlpatterns = patterns('challenges.views',
             "open_ended.open_ended_detail_view", 
             name="open-ended-overview",
     ),
+
+    url(r"^"+barrier_slug+"/(?P<challenge_id>\d+)/play/$",
+            "barrier.barrier_play_view", 
+            name="barrier-play",
+    ),
+    url(r"^"+barrier_slug+"/(?P<challenge_id>\d+)/overview/$",
+            "barrier.barrier_detail_view", 
+            name="barrier-overview",
+    ),
+
+    url(r"^"+final_barrier_slug+"/(?P<challenge_id>\d+)/play/$",
+            "final_barrier.final_barrier_play_view", 
+            name="final-barrier-play",
+    ),
+    url(r"^"+final_barrier_slug+"/(?P<challenge_id>\d+)/overview/$",
+            "final_barrier.final_barrier_detail_view", 
+            name="final-barrier-overview",
+    ),
+
 
     #url(r"^(?P<activity_id>\d+)/$",
     #        "activities.activity",
