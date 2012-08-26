@@ -369,6 +369,7 @@ html, body {
         margin-bottom: 10px;
         min-height: 300px;
         box-sizing: border-box;
+
         .box-shadow;
         .lifted;
 
@@ -403,8 +404,22 @@ html, body {
             text-align: right;
         }
     }
+    
+    /* Challenge Detail View */
+    #challenge {
+        #challenge-discussion {
+            margin: 75px 0px;
+            .header-discussion {
+                font-size: 2em;
+                font-family: "futura-pt", sans-serif;
+                font-weight: 700;
+                text-align: center;
+                text-transform: uppercase;
+            }
+        }
+    }
 
-    .challenge-prev {
+    #challenge-prev {
         position: absolute;
         width: 300px;
         margin: 0px;
@@ -414,7 +429,7 @@ html, body {
         color: @light-light-gray;
     }
 
-    .challenge-next {
+    #challenge-next {
         position: absolute;
         width: 300px;
         margin: 0px;
@@ -424,6 +439,7 @@ html, body {
         color: @light-light-gray;
     }
 }
+
 
 .carousel {
     width: 100%;
@@ -480,6 +496,23 @@ html, body {
     .drop-shadow;
 }
 
+.answerchoices-container {
+    ul {
+        margin: 0px;
+    }
+    li {
+        list-style: none;
+    }
+    label {
+        margin: 5px 0;
+        padding: 10px;
+        background: @light-light-gray;
+        cursor: pointer;
+        &:hover {
+            background: @light-gray;
+        }
+    }
+}
 
 .comment-add {
     position: relative;
@@ -487,6 +520,12 @@ html, body {
     padding: 20px;
     background: @light-light-gray;
     .border-radius;
+
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+        resize: vertical
+    }
 
     &:after {
         content:'';
@@ -506,7 +545,6 @@ html, body {
     }
 }
 
-
 .comment {
     background: @light-light-gray;
     padding: 20px;
@@ -515,7 +553,6 @@ html, body {
 }
 
 .thread {
-
     .thread-tail {
         margin-left: 20px;
     }

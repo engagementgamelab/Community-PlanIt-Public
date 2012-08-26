@@ -47,7 +47,8 @@
 
             /* Init */
             $('.minimap .challenge').click(function(){
-                var index = $(this).index();
+                var index = $(this).index('.minimap .challenge');
+                console.log(index);
                 goto_challenge($challenges.eq(index));
             });
 
@@ -64,7 +65,11 @@
 
 
             $slide.find('.challenge').eq(2).addClass('active');
-            goto_challenge($slide.find('.challenge').first().next());
+            if(window.location.hash){
+                goto_challenge($slide.find(window.location.hash));
+            } else {
+                goto_challenge($slide.find('.challenge').first().next());
+            }
 
         });
     </script>
@@ -102,9 +107,10 @@
                     </div>
                 {% else %}
                     {# Active Mission #}
-                    <div class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
+                    <div id="challenge-{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% if challenge.is_locked %}challenge-locked{% endif %} span4">
 
                         <h3>{{ challenge.title }}</h3>
+
                         <span class="badge">{{ challenge_type }}</span>
 
                         {% if forloop.first %}

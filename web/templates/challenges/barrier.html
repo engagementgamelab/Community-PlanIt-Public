@@ -13,7 +13,8 @@
                         {% csrf_token %}
                         <input type="hidden" name="form" value="empathy">
 
-                        {{ form.selected }}
+                        <div class="answerchoices-container">{{ form.selected }}</div>
+
                         <button class="btn btn-primary btn-large">50/50</button>
                         {% include 'comments/_add.html' %}
 

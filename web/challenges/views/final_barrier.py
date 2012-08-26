@@ -32,6 +32,7 @@ class FinalBarrierDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
         ctx.update({
             'is_completed': True,
             'mission': self.object.mission,
+            'challenges': self.challenge.mission.challenges.all(),
         })
         return ctx
 
@@ -94,6 +95,7 @@ class FinalBarrierCreateView(LoginRequiredMixin, RedirectToChallengeOverviewMixi
         context_data.update({
             'challenge': self.challenge,
             'mission': self.challenge.mission,
+            'challenges': self.challenge.mission.challenges.all(),
         })
         return context_data
 

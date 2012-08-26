@@ -48,7 +48,9 @@
                 <a href="{% url missions:challenges:challenges mission.pk %}" class="btn btn-primary btn-large">
                     {% if mission.is_active %}
                         {% trans "Resume Mission" %}
-                    {% else %}
+                    {% elif mission.is_future %}
+                        {% trans "Preview Mission" %}
+                    {% elif mission.is_past %}
                         {% trans "Review Mission" %}
                     {% endif %}
                 </a>

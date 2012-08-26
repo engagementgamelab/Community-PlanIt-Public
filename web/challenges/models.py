@@ -41,7 +41,7 @@ class Challenge(BaseTreeNode):
     )
     question = models.CharField(max_length=1000, default='')
     challenge_type = models.IntegerField(max_length=1, choices=CHALLENGE_TYPES, null=True)
-    mission = models.ForeignKey(Mission, related_name='%(app_label)s_%(class)s_related')
+    mission = models.ForeignKey(Mission, related_name='challenges')
     is_player_submitted = models.BooleanField("is player submitted?", default=False)
 
     created_by = models.ForeignKey(User, verbose_name="created by")

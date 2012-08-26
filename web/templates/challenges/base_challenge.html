@@ -6,7 +6,7 @@
     {{ block.super }}
     <div id="challenges">
         <div class="wrapper box-shadow-container">
-            <div class="challenge">
+            <div id="challenge" class="challenge">
                 <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
 
                 <h1>{{ challenge.title|safe }}</h1>
@@ -15,21 +15,17 @@
                 {% block content_challenge %}
                 {% endblock %}
 
-
-                <h2>Discussion</h2>
-                {% block comments %}
-                    <p>Once you are done, you will be able to view everyone's responses.</p>
-                {% endblock %}
-
-                {% if request.user in challenge.mission.instance.curators.all %}
-                    <a href="{{ challenge.overview_url }}" class="btn btn-inverse">Overview</a>
-                {% endif %}
-                
+                <div id="challenge-discussion">
+                    <h2 class="header-discussion">Discussion</h2>
+                    {% block comments %}
+                        <p>Once you are done, you will be able to view everyone's responses. {% if request.user in challenge.mission.instance.curators.all %}But since you are a curator for this game, you can just skip ahead to the <a href="{{ challenge.overview_url }}">Overview</a>.{% endif %}</p>
+                    {% endblock %}
+                </div>
             </div>
-            <a href="{{ challenge.get_previous_challenge.play_url }}" class="challenge challenge-prev">
+            <a id="challenge-prev" class="challenge" href="{{ challenge.get_previous_challenge.play_url }}">
                 <h3>{{ challenge.get_previous_challenge.title }}</h3>
             </a>
-            <a href="{{ challenge.get_next_challenge.play_url }}" class="challenge challenge-next">
+            <a id="challenge-next" class="challenge" href="{{ challenge.get_next_challenge.play_url }}">
                 <h3>{{ challenge.get_next_challenge.title }}</h3>
             </a>
         </div>
