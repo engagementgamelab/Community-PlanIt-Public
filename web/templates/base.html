@@ -148,8 +148,12 @@
                             </div>
                             <div class="span4">
                                 <ul id="nav-footer-right" class="nav-inline">
-                                    <li><a href="">{% trans "Register" %}</a></li>
-                                    <li><a href="">{% trans "Sign In" %}</a></li>
+                                    {% if user.is_authenticated %}
+                                        <li>You are logged in as {{user.get_profile.screen_name }} <a href="">{% trans "Sign Out" %}</a></li>
+                                    {% else %}
+                                        <li><a href="">{% trans "Register" %}</a></li>
+                                        <li><a href="">{% trans "Sign In" %}</a></li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </div>
