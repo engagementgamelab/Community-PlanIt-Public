@@ -1,42 +1,56 @@
 {% load i18n avatar%}
 
-<div class="btn-group nav-account pull-right">
-    <a class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown">
-        <i class="icon-user icon-white"></i> {{ screen_name }}
-        <b class="caret"></b>
-    </a>
-    <ul class="dropdown-menu">
-        <li>
-            <a>
-                {% avatar user "64x64" %}
-                {{ screen_name }}
-            </a>
-        </li>
-        <li>
-            <a href="">
-                {% trans "Demographics" %}
-                {# TODO: if not yet filled out #}
-                <span class="label label-warning">&nbsp;!&nbsp;</span>
-            </a>
-        </li>
-        <li><a href="{{ my_active_game_profile.get_absolute_url }}">{% trans "Account Settings" %}</a></li>
-        <li class="divider"></li>
-        <!-- Current Game -->
-        <li class="game game-active">
-            <a href="{{ my_active_game.get_absolute_url }}">{{ my_active_game.title }}</a>
-        </li>
-        <!-- Switch Games, if any -->
-        {% if my_non_active_game_profiles %}
-        {% for game_profile in my_non_active_game_profiles %}
-        <li class="game">
-            <a href="">
-                {{ game_profile.instance.title }}
-                <span class="label switch-game">{% trans "Switch" %}</span>
-            </a>
-        </li>
-        {% endfor %}
-        {% endif %}
-        <li class="divider"></li>
-        <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
-    </ul>
+<div class="nav-account pull-right">
+
+    <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            <i class="glyphicon-certificate glyphicon-white"></i> 
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <p><a>You do not have any badges yet.</a></p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="btn-group pull-right">
+        {# {{ screen_name }} #}
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            <i class="icon-cog icon-white"></i> 
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="">
+                    {% trans "Demographics" %}
+                    {# TODO: if not yet filled out #}
+                    <span class="label label-warning">&nbsp;!&nbsp;</span>
+                </a>
+            </li>
+            <li><a href="{{ my_active_game_profile.get_absolute_url }}">{% trans "Account Settings" %}</a></li>
+            <li class="divider"></li>
+            <!-- Current Game -->
+            <li class="game game-active">
+                <a href="{{ my_active_game.get_absolute_url }}">{{ my_active_game.title }}</a>
+            </li>
+            <!-- Switch Games, if any -->
+            {% if my_non_active_game_profiles %}
+            {% for game_profile in my_non_active_game_profiles %}
+            <li class="game">
+                <a href="">
+                    {{ game_profile.instance.title }}
+                    <span class="label switch-game">{% trans "Switch" %}</span>
+                </a>
+            </li>
+            {% endfor %}
+            {% endif %}
+            <li class="divider"></li>
+            <li><a href="{% url accounts:logout %}">{% trans "Sign Out" %}</a></li>
+        </ul>
+    </div>
+
+    <div class="btn-group pull-right">
+        {% avatar user "28x28" %}
+        {{ screen_name }}
+    </div>
+
 </div>
