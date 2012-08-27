@@ -121,10 +121,9 @@ class Mission(BaseTreeNode):
         return self.get_previous_sibling()
 
     @property
-    def initial_challenges(self):
+    def initial_unlocked_challenges(self):
+        """ this method is used to get the first block of unlocked challenges """
         initial_unlocked = []
-        #for challenge in map(lambda c: c.get_real_instance(), 
-        #        self.get_children()):
         for challenge in Challenge.objects.filter(parent=self):
             if challenge.challenge_type != Challenge.BARRIER:
                 initial_unlocked.append(challenge)

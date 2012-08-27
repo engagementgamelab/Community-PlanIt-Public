@@ -17,7 +17,6 @@ class FetchAnswersMixin(object):
     def get_context_data(self, *args, **kwargs):
         ctx = super(FetchAnswersMixin, self).\
                 get_context_data(*args, **kwargs)
-        print '1) %s get_ctx' % self.__class__.__name__
         return ctx
 
 
@@ -35,10 +34,8 @@ class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView
             #'challenge' : kwargs['challenge'],
             'is_completed': True,
             'mission': self.object.parent,
-            'challenges': self.object.parent.challenges.all(),
+            'challenges': self.object.parent.get_children(),
         })
-        print ctx
-        print '2) %s get_ctx' % self.__class__.__name__
         return ctx
 
 single_response_detail_view = SingleResponseDetailView.as_view()
@@ -98,7 +95,6 @@ class SingleResponseCreateView(LoginRequiredMixin,
         #return log_activity_and_redirect(self.request, self.challenge, action_msg)
 
     def form_invalid(self, form):
-        print form.errors
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, *args, **kwargs):
@@ -107,9 +103,8 @@ class SingleResponseCreateView(LoginRequiredMixin,
         context_data.update({
             'challenge': self.challenge,
             'mission': self.challenge.parent,
-            'challenges': self.challenge.parent.challenges.all(),
+            'challenges': self.challenge.parent.get_children(),
         })
-        print '%s get_ctx' % self.__class__.__name__
         return context_data
 
 single_response_play_view = SingleResponseCreateView.as_view()

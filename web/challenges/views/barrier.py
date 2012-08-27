@@ -32,7 +32,7 @@ class BarrierDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
         ctx.update({
             'is_completed': True,
             'mission': self.object.parent,
-            'challenges': self.object.parent.challenges.all(),
+            'challenges': self.object.parent.get_children(),
         })
         return ctx
 
@@ -94,7 +94,7 @@ class BarrierCreateView(LoginRequiredMixin, RedirectToChallengeOverviewMixin, Cr
         context_data = super(BarrierCreateView, self).get_context_data(*args, **kwargs)
         context_data.update({
             'challenge': self.challenge,
-            'challenges': self.challenge.parent.challenges.all(),
+            'challenges': self.challenge.parent.get_children(),
             'mission': self.challenge.parent,
         })
         return context_data

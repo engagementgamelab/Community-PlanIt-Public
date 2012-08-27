@@ -35,7 +35,7 @@ class MapDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
             #'activity' : kwargs['activity'],
             'is_completed': True,
             'mission': self.object.parent,
-            'challenges': self.object.parent.challenges.all(),
+            'challenges': self.object.parent.get_children(),
         })
         print ctx
         print '2) %s get_ctx' % self.__class__.__name__
@@ -123,9 +123,8 @@ class MapCreateView(LoginRequiredMixin,
         context_data.update({
             'challenge': self.challenge,
             'mission': self.challenge.parent,
-            'challenges': self.challenge.parent.challenges.all(),
+            'challenges': self.challenge.parent.get_children(),
         })
-        print '%s get_ctx' % self.__class__.__name__
         return context_data
 
 map_play_view = MapCreateView.as_view()

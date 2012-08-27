@@ -439,6 +439,7 @@ class UserProfileVariantsForInstance(models.Model):
     affiliation_variants = models.ManyToManyField(Affiliation, blank=True, null=True, default=None)
 
 
+
 class PlayerMissionState(models.Model):
 
     profile_per_instance = models.ForeignKey(UserProfilePerInstance, editable=False, related_name='player_mission_states')
@@ -449,25 +450,37 @@ class PlayerMissionState(models.Model):
     next_unlocked_barrier = models.OneToOneField(Challenge, blank=True, null=True, related_name='next_unlocked_barriers')
     coins = models.IntegerField(default=0)
 
+    def init_state(self):
+        self.challenges_unlocked.clear()
+        self.challenges_locked.clear()
+
+        unlocked = self.mission.initial_unlocked_challenges
+        for challenge in unlocked:
+            self.challenges_unlocked.add(challenge)
+
+        for challenge in Challenge.objects.filter(parent=self.mission).\
+                exclude(pk__in=[ch.pk for ch in unlocked]):
+            self.challenges_locked.add(challenge)
+
+
 @receiver(post_save, sender=Answer)
 def update_player_mission_state(sender, **kwargs):
     if not isinstance(kwargs.get('instance'), Answer):
         return
     answer = kwargs.get('instance')
-    if  kwargs.get('created', False) == True :
+    if  kwargs.get('created', False) == True:
         challenge = answer.challenge
         mission = challenge.parent
-        user = answer.user
         profile_per_instance  = UserProfilePerInstance.objects.get(
-                answer=mission.parent,
-                user_profile__user=user
+                instance=mission.parent,
+                user_profile__user=answer.user
         )
         player_mission_state, created = PlayerMissionState.objects.get_or_create(
                 profile_per_instance=profile_per_instance,
                 mission=mission,
         )
         if created:
-            mission.challenges_locked = Challenge.objects.filter(parent=mission)
+            player_mission_state.init_state()
 
         player_mission_state.challenges_completed.add(challenge)
         player_mission_state.coins = player_mission_state.coins + mission.challenge_coin_value
