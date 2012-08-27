@@ -19,7 +19,9 @@
                         <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
                     {% endfor %}
                     {{ form.map.errors }}
-                    <div id="map" class="google-map" data-type="Point"></div>
+
+                    <div id="map" class="google-map" data-type="Point" width="200" height="600"></div>
+
                 </div>
             </form>
             {% endblock %}

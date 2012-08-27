@@ -32,7 +32,7 @@ class BarrierDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
         ctx.update({
             'is_completed': True,
             'mission': self.object.mission,
-            'challenges': self.challenge.mission.challenges.all(),
+            'challenges': self.object.mission.challenges.all(),
         })
         return ctx
 

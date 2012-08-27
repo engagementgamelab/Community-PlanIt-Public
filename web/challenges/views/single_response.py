@@ -35,7 +35,7 @@ class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView
             #'challenge' : kwargs['challenge'],
             'is_completed': True,
             'mission': self.object.mission,
-            'challenges': self.challenge.mission.challenges.all(),
+            'challenges': self.object.mission.challenges.all(),
         })
         print ctx
         print '2) %s get_ctx' % self.__class__.__name__
