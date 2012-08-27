@@ -27,6 +27,7 @@
                 </a>
             </li>
             <li><a href="{{ my_active_game_profile.get_absolute_url }}">{% trans "Account Settings" %}</a></li>
+            <li><a href="{% url accounts:notifications %}">{% trans "Notifications" %}</a></li>
             <li class="divider"></li>
             <!-- Current Game -->
             <li class="game game-active">
@@ -50,6 +51,7 @@
 
     <div class="btn-group pull-right">
         {% avatar user "28x28" %}
+        <a href="{% url accounts:notifications %}" class="badge-notification">3</a>
         {{ screen_name }}
     </div>
 

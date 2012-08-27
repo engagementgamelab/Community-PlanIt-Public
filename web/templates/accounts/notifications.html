@@ -1,14 +1,10 @@
-{% extends "accounts/base_game.html" %}
+{% extends "base_game.html" %}
 {% load i18n cpi_tags %}
 
 {% block title %}{% trans "Notifications" %}{% endblock %}
 
-{% block body_class %}{{ block.super }} section-notifications{% endblock %}
-
-{% block game_content %}
-<div id="notifications" class="column-container">
-    <a href="{% url missions:mission mission.slug %}" class="btn-back">{% trans "Back to Mission" %}</a>
-    
+{% block content %}
+<div class="wrapper">
     <h1>{% trans "Notifications" %}</h1>
     
     {% if notifications_page.object_list %}
@@ -27,7 +23,7 @@
             {% pagenavigator notifications_page request.get_full_path %}
         {% endif %}
     {% else %}
-        You have no notifications at this time.
+        <p>You have no notifications at this time.</p>
     {% endif %}
 </div>
 {% endblock %}
