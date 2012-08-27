@@ -63,7 +63,6 @@ class MissionManager(TreeManager):
 
 class Mission(BaseTreeNode):
 
-    instance = models.ForeignKey(Instance, related_name='missions')
     description = models.TextField(blank=True)
     video = models.TextField(blank=True)
     challenge_coin_value = models.IntegerField(verbose_name="coin value for challenge", default=0)
@@ -95,7 +94,7 @@ class Mission(BaseTreeNode):
 
     @property
     def is_active(self):
-        return self == self.instance.active_mission
+        return self == self.parent.active_mission
 
     @property
     def is_expired(self):
