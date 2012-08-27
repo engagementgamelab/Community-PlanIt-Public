@@ -19,7 +19,6 @@ from django.contrib.contenttypes import generic
 
 #from web.attachments_v2.models import Attachment
 #from web.comments.models import Comment
-from web.missions.models import Mission
 from web.instances.models import BaseTreeNode
 
 import logging
@@ -41,7 +40,6 @@ class Challenge(BaseTreeNode):
     )
     question = models.CharField(max_length=1000, default='')
     challenge_type = models.IntegerField(max_length=1, choices=CHALLENGE_TYPES, null=True)
-    mission = models.ForeignKey(Mission, related_name='challenges')
     is_player_submitted = models.BooleanField("is player submitted?", default=False)
 
     created_by = models.ForeignKey(User, verbose_name="created by")
@@ -59,14 +57,14 @@ class Challenge(BaseTreeNode):
     def play_url(self):
         return reverse(
                 'missions:challenges:'+self.challenge_type_shortcut+'-play',
-                args=(self.mission.pk, self.pk)
+                args=(self.parent.pk, self.pk)
         )
 
     @property
     def overview_url(self):
         return reverse(
                 'missions:challenges:'+self.challenge_type_shortcut+'-overview',
-                args=(self.mission.pk, self.pk)
+                args=(self.parent.pk, self.pk)
         )
 
     def trivia_answers(self):
