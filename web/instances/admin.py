@@ -31,15 +31,7 @@ class AnswerChoiceInline(admin.StackedInline):
 
 class ChallengeAdminBase(BaseChildAdmin):
     readonly_fields = ('is_player_submitted', 'created_by')
-    exclude = ('challenge_type', 'mission',)
-
-    def save_model(self, request, obj, form, change):
-        #TODO should only save these fields
-        # if adding a new instance
-        if isinstance(obj.parent, mission_models.Mission):
-            obj.mission = obj.parent
-            obj.created_by = request.user
-            obj.save()
+    exclude = ('challenge_type', )
 
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
@@ -74,17 +66,8 @@ class MapChallengeAdmin(ChallengeAdminBase):
 class EmpathyChallengeAdmin(ChallengeAdminBase):
     inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
 
-
 class MissionAdmin(BaseChildAdmin):
-    exclude = ('instance',)
-
-    def save_model(self, request, obj, form, change):
-        #TODO should only save these fields
-        # if adding a new instance
-        if isinstance(obj.parent, game_models.Instance):
-            obj.instance = obj.parent
-            obj.save()
-
+    pass
 
 class GameAdmin(BaseChildAdmin):
     filter_horizontal = ('curators',)

@@ -29,7 +29,7 @@ class MissionDetail(LoginRequiredMixin, DetailView):
         context = super(MissionDetail, self).get_context_data(
             **kwargs)
         mission = kwargs['object']
-        game = mission.instance
+        game = mission.parent
 
         #if settings.DEBUG == True:
         #    if self.request.user.is_authenticated():
@@ -61,7 +61,7 @@ class MissionDetailWithDemographicForm(MissionDetail, FormView):
         mission = kwargs['object']
         # the current game is being used by the DemographicForm to set
         # select variants
-        self.initial['current_game'] = mission.instance
+        self.initial['current_game'] = mission.parent
 
         context['show_demog_form'] = True
 

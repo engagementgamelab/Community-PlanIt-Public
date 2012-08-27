@@ -14,6 +14,7 @@ from django.db import models
 from django.contrib import admin
 
 from web.instances.models import Instance, BaseTreeNode
+from web.challenges.models import Challenge
 
 import logging
 log = logging.getLogger(__name__)
@@ -118,6 +119,18 @@ class Mission(BaseTreeNode):
 
     def get_previous_mission(self):
         return self.get_previous_sibling()
+
+    @property
+    def initial_challenges(self):
+        initial_unlocked = []
+        #for challenge in map(lambda c: c.get_real_instance(), 
+        #        self.get_children()):
+        for challenge in Challenge.objects.filter(parent=self):
+            if challenge.challenge_type != Challenge.BARRIER:
+                initial_unlocked.append(challenge)
+            else:
+                return initial_unlocked
+
 
 stream_utils.register_target(Mission)
 

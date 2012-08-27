@@ -126,7 +126,7 @@ def _build_context(request, action, activity, user=None):
                     x = x + 1
 
             if not map:
-                map = activity.mission.instance.location
+                map = activity.mission.parent.location
             context.update(dict(
                 init_coords = init_coords,
                 map = map,
@@ -157,7 +157,7 @@ def _build_context(request, action, activity, user=None):
                     init_coords.append( [x, coor[0], coor[1]] )
                     x = x + 1
             else:
-                map = activity.mission.instance.location
+                map = activity.mission.parent.location
             context.update({'map': map})
 
         context.update({'form': form})
@@ -184,14 +184,13 @@ class ChallengeListView(ListView):
     def dispatch(self, request, *args, **kwargs):
 
         self.mission = get_object_or_404(Mission, pk=kwargs['mission_id'])
-        self.game = self.mission.instance
         try:
             self.prof_per_instance = UserProfilePerInstance.objects.get(
                                                 user_profile=request.user.get_profile(),
-                                                instance=self.game,
+                                                instance=self.mission.parent,
             )
         except UserProfilePerInstance.DoesNotExist:
-            raise Http404("You are not registered for Game <%s>" % self.game.title)
+            raise Http404("You are not registered for Game <%s>" % self.mission.parent.title)
 
         return super(ChallengeListView, self).\
                 dispatch(request, *args, **kwargs)
@@ -236,7 +235,7 @@ class ChallengeListView(ListView):
                 get_context_data( **kwargs)
         ctx['game_profile_exists'] = UserProfilePerInstance.objects.filter(
                                             user_profile=self.request.user.get_profile(),
-                                            instance=self.game,
+                                            instance=self.mission.parent,
                                         ).exists()
         ctx['mission'] = self.mission
         ctx['my_completed'] = self.my_completed

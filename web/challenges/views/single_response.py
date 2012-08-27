@@ -34,8 +34,8 @@ class SingleResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView
         ctx.update({
             #'challenge' : kwargs['challenge'],
             'is_completed': True,
-            'mission': self.object.mission,
-            'challenges': self.object.mission.challenges.all(),
+            'mission': self.object.parent,
+            'challenges': self.object.parent.challenges.all(),
         })
         print ctx
         print '2) %s get_ctx' % self.__class__.__name__
@@ -106,8 +106,8 @@ class SingleResponseCreateView(LoginRequiredMixin,
                 get_context_data(*args, **kwargs)
         context_data.update({
             'challenge': self.challenge,
-            'mission': self.challenge.mission,
-            'challenges': self.challenge.mission.challenges.all(),
+            'mission': self.challenge.parent,
+            'challenges': self.challenge.parent.challenges.all(),
         })
         print '%s get_ctx' % self.__class__.__name__
         return context_data

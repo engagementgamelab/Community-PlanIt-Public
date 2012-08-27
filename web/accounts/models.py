@@ -12,6 +12,8 @@ from sorl.thumbnail import ImageField
 
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
 from django.contrib.auth.signals import user_logged_in
@@ -30,6 +32,7 @@ from web.missions.models import Mission
 from web.values.models import PlayerValue
 from web.badges.models import BadgePerPlayer
 from web.comments.models import Comment
+from web.challenges.models import Challenge, Answer
 
 import logging
 log = logging.getLogger(__name__)
@@ -334,10 +337,13 @@ class UserProfilePerInstance(models.Model):
 
 stream_utils.register_target(UserProfilePerInstance)
 
-def determine_path(instance, filename):
-    return os.path.join('uploads', 'avatars', str(instance.user.id), filename)
 
 class UserProfile(models.Model):
+
+    def determine_path(instance, filename):
+        return os.path.join('uploads', 'avatars', str(instance.user.id), filename)
+
+
     user = models.ForeignKey(User, unique=True)
     instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='user_profiles_list', through=UserProfilePerInstance)
 
@@ -431,6 +437,42 @@ class UserProfileVariantsForInstance(models.Model):
     instance = models.OneToOneField(Instance, unique=True, related_name='user_profile_variants')
     stake_variants = models.ManyToManyField(UserProfileStake, blank=True, null=True, default=None)
     affiliation_variants = models.ManyToManyField(Affiliation, blank=True, null=True, default=None)
+
+
+class PlayerMissionState(models.Model):
+
+    profile_per_instance = models.ForeignKey(UserProfilePerInstance, editable=False, related_name='player_mission_states')
+    mission = models.ForeignKey(Mission, related_name='player_mission_states')
+    challenges_completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
+    challenges_locked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_locked')
+    challenges_unlocked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_unlocked')
+    next_unlocked_barrier = models.OneToOneField(Challenge, blank=True, null=True, related_name='next_unlocked_barriers')
+    coins = models.IntegerField(default=0)
+
+@receiver(post_save, sender=Answer)
+def update_player_mission_state(sender, **kwargs):
+    if not isinstance(kwargs.get('instance'), Answer):
+        return
+    answer = kwargs.get('instance')
+    if  kwargs.get('created', False) == True :
+        challenge = answer.challenge
+        mission = challenge.parent
+        user = answer.user
+        profile_per_instance  = UserProfilePerInstance.objects.get(
+                answer=mission.parent,
+                user_profile__user=user
+        )
+        player_mission_state, created = PlayerMissionState.objects.get_or_create(
+                profile_per_instance=profile_per_instance,
+                mission=mission,
+        )
+        if created:
+            mission.challenges_locked = Challenge.objects.filter(parent=mission)
+
+        player_mission_state.challenges_completed.add(challenge)
+        player_mission_state.coins = player_mission_state.coins + mission.challenge_coin_value
+        player_mission_state.save()
+post_save.connect(update_player_mission_state, dispatch_uid='update_mission_state')
 
 
 # Custom hook for adding an anonymous username to the User model.

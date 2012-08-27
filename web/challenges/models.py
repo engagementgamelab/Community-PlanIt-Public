@@ -205,6 +205,7 @@ class AnswerChoice(models.Model):
     def __unicode__(self):
         return self.value
 
+
 class Answer(models.Model):
     """ user submitted response to a challenge """
 
@@ -291,13 +292,3 @@ stream_utils.register_target(EmpathyChallenge)
 
 # invalidate cache for 'missions' group
 #post_save.connect(invalidate_mission, Challenge)
-#post_save.connect(invalidate_mission, MapChallenge)
-#post_save.connect(invalidate_mission, EmpathyChallenge)
-
-#post_save.connect(invalidate_prof_per_instance, Challenge)
-#post_save.connect(invalidate_prof_per_instance, PlayerMapActivity)
-#post_save.connect(invalidate_prof_per_instance, PlayerEmpathyActivity)
-
-#post_delete.connect(invalidate_activities_for_mission, Challenge)
-#post_delete.connect(invalidate_activities_for_mission, PlayerMapActivity)
-#post_delete.connect(invalidate_activities_for_mission, PlayerEmpathyActivity)

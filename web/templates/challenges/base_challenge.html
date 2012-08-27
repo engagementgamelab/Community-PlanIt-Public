@@ -7,10 +7,10 @@
     <div id="challenges">
         <div class="wrapper box-shadow-container">
             <div id="challenge" class="challenge">
-                <a class="close" href="{% url missions:challenges:challenges challenge.mission.pk %}">×</a>
+                <a class="close" href="{% url missions:challenges:challenges challenge.parent.pk %}">×</a>
 
                 <h1>{{ challenge.title|safe }}</h1>
-                <span><i class="glyphicon-credit"></i> {{ challenge.mission.challenge_coin_value }}</span>
+                <span><i class="glyphicon-credit"></i> {{ challenge.parent.challenge_coin_value }}</span>
                 
                 {% block content_challenge %}
                 {% endblock %}
@@ -18,7 +18,7 @@
                 <div id="challenge-discussion">
                     <h2 class="header-discussion">Discussion</h2>
                     {% block comments %}
-                        <p>Once you are done, you will be able to view everyone's responses. {% if request.user in challenge.mission.instance.curators.all %}But since you are a curator for this game, you can just skip ahead to the <a href="{{ challenge.overview_url }}">Overview</a>.{% endif %}</p>
+                        <p>Once you are done, you will be able to view everyone's responses. {% if request.user in challenge.parent.parent.curators.all %}But since you are a curator for this game, you can just skip ahead to the <a href="{{ challenge.overview_url }}">Overview</a>.{% endif %}</p>
                     {% endblock %}
                 </div>
             </div>
