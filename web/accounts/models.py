@@ -491,8 +491,9 @@ def update_player_mission_state(sender, **kwargs):
         )
         # append to the completed challenges 
         player_mission_state.challenges_completed.add(challenge)
-        # increment the coins count
-        player_mission_state.coins = player_mission_state.coins + mission.challenge_coin_value
+        # increment the coins count for non-barrier challenges
+        if challenge.challenge_type != Challenge.BARRIER:
+            player_mission_state.coins = player_mission_state.coins + mission.challenge_coin_value
 
         # if the next barrier in order is eligible to be unlocked
         # add it to the challenges_unlocked

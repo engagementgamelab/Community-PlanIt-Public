@@ -1,3 +1,4 @@
+import random
 import datetime
 import os.path
 
@@ -7,6 +8,7 @@ from stream.models import Action
 from cache_utils.decorators import cached
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
@@ -121,6 +123,28 @@ class MultiResponseChallenge(Challenge):
 class BarrierChallenge(Challenge):
 
     minimum_coins_to_play = models.IntegerField(default=0)
+
+    @property
+    def random_answer_choices(self):
+        #TODO explain what this is all about
+        """ 50/50. generate a list of random....."""
+
+        answers = AnswerChoice.objects.filter(challenge=self)
+        try:
+            correct_answer = answers.get(is_barrier_correct_answer=True)
+        except AnswerChoice.DoesNotExist:
+            raise ImproperlyConfigured("A correct answer has not been set on the barrier challenge '%s'" % challenge.title)
+
+        cnt = 0
+        choice_statuses = [False]*answers.count()
+        choice_indexes = range(len(choice_statuses))
+        while cnt <=  (answers.count()-1)/2:
+            random_index = random.choice(choice_indexes)
+            if random_index != list(answers).index(correct_answer):
+                choice_statuses[random_index] = True
+                choice_indexes.pop(random_index)
+                cnt+=1
+        return choice_statuses
 
     def save(self, *args, **kwargs):
         #TODO

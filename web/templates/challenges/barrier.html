@@ -4,14 +4,12 @@
 {% block content_challenge %}
     <div class="row-fluid">
         <div class="span9">
-            <p class="bio">{{challenge.bio_text}}</p>
             <p>{{ challenge.question|safe }}</p>
 
             {% block response %}
                 <div class="response">
-                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="form" value="empathy">
+                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">{% csrf_token %}
+                        <input type="hidden" name="form" value="barrier">
 
                         <div class="answerchoices-container">{{ form.selected }}</div>
 
