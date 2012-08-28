@@ -32,7 +32,7 @@ from web.missions.models import Mission
 from web.values.models import PlayerValue
 from web.badges.models import BadgePerPlayer
 from web.comments.models import Comment
-from web.challenges.models import Challenge, Answer
+from web.challenges.models import Challenge, BarrierChallenge, Answer
 
 import logging
 log = logging.getLogger(__name__)
@@ -465,6 +465,14 @@ class PlayerMissionState(models.Model):
 
         self.save()
 
+    @property
+    def next_barrier(self):
+        for barrier in Challenge.objects.filter(parent=self.mission).\
+                instance_of(BarrierChallenge):
+            if barrier.basetreenode_ptr.get_previous_sibling().get_real_instance() in \
+                    self.challenges_unlocked.all():
+                return barrier
+
 @receiver(post_save, sender=Answer)
 def update_player_mission_state(sender, **kwargs):
     if not isinstance(kwargs.get('instance'), Answer):
@@ -481,10 +489,17 @@ def update_player_mission_state(sender, **kwargs):
                 profile_per_instance=profile_per_instance,
                 mission=mission,
         )
+        # append to the completed challenges 
         player_mission_state.challenges_completed.add(challenge)
+        # increment the coins count
         player_mission_state.coins = player_mission_state.coins + mission.challenge_coin_value
 
-        #player_mission_state.next_unlocked_barrier 
+        # if the next barrier in order is eligible to be unlocked
+        # add it to the challenges_unlocked
+        next_barrier = player_mission_state.next_barrier
+        if next_barrier.minimum_coins_to_play <= player_mission_state.coins:
+             player_mission_state.challenges_unlocked.add(next_barrier)
+             player_mission_state.challenges_locked.remove(next_barrier)
 
         player_mission_state.save()
 post_save.connect(update_player_mission_state, dispatch_uid='update_mission_state')
