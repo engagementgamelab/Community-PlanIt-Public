@@ -120,7 +120,12 @@ class MultiResponseChallenge(Challenge):
 
 class BarrierChallenge(Challenge):
 
+    minimum_coins_to_play = models.IntegerField(default=0)
+
     def save(self, *args, **kwargs):
+        #TODO
+        # validate to see if the number of points per challenge is not less than
+        # minimum_coins_to_play
         if self.challenge_type is None:
             self.challenge_type = Challenge.BARRIER
         super(BarrierChallenge, self).save(*args, **kwargs)
