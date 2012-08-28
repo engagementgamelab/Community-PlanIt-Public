@@ -94,11 +94,11 @@ class Challenge(BaseTreeNode):
         #return len(all_completed)
         return 0
 
-    def get_previous_challenge(self):
-        return self.get_previous_sibling()
+    #def get_previous_challenge(self):
+    #    return self.challenge.get_previous_sibling()
 
-    def get_next_challenge(self):
-        return self.get_next_sibling()
+    #def get_next_challenge(self):
+    #    return self.challenge.get_next_sibling()
 
 class SingleResponseChallenge(Challenge):
 
@@ -203,7 +203,7 @@ class AnswerChoice(models.Model):
     # this field signifies that the multi-response question is of type
     # `Trivia`.
     #
-    trivia_correct_answer = models.BooleanField(default=False, verbose_name="The correct answer to a trivia question")
+    is_barrier_correct_answer = models.BooleanField(default=False, verbose_name="The correct answer to a barrier challenge")
 
     objects = AnswerChoiceManager()
 
