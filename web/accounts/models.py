@@ -453,6 +453,7 @@ class PlayerMissionState(models.Model):
     def init_state(self):
         self.challenges_unlocked.clear()
         self.challenges_locked.clear()
+        self.coins = 0
 
         unlocked = self.mission.initial_unlocked_challenges
         for challenge in unlocked:
@@ -462,6 +463,7 @@ class PlayerMissionState(models.Model):
                 exclude(pk__in=[ch.pk for ch in unlocked]):
             self.challenges_locked.add(challenge)
 
+        self.save()
 
 @receiver(post_save, sender=Answer)
 def update_player_mission_state(sender, **kwargs):
@@ -475,15 +477,15 @@ def update_player_mission_state(sender, **kwargs):
                 instance=mission.parent,
                 user_profile__user=answer.user
         )
-        player_mission_state, created = PlayerMissionState.objects.get_or_create(
+        player_mission_state = PlayerMissionState.objects.get(
                 profile_per_instance=profile_per_instance,
                 mission=mission,
         )
-        if created:
-            player_mission_state.init_state()
-
         player_mission_state.challenges_completed.add(challenge)
         player_mission_state.coins = player_mission_state.coins + mission.challenge_coin_value
+
+        #player_mission_state.next_unlocked_barrier 
+
         player_mission_state.save()
 post_save.connect(update_player_mission_state, dispatch_uid='update_mission_state')
 

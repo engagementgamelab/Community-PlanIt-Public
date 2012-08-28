@@ -15,13 +15,15 @@ from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
 from web.missions.models import Mission
-from web.accounts.models import UserProfilePerInstance
+from web.accounts.models import UserProfilePerInstance, PlayerMissionState
 from web.comments.models import *
 from web.comments.forms import *
 from ..forms import *
 from ..models import *
 from ..views import comment_fun,\
                     log_activity_and_redirect
+
+from ..mixins import PlayerMissionStateContextMixin
 
 
 import logging
@@ -176,7 +178,7 @@ def _get_mc_choices(activity):
 def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
 
-class ChallengeListView(ListView):
+class ChallengeListView(PlayerMissionStateContextMixin, ListView):
     #model = Challenge
     template_name = 'challenges/all.html'
     context_object_name = 'challenges'
@@ -196,50 +198,12 @@ class ChallengeListView(ListView):
                 dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-
-        player_submitted_only = False
-
-        # TODO: Should only return non-player-created challenges
-        #player_submitted = set(self.mission.player_submitted_challenges(lang=get_language()))
-        #all_activities = player_submitted if player_submitted_only == True else \
-        #        set(self.mission.challenges()) - player_submitted
-
-        #my_completed = set(
-        #                self.prof_per_instance.my_completed_by_mission(
-        #                            self.mission,
-        #                            player_submitted_only
-        #                )
-        #            )
-        #my_incomplete = all_activities - my_completed
-        #my_incomplete = sorted(my_incomplete, key=attrgetter('name'))
-        #self.my_completed = sorted(list(my_completed), key=attrgetter('name'))
-
-        #my_incomplete.extend(self.my_completed)
-        #all_activities_sorted = my_incomplete
-
-        #context.update(dict(
-        #    activities = all_activities_sorted,
-        #    my_completed = my_completed,
-        #    all_player_submitted_cnt = len(player_submitted),
-        #))
-        #for ch in all_activities_sorted:
-        #    print ch.play_url, ch.overview_url
-        #return all_activities_sorted
-        self.my_completed = []
         return map(lambda n: n.get_real_instance(),
                    self.mission.get_children())
 
-
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         ctx = super(ChallengeListView, self).\
-                get_context_data( **kwargs)
-        ctx['game_profile_exists'] = UserProfilePerInstance.objects.filter(
-                                            user_profile=self.request.user.get_profile(),
-                                            instance=self.mission.parent,
-                                        ).exists()
-        ctx['mission'] = self.mission
-        ctx['my_completed'] = self.my_completed
-        print ctx
+                get_context_data(mission=self.mission, *args, **kwargs)
         return ctx
 
 challenge_list_view = ChallengeListView.as_view()
