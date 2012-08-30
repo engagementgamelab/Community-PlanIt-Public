@@ -24,14 +24,26 @@ class BaseChildAdmin(PolymorphicMPTTChildModelAdmin):
     )
 
 
-# Optionally some custom admin code
 class AnswerChoiceInline(admin.StackedInline):
-	model = challenge_models.AnswerChoice
+    """
+        TODO
+        make sure it only appears on BarrierChallenge and
+        FinalBarrierChallenge
+        exclude = ('is_barrier_correct_answer',)
+    """
+
+    model = challenge_models.AnswerChoice
 
 
 class ChallengeAdminBase(BaseChildAdmin):
-    readonly_fields = ('is_player_submitted', 'created_by')
+    readonly_fields = ('is_player_submitted', 'created_by',)
     exclude = ('challenge_type', )
+
+    def save_model(self, request, obj, form, change):
+
+        if isinstance(obj, challenge_models.Challenge):
+            obj.created_by = request.user
+            obj.save()
 
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
@@ -46,12 +58,18 @@ class ChallengeAdminBase(BaseChildAdmin):
 
 
 class SingleResponseChallengeAdmin(ChallengeAdminBase):
+
+    #def __init__(self, *args, **kwargs):
+    #    super(SingleResponseChallengeAdmin, self).__init__(*args, **kwargs)
+    #    self.exclude = self.exclude + ('is_barrier_correct_answer',)
+
     inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
 
 class MultiResponseChallengeAdmin(ChallengeAdminBase):
     inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
 
 class BarrierChallengeAdmin(ChallengeAdminBase):
+    list_display = ('minimum_coins_to_play',)
     inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
 
 class FinalBarrierChallengeAdmin(ChallengeAdminBase):

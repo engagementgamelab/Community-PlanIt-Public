@@ -43,7 +43,7 @@ barrier_detail_view = BarrierDetailView.as_view()
 class RedirectToChallengeOverviewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
-        if AnswerWithChoices.objects.filter(
+        if AnswerWithMultipleChoices.objects.filter(
                                     user=request.user,
                                     challenge=self.challenge
                 ).exists():
@@ -120,7 +120,7 @@ class BarrierForm(forms.Form):
         self.fields['selected'].widget.renderer.choice_statuses = challenge.random_answer_choices
 
     class Meta:
-        #model = AnswerWithChoices
+        #model = AnswerWithMultipleChoices
         exclude = ('user', 'challenge')
 
 

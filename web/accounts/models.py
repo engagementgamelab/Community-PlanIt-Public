@@ -444,25 +444,29 @@ class PlayerMissionState(models.Model):
 
     profile_per_instance = models.ForeignKey(UserProfilePerInstance, editable=False, related_name='player_mission_states')
     mission = models.ForeignKey(Mission, related_name='player_mission_states')
-    challenges_completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
     challenges_locked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_locked')
     challenges_unlocked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_unlocked')
-    next_unlocked_barrier = models.OneToOneField(Challenge, blank=True, null=True, related_name='next_unlocked_barriers')
+    challenges_completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
     coins = models.IntegerField(default=0)
 
+    # not sure if we need these yet
+    next_unlocked_barrier = models.OneToOneField(Challenge, blank=True, null=True, related_name='next_unlocked_barriers')
+
     def init_state(self):
+        """ called after creation from MissionListView to initialize state"""
         self.challenges_unlocked.clear()
         self.challenges_locked.clear()
         self.coins = 0
 
-        unlocked = self.mission.initial_unlocked_challenges
-        for challenge in unlocked:
-            self.challenges_unlocked.add(challenge)
-
-        for challenge in Challenge.objects.filter(parent=self.mission).\
-                exclude(pk__in=[ch.pk for ch in unlocked]):
-            self.challenges_locked.add(challenge)
-
+        for i, barrier in enumerate(self.mission.challenges_as_sorteddict):
+            if i == 0:
+                self.challenges_unlocked.add(barrier)
+                for challenge in self.mission.challenges_as_sorteddict.get(barrier):
+                    self.challenges_unlocked.add(challenge)
+            else:
+                self.challenges_locked.add(barrier)
+                for challenge in self.mission.challenges_as_sorteddict.get(barrier):
+                    self.challenges_locked.add(challenge)
         self.save()
 
     @property
@@ -494,13 +498,12 @@ def update_player_mission_state(sender, **kwargs):
         # increment the coins count for non-barrier challenges
         if challenge.challenge_type != Challenge.BARRIER:
             player_mission_state.coins = player_mission_state.coins + mission.challenge_coin_value
-
         # if the next barrier in order is eligible to be unlocked
         # add it to the challenges_unlocked
-        next_barrier = player_mission_state.next_barrier
-        if next_barrier.minimum_coins_to_play <= player_mission_state.coins:
-             player_mission_state.challenges_unlocked.add(next_barrier)
-             player_mission_state.challenges_locked.remove(next_barrier)
+        #next_barrier = player_mission_state.next_barrier
+        #if next_barrier.minimum_coins_to_play <= player_mission_state.coins:
+        #     player_mission_state.challenges_unlocked.add(next_barrier)
+        #     player_mission_state.challenges_locked.remove(next_barrier)
 
         player_mission_state.save()
 post_save.connect(update_player_mission_state, dispatch_uid='update_mission_state')

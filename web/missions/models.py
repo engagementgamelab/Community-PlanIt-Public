@@ -7,14 +7,14 @@ from model_utils.managers import InheritanceManager
 from cache_utils.decorators import cached
 from stream import utils as stream_utils
 
-from django.conf import settings
-from django.core.cache import cache
-#from django.db.models.signals import post_save
+from django.core.exceptions import ImproperlyConfigured
+from django.utils.datastructures import SortedDict
 from django.db import models
-from django.contrib import admin
+from django.conf import settings
+#from django.db.models.signals import post_save
 
 from web.instances.models import Instance, BaseTreeNode
-from web.challenges.models import Challenge
+from web.challenges.models import Challenge, FinalBarrierChallenge
 
 import logging
 log = logging.getLogger(__name__)
@@ -120,16 +120,30 @@ class Mission(BaseTreeNode):
     def get_previous_mission(self):
         return self.get_previous_sibling()
 
-    @property
-    def initial_unlocked_challenges(self):
-        """ this method is used to get the first block of unlocked challenges """
-        initial_unlocked = []
-        for challenge in Challenge.objects.filter(parent=self):
-            if challenge.challenge_type != Challenge.BARRIER:
-                initial_unlocked.append(challenge)
-            else:
-                return initial_unlocked
+    def _validate_challenges_sorteddict(self, challenges, d):
+        """ make sure that the challenges count in the SortedDict is the same as in db"""
 
+        dict_challenge_count = len(d.keys())
+        for k in d.keys():
+            dict_challenge_count += len(d.get(k))
+
+        if challenges.count() != dict_challenge_count:
+            raise ImproperlyConfigured("a barrier challenge is missing in mission %s" % self.title)
+
+    @property
+    def challenges_as_sorteddict(self):
+        d = SortedDict()
+        this_block = []
+        challenges = Challenge.objects.filter(parent=self)
+        for challenge in challenges:
+            if not challenge.challenge_type in \
+                    (Challenge.BARRIER, Challenge.FINAL_BARRIER):
+                this_block.append(challenge)
+            else:
+                d[challenge] = this_block
+                this_block = []
+        self._validate_challenges_sorteddict(challenges, d)
+        return d
 
 stream_utils.register_target(Mission)
 

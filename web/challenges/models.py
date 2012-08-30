@@ -49,7 +49,7 @@ class Challenge(BaseTreeNode):
 
     #objects = ChallengeManager()
     def __unicode__(self):
-        return self.question
+        return "%s [%s]" % (self.title, self.challenge_type_shortcut)
 
     @property
     def challenge_type_shortcut(self):
@@ -68,24 +68,6 @@ class Challenge(BaseTreeNode):
                 'missions:challenges:'+self.challenge_type_shortcut+'-overview',
                 args=(self.parent.pk, self.pk)
         )
-
-    def trivia_answers(self):
-        return filter(lambda c: c.trivia_correct_answer is True, self.answer_choices.all() if hasattr(self, 'answer_choices') else [])
-
-    def get_trivia_answer(self):
-        # This will work for multi_response activities only
-        # which is what the requirements are for now
-        # in the future may need to update to work for other
-        # challenge types
-        trivia_answers = self.trivia_answers()
-        if len(trivia_answers) > 0:
-            return trivia_answers[0]
-
-    def is_trivia(self):
-        @cached(60*60*24*7)
-        def is_trivia_by_pk(pk):
-            return len(self.trivia_answers()) > 0
-        return is_trivia_by_pk(self.pk)
 
     @property
     def completed_count(self):
@@ -224,9 +206,6 @@ class AnswerChoice(models.Model):
     challenge = models.ForeignKey(Challenge, related_name='answer_choices')
     value = models.CharField(max_length=255)
 
-    # this field signifies that the multi-response question is of type
-    # `Trivia`.
-    #
     is_barrier_correct_answer = models.BooleanField(default=False, verbose_name="The correct answer to a barrier challenge")
 
     objects = AnswerChoiceManager()
@@ -249,17 +228,27 @@ class Answer(models.Model):
         return ""
 
 
-class AnswerWithChoices(Answer):
-    """ user submitted response to a single response challenge """
+class AnswerWithMultipleChoices(Answer):
+    """ user submitted response to a multi response challenge """
 
-    selected = models.ManyToManyField(AnswerChoice, related_name='singleresponse_answers')
-    challenge = models.ForeignKey(Challenge, related_name='singleresponse_answers')
+    selected = models.ManyToManyField(AnswerChoice, related_name='multiresponse_answers')
+    challenge = models.ForeignKey(Challenge, related_name='multiresponse_answers')
 
     #objects = AnswerSingleResponseManager()
 
     def __unicode__(self):
         return _(u'an answer to %s' % self.challenge)
 
+class AnswerWithOneChoice(Answer):
+    """ user submitted response to a multi response challenge """
+
+    selected = models.OneToOneField(AnswerChoice, related_name='singleresponse_answers')
+    challenge = models.ForeignKey(Challenge, related_name='singleresponse_answers')
+
+    #objects = AnswerSingleResponseManager()
+
+    def __unicode__(self):
+        return _(u'an answer to %s' % self.challenge)
 
 class AnswerMap(Answer):
     map = GoogleMapsField()

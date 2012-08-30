@@ -4,12 +4,11 @@
 {% block content_challenge %}
     <div class="row-fluid">
         <div class="span9">
-            <div>{{ challenge.question|safe }}</div>
+            <div>{{ object.question|safe }}</div>
 
             {% block response %}
                 <div class="response">
-                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
-                        {% csrf_token %}
+                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post"> {% csrf_token %}
                         <input type="hidden" name="form" value="multi_response">
 
                         {{ errors.response }}

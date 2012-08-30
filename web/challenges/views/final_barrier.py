@@ -53,14 +53,14 @@ class FinalBarrierForm(forms.ModelForm):
         )
 
     class Meta:
-        model = AnswerWithChoices
+        model = AnswerWithMultipleChoices
         exclude = ('user', 'challenge')
 
 
 class RedirectToChallengeOverviewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
-        if AnswerWithChoices.objects.filter(user=request.user, challenge=self.challenge).exists():
+        if AnswerWithMultipleChoices.objects.filter(user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
 
         return super(RedirectToChallengeOverviewMixin, self).dispatch(request, *args, **kwargs)

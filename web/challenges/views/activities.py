@@ -14,6 +14,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from django.contrib.auth.decorators import login_required
 
+from web.core.views import LoginRequiredMixin
 from web.missions.models import Mission
 from web.accounts.models import UserProfilePerInstance, PlayerMissionState
 from web.comments.models import *
@@ -178,7 +179,7 @@ def _get_mc_choices(activity):
 def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
 
-class ChallengeListView(PlayerMissionStateContextMixin, ListView):
+class ChallengeListView(LoginRequiredMixin, PlayerMissionStateContextMixin, ListView):
     #model = Challenge
     template_name = 'challenges/all.html'
     context_object_name = 'challenges'

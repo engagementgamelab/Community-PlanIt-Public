@@ -3,18 +3,16 @@
 {% block title %}{{ challenge.name}} | Multi Response Overview{% endblock %}
 
 {% block response %}        
-    {% if is_completed or challenge.is_past %}
-        <div id="activity-response-summary">
-            <h2>Response Summary</h2>
-            {% for choice in choices %}
-                <div class="activity-response-summary-choice {% if choice.value in my_answers %}my-choice{% endif %}">
-                    {{ choice }}
-                    <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.multichoice_answers.count }}'>
-                </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}            
+    <div id="activity-response-summary">
+        <h2>Response Summary</h2>
+        {% for choice in object.answer_choices.all %}
+            <div class="activity-response-summary-choice {% if choice in my_answers %}my-choice{% endif %}">
+                {{ choice }}
+                <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.multiresponse_answers.count }}'>
+            </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block comments %}

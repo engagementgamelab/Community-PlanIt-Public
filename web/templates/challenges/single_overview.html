@@ -2,33 +2,16 @@
 {% load gmap i18n avatar %}
 
 {% block response %}
-    {% if challenge.is_trivia and is_completed %}
-        <div class="activity-question-trivia-result">
-            {% ifequal myAnswer.selected challenge.get_trivia_answer %}
-                <span class="activity-question-trivia-correct">{{ challenge.get_trivia_answer }}</span> is correct! You just earned {{ challenge.get_pointed }} points!
-            {% else %}
-                Sorry! <span class="activity-question-trivia-incorrect">{{ myAnswer.selected }}</span> is incorrect. The correct answer is <span class="activity-question-trivia-correct">{{ challenge.get_trivia_answer }}</span>
-            {% endifequal %}
-        </div>
-    {% endif %}
 
-    {% if is_completed or challenge.is_past %}
-        {# RESPONSE SUMMARY #}
-        {% if myAnswer %}
-            <div id="activity-response-summary" class="{% if challenge.is_trivia %}activity-type-trivia{% endif %}">
-            {% if answers %}
-                {% for choice in choices %}
-                    <div class="activity-response-summary-choice {% ifequal choice myAnswer.selected %}my-choice{% endifequal %} {% ifequal choice challenge.get_trivia_answer %}correct-answer{% else %}incorrect-answer{% endifequal %}">
-                        {{ choice }}
-                        <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'>
-                    </div>
-
-                    </div>
-                {% endfor %}
-            {% endif %}
-            </div>
-        {% endif %}
-    {% endif %}
+{# RESPONSE SUMMARY #}
+<div id="activity-response-summary" class="">
+{% for choice in object.answer_choices.all %}
+    <div class="activity-response-summary-choice {% ifequal choice my_answer.selected %}my-choice{% endifequal %}">
+        {{ choice }}
+        <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'></div>
+    </div>
+{% endfor %}
+</div>
 {% endblock %}
 
 {% block comments %}

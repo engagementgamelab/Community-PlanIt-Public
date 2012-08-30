@@ -5,8 +5,10 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
-from ..models import *
 from web.core.views import LoginRequiredMixin
+from web.missions.models import Mission
+from ..models import *
+from ..mixins import PlayerMissionStateContextMixin
 
 import logging
 log = logging.getLogger(__name__)
@@ -21,22 +23,39 @@ class FetchAnswersMixin(object):
         return ctx
 
 
-class MultiResponseDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
+class MultiResponseDetailView(LoginRequiredMixin, 
+                              DetailView, PlayerMissionStateContextMixin):
     model = MultiResponseChallenge
     template_name = 'challenges/multi_overview.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
     context_object_name = 'challenge'
 
+    def dispatch(self, request, *args, **kwargs):
+        self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
+        self.mission = get_object_or_404(Mission, pk=kwargs['mission_id'])
+
+        # make sure the challenge has not been played yet and is not
+        # expired
+        if not self.challenge.parent.is_expired and not \
+                AnswerWithMultipleChoices.objects.filter(
+                                user=request.user, 
+                                challenge=self.challenge
+                ).exists():
+            return redirect(self.challenge.play_url)
+        return super(MultiResponseDetailView, self).dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         ctx = super(MultiResponseDetailView, self).\
                 get_context_data(**kwargs)
+        my_answers = AnswerWithMultipleChoices.objects.get(
+                                user=self.request.user,
+                                challenge=self.object
+        )
         ctx.update({
-            #'activity' : kwargs['activity'],
-            'is_completed': True,
-            'mission': self.object.parent,
-            'challenges': self.object.parent.get_children(),
+            'my_answers': my_answers,
         })
+        print ctx
         return ctx
 
 multi_response_detail_view = MultiResponseDetailView.as_view()
@@ -56,25 +75,12 @@ class MultiResponseForm(forms.ModelForm):
         )
 
     class Meta:
-        model = AnswerWithChoices
-        exclude = ('user',)
-
-
-class RedirectToChallengeOverviewMixin(object):
-
-    def dispatch(self, request, *args, **kwargs):
-        if AnswerWithChoices.objects.\
-                filter(user=request.user, challenge=self.challenge).\
-                exists():
-            return redirect(self.challenge.overview_url)
-
-        return super(RedirectToChallengeOverviewMixin, self).dispatch(request,
-            *args, **kwargs)
+        model = AnswerWithMultipleChoices
+        exclude = ('user', 'challenge')
 
 
 class MultiResponseCreateView(LoginRequiredMixin, 
-                               RedirectToChallengeOverviewMixin, 
-                               CreateView):
+                               CreateView, PlayerMissionStateContextMixin):
     form_class = MultiResponseForm
     model = None
     context_object_name = 'multi_response_answer'
@@ -82,16 +88,22 @@ class MultiResponseCreateView(LoginRequiredMixin,
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(MultiResponseChallenge, pk=kwargs['challenge_id'])
+
+        if AnswerWithMultipleChoices.objects.\
+                        filter(user=request.user, challenge=self.challenge).\
+                        exists():
+            return redirect(self.challenge.overview_url)
+
         self.initial.update({'challenge': self.challenge,})
         return super(MultiResponseCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user
-        #self.object.challenge = self.challenge
+        self.object.challenge = self.challenge
         self.object.save()
+        form.save_m2m()
         return redirect(self.challenge.overview_url)
-        #return log_activity_and_redirect(self.request, self.challenge, action_msg)
 
     def form_invalid(self, form):
         print form.errors
@@ -103,9 +115,7 @@ class MultiResponseCreateView(LoginRequiredMixin,
         context_data.update({
             'challenge': self.challenge,
             'mission': self.challenge.parent,
-            'challenges': self.challenge.parent.get_children(),
         })
-        print '%s get_ctx' % self.__class__.__name__
         return context_data
 
 multi_response_play_view = MultiResponseCreateView.as_view()
