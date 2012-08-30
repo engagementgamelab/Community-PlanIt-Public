@@ -449,6 +449,7 @@ class PlayerMissionState(models.Model):
     challenges_completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
     coins = models.IntegerField(default=0)
 
+    barriers_fifty_fifty = models.ManyToManyField(Challenge, blank=True, null=True, related_name='barriers_fifty_fifty')
     # not sure if we need these yet
     next_unlocked_barrier = models.OneToOneField(Challenge, blank=True, null=True, related_name='next_unlocked_barriers')
 

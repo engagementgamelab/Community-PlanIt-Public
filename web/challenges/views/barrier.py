@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, get_object_or_404
+from django.core.urlresolvers import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
@@ -7,11 +8,15 @@ from ..forms import SingleResponseForm, BarrierFiftyFiftyForm
 from ..mixins import PlayerMissionStateContextMixin
 from web.core.views import LoginRequiredMixin
 
+from web.accounts.models import UserProfilePerInstance, PlayerMissionState
+
 import logging
 log = logging.getLogger(__name__)
 
 
-class BarrierDetailView(LoginRequiredMixin, DetailView):
+class BarrierDetailView(LoginRequiredMixin, 
+                        PlayerMissionStateContextMixin,
+                        DetailView):
     model = BarrierChallenge
     template_name = 'challenges/barrier_overview.html'
     pk_url_kwarg = 'challenge_id'
@@ -28,7 +33,7 @@ class BarrierDetailView(LoginRequiredMixin, DetailView):
                                 challenge=self.challenge
                 ).exists():
             return redirect(self.challenge.play_url)
-        return super(MultiResponseDetailView, self).dispatch(request, *args, **kwargs)
+        return super(BarrierDetailView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         ctx = super(BarrierDetailView, self).\
@@ -45,13 +50,6 @@ class BarrierDetailView(LoginRequiredMixin, DetailView):
 barrier_detail_view = BarrierDetailView.as_view()
 
 
-class RedirectToChallengeOverviewMixin(object):
-
-    def dispatch(self, request, *args, **kwargs):
-
-        return super(RedirectToChallengeOverviewMixin, self).dispatch(request, *args, **kwargs)
-
-
 class BarrierCreateView(LoginRequiredMixin,
                         PlayerMissionStateContextMixin,
                         CreateView):
@@ -61,9 +59,29 @@ class BarrierCreateView(LoginRequiredMixin,
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
+        profile_per_instance = UserProfilePerInstance.objects.get(
+                                    user_profile=request.user.get_profile(),
+                                    instance=self.challenge.parent.parent,
+        )
+        try:
+            self.player_mission_state = PlayerMissionState.objects.get(
+                    profile_per_instance=profile_per_instance,
+                    mission=self.challenge.parent,
+            )
+        except PlayerMissionState.DoesNotExist:
+            # if mission state has not been created and initialized
+            # redirect the player back to the ChallengeListView to create it
+            return redirect(
+                    reverse('missions:challenges:challenges', args=[self.challenge.parent.pk,])
+            )
+
+        # TODO 
+        # convert this to a redirect
+        if self.player_mission_state.coins < self.challenge.minimum_coins_to_play:
+            raise RuntimeError("Player does not have enough coins to play the barrier.")
 
         if AnswerWithOneChoice.objects.\
-                filter( user=request.user, challenge=self.challenge).exists():
+                filter(user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
 
         self.initial.update({'challenge': self.challenge,})
@@ -85,6 +103,7 @@ class BarrierCreateView(LoginRequiredMixin,
                 get_context_data(mission=self.challenge.parent, *args, **kwargs)
         context_data.update({
             'challenge': self.challenge,
+            'fifty_fifty': False,
         })
         return context_data
 
@@ -101,6 +120,10 @@ class BarrierFiftyFiftyCreateView(LoginRequiredMixin,
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
 
+        # check to prevent running the 50/50 twice
+        # need to get the PlayerMissionState.barriers_fifty_fifty
+        # *****
+
         if AnswerWithOneChoice.objects.\
                 filter( user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
@@ -109,11 +132,10 @@ class BarrierFiftyFiftyCreateView(LoginRequiredMixin,
         return super(BarrierFiftyFiftyCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        cd = form.cleaned_data
-        print cd
         answer = AnswerWithOneChoice()
         answer.user = self.request.user
         answer.challenge = self.challenge
+        answer.selected = AnswerChoice.objects.get(pk=int(form.cleaned_data.get('selected')))
         answer.save()
         return redirect(self.challenge.overview_url)
 
@@ -122,12 +144,16 @@ class BarrierFiftyFiftyCreateView(LoginRequiredMixin,
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(BarrierFiftyFiftyCreateView, self).\
+        ctx = super(BarrierFiftyFiftyCreateView, self).\
                 get_context_data(mission=self.challenge.parent, *args, **kwargs)
-        context_data.update({
+        ctx.update({
             'challenge': self.challenge,
+            'fifty_fifty': True,
         })
-        return context_data
+        #set the 50/50 request into player mission state
+        mission_state = ctx.get('player_mission_state')
+        mission_state.barriers_fifty_fifty.add(self.challenge)
+        return ctx
 
 barrier_fifty_fifty_view = BarrierFiftyFiftyCreateView.as_view()
 

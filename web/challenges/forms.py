@@ -106,11 +106,13 @@ class BarrierFiftyFiftyForm(forms.Form):
         initial_data = kwargs.pop('initial')
         challenge = initial_data.get('challenge')
         super(BarrierFiftyFiftyForm, self).__init__(*args, **kwargs)
-        answers = AnswerChoice.objects.by_challenge(challenge)
 
-        choices = answers.values_list('pk', 'value')
         self.fields['selected'] = forms.ChoiceField(required=True)
         self.fields['selected'].widget = forms.widgets.RadioSelect(
-                renderer=BarrierFieldRenderer, choices=choices
+                renderer=BarrierFieldRenderer
         )
+        self.fields['selected'].choices=AnswerChoice.objects.\
+                                            by_challenge(challenge).\
+                                            values_list('pk', 'value')
         self.fields['selected'].widget.renderer.choice_statuses = challenge.random_answer_choices
+
