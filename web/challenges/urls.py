@@ -74,6 +74,11 @@ urlpatterns = patterns('challenges.views',
             name="barrier-overview",
     ),
 
+    url(r"^"+barrier_slug+"/(?P<challenge_id>\d+)/fifty-fifty/$",
+            "barrier.barrier_fifty_fifty_view", 
+            name="barrier-fifty-fifty",
+    ),
+
     url(r"^"+final_barrier_slug+"/(?P<challenge_id>\d+)/play/$",
             "final_barrier.final_barrier_play_view", 
             name="final-barrier-play",

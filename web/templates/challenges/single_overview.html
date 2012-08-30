@@ -5,7 +5,7 @@
 
 {# RESPONSE SUMMARY #}
 <div id="activity-response-summary" class="">
-{% for choice in object.answer_choices.all %}
+{% for choice in challenge.answer_choices.all %}
     <div class="activity-response-summary-choice {% ifequal choice my_answer.selected %}my-choice{% endifequal %}">
         {{ choice }}
         <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'></div>

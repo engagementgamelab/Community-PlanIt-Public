@@ -5,7 +5,7 @@
 {% block response %}        
     <div id="activity-response-summary">
         <h2>Response Summary</h2>
-        {% for choice in object.answer_choices.all %}
+        {% for choice in challenge.answer_choices.all %}
             <div class="activity-response-summary-choice {% if choice in my_answers %}my-choice{% endif %}">
                 {{ choice }}
                 <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.multiresponse_answers.count }}'>

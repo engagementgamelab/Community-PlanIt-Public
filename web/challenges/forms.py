@@ -1,194 +1,116 @@
-from stream import utils as stream_utils
-from gmapsfield.fields import *
-
 from django import forms
-from django.core.cache import cache
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
-from django.contrib.formtools.wizard.views import SessionWizardView
-from django.shortcuts import redirect
-from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
-from django.utils import simplejson
-from django.utils.translation import ugettext as _
+from django.utils.safestring import mark_safe
+from django.utils.encoding import force_unicode
+from django.utils.html import conditional_escape
 
 from .models import *
-from web.instances.models import Instance
 from web.missions.models import Mission
-from web.core.utils import missions_bar_context
+
 
 import logging
 log = logging.getLogger(__name__)
 
-def make_answer_form():
-    class AnswerForm(forms.Form):
-        response = forms.CharField(widget=forms.Textarea)
-        class Meta:
-            model = Answer
-    return AnswerForm
 
-def make_openended_form():
-    class OpenEndedAnswerForm(forms.Form):
-        response = forms.CharField(widget=forms.Textarea)
-        class Meta:
-            model = AnswerOpenEnded
-    return OpenEndedAnswerForm
+class SingleResponseForm(forms.ModelForm):
 
-def make_empathy_form():
-    class EmpathyAnswerForm(forms.Form):
-        response = forms.CharField(widget=forms.Textarea)
-        class Meta:
-            model = AnswerEmpathy
-    return EmpathyAnswerForm
+    def __init__(self, *args, **kwargs):
+        challenge = kwargs.get('initial')['challenge']
+        super(SingleResponseForm, self).__init__(*args, **kwargs)
 
-def make_single_form(choices):
-    class SingleForm(forms.Form):
-        response = forms.ChoiceField(widget=RadioSelect, choices=choices)
-        class Meta:
-            model = AnswerSingleResponse
-    return SingleForm
+        self.fields['selected'] = forms.ModelChoiceField(
+                    widget=forms.widgets.RadioSelect,
+                    required=True,
+                    empty_label=None,
+                    queryset=AnswerChoice.objects.\
+                            filter(challenge=challenge).distinct()
+        )
 
-def make_multi_form(choices):
-    class MultiForm(forms.Form):
-        response = forms.ChoiceField(widget=CheckboxSelectMultiple, choices=choices, required=False)
-        class Meta:
-            model = AnswerMultiChoice
-    return MultiForm
-
-class MapForm(forms.Form):
-    map = GoogleMapsField().formfield()
-
-    def clean_map(self):
-        map = self.cleaned_data.get('map')
-        if not map:
-            raise forms.ValidationError("The map doesn't exist")
-        mapDict = simplejson.loads(map);
-        if len(mapDict["markers"]) == 0:
-            raise forms.ValidationError("Please select a point on the map")
-        return map
-
-# =========================================
-# player submitted activity wizard and forms
-
-"""
-
-class SelectNewActivityForm(forms.Form):
-
-    #mission = forms.ModelChoiceField(
-    #            queryset=Mission.objects.filter()
-    #)
-    name = forms.CharField(widget=forms.TextInput(attrs={
-        'placeholder':'Title of your Challenge...'
-    }), required=True, max_length=255, label=_("Name"))
-    question = forms.CharField(widget=forms.Textarea(attrs={
-        'placeholder':'Described your Challenge...'
-    }), required=True, max_length=1000, label=_("Question"))
-    #type = forms.ChoiceField(
-    #            choices=ChallengeType.objects.filter(
-    #                    type__in=['open_ended', 'multi_response', 'map']
-    #                    ).values_list('type', 'displayType')
-    #)
+    class Meta:
+        model = AnswerWithOneChoice
+        exclude = ('user', 'challenge')
 
 
-class MultiResponseForm(forms.Form):
+class MultiResponseForm(forms.ModelForm):
 
-    answ1 = forms.CharField(required=True, max_length=255, label=_("Answer A)"))
-    answ2 = forms.CharField(required=True, max_length=255, label=_("Answer B)"))
-    answ3 = forms.CharField(required=False, max_length=255, label=_("Answer C)"))
-    answ4 = forms.CharField(required=False, max_length=255, label=_("Answer D)"))
-    answ5 = forms.CharField(required=False, max_length=255, label=_("Answer E)"))
+    def __init__(self, *args, **kwargs):
+        challenge = kwargs.get('initial')['challenge']
+        super(MultiResponseForm, self).__init__(*args, **kwargs)
 
-    #class Meta:
-    #    exclude = ('activity',)
+        self.fields['selected'] = forms.ModelMultipleChoiceField(
+                    widget=forms.widgets.CheckboxSelectMultiple,
+                    required=True,
+                    queryset=AnswerChoice.objects.\
+                            filter(challenge=challenge).distinct()
+        )
+
+    class Meta:
+        model = AnswerWithMultipleChoices
+        exclude = ('user', 'challenge')
 
 
-class NewActivityWizard(SessionWizardView):
+class BarrierRadioInput(forms.widgets.RadioInput):
 
+    def __init__(self, *args, **kwargs):
+        choice_statuses = kwargs.pop('choice_statuses')
+        super(BarrierRadioInput, self).__init__(*args, **kwargs)
 
-    def process_step(self, form):
-        form_list = self.get_form_list()
-        cd =  form.cleaned_data
-        if len(form_list.keys()) == 1:
-            d = {
-                    'multi_response': MultiResponseForm,
-                    #'map' : MapForm,
-            }
-            next_form = d.get(cd.get('type').type)
-            if next_form:
-                self.form_list.update({'1': next_form})
-        return self.get_form_step_data(form)
-
-    def get_context_data(self, form, **kwargs):
-        context = super(NewActivityWizard, self).get_context_data(form, **kwargs)
-        context.update({ 'game_header' : True, })
-        context.update(missions_bar_context(self.request))
-
-        form_list = self.get_form_list()
-        if len(form_list.keys()) > 1:
-            if form_list.get('1') == MultiResponseForm:
-                self.template_name = 'player_activities/new_multi_response.html'
-            #elif form_list.get('1') == MapForm:
-            #    self.template_name =  'player_activities/new_map.html'
-
-            #    mission = Mission.objects.get(slug="growth-versus-proficiency")
-            #    init_coords = []
-            #    map = mission.instance.location
-            #    markers = simplejson.loads("%s" % map)["markers"]
-            #    x = 0
-            #    for coor in markers if markers != None else []:
-            #        coor = coor["coordinates"]
-            #        init_coords.append( [x, coor[0], coor[1]] )
-            #        x = x + 1
-            #    context.update(dict(
-            #            init_coords = init_coords,
-            #            map = map,
-            #    ))
+    def render(self, name=None, value=None, attrs=None, choices=()):
+        name = name or self.name
+        value = value or self.value
+        attrs = attrs or self.attrs
+        if 'id' in self.attrs:
+            label_for = ' for="%s_%s"' % (self.attrs['id'], self.index)
         else:
-            self.template_name =  'player_activities/new_activity_form1.html'
+            label_for = ''
+        choice_label = conditional_escape(force_unicode(self.choice_label))
 
-        return context
+        dark_background_css = 'class="radio-item-disabled"'
+        #background: none repeat scroll 0 0 #DDDDDD;"'
 
-    def done(self, form_list, **kwargs):
+        return mark_safe(u'<label%s %s>%s %s</label>' % (label_for, dark_background_css, self.tag(), choice_label))
 
-        mission_slug = kwargs.pop('mission_slug', '')
+class BarrierFieldRenderer(forms.widgets.RadioFieldRenderer):
 
-        form_one = form_list[0]
+    """ Modifies some of the Radio buttons to be disabled in HTML,
+    based on an externally-appended choice_statuses list. """
 
-        type = ChallengeType.objects.get(type=form_one.cleaned_data.get('type'))
-        mission = Mission.objects.get(slug=mission_slug)
-        q = form_one.cleaned_data.get('question', '')
+    def __iter__(self):
+        for i, choice in enumerate(self.choices):
+            yield BarrierRadioInput(self.name, self.value, self.attrs.copy(), choice, i, choice_statuses=self.choice_statuses)
 
-        if type.type == 'map':
-            activity_cls = PlayerMapActivity
-        elif type.type in ['multi_response', 'open_ended']:
-            activity_cls = Challenge
+    def render(self):
+        if not hasattr(self, "choice_statuses"):
+            return self.original_render()
+        return self.my_render()
 
-        create_kwargs =dict( 
-                mission=mission,
-                creationUser=self.request.user,
-                type=type,
-                question=q,
-                points=0,
-                is_player_submitted=True,
-                name = form_one.cleaned_data.get('name', ''),
+    def original_render(self):
+        return mark_safe(u'<ul>\n%s\n</ul>' % u'\n'.join([u'<li>%s</li>'
+            % force_unicode(w) for w in self]))
+
+    def my_render(self):
+        midList = []
+        for x, wid in enumerate(self):
+            if self.choice_statuses[x]:
+                wid.attrs['disabled'] = True
+            midList.append(u'<li>%s</li>' % force_unicode(wid))
+        finalList = mark_safe(u'<ul>\n%s\n</ul>' % u'\n'.join([u'<li>%s</li>'
+            % w for w in midList])
         )
-        new_activity = activity_cls.objects.create(**create_kwargs)
+        return finalList
 
-        if type.type == 'multi_response':
-            form_two = form_list[1]
-            log.debug("player submitted multi:%s " % form_two.cleaned_data)
-            for f in form_two.cleaned_data.keys():
-                if form_two.cleaned_data.get(f).strip() != '':
-                    mc = MultiChoiceActivity.objects.create(
-                            value=form_two.cleaned_data.get(f, ''),
-                            activity=new_activity,
-                    )
-        cache.invalidate_group('activities_for_mission')
-        stream_utils.action.send(
-                                self.request.user,
-                                verb='activity_player_submitted',
-                                action_object=new_activity,
-                                target=self.request.current_game,
-                                description='created the Challenge',
+
+class BarrierFiftyFiftyForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.pop('instance')
+        initial_data = kwargs.pop('initial')
+        challenge = initial_data.get('challenge')
+        super(BarrierFiftyFiftyForm, self).__init__(*args, **kwargs)
+        answers = AnswerChoice.objects.by_challenge(challenge)
+
+        choices = answers.values_list('pk', 'value')
+        self.fields['selected'] = forms.ChoiceField(required=True)
+        self.fields['selected'].widget = forms.widgets.RadioSelect(
+                renderer=BarrierFieldRenderer, choices=choices
         )
-        return redirect(reverse("missions:mission_playercreated", args=(mission.slug,)))
-"""
+        self.fields['selected'].widget.renderer.choice_statuses = challenge.random_answer_choices

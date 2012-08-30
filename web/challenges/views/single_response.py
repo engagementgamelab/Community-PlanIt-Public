@@ -1,13 +1,11 @@
-from django import forms
-from django.utils.translation import get_language
-from django.forms.widgets import RadioSelect
-from django.shortcuts import render_to_response, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from web.missions.models import Mission
 from web.core.views import LoginRequiredMixin
 from ..models import *
+from ..forms import SingleResponseForm
 from ..mixins import PlayerMissionStateContextMixin
 
 import logging
@@ -29,17 +27,16 @@ log = logging.getLogger(__name__)
 
 
 class SingleResponseDetailView(LoginRequiredMixin, 
-                               DetailView, PlayerMissionStateContextMixin):
-
+                               PlayerMissionStateContextMixin,
+                               DetailView, 
+                               ):
     model = SingleResponseChallenge
     template_name = 'challenges/single_overview.html'
-    #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
     context_object_name = 'challenge'
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
-        self.mission = get_object_or_404(Mission, pk=kwargs['mission_id'])
 
         # make sure the challenge has not been played yet and is not
         # expired
@@ -51,12 +48,12 @@ class SingleResponseDetailView(LoginRequiredMixin,
             return redirect(self.challenge.play_url)
         return super(SingleResponseDetailView, self).dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         ctx = super(SingleResponseDetailView, self).\
-                get_context_data(**kwargs)
+                get_context_data(mission=self.challenge.parent, *args, **kwargs)
         my_answer = AnswerWithOneChoice.objects.get(
                                 user=self.request.user,
-                                challenge=self.object
+                                challenge=self.challenge
         )
         ctx.update({
             'my_answer': my_answer,
@@ -66,39 +63,18 @@ class SingleResponseDetailView(LoginRequiredMixin,
 single_response_detail_view = SingleResponseDetailView.as_view()
 
 
-class SingleResponseForm(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        challenge = kwargs.get('initial')['challenge']
-        super(SingleResponseForm, self).__init__(*args, **kwargs)
-
-        self.fields['selected'] = forms.ModelChoiceField(
-                    widget=RadioSelect,
-                    required=True,
-                    empty_label=None,
-                    queryset=AnswerChoice.objects.\
-                            filter(challenge=challenge).distinct()
-        )
-
-    class Meta:
-        model = AnswerWithOneChoice
-        exclude = ('user', 'challenge')
-
-
 class SingleResponseCreateView(LoginRequiredMixin,
-                               CreateView, PlayerMissionStateContextMixin):
-
+                               PlayerMissionStateContextMixin,
+                               CreateView,
+                               ):
     form_class = SingleResponseForm
-    model = None
-    context_object_name = 'single_response_answer'
     template_name = "challenges/single.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
 
         if AnswerWithOneChoice.objects.\
-                        filter(user=request.user, challenge=self.challenge).\
-                        exists():
+                    filter(user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
 
         self.initial.update({'challenge': self.challenge,})
@@ -116,10 +92,9 @@ class SingleResponseCreateView(LoginRequiredMixin,
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(SingleResponseCreateView, self).\
-                get_context_data(*args, **kwargs)
+                get_context_data(mission=self.challenge.parent, *args, **kwargs)
         context_data.update({
             'challenge': self.challenge,
-            'mission': self.challenge.parent,
         })
         return context_data
 

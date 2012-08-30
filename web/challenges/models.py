@@ -107,6 +107,14 @@ class BarrierChallenge(Challenge):
     minimum_coins_to_play = models.IntegerField(default=0)
 
     @property
+    def fifty_fifty_url(self):
+        return reverse(
+                'missions:challenges:'+self.challenge_type_shortcut+'-fifty-fifty',
+                args=(self.parent.pk, self.pk)
+        )
+
+
+    @property
     def random_answer_choices(self):
         #TODO explain what this is all about
         """ 50/50. generate a list of random....."""
