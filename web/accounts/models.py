@@ -470,6 +470,14 @@ class PlayerMissionState(models.Model):
                     self.challenges_locked.add(challenge)
         self.save()
 
+    def unlock_next_block(self):
+        """ a barrier has been completed. unlock next block of challenges"""
+        for i, barrier in enumerate(self.mission.challenges_as_sorteddict):
+            if not barrier in self.challenges_completed.all():
+                for challenge in self.mission.challenges_as_sorteddict.get(barrier):
+                    self.challenges_unlocked.add(challenge)
+                    self.challenges_locked.remove(challenge)
+
     @property
     def next_barrier(self):
         for barrier in Challenge.objects.filter(parent=self.mission).\
@@ -483,7 +491,7 @@ def update_player_mission_state(sender, **kwargs):
     if not isinstance(kwargs.get('instance'), Answer):
         return
     answer = kwargs.get('instance')
-    if  kwargs.get('created', False) == True:
+    if  kwargs.get('created') == True:
         challenge = answer.challenge
         mission = challenge.parent
         profile_per_instance  = UserProfilePerInstance.objects.get(
@@ -494,11 +502,16 @@ def update_player_mission_state(sender, **kwargs):
                 profile_per_instance=profile_per_instance,
                 mission=mission,
         )
-        # append to the completed challenges 
+        # append to the completed challenges
         player_mission_state.challenges_completed.add(challenge)
         # increment the coins count for non-barrier challenges
         if challenge.challenge_type != Challenge.BARRIER:
             player_mission_state.coins = player_mission_state.coins + mission.challenge_coin_value
+        # if barrier has been played,
+        # unlock next block of challenges
+        if challenge.challenge_type == Challenge.BARRIER:
+            player_mission_state.unlock_next_block()
+
         # if the next barrier in order is eligible to be unlocked
         # add it to the challenges_unlocked
         #next_barrier = player_mission_state.next_barrier
