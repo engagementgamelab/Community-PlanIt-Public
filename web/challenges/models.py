@@ -123,7 +123,7 @@ class BarrierChallenge(Challenge):
         try:
             correct_answer = answers.get(is_barrier_correct_answer=True)
         except AnswerChoice.DoesNotExist:
-            raise ImproperlyConfigured("A correct answer has not been set on the barrier challenge '%s'" % challenge.title)
+            raise ImproperlyConfigured("A correct answer has not been set on the barrier challenge '%s'" % self.title)
 
         cnt = 0
         choice_statuses = [False]*answers.count()
