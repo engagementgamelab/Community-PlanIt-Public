@@ -1,3 +1,5 @@
+import simplejson 
+
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
@@ -9,6 +11,23 @@ from web.missions.models import Mission
 
 import logging
 log = logging.getLogger(__name__)
+
+
+class MapForm(forms.ModelForm):
+    map = GoogleMapsField().formfield()
+
+    def clean_map(self):
+        map = self.cleaned_data.get('map')
+        if not map:
+            raise forms.ValidationError("The map doesn't exist")
+        mapDict = simplejson.loads(map);
+        if len(mapDict["markers"]) == 0:
+            raise forms.ValidationError("Please select a point on the map")
+        return map
+
+    class Meta:
+        model = AnswerMap
+        exclude = ('user', 'challenge')
 
 
 class OpenEndedForm(forms.ModelForm):
