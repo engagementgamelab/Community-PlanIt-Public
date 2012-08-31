@@ -4,7 +4,6 @@
 {% block content_challenge %}
     <div class="row-fluid">
         <div class="span9">
-            <p class="bio">{{challenge.bio}}</p>
             <div>{{ challenge.question|safe }}</div>
 
             {% block response %}
@@ -14,7 +13,7 @@
                         <input type="hidden" name="form" value="open_response">
 
                         {{ errors.response }}
-                        {{ form.response }}
+                        {{ form.value }}
                         {% include 'comments/_add.html' %}
 
                     </form>

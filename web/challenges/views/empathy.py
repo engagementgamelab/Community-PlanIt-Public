@@ -16,7 +16,6 @@ class EmpathyDetailView(LoginRequiredMixin,
                         DetailView):
     model = EmpathyChallenge
     template_name = 'challenges/empathy_overview.html'
-    #queryset = Instance.objects.exclude(is_disabled=True)
     pk_url_kwarg = 'challenge_id'
     context_object_name = 'challenge'
 
