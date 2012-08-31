@@ -3,6 +3,13 @@
 {% block title %}{{ challenge.name }} | Empathy Response Overview{% endblock %}
 
 {% block response %}
+{# RESPONSE SUMMARY #}
+<div id="activity-response-summary" class="">
+    <div class="activity-response-summary-choice">
+        {{ my_answer.value }}
+        <div class="activity-response-summary-choice-percentage" data-summary-count='{{ challenge.empathy_answers.count }}'></div>
+    </div>
+</div>
     
 {% endblock %}
 

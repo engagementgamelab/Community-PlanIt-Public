@@ -12,9 +12,8 @@
                     <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
                         {% csrf_token %}
                         <input type="hidden" name="form" value="empathy">
-
                         {{ errors.response }}
-                        {{ form.response }}
+                        {{ form.value }}
                         {% include 'comments/_add.html' %}
 
                     </form>

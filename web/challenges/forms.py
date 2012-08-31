@@ -11,6 +11,19 @@ import logging
 log = logging.getLogger(__name__)
 
 
+class EmpathyForm(forms.ModelForm):
+    #response = forms.CharField(widget=forms.Textarea)
+
+    def __init__(self, *args, **kwargs):
+        challenge = kwargs.get('initial')['challenge']
+        super(EmpathyForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = AnswerEmpathy
+        exclude = ('user', 'challenge')
+
+
+
 class SingleResponseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):

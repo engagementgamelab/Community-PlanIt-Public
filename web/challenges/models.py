@@ -69,20 +69,6 @@ class Challenge(BaseTreeNode):
                 args=(self.parent.pk, self.pk)
         )
 
-    @property
-    def completed_count(self):
-        #TODO
-        #actions = Action.objects.get_for_action_object(self)
-        #all_completed = filter(lambda a: a.verb == "activity_completed", actions)
-        #log.debug("%s completed %s" % (self.__unicode__(), len(all_completed)))
-        #return len(all_completed)
-        return 0
-
-    #def get_previous_challenge(self):
-    #    return self.challenge.get_previous_sibling()
-
-    #def get_next_challenge(self):
-    #    return self.challenge.get_next_sibling()
 
 class SingleResponseChallenge(Challenge):
 
@@ -179,7 +165,7 @@ class OpenEndedChallenge(Challenge):
 class EmpathyChallenge(Challenge):
 
     def determine_path(instance, filename):
-        return 'uploads/'+ str(instance.creationUser.id) +'/'+ filename
+        return 'uploads/empathy_challenges/'+ str(instance.id) +'/'+ filename
 
     bio_text = models.TextField(verbose_name="Bio", max_length=1000, default='')
     avatar = models.ImageField(upload_to=determine_path, null=True, blank=True)
