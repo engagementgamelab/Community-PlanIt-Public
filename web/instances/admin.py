@@ -100,14 +100,33 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
         (mission_models.Mission, MissionAdmin),
         (challenge_models.SingleResponseChallenge, SingleResponseChallengeAdmin),
         (challenge_models.MultiResponseChallenge, MultiResponseChallengeAdmin),
-        (challenge_models.MapChallenge, MapChallengeAdmin),  # custom admin allows custom edit/delete view.
+        (challenge_models.MapChallenge, MapChallengeAdmin),
         (challenge_models.EmpathyChallenge, EmpathyChallengeAdmin),
         (challenge_models.OpenEndedChallenge, OpenEndedChallengeAdmin),
         (challenge_models.BarrierChallenge, BarrierChallengeAdmin),
         (challenge_models.FinalBarrierChallenge, FinalBarrierChallengeAdmin),
     )
 
-    list_display = ('title', 'actions_column',)
+    list_display = ('custom_title', 'actions_column',)
+
+
+    def custom_title(self, node):
+        """
+        """
+        #print vars(node)
+        if isinstance(node.get_real_instance(), challenge_models.Challenge):
+            node_type = '[%s]' % node.get_real_instance().get_challenge_type_display()
+        elif isinstance(node.get_real_instance(), mission_models.Mission):
+            node_type = '[mission]'
+        elif isinstance(node.get_real_instance(), game_models.Instance):
+            node_type = '[game]'
+        else:
+            ''
+        return u' '.join([node.title, node_type])
+
+    custom_title.allow_tags = True
+    custom_title.short_description = _('Title')
+
 
     class Media:
         css = {
