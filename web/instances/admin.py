@@ -25,12 +25,17 @@ class BaseChildAdmin(PolymorphicMPTTChildModelAdmin):
 
 
 class AnswerChoiceInline(admin.StackedInline):
-    """
-        TODO
-        make sure it only appears on BarrierChallenge and
-        FinalBarrierChallenge
-        exclude = ('is_barrier_correct_answer',)
-    """
+    def get_formset(self, request, obj=None, **kwargs):
+        """ do not display the is_barrier_correct_answer field on challenges that are not Barrier or Final Barrier"""
+
+        if not isinstance(obj, (challenge_models.BarrierChallenge, 
+                                challenge_models.FinalBarrierChallenge)):
+            if self.exclude is None:
+                self.exclude = []
+            else:
+                self.exclude = list(self.exclude)
+            self.exclude.append('is_barrier_correct_answer')
+        return super(AnswerChoiceInline, self).get_formset(request, obj=obj, **kwargs)
 
     model = challenge_models.AnswerChoice
 
@@ -111,9 +116,6 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
 
 
     def custom_title(self, node):
-        """
-        """
-        #print vars(node)
         if isinstance(node.get_real_instance(), challenge_models.Challenge):
             node_type = '[%s]' % node.get_real_instance().get_challenge_type_display()
         elif isinstance(node.get_real_instance(), mission_models.Mission):
