@@ -118,9 +118,15 @@
                         {% endif %}
 
                         <div class="meta"><i class="glyphicon-credit"></i> {% ifequal challenge.challenge_type_shortcut 'final-barrier' %}?{% else %}{{ coins }}{% endifequal %} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
-                        <div class="action"><a href="{{ challenge.play_url }}" class="btn btn-primary">{% if challenge in player_mission_state.challenges_locked.all %}Locked{% elif challenge in player_mission_state.challenges_completed.all %}Challenge Overview{% else %}Play Challenge{% endif %}
-
-</a></div>
+                        <div class="action">
+                            {% if challenge not in player_mission_state.challenges_locked.all %}
+                                <a href="{{ challenge.play_url }}" class="btn btn-primary">
+                                    {% if challenge in player_mission_state.challenges_completed.all %}Challenge Overview{% else %}Play Challenge{% endif %}
+                                </a>
+                            {% else %}
+                                <button class="btn disabled">Locked</button>
+                            {% endif %}
+                        </div>
                     </div>
                 {% endif %}
             {% endwith %}
