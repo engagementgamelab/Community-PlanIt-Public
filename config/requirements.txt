@@ -1,9 +1,16 @@
+Django==1.4.1
 Fabric==1.4.3
 PIL==1.1.7
 django-cache-utils==0.7.2
 django-debug-toolbar==0.9.4
 django-extensions==0.9
+django-facebook==4.0.9
+django-filebrowser==3.5.0
+django-grappelli==2.4.0
 django-model-utils==1.1.0
+django-mptt==0.5.2
+django-polymorphic==0.2
+django-polymorphic-tree==0.8.2
 pycrypto==2.6
 ssh==1.7.14
 wsgiref==0.1.2
