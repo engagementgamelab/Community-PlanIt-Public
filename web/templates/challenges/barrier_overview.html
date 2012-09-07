@@ -7,11 +7,21 @@
     {% for choice in challenge.answer_choices.all %}
         <div class="activity-response-summary-choice {% ifequal choice my_answer.selected %}my-choice{% endifequal %}">
             {{ choice }}
-            <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'>
+            <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'> </div>
+        </div>
+        {% endfor %}
+
+        <br/>
+        <div>
+            <span style="color:red;"><strong>
+            {% if my_answer_is_correct == True  %}
+            You chose an correct answer. {{ challenge.mission.challenge_coin_value }} coins were subtracted from your coin total
+            {% else %}
+            Congratulations! You chose the correct answer.
+            {% endif %}
+            </strong></span>
         </div>
 
-        </div>
-    {% endfor %}
 </div>
 {% endblock %}
 

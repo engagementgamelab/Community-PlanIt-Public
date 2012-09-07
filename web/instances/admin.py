@@ -10,7 +10,6 @@ from . import models as game_models
 from web.missions import models as mission_models
 from web.challenges import models as challenge_models
 
-
 # The common admin functionality for all derived models:
 
 class BaseChildAdmin(PolymorphicMPTTChildModelAdmin):
@@ -25,6 +24,8 @@ class BaseChildAdmin(PolymorphicMPTTChildModelAdmin):
 
 
 class AnswerChoiceInline(admin.StackedInline):
+    model = challenge_models.AnswerChoice
+
     def get_formset(self, request, obj=None, **kwargs):
         """ do not display the is_barrier_correct_answer field on challenges that are not Barrier or Final Barrier"""
 
@@ -36,8 +37,6 @@ class AnswerChoiceInline(admin.StackedInline):
                 self.exclude = list(self.exclude)
             self.exclude.append('is_barrier_correct_answer')
         return super(AnswerChoiceInline, self).get_formset(request, obj=obj, **kwargs)
-
-    model = challenge_models.AnswerChoice
 
 
 class ChallengeAdminBase(BaseChildAdmin):
@@ -56,38 +55,40 @@ class ChallengeAdminBase(BaseChildAdmin):
             if isinstance(instance, Attachment):
                 if isinstance(instance, AttachmentVideo):
                     instance.attachment_file = ''
-
                 instance.creator = request.user
-                instance.save()
-
+            instance.save()
 
 
 class SingleResponseChallengeAdmin(ChallengeAdminBase):
+    inlines = [AnswerChoiceInline, CPIAttachmentInlines, VideoAttachmentInlines]
 
-    #def __init__(self, *args, **kwargs):
-    #    super(SingleResponseChallengeAdmin, self).__init__(*args, **kwargs)
-    #    self.exclude = self.exclude + ('is_barrier_correct_answer',)
-
-    inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
 
 class MultiResponseChallengeAdmin(ChallengeAdminBase):
-    inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
+    inlines = [AnswerChoiceInline, CPIAttachmentInlines, VideoAttachmentInlines]
+
 
 class BarrierChallengeAdmin(ChallengeAdminBase):
-    list_display = ('minimum_coins_to_play',)
-    inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
+    inlines = [AnswerChoiceInline, CPIAttachmentInlines, VideoAttachmentInlines]
+
+    #from django.core.exceptions import ValidationError
+    #raise ValidationError("Barrier Challenge must have exactly one correct answer set.")
+
 
 class FinalBarrierChallengeAdmin(ChallengeAdminBase):
-    inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AnswerChoiceInline]
+    inlines = [AnswerChoiceInline, CPIAttachmentInlines, VideoAttachmentInlines]
+
 
 class OpenEndedChallengeAdmin(ChallengeAdminBase):
     inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
 
+
 class MapChallengeAdmin(ChallengeAdminBase):
     inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
 
+
 class EmpathyChallengeAdmin(ChallengeAdminBase):
     inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
+
 
 class MissionAdmin(BaseChildAdmin):
     pass
@@ -146,35 +147,3 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
 
 
 admin.site.register(game_models.BaseTreeNode, TreeNodeParentAdmin)
-
-
-"""
-from web.accounts.models import UserProfileVariantsForInstance
-class UserProfileVariantsForInstanceInline(admin.StackedInline):
-    filter_horizontal = ('affiliation_variants', 'stake_variants',)
-    model = UserProfileVariantsForInstance
-
-class InstanceAdmin(TranslatableAdmin):
-    list_display = ('title', 'start_date', 'city', 'is_disabled')
-    list_filter = ('is_disabled',)
-    filter_horizontal = ('curators', 'languages',)
-    inlines = [
-        UserProfileVariantsForInstanceInline,
-    ]
-class NotificationRequestAdmin(admin.ModelAdmin):
-    list_display = ('email', 'instance')
-
-class PointsAssignmentAdmin(admin.ModelAdmin):
-    list_display = ('action', 'points', 'instance')
-
-class AffiliationAdmin(admin.ModelAdmin):
-	list_display = ('name',)
-
-# Register to admin sites
-admin.site.register(Instance, InstanceAdmin)
-admin.site.register(Language)
-admin.site.register(Affiliation, AffiliationAdmin)
-admin.site.register(NotificationRequest, NotificationRequestAdmin)
-#admin.site.register(PointsAssignmentAction)
-admin.site.register(PointsAssignment, PointsAssignmentAdmin)
-"""

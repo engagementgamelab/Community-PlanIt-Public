@@ -33,17 +33,22 @@ class BarrierDetailView(LoginRequiredMixin,
                                 challenge=self.challenge
                 ).exists():
             return redirect(self.challenge.play_url)
-        return super(BarrierDetailView, self).dispatch(request, *args, **kwargs)
+        return super(BarrierDetailView, self).dispatch(request,
+                                                        *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         ctx = super(BarrierDetailView, self).\
-                get_context_data(mission=self.challenge.parent, *args, **kwargs)
+                get_context_data(mission=self.challenge.parent,
+                                                        *args, **kwargs)
         my_answer = AnswerWithOneChoice.objects.get(
                                 user=self.request.user,
                                 challenge=self.challenge
         )
         ctx.update({
             'my_answer': my_answer,
+            'my_answer_is_correct' : my_answer.selected in \
+                                    self.challenge.answer_choices.\
+                                    filter(is_barrier_correct_answer=True),
         })
         return ctx
 
@@ -92,6 +97,7 @@ class BarrierCreateView(LoginRequiredMixin,
         self.object.user = self.request.user
         self.object.challenge = self.challenge
         self.object.save()
+
         return redirect(self.challenge.overview_url)
 
     def form_invalid(self, form):

@@ -488,10 +488,11 @@ class PlayerMissionState(models.Model):
 
 @receiver(post_save, sender=Answer)
 def update_player_mission_state(sender, **kwargs):
-    if not isinstance(kwargs.get('instance'), Answer):
-        return
     answer = kwargs.get('instance')
-    if  kwargs.get('created') == True:
+
+    if  kwargs.get('created') == True and \
+            isinstance(answer, Answer):
+
         challenge = answer.challenge
         mission = challenge.parent
         profile_per_instance  = UserProfilePerInstance.objects.get(
@@ -506,10 +507,12 @@ def update_player_mission_state(sender, **kwargs):
         player_mission_state.challenges_completed.add(challenge)
         # increment the coins count for non-barrier challenges
         if challenge.challenge_type != Challenge.BARRIER:
-            player_mission_state.coins = player_mission_state.coins + mission.challenge_coin_value
-        # if barrier has been played,
-        # unlock next block of challenges
+            player_mission_state.coins += mission.challenge_coin_value
+        # if barrier has been played, unlock next block of challenges
         if challenge.challenge_type == Challenge.BARRIER:
+            # if chosen answer is incorrect, subtract coins
+            if answer.selected.is_barrier_correct_answer != True:
+                player_mission_state.coins -= mission.challenge_coin_value
             player_mission_state.unlock_next_block()
 
         # if the next barrier in order is eligible to be unlocked

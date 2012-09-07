@@ -82,9 +82,8 @@ class BaseTreeNode(PolymorphicMPTTModel):
     #objects = InstanceManager()
 
     class Meta:
-        verbose_name = _("Tree node")
-        verbose_name_plural = _("Tree nodes")
-
+        verbose_name = _("Game")
+        verbose_name_plural = _("Games")
 
 
 class Instance(BaseTreeNode):
@@ -110,6 +109,8 @@ class Instance(BaseTreeNode):
 
 
     class Meta:
+        verbose_name = "Game"
+        verbose_name_plural = "Games"
         get_latest_by = 'start_date'
         ordering = ('start_date',)
 

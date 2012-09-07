@@ -8,6 +8,7 @@ from stream.models import Action
 from cache_utils.decorators import cached
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.exceptions import ImproperlyConfigured
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
@@ -122,6 +123,10 @@ class BarrierChallenge(Challenge):
                 cnt+=1
         return choice_statuses
 
+    #def clean(self):
+    #    if self.answer_choices.filter(is_barrier_correct_answer=True).count() != 1:
+    #        raise ValidationError("Barrier Challenge must have exactly one correct answer set.")
+
     def save(self, *args, **kwargs):
         #TODO
         # validate to see if the number of points per challenge is not less than
@@ -200,7 +205,7 @@ class AnswerChoice(models.Model):
     challenge = models.ForeignKey(Challenge, related_name='answer_choices')
     value = models.CharField(max_length=255)
 
-    is_barrier_correct_answer = models.BooleanField(default=False, verbose_name="The correct answer to a barrier challenge")
+    is_barrier_correct_answer = models.BooleanField(default=False, verbose_name="Mark this answer as the correct answer")
 
     objects = AnswerChoiceManager()
 
