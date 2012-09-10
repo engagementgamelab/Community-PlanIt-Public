@@ -34,7 +34,10 @@ STATICFILES_STORAGE = (
 
 ADMINS = ( ('philip.kalinsky', 'eloquentbits.com'), )
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
-AUTHENTICATION_BACKENDS = ( 'web.accounts.backends.EmailBackend', )
+AUTHENTICATION_BACKENDS = (
+    'web.accounts.backends.EmailBackend',
+    'socialregistration.contrib.facebook.auth.FacebookAuth',
+)
 DATE_FORMAT = '%m/%d/%Y'
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -105,6 +108,8 @@ INSTALLED_APPS = (
     # django-ajax-selects
     'ajax_select',
     'django_extensions',
+    'socialregistration',
+    'socialregistration.contrib.facebook',
     #'template_repl',
     'cache_utils',
     'south',
