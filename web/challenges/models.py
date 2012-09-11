@@ -41,6 +41,9 @@ class Challenge(BaseTreeNode):
         (BARRIER, 'Barrier'),
         (FINAL_BARRIER, 'Final Barrier'),
     )
+    # used by django-polymorphic-tree for self explanatory purpose
+    can_have_children = False
+
     question = models.CharField(max_length=1000, default='')
     challenge_type = models.IntegerField(max_length=1, choices=CHALLENGE_TYPES, null=True)
     is_player_submitted = models.BooleanField("is player submitted?", default=False)

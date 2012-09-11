@@ -1,16 +1,23 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
+from polymorphic_tree.admin import PolymorphicMPTTChildModelAdmin
+
 from attachments.models import Attachment
 
 from web.instances.models import *
 from web.attachment_types.models import *
 
 from . import models as game_models
+from .parentadmin import PolymorphicMPTTParentModelAdmin
 from web.missions import models as mission_models
 from web.challenges import models as challenge_models
 
 # The common admin functionality for all derived models:
+
+
+class TreeNodeTypeChoiceForm():
+    type_label = _("Tree node type")
+
 
 class BaseChildAdmin(PolymorphicMPTTChildModelAdmin):
     GENERAL_FIELDSET = (None, {
@@ -98,23 +105,29 @@ class GameAdmin(BaseChildAdmin):
     inlines = [VideoAttachmentInlines,]
     #readonly_fields = ('start_date', 'end_date')
 
+
 # Create the parent admin that combines it all:
 class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
     base_model = game_models.BaseTreeNode
+    #add_type_form = TreeNodeTypeChoiceForm
+
+    # child_models defines:
+    #   1) model
+    #   2) model admin
+    #   3) tuple of models allowed to be the
+    #      parent of the current model
     child_models = (
-        (game_models.Instance, GameAdmin),
-        (mission_models.Mission, MissionAdmin),
-        (challenge_models.SingleResponseChallenge, SingleResponseChallengeAdmin),
-        (challenge_models.MultiResponseChallenge, MultiResponseChallengeAdmin),
-        (challenge_models.MapChallenge, MapChallengeAdmin),
-        (challenge_models.EmpathyChallenge, EmpathyChallengeAdmin),
-        (challenge_models.OpenEndedChallenge, OpenEndedChallengeAdmin),
-        (challenge_models.BarrierChallenge, BarrierChallengeAdmin),
-        (challenge_models.FinalBarrierChallenge, FinalBarrierChallengeAdmin),
+        (game_models.Instance, GameAdmin, ()),
+        (mission_models.Mission, MissionAdmin, (game_models.Instance,)),
+        (challenge_models.SingleResponseChallenge, SingleResponseChallengeAdmin, (mission_models.Mission,)),
+        (challenge_models.MultiResponseChallenge, MultiResponseChallengeAdmin, (mission_models.Mission,)),
+        (challenge_models.MapChallenge, MapChallengeAdmin, (mission_models.Mission,)),
+        (challenge_models.EmpathyChallenge, EmpathyChallengeAdmin, (mission_models.Mission,)),
+        (challenge_models.OpenEndedChallenge, OpenEndedChallengeAdmin, (mission_models.Mission,)),
+        (challenge_models.BarrierChallenge, BarrierChallengeAdmin, (mission_models.Mission,)),
+        (challenge_models.FinalBarrierChallenge, FinalBarrierChallengeAdmin, (mission_models.Mission,)),
     )
-
     list_display = ('custom_title', 'actions_column',)
-
 
     def custom_title(self, node):
         if isinstance(node.get_real_instance(), challenge_models.Challenge):
@@ -131,10 +144,10 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
     custom_title.short_description = _('Title')
 
 
-    class Media:
-        css = {
-            'all': ('admin/treenode/admin.css',)
-        }
+    #class Media:
+    #    css = {
+    #        'all': ('admin/treenode/admin.css',)
+    #    }
 
     def queryset(self, request):
         qs = super(TreeNodeParentAdmin, self).queryset(request)
