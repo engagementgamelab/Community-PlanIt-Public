@@ -56,6 +56,11 @@ urlpatterns = patterns('web',
 #if 'admin_tools' in settings.INSTALLED_APPS:
 #    url(r'^admin_tools/', include('admin_tools.urls')),
 
+if 'socialregistration' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^social/', include('socialregistration.urls', namespace = 'socialregistration'))
+    )
+
 if 'grappelli' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^grappelli/', include('grappelli.urls')),
