@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from polymorphic_tree.admin import PolymorphicMPTTChildModelAdmin
+from polymorphic_tree.admin import PolymorphicMPTTChildModelAdmin, PolymorphicMPTTParentModelAdmin
 
 from attachments.models import Attachment
 
@@ -8,7 +8,6 @@ from web.instances.models import *
 from web.attachment_types.models import *
 
 from . import models as game_models
-from .parentadmin import PolymorphicMPTTParentModelAdmin
 from web.missions import models as mission_models
 from web.challenges import models as challenge_models
 
