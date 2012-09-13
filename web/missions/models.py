@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from operator import attrgetter
 
-from model_utils.managers import InheritanceManager
 from cache_utils.decorators import cached
 from stream import utils as stream_utils
 
