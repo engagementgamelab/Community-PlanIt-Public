@@ -1,5 +1,4 @@
 from sijax import Sijax
-from localeurl.utils import strip_path
 
 from django import forms
 from django.conf import settings
