@@ -46,8 +46,10 @@ class Affiliation(models.Model):
         ordering = ('name',)
 
 
-class InstanceManager(PolymorphicMPTTModelManager):
+class TreeNodeManager(PolymorphicMPTTModelManager):
+    pass
 
+    """
     @cached(60*60*24*7)
     def for_slug(self, slug):
         return self.get(slug=slug)
@@ -72,6 +74,7 @@ class InstanceManager(PolymorphicMPTTModelManager):
         # basically, active and future
         qs = self.exclude(is_disabled=True)
         return qs.filter(missions__end_date__gte=self.now).distinct()
+    """
 
 
 # A base model for the tree:
@@ -79,7 +82,14 @@ class BaseTreeNode(PolymorphicMPTTModel):
     parent = PolymorphicTreeForeignKey('self', blank=True, null=True, related_name='children', verbose_name=_('parent'))
     title = models.CharField(_("Title"), max_length=200)
 
-    #objects = InstanceManager()
+    #tree_node_mgr = TreeNodeManager()
+
+    def can_create(self, user_obj):
+        if user_obj.is_superuser == True:
+            return True
+        game = self.get_root()
+        game = game.get_real_instance()
+        return user_obj in game.curators.all()
 
     class Meta:
         verbose_name = _("Game")

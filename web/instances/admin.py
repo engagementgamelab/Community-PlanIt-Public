@@ -142,20 +142,11 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
     custom_title.allow_tags = True
     custom_title.short_description = _('Title')
 
-
-    #class Media:
-    #    css = {
-    #        'all': ('admin/treenode/admin.css',)
-    #    }
-
     def queryset(self, request):
         qs = super(TreeNodeParentAdmin, self).queryset(request)
-        #curators=request.user
-        qs = qs.filter()
-        return qs
-        #from web.instances.models import Instance
-        #print request.user
-        #return qs.instance_of(Instance)
-
+        return qs.filter(id__in=
+                    [node.pk for node in \
+                            filter(lambda n: n.can_create(request.user), qs.filter())]
+        )
 
 admin.site.register(game_models.BaseTreeNode, TreeNodeParentAdmin)
