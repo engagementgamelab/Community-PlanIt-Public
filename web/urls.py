@@ -93,8 +93,15 @@ if 'ajax_select' in settings.INSTALLED_APPS:
         (r'^ajax_select/', include('ajax_select.urls')),
     )
 
+if 'django_su' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r"^su/", include("django_su.urls")),
+    )
+
 if 'attachments' in settings.INSTALLED_APPS:
     (r'^attachments/', include('attachments.urls')),
+
+
 
 #urlpatterns += patterns('core.memcached_status',
 #    url(r'^status/cache/$', 'view'),

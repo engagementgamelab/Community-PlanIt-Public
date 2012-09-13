@@ -37,6 +37,7 @@ AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 AUTHENTICATION_BACKENDS = (
     'web.accounts.backends.EmailBackend',
     'socialregistration.contrib.facebook.auth.FacebookAuth',
+    'django_rules.backends.ObjectPermissionBackend',
 )
 DATE_FORMAT = '%m/%d/%Y'
 DEBUG = False
@@ -58,6 +59,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'grappelli',
     'filebrowser',
+    'django_su',
 
     'django.contrib.admin',
     'django.contrib.admindocs',
@@ -105,8 +107,8 @@ INSTALLED_APPS = (
     'gmapsfield.templatetags',
     'rosetta',
     'sorl.thumbnail',
-    # django-ajax-selects
     'ajax_select',
+    'django_rules',
     'django_extensions',
     'socialregistration',
     'socialregistration.contrib.facebook',
@@ -188,6 +190,9 @@ LANGUAGES = (
 ROSETTA_UWSGI_AUTO_RELOAD = True
 ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS = True
 
+#django-grappelli
+GRAPPELLI_ADMIN_TITLE = "CommunityPlanIt CMS"
+
 #django-stream
 # see notes in web.reports.actions
 STREAM_VERBS = (
@@ -222,6 +227,7 @@ BRINGCPI_RECIPIENTS = ['eric_gordon@emerson.edu']
 # used in autocompletion
 AJAX_LOOKUP_CHANNELS = {
     'affiliations': ('accounts.lookups', 'AffiliationsLookup'),
+    'django_su': dict(model='auth.user', search_field='username'),
 }
 
 # django_endless_pagination
