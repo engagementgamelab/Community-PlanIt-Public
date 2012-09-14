@@ -2,26 +2,21 @@
 {% load i18n avatar %}
 
 {% block content_challenge %}
-    <div class="row-fluid">
-        <div class="span9">
-            <div>{{ challenge.question|safe }}</div>
+    <div>
+        <div>{{ challenge.question|safe }}</div>
 
-            {% block response %}
-                <div class="response">
-                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="form" value="single_response">
+        {% block response %}
+            <div class="response">
+                <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="form" value="single_response">
 
-                        {{ errors.response }}
-                        <div class="answerchoices-container">{{ form.selected }}</div>
-                        {% include 'comments/_add.html' %}
+                    {{ errors.response }}
+                    <div class="answerchoices-container">{{ form.selected }}</div>
+                    {% include 'comments/_add.html' %}
 
-                    </form>
-                </div>
-            {% endblock %}
-        </div>
-        <div class="span3">
-            {% include 'challenges/_resources.html' %}
-        </div>
+                </form>
+            </div>
+        {% endblock %}
     </div>
 {% endblock %}

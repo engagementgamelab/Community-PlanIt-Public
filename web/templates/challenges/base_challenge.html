@@ -6,34 +6,45 @@
     {{ block.super }}
     <div id="challenges">
         <div class="wrapper box-shadow-container">
-            <div id="challenge" class="challenge">
-                <a class="close" href="{% url missions:challenges:challenges challenge.parent.pk %}">×</a>
+            <div id="challenge" class="challenge row-fluid">
+                <div class="challenge-basics">
+                    <div class="challenge-image-container">
+                        
+                        <h4>Challenge</h4>
+                        <h1>{{ challenge.title|safe }}</h1>                        
+                        <img class="challenge-image" src="http://placehold.it/300x300" width="300" height="300" alt="">
+                    </div>
+                    <div>
+                        <span><i class="glyphicon-credit"></i> {{ challenge.parent.challenge_coin_value }}</span>
+                        <span> <strong>My coins count: {{ player_mission_state.coins }}</strong></span>
 
-                <h1>{{ challenge.title|safe }}</h1>
-                <span><i class="glyphicon-credit"></i> {{ challenge.parent.challenge_coin_value }}</span>
-                <br/> <br/>
-                <span> <strong>My coins count: {{ player_mission_state.coins }}</strong></span>
-                
-                {% block content_challenge %}
-                {% endblock %}
-
-                <div id="challenge-discussion">
-                    <h2 class="header-discussion">Discussion</h2>
-                    {% block comments %}
-                        <p>Once you are done, you will be able to view everyone's responses. {% if request.user in challenge.parent.parent.curators.all %}But since you are a curator for this game, you can just skip ahead to the <a href="{{ challenge.overview_url }}">Overview</a>.{% endif %}</p>
+                        {% include 'challenges/_resources.html' %}
+                    </div>
+                </div>
+                <div class="challenge-details">
+                    <a class="close" href="{% url missions:challenges:challenges challenge.parent.pk %}">×</a>
+                    {% block content_challenge %}
                     {% endblock %}
                 </div>
             </div>
+            <div id="challenge-discussion">
+                <h2 class="header-discussion">Discussion</h2>
+                {% block comments %}
+                    <p>Once you are done, you will be able to view everyone's responses. {% if request.user in challenge.parent.parent.curators.all %}But since you are a curator for this game, you can just skip ahead to the <a href="{{ challenge.overview_url }}">Overview</a>.{% endif %}</p>
+                {% endblock %}
+            </div>
+
+
             {# TODO add utility methods to the challenge models for navigation #}
             {% if challenge.challenge_ptr.get_previous_sibling and challenge.challenge_ptr.get_previous_sibling.get_real_instance in player_mission_state.challenges_unlocked.all %}
-            {% with challenge.challenge_ptr.get_previous_sibling as previous_challenge %}
-            <a id="challenge-prev" class="challenge" href="{{ previous_challenge.play_url }}"><h3>{{ previous_challenge.title }}</h3></a>
-            {% endwith %}
-            {% endif %}
-            {% if challenge.challenge_ptr.get_next_sibling and challenge.challenge_ptr.get_next_sibling.get_real_instance in player_mission_state.challenges_unlocked.all%}
-            {% with challenge.challenge_ptr.get_next_sibling as next_challenge  %}
-            <a id="challenge-next" class="challenge" href="{{ next_challenge.play_url }}"><h3>{{ next_challenge.title }}</h3></a>
-            {% endwith %}
+                {% with challenge.challenge_ptr.get_previous_sibling as previous_challenge %}
+                        <a id="challenge-prev" class="challenge" href="{{ previous_challenge.play_url }}"><h3>{{ previous_challenge.title }}</h3></a>
+                    {% endwith %}
+                    {% endif %}
+                        {% if challenge.challenge_ptr.get_next_sibling and challenge.challenge_ptr.get_next_sibling.get_real_instance in player_mission_state.challenges_unlocked.all%}
+                    {% with challenge.challenge_ptr.get_next_sibling as next_challenge  %}
+                    <a id="challenge-next" class="challenge" href="{{ next_challenge.play_url }}"><h3>{{ next_challenge.title }}</h3></a>
+                {% endwith %}
             {% endif %}
         </div>
     </div>

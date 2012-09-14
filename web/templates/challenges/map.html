@@ -2,35 +2,28 @@
 {% load i18n avatar gmap %}
 
 {% block content_challenge %}
-    <div class="row-fluid">
-        <div class="span9">
-            <div>{{ challenge.question|safe }}</div>
+    <div>
+        <div>{{ challenge.question|safe }}</div>
 
-            {% block response %}
-            <form id="id_activity-form" enctype="multipart/form-data" action="" method="post" class="narrow">{% csrf_token %}
-                <div class="map-controls form-inline">
-                    <input type="text" name="google_search" id="google_search" placeholder="Search for a company or an address" />
-                    <button class="btn btn-primary add">{% trans "Add Point" %}</button>
-                    <button class="btn btn-primary rm">{% trans "Clear All Points" %}</button>
-                </div>
-                
-                <div>
-                    {% for x, lat, lon in init_coords %}
-                        <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
-                    {% endfor %}
-                    {{ form.map.errors }}
+        {% block response %}
+        <form id="id_activity-form" enctype="multipart/form-data" action="" method="post" class="narrow">{% csrf_token %}
+            <div class="map-controls form-inline">
+                <input type="text" name="google_search" id="google_search" placeholder="Search for a company or an address" />
+                <button class="btn btn-primary add">{% trans "Add Point" %}</button>
+                <button class="btn btn-primary rm">{% trans "Clear All Points" %}</button>
+            </div>
+            
+            <div>
+                {% for x, lat, lon in init_coords %}
+                    <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
+                {% endfor %}
+                {{ form.map.errors }}
 
-                    <div id="map" class="google-map" data-type="Point" width="200" height="600"></div>
+                <div id="map" class="google-map" data-type="Point" width="200" height="600"></div>
 
-                </div>
-            </form>
-            {% endblock %}
-        </div>
-        <div class="span3">
-            {% include 'challenges/_resources.html' %}
-        </div>
-
-
+            </div>
+        </form>
+        {% endblock %}
     </div>
 {% endblock %}
 

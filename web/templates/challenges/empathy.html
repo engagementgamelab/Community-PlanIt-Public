@@ -2,26 +2,21 @@
 {% load i18n avatar %}
 
 {% block content_challenge %}
-    <div class="row-fluid">
-        <div class="span9">
-            <p class="bio">{{challenge.bio_text}}</p>
-            <p>{{ challenge.question|safe }}</p>
+    <div>
+        <p class="bio">{{challenge.bio_text}}</p>
+        <p>{{ challenge.question|safe }}</p>
 
-            {% block response %}
-                <div class="response">
-                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="form" value="empathy">
-                        {{ errors.response }}
-                        {{ form.value }}
-                        {% include 'comments/_add.html' %}
+        {% block response %}
+            <div class="response">
+                <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="form" value="empathy">
+                    {{ errors.response }}
+                    {{ form.value }}
+                    {% include 'comments/_add.html' %}
 
-                    </form>
-                </div>
-            {% endblock %}
-        </div>
-        <div class="span3">
-            {% include 'challenges/_resources.html' %}
-        </div>
+                </form>
+            </div>
+        {% endblock %}
     </div>
 {% endblock %}

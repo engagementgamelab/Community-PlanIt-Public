@@ -3,6 +3,9 @@
 
 {% block content_challenge %}
     <div class="row-fluid">
+        <div class="span3">
+            {% include 'challenges/_resources.html' %}
+        </div>
         <div class="span9">
             <p class="bio">{{challenge.bio_text}}</p>
             <p>{{ challenge.question|safe }}</p>
@@ -21,9 +24,6 @@
                     </form>
                 </div>
             {% endblock %}
-        </div>
-        <div class="span3">
-            {% include 'challenges/_resources.html' %}
         </div>
     </div>
 {% endblock %}

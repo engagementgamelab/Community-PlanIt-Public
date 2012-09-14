@@ -2,30 +2,25 @@
 {% load i18n avatar %}
 
 {% block content_challenge %}
-    <div class="row-fluid">
-        <div class="span9">
-            <p>{{ challenge.question|safe }}</p>
+    <div>
+        <p>{{ challenge.question|safe }}</p>
 
-            {% block response %}
-                <div class="response">
-                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">{% csrf_token %}
-                        <div><strong>coins needed to play this barrier: {{ challenge.minimum_coins_to_play }} </strong> </div>
+        {% block response %}
+            <div class="response">
+                <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">{% csrf_token %}
+                    <div><strong>coins needed to play this barrier: {{ challenge.minimum_coins_to_play }} </strong> </div>
 
-                        <div class="answerchoices-container">{{ form.selected }}</div>
+                    <div class="answerchoices-container">{{ form.selected }}</div>
 
-                        {% if not fifty_fity and not challenge in player_mission_state.barriers_fifty_fifty.all %}
-                        <!--button class="btn btn-primary btn-large"-->
-                        <a href="{{ challenge.fifty_fifty_url}}">50/50</a>
-                        <!--/button-->
-                        {% endif %}
-                        {% include 'comments/_add.html' %}
+                    {% if not fifty_fity and not challenge in player_mission_state.barriers_fifty_fifty.all %}
+                    <!--button class="btn btn-primary btn-large"-->
+                    <a href="{{ challenge.fifty_fifty_url}}">50/50</a>
+                    <!--/button-->
+                    {% endif %}
+                    {% include 'comments/_add.html' %}
 
-                    </form>
-                </div>
-            {% endblock %}
-        </div>
-        <div class="span3">
-            {% include 'challenges/_resources.html' %}
-        </div>
+                </form>
+            </div>
+        {% endblock %}
     </div>
 {% endblock %}

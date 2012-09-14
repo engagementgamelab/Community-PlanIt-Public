@@ -3,7 +3,6 @@
 
 
 {% block js %}
-    {{ block.super }}
     {% comment %}
     DO NOT DELETE, temp commented
     {# masonry is required to display comments correctly #}
@@ -35,22 +34,85 @@
     });
     </script>
     {% endcomment %}
+    {{ block.super }}
+    <script>
+
+        $(function(){
+            var $carousel = $('.carousel');
+            var $clip = $carousel.find('.carousel-clip');
+            var $slide = $carousel.find('.carousel-slide');
+            var $challenges = $slide.find('.challenge');
+
+            var $minimap = $('.minimap');
+            var $minimap_challenges = $minimap.find('.challenge');
+
+            var get_current_challenge = function(){
+                return $slide.find('.challenge.active');
+            };
+
+            var goto_challenge = function (challenge){
+                if(challenge[0] == $challenges.first()[0]){
+                    goto_challenge(challenge.next());
+                } else if (challenge[0] == $challenges.last()[0]){
+                    goto_challenge(challenge.prev());
+                } else if(challenge.length){
+
+                    /* clear active classes */
+                    $slide.find('.challenge').removeClass('active');
+                    $minimap.find('.challenge').removeClass('active');
+
+
+                    challenge.addClass('active');
+                    $minimap.find('.challenge').eq(challenge.index()).addClass('active');
+
+                    $slide.animate({
+                        'margin-left': $clip.width()/2 - challenge.outerWidth()/2 - 20 - challenge.position().left,
+                    });
+
+                    $minimap.find('.window').animate({
+                        'margin-left': $minimap.find('.challenge.active').position().left + $minimap.find('.challenge.active').width()/2 - $minimap.find('.window').width()/2,
+                    });
+                }
+            };
+
+            /* Init */
+            $('.minimap .challenge').click(function(){
+                var index = $(this).index('.minimap .challenge');
+                console.log(index);
+                goto_challenge($challenges.eq(index));
+            });
+
+            $('.carousel-controls-previous').click(function(){
+                var prev_challenge = get_current_challenge().prev();
+                goto_challenge(prev_challenge);
+            });
+
+            $('.carousel-controls-next').click(function(){
+                var next_challenge = get_current_challenge().next();
+                goto_challenge(next_challenge);
+
+            });
+
+
+            $slide.find('.challenge').eq(2).addClass('active');
+
+            goto_challenge($slide.find('.challenge').first().next());
+
+        });
+    </script>
 {% endblock %}
 
 
 {% block content %}
 <div class="wrapper">
+    {% with player_mission_state.mission as mission %}
     <h1>{{ mission }}</h1>
 
     <div class="minimap">
         {% if mission.get_previous_mission %}<a href="{% url missions:challenges:challenges mission.get_previous_mission.id %}" class="badge">Previous Mission</a>{% endif %}
         {% for challenge in challenges %}
             <div class="challenge challenge-{{ challenge.challenge_type_shortcut }}">
-                {# Examples #}
-                {% if forloop.first %}
-                    <i class="icon-user"></i>
-                {% endif %}
-                {% if challenge.is_locked %}
+                {% if challenge in player_mission_state.challenges_locked.all %}
                     <i class="icon-lock"></i>
                 {% endif %}
                 {% ifequal challenge.challenge_type_shortcut 'final-barrier' %}
@@ -64,5 +126,6 @@
         {% if mission.get_next_mission %}<a href="{% url missions:challenges:challenges mission.get_next_mission.id %}" class="badge">Next Mission</a>{% endif %}
         <div class="window"></div>
     </div>
+    {% endwith %}
 </div>
 {% endblock %}

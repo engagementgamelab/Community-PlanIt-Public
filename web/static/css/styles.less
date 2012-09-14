@@ -370,12 +370,10 @@ html, body {
 
     .challenge {
         position: relative;
-        padding: 20px;
         margin-top: 10px;
         margin-bottom: 10px;
-        min-height: 300px;
         box-sizing: border-box;
-
+        min-height: 300px;
         .box-shadow;
         .lifted;
 
@@ -409,19 +407,60 @@ html, body {
             right: 20px;
             text-align: right;
         }
+
+        /* Challenge Detail View */
+        .challenge-image-container {
+            position: relative;
+            min-height: 300px;
+            z-index: 0;
+            .challenge-image {
+                position: absolute;
+                margin-top: -20px; margin-left: -20px;
+                width: 300px; height: 300px;
+                max-width: none; /* Override bootstrap default */
+                top: 0; left: 0;
+                z-index: -1;
+            }
+        }
+        .challenge-basics {
+            position: absolute;
+            float: left;
+            box-sizing: border-box;
+            width: 300px;
+            top: 0; left: 0; bottom: 0;
+            padding: 20px;
+            z-index: 0;
+        }
+
+        .challenge-details {
+            position: relative;
+            left: 300px;
+            box-sizing: border-box;
+            width: 640px;
+            min-height: 550px;
+            padding: 20px;
+            background: #fff;
+        }
+
     }
     
     /* Challenge Detail View */
-    #challenge {
-        #challenge-discussion {
-            margin: 75px 0px;
-            .header-discussion {
-                font-size: 2em;
-                font-family: "futura-pt", sans-serif;
-                font-weight: 700;
-                text-align: center;
-                text-transform: uppercase;
-            }
+    #challenge-discussion {
+        width: 100%;
+        overflow: hidden;
+        margin: 20px 0px;
+        padding: 20px;
+        background: #fff;
+        box-sizing: border-box;
+        .box-shadow;
+        .lifted;
+
+        .header-discussion {
+            font-size: 2em;
+            font-family: "futura-pt", sans-serif;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
         }
     }
 
@@ -443,6 +482,26 @@ html, body {
         right: -300px;
         text-decoration: none;
         color: @light-light-gray;
+    }
+
+    /* Resources */
+    .resources {
+        h3 {
+            text-transform: uppercase;
+        }
+        ul {
+            margin: 0;
+        }
+        li {
+            display: inline-block;
+        }
+
+        .resource {
+            display: block;
+            width: 64px;
+            height: 64px;
+            background: @light-gray;
+        }
     }
 }
 
@@ -512,10 +571,9 @@ html, body {
     label {
         margin: 5px 0;
         padding: 10px;
-        background: @light-light-gray;
         cursor: pointer;
         &:hover {
-            background: @light-gray;
+            background: @light-light-gray;
         }
     }
 }
