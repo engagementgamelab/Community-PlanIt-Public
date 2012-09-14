@@ -6,8 +6,7 @@ class PlayerMissionStateContextMixin(object):
     """ on ChallengeListView create and initialize PlayerMissionState """
 
     def get_context_data(self, *args, **kwargs):
-        ctx = super(PlayerMissionStateContextMixin, self).\
-                get_context_data(*args, **kwargs)
+        ctx = super(PlayerMissionStateContextMixin, self).get_context_data(*args, **kwargs)
         mission = kwargs.get('mission')
         if mission is None:
             raise RuntimeError("Cannot retrieve player mission context. Mission missing from context.")
@@ -32,3 +31,12 @@ class PlayerMissionStateContextMixin(object):
 
         return ctx
 
+class MissionContextMixin(object):
+    """ Context for missions and challenges """
+    def get_context_data(self, *args, **kwargs):
+        context = super(MissionContextMixin, self).get_context_data(*args, **kwargs)
+        mission = kwargs.get('mission')
+
+        context['mission'] = mission.get_real_instance()
+        context['challenges'] = Challenge.objects.get_real_instances(mission.get_children())
+        return context

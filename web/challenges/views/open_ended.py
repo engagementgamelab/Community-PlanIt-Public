@@ -3,7 +3,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from web.core.views import LoginRequiredMixin
-from ..mixins import PlayerMissionStateContextMixin
+from ..mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from ..models import *
 from ..forms import OpenEndedForm
 
@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 class OpenEndedDetailView(LoginRequiredMixin, 
                           PlayerMissionStateContextMixin,
+                          MissionContextMixin,
                           DetailView):
     model = Challenge
     template_name = 'challenges/open_overview.html'
@@ -53,6 +54,7 @@ open_ended_detail_view = OpenEndedDetailView.as_view()
 
 class OpenEndedCreateView(LoginRequiredMixin, 
                           PlayerMissionStateContextMixin,
+                          MissionContextMixin,
                           CreateView):
     form_class = OpenEndedForm
     template_name = "challenges/open.html"

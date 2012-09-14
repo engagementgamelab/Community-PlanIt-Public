@@ -6,7 +6,7 @@ from web.missions.models import Mission
 from web.core.views import LoginRequiredMixin
 from ..models import *
 from ..forms import SingleResponseForm
-from ..mixins import PlayerMissionStateContextMixin
+from ..mixins import PlayerMissionStateContextMixin, MissionContextMixin
 
 import logging
 log = logging.getLogger(__name__)
@@ -28,6 +28,7 @@ log = logging.getLogger(__name__)
 
 class SingleResponseDetailView(LoginRequiredMixin, 
                                PlayerMissionStateContextMixin,
+                               MissionContextMixin,
                                DetailView, 
                                ):
     model = SingleResponseChallenge
@@ -65,6 +66,7 @@ single_response_detail_view = SingleResponseDetailView.as_view()
 
 class SingleResponseCreateView(LoginRequiredMixin,
                                PlayerMissionStateContextMixin,
+                               MissionContextMixin,
                                CreateView,
                                ):
     form_class = SingleResponseForm

@@ -3,7 +3,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from web.core.views import LoginRequiredMixin
-from ..mixins import PlayerMissionStateContextMixin
+from ..mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from ..models import *
 from ..forms import EmpathyForm
 
@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 class EmpathyDetailView(LoginRequiredMixin, 
                         PlayerMissionStateContextMixin,
+                        MissionContextMixin,
                         DetailView):
     model = EmpathyChallenge
     template_name = 'challenges/empathy_overview.html'
@@ -51,6 +52,7 @@ empathy_detail_view = EmpathyDetailView.as_view()
 
 class EmpathyCreateView(LoginRequiredMixin, 
                         PlayerMissionStateContextMixin,
+                        MissionContextMixin,
                         CreateView):
     form_class = EmpathyForm
     template_name = "challenges/empathy.html"

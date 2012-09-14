@@ -8,6 +8,7 @@ from django.views.generic.edit import CreateView
 from ..models import *
 from web.core.views import LoginRequiredMixin
 
+
 import logging
 log = logging.getLogger(__name__)
 
