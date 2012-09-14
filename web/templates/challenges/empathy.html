@@ -4,7 +4,7 @@
 {% block content_challenge %}
     <div>
         <p class="bio">{{challenge.bio_text}}</p>
-        <p>{{ challenge.question|safe }}</p>
+        <h2>{{ challenge.question|safe }}</h2>
 
         {% block response %}
             <div class="response">
