@@ -109,7 +109,8 @@ class Mission(BaseTreeNode):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('missions:mission', (), {
+        return ('instances:missions:mission', (), {
+            'game_slug': self.parent.slug,
             'mission_id': self.pk
         })
 

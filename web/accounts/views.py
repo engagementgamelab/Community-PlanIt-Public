@@ -117,8 +117,11 @@ class GameProfileCreateView(CreateView):
         elif self.for_game.is_present:
             slug = None
         return redirect(
-            reverse('missions:mission-with-demographic-form',
-                                args=(self.for_game.active_mission.pk,)
+                reverse('instances:missions:mission-with-demographic-form',
+                                args=(
+                                    self.for_game.slug,
+                                    self.for_game.active_mission.pk,
+                                )
             )
         )
 

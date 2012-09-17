@@ -29,7 +29,7 @@
 
 {% block content %}
 <div class="wrapper faux-modal">
-    <div class="close close-faux-modal"><a href="{% url missions:challenges:challenges mission.pk %}">×</a></div>
+    <div class="close close-faux-modal"><a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.pk %}">×</a></div>
     <div class="row">
         <div class="span1">
             {% if mission.get_previous_mission %}<a href="{{ mission.get_previous_mission.get_absolute_url }}" id="mission-details-prev"></a>{% else %}&nbsp;{% endif %}
@@ -45,7 +45,7 @@
             <p>{{ mission.description }}</p>
 
             <p class="align-center">
-                <a href="{% url missions:challenges:challenges mission.pk %}" class="btn btn-primary btn-large">
+                <a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.pk %}" class="btn btn-primary btn-large">
                     {% if mission.is_active %}
                         {% trans "Resume Mission" %}
                     {% elif mission.is_future %}

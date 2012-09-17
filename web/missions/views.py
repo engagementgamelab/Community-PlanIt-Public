@@ -13,13 +13,14 @@ from .models import *
 from web.core.utils import missions_bar_context
 from web.accounts.models import UserProfilePerInstance
 from web.accounts.forms import DemographicForm
+from web.accounts.mixins import MissionContextMixin
 from web.core.views import LoginRequiredMixin
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class MissionDetail(LoginRequiredMixin, DetailView):
+class MissionDetail(LoginRequiredMixin, MissionContextMixin, DetailView):
     model = Mission
     template_name = 'missions/mission.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
@@ -50,7 +51,7 @@ class MissionDetailPlayerCreated(MissionDetail):
 mission_detail_player_created_view = MissionDetailPlayerCreated.as_view()
 
 
-class MissionDetailWithDemographicForm(MissionDetail, FormView):
+class MissionDetailWithDemographicForm(MissionDetail, MissionContextMixin, FormView):
 
     form_class = DemographicForm
 

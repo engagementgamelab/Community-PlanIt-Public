@@ -33,7 +33,7 @@
             {% endif %}
         </p>
         {% if game_profile_exists %}
-        <p>You're signed up for this game <a class="btn btn-large btn-primary" href="{% url missions:mission-with-demographic-form current_mission.pk %}">Continue Game</a></p>
+        <p>You're signed up for this game <a class="btn btn-large btn-primary" href="{% url instances:missions:mission-with-demographic-form current_mission.parent.slug current_mission.pk %}">Continue Game</a></p>
             {# href="{{ current_mission.get_absolute_url }} #}
         {% endif %}
     </div>

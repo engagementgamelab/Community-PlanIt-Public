@@ -38,11 +38,8 @@ urlpatterns = patterns('web',
 
     (r'^accounts/', include('accounts.urls', namespace='accounts', app_name='accounts')),
     #(r'^resource-center/', include('attachments.urls', namespace='attachments', app_name='attachments')),
-
     #(r'^comments/', include('comments.urls', namespace='comments', app_name='comments')),
-    (r'^missions/', include('missions.urls', namespace='missions', app_name='missions')),
     (r'^affiliations/', include('affiliations.urls', namespace='affiliations', app_name='affiliations')),
-    (r'^causes/', include('causes.urls', namespace='causes', app_name='causes')),
     (r'^lists/', include('lists.urls', namespace='lists', app_name='lists')),
     (r'^flags/', include('flags.urls', namespace='flags', app_name='flags')),
     (r'^badges/', include('badges.urls', namespace='badges', app_name='badges')),

@@ -9,6 +9,7 @@ urlpatterns = patterns('causes.views',
     url(r'^(?P<id>\d+)/$', 'cause_public_detail_view', name='detail_public'),
 
     # url(r'^spend/$', 'causes.views.spend', name='spend'),
+    url(r'^add/$', 'cause_add_view', name='cause_add'),
 
     # url(r'^take/(?P<id>\d+)/$', 'causes.views.take', name='take'),
 

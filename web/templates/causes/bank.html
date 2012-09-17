@@ -12,7 +12,7 @@
     			<h2>Causes</h2>
     			<div>
 	    			<a class="btn btn-primary">Sort By</a>
-	    			<a class="btn btn-primary pull-right">Add</a>
+                    <a class="btn btn-primary pull-right" href="{% url instances:causes:cause_add active_game.slug %}">Add</a>
 	    		</div>
 
                 <br><br>
@@ -29,7 +29,7 @@
                         <div>
                             <i class="glyphicon-facebook"></i>
                             <i class="glyphicon-twitter-t"></i>
-                            Started By <a href="">Yuan Ma</a>
+                            Started By <a href="">{{ cause.creator.get_profile.screen_name }}</a>
                         </div>
                         <p>{{ cause.description }}</p>
                     </div>

@@ -33,10 +33,18 @@ class PlayerMissionStateContextMixin(object):
 
 class MissionContextMixin(object):
     """ Context for missions and challenges """
+
     def get_context_data(self, *args, **kwargs):
         context = super(MissionContextMixin, self).get_context_data(*args, **kwargs)
-        mission = kwargs.get('mission')
+
+        active_game = self.request.session.get('my_active_game', None)
+
+        if 'mission' in kwargs:
+            mission = kwargs.get('mission')
+        else:
+            mission = active_game.active_mission
 
         context['mission'] = mission.get_real_instance()
+        context['active_game'] = active_game
         context['challenges'] = Challenge.objects.get_real_instances(mission.get_children())
         return context
