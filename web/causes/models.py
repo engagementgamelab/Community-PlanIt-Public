@@ -1,3 +1,5 @@
+from sorl.thumbnail import ImageField
+
 #from stream import utils as stream_utils
 from cache_utils.decorators import cached
 
@@ -12,9 +14,15 @@ class CauseManager(models.Manager):
 
 class Cause(models.Model):
 
+    def determine_path(instance, filename):
+        return os.path.join('uploads', 'causes', str(instance.instance.id), filename)
+
     name = models.CharField(max_length=60, verbose_name='Name')
     instance = models.ForeignKey(Instance, related_name='causes')
+    creator = models.ForeignKey(User, related_name='causes')
     description = models.TextField(max_length=1000, verbose_name='Description', blank=True, default='')
+    image = ImageField(upload_to=determine_path, null=True, blank=True)
+    date_added = models.DateField(auto_now_add=True)
 
     objects = CauseManager()
 
