@@ -1,0 +1,19 @@
+{% extends 'causes/base.html' %}
+{% load i18n %}
+
+{% block body_id %}page-causes-add{% endblock %}
+
+{% block content %}
+<div class="wrapper faux-modal">
+    <div class="close close-faux-modal"><a href="">×</a></div>
+        
+        <form method="POST" action="">
+            {{ form.as_p }}
+            <input type="submit">
+
+        <form>
+
+    </div>
+</div>
+
+{% endblock %}
