@@ -15,6 +15,7 @@
 </script>
 {% endblock %}
 
+{% block body_id %}page-challenge-detail{% endblock %}
 
 {% block content %}
     {{ block.super }}
@@ -30,7 +31,6 @@
                     </div>
                     <div>
                         <span><i class="glyphicon-credit"></i> {{ challenge.parent.challenge_coin_value }}</span>
-                        <span> <strong>My coins count: {{ player_mission_state.coins }}</strong></span>
 
                         {% include 'challenges/_resources.html' %}
                     </div>
