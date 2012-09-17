@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div class="challenge-details">
-                    <a class="close" href="{% url missions:challenges:challenges challenge.parent.pk %}">×</a>
+                    <a class="close" href="{% url instances:missions:challenges:challenges challenge.get_instance.slug challenge.get_mission.pk %}">×</a>
                     {% block content_challenge %}
                     {% endblock %}
                 </div>

@@ -56,21 +56,29 @@ class Challenge(BaseTreeNode):
         return "%s [%s]" % (self.title, self.challenge_type_shortcut)
 
     @property
+    def get_mission(self):
+        return self.parent
+
+    @property
+    def get_instance(self):
+        return self.parent.parent
+
+    @property
     def challenge_type_shortcut(self):
         return slugify(self.get_challenge_type_display())
 
     @property
     def play_url(self):
         return reverse(
-                'missions:challenges:'+self.challenge_type_shortcut+'-play',
-                args=(self.parent.pk, self.pk)
+                'instances:missions:challenges:'+self.challenge_type_shortcut+'-play',
+                args=(self.parent.parent.slug, self.parent.pk, self.pk)
         )
 
     @property
     def overview_url(self):
         return reverse(
-                'missions:challenges:'+self.challenge_type_shortcut+'-overview',
-                args=(self.parent.pk, self.pk)
+                'instances:missions:challenges:'+self.challenge_type_shortcut+'-overview',
+                args=(self.parent.parent.slug, self.parent.pk, self.pk)
         )
 
 
