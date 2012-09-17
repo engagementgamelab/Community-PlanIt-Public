@@ -21,10 +21,9 @@ from web.comments.models import *
 from web.comments.forms import *
 from ..forms import *
 from ..models import *
-from ..views import comment_fun,\
-                    log_activity_and_redirect
+from ..views import comment_fun, log_activity_and_redirect
 
-from ..mixins import PlayerMissionStateContextMixin
+from web.accounts.mixins import PlayerMissionStateContextMixin
 
 
 import logging

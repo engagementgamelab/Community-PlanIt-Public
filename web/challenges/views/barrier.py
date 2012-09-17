@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 
 from ..models import *
 from ..forms import SingleResponseForm, BarrierFiftyFiftyForm
-from ..mixins import PlayerMissionStateContextMixin, MissionContextMixin
+from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from web.core.views import LoginRequiredMixin
 
 from web.accounts.models import UserProfilePerInstance, PlayerMissionState

@@ -26,8 +26,7 @@ class MissionDetail(LoginRequiredMixin, DetailView):
     pk_url_kwarg = 'mission_id'
 
     def get_context_data(self, **kwargs):
-        context = super(MissionDetail, self).get_context_data(
-            **kwargs)
+        context = super(MissionDetail, self).get_context_data(**kwargs)
         mission = kwargs['object']
         game = mission.parent
 

@@ -3,7 +3,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from web.core.views import LoginRequiredMixin
-from ..mixins import PlayerMissionStateContextMixin, MissionContextMixin
+from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from ..models import *
 from ..forms import OpenEndedForm
 
