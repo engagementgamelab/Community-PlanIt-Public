@@ -23,7 +23,7 @@ from ..forms import *
 from ..models import *
 from ..views import comment_fun, log_activity_and_redirect
 
-from web.accounts.mixins import PlayerMissionStateContextMixin
+from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
 
 
 import logging
@@ -178,7 +178,7 @@ def _get_mc_choices(activity):
 def _get_mc_choice_ids(activity):
     return _get_mcqs(activity).values_list('pk', flat=True)
 
-class ChallengeListView(LoginRequiredMixin, PlayerMissionStateContextMixin, ListView):
+class ChallengeListView(LoginRequiredMixin, PlayerMissionStateContextMixin, MissionContextMixin, ListView):
     #model = Challenge
     template_name = 'challenges/all.html'
     context_object_name = 'challenges'
