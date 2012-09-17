@@ -39,7 +39,7 @@ from web.comments.utils import create_video_attachment, create_image_attachment
 from web.instances.models import Instance, Affiliation
 from web.missions.models import Mission
 from web.reports.models import Activity
-from web.values.models import *
+from web.causes.models import *
 
 import logging
 log = logging.getLogger(__name__)

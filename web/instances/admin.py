@@ -10,8 +10,14 @@ from web.attachment_types.models import *
 from . import models as game_models
 from web.missions import models as mission_models
 from web.challenges import models as challenge_models
+from web.causes import models as causes_models
 
 # The common admin functionality for all derived models:
+
+
+class CauseInlines(admin.StackedInline):
+    model = causes_models.Cause
+    readonly_fields = ('instance',)
 
 
 class TreeNodeTypeChoiceForm():
@@ -101,7 +107,7 @@ class MissionAdmin(BaseChildAdmin):
 
 class GameAdmin(BaseChildAdmin):
     filter_horizontal = ('curators',)
-    inlines = [VideoAttachmentInlines,]
+    inlines = [CauseInlines, VideoAttachmentInlines]
     #readonly_fields = ('start_date', 'end_date')
 
 

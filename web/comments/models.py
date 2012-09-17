@@ -1,5 +1,5 @@
 import datetime
-from stream import utils as stream_utils
+#from stream import utils as stream_utils
 from cache_utils.decorators import cached
 from stream.models import Action
 from stream.signals import action
@@ -177,8 +177,8 @@ class Comment(models.Model):
             args=(comment.content_type_id, comment.object_id)
         )
 
-stream_utils.register_action_object(Comment)
-stream_utils.register_target(Comment)
+#stream_utils.register_action_object(Comment)
+#stream_utils.register_target(Comment)
 
 @receiver(action, sender=Action)
 def invalidate_likes_for_comment(sender, **kwargs):

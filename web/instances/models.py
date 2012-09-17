@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from dateutil.rrule import *
 
-from stream import utils as stream_utils
+#from stream import utils as stream_utils
 from cache_utils.decorators import cached
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
 from polymorphic_tree.managers import PolymorphicMPTTModelManager
@@ -198,4 +198,4 @@ class Instance(BaseTreeNode):
             self.slug = slugify(self.title)[:50]
         super(Instance, self).save()
 
-stream_utils.register_target(Instance)
+#stream_utils.register_target(Instance)

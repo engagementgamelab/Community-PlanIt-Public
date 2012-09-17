@@ -4,7 +4,7 @@ from decimal import Decimal
 from operator import attrgetter
 
 from cache_utils.decorators import cached
-from stream import utils as stream_utils
+#from stream import utils as stream_utils
 
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.datastructures import SortedDict
@@ -144,10 +144,10 @@ class Mission(BaseTreeNode):
         self._validate_challenges_sorteddict(challenges, d)
         return d
 
-stream_utils.register_target(Mission)
+#stream_utils.register_target(Mission)
 
 #ALTER TABLE stream_action ADD COLUMN action_object_mission_id integer;
-stream_utils.register_action_object(Mission)
+#stream_utils.register_action_object(Mission)
 
 # invalidate cache for 'missions' group
 def invalidate_mission(sender, **kwargs):

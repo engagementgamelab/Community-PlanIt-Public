@@ -2,10 +2,10 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 
 from web.core.views import LoginRequiredMixin
-from web.values.models import Value
+from web.causes.models import Cause
 
 class CauseListView(LoginRequiredMixin, ListView):
-    model = Value
+    model = Cause
     template_name = 'causes/bank.html'
     context_object_name = 'causes'
 
@@ -18,7 +18,7 @@ cause_list_view = CauseListView.as_view()
 
 
 class CauseGameDetailView(LoginRequiredMixin, DetailView):
-    model = Value
+    model = Cause
     template_name = 'causes/cause_game.html'
     pk_url_kwarg = 'id'
     context_object_name = 'cause'
@@ -27,7 +27,7 @@ class CauseGameDetailView(LoginRequiredMixin, DetailView):
 cause_game_detail_view = CauseGameDetailView.as_view()
 
 class CausePublicDetailView(DetailView):
-    model = Value
+    model = Cause
     template_name = 'causes/cause_public.html'
     pk_url_kwarg = 'id'
     context_object_name = 'cause'

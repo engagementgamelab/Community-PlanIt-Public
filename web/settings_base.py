@@ -76,8 +76,7 @@ INSTALLED_APPS = (
     'web.attachment_types',
     'web.attachments_v2',
     'web.badges',
-    'web.crowds',
-    'web.comments',
+    #'web.comments',
     'web.core',
     'web.curator',
     'web.flags',
@@ -85,8 +84,7 @@ INSTALLED_APPS = (
     'web.lists',
     'web.missions',
     'web.challenges',
-    'web.responses',
-    'web.values',
+    'web.causes',
     'web.reporting',
 
     # Need this after web.admin because of test runner: 
@@ -99,7 +97,7 @@ INSTALLED_APPS = (
     'polymorphic_tree',
     'polymorphic',
     'mptt',
-    'hvad',
+    #'hvad',
     'stream',
     'attachments',
     'django_mailer',
@@ -196,8 +194,6 @@ GRAPPELLI_ADMIN_TITLE = "CommunityPlanIt CMS"
 #django-stream
 # see notes in web.reports.actions
 STREAM_VERBS = (
-
-    ('crowd_created', 'create a crowd'),
 
     ('activity_replayed', 'replayed challenge'),
     ('activity_completed', 'completed challenge'),

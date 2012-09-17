@@ -5,7 +5,7 @@ from decimal import Decimal
 from uuid import uuid4 as uuid
 from cache_utils.decorators import cached
 
-from stream import utils as stream_utils
+#from stream import utils as stream_utils
 from stream.models import Action
 
 from sorl.thumbnail import ImageField
@@ -24,20 +24,16 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
-from nani.models import TranslatableModel, TranslatedFields
-from nani.utils import get_translation, combine
-
 from web.instances.models import Instance, Affiliation
 from web.missions.models import Mission
-from web.values.models import PlayerValue
+from web.causes.models import PlayerCause
 from web.badges.models import BadgePerPlayer
-from web.comments.models import Comment
 from web.challenges.models import Challenge, BarrierChallenge, Answer
 
 import logging
 log = logging.getLogger(__name__)
 
-class UserProfileOptionBase(TranslatableModel):
+class UserProfileOptionBase(models.Model):
     pos = models.IntegerField(blank=False, null=False)
 
     class Meta:
@@ -45,9 +41,7 @@ class UserProfileOptionBase(TranslatableModel):
         abstract = True
 
 class UserProfileEducation(UserProfileOptionBase):
-    translations = TranslatedFields(
-        education = models.CharField(max_length=128)
-    )
+    education = models.CharField(max_length=128)
 
     class Meta:
         ordering = ('pos',)
@@ -58,9 +52,7 @@ class UserProfileEducation(UserProfileOptionBase):
         return self.education
 
 class UserProfileGender(UserProfileOptionBase):
-    translations = TranslatedFields(
-        gender = models.CharField(max_length=128)
-    )
+    gender = models.CharField(max_length=128)
 
     class Meta:
         ordering = ('pos',)
@@ -71,9 +63,7 @@ class UserProfileGender(UserProfileOptionBase):
         return self.gender
 
 class UserProfileHowDiscovered(UserProfileOptionBase):
-    translations = TranslatedFields(
-        how = models.CharField(max_length=128)
-    )
+    how = models.CharField(max_length=128)
 
     class Meta:
         ordering = ('pos',)
@@ -84,9 +74,7 @@ class UserProfileHowDiscovered(UserProfileOptionBase):
         return self.how
 
 class UserProfileIncome(UserProfileOptionBase):
-    translations = TranslatedFields(
-        income = models.CharField(max_length=128)
-    )
+    income = models.CharField(max_length=128)
 
     class Meta:
         ordering = ('pos',)
@@ -97,9 +85,7 @@ class UserProfileIncome(UserProfileOptionBase):
         return self.income
     
 class UserProfileLivingSituation(UserProfileOptionBase):
-    translations = TranslatedFields(
-        situation = models.CharField(max_length=128)
-    )
+    situation = models.CharField(max_length=128)
 
     class Meta:
         ordering = ('pos',)
@@ -110,9 +96,7 @@ class UserProfileLivingSituation(UserProfileOptionBase):
         return self.situation
 
 class UserProfileRace(UserProfileOptionBase):
-    translations = TranslatedFields(
-        race = models.CharField(max_length=128)
-    )
+    race = models.CharField(max_length=128)
 
     class Meta:
         ordering = ('pos',)
@@ -120,7 +104,7 @@ class UserProfileRace(UserProfileOptionBase):
         verbose_name_plural = "User Profile Race options"
 
     def __unicode__(self):
-        return self.lazy_translation_getter('race', 'race %s' % self.pk)
+        return self.race
 
 
 class UserProfileStake(UserProfileOptionBase):
@@ -128,9 +112,7 @@ class UserProfileStake(UserProfileOptionBase):
     The stakes users hold in the community, e.g. Live, Work, Play, or Teacher,
     Administrator, Student.
     """
-    translations = TranslatedFields(
-        stake = models.CharField(max_length=128),
-    )
+    stake = models.CharField(max_length=128)
 
     class Meta:
         ordering = ('pos',)
@@ -138,7 +120,7 @@ class UserProfileStake(UserProfileOptionBase):
         verbose_name_plural = "User Profile Stake options"
 
     def __unicode__(self):
-        return self.lazy_translation_getter('stake', 'stake %s' % self.pk)
+        return self.stake
 
 class CPIUser(User):
 
@@ -195,9 +177,6 @@ class UserProfilePerInstance(models.Model):
 
     stakes = models.ManyToManyField(UserProfileStake, blank=True, null=True, related_name='stakes')
     affils = models.ManyToManyField(Affiliation, blank=True, null=True, related_name='user_profiles_per_instance')
-
-    # comments on the profile from others
-    comments = generic.GenericRelation(Comment)
 
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -313,7 +292,7 @@ class UserProfilePerInstance(models.Model):
             my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))
             if my_points_for_mission > min_points_for_mission:
                 my_flags+=1
-        my_spent_flags = PlayerValue.objects.total_flags_for_player(instance=self.instance, user=self.get_user())
+        my_spent_flags = PlayerCause.objects.total_flags_for_player(instance=self.instance, user=self.get_user())
         return my_flags - int(my_spent_flags)
 
     @property
@@ -335,7 +314,7 @@ class UserProfilePerInstance(models.Model):
     def user_profile_email(self):
         return self.user_profile.email or self.user_profile.user.email 
 
-stream_utils.register_target(UserProfilePerInstance)
+#stream_utils.register_target(UserProfilePerInstance)
 
 
 class UserProfile(models.Model):
@@ -373,10 +352,6 @@ class UserProfile(models.Model):
     totalPoints = models.IntegerField(default=0)
     # points to the next coin
     coinPoints = models.IntegerField(default=0)
-
-    # to be removed. comments  are now game specific
-    # comments on the profile from others
-    comments = generic.GenericRelation(Comment)
 
     class Meta:
         verbose_name = "User Profile"
@@ -545,7 +520,7 @@ def user_post_save(instance, created, **kwargs):
 models.signals.pre_save.connect(user_pre_save, sender=User)
 models.signals.post_save.connect(user_post_save, sender=User)
 
-stream_utils.register_actor(User)
+#stream_utils.register_actor(User)
 
 class NotificationQueryMixin(object):
     def unread(self):
