@@ -2,6 +2,20 @@
 {% load i18n avatar %}
 {% block title %}{{ challenge.get_challenge_type_display }}{% endblock %}
 
+{% block js_gameboard %}
+<script>
+    $(function(){
+
+        var minimap =  $('.minimap');
+        minimap.find('.window').animate({
+            'margin-left': minimap.find('.challenge.active').position().left + minimap.find('.challenge.active').width()/2 - minimap.find('.window').width()/2
+        });
+
+    });
+</script>
+{% endblock %}
+
+
 {% block content %}
     {{ block.super }}
     <div id="challenges">

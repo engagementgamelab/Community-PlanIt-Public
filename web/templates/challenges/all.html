@@ -36,7 +36,7 @@
                     </div>
                 {% else %}
                     {# Active Mission #}
-                    <div id="challenge-{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% if challenge in player_mission_state.challenges_locked.all %}challenge-locked{% endif %} span4">
+                    <div id="challenge-{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% if challenge in player_mission_state.challenges_locked.all %}challenge-locked{% endif %} {% if challenge in player_mission_state.challenges_completed.all %}completed{% else %}not-completed{% endif %} span4">
 
                         <h3>{{ challenge.title }}</h3>
 
