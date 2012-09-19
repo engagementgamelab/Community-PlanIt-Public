@@ -48,21 +48,23 @@ class Cause(models.Model):
 #stream_utils.register_target(Cause)
 #stream_utils.register_action_object(Cause)
 
+
 class PlayerCauseManager(models.Manager):
 
     @cached(60*60*24)
     def for_instance(self, instance):
         return self.filter(cause__instance=instance)
 
-    def total_flags_by_game(self, instance, cause):
-        return PlayerCause.objects.for_instance(instance=instance).filter(cause=cause).aggregate(models.Sum('coins')).get('coins__sum') or 0
+    #def total_flags_by_game(self, instance, cause):
+    #    return PlayerCause.objects.for_instance(instance=instance).filter(cause=cause).aggregate(models.Sum('coins')).get('coins__sum') or 0
 
-    @cached(60*60*24, 'my_spent_flags')
-    def total_flags_for_player(self, instance, user, cause=None):
-        player_cause = self.for_instance(instance=instance).filter(user=user)
-        if cause is not None:
-            player_cause = player_cause.filter(cause=cause)
-        return player_cause.aggregate(models.Sum('coins')).get('coins__sum') or 0
+    #@cached(60*60*24, 'my_spent_flags')
+    #def total_flags_for_player(self, instance, user, cause=None):
+    #    player_cause = self.for_instance(instance=instance).filter(user=user)
+    #    if cause is not None:
+    #        player_cause = player_cause.filter(cause=cause)
+    #    return player_cause.aggregate(models.Sum('coins')).get('coins__sum') or 0
+
 
 class PlayerCause(models.Model):
 

@@ -1,16 +1,16 @@
-from stream import utils as stream_utils
+#from stream import utils as stream_utils
 from django.contrib.auth.models import User
 #from web.player_activities.models import 
 from web.accounts.models import UserProfilePerInstance
 from web.missions.models import Mission
 from web.instances.models import Instance
-from .models import Badge, BadgePerPlayer
+from .models import Award, PlayerAward
 
 import logging
 log = logging.getLogger(__name__)
 
-def assign_challenge_completed_badges(user_id, mission_id, run_for_expired_missions=False):
-    log.debug("assign badge for user %s, mission %s" %(user_id, mission_id))
+def assign_challenge_completed_awards(user_id, mission_id, run_for_expired_missions=False):
+    log.debug("assign award for user %s, mission %s" %(user_id, mission_id))
     try:
         user = User.objects.get(pk=user_id)
     except User.DoesNotExist:
@@ -36,36 +36,36 @@ def assign_challenge_completed_badges(user_id, mission_id, run_for_expired_missi
     if for_mission_count == my_completed_count:
 
         try:
-            visionary_badge = Badge.objects.get(type=Badge.BADGE_VISIONARY)
-        except Badge.DoesNotExist:
+            visionary_award = Award.objects.get(type=Award.VISIONARY)
+        except Award.DoesNotExist:
             return
 
-        my_badge, created = BadgePerPlayer.objects.get_or_create(user=user, badge=visionary_badge)
+        my_awrd, created = PlayerAward.objects.get_or_create(user=user, award=visionary_award)
         if created == False:
-            my_badge.increment_level()
-            my_badge.save()
-            log.debug("incremented level for a Visionary badge for %s" % (user.get_profile().screen_name))
+            my_award.increment_level()
+            my_award.save()
+            log.debug("incremented level for a Visionary award for %s" % (user.get_profile().screen_name))
         else:
-            log.debug("create a Visionary badge for %s" % (user.get_profile().screen_name))
-        message = "Congratulations! You earned the %s badge." %( visionary_badge.title )
+            log.debug("create a Visionary award for %s" % (user.get_profile().screen_name))
+        message = "Congratulations! You earned the %s award." %( visionary_award.title )
         user.notifications.create(content_object=user_prof_per_instance, message=message)
-        stream_utils.action.send(
-                user, 'badge_received', 
-                action_object=mission,
-                target=mission.instance,
-                description='received a Visionary badge',
+        #stream_utils.action.send(
+        #        user, 'award_received', 
+        #        action_object=mission,
+        #        target=mission.instance,
+        #        description='received a Visionary award',
 
         )
 
-def assign_badges_for_past_missions():
-    # user this util method to assign badges for past missions
+def assign_awards_for_past_missions():
+    # user this util method to assign awardsfor past missions
     for game in Instance.objects.current():
         past_missions = Mission.objects.past(game)
         log.debug("assigning for game %s" % game)
         for user_prof_per_instance in UserProfilePerInstance.objects.\
                                                 filter(instance=game):
             for mission in past_missions:
-                assign_challenge_completed_badges(
+                assign_challenge_completed_awards(
                                         str(user_prof_per_instance.get_user().pk),
                                         str(mission.pk),
                                         run_for_expired_missions=True,

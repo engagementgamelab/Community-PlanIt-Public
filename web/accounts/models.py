@@ -26,8 +26,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from web.instances.models import Instance, Affiliation
 from web.missions.models import Mission
-from web.causes.models import PlayerCause
-from web.badges.models import BadgePerPlayer
+#from web.causes.models import PlayerCause
+from web.awards.models import Award
 from web.challenges.models import Challenge, BarrierChallenge, Answer
 
 import logging
@@ -41,7 +41,7 @@ class UserProfileOptionBase(models.Model):
         abstract = True
 
 class UserProfileEducation(UserProfileOptionBase):
-    education = models.CharField(max_length=128)
+    education = models.CharField(max_length=128, blank=True, default='')
 
     class Meta:
         ordering = ('pos',)
@@ -52,7 +52,7 @@ class UserProfileEducation(UserProfileOptionBase):
         return self.education
 
 class UserProfileGender(UserProfileOptionBase):
-    gender = models.CharField(max_length=128)
+    gender = models.CharField(max_length=128, blank=True, default='')
 
     class Meta:
         ordering = ('pos',)
@@ -63,7 +63,7 @@ class UserProfileGender(UserProfileOptionBase):
         return self.gender
 
 class UserProfileHowDiscovered(UserProfileOptionBase):
-    how = models.CharField(max_length=128)
+    how = models.CharField(max_length=128, blank=True, default='')
 
     class Meta:
         ordering = ('pos',)
@@ -74,7 +74,7 @@ class UserProfileHowDiscovered(UserProfileOptionBase):
         return self.how
 
 class UserProfileIncome(UserProfileOptionBase):
-    income = models.CharField(max_length=128)
+    income = models.CharField(max_length=128, blank=True, default='')
 
     class Meta:
         ordering = ('pos',)
@@ -85,7 +85,7 @@ class UserProfileIncome(UserProfileOptionBase):
         return self.income
     
 class UserProfileLivingSituation(UserProfileOptionBase):
-    situation = models.CharField(max_length=128)
+    situation = models.CharField(max_length=128, blank=True, default='')
 
     class Meta:
         ordering = ('pos',)
@@ -96,7 +96,7 @@ class UserProfileLivingSituation(UserProfileOptionBase):
         return self.situation
 
 class UserProfileRace(UserProfileOptionBase):
-    race = models.CharField(max_length=128)
+    race = models.CharField(max_length=128, blank=True, default='')
 
     class Meta:
         ordering = ('pos',)
@@ -112,7 +112,7 @@ class UserProfileStake(UserProfileOptionBase):
     The stakes users hold in the community, e.g. Live, Work, Play, or Teacher,
     Administrator, Student.
     """
-    stake = models.CharField(max_length=128)
+    stake = models.CharField(max_length=128, blank=True, default='')
 
     class Meta:
         ordering = ('pos',)
@@ -209,93 +209,6 @@ class UserProfilePerInstance(models.Model):
         return this_user(self.pk)
 
     @property
-    def total_points(self):
-        return self.total_points_by_mission(include_comments=True)
-
-    def total_points_by_mission(self, mission=None, include_comments=False):
-        points =  self.total_points_for_completed_challenges(mission=mission) + \
-                  self.total_points_for_player_submitted_challenges(mission=mission)
-        if include_comments == True:
-            points += self.total_points_for_comments(mission=mission)
-        return points
-
-    def total_points_for_comments(self, mission=None):
-        actions = Action.objects.get_for_actor(self.get_user()).filter(verb="commented")
-        if mission is not None:
-            num_comments  = 0
-            for action in actions:
-                if isinstance(action.target, Comment):
-                    comment = action.target
-                    topic = comment.topic
-                    # TODO filter comments by mission
-                    # add the rest of the possible answers
-                    if topic.__class__.__name__ in ['AnswerOpenEnded', 
-                                                    'AnswerSingleResponse', 
-                                                    'AnswerMap']:
-                        if hasattr(topic, 'activity') and \
-                            topic.activity.mission == mission:
-                                num_comments += 1
-                    elif topic.__class__.__name__ == 'AnswerMultiChoice':
-                        if topic.option.activity.mission == mission:
-                                num_comments += 1
-        else:
-            num_comments = actions.count()
-
-        return num_comments * settings.CPI_POINTS_FOR_COMMENT
-
-    def total_points_for_player_submitted_challenges(self, mission=None):
-        kwargs = {}
-        kwargs['verb'] = "activity_player_submitted"
-        if mission:
-            kwargs['action_object_playeractivity__mission'] = mission
-        points = Action.objects.get_for_actor(self.get_user()).filter(**kwargs).count()
-        return points * settings.CPI_POINTS_FOR_PLAYER_SUBMITTED_CHALLENGE
-
-    def total_points_for_completed_challenges(self, mission=None):
-        my_completed = []
-        if mission is None:
-            for mission in Mission.objects.for_instance(instance=self.instance):
-                my_completed.extend(self.my_completed_by_mission(mission))
-        else:
-            my_completed = self.my_completed_by_mission(mission)
-        return  Decimal(sum(activity.get_points() for activity in my_completed))
-
-    def my_completed_by_mission(self, mission, player_submitted_only=False):
-
-        challenges_for_mission = mission.player_submitted_challenges() if player_submitted_only == True else mission.challenges()
-        if len(challenges_for_mission) == 0:
-            return []
-
-        # do not pass en empty list to Action.get_for_action_objects
-        # it will blow up
-        actions = Action.objects.get_for_action_objects(challenges_for_mission).\
-                filter(actor_user=self.get_user(), verb='activity_completed')
-
-        def challenges_from_actions(actions):
-            pass
-            #return map(lambda a: \
-            #            combine(get_translation(a, language_code=get_language())),
-            #        [getattr(action, 'action_object_challenge') or \
-            #         getattr(action, 'action_object_mapchallenge') or \
-            #         getattr(action, 'action_object_playerempathychallenge') for action in actions]
-            #)
-        return challenges_from_actions(actions)
-
-    @property
-    def flags(self):
-        all_missions_for_game = Mission.objects.for_instance(self.instance)
-        my_flags = all_missions_for_game.count()
-
-        for m in all_missions_for_game:
-            min_points_for_mission = Decimal(m.total_points) * (Decimal(Mission.MISSION_FLAG_PERCENTAGE) / Decimal(100))
-            my_completed = self.my_completed_by_mission(m)
-            my_points_for_mission = Decimal(sum(activity.get_points() for activity in my_completed))
-            if my_points_for_mission > min_points_for_mission:
-                my_flags+=1
-        my_spent_flags = PlayerCause.objects.total_flags_for_player(instance=self.instance, user=self.get_user())
-        return my_flags - int(my_spent_flags)
-
-    @property
     def badges(self):
         return BadgePerPlayer.objects.filter(user=self.get_user)
 
@@ -317,121 +230,38 @@ class UserProfilePerInstance(models.Model):
 #stream_utils.register_target(UserProfilePerInstance)
 
 
-class UserProfile(models.Model):
+class PlayerMissionStateManager(models.Manager):
 
-    def determine_path(instance, filename):
-        return os.path.join('uploads', 'avatars', str(instance.user.id), filename)
+    def by_game(self, game):
+        return self.filter(mission__parent=game)
 
+    def total_coins_by_mission(self, profile_per_instance, mission):
+        return  self.filter(profile_per_instance=profile_per_instance, mission=mission).\
+                                    aggregate(models.Sum('coins')).get('coins__sum') or 0
 
-    user = models.ForeignKey(User, unique=True)
-    instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='user_profiles_list', through=UserProfilePerInstance)
-
-    avatar = ImageField(upload_to=determine_path, null=True, blank=True)
-    email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
-    receive_email = models.BooleanField(default=True)
-    city = models.CharField(max_length=128, blank=True, default='')
-    zip_code = models.CharField(max_length=10, blank=True, default='')
-
-    # Additional profile fields
-    birth_year = models.IntegerField(blank=True, null=True, default=0)
-    gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
-    race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
-    education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
-    income = models.ForeignKey(UserProfileIncome, blank=True, null=True, default=None)
-    living = models.ForeignKey(UserProfileLivingSituation, blank=True, null=True, default=None)
-    how_discovered = models.ForeignKey(UserProfileHowDiscovered, blank=True, null=True, default=None)
-    how_discovered_other = models.CharField(max_length=1000, blank=True, default='')
-    tagline = models.CharField(max_length=140, blank=True, default='')
-
-    #
-    # internal system records
-    #
-    # the current number of coins that the player has
-    currentCoins = models.IntegerField(default=0)
-    # the total points that the player has accrued
-    totalPoints = models.IntegerField(default=0)
-    # points to the next coin
-    coinPoints = models.IntegerField(default=0)
-
-    class Meta:
-        verbose_name = "User Profile"
-        verbose_name_plural = "User Profiles"
-
-    def __unicode__(self):
-        return "%s's profile" % (self.screen_name)
-
-    #@property
-    #def active_instance(self):
-    #    profiles_per_instance = UserProfilePerInstance.objects.filter(user_profile=self)
-    #    if profiles_per_instance.count():
-    #        return profiles_per_instance[0].instance
-
-    @property
-    def affiliations_csv(self):
-        if self.affils:
-            return self.affils.values_list('name', flat=True)
-        return ""
-
-    def earned_tokens(self):
-        return self.totalPoints // 100
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('accounts:player_profile', [str(self.user.id)])
-
-    def points_progress(self):
-        return self.coinPoints
-
-    def points_to_coin(self):
-        return 100 - self.coinPoints
-    
-    def points_to_coin_for_fill(self):
-        return self.coinPoints
-
-    @property
-    def screen_name(self):
-        #First name and last name are required
-        first = self.user.first_name or ''
-        if first and len(first) > 1:
-            first = first[0].upper() + first[1:]
-
-        last = self.user.last_name or ''
-        if last:
-            if len(last) > 1:
-                last = last[0].upper() + last[1:]
-                last = "%s." % last[0]
-            else:
-                last = last[0]
-
-        if first or last:
-            return "%s %s" % (first, last)
-
-        return self.user.username
-
-class UserProfileVariantsForInstance(models.Model):
-    instance = models.OneToOneField(Instance, unique=True, related_name='user_profile_variants')
-    stake_variants = models.ManyToManyField(UserProfileStake, blank=True, null=True, default=None)
-    affiliation_variants = models.ManyToManyField(Affiliation, blank=True, null=True, default=None)
+        self.by_game(game)
+    def total_coins_by_game(self, profile_per_instance, game):
+        self.by_game(game)
 
 
 
 class PlayerMissionState(models.Model):
+    """ keep track of mission state for each player """
 
-    profile_per_instance = models.ForeignKey(UserProfilePerInstance, editable=False, related_name='player_mission_states')
     mission = models.ForeignKey(Mission, related_name='player_mission_states')
     challenges_locked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_locked')
     challenges_unlocked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_unlocked')
     challenges_completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
+    barriers_fifty_fifty = models.ManyToManyField(Challenge, blank=True, null=True, related_name='barriers_fifty_fifty')
     coins = models.IntegerField(default=0)
 
-    barriers_fifty_fifty = models.ManyToManyField(Challenge, blank=True, null=True, related_name='barriers_fifty_fifty')
-    # not sure if we need these yet
-    next_unlocked_barrier = models.OneToOneField(Challenge, blank=True, null=True, related_name='next_unlocked_barriers')
+    objects = PlayerMissionStateManager()
 
     def init_state(self):
         """ called after creation from MissionListView to initialize state"""
         self.challenges_unlocked.clear()
         self.challenges_locked.clear()
+        self.challenges_completed.clear()
         self.coins = 0
 
         for i, barrier in enumerate(self.mission.challenges_as_sorteddict):
@@ -460,6 +290,89 @@ class PlayerMissionState(models.Model):
             if barrier.basetreenode_ptr.get_previous_sibling().get_real_instance() in \
                     self.challenges_unlocked.all():
                 return barrier
+
+
+class UserProfile(models.Model):
+
+    def determine_path(instance, filename):
+        return os.path.join('uploads', 'avatars', str(instance.user.id), filename)
+
+
+    user = models.ForeignKey(User, unique=True)
+    instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='players', through=UserProfilePerInstance)
+    mission_states = models.ForeignKey(PlayerMissionState, related_name='players', blank=True, null=True)
+    awards = models.ManyToManyField(Award, blank=True, null=True, related_name='players', through='PlayerAward')
+
+    avatar = ImageField(upload_to=determine_path, null=True, blank=True)
+    email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
+    receive_email = models.BooleanField(default=True)
+    city = models.CharField(max_length=128, blank=True, default='')
+    zip_code = models.CharField(max_length=10, blank=True, default='')
+
+    # Additional profile fields
+    birth_year = models.IntegerField(blank=True, null=True, default=0)
+    gender = models.ForeignKey(UserProfileGender, blank=True, null=True, default=None)
+    race = models.ForeignKey(UserProfileRace, blank=True, null=True, default=None)
+    education = models.ForeignKey(UserProfileEducation, blank=True, null=True, default=None)
+    income = models.ForeignKey(UserProfileIncome, blank=True, null=True, default=None)
+    living = models.ForeignKey(UserProfileLivingSituation, blank=True, null=True, default=None)
+    how_discovered = models.ForeignKey(UserProfileHowDiscovered, blank=True, null=True, default=None)
+    how_discovered_other = models.CharField(max_length=1000, blank=True, default='')
+    tagline = models.CharField(max_length=140, blank=True, default='')
+
+    class Meta:
+        verbose_name = "User Profile"
+        verbose_name_plural = "User Profiles"
+
+    def __unicode__(self):
+        return "%s's profile" % (self.screen_name)
+
+    #@property
+    #def active_instance(self):
+    #    profiles_per_instance = UserProfilePerInstance.objects.filter(user_profile=self)
+    #    if profiles_per_instance.count():
+    #        return profiles_per_instance[0].instance
+
+    @property
+    def affiliations_csv(self):
+        if self.affils:
+            return self.affils.values_list('name', flat=True)
+        return ""
+
+    def earned_tokens(self):
+        return self.totalPoints // 100
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('accounts:player_profile', [str(self.user.id)])
+
+    @property
+    def screen_name(self):
+        #First name and last name are required
+        first = self.user.first_name or ''
+        if first and len(first) > 1:
+            first = first[0].upper() + first[1:]
+
+        last = self.user.last_name or ''
+        if last:
+            if len(last) > 1:
+                last = last[0].upper() + last[1:]
+                last = "%s." % last[0]
+            else:
+                last = last[0]
+
+        if first or last:
+            return "%s %s" % (first, last)
+
+        return self.user.username
+
+
+class UserProfileVariantsForInstance(models.Model):
+    instance = models.OneToOneField(Instance, unique=True, related_name='user_profile_variants')
+    stake_variants = models.ManyToManyField(UserProfileStake, blank=True, null=True, default=None)
+    affiliation_variants = models.ManyToManyField(Affiliation, blank=True, null=True, default=None)
+
+
 
 @receiver(post_save, sender=Answer)
 def update_player_mission_state(sender, **kwargs):

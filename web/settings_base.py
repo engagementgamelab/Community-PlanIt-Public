@@ -74,8 +74,8 @@ INSTALLED_APPS = (
     'web.accounts',
     'web.affiliations',
     'web.attachment_types',
-    'web.attachments_v2',
-    'web.badges',
+    #'web.attachments_v2',
+    'web.awards',
     #'web.comments',
     'web.core',
     'web.curator',
@@ -98,7 +98,7 @@ INSTALLED_APPS = (
     'polymorphic',
     'mptt',
     #'hvad',
-    'stream',
+    #'stream',
     'attachments',
     'django_mailer',
     'gmapsfield',
@@ -209,7 +209,7 @@ STREAM_VERBS = (
 
     ('user_logged_in', 'a user logged into the system'),
 
-    ('badge_received', 'player received a badge'),
+    ('award_received', 'player received a award'),
 )
 
 REPORTS_RECIPIENTS = (
@@ -248,7 +248,7 @@ CPI_REPORTS = {
 # django-celery
 # import djcelery
 # djcelery.setup_loader()
-# CELERY_IMPORTS = ('badges.tasks',)
+# CELERY_IMPORTS = ('awards.tasks',)
 
 # BROKER_HOST = "localhost"
 # BROKER_PORT = 5672

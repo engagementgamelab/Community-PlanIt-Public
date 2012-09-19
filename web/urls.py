@@ -42,7 +42,7 @@ urlpatterns = patterns('web',
     (r'^affiliations/', include('affiliations.urls', namespace='affiliations', app_name='affiliations')),
     (r'^lists/', include('lists.urls', namespace='lists', app_name='lists')),
     (r'^flags/', include('flags.urls', namespace='flags', app_name='flags')),
-    (r'^badges/', include('badges.urls', namespace='badges', app_name='badges')),
+    (r'^awards/', include('awards.urls', namespace='awards', app_name='awards')),
     
     # Admin stuff
     #(r'^curator/', include('curator.urls')),

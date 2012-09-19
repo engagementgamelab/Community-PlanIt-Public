@@ -3,8 +3,7 @@ import datetime
 import os.path
 
 from gmapsfield.fields import GoogleMapsField
-from stream import utils as stream_utils
-from stream.models import Action
+#from stream import utils as stream_utils
 from cache_utils.decorators import cached
 
 from django.conf import settings
@@ -299,17 +298,17 @@ class AnswerOpenEnded(Answer):
 
 
 #django-stream registrations
-stream_utils.register_action_object(Challenge)
-stream_utils.register_target(Challenge)
+#stream_utils.register_action_object(Challenge)
+#stream_utils.register_target(Challenge)
 
-stream_utils.register_action_object(Challenge)
-stream_utils.register_target(Challenge)
+#stream_utils.register_action_object(Challenge)
+#stream_utils.register_target(Challenge)
 
-stream_utils.register_action_object(MapChallenge)
-stream_utils.register_target(MapChallenge)
+#stream_utils.register_action_object(MapChallenge)
+#stream_utils.register_target(MapChallenge)
 
-stream_utils.register_action_object(EmpathyChallenge)
-stream_utils.register_target(EmpathyChallenge)
+#stream_utils.register_action_object(EmpathyChallenge)
+#stream_utils.register_target(EmpathyChallenge)
 
 #@receiver(pre_delete, sender=Challenge, dispatch_uid='web.playeractivities.models')
 #@receiver(pre_delete, sender=PlayerMapActivity, dispatch_uid='web.playeractivities.models')
