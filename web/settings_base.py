@@ -75,7 +75,7 @@ INSTALLED_APPS = (
     'web.affiliations',
     'web.attachment_types',
     #'web.attachments_v2',
-    'web.awards',
+    'web.badges',
     #'web.comments',
     'web.core',
     'web.curator',
@@ -248,7 +248,7 @@ CPI_REPORTS = {
 # django-celery
 # import djcelery
 # djcelery.setup_loader()
-# CELERY_IMPORTS = ('awards.tasks',)
+# CELERY_IMPORTS = ('badges.tasks',)
 
 # BROKER_HOST = "localhost"
 # BROKER_PORT = 5672
