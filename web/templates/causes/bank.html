@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="wrapper faux-modal">
-    <div class="close close-faux-modal"><a href="">×</a></div>
+    <div class="close close-faux-modal"><a href="{% url instances:missions:challenges:challenges active_game.slug mission.pk %}">×</a></div>
     <div class="row">
     	<div class="span9">
     		<div>

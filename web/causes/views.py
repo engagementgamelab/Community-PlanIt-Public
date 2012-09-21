@@ -7,19 +7,16 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from web.core.views import LoginRequiredMixin
-from web.accounts.mixins import MissionContextMixin
+from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
+from web.accounts.models import PlayerMissionState
 from .models import Cause
 from .forms import CauseForm
 
-class CauseListView(LoginRequiredMixin, MissionContextMixin, ListView):
+class CauseListView(LoginRequiredMixin, PlayerMissionStateContextMixin, MissionContextMixin, ListView):
     model = Cause
     template_name = 'causes/bank.html'
     context_object_name = 'causes'
 
-    def get_context_data(self, **kwargs):
-        context = super(CauseListView, self).get_context_data(**kwargs)
-
-        return context
 
 cause_list_view = CauseListView.as_view()
 
@@ -29,7 +26,6 @@ class CauseGameDetailView(LoginRequiredMixin, MissionContextMixin, DetailView):
     template_name = 'causes/cause_game.html'
     pk_url_kwarg = 'id'
     context_object_name = 'cause'
-
 
 cause_game_detail_view = CauseGameDetailView.as_view()
 
@@ -44,9 +40,9 @@ cause_public_detail_view = CausePublicDetailView.as_view()
 
 
 class CauseCreateView(MissionContextMixin, CreateView):
-
     form_class = CauseForm
     template_name = "causes/cause_create.html"
+    context_object_name = 'cause'
 
     def form_valid(self, form):
         self.object = form.save(commit=False)

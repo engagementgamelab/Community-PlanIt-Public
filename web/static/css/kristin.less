@@ -35,13 +35,64 @@
 
 }
 
-// .minimap {
-// 	.window {
-// 		margin-top: -50px;
-// 		height: 150px;
-// 		width: 150px;
-// 		background: @k-yellow !important;
-// 		border: 0;
-// 		.border-radius(100px);
-// 	}
-// }
+.minimap {
+	position: relative;
+	font-size: 0; /* Collapse spaces between inline-block */
+	background: url('../img/bg-minimap-hills.png') bottom center no-repeat;
+
+	// .window {
+	// 	margin-top: -50px;
+	// 	height: 150px;
+	// 	width: 150px;
+	// 	background: @k-yellow !important;
+	// 	border: 0;
+	// 	.border-radius(100px);
+	// }
+
+	&:before {
+		content: '';
+		position: absolute;
+		width: 100%; height: 20px;
+		bottom: -20px;
+		background: #81AC6E;
+	}
+
+	.challenge {
+		width: 48px; height: 72px;
+		border: none;
+		background: url('../img/bg-minimap-challenges.png') 0px -72px;
+		&.challenge-building-1 { background-position: -48*1px -72px; }
+		&.challenge-building-2 { background-position: -48*2px -72px; }
+		&.challenge-building-3 { background-position: -48*3px -72px; }
+		&.challenge-building-4 { background-position: -48*4px -72px; }
+
+		&.completed {
+			background-position: 0px -216px;
+			&.challenge-building-1 { background-position: -48*1px -216px; }
+			&.challenge-building-2 { background-position: -48*2px -216px; }
+			&.challenge-building-3 { background-position: -48*3px -216px; }
+			&.challenge-building-4 { background-position: -48*4px -216px; }
+		}
+
+		&.challenge-locked {
+			background-position: 0px 0px;
+			&.challenge-building-1 { background-position: -48*1px 0px; }
+			&.challenge-building-2 { background-position: -48*2px 0px; }
+			&.challenge-building-3 { background-position: -48*3px 0px; }
+			&.challenge-building-4 { background-position: -48*4px 0px; }
+		}
+
+		&.challenge-barrier {
+			background: url('../img/bg-minimap-gnomes.png') -48px 0px !important;
+			&.completed { background-position: -96px 0px !important; }
+		}
+
+		&.challenge-final-barrier {
+			background: url('../img/bg-minimap-gnomes.png') 0px 0px;
+
+		}
+
+
+	}
+
+}

@@ -7,7 +7,13 @@ class PlayerMissionStateContextMixin(object):
 
     def get_context_data(self, *args, **kwargs):
         ctx = super(PlayerMissionStateContextMixin, self).get_context_data(*args, **kwargs)
-        mission = kwargs.get('mission')
+        
+        active_game = self.request.session.get('my_active_game', None)
+        if 'mission' in kwargs:
+            mission = kwargs.get('mission')
+        else:
+            mission = active_game.active_mission
+
         if mission is None:
             raise RuntimeError("Cannot retrieve player mission context. Mission missing from context.")
         try:

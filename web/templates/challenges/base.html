@@ -133,28 +133,19 @@
 <div class="wrapper">
     {% with player_mission_state.mission as mission %}
     <h1>{{ mission }}</h1>
+    {% endwith %}
+</div>
 
     <div class="minimap">
-        {% if mission.get_previous_mission %}<a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.get_previous_mission.id %}" class="badge">Previous Mission</a>{% endif %}
+        {# if mission.get_previous_mission %}<a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.get_previous_mission.id %}" class="badge">Previous Mission</a>{% endif #}
 
         {% with challenge as current_challenge %}
             {% for challenge in challenges %}
-                <a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.id %}#{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% ifequal current_challenge.id challenge.id %}active{% endifequal %}" data-challenge-id="{{ challenge.id }}">
-                    {% if challenge in player_mission_state.challenges_locked.all %}
-                        <i class="icon-lock"></i>
-                    {% endif %}
-                    {% ifequal challenge.challenge_type_shortcut 'final-barrier' %}
-                        <i class="icon-flag"></i>
-                    {% endifequal %}
-                    {% ifequal challenge.challenge_type_shortcut 'barrier' %}
-                        <i class="glyphicon-flash"></i>
-                    {% endifequal %}
+                <a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.id %}#{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% ifequal current_challenge.id challenge.id %}active{% endifequal %} {% if challenge in player_mission_state.challenges_locked.all %}challenge-locked{% endif %} {% if challenge in player_mission_state.challenges_completed.all %}completed{% else %}not-completed{% endif %} {% cycle 'challenge-building-1' 'challenge-building-2' 'challenge-building-3' 'challenge-building-4' %}" data-challenge-id="{{ challenge.id }}">
                 </a>
             {% endfor %}
         {% endwith %}
-        {% if mission.get_next_mission %}<a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.get_next_mission.id %}" class="badge">Next Mission</a>{% endif %}
+        {# if mission.get_next_mission %}<a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.get_next_mission.id %}" class="badge">Next Mission</a>{% endif #}
         <div class="window"></div>
     </div>
-    {% endwith %}
-</div>
 {% endblock %}
