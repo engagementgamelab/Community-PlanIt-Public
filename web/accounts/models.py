@@ -27,7 +27,6 @@ from django.contrib.contenttypes.models import ContentType
 from web.instances.models import Instance, Affiliation
 from web.missions.models import Mission
 #from web.causes.models import PlayerCause
-from web.awards.models import Award
 from web.challenges.models import Challenge, BarrierChallenge, Answer
 
 import logging
@@ -301,7 +300,6 @@ class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='players', through=UserProfilePerInstance)
     mission_states = models.ForeignKey(PlayerMissionState, related_name='players', blank=True, null=True)
-    awards = models.ManyToManyField(Award, blank=True, null=True, related_name='players', through='PlayerAward')
 
     avatar = ImageField(upload_to=determine_path, null=True, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
