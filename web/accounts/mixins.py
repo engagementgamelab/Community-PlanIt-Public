@@ -19,12 +19,13 @@ class PlayerMissionStateContextMixin(object):
         except UserProfilePerInstance.DoesNotExist:
             game_profile_exists = False
 
-        player_mission_state, created = PlayerMissionState.objects.get_or_create(
-                profile_per_instance=profile_per_instance,
-                mission=mission,
-        )
-        if created:
+        user_profile = self.request.user.get_profile()
+        try:
+            player_mission_state =  user_profile.mission_states.get(mission=mission)
+        except PlayerMissionState.DoesNotExist:
+            player_mission_state = PlayerMissionState.objects.create(mission=mission)
             player_mission_state.init_state()
+            user_profile.mission_states.add(player_mission_state)
 
         ctx['player_mission_state'] = player_mission_state
         ctx['profile_per_instance'] = profile_per_instance 

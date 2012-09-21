@@ -46,7 +46,7 @@ class InstanceDetailView(DetailView):
         game = kwargs['object']#self.get_object()
         if game.is_future:
             self.template_name = 'instances/instance_future.html'
-            post_reg = bool(request.GET.get('post-reg'))
+            post_reg = bool(self.request.GET.get('post-reg'))
         elif game.is_present:
             self.template_name = 'instances/instance_present.html'
         elif game.is_past:

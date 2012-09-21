@@ -298,8 +298,8 @@ class UserProfile(models.Model):
 
 
     user = models.ForeignKey(User, unique=True)
-    instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='players', through=UserProfilePerInstance)
-    mission_states = models.ForeignKey(PlayerMissionState, related_name='players', blank=True, null=True)
+    instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='user_profiles', through=UserProfilePerInstance)
+    mission_states = models.ManyToManyField(PlayerMissionState, related_name='user_profiles', blank=True, null=True)
 
     avatar = ImageField(upload_to=determine_path, null=True, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
@@ -381,14 +381,9 @@ def update_player_mission_state(sender, **kwargs):
 
         challenge = answer.challenge
         mission = challenge.parent
-        profile_per_instance  = UserProfilePerInstance.objects.get(
-                instance=mission.parent,
-                user_profile__user=answer.user
-        )
-        player_mission_state = PlayerMissionState.objects.get(
-                profile_per_instance=profile_per_instance,
-                mission=mission,
-        )
+        user_profile = answer.user.get_profile()
+        player_mission_state = user_profile.mission_states.get(mission=mission)
+
         # append to the completed challenges
         player_mission_state.challenges_completed.add(challenge)
         # increment the coins count for non-barrier challenges
