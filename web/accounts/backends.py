@@ -12,11 +12,11 @@ class EmailBackend(ModelBackend):
         # to allow these users to login must test for email address separately.
         if email_re.search(username):
             try:
-                user_profile = UserProfile.objects.get(email=username)
+                user_profile = UserProfile.objects.get(email__iexact=username)
                 user = user_profile.user                
             except UserProfile.DoesNotExist:
                 try:
-                    user = User.objects.get(email=username)
+                    user = User.objects.get(email__iexact=username)
                 except User.DoesNotExist:        
                     return None
         # Username did not validate to email address test for username

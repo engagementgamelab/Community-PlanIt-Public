@@ -47,7 +47,7 @@ class AuthenticationForm(AuthenticationForm):
         try:
             UserProfilePerInstance.objects.get(
                         instance__slug=self.cleaned_data.get('game_slug'),
-                        user_profile__user__email=self.cleaned_data.get('username', '')
+                        user_profile__user__email__iexact=self.cleaned_data.get('username', '')
             )
         except UserProfilePerInstance.DoesNotExist:
             raise forms.ValidationError(_("You have not registered for this instance."))
