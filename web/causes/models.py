@@ -1,3 +1,4 @@
+import os.path
 from sorl.thumbnail import ImageField
 
 #from stream import utils as stream_utils

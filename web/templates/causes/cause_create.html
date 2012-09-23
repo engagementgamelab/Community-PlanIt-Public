@@ -10,7 +10,7 @@
 	<h1>Have a cause you want to support?</h1>
 	<p>Have a cause you want to support that's not already part of the game? Submit a request for a cause you want to be added to Community Planit and rally the community around it!</p>
 
-    <form method="POST" action="">{% csrf_token %}
+    <form method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
         {{ form.as_p }}
         <input class="btn btn-primary" type="submit">
 	<form>
