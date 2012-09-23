@@ -8,13 +8,12 @@
     <div class="close close-faux-modal"><a href="{% url instances:causes:bank active_game.slug %}">×</a></div>
 	
 	<h1>Have a cause you want to support?</h1>
-	<p>Submit a request for a cause you want to be added to Community PlanIt and rally the community around it!</p>
+	<p>Have a cause you want to support that's not already part of the game? Submit a request for a cause you want to be added to Community Planit and rally the community around it!</p>
 
     <form method="POST" action="">{% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit">
-
-        <form>
+        {{ form.as_p }}
+        <input class="btn btn-primary" type="submit">
+	<form>
 
     </div>
 </div>

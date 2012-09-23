@@ -17,9 +17,11 @@ class Cause(models.Model):
     def determine_path(instance, filename):
         return os.path.join('uploads', 'causes', str(instance.instance.id), filename)
 
-    name = models.CharField(max_length=60, verbose_name='Name')
+    facebook_group_url = models.URLField(null=True, blank=True)
+    name = models.CharField(max_length=60, verbose_name='Organization Name')
     instance = models.ForeignKey(Instance, related_name='causes')
     creator = models.ForeignKey(User, related_name='causes')
+    cause_type = models.CharField(max_length=1000, null=True, blank=True)
     description = models.TextField(max_length=1000, verbose_name='Description', blank=True, default='')
     image = ImageField(upload_to=determine_path, null=True, blank=True)
     date_added = models.DateField(auto_now_add=True)
