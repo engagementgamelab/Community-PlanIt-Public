@@ -77,8 +77,8 @@
                             'margin-left': this.clip.width()/2 - challenge.outerWidth()/2 - 20 - challenge.position().left,
                         });
 
-                        this.minimap.find('.window').animate({
-                            'margin-left': this.minimap.find('.challenge.active').position().left + this.minimap.find('.challenge.active').width()/2 - this.minimap.find('.window').width()/2
+                        this.minimap.siblings('.window').animate({
+                            'margin-left': this.minimap.find('.challenge.active').position().left + this.minimap.find('.challenge.active').width()/2 - this.minimap.siblings('.window').width()/2
                         });
 
                         document.location.hash = this.minimap_challenges.eq(challenge.index()).attr('data-challenge-id');
@@ -148,6 +148,6 @@
             {% endfor %}
         {% endwith %}
         {# if mission.get_next_mission %}<a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.get_next_mission.id %}" class="badge">Next Mission</a>{% endif #}
-        <div class="window"></div>
     </div>
+    <div class="window"></div>
 {% endblock %}

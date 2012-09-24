@@ -8,7 +8,7 @@
 @k-dark-gray: #555;
 @k-blue: #0f85a5;
 @k-yellow: #fbc44c;
-
+@k-green: #81AC6E;
 
 
 .challenge-basics {
@@ -40,21 +40,12 @@
 	font-size: 0; /* Collapse spaces between inline-block */
 	background: url('../img/bg-minimap-hills.png') bottom center no-repeat;
 
-	// .window {
-	// 	margin-top: -50px;
-	// 	height: 150px;
-	// 	width: 150px;
-	// 	background: @k-yellow !important;
-	// 	border: 0;
-	// 	.border-radius(100px);
-	// }
-
 	&:before {
 		content: '';
 		position: absolute;
 		width: 100%; height: 21px;
 		bottom: -20px;
-		background: #81AC6E;
+		background: @k-green;
 	}
 
 	.challenge {
@@ -105,8 +96,28 @@
 			background: url('../img/bg-minimap-gnomes_72x72.png') -288px 0px !important;
 			&:hover { background-position: -288px -72px !important; }
 		}
-
-
 	}
+}
 
+.window {
+	margin-top: -100px;
+	height: 100px;
+	width: 100px;
+	background: @k-yellow !important;
+	border: 0;
+	.border-radius(50px);
+}
+
+
+#challenges {
+	background: url('../img/bg-challenges-tile.png');
+}
+
+#footer-fat {
+	margin: 0;
+	background: @k-green;
+}
+
+#footer {
+	background: @k-green;
 }
