@@ -58,11 +58,13 @@
                 },
 
                 goto_challenge: function(challenge){
-                    if(challenge[0] == this.challenges.first()[0]){
+                    /* if(challenge[0] == this.challenges.first()[0]){
                         this.goto_challenge(challenge.next());
                     } else if (challenge[0] == this.challenges.last()[0]){
                         this.goto_challenge(challenge.prev());
-                    } else if(challenge.length){
+                    } else 
+                    */
+                    if(challenge.length){
 
                         /* clear active classes */
                         this.slide.find('.challenge').removeClass('active');
