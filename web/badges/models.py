@@ -5,8 +5,8 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.conf import settings
 
-from badges.signals import badge_awarded
-from badges.managers import BadgeManager
+from .signals import badge_awarded
+from .managers import BadgeManager
 
 if hasattr(settings, 'BADGE_LEVEL_CHOICES'):
     LEVEL_CHOICES = settings.BADGE_LEVEL_CHOICES
@@ -80,3 +80,5 @@ class BadgeToUser(models.Model):
     user = models.ForeignKey(User)
 
     created = models.DateTimeField(default=datetime.now)
+
+from web.badges import meta_badges

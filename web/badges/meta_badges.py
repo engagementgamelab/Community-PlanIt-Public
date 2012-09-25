@@ -1,3 +1,7 @@
+import badges
+
+from web.challenges.models import BarrierChallenge
+
 """
 All Awards (Badges) should be treated less as a reputation system and more as a bonus system.
 So every Award should come with a coin bonus.
@@ -30,9 +34,7 @@ Users have the ability to earn the same Award in each mission (i.e. If I earn th
     7) having players answer your 
         challenges                      instance - challenges.Challenge
 """
-
-import badges
-
+"""
 class Explorer(badges.MetaBadge):
     id = "explorer"
     model = Comment
@@ -56,6 +58,20 @@ class Trailblazer(badges.MetaBadge):
 
     title = "Trailblazer"
     description = "Being a top 10 coin-earner when the mission ends"
+    level = "1"
+
+    #def get_user(self, instance):
+    #    return instance.user
+"""
+
+
+class Smartypants(badges.MetaBadge):
+    id = "Smartypants"
+    model = BarrierChallenge
+    one_time_only = True
+
+    title = "Smarty Pants"
+    description = "Getting all trivia barriers for a mission correct without using any lifelines. "
     level = "1"
 
     #def get_user(self, instance):
