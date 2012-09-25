@@ -171,11 +171,8 @@ class UserProfilePerInstance(models.Model):
     user_profile = models.ForeignKey("UserProfile", related_name='user_profiles_per_instance')
     instance = models.ForeignKey(Instance)
 
-    # to be removed
-    stake = models.ForeignKey(UserProfileStake, blank=True, null=True, default=None)
-
     stakes = models.ManyToManyField(UserProfileStake, blank=True, null=True, related_name='stakes')
-    affils = models.ManyToManyField(Affiliation, blank=True, null=True, related_name='user_profiles_per_instance')
+    affils = models.ManyToManyField(Affiliation, verbose_name = "Affiliations", blank=True, null=True, related_name='user_profiles_per_instance')
 
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -189,6 +186,8 @@ class UserProfilePerInstance(models.Model):
         return ('accounts:player_profile', [str(self.get_user().pk)])
 
     class Meta:
+        verbose_name = "Game specific info"
+        verbose_name_plural = "Game specific info"
         unique_together = ('user_profile', 'instance',)
         ordering = ('date_created', 'user_profile__user__last_name', )
 
@@ -318,27 +317,12 @@ class UserProfile(models.Model):
     how_discovered_other = models.CharField(max_length=1000, blank=True, default='')
     tagline = models.CharField(max_length=140, blank=True, default='')
 
-    class Meta:
-        verbose_name = "User Profile"
-        verbose_name_plural = "User Profiles"
-
     def __unicode__(self):
         return "%s's profile" % (self.screen_name)
 
-    #@property
-    #def active_instance(self):
-    #    profiles_per_instance = UserProfilePerInstance.objects.filter(user_profile=self)
-    #    if profiles_per_instance.count():
-    #        return profiles_per_instance[0].instance
-
-    @property
-    def affiliations_csv(self):
-        if self.affils:
-            return self.affils.values_list('name', flat=True)
-        return ""
-
-    def earned_tokens(self):
-        return self.totalPoints // 100
+    class Meta:
+        verbose_name = "User Profile"
+        verbose_name_plural = "User Profiles"
 
     @models.permalink
     def get_absolute_url(self):
