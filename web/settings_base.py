@@ -74,7 +74,7 @@ INSTALLED_APPS = (
     'web.accounts',
     'web.affiliations',
     'web.attachment_types',
-    'web.badges',
+    #'web.badges',
     'web.core',
     'web.curator',
     'web.flags',
