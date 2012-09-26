@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 
 from .models import *
@@ -79,15 +80,32 @@ admin.site.register(UserProfileHowDiscovered, UserProfileHowDiscoveredAdmin)
 class UserProfilePerInstanceInline(admin.StackedInline):
     model = UserProfile.instances.through
     #filter_horizontal = ('stakes', 'affils',)
-    readonly_fields = ('instance', 'stakes', 'affils',)
+    readonly_fields = ('stakes', 'affils',)
     extra = 0
+
+
+class GameListFilter(admin.SimpleListFilter):
+    title = 'games'
+    parameter_name = 'game'
+
+    def lookups(self, request, model_admin):
+        return Instance.objects.values_list('pk', 'title')
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            return queryset.filter(instances__pk=self.value()).distinct()
+        return queryset
 
 
 class ProfileForm(forms.ModelForm):
 
     first_name = forms.CharField(max_length=256)
     last_name = forms.CharField(max_length=256)
-    avatar_thumb = forms.ImageField(label='Avatar', required=False, widget=AdminImageWidget)
+    avatar_thumb = forms.ImageField(label=_('Avatar'), required=False, widget=AdminImageWidget)
+    email = forms.EmailField(label=_("E-mail"), max_length=75)
+    last_login = forms.DateTimeField()
+    date_joined = forms.DateTimeField()
+    is_active = forms.BooleanField()
 
     def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
@@ -95,6 +113,16 @@ class ProfileForm(forms.ModelForm):
             self.fields['first_name'].initial = self.instance.user.first_name
             self.fields['last_name'].initial = self.instance.user.last_name
             self.fields['avatar_thumb'].initial = self.instance.avatar
+            self.fields['last_login'].initial = self.instance.user.last_login
+            self.fields['last_login'].widget.attrs['readonly'] = True
+            self.fields['date_joined'].initial = self.instance.user.date_joined
+            self.fields['date_joined'].widget.attrs['readonly'] = True
+            self.fields['is_active'].initial = self.instance.user.is_active
+
+            if self.instance.user.email:
+                self.fields['email'].initial = self.instance.user.email
+            else:
+                self.fields['email'].initial = self.instance.email
         except User.DoesNotExist:
             pass
 
@@ -105,7 +133,10 @@ class ProfileForm(forms.ModelForm):
             'first_name', 
             'last_name', 
             'avatar_thumb',
+            'last_login',
+            'date_joined',
 
+            'receive_email',
             'city',
             'zip_code',
             'birth_year', 
@@ -125,60 +156,62 @@ class UserProfileAdmin(admin.ModelAdmin):
     form = ProfileForm
 
     fieldsets = (
-            ('User Info', {
-                'fields': (
-                    'first_name',
-                    'last_name',
-                )
-            }),
-
-            ('User Info Misc', {
-                'classes': ('collapse',),
-                'fields': (
-                    'avatar_thumb',
-                    'tagline',
-                )
-            }),
-
-            ('Demographic Data', {
-                'classes': ('collapse',),
-                'fields': (
-                    'city',
-                    'zip_code',
-                    'birth_year',
-                    'gender',
-                    'race',
-                    'education',
-                    'income',
-                    'living',
-                    'how_discovered',
-                    'how_discovered_other',
-                )
-            }),
+        (_('User Info'), {
+            'fields': ('first_name', 'last_name', 'email',)
+        }),
+        (_('Demographic Data'), {
+            'classes': ('collapse',),
+            'fields': (
+                'city',
+                'zip_code',
+                'birth_year',
+                'gender',
+                'race',
+                'education',
+                'income',
+                'living',
+                'how_discovered',
+                'how_discovered_other',
+            )
+        }),
+        (_('User Info Misc'), {
+            'classes': ('collapse',),
+            'fields': ('receive_email', 'avatar_thumb', 'tagline',)
+        }),
+        (_('Permissions'), 
+            {'fields': ('is_active',)}
+        ),
+        (_('Important dates'), 
+            {'classes': ('collapse',),
+             'fields': ('last_login', 'date_joined')}
+        ),
     )
     list_display = ('user_first_name', 'user_last_name', 'user_email')
+    list_filter = (GameListFilter,)
     search_fields = ('email',)
     inlines = [UserProfilePerInstanceInline,]
 
     def user_last_name(self, obj):
         return obj.user.last_name
-    user_last_name.short_description = "Last Name"
+    user_last_name.short_description = _("Last Name")
 
     def user_first_name(self, obj):
         return obj.user.first_name
-    user_first_name.short_description = "First Name"
+    user_first_name.short_description = _("First Name")
 
     def user_email(self, obj):
-        if obj.email:
-            return obj.email
-        return obj.user.email
-    user_email.short_description = "E-Mail"
+        return obj.email or obj.user.email
+    user_email.short_description = _("E-Mail")
 
     def save_model(self, request, obj, form, change):
         obj.user.first_name = form.cleaned_data['first_name']
         obj.user.last_name = form.cleaned_data['last_name']
+        obj.user.email = form.cleaned_data['email']
+        obj.user.is_active = form.cleaned_data['is_active']
         obj.user.save()
         obj.avatar = form.cleaned_data['avatar_thumb']
+        #TODO why does UserProfile have the email field?
+        obj.email = form.cleaned_data['email']
         obj.save()
 
 admin.site.register(UserProfile, UserProfileAdmin)
