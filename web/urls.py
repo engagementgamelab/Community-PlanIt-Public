@@ -42,12 +42,15 @@ urlpatterns = patterns('web',
     (r'^affiliations/', include('affiliations.urls', namespace='affiliations', app_name='affiliations')),
     (r'^lists/', include('lists.urls', namespace='lists', app_name='lists')),
     (r'^flags/', include('flags.urls', namespace='flags', app_name='flags')),
-    (r'^badges/', include('badges.urls', namespace='badges', app_name='badges')),
-    
+
     # Admin stuff
     #(r'^curator/', include('curator.urls')),
     (r'^reports/', include('web.reporting.urls', namespace='reporting', app_name='reporting')),
 )
+
+if 'web.badges'  in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^badges/', include('badges.urls', namespace='badges', app_name='badges')         ))
 
 #if 'admin_tools' in settings.INSTALLED_APPS:
 #    url(r'^admin_tools/', include('admin_tools.urls')),
