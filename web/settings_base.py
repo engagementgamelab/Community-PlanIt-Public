@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.messages',
     'django.contrib.sessions',
+    'django.contrib.comments',
     'django.contrib.sites',
     'django.contrib.staticfiles',
 
@@ -76,6 +77,7 @@ INSTALLED_APPS = (
     'web.attachment_types',
     #'web.badges',
     'web.core',
+    'web.player_comments',
     'web.curator',
     'web.flags',
     'web.instances',
@@ -158,7 +160,6 @@ TIME_ZONE = 'America/New_York'
 USE_I18N = True
 USE_L10N = True
 
-
 CACHES = {
     'default': {
         'BACKEND': 'cache_utils.group_backend.CacheClass',
@@ -179,6 +180,9 @@ ugettext = lambda s: s
 LANGUAGES = (
   ('en-us', ugettext('English')),
 )
+
+#comments
+COMMENTS_APP = 'web.player_comments'
 
 #django-rosetta
 ROSETTA_UWSGI_AUTO_RELOAD = True
@@ -208,11 +212,6 @@ STREAM_VERBS = (
     ('award_received', 'player received a award'),
 )
 
-REPORTS_RECIPIENTS = (
-        'eric_gordon@emerson.edu',
-        'philip.kalinsky@eloquentbits.com',
-)
-
 BRINGCPI_RECIPIENTS = ['eric_gordon@emerson.edu']
 
 # ajax_select
@@ -222,21 +221,18 @@ AJAX_LOOKUP_CHANNELS = {
     'django_su': dict(model='auth.user', search_field='username'),
 }
 
-# django_endless_pagination
-ENDLESS_PAGINATION_ADD_NOFOLLOW = True
-ENDLESS_PAGINATE_PLAYERS_PER_PAGE = 16
-ENDLESS_PAGINATION_PREVIOUS_LABEL = '''<div class="pagination-previous"></div>'''
-ENDLESS_PAGINATION_NEXT_LABEL = '''<div class="pagination-next"></div>'''
-
-CPI_POINTS_FOR_COMMENT = 5
-CPI_POINTS_FOR_PLAYER_SUBMITTED_CHALLENGE = 5
-
-CPI_REPORTS = {
+REPORTS = {
         'demographic' : ('web.reporting.reports', 'DemographicReport'),
         'login_activity' : ('web.reporting.reports', 'LoginActivityReport'),
         'challenge_activity' : ('web.reporting.reports', 'ChallengeActivityReport'),
         'mission' : ('web.reporting.reports', 'MissionReport'),
 }
+
+REPORTS_RECIPIENTS = (
+        'eric_gordon@emerson.edu',
+        'philip.kalinsky@eloquentbits.com',
+)
+
 
 # celery disabled
 # using uwsgi spoooler, timer decorator for now
@@ -255,11 +251,6 @@ CPI_REPORTS = {
 #
 # Community PlanIT settings
 #
-
-# Default points/coins
-DEFAULT_POINTS = 10
-DEFAULT_COINS = 0
-
 
 # Heatmap Threshold
 # The divisor in calculating heat map regions. 
