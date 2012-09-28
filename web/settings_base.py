@@ -141,8 +141,6 @@ SERVER_EMAIL = 'noreply@communityplanit.org'
 
 SITE_ID = 1
 
-SESSION_COOKIE_DOMAIN = '.communityplanit.org'
-#SESSION_COOKIE_PATH = '/pk.local'
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
