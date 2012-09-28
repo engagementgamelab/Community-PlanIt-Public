@@ -29,97 +29,14 @@ from web.missions.models import Mission
 #from web.causes.models import PlayerCause
 from web.challenges.models import Challenge, BarrierChallenge, Answer
 
+from .options import *
+from .managers import UserProfilePerInstanceManager, PlayerMissionStateManager
+
+
 import logging
 log = logging.getLogger(__name__)
 
-class UserProfileOptionBase(models.Model):
-    pos = models.IntegerField(blank=False, null=False)
 
-    class Meta:
-        ordering = ('pos',)
-        abstract = True
-
-class UserProfileEducation(UserProfileOptionBase):
-    education = models.CharField(max_length=128, blank=True, default='')
-
-    class Meta:
-        ordering = ('pos',)
-        verbose_name = "User Profile Education option"
-        verbose_name_plural = "User Profile Education options"
-
-    def __unicode__(self):
-        return self.education
-
-class UserProfileGender(UserProfileOptionBase):
-    gender = models.CharField(max_length=128, blank=True, default='')
-
-    class Meta:
-        ordering = ('pos',)
-        verbose_name = "User Profile Gender option"
-        verbose_name_plural = "User Profile Gender options"
-
-    def __unicode__(self):
-        return self.gender
-
-class UserProfileHowDiscovered(UserProfileOptionBase):
-    how = models.CharField(max_length=128, blank=True, default='')
-
-    class Meta:
-        ordering = ('pos',)
-        verbose_name = "User Profile How Discovered option"
-        verbose_name_plural = "User Profile How Discovered options"
-
-    def __unicode__(self):
-        return self.how
-
-class UserProfileIncome(UserProfileOptionBase):
-    income = models.CharField(max_length=128, blank=True, default='')
-
-    class Meta:
-        ordering = ('pos',)
-        verbose_name = "User Profile Income option"
-        verbose_name_plural = "User Profile Income options"
-
-    def __unicode__(self):
-        return self.income
-    
-class UserProfileLivingSituation(UserProfileOptionBase):
-    situation = models.CharField(max_length=128, blank=True, default='')
-
-    class Meta:
-        ordering = ('pos',)
-        verbose_name = "User Profile Living Situation option"
-        verbose_name_plural = "User Profile Living Situation options"
-
-    def __unicode__(self):
-        return self.situation
-
-class UserProfileRace(UserProfileOptionBase):
-    race = models.CharField(max_length=128, blank=True, default='')
-
-    class Meta:
-        ordering = ('pos',)
-        verbose_name = "User Profile Race option"
-        verbose_name_plural = "User Profile Race options"
-
-    def __unicode__(self):
-        return self.race
-
-
-class UserProfileStake(UserProfileOptionBase):
-    """
-    The stakes users hold in the community, e.g. Live, Work, Play, or Teacher,
-    Administrator, Student.
-    """
-    stake = models.CharField(max_length=128, blank=True, default='')
-
-    class Meta:
-        ordering = ('pos',)
-        verbose_name = "User Profile Stake option"
-        verbose_name_plural = "User Profile Stake options"
-
-    def __unicode__(self):
-        return self.stake
 
 class CPIUser(User):
 
@@ -132,40 +49,6 @@ class CPIUser(User):
         return self.username
 
 
-class UserProfilePerInstanceManager(models.Manager):
-
-    #@cached(60*60*24, 'user_profile_per_instance_get')
-    #def get(self, *args, **kwargs):
-    #    return super(UserProfilePerInstanceManager, self).get(*args, **kwargs)
-
-    @cached(60*60*24, 'all_games_for_profile')
-    def games_for_profile(self, user_profile):
-        game_pks = self.filter(user_profile=user_profile).values_list('instance__pk', flat=True)
-        my_games = Instance.objects.filter(pk__in=game_pks)
-        return my_games
-
-    # deprecated. points now come from the core.PlayerLeaderboard
-    #@cached(60*60*24)
-    #def total_points_for_profile(self, instance, user_profile):
-    #    log.debug("profile manager: total_points_for_profile %s ** not cached **" % user_profile.screen_name)
-    #    try:
-    #        return self.get(instance=instance, user_profile=user_profile).total_points
-    #    except UserProfilePerInstance.DoesNotExist:
-    #        return 0
-
-    #@cached(60*60*24, 'progress_data_for_mission')
-    def progress_data_for_mission(self, instance, mission, user_profile):
-        return self.get(instance=instance, user_profile=user_profile).\
-                progress_percentage_by_mission(mission)
-
-    #def latest_instance_by_profile(self, user_profile, domain):
-    #    return self.objects.filter(user_profile=user_profile).latest_for_city_domain(domain)
-
-    #def total_points_by_affiliation(self, instance, affiliation_slug):
-    #    total_points = 0
-    #    for player_profile in self.all_by_affiliation(instance, affiliation_slug):
-    #        total_points+=self.total_points_for_profile(instance, player_profile)
-    #    return total_points
 
 class UserProfilePerInstance(models.Model):
     user_profile = models.ForeignKey("UserProfile", related_name='user_profiles_per_instance')
@@ -226,21 +109,6 @@ class UserProfilePerInstance(models.Model):
         return self.user_profile.email or self.user_profile.user.email 
 
 #stream_utils.register_target(UserProfilePerInstance)
-
-
-class PlayerMissionStateManager(models.Manager):
-
-    def by_game(self, game):
-        return self.filter(mission__parent=game)
-
-    def total_coins_by_mission(self, profile_per_instance, mission):
-        return  self.filter(profile_per_instance=profile_per_instance, mission=mission).\
-                                    aggregate(models.Sum('coins')).get('coins__sum') or 0
-
-        self.by_game(game)
-    def total_coins_by_game(self, profile_per_instance, game):
-        self.by_game(game)
-
 
 
 class PlayerMissionState(models.Model):
