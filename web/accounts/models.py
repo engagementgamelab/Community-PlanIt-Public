@@ -115,13 +115,21 @@ class PlayerMissionState(models.Model):
 
     user = models.ForeignKey(User, verbose_name=_('user'), related_name="mission_states")
     mission = models.ForeignKey(Mission, related_name='mission_states')
-    challenges_locked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_locked')
-    challenges_unlocked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_unlocked')
-    challenges_completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
+    locked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_locked')
+    unlocked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_unlocked')
+    completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
     barriers_fifty_fifty = models.ManyToManyField(Challenge, blank=True, null=True, related_name='barriers_fifty_fifty')
     coins = models.IntegerField(default=0)
 
     objects = PlayerMissionStateManager()
+
+    def __unicode__(self):
+
+        return "Mission: %s, %s locked, %s unlocked" %(
+                        self.mission,
+                        self.locked.count(),
+                        self.unlocked.count(),
+                )
 
     class Meta:
         unique_together = ('mission', 'user')
@@ -130,17 +138,17 @@ class PlayerMissionState(models.Model):
     def unlock_next_block(self):
         """ a barrier has been completed. unlock next block of challenges"""
         for i, barrier in enumerate(self.mission.challenges_as_sorteddict):
-            if not barrier in self.challenges_completed.all():
+            if not barrier in self.completed.all():
                 for challenge in self.mission.challenges_as_sorteddict.get(barrier):
-                    self.challenges_unlocked.add(challenge)
-                    self.challenges_locked.remove(challenge)
+                    self.unlocked.add(challenge)
+                    self.locked.remove(challenge)
 
     @property
     def next_barrier(self):
         for barrier in Challenge.objects.filter(parent=self.mission).\
                 instance_of(BarrierChallenge):
             if barrier.basetreenode_ptr.get_previous_sibling().get_real_instance() in \
-                    self.challenges_unlocked.all():
+                    self.unlocked.all():
                 return barrier
 
 
@@ -221,7 +229,7 @@ def update_player_mission_state(sender, **kwargs):
         mst = up.mission_states.get(mission=mission)
 
         # append to the completed challenges
-        mst.challenges_completed.add(challenge)
+        mst.completed.add(challenge)
         # increment the coins count for non-barrier challenges
         if challenge.challenge_type != Challenge.BARRIER:
             mst.coins += mission.challenge_coin_value
@@ -233,11 +241,11 @@ def update_player_mission_state(sender, **kwargs):
             mst.unlock_next_block()
 
         # if the next barrier in order is eligible to be unlocked
-        # add it to the challenges_unlocked
+        # add it to the unlocked
         #next_barrier = mst.next_barrier
         #if next_barrier.minimum_coins_to_play <= mst.coins:
-        #     mst.challenges_unlocked.add(next_barrier)
-        #     mst.challenges_locked.remove(next_barrier)
+        #     mst.unlocked.add(next_barrier)
+        #     mst.locked.remove(next_barrier)
 
         mst.save()
 post_save.connect(update_player_mission_state, dispatch_uid='update_mission_state')

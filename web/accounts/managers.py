@@ -59,19 +59,23 @@ class PlayerMissionStateManager(models.Manager):
             print "init ms for user %s" % kwargs.get('user')
 
         mission = kwargs.get('mission')
-
         obj = super(PlayerMissionStateManager, self).create(*args, **kwargs)
         challenges = mission.challenges_as_sorteddict
+        import pprint
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(dict(challenges))
         for i, barrier in enumerate(challenges):
             if i == 0:
-                obj.challenges_unlocked.add(barrier)
+                obj.unlocked.add(barrier)
                 for challenge in challenges.get(barrier):
-                    obj.challenges_unlocked.add(challenge)
+                    obj.unlocked.add(challenge)
+                    print 'adding to unlocked %s' % challenge
             else:
-                obj.challenges_locked.add(barrier)
+                obj.locked.add(barrier)
                 for challenge in challenges.get(barrier):
-                    obj.challenges_locked.add(challenge)
-        #obj.save(force_insert=True, using=self.db)
+                    obj.locked.add(challenge)
+                    print 'adding to locked %s' % challenge
+        print obj
         return obj
 
 
