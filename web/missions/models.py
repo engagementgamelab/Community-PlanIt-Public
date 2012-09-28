@@ -80,15 +80,13 @@ class Mission(BaseTreeNode):
     def get_previous_mission(self):
         return self.get_previous_sibling()
 
-    def _validate_challenges_sorteddict(self, challenges, d):
+    def _validate_challenges_sorteddict(self, d):
         """ make sure that the challenges count in the SortedDict is the same as in db"""
 
         dict_challenge_count = len(d.keys())
         for k in d.keys():
             dict_challenge_count += len(d.get(k))
-
-        if challenges.count() != dict_challenge_count:
-            raise ImproperlyConfigured("a barrier challenge is missing in mission %s" % self.title)
+        return Challenge.objects.filter(parent=self).count() != dict_challenge_count
 
     @property
     def challenges_as_sorteddict(self):
@@ -102,7 +100,8 @@ class Mission(BaseTreeNode):
             else:
                 d[challenge] = this_block
                 this_block = []
-        self._validate_challenges_sorteddict(challenges, d)
+        assert(self._validate_challenges_sorteddict(d), True)
+
         return d
 
 #stream_utils.register_target(Mission)

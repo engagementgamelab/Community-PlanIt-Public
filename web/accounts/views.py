@@ -497,7 +497,7 @@ def profile(request, id, template_name="accounts/profile.html"):
     kwargs['instance']=request.current_game
     kwargs['user_profile'] = request.user.get_profile() if request.user == player else player.get_profile()
     try:
-        prof_per_instance = UserProfilePerInstance.objects.get(**kwargs)
+        my_game_profile = UserProfilePerInstance.objects.get(**kwargs)
     except UserProfilePerInstance.DoesNotExist:
         raise Http404("user for this game is not registered")
 
@@ -554,9 +554,9 @@ def profile(request, id, template_name="accounts/profile.html"):
 
     context.update({
         'player': player,
-        'profile_per_instance' : prof_per_instance,
+        'profile_per_instance' : my_game_profile,
         'stream': stream,
-        'affiliations': prof_per_instance.affils.all(),
+        'affiliations': my_game_profile.affils.all(),
         'my_games': my_games,
     })
     # this line here updates the context with 

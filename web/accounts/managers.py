@@ -53,4 +53,29 @@ class PlayerMissionStateManager(models.Manager):
         self.by_game(game)
 
 
+    def create(self, *args, **kwargs):
+        #raise Exception("stop!")
+        if 'user' in kwargs:
+            print "init ms for user %s" % kwargs.get('user')
+
+        mission = kwargs.get('mission')
+
+        obj = super(PlayerMissionStateManager, self).create(*args, **kwargs)
+        challenges = mission.challenges_as_sorteddict
+        for i, barrier in enumerate(challenges):
+            if i == 0:
+                obj.challenges_unlocked.add(barrier)
+                for challenge in challenges.get(barrier):
+                    obj.challenges_unlocked.add(challenge)
+            else:
+                obj.challenges_locked.add(barrier)
+                for challenge in challenges.get(barrier):
+                    obj.challenges_locked.add(challenge)
+        #obj.save(force_insert=True, using=self.db)
+        return obj
+
+
+
+
+
 

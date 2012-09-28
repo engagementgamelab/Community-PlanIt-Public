@@ -19,8 +19,7 @@ from django.core.cache import cache
 from django.contrib.auth.signals import user_logged_in
 from django.utils.translation import ugettext_lazy as _ 
 
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
@@ -114,7 +113,8 @@ class UserProfilePerInstance(models.Model):
 class PlayerMissionState(models.Model):
     """ keep track of mission state for each player """
 
-    mission = models.ForeignKey(Mission, related_name='player_mission_states')
+    user = models.ForeignKey(User, verbose_name=_('user'), related_name="mission_states")
+    mission = models.ForeignKey(Mission, related_name='mission_states')
     challenges_locked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_locked')
     challenges_unlocked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_unlocked')
     challenges_completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
@@ -123,23 +123,9 @@ class PlayerMissionState(models.Model):
 
     objects = PlayerMissionStateManager()
 
-    def init_state(self):
-        """ called after creation from MissionListView to initialize state"""
-        self.challenges_unlocked.clear()
-        self.challenges_locked.clear()
-        self.challenges_completed.clear()
-        self.coins = 0
+    class Meta:
+        unique_together = ('mission', 'user')
 
-        for i, barrier in enumerate(self.mission.challenges_as_sorteddict):
-            if i == 0:
-                self.challenges_unlocked.add(barrier)
-                for challenge in self.mission.challenges_as_sorteddict.get(barrier):
-                    self.challenges_unlocked.add(challenge)
-            else:
-                self.challenges_locked.add(barrier)
-                for challenge in self.mission.challenges_as_sorteddict.get(barrier):
-                    self.challenges_locked.add(challenge)
-        self.save()
 
     def unlock_next_block(self):
         """ a barrier has been completed. unlock next block of challenges"""
@@ -166,7 +152,6 @@ class UserProfile(models.Model):
 
     user = models.ForeignKey(User, unique=True)
     instances = models.ManyToManyField(Instance, blank=True, null=True, related_name='user_profiles', through=UserProfilePerInstance)
-    mission_states = models.ManyToManyField(PlayerMissionState, related_name='user_profiles', blank=True, null=True)
 
     avatar = ImageField(upload_to=determine_path, null=True, blank=True)
     email = models.EmailField(_('e-mail address'), blank=True, max_length=250)
@@ -223,7 +208,6 @@ class UserProfileVariantsForInstance(models.Model):
     affiliation_variants = models.ManyToManyField(Affiliation, blank=True, null=True, default=None)
 
 
-
 @receiver(post_save, sender=Answer)
 def update_player_mission_state(sender, **kwargs):
     answer = kwargs.get('instance')
@@ -233,29 +217,29 @@ def update_player_mission_state(sender, **kwargs):
 
         challenge = answer.challenge
         mission = challenge.parent
-        user_profile = answer.user.get_profile()
-        player_mission_state = user_profile.mission_states.get(mission=mission)
+        up = answer.user.get_profile()
+        mst = up.mission_states.get(mission=mission)
 
         # append to the completed challenges
-        player_mission_state.challenges_completed.add(challenge)
+        mst.challenges_completed.add(challenge)
         # increment the coins count for non-barrier challenges
         if challenge.challenge_type != Challenge.BARRIER:
-            player_mission_state.coins += mission.challenge_coin_value
+            mst.coins += mission.challenge_coin_value
         # if barrier has been played, unlock next block of challenges
         if challenge.challenge_type == Challenge.BARRIER:
             # if chosen answer is incorrect, subtract coins
             if answer.selected.is_barrier_correct_answer != True:
-                player_mission_state.coins -= mission.challenge_coin_value
-            player_mission_state.unlock_next_block()
+                mst.coins -= mission.challenge_coin_value
+            mst.unlock_next_block()
 
         # if the next barrier in order is eligible to be unlocked
         # add it to the challenges_unlocked
-        #next_barrier = player_mission_state.next_barrier
-        #if next_barrier.minimum_coins_to_play <= player_mission_state.coins:
-        #     player_mission_state.challenges_unlocked.add(next_barrier)
-        #     player_mission_state.challenges_locked.remove(next_barrier)
+        #next_barrier = mst.next_barrier
+        #if next_barrier.minimum_coins_to_play <= mst.coins:
+        #     mst.challenges_unlocked.add(next_barrier)
+        #     mst.challenges_locked.remove(next_barrier)
 
-        player_mission_state.save()
+        mst.save()
 post_save.connect(update_player_mission_state, dispatch_uid='update_mission_state')
 
 
@@ -267,12 +251,8 @@ def user_pre_save(instance, **kwargs):
 # Custom post save hook for adding group and user profile
 def user_post_save(instance, created, **kwargs):
     if created:
-        # Create a user profile for the player and add them to the
-        # `Player` group.  Default the player to inactive.
-        player_group, created = Group.objects.get_or_create(name='Player')
-        user_profile = UserProfile.objects.get_or_create(user=instance)
-        #instance.is_active = False
-        #instance.groups.add(player_group)
+        # Create a user profile for the player
+        UserProfile.objects.get_or_create(user=instance)
         instance.save()
 
 models.signals.pre_save.connect(user_pre_save, sender=User)
