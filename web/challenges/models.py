@@ -19,8 +19,6 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
-#from web.attachments_v2.models import Attachment
-#from web.comments.models import Comment
 from web.instances.models import BaseTreeNode
 
 import logging

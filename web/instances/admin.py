@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from polymorphic_tree.admin import PolymorphicMPTTChildModelAdmin, PolymorphicMPTTParentModelAdmin
 
 from attachments.models import Attachment
+from attachments.admin import AttachmentInlines
 
 from web.instances.models import *
 from web.attachment_types.models import *
@@ -12,8 +13,32 @@ from web.missions import models as mission_models
 from web.challenges import models as challenge_models
 from web.causes import models as causes_models
 
-# The common admin functionality for all derived models:
+# attachment inlines 
+class CPIAttachmentInlines(AttachmentInlines):
+    model = Attachment
+    readonly_fields = ('creator',)
 
+
+class AttachmentWithThumbnailInlines(generic.GenericStackedInline):
+    model = AttachmentWithThumbnail
+    extra = 1
+    readonly_fields = ('creator',)
+
+
+class AttachmentHyperlinkInlines(generic.GenericStackedInline):
+    model = AttachmentHyperlink
+    extra = 1
+    readonly_fields = ('creator',)
+    exclude = ('attachment_file',)
+
+
+class VideoAttachmentInlines(generic.GenericStackedInline):
+    model = AttachmentVideo
+    extra = 1
+    readonly_fields = ('creator',)
+    exclude = ('attachment_file',)
+
+# end attachment inlines
 
 class CauseInlines(admin.StackedInline):
     model = causes_models.Cause
@@ -70,36 +95,38 @@ class ChallengeAdminBase(BaseChildAdmin):
                 instance.creator = request.user
             instance.save()
 
+challenge_base_inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AttachmentHyperlinkInlines,]
+challenge_inlines_with_answers = [AnswerChoiceInline, ] + challenge_base_inlines
 
 class SingleResponseChallengeAdmin(ChallengeAdminBase):
-    inlines = [AnswerChoiceInline, CPIAttachmentInlines, VideoAttachmentInlines]
+    inlines = challenge_inlines_with_answers
 
 
 class MultiResponseChallengeAdmin(ChallengeAdminBase):
-    inlines = [AnswerChoiceInline, CPIAttachmentInlines, VideoAttachmentInlines]
+    inlines = challenge_inlines_with_answers
 
 
 class BarrierChallengeAdmin(ChallengeAdminBase):
-    inlines = [AnswerChoiceInline, CPIAttachmentInlines, VideoAttachmentInlines]
+    inlines = challenge_inlines_with_answers
 
     #from django.core.exceptions import ValidationError
     #raise ValidationError("Barrier Challenge must have exactly one correct answer set.")
 
 
 class FinalBarrierChallengeAdmin(ChallengeAdminBase):
-    inlines = [AnswerChoiceInline, CPIAttachmentInlines, VideoAttachmentInlines]
+    inlines = challenge_inlines_with_answers
 
 
 class OpenEndedChallengeAdmin(ChallengeAdminBase):
-    inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
+    inlines = challenge_base_inlines
 
 
 class MapChallengeAdmin(ChallengeAdminBase):
-    inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
+    inlines = challenge_base_inlines
 
 
 class EmpathyChallengeAdmin(ChallengeAdminBase):
-    inlines = [CPIAttachmentInlines, VideoAttachmentInlines,]
+    inlines = challenge_base_inlines
 
 
 class MissionAdmin(BaseChildAdmin):

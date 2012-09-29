@@ -3,9 +3,10 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from web.core.views import LoginRequiredMixin
+from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from ..models import *
 from ..forms import MapForm
-from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
+from ..mixins import ChallengeContextMixin
 
 import logging
 log = logging.getLogger(__name__)
@@ -14,6 +15,7 @@ log = logging.getLogger(__name__)
 class MapDetailView(LoginRequiredMixin,
                     PlayerMissionStateContextMixin,
                     MissionContextMixin,
+                    ChallengeContextMixin,
                     DetailView):
     model = MapChallenge
     template_name = 'challenges/map_overview.html'
@@ -52,6 +54,7 @@ map_detail_view = MapDetailView.as_view()
 class MapCreateView(LoginRequiredMixin, 
                     PlayerMissionStateContextMixin,
                     MissionContextMixin,
+                    ChallengeContextMixin,
                     CreateView):
     form_class = MapForm
     template_name = "challenges/map.html"

@@ -7,29 +7,17 @@ from web.core.views import LoginRequiredMixin
 from ..models import *
 from ..forms import SingleResponseForm
 from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
+from ..mixins import ChallengeContextMixin
 
 import logging
 log = logging.getLogger(__name__)
 
-#class RedirectToChallengeOverviewMixin(object):
-#    def dispatch(self, request, *args, **kwargs):
-#        if AnswerWithChoices.objects.\
-#                filter(user=request.user, challenge=self.challenge).\
-#                exists():
-#            return redirect(self.challenge.overview_url)
-#        return super(RedirectToChallengeOverviewMixin, self).dispatch(request,
-#            *args, **kwargs)
-#class FetchAnswersMixin(object):
-#    def get_context_data(self, *args, **kwargs):
-#        ctx = super(FetchAnswersMixin, self).\
-#                get_context_data(*args, **kwargs)
-#        return ctx
 
-
-class SingleResponseDetailView(LoginRequiredMixin, 
+class SingleResponseDetailView(LoginRequiredMixin,
                                PlayerMissionStateContextMixin,
                                MissionContextMixin,
-                               DetailView, 
+                               ChallengeContextMixin,
+                               DetailView,
                                ):
     model = SingleResponseChallenge
     template_name = 'challenges/single_overview.html'
@@ -67,6 +55,7 @@ single_response_detail_view = SingleResponseDetailView.as_view()
 class SingleResponseCreateView(LoginRequiredMixin,
                                PlayerMissionStateContextMixin,
                                MissionContextMixin,
+                               ChallengeContextMixin,
                                CreateView,
                                ):
     form_class = SingleResponseForm
@@ -77,6 +66,8 @@ class SingleResponseCreateView(LoginRequiredMixin,
 
         if AnswerWithOneChoice.objects.\
                     filter(user=request.user, challenge=self.challenge).exists():
+            log.debug("%s has already been played by %s. redirecting to overview." % 
+                                (self.challenge, request.user))
             return redirect(self.challenge.overview_url)
 
         self.initial.update({'challenge': self.challenge,})

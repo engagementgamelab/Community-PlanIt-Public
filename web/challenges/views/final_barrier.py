@@ -5,9 +5,10 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
-from ..models import *
 from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from web.core.views import LoginRequiredMixin
+from ..models import *
+from ..mixins import ChallengeContextMixin
 
 import logging
 log = logging.getLogger(__name__)
@@ -16,6 +17,7 @@ log = logging.getLogger(__name__)
 class FinalBarrierDetailView(LoginRequiredMixin, 
                              PlayerMissionStateContextMixin,
                              MissionContextMixin,
+                             ChallengeContextMixin,
                              DetailView):
     model = FinalBarrierChallenge
     template_name = 'challenges/final_barrier_overview.html'
@@ -71,6 +73,7 @@ class FinalBarrierForm(forms.ModelForm):
 class FinalBarrierCreateView(LoginRequiredMixin, 
                              PlayerMissionStateContextMixin,
                              MissionContextMixin,
+                             ChallengeContextMixin,
                              CreateView):
     form_class = FinalBarrierForm
     model = None

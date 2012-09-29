@@ -3,9 +3,10 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from web.core.views import LoginRequiredMixin
+from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from ..models import *
 from ..forms import MultiResponseForm
-from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
+from ..mixins import ChallengeContextMixin
 
 import logging
 log = logging.getLogger(__name__)
@@ -14,6 +15,7 @@ log = logging.getLogger(__name__)
 class MultiResponseDetailView(LoginRequiredMixin, 
                               PlayerMissionStateContextMixin,
                               MissionContextMixin,
+                              ChallengeContextMixin,
                               DetailView, 
                               ):
     model = MultiResponseChallenge
@@ -53,6 +55,7 @@ multi_response_detail_view = MultiResponseDetailView.as_view()
 class MultiResponseCreateView(LoginRequiredMixin, 
                                PlayerMissionStateContextMixin,
                                MissionContextMixin,
+                               ChallengeContextMixin,
                                CreateView, 
                                ):
     form_class = MultiResponseForm

@@ -3,10 +3,11 @@ from django.core.urlresolvers import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
-from ..models import *
-from ..forms import SingleResponseForm, BarrierFiftyFiftyForm
 from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from web.core.views import LoginRequiredMixin
+from ..models import *
+from ..forms import SingleResponseForm, BarrierFiftyFiftyForm
+from ..mixins import ChallengeContextMixin
 
 from web.accounts.models import UserProfilePerInstance, PlayerMissionState
 
@@ -17,6 +18,7 @@ log = logging.getLogger(__name__)
 class BarrierDetailView(LoginRequiredMixin, 
                         PlayerMissionStateContextMixin,
                         MissionContextMixin,
+                        ChallengeContextMixin,
                         DetailView):
     model = BarrierChallenge
     template_name = 'challenges/barrier_overview.html'
@@ -59,6 +61,7 @@ barrier_detail_view = BarrierDetailView.as_view()
 class BarrierCreateView(LoginRequiredMixin,
                         PlayerMissionStateContextMixin,
                         MissionContextMixin,
+                        ChallengeContextMixin,
                         CreateView):
     form_class = SingleResponseForm
     context_object_name = 'barrier_answer'

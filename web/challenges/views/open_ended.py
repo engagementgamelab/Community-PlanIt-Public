@@ -6,6 +6,7 @@ from web.core.views import LoginRequiredMixin
 from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from ..models import *
 from ..forms import OpenEndedForm
+from ..mixins import ChallengeContextMixin
 
 import logging
 log = logging.getLogger(__name__)
@@ -14,6 +15,7 @@ log = logging.getLogger(__name__)
 class OpenEndedDetailView(LoginRequiredMixin, 
                           PlayerMissionStateContextMixin,
                           MissionContextMixin,
+                          ChallengeContextMixin,
                           DetailView):
     model = Challenge
     template_name = 'challenges/open_overview.html'
@@ -55,6 +57,7 @@ open_ended_detail_view = OpenEndedDetailView.as_view()
 class OpenEndedCreateView(LoginRequiredMixin, 
                           PlayerMissionStateContextMixin,
                           MissionContextMixin,
+                          ChallengeContextMixin,
                           CreateView):
     form_class = OpenEndedForm
     template_name = "challenges/open.html"
