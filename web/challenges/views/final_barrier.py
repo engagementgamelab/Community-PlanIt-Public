@@ -6,27 +6,37 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from ..models import *
+from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from web.core.views import LoginRequiredMixin
-
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class FetchAnswersMixin(object):
-
-    def get_context_data(self, *args, **kwargs):
-        ctx = super(FetchAnswersMixin, self).\
-                get_context_data(*args, **kwargs)
-        print '1) %s get_ctx' % self.__class__.__name__
-        return ctx
-
-
-class FinalBarrierDetailView(LoginRequiredMixin, FetchAnswersMixin, DetailView):
+class FinalBarrierDetailView(LoginRequiredMixin, 
+                             PlayerMissionStateContextMixin,
+                             MissionContextMixin,
+                             DetailView):
     model = FinalBarrierChallenge
     template_name = 'challenges/final_barrier_overview.html'
     pk_url_kwarg = 'challenge_id'
     context_object_name = 'challenge'
+
+
+    def dispatch(self, request, *args, **kwargs):
+        self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
+
+        # make sure the challenge has not been played yet and is not
+        # expired
+        if not self.challenge.parent.is_expired and not \
+                AnswerWithOneChoice.objects.filter(
+                                user=request.user, 
+                                challenge=self.challenge
+                ).exists():
+            return redirect(self.challenge.play_url)
+        return super(BarrierDetailView, self).dispatch(request,
+                                                        *args, **kwargs)
+
 
     def get_context_data(self, **kwargs):
         ctx = super(FinalBarrierDetailView, self).get_context_data(**kwargs)
@@ -58,16 +68,10 @@ class FinalBarrierForm(forms.ModelForm):
         exclude = ('user', 'challenge')
 
 
-class RedirectToChallengeOverviewMixin(object):
-
-    def dispatch(self, request, *args, **kwargs):
-        if AnswerWithMultipleChoices.objects.filter(user=request.user, challenge=self.challenge).exists():
-            return redirect(self.challenge.overview_url)
-
-        return super(RedirectToChallengeOverviewMixin, self).dispatch(request, *args, **kwargs)
-
-
-class FinalBarrierCreateView(LoginRequiredMixin, RedirectToChallengeOverviewMixin, CreateView):
+class FinalBarrierCreateView(LoginRequiredMixin, 
+                             PlayerMissionStateContextMixin,
+                             MissionContextMixin,
+                             CreateView):
     form_class = FinalBarrierForm
     model = None
     context_object_name = 'final_barrier_answer'

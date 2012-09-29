@@ -87,48 +87,4 @@ urlpatterns = patterns('challenges.views',
             "final_barrier.final_barrier_detail_view", 
             name="final-barrier-overview",
     ),
-
-
-    #url(r"^(?P<activity_id>\d+)/$",
-    #        "activities.activity",
-    #        dict(
-    #            model='challenges.PlayerActivity',
-    #            action='play',
-    #        ), "activity"),
-    #url(r"^(?P<activity_id>\d+)/overview/$",
-    #        "activities.activity",
-    #        dict(
-    #            model='challenges.PlayerActivity',
-    #            action='overview',
-    #        ), "overview"),
-
-    #url(r"^empathy/(?P<activity_id>\d+)/$",
-    #        "activities.activity",
-    #        dict(
-    #                model='challenges.PlayerEmpathyActivity',
-    #                action='play',
-    #        ),
-    #        "empathy-activity"),
-    #url(r"^empathy/(?P<activity_id>\d+)/overview/$",
-    #        "activities.activity",
-    #        dict(
-    #                model='challenges.PlayerEmpathyActivity',
-    #                action='overview',
-    #        ),
-    #        "empathy-overview"),
-
-    #url(r"^map/(?P<activity_id>\d+)/$", 
-    #        "activities.activity", 
-    #        dict(
-    #                model='challenges.PlayerMapActivity', 
-    #                action='play',
-    #        ),
-    #        "map-activity"),
-    #url(r"^map/(?P<activity_id>\d+)/overview/$", 
-    #        "activities.activity", 
-    #        dict(
-    #                model='challenges.PlayerMapActivity', 
-    #                action='overview',
-    #        ),
-    #        "map-overview"),
 )

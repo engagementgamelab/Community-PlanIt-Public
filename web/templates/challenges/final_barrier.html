@@ -12,11 +12,8 @@
 
             {% block response %}
                 <div class="response">
-                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">
-                        {% csrf_token %}
+                    <form id="id_activity-form" enctype="multipart/form-data" action="." method="post"> {% csrf_token %}
                         <input type="hidden" name="form" value="empathy">
-
-
                         {{ errors.response }}
                         <div class="answerchoices-container">{{ form.selected }}</div>
                         {% include 'comments/_add.html' %}

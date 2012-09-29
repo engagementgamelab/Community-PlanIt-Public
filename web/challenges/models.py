@@ -106,8 +106,8 @@ class BarrierChallenge(Challenge):
     @property
     def fifty_fifty_url(self):
         return reverse(
-                'missions:challenges:'+self.challenge_type_shortcut+'-fifty-fifty',
-                args=(self.parent.pk, self.pk)
+                'instances:missions:challenges:'+self.challenge_type_shortcut+'-fifty-fifty',
+                args=(self.parent.parent.slug, self.parent.pk, self.pk)
         )
 
 

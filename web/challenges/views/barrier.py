@@ -75,8 +75,8 @@ class BarrierCreateView(LoginRequiredMixin,
                     reverse('missions:challenges:challenges', args=[self.challenge.parent.pk,]))
         # TODO 
         # convert this to a redirect
-        if mst.coins < self.challenge.minimum_coins_to_play:
-            raise RuntimeError("Player does not have enough coins to play the barrier.")
+        assert mst.coins >= self.challenge.minimum_coins_to_play, \
+                "Mission `%s`. Player does not have enough coins to play the barrier." %  mst.mission.__unicode__()
 
         if AnswerWithOneChoice.objects.\
                 filter(user=request.user, challenge=self.challenge).exists():
@@ -110,8 +110,10 @@ barrier_play_view = BarrierCreateView.as_view()
 
 
 class BarrierFiftyFiftyCreateView(LoginRequiredMixin,
-                        PlayerMissionStateContextMixin,
-                        CreateView):
+                                  PlayerMissionStateContextMixin,
+                                  MissionContextMixin,
+                                  CreateView):
+
     form_class = BarrierFiftyFiftyForm
     context_object_name = 'my_answer'
     template_name = "challenges/barrier.html"
@@ -123,8 +125,10 @@ class BarrierFiftyFiftyCreateView(LoginRequiredMixin,
         # need to get the PlayerMissionState.barriers_fifty_fifty
         # *****
 
+        # if player already answered this challenge, redirect to
+        # challenge overview
         if AnswerWithOneChoice.objects.\
-                filter( user=request.user, challenge=self.challenge).exists():
+                filter(user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
 
         self.initial.update({'challenge': self.challenge,})
