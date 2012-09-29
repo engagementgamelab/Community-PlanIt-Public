@@ -36,7 +36,7 @@ class PlayerMissionStateContextMixin(object):
                     mission=mission,
             )
 
-        ctx['player_mission_state'] = mst
+        ctx['mst'] = mst
         ctx['profile_per_instance'] = my_game_profile 
 
         return ctx

@@ -60,19 +60,19 @@ class PlayerMissionStateManager(models.Manager):
 
         mission = kwargs.get('mission')
         obj = super(PlayerMissionStateManager, self).create(*args, **kwargs)
-        challenges = mission.challenges_as_sorteddict
+        sorted_challenges = mission.challenges_as_sorteddict
         import pprint
         pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(dict(challenges))
-        for i, barrier in enumerate(challenges):
+        pp.pprint(dict(sorted_challenges))
+        for i, barrier in enumerate(sorted_challenges):
             if i == 0:
                 obj.unlocked.add(barrier)
-                for challenge in challenges.get(barrier):
+                for challenge in sorted_challenges.get(barrier):
                     obj.unlocked.add(challenge)
                     print 'adding to unlocked %s' % challenge
             else:
                 obj.locked.add(barrier)
-                for challenge in challenges.get(barrier):
+                for challenge in sorted_challenges.get(barrier):
                     obj.locked.add(challenge)
                     print 'adding to locked %s' % challenge
         print obj

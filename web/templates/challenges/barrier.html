@@ -12,7 +12,7 @@
 
                     <div class="answerchoices-container">{{ form.selected }}</div>
 
-                    {% if not fifty_fity and not challenge in player_mission_state.barriers_fifty_fifty.all %}
+                    {% if not fifty_fity and not challenge in mst.barriers_fifty_fifty.all %}
                     <!--button class="btn btn-primary btn-large"-->
                     <a href="{{ challenge.fifty_fifty_url}}">50/50</a>
                     <!--/button-->

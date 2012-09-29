@@ -124,12 +124,12 @@ class PlayerMissionState(models.Model):
     objects = PlayerMissionStateManager()
 
     def __unicode__(self):
-
-        return "Mission: %s, %s locked, %s unlocked" %(
-                        self.mission,
-                        self.locked.count(),
-                        self.unlocked.count(),
-                )
+        return "Mission: %s, %s unlocked, %s locked, %s completed, %s coins" %(
+                                            self.mission.__unicode__(),
+                                            self.unlocked.count(),
+                                            self.locked.count(),
+                                            self.completed.count(),
+                                            self.coins,)
 
     class Meta:
         unique_together = ('mission', 'user')
@@ -137,11 +137,35 @@ class PlayerMissionState(models.Model):
 
     def unlock_next_block(self):
         """ a barrier has been completed. unlock next block of challenges"""
-        for i, barrier in enumerate(self.mission.challenges_as_sorteddict):
-            if not barrier in self.completed.all():
-                for challenge in self.mission.challenges_as_sorteddict.get(barrier):
-                    self.unlocked.add(challenge)
-                    self.locked.remove(challenge)
+        log.debug("barrier completed, unlocking next block")
+        sorted_challenges = self.mission.challenges_as_sorteddict
+        #get index for the barrier (key) of last block
+        last_unlocked_barrier_index = max([i for i, x in enumerate(
+                                        self.unlocked.instance_of(BarrierChallenge))])
+        try:
+            next_block = sorted_challenges.value_for_index(last_unlocked_barrier_index+1)
+        except IndexError:
+            log.error("Mission `%s`: cannot unlock next block.")
+            return
+        else:
+
+            #TODO there has to be a better way to get the challenge by key index
+            def get_last_unlocked_barrier():
+                for barrier, challenges in sorted_challenges.items():
+                    if challenges == next_block:
+                        return barrier
+            #if last barrier is a Final Barrier, unlock it
+            last_unlocked_barrier = get_last_unlocked_barrier()
+            print "last unlocked barrier %s" % last_unlocked_barrier 
+            if last_unlocked_barrier.challenge_type == Challenge.FINAL_BARRIER:
+                print "unlocking final barrier!"
+                self.unlocked.add(last_unlocked_barrier)
+                self.locked.remove(last_unlocked_barrier)
+
+            print "unlocking block: %s" % next_block
+            map(lambda ch: self.unlocked.add(ch), next_block)
+            map(lambda ch: self.locked.remove(ch), next_block)
+
 
     @property
     def next_barrier(self):
@@ -225,20 +249,24 @@ def update_player_mission_state(sender, **kwargs):
 
         challenge = answer.challenge
         mission = challenge.parent
-        up = answer.user.get_profile()
-        mst = up.mission_states.get(mission=mission)
+        mst =  mission.mission_states.get(user=answer.user)
 
         # append to the completed challenges
         mst.completed.add(challenge)
+
         # increment the coins count for non-barrier challenges
         if challenge.challenge_type != Challenge.BARRIER:
             mst.coins += mission.challenge_coin_value
         # if barrier has been played, unlock next block of challenges
-        if challenge.challenge_type == Challenge.BARRIER:
+        elif challenge.challenge_type == Challenge.BARRIER:
             # if chosen answer is incorrect, subtract coins
-            if answer.selected.is_barrier_correct_answer != True:
+            if answer.selected.is_barrier_correct_answer == False:
                 mst.coins -= mission.challenge_coin_value
+            print "barrier completed, unlocking next block"
             mst.unlock_next_block()
+        # if final barrier has been played, ....
+        elif challenge.challenge_type == Challenge.FINAL_BARRIER:
+            pass
 
         # if the next barrier in order is eligible to be unlocked
         # add it to the unlocked

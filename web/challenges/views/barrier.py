@@ -66,25 +66,16 @@ class BarrierCreateView(LoginRequiredMixin,
 
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
-        profile_per_instance = UserProfilePerInstance.objects.get(
-                                    user_profile=request.user.get_profile(),
-                                    instance=self.challenge.parent.parent,
-        )
         try:
-            self.player_mission_state = PlayerMissionState.objects.get(
-                    profile_per_instance=profile_per_instance,
-                    mission=self.challenge.parent,
-            )
+            mst =  self.challenge.parent.mission_states.get(user=request.user)
         except PlayerMissionState.DoesNotExist:
             # if mission state has not been created and initialized
             # redirect the player back to the ChallengeListView to create it
             return redirect(
-                    reverse('missions:challenges:challenges', args=[self.challenge.parent.pk,])
-            )
-
+                    reverse('missions:challenges:challenges', args=[self.challenge.parent.pk,]))
         # TODO 
         # convert this to a redirect
-        if self.player_mission_state.coins < self.challenge.minimum_coins_to_play:
+        if mst.coins < self.challenge.minimum_coins_to_play:
             raise RuntimeError("Player does not have enough coins to play the barrier.")
 
         if AnswerWithOneChoice.objects.\
@@ -159,8 +150,8 @@ class BarrierFiftyFiftyCreateView(LoginRequiredMixin,
             'fifty_fifty': True,
         })
         #set the 50/50 request into player mission state
-        mission_state = ctx.get('player_mission_state')
-        mission_state.barriers_fifty_fifty.add(self.challenge)
+        mst = ctx.get('mst')
+        mst.barriers_fifty_fifty.add(self.challenge)
         return ctx
 
 barrier_fifty_fifty_view = BarrierFiftyFiftyCreateView.as_view()

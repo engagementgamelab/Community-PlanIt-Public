@@ -16,9 +16,9 @@ def game_nav(context):
         profile_per_instance = UserProfilePerInstance.objects.get(user_profile=profile, instance=my_active_game)
         screen_name = profile.screen_name
 
-        player_mission_state = None
-        if 'player_mission_state' in context:
-            player_mission_state = context['player_mission_state']
+        mst = None
+        if 'mst' in context:
+            mst = context['mst']
 
         ctx.update({
             'user': user,
@@ -27,7 +27,7 @@ def game_nav(context):
             'player_id': user.pk,
             'my_active_game': my_active_game,
             'my_active_game_profile': profile_per_instance,
-            'player_mission_state': player_mission_state,
+            'mst': mst,
             'my_non_active_game_profiles': UserProfilePerInstance.objects
                 .filter(user_profile=profile)
                 .exclude(instance=my_active_game)
