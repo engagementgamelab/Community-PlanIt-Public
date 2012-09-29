@@ -95,7 +95,7 @@ class ChallengeAdminBase(BaseChildAdmin):
                 instance.creator = request.user
             instance.save()
 
-challenge_base_inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AttachmentHyperlinkInlines,]
+challenge_base_inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AttachmentHyperlinkInlines, AttachmentWithThumbnailInlines]
 challenge_inlines_with_answers = [AnswerChoiceInline, ] + challenge_base_inlines
 
 class SingleResponseChallengeAdmin(ChallengeAdminBase):
