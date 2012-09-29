@@ -95,8 +95,8 @@ class ChallengeAdminBase(BaseChildAdmin):
                 instance.creator = request.user
             instance.save()
 
-challenge_base_inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AttachmentHyperlinkInlines, AttachmentWithThumbnailInlines]
-challenge_inlines_with_answers = [AnswerChoiceInline, ] + challenge_base_inlines
+challenge_attachment_inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AttachmentHyperlinkInlines, AttachmentWithThumbnailInlines]
+challenge_inlines_with_answers = [AnswerChoiceInline, ] + challenge_attachment_inlines 
 
 class SingleResponseChallengeAdmin(ChallengeAdminBase):
     inlines = challenge_inlines_with_answers
@@ -118,15 +118,15 @@ class FinalBarrierChallengeAdmin(ChallengeAdminBase):
 
 
 class OpenEndedChallengeAdmin(ChallengeAdminBase):
-    inlines = challenge_base_inlines
+    inlines = challenge_attachment_inlines 
 
 
 class MapChallengeAdmin(ChallengeAdminBase):
-    inlines = challenge_base_inlines
+    inlines = challenge_attachment_inlines 
 
 
 class EmpathyChallengeAdmin(ChallengeAdminBase):
-    inlines = challenge_base_inlines
+    inlines = challenge_attachment_inlines 
 
 
 class MissionAdmin(BaseChildAdmin):
@@ -134,7 +134,7 @@ class MissionAdmin(BaseChildAdmin):
 
 class GameAdmin(BaseChildAdmin):
     filter_horizontal = ('curators',)
-    inlines = [CauseInlines, VideoAttachmentInlines]
+    inlines = [CauseInlines,] + challenge_attachment_inlines 
     #readonly_fields = ('start_date', 'end_date')
 
 
