@@ -1,22 +1,24 @@
 from django.contrib import admin
+from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 from polymorphic_tree.admin import PolymorphicMPTTChildModelAdmin, PolymorphicMPTTParentModelAdmin
 
 from attachments.models import Attachment
-from attachments.admin import AttachmentInlines
+#from attachments.admin import AttachmentInlines
 
 from web.instances.models import *
-from web.attachment_types.models import *
+from web.attachments.models import *
 
 from . import models as game_models
 from web.missions import models as mission_models
 from web.challenges import models as challenge_models
 from web.causes import models as causes_models
+from web.attachments import models as attachment_models
 
 # attachment inlines 
-class CPIAttachmentInlines(AttachmentInlines):
-    model = Attachment
-    readonly_fields = ('creator',)
+#class CPIAttachmentInlines(AttachmentInlines):
+#    model = Attachment
+#    readonly_fields = ('creator',)
 
 
 class AttachmentWithThumbnailInlines(generic.GenericStackedInline):
@@ -59,7 +61,8 @@ class BaseChildAdmin(PolymorphicMPTTChildModelAdmin):
         GENERAL_FIELDSET,
     )
 
-
+# ************ CHALLENGES
+# ************
 class AnswerChoiceInline(admin.StackedInline):
     model = challenge_models.AnswerChoice
 
@@ -81,7 +84,6 @@ class ChallengeAdminBase(BaseChildAdmin):
     exclude = ('challenge_type', )
 
     def save_model(self, request, obj, form, change):
-
         if isinstance(obj, challenge_models.Challenge):
             obj.created_by = request.user
             obj.save()
@@ -95,8 +97,9 @@ class ChallengeAdminBase(BaseChildAdmin):
                 instance.creator = request.user
             instance.save()
 
-challenge_attachment_inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AttachmentHyperlinkInlines, AttachmentWithThumbnailInlines]
-challenge_inlines_with_answers = [AnswerChoiceInline, ] + challenge_attachment_inlines 
+
+#challenge_attachment_inlines = [CPIAttachmentInlines, VideoAttachmentInlines, AttachmentHyperlinkInlines, AttachmentWithThumbnailInlines]
+challenge_inlines_with_answers = [AnswerChoiceInline, ] #+ challenge_attachment_inlines 
 
 class SingleResponseChallengeAdmin(ChallengeAdminBase):
     inlines = challenge_inlines_with_answers
@@ -118,15 +121,45 @@ class FinalBarrierChallengeAdmin(ChallengeAdminBase):
 
 
 class OpenEndedChallengeAdmin(ChallengeAdminBase):
-    inlines = challenge_attachment_inlines 
+    #inlines = challenge_attachment_inlines 
+    pass
 
 
 class MapChallengeAdmin(ChallengeAdminBase):
-    inlines = challenge_attachment_inlines 
+    #inlines = challenge_attachment_inlines 
+    pass
 
 
 class EmpathyChallengeAdmin(ChallengeAdminBase):
-    inlines = challenge_attachment_inlines 
+    #inlines = challenge_attachment_inlines 
+    pass
+
+
+# ************ ATTACHMENTS
+# ************
+class AttachmentAdminBase(BaseChildAdmin):
+    readonly_fields = ('creator',)
+    def save_model(self, request, obj, form, change):
+        obj.creator = request.user
+        obj.save()
+
+
+class AttachmentDocumentAdmin(AttachmentAdminBase):
+    pass
+
+class AttachmentWithThumbnailAdmin(AttachmentAdminBase):
+    pass
+
+
+class AttachmentVideoAdmin(AttachmentAdminBase):
+    pass
+
+
+class AttachmentHyperlinkAdmin(AttachmentAdminBase):
+    pass
+
+#
+# endattachments
 
 
 class MissionAdmin(BaseChildAdmin):
@@ -134,7 +167,7 @@ class MissionAdmin(BaseChildAdmin):
 
 class GameAdmin(BaseChildAdmin):
     filter_horizontal = ('curators',)
-    inlines = [CauseInlines,] + challenge_attachment_inlines 
+    inlines = [CauseInlines,] #+ challenge_attachment_inlines 
     #readonly_fields = ('start_date', 'end_date')
 
 
@@ -148,6 +181,15 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
     #   2) model admin
     #   3) tuple of models allowed to be the
     #      parent of the current model
+    _challenge_models = (
+            challenge_models.SingleResponseChallenge,
+            challenge_models.MultiResponseChallenge,
+            challenge_models.MapChallenge,
+            challenge_models.EmpathyChallenge,
+            challenge_models.OpenEndedChallenge,
+            challenge_models.BarrierChallenge,
+            challenge_models.FinalBarrierChallenge,
+    )
     child_models = (
         (game_models.Instance, GameAdmin, ()),
         (mission_models.Mission, MissionAdmin, (game_models.Instance,)),
@@ -158,6 +200,10 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
         (challenge_models.OpenEndedChallenge, OpenEndedChallengeAdmin, (mission_models.Mission,)),
         (challenge_models.BarrierChallenge, BarrierChallengeAdmin, (mission_models.Mission,)),
         (challenge_models.FinalBarrierChallenge, FinalBarrierChallengeAdmin, (mission_models.Mission,)),
+        (attachment_models.AttachmentDocument, AttachmentDocumentAdmin, (game_models.Instance,)+_challenge_models),
+        (attachment_models.AttachmentWithThumbnail, AttachmentWithThumbnailAdmin, (game_models.Instance,)+_challenge_models),
+        (attachment_models.AttachmentVideo, AttachmentVideoAdmin, (game_models.Instance,)+_challenge_models),
+        (attachment_models.AttachmentHyperlink, AttachmentHyperlinkAdmin, (game_models.Instance,)+_challenge_models),
     )
     list_display = ('custom_title', 'actions_column',)
 
@@ -168,6 +214,8 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
             node_type = '[mission]'
         elif isinstance(node.get_real_instance(), game_models.Instance):
             node_type = '[game]'
+        elif isinstance(node.get_real_instance(), attachment_models.Attachment):
+            node_type = '[attachment]'
         else:
             ''
         return u' '.join([node.title, node_type])

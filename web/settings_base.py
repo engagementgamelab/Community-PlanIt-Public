@@ -74,7 +74,7 @@ INSTALLED_APPS = (
 
     'web.accounts',
     'web.affiliations',
-    'web.attachment_types',
+    'web.attachments',
     #'web.badges',
     'web.core',
     'web.player_comments',
@@ -99,7 +99,6 @@ INSTALLED_APPS = (
     'mptt',
     #'hvad',
     #'stream',
-    'attachments',
     'django_mailer',
     'gmapsfield',
     'gmapsfield.templatetags',

@@ -17,7 +17,6 @@ from django.db import models
 from django.dispatch import receiver
 
 from django.contrib.auth.models import User
-from django.contrib.contenttypes import generic
 
 from web.instances.models import BaseTreeNode
 
@@ -39,7 +38,7 @@ class Challenge(BaseTreeNode):
         (FINAL_BARRIER, 'Final Barrier'),
     )
     # used by django-polymorphic-tree for self explanatory purpose
-    can_have_children = False
+    can_have_children = True
 
     question = models.CharField(max_length=1000, default='')
     challenge_type = models.IntegerField(max_length=1, choices=CHALLENGE_TYPES, null=True)

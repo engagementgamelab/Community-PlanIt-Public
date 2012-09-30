@@ -1,19 +1,42 @@
-from attachments import models as attachment_models 
-
-from django.contrib.contenttypes import generic
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
+from web.instances.models import BaseTreeNode
 
-class Attachment(attachment_models.Attachment):
+class Attachment(BaseTreeNode):
+
+    def attachment_upload(instance, filename):
+        """Stores the attachment in a "per module/appname/primary key" folder"""
+        return 'attachments/%s/%s' % (instance.parent.pk, filename)
+
+    # used by django-polymorphic-tree for self explanatory purpose
+    can_have_children = False
+
+    creator = models.ForeignKey(User, related_name="created_attachments", verbose_name=_('creator'))
+    attachment_file = models.FileField(_('attachment'), upload_to=attachment_upload)
+    created = models.DateTimeField(_('created'), auto_now_add=True)
+    modified = models.DateTimeField(_('modified'), auto_now=True)
+
+    def __unicode__(self):
+        return '%s attached %s' % (self.creator.username, self.attachment_file.name)
 
     class Meta:
-        proxy = True
+        ordering = ['-created']
+        permissions = (
+            ('delete_foreign_attachments', 'Can delete foreign attachments'),
+        )
         verbose_name = "Document Attachment"
         verbose_name_plural = "Document Attachments"
 
-    def __unicode__(self):
-        return '%s' % (self.attachment_file.name)
+
+    @property
+    def filename(self):
+        return os.path.split(self.attachment_file.name)[1]
+
+
+class AttachmentDocument(Attachment):
+    pass
 
 
 class AttachmentWithThumbnail(Attachment):

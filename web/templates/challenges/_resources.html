@@ -1,8 +1,16 @@
+{% load attachments_tags %}
+
+{% get_attachments_for challenge as "challenge_resources" %}
+
 <div class="resources">
     <h3>Resources</h3>
+    {% if challenge_resources %}
     <ul>
-        <li><a  class="resource" href=""></a></li>
-        <li><a  class="resource" href=""></a></li>
-        <li><a  class="resource" href=""></a></li>
+        {% for resource in challenge_resources %}
+        <li><a class="resource" href="">{{ resource.pk }}</a></li>
+        {% endfor %}
     </ul>
+    {% else %}
+    <p>this challenge has no resources</p>
+    {% endif%}
 </div>

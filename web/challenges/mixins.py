@@ -6,5 +6,7 @@ class ChallengeContextMixin(object):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ChallengeContextMixin, self).get_context_data(*args, **kwargs)
-        context['attachments'] = Attachment.objects.attachments_for_object(self.challenge)
+        # attachments are inserted into the context using the
+        # attachments_tags
+        #context['attachments'] = Attachment.objects.attachments_for_object(self.challenge)
         return context
