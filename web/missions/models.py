@@ -105,14 +105,21 @@ class Mission(BaseTreeNode):
                 d[challenge] = this_block
                 this_block = []
 
+        #TODO
+        # move the validation checks to the admin
+
+        msg = "Mission `%s` contains two consecutive Barrier Challenges"  %(self.__unicode__())
+        for val in d.values():
+            assert len(val) != 0, msg
+
+        msg = "Mission `%s` contains an invalid number of barriers, need at least one Barrier Challenge and one Final Barrier Challenge" %(self.__unicode__())
         assert (Challenge.objects.filter(parent=self).\
                             instance_of(FinalBarrierChallenge) | 
                 Challenge.objects.filter(parent=self).\
-                            instance_of(BarrierChallenge)).count()  == len(d), \
-                "Mission `%s` contains an invalid number of barriers, need at least one Barrier Challenge and one Final Barrier Challenge" %(self.__unicode__())
+                            instance_of(BarrierChallenge)).count()  == len(d), msg
 
-        assert self._validate_challenge_counts(d) is True, \
-                "Mission `%s` contains an invalid challenge/barrier order" %(self.__unicode__())
+        msg = "Mission `%s` contains an invalid challenge/barrier order" %(self.__unicode__())
+        assert self._validate_challenge_counts(d) is True, msg
 
         return d
 
