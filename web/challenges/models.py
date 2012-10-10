@@ -37,11 +37,16 @@ class Challenge(BaseTreeNode):
         (BARRIER, 'Barrier'),
         (FINAL_BARRIER, 'Final Barrier'),
     )
+
+    def challenge_upload(instance, filename):
+        return 'attachments/{pk}/{filename}'.format(pk=instance.pk, filename=filename)
+
     # used by django-polymorphic-tree for self explanatory purpose
     can_have_children = True
 
     question = models.CharField(max_length=1000, default='')
     challenge_type = models.IntegerField(max_length=1, choices=CHALLENGE_TYPES, null=True)
+    thumbnail = models.FileField(help_text="Thumb 164x100", upload_to=challenge_upload, blank=True, null=True)
     is_player_submitted = models.BooleanField("is player submitted?", default=False)
 
     created_by = models.ForeignKey(User, verbose_name="created by")
