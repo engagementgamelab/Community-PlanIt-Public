@@ -1,6 +1,9 @@
 from django.db import models
 from cache_utils.decorators import cached
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class UserProfilePerInstanceManager(models.Manager):
 
@@ -44,38 +47,35 @@ class PlayerMissionStateManager(models.Manager):
     def by_game(self, game):
         return self.filter(mission__parent=game)
 
-    def total_coins_by_mission(self, profile_per_instance, mission):
-        return  self.filter(profile_per_instance=profile_per_instance, mission=mission).\
+    def total_coins_by_mission(self, user, mission):
+        return  self.filter(user=user, mission=mission).\
                                     aggregate(models.Sum('coins')).get('coins__sum') or 0
 
-        self.by_game(game)
-    def total_coins_by_game(self, profile_per_instance, game):
-        self.by_game(game)
-
+    def total_coins_by_game(self, user, game):
+        return  self.filter(user=user, mission__parent=game).\
+                            aggregate(models.Sum('coins')).get('coins__sum') or 0
 
     def create(self, *args, **kwargs):
-        #raise Exception("stop!")
         if 'user' in kwargs:
-            print "init ms for user %s" % kwargs.get('user')
+            log.debug("init ms for user %s" % kwargs.get('user'))
 
         mission = kwargs.get('mission')
         obj = super(PlayerMissionStateManager, self).create(*args, **kwargs)
         sorted_challenges = mission.challenges_as_sorteddict
-        import pprint
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(dict(sorted_challenges))
+        #import pprint
+        #pp = pprint.PrettyPrinter(indent=4)
+        #pp.pprint(dict(sorted_challenges))
         for i, barrier in enumerate(sorted_challenges):
             if i == 0:
                 obj.unlocked.add(barrier)
                 for challenge in sorted_challenges.get(barrier):
                     obj.unlocked.add(challenge)
-                    print 'adding to unlocked %s' % challenge
+                    log.debug('adding to unlocked %s' % challenge)
             else:
                 obj.locked.add(barrier)
                 for challenge in sorted_challenges.get(barrier):
                     obj.locked.add(challenge)
-                    print 'adding to locked %s' % challenge
-        print obj
+                    log.debug('adding to locked %s' % challenge)
         return obj
 
 
