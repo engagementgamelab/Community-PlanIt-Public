@@ -134,6 +134,12 @@ class PlayerMissionState(models.Model):
     class Meta:
         unique_together = ('mission', 'user')
 
+    @property
+    def is_mission_completed(self):
+        """ consider completed mission if at 
+            least one Final Barrier Challenge was completed"""
+        from web.challenges.models import FinalBarrierChallenge
+        return self.completed.instance_of(FinalBarrierChallenge).exists()
 
     def unlock_next_block(self):
         """ a barrier has been completed. unlock next block of challenges"""
@@ -163,6 +169,7 @@ class PlayerMissionState(models.Model):
                 self.locked.remove(last_unlocked_barrier)
 
             print "unlocking block: %s" % next_block
+            # iterate over the challenges and unlock each
             map(lambda ch: self.unlocked.add(ch), next_block)
             map(lambda ch: self.locked.remove(ch), next_block)
 

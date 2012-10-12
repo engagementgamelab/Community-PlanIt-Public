@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -8,10 +8,12 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from web.core.views import LoginRequiredMixin
+from web.instances.models import Instance
 from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
 from web.accounts.models import PlayerMissionState
 from .models import Cause
 from .forms import CauseForm
+from .mixins import CausesContextMixin
 
 class CauseListView(LoginRequiredMixin, PlayerMissionStateContextMixin, MissionContextMixin, ListView):
     model = Cause
@@ -60,7 +62,11 @@ class SponsorListView(MissionContextMixin, TemplateView):
 
 sponsor_list_view = SponsorListView.as_view()
 
-class CoinsView(MissionContextMixin, TemplateView):
+class CoinsView(LoginRequiredMixin, MissionContextMixin, CausesContextMixin, TemplateView):
     template_name = 'causes/coins.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.game = get_object_or_404(Instance, slug=kwargs['game_slug'])
+        return super(CoinsView, self).dispatch(request, *args, **kwargs)
 
 coins_view = CoinsView.as_view()

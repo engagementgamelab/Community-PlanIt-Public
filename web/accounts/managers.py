@@ -7,6 +7,7 @@ log = logging.getLogger(__name__)
 
 class UserProfilePerInstanceManager(models.Manager):
 
+
     #@cached(60*60*24, 'user_profile_per_instance_get')
     #def get(self, *args, **kwargs):
     #    return super(UserProfilePerInstanceManager, self).get(*args, **kwargs)
@@ -41,19 +42,21 @@ class UserProfilePerInstanceManager(models.Manager):
     #    return total_points
 
 
-
 class PlayerMissionStateManager(models.Manager):
 
-    def by_game(self, game):
-        return self.filter(mission__parent=game)
+    def by_game(self, game, user):
+        """ return player mission states by game """
+        return self.filter(mission__parent=game, user=user)
 
-    def total_coins_by_mission(self, user, mission):
-        return  self.filter(user=user, mission=mission).\
-                                    aggregate(models.Sum('coins')).get('coins__sum') or 0
+    def by_completed_mission(self, game, user):
+        """ return player mission states for completed missions """
+        return [ms for ms in self.by_game(game, user) if ms.is_mission_completed]
 
-    def total_coins_by_game(self, user, game):
-        return  self.filter(user=user, mission__parent=game).\
-                            aggregate(models.Sum('coins')).get('coins__sum') or 0
+    def coins_for_completed_missions(self, game, user):
+        coins = 0
+        for ms in self.by_completed_mission(game, user):
+            coins += ms.coins
+        return coins
 
     def create(self, *args, **kwargs):
         if 'user' in kwargs:
