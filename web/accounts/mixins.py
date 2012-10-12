@@ -27,6 +27,8 @@ class PlayerMissionStateContextMixin(object):
             game_profile_exists = True
         except UserProfilePerInstance.DoesNotExist:
             game_profile_exists = False
+        else:
+            ctx['profile_per_instance'] = my_game_profile 
 
         try:
             mst =  mission.mission_states.get(user=self.request.user)
@@ -35,9 +37,8 @@ class PlayerMissionStateContextMixin(object):
                     user=self.request.user,
                     mission=mission,
             )
-
-        ctx['mst'] = mst
-        ctx['profile_per_instance'] = my_game_profile 
+        else:
+            ctx['mst'] = mst
 
         return ctx
 
