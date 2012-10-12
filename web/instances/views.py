@@ -23,7 +23,6 @@ from django.contrib import messages
 
 from .models import *
 from web.core.models import PlayerLeaderboard, AffiliationLeaderboard
-from web.core.utils import missions_bar_context
 from web.accounts.forms import *
 from web.accounts.models import *
 from web.attachments_v2.models import Attachment
@@ -106,7 +105,6 @@ def stream(request, template='instances/stream.html'):
     }
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
-    context.update(missions_bar_context(request))
     return render(request, template, context)
 
 @login_required
@@ -141,7 +139,6 @@ def leaderboard(request, template='instances/leaderboard.html'):
     }
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
-    context.update(missions_bar_context(request))
     return render(request, template, context)
 
 #@login_required
