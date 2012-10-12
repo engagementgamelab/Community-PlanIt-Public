@@ -12,6 +12,12 @@
     @yuanyma
     New York, NY
 
+    Kristin Breivik
+    Designer
+    kristin.breivik@gmail.com
+    @dietrovetro
+    Brooklyn, NY
+
 /* TECHNOLOGY COLOPHON */
 
     HTML5, CSS3
