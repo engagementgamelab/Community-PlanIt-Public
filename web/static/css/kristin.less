@@ -10,6 +10,29 @@
 @k-yellow: #fbc44c;
 @k-green: #81AC6E;
 
+.nav-account {
+
+	.nav-account-stats {
+		position: relative;
+		display: inline-block;
+		padding: 10px 10px 10px 55px;
+		border-left: 1px solid @light-gray;
+		&:first-child { border-left: none; }
+		&:before {
+			content: '';
+			position: absolute;
+			left: 12px; top: 50%;
+			margin-top: -18px;
+			width: 36px; height: 36px;
+			background: url('../img/icons-gamenav.png') no-repeat;
+		}
+	}
+	#nav-account-coins { &:before { background-position: 0 0; }}
+	#nav-account-rank { &:before { background-position: -36px 0; }}
+	#nav-account-awards { &:before { background-position: -72px 0; }}
+}
+
+
 
 .challenge-basics {
 	color: #fff;

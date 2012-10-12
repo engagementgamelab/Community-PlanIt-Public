@@ -3,17 +3,6 @@
 <div class="nav-account pull-right">
 
     <div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-            <i class="glyphicon-certificate glyphicon-white"></i> 
-        </a>
-        <ul class="dropdown-menu">
-            <li>
-                <p><a>You do not have any badges yet.</a></p>
-            </li>
-        </ul>
-    </div>
-
-    <div class="btn-group pull-right">
         {# {{ screen_name }} #}
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
             <i class="icon-cog icon-white"></i> 
@@ -50,9 +39,15 @@
     </div>
 
     <div class="btn-group pull-right">
-        {% avatar user "28x28" %}
-        <a href="{% url accounts:notifications %}" class="badge-notification">3</a>
-        {{ screen_name }} (<strong><i class="glyphicon-credit"></i> {{ mst.coins }} </strong>)
+        <div id="nav-account-coins" class="nav-account-stats">{{ mst.coins }}</div>
+        <div id="nav-account-rank" class="nav-account-stats">26th</div>
+        <div id="nav-account-awards" class="nav-account-stats">0</div>
+
+
+
+        {% avatar user "36x36" %}
+            {# <a href="{% url accounts:notifications %}" class="badge-notification">3</a> #}
+        {{ screen_name }} 
     </div>
 
 </div>
