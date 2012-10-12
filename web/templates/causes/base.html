@@ -1,4 +1,12 @@
 {% extends "base_game.html" %}
 {% load gmap i18n game_extras cpi_tags %}
 
-{% block title %}{% trans "Bank" %}{% endblock %}
+{% block title %}Bank{% endblock %}
+
+{% block content %}
+<div id="bank-nav" class="wrapper">
+    <a id="bank-nav-causes" href="{% url instances:causes:cause_list active_game.slug %}" alt="Causes"></a>
+    <a id="bank-nav-coins" href="{% url instances:causes:coins active_game.slug %}" alt="Your Coins"></a>
+    <a id="bank-nav-sponsors" href="{% url instances:causes:sponsor_list active_game.slug %}" alt="Sponsors"></a>
+</div>
+{% endblock %}

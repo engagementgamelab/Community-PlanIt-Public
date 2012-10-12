@@ -4,14 +4,8 @@
 {% block body_id %}page-causes-bank{% endblock %}
 
 {% block content %}
+{{ block.super }}
 <div class="wrapper">
-    <a href="{% url instances:causes:coins active_game.slug %}">Your Coins</a>
-    <a href="{% url instances:causes:cause_list active_game.slug %}">Causes</a>
-    <a href="{% url instances:causes:sponsor_list active_game.slug %}">Sponsors</a>
-</div>
-
-<div class="wrapper faux-modal">
-    <div class="close close-faux-modal"><a href="{% url instances:missions:challenges:challenges active_game.slug mission.pk %}">×</a></div>
     <div class="row">
     	<div class="span9">
     		<div>
