@@ -1,0 +1,12 @@
+{% extends 'causes/base.html' %}
+{% load i18n thumbnail %}
+
+{% block body_id %}page-causes-bank{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <a href="{% url instances:causes:coins active_game.slug %}">Your Coins</a>
+    <a href="{% url instances:causes:cause_list active_game.slug %}">Causes</a>
+    <a href="{% url instances:causes:sponsor_list active_game.slug %}">Sponsors</a>
+</div>
+{% endblock %}

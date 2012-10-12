@@ -35,7 +35,7 @@
             {% if mission.get_previous_mission %}<a href="{{ mission.get_previous_mission.get_absolute_url }}" id="mission-details-prev"></a>{% else %}&nbsp;{% endif %}
         </div>
         <div class="span7">
-            <h1>{{ mission.title }}</h1>
+            <h1>{{mission.id }}{{ mission.title }}</h1>
             <p>
                 <a href="#" class="thumbnail">
                     <img src="http://placehold.it/610x343" alt="">

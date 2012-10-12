@@ -2,6 +2,7 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
@@ -14,7 +15,7 @@ from .forms import CauseForm
 
 class CauseListView(LoginRequiredMixin, PlayerMissionStateContextMixin, MissionContextMixin, ListView):
     model = Cause
-    template_name = 'causes/bank.html'
+    template_name = 'causes/cause_list.html'
     context_object_name = 'causes'
 
 
@@ -54,3 +55,12 @@ class CauseCreateView(MissionContextMixin, CreateView):
 
 cause_add_view = CauseCreateView.as_view()
 
+class SponsorListView(MissionContextMixin, TemplateView):
+    template_name = 'causes/sponsor_list.html'
+
+sponsor_list_view = SponsorListView.as_view()
+
+class CoinsView(MissionContextMixin, TemplateView):
+    template_name = 'causes/coins.html'
+
+coins_view = CoinsView.as_view()

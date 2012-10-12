@@ -1,17 +1,14 @@
 from django.conf.urls.defaults import *
 from django.contrib.auth.views import login, logout
 
+from web.causes.views import sponsor_list_view
+
 urlpatterns = patterns('causes.views',
-    url(r'^bank/$', 'cause_list_view', name='bank'),
-    
-    url(r'^(?P<id>\d+)/$', 'cause_game_detail_view', name='detail_game'),
+    url(r'^causes/$', 'cause_list_view', name='cause_list'),
+    url(r'^causes/(?P<id>\d+)/$', 'cause_game_detail_view', name='cause_detail_game'),
+    url(r'^causes/p/(?P<id>\d+)/$', 'cause_public_detail_view', name='cause_detail_public'),
+    url(r'^causes/add/$', 'cause_add_view', name='cause_add'),
 
-    url(r'^(?P<id>\d+)/$', 'cause_public_detail_view', name='detail_public'),
-
-    # url(r'^spend/$', 'causes.views.spend', name='spend'),
-    url(r'^add/$', 'cause_add_view', name='cause_add'),
-
-    # url(r'^take/(?P<id>\d+)/$', 'causes.views.take', name='take'),
-
-    # url(r'^(?P<id>\d+)/$', 'causes.views.detail', name='detail'),
+    url(r'^coins/$', 'coins_view', name='coins'),
+    url(r'^sponsors/$', 'sponsor_list_view', name='sponsor_list'),
 )

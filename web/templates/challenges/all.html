@@ -8,6 +8,9 @@
 
 {% block content %}
 {{ block.super }}
+<div>
+{{ mst }}
+</div>
 
 <div id="challenges" class="carousel">
     <!-- Carousel Controls -->
@@ -36,7 +39,7 @@
                     </div>
                 {% else %}
                     {# Active Mission #}
-                    <div id="challenge-{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% if challenge in player_mission_state.challenges_locked.all %}challenge-locked{% endif %} {% if challenge in player_mission_state.challenges_completed.all %}completed{% else %}not-completed{% endif %} span4">
+                    <div id="challenge-{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% if challenge in mst.challenges_locked.all %}challenge-locked{% endif %} {% if challenge in mst.challenges_completed.all %}completed{% else %}not-completed{% endif %} span4">
                         {% ifequal challenge.challenge_type_shortcut 'barrier' %}
                             You are not getting past me until you show me how much you care about the city… Ready for a question? [Yum, I'm ready]
                         {% else %}
@@ -44,9 +47,9 @@
                             <span class="badge">{{ challenge_type }}</span>
                             <div class="meta"><i class="glyphicon-credit"></i> {% ifequal challenge.challenge_type_shortcut 'final-barrier' %}?{% else %}{{ coins }}{% endifequal %} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
                             <div class="action">
-                                {% if challenge not in player_mission_state.challenges_locked.all %}
-                                    <a href="{% if challenge in player_mission_state.challenges_completed.all %}{{ challenge.overview_url }}{% else %}{{ challenge.play_url }}{% endif %}" class="btn btn-primary">
-                                        {% if challenge in player_mission_state.challenges_completed.all %}Challenge Overview{% else %}Play Challenge{% endif %}
+                                {% if challenge not in mst.challenges_locked.all %}
+                                    <a href="{% if challenge in mst.challenges_completed.all %}{{ challenge.overview_url }}{% else %}{{ challenge.play_url }}{% endif %}" class="btn btn-primary">
+                                        {% if challenge in mst.challenges_completed.all %}Challenge Overview{% else %}Play Challenge{% endif %}
                                     </a>
                                 {% else %}
                                     <button class="btn disabled">Locked</button>
