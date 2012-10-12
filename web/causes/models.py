@@ -52,7 +52,7 @@ class Cause(models.Model):
 #stream_utils.register_action_object(Cause)
 
 
-class PlayerCauseManager(models.Manager):
+class PlayerCauseTransactionManager(models.Manager):
 
     @cached(60*60*24)
     def for_instance(self, instance):
@@ -69,13 +69,13 @@ class PlayerCauseManager(models.Manager):
     #    return player_cause.aggregate(models.Sum('coins')).get('coins__sum') or 0
 
 
-class PlayerCause(models.Model):
+class PlayerCauseTransaction(models.Model):
 
     user = models.ForeignKey(User)
     cause = models.ForeignKey(Cause)
     coins = models.IntegerField(default=0)
 
-    objects = PlayerCauseManager()
+    objects = PlayerCauseTransactionManager()
 
     class Meta:
         unique_together = (('user', 'cause'),)
