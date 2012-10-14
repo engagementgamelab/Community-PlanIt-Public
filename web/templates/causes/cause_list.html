@@ -5,69 +5,46 @@
 
 {% block content %}
 {{ block.super }}
+<div id="bank-causes-intro" class="section-intro section-bank-intro">
+    <div class="wrapper">
+        <h1>Causes in need of your support</h1>
+        <p>When you have completed a mission, you can use the coins you earned to suport any of the causes below, or even enter your own cause into the mix. The causes with most support get a <a href="">cash prize</a> at the end of the game.</p>
+    </div>
+</div>
 <div class="wrapper">
     <div class="row">
-    	<div class="span9">
-    		<div>
-    			<h1 class="">The Bank</h1>
-    			<div>
-	    			<a class="btn btn-primary">Sort By</a>
-	    		</div>
+		<div>
 
-                <br><br>
-
-                {% for cause in causes %}
-	    		<div class="cause row-fluid">
-                    <div class="span3">
-                        {% thumbnail cause.image '164x100' crop="center" format="PNG" as img %}
-                            <img src="{{ img.url }}" alt="" width="img.width" height="img.height">
-                        {% endthumbnail %}
-                        <div>Coins: </div>
-                        <div>Rank: {{ forloop.counter }}</div>
-                    </div>
-                    <div class="span6">
-                        <h3><a href="{{ cause.get_game_url }}">{{ cause.name }}</a></h3>
-                        <div>
-                            <i class="glyphicon-facebook"></i>
-                            <i class="glyphicon-twitter-t"></i>
-                            Started By <a href="">{{ cause.creator.get_profile.screen_name }}</a>
-                        </div>
-                        <p>{{ cause.description }}</p>
-                    </div>
-                    <div class="span3 well">
-                        <h3>Give</h3>
-                        <input type="text" class="span12" placeholder="Enter Amount" />
-                        <a class="btn btn-primary btn-small">Give</a>
-                    </div>
-	    		</div>
-                {% endfor %}
-
-                <div>
-                    An organization you want to donate to not listed? <a class="" href="{% url instances:causes:cause_add active_game.slug %}">Request to add them</a>!
+            {% for cause in causes %}
+    		<div class="cause row-fluid">
+                <div class="span3">
+                    {% thumbnail cause.image '164x100' crop="center" format="PNG" as img %}
+                        <img src="{{ img.url }}" alt="" width="img.width" height="img.height">
+                    {% endthumbnail %}
+                    <div>Coins: </div>
+                    <div>Rank: {{ forloop.counter }}</div>
                 </div>
-            </div>
-        </div>
-    	<div class="span3">
-    		<div>
-    			<h2>Your Stuff</h2>
-                <div class="well">
-        			<h3>Mission Earnings</h3>
-        			
-        			Mission 1: 450<br>
-        			Mission 2: 0<br>
-
-        			Earned: 450<br>
-        			Spent: 0<br>
-
-        			Remaining: <br>
-
-        			<h3>Causes Supported</h3>
-                    <ol>
-                        <li>Yuan</li>
-                    </ol>
+                <div class="span6">
+                    <h3><a href="{{ cause.get_game_url }}">{{ cause.name }}</a></h3>
+                    <div>
+                        <i class="glyphicon-facebook"></i>
+                        <i class="glyphicon-twitter-t"></i>
+                        Started By <a href="">{{ cause.creator.get_profile.screen_name }}</a>
+                    </div>
+                    <p>{{ cause.description }}</p>
+                </div>
+                <div class="span3 well">
+                    <h3>Give</h3>
+                    <input type="text" class="span12" placeholder="Enter Amount" />
+                    <a class="btn btn-primary btn-small">Give</a>
                 </div>
     		</div>
-    	</div>
+            {% endfor %}
+
+            <div>
+                An organization you want to donate to not listed? <a class="" href="{% url instances:causes:cause_add active_game.slug %}">Request to add them</a>!
+            </div>
+        </div>
     </div>
 </div>
 

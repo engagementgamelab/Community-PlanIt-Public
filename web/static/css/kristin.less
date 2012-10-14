@@ -190,6 +190,63 @@
 	}
 }
 
-.hero-tile {
+#bank-coins-table {
+	width: 100%;
+	td {
+		padding: 10px 0;
+		border-bottom: 1px solid @light-gray;
+		&:last-child {
+			text-align: right;
+		}
+	}
+
+	.row-spend td {
+		border-bottom: 3px solid @k-dark-gray;
+	}
+
+	.row-spent td, .row-earned td {
+		padding-top: 50px;
+	}
+}
+
+.section-intro {
 	background: url('../img/bg-tile.png');
+	.inner-shadow(0px, 1px, 8px);
+
+	&.section-bank-intro {
+		.wrapper {
+			position: relative;
+			min-height: 230px;
+			box-sizing: border-box;
+			padding: 30px 350px 30px 0px;
+			&:after {
+				content: '';
+				position: absolute;
+				bottom: 0; right: 0px;
+				width: 300px; height: 230px;
+				background: url('../img/bg-bank-section.png');
+			}
+		}
+	}
+
+	&#bank-causes-intro {
+		.wrapper:after { background-position: 0px; }
+	}
+
+	&#bank-coins-intro {
+		.wrapper:after { background-position: -300px; }
+	}
+
+	&#bank-sponsors-intro {
+		.wrapper:after { background-position: -600px; }
+	}
+}
+
+.aside {
+	padding: 50px 20px;
+	box-sizing: border-box;
+	background: @light-light-gray;
+	h3 {
+		text-transform: uppercase;
+	}
 }

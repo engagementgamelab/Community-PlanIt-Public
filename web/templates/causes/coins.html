@@ -6,7 +6,7 @@
 {% block content %}
 {{ block.super }}
 
-<div class="hero-tile">
+<div id="bank-coins-intro" class="section-intro section-bank-intro">
 	<div class="wrapper">
 			<h1>Your Coins</h1>
 			<p>The details of your coins earned and how you spent them are listed below. When you have completed a mission, you can use the coins you earned to support any of the <a href="{% url instances:causes:cause_list active_game.slug %}">causes in need of support</a>.</p>
@@ -14,46 +14,48 @@
 </div>
 <div class="wrapper">
 	<div class="row">
-		<div class="span9">
-
-			<table>
-				<tr>
+		<div class="span8">
+			<table id="bank-coins-table">
+				<tr class="row-spend">
 					<td><h3>Coins to spend</h3></td>
 					<td>620</td>
 				</tr>
 
-				<tr>
+				<tr class="row-spent">
 					<td><h3>Coins spent</h3></td>
 					<td>2100</td>
 				</tr>
 
-				{% for transaction in player_cause_transaction %} 
 				<tr>
 					<td>More lights in the Park{# transaction.cause.title #}</td>
 					<td>500{# transaction.coins #}</td>
 				</tr>
-				{% endfor %}
 
-				<tr>
+				<tr class="row-earned">
 					<td><h3>Coins earned</h3></td>
 					<td>620</td>
 				</tr>
 
-				{% for mission in active_game.missions %}
 				<tr>
 					<td>
-						<h4>Mission 1<h4>
+						<p>Mission 1</p>
+						<p>Share your Detroit</p>
+					</td>
+					<td>2720</td>
+				</tr>
+				<tr>
+					<td>
+						<p>Mission 2</p>
 						<p>{{ mission.name }}</p>
 					</td>
-					<td>{{ mission.mission_state.coins }}</td>
+					<td>1300</td>
 				</tr>
-				{% endfor %}
 
 			</table>
 
 		</div>
 
-		<div class="span3">
+		<div class="aside span4">
 			<h3>Earning Coins</h3>
 			<p>You earn your coins through doing mission challenges. You can gain more coins in the missions by winning awards for your debate skills.</p>
 			<a href="">How to get awards</a>
