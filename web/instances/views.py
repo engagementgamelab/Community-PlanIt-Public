@@ -30,13 +30,12 @@ from web.attachments_v2.models import Attachment
 from web.missions.models import *
 from web.reports.models import Activity 
 from web.core.utils import get_translation_with_fallback
-from web.accounts.mixins import MissionContextMixin
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class InstanceDetailView(MissionContextMixin, DetailView):
+class InstanceDetailView(DetailView):
     model = Instance
     queryset = Instance.objects.exclude(is_disabled=True)
 
@@ -59,6 +58,9 @@ class InstanceDetailView(MissionContextMixin, DetailView):
                                         user_profile=self.request.user.get_profile(),
                                         instance=game,
                                     ).exists()
+            active_game = self.request.session.get('my_active_game', None)
+            context['active_game'] = active_game
+            context['active_mission'] = active_game.active_mission
 
         context['game_profile_exists'] = game_profile_exists
         context['current_mission'] = game.active_mission
