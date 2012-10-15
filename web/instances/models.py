@@ -134,18 +134,25 @@ class Instance(BaseTreeNode):
         })
 
     @property
+    def missions(self):
+        from web.missions.models import Mission
+        return Mission.objects.filter(parent=self)
+
+    @property
     def _mission_recurrences(self):
         """all mission recurrences within this game """
-        return rrule(DAILY, interval=self.days_for_mission, 
-            count=self.get_children().count(),
+        return rrule(DAILY, interval=self.days_for_mission,
+            count=self.missions.count(),
             dtstart=self.start_date)
 
     @property
     def _missions_by_start_date(self):
         return SortedDict(
                 zip(list(self._mission_recurrences),
-                    map(lambda n: n.get_real_instance(), 
-                                    self.get_children()))
+                    map(lambda n: n.get_real_instance(),
+                                    self.missions)
+                    self.missions
+                )
         )
 
     @property
