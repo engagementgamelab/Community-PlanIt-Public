@@ -6,6 +6,8 @@
 {# RESPONSE SUMMARY #}
 <div id="activity-response-summary" class="">
 {% for choice in challenge.answer_choices.all %}
+        {# TODO: #}
+        {# style my-choice so that the player can see his selection  #}
     <div class="activity-response-summary-choice {% ifequal choice my_answer.selected %}my-choice{% endifequal %}">
         {{ choice }}
         <div class="activity-response-summary-choice-percentage" data-summary-count='{{ choice.singleresponse_answers.count }}'></div>
