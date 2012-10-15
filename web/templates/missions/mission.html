@@ -50,7 +50,7 @@
                         {% trans "Resume Mission" %}
                     {% elif mission.is_future %}
                         {% trans "Preview Mission" %}
-                    {% elif mission.is_expired %}
+                    {% elif mission.is_past %}
                         {% trans "Review Mission" %}
                     {% endif %}
                 </a>
