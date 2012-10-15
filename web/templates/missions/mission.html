@@ -46,13 +46,15 @@
 
             <p class="align-center">
                 <a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.pk %}" class="btn btn-primary btn-large">
-                    {% if mission.is_active %}
+                    {% with mission.parent as game %}
+                    {% if game.is_present %}
                         {% trans "Resume Mission" %}
-                    {% elif mission.is_future %}
+                    {% elif game.is_future %}
                         {% trans "Preview Mission" %}
-                    {% elif mission.is_past %}
+                    {% elif game.is_past %}
                         {% trans "Review Mission" %}
                     {% endif %}
+                    {% endwith %}
                 </a>
             </p>
 
