@@ -8,16 +8,10 @@
 
 
 {% block content %}
-{{ block.super }}
 <div class="wrapper">
 
     <br><br>
     <div class="well">
-
-        {% if debug %}
-            present template
-            {% include "instances/debug.html" %}
-        {% endif %}
 
         <p>This game is live! 
             {% if not game_profile_exists %}
@@ -33,7 +27,7 @@
             {% endif %}
         </p>
         {% if game_profile_exists %}
-        <p>You're signed up for this game <a class="btn btn-large btn-primary" href="{% url instances:missions:mission-with-demographic-form current_mission.parent.slug current_mission.pk %}">Continue Game</a></p>
+        <p>You're signed up for this game <a class="btn btn-large btn-primary" href="{% url instances:missions:mission-with-demographic-form active_game.slug active_mission.pk %}">Continue Game</a></p>
             {# href="{{ current_mission.get_absolute_url }} #}
         {% endif %}
     </div>
