@@ -4,7 +4,7 @@
 {% block content %}
 <div class="wrapper">
     <h1>{{ instance }}</h1>
-    <h6>A game in the {{ instance.for_city.name }} area.</h6>
+    {# <h6>A game in the {{ instance.for_city.name }} area.</h6> #}
     
     <p>
         Game State: 
@@ -29,6 +29,12 @@
         </div>
         <div class="span6">
             <h2>Causes</h2>        
+            <ul>
+                {% for cause in instance.causes %}
+                <li><a href="{{ cause.get_absolute_url }}">{{ cause.name }}</a> </li>
+                {% endfor %}
+                
+            </ul>
         </div>
     </div>
     
