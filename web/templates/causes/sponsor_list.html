@@ -12,21 +12,8 @@
 	</div>
 </div>
 <div class="wrapper">
-	<div class="row">
-		<div class="span8">
-			<h2>A ${{ active_game.prize }} cash prize to each of the top 3 causes!</h2>
+	<h2>A ${{ active_game.prize }} cash prize to each of the top 3 causes!</h2>
 
-			<h3>The Sponsors</h3>
-		</div>
-		<div class="span4 aside">
-			<h3>Current Top 3 Causes</h3>
-			<ol>
-				<li></li>
-				<li></li>
-				<li></li>
-			</ol>
-			<a href="{% url instances:causes:cause_list active_game.slug %}">See all causes</a>
-		</div>
-	</div>
+	<h3>The Sponsors</h3>
 </div>
 {% endblock %}
