@@ -149,11 +149,7 @@ class Instance(BaseTreeNode):
     def _missions_by_start_date(self):
         return SortedDict(
                 zip(list(self._mission_recurrences),
-                    map(lambda n: n.get_real_instance(),
-                                    self.missions)
-                    self.missions
-                )
-        )
+                    map(lambda n: n.get_real_instance(), self.missions)))
 
     @property
     def is_started(self):
