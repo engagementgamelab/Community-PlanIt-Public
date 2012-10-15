@@ -29,13 +29,14 @@ from web.attachments_v2.models import Attachment
 #from web.challenges.models import *
 from web.missions.models import *
 from web.reports.models import Activity 
-from core.utils import get_translation_with_fallback
+from web.core.utils import get_translation_with_fallback
+from web.accounts.mixins import MissionContextMixin
 
 import logging
 log = logging.getLogger(__name__)
 
 
-class InstanceDetailView(DetailView):
+class InstanceDetailView(MissionContextMixin, DetailView):
     model = Instance
     queryset = Instance.objects.exclude(is_disabled=True)
 
