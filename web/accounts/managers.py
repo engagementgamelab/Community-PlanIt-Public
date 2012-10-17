@@ -70,15 +70,16 @@ class PlayerMissionStateManager(models.Manager):
         #pp.pprint(dict(sorted_challenges))
         for i, barrier in enumerate(sorted_challenges):
             if i == 0:
-                obj.unlocked.add(barrier)
+                # Lock the first barrier
+                # The rule for a barrier to be unlocked
+                # is to earn 3x the coins per one challenge
+                obj.locked.add(barrier)
                 for challenge in sorted_challenges.get(barrier):
                     obj.unlocked.add(challenge)
-                    log.debug('adding to unlocked %s' % challenge)
             else:
                 obj.locked.add(barrier)
                 for challenge in sorted_challenges.get(barrier):
                     obj.locked.add(challenge)
-                    log.debug('adding to locked %s' % challenge)
         return obj
 
 
