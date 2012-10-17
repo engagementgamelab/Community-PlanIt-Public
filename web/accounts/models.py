@@ -111,7 +111,14 @@ class UserProfilePerInstance(models.Model):
 
 
 class PlayerMissionState(models.Model):
-    """ keep track of mission state for each player """
+    """ keep track of mission state for each player 
+
+        currently an instance of this model is created by
+            `accounts.mixins.PlayerMissionStateContextMixin`
+        `PlayerMissionStateManager.create` method assigns 
+        the state of challanges (locked/unlocked)
+
+    """
 
     user = models.ForeignKey(User, verbose_name=_('user'), related_name="mission_states")
     mission = models.ForeignKey(Mission, related_name='mission_states')
@@ -269,7 +276,6 @@ def update_player_mission_state(sender, **kwargs):
             # if chosen answer is incorrect, subtract coins
             if answer.selected.is_barrier_correct_answer == False:
                 mst.coins -= mission.challenge_coin_value
-            print "barrier completed, unlocking next block"
             mst.unlock_next_block()
         # if final barrier has been played, ....
         elif challenge.challenge_type == Challenge.FINAL_BARRIER:

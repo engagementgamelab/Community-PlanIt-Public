@@ -30,6 +30,7 @@ class PlayerMissionStateContextMixin(object):
         else:
             ctx['profile_per_instance'] = my_game_profile 
 
+        # retrieve or initialize mission state
         try:
             mst =  mission.mission_states.get(user=self.request.user)
         except PlayerMissionState.DoesNotExist:
