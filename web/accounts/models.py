@@ -271,6 +271,12 @@ def update_player_mission_state(sender, **kwargs):
         # increment the coins count for non-barrier challenges
         if challenge.challenge_type != Challenge.BARRIER:
             mst.coins += mission.challenge_coin_value
+            # if earned coins for this mission is 3x the challenge_coin_value  
+            # then unlock this blocks barrier
+            if mst.coins <=  mission.challenge_coin_value  * 3:
+                next_barrier = mst.next_barrier
+                mst.locked.remove(next_barrier)
+                mst.unlocked.remove(next_barrier)
         # if barrier has been played, unlock next block of challenges
         elif challenge.challenge_type == Challenge.BARRIER:
             # if chosen answer is incorrect, subtract coins
@@ -280,13 +286,6 @@ def update_player_mission_state(sender, **kwargs):
         # if final barrier has been played, ....
         elif challenge.challenge_type == Challenge.FINAL_BARRIER:
             pass
-
-        # if the next barrier in order is eligible to be unlocked
-        # add it to the unlocked
-        #next_barrier = mst.next_barrier
-        #if next_barrier.minimum_coins_to_play <= mst.coins:
-        #     mst.unlocked.add(next_barrier)
-        #     mst.locked.remove(next_barrier)
 
         mst.save()
 post_save.connect(update_player_mission_state, dispatch_uid='update_mission_state')
