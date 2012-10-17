@@ -47,11 +47,13 @@ class BarrierDetailView(LoginRequiredMixin,
                                 user=self.request.user,
                                 challenge=self.challenge
         )
+        my_answer_is_correct = my_answer.selected in \
+                                    self.challenge.answer_choices.\
+                                    filter(is_barrier_correct_answer=True)
+        print my_answer_is_correct 
         ctx.update({
             'my_answer': my_answer,
-            'my_answer_is_correct' : my_answer.selected in \
-                                    self.challenge.answer_choices.\
-                                    filter(is_barrier_correct_answer=True),
+            'my_answer_is_correct' : my_answer_is_correct,
         })
         return ctx
 
@@ -77,9 +79,12 @@ class BarrierCreateView(LoginRequiredMixin,
             return redirect(
                     reverse('missions:challenges:challenges', args=[self.challenge.parent.pk,]))
         # TODO 
-        # convert this to a redirect
-        assert mst.coins >= self.challenge.minimum_coins_to_play, \
+        # convert this to a redirect or 
+        assert mst.coins >= mst.mission.challenge_coin_value  * 3, \
                 "Mission `%s`. Player does not have enough coins to play the barrier." %  mst.mission.__unicode__()
+        # TODO move to admin validation
+        assert self.challenge.answer_choices.\
+                filter(is_barrier_correct_answer=True).exists() == True, "A correct answer has not been set on the barrier challenge '%s'" % self.challenge.title
 
         if AnswerWithOneChoice.objects.\
                 filter(user=request.user, challenge=self.challenge).exists():
