@@ -17,7 +17,7 @@
     {% endif %}
     
     <div class="well">
-        <p>This game has finished! <a class="btn btn-large disabled">Join Game</a> <a class="btn btn-large btn-danger">See Results</a></p>
+        <p>This game has finished! <a class="btn btn-large disabled">Join Game</a> <a href="{% url instances:missions:mission instance.slug first_mission.pk %}" class="btn btn-large btn-danger">See Results</a></p>
     </div>
     
     <br><br>
