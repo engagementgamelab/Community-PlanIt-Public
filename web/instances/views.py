@@ -50,6 +50,7 @@ class InstanceDetailView(DetailView):
             self.template_name = 'instances/instance_present.html'
         elif game.is_past:
             self.template_name = 'instances/instance_past.html'
+            context['first_mission'] = game.missions[0]
 
         game_profile_exists = False
 
@@ -63,17 +64,7 @@ class InstanceDetailView(DetailView):
             context['active_mission'] = active_game.active_mission
 
         context['game_profile_exists'] = game_profile_exists
-        context['current_mission'] = game.active_mission
-
-        if settings.DEBUG == True:
-            if self.request.user.is_authenticated():
-                my_profiles = UserProfilePerInstance.objects.filter(
-                        user_profile__user=self.request.user
-                )
-                my_profile = self.request.user.get_profile()
-                context['my_games'] = ['I am signed up for: ']+[prof.instance.title for prof in my_profiles]
-                context['my_profile_data'] = "".join([my_profile.screen_name, "<", self.request.user.email, '>'])
-
+        #context['current_mission'] = game.active_mission
         return context
 
 instance_detail_view = InstanceDetailView.as_view()
