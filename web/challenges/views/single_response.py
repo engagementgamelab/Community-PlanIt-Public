@@ -56,8 +56,7 @@ class SingleResponseCreateView(LoginRequiredMixin,
                                PlayerMissionStateContextMixin,
                                MissionContextMixin,
                                ChallengeContextMixin,
-                               CreateView,
-                               ):
+                               CreateView):
     form_class = SingleResponseForm
     template_name = "challenges/single.html"
 

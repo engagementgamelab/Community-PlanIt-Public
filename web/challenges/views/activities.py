@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 
 from web.core.views import LoginRequiredMixin
 from web.missions.models import Mission
-from web.accounts.models import UserProfilePerInstance, PlayerMissionState
+from web.accounts.models import UserProfilePerInstance
 from web.comments.models import *
 from web.comments.forms import *
 from ..forms import *
