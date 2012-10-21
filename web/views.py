@@ -11,7 +11,6 @@ from web.settings import *
 from web.missions.models import Mission
 from web.accounts.models import UserProfilePerInstance
 from web.instances.models import Instance
-from web.core.utils import missions_bar_context
 
 import logging
 log = logging.getLogger(__name__)
@@ -49,8 +48,6 @@ def bringcpi(request, template='static/bringcpi.html'):
         'form': form,
     }
     
-    if hasattr(request, 'current_game'): 
-        context.update(missions_bar_context(request))
     return render(request, template, context)
 
 @never_cache

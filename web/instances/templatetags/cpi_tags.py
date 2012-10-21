@@ -11,9 +11,7 @@ from django import template
 from django.utils.html import fix_ampersands
 from django.utils.text import truncate_words
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _, get_language
-
-from core.utils import get_translation_with_fallback
+from django.utils.translation import ugettext_lazy as _,
 
 register = template.Library()
 
@@ -107,10 +105,6 @@ def teaser(text, word_count):
     if len(teaser) < len(text):
         teaser += '...'
     return teaser
-
-@register.filter
-def trans_fallback(obj, attr):
-	return get_translation_with_fallback(obj, attr)
 
 @register.filter
 def order_by(queryset, args):

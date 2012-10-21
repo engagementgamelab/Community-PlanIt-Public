@@ -3,7 +3,6 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from web.core.models import AffiliationLeaderboard
-from web.core.utils import missions_bar_context
 from web.instances.models import Affiliation
 from web.accounts.forms import UserProfileVariantsForInstance
 
@@ -18,7 +17,6 @@ def all(request, template="affiliations/all.html"):
     context = {
         'affiliations': affiliations,
     }
-    context.update(missions_bar_context(request))
     return render(request, template, context)
 
 @login_required
@@ -43,7 +41,6 @@ def affiliation(request, slug, template='affiliations/affiliation.html'):
         'players': players,
         'total_points': leaderboard_entry.points,
     }
-    context.update(missions_bar_context(request))
 
     return render(request, template, context)
 

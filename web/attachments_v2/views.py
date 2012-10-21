@@ -3,7 +3,6 @@ from django.template import RequestContext
 
 from .models import Attachment
 from web.instances.models import Instance
-from web.core.utils import missions_bar_context
 
 def index(request, slug=None, template='attachments/index.html', extra_context={}):
     context = {}
@@ -21,7 +20,6 @@ def index(request, slug=None, template='attachments/index.html', extra_context={
     if extra_context:
         context.update(extra_context)
 
-    context.update(missions_bar_context(request))
     return render(request, template, context)
 
 def post_game(request, template='attachments/post_game.html', extra_context={}):
@@ -33,7 +31,6 @@ def post_game(request, template='attachments/post_game.html', extra_context={}):
         'attachments': attachments,
     })
 
-    context.update(missions_bar_context(request))
     return render(request, template, context)
     
     
@@ -52,5 +49,4 @@ def attachment(request, slug=None, attachment_id=None, template='attachments/att
 
     if extra_context:
         context.update(extra_context)
-    context.update(missions_bar_context(request))
     return render(request, template, context)

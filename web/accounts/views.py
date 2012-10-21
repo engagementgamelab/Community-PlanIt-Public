@@ -314,7 +314,6 @@ def notifications(request):
         notification.read = True
         notification.save()
 
-    #context.update(missions_bar_context(request))
     return render(request, 'accounts/notifications.html', context)
 
 # Forgot your password
@@ -408,7 +407,6 @@ def edit(request, template_name='accounts/profile_edit.html'):
         'profile_form': profile_form,
         'change_password_form': change_password_form,
     }
-    #context.update(missions_bar_context(request))
     return render(request, template_name, context)
 
 @login_required
@@ -432,7 +430,6 @@ def all(request, template='accounts/all.html'):
         'search_by_kw_sijax_js': search_by_kw.get_js(),
         'paginate_players_per_page' : settings.ENDLESS_PAGINATE_PLAYERS_PER_PAGE,
     }
-    #context.update(missions_bar_context(request))
 
     return render(request, template, context)
 
@@ -561,7 +558,6 @@ def profile(request, id, template_name="accounts/profile.html"):
     })
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
-    #context.update(missions_bar_context(request))
     return render(request, template_name, context)
 
 """

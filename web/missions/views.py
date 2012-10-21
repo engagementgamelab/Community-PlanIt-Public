@@ -7,7 +7,6 @@ from django.views.generic.edit import FormView
 from django.contrib.auth.decorators import login_required
 
 from .models import *
-from web.core.utils import missions_bar_context
 from web.accounts.models import UserProfilePerInstance
 from web.accounts.forms import DemographicForm
 from web.accounts.mixins import PlayerMissionStateContextMixin, MissionContextMixin
