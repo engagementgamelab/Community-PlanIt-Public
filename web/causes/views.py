@@ -15,7 +15,10 @@ from .models import Cause
 from .forms import CauseForm
 from .mixins import CausesContextMixin
 
-class CauseListView(LoginRequiredMixin, PlayerMissionStateContextMixin, MissionContextMixin, ListView):
+class CauseListView(LoginRequiredMixin,
+                    #PlayerMissionStateContextMixin,
+                    MissionContextMixin,
+                    ListView):
     model = Cause
     template_name = 'causes/cause_list.html'
     context_object_name = 'causes'
@@ -23,6 +26,16 @@ class CauseListView(LoginRequiredMixin, PlayerMissionStateContextMixin, MissionC
 
 cause_list_view = CauseListView.as_view()
 
+
+
+class BankContextMixin(object):
+    """ gather context for the bank"""
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(MissionContextMixin, self).get_context_data(*args, **kwargs)
+        active_game = self.request.session.get('my_active_game', None)
+
+        return context
 
 class CauseGameDetailView(LoginRequiredMixin, MissionContextMixin, DetailView):
     model = Cause
