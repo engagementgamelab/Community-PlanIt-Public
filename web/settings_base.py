@@ -37,7 +37,6 @@ AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 AUTHENTICATION_BACKENDS = (
     'web.accounts.backends.EmailBackend',
     'socialregistration.contrib.facebook.auth.FacebookAuth',
-    'django_rules.backends.ObjectPermissionBackend',
 )
 DATE_FORMAT = '%m/%d/%Y'
 DEBUG = False
@@ -105,7 +104,6 @@ INSTALLED_APPS = (
     'rosetta',
     'sorl.thumbnail',
     'ajax_select',
-    'django_rules',
     'django_extensions',
     'socialregistration',
     'socialregistration.contrib.facebook',
