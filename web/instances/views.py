@@ -29,7 +29,6 @@ from web.attachments_v2.models import Attachment
 #from web.challenges.models import *
 from web.missions.models import *
 from web.reports.models import Activity 
-from web.core.utils import get_translation_with_fallback
 
 import logging
 log = logging.getLogger(__name__)
@@ -185,7 +184,6 @@ def ajax_load_games_by_city(request, for_city_id):
 
     def load_options(obj_response, for_city_id):
         #games_for_city = Instance.objects.filter(for_city__pk=for_city_id).language(get_language())
-        #games = [(x.pk, get_translation_with_fallback(x, 'title')) for x in games_for_city]
         games = Instance.objects.exclude(is_disabled=True).filter(for_city__pk=for_city_id).values_list('pk', 'title').distinct().order_by('title')
         out = ""
         for id, title in games:
