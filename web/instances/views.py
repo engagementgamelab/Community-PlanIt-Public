@@ -6,17 +6,17 @@ from stream.models import Action
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from django.contrib import auth
 #from django.views.decorators.csrf import ensure_csrf_cookie
 #from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 #from django.template import Context, RequestContext, loader
 from django.utils.translation import ugettext as _
 from django.db.models import Sum
 from django.utils.translation import get_language
 
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -41,26 +41,37 @@ class InstanceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(InstanceDetailView, self).get_context_data(
             **kwargs)
-        game = kwargs['object']#self.get_object()
+        game = kwargs['object']
+        game_profile_exists = False
+
+        log.debug("is auth? %s" % self.request.user.is_authenticated())
+
         if game.is_future:
             self.template_name = 'instances/instance_future.html'
-            post_reg = bool(self.request.GET.get('post-reg'))
-        elif game.is_present:
-            self.template_name = 'instances/instance_present.html'
+            #post_reg = bool(self.request.GET.get('post-reg'))
+
         elif game.is_past:
             self.template_name = 'instances/instance_past.html'
             context['first_mission'] = game.missions[0]
 
-        game_profile_exists = False
+        elif game.is_present:
+            self.template_name = 'instances/instance_present.html'
 
-        if self.request.user.is_authenticated():
-            game_profile_exists = UserProfilePerInstance.objects.filter(
-                                        user_profile=self.request.user.get_profile(),
-                                        instance=game,
-                                    ).exists()
-            active_game = self.request.session.get('my_active_game', None)
-            context['active_game'] = active_game
-            context['active_mission'] = active_game.active_mission
+            if self.request.user.is_authenticated():
+                # if user is logged in but the active game is not set in the
+                # session, log the user out and redirect to the game's log-in page
+                active_game = self.request.session.get('my_active_game', None)
+                if active_game is None:
+                    logout(self.request)
+                    return redirect(reverse("instances:login", kwargs={game_slug:game.slug,}))
+                context['active_game'] = active_game
+                context['active_mission'] = active_game.active_mission
+
+                game_profile_exists = UserProfilePerInstance.objects.filter(
+                                            user_profile=self.request.user.get_profile(),
+                                            instance=game,
+                                        ).exists()
+
 
         context['game_profile_exists'] = game_profile_exists
         #context['current_mission'] = game.active_mission

@@ -11,7 +11,7 @@ from django import template
 from django.utils.html import fix_ampersands
 from django.utils.text import truncate_words
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _,
+from django.utils.translation import ugettext_lazy as _
 
 register = template.Library()
 
