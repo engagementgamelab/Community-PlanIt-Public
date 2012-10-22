@@ -11,40 +11,48 @@
         <p>When you have completed a mission, you can use the coins you earned to suport any of the causes below, or even enter your own cause into the mix. The causes with most support get a <a href="">cash prize</a> at the end of the game.</p>
     </div>
 </div>
+
+<div class="section-filter-search">
+    <form class="wrapper form-inline">
+        <label>Order By</label>
+        <select>
+
+        </select>
+
+        <label>Search</label>
+        <input type="text" placeholder="Search for cause">
+    </form>
+</div>
+
 <div class="wrapper">
-    <div class="row">
-		<div>
-
-            {% for cause in causes %}
-    		<div class="cause row-fluid">
-                <div class="span3">
-                    {% thumbnail cause.image '164x100' crop="center" format="PNG" as img %}
-                        <img src="{{ img.url }}" alt="" width="img.width" height="img.height">
-                    {% endthumbnail %}
-                    <div>Coins: </div>
-                    <div>Rank: {{ forloop.counter }}</div>
-                </div>
-                <div class="span6">
-                    <h3><a href="{{ cause.get_game_url }}">{{ cause.name }}</a></h3>
-                    <div>
-                        <i class="glyphicon-facebook"></i>
-                        <i class="glyphicon-twitter-t"></i>
-                        Started By <a href="">{{ cause.creator.get_profile.screen_name }}</a>
-                    </div>
-                    <p>{{ cause.description }}</p>
-                </div>
-                <div class="span3 well">
-                    <h3>Give</h3>
-                    <input type="text" class="span12" placeholder="Enter Amount" />
-                    <a class="btn btn-primary btn-small">Give</a>
-                </div>
-    		</div>
-            {% endfor %}
-
-            <div>
-                An organization you want to donate to not listed? <a class="" href="{% url instances:causes:cause_add active_game.slug %}">Request to add them</a>!
-            </div>
+    {% for cause in causes %}
+	<div class="cause row">
+        <div class="span3">
+            {% thumbnail cause.image '164x100' crop="center" format="PNG" as img %}
+                <img src="{{ img.url }}" alt="" width="img.width" height="img.height">
+            {% endthumbnail %}
+            <div>Coins: </div>
+            <div>Rank: {{ forloop.counter }}</div>
         </div>
+        <div class="span6">
+            <h3><a href="{{ cause.get_game_url }}">{{ cause.name }}</a></h3>
+            <div>
+                <i class="glyphicon-facebook"></i>
+                <i class="glyphicon-twitter-t"></i>
+                Started By <a href="">{{ cause.creator.get_profile.screen_name }}</a>
+            </div>
+            <p>{{ cause.description }}</p>
+        </div>
+        <div class="span3">
+            <h3>Give</h3>
+            <input type="text" placeholder="Enter Amount" />
+            <a class="btn btn-primary btn-small">Give</a>
+        </div>
+	</div>
+    {% endfor %}
+
+    <div>
+        An organization you want to donate to not listed? <a class="" href="{% url instances:causes:cause_add active_game.slug %}">Request to add them</a>!
     </div>
 </div>
 
