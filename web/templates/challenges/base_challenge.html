@@ -24,15 +24,12 @@
             <div id="challenge" class="challenge row-fluid">
                 <div class="challenge-basics">
                     <div class="challenge-image-container">
-                        
                         <h4>Challenge</h4>
                         {% thumbnail challenge.thumbnail "300x300" crop="center" as im %}
                         <img src="{{ im.url }}">
                         {% empty %}
                         <img class="challenge-image" src="http://placehold.it/300x300" width="300" height="300" alt="">
                         {% endthumbnail %}
-
-
                     </div>
                     <div>
                         <span><i class="glyphicon-credit"></i> {{ challenge.parent.challenge_coin_value }}</span>

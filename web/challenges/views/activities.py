@@ -180,7 +180,7 @@ def _get_mc_choice_ids(activity):
 
 class ChallengeListView(LoginRequiredMixin, PlayerMissionStateContextMixin, MissionContextMixin, ListView):
     #model = Challenge
-    template_name = 'challenges/all.html'
+    template_name = 'challenges/challenge_list.html'
     context_object_name = 'challenges'
 
     def dispatch(self, request, *args, **kwargs):
