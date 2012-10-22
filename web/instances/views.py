@@ -63,7 +63,7 @@ class InstanceDetailView(DetailView):
                 active_game = self.request.session.get('my_active_game', None)
                 if active_game is None:
                     logout(self.request)
-                    return redirect(reverse("instances:login", kwargs={game_slug:game.slug,}))
+                    return redirect(reverse("instances:login", kwargs={"game_slug":game.slug,}))
                 context['active_game'] = active_game
                 context['active_mission'] = active_game.active_mission
 
