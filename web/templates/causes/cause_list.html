@@ -16,39 +16,44 @@
     <form class="wrapper form-inline">
         <label>Order By</label>
         <select>
-
         </select>
 
-        <label>Search</label>
-        <input type="text" placeholder="Search for cause">
+        <fieldset class="pull-right">
+            <label>Search</label>
+            <input type="text" placeholder="Search for cause">
+        </fieldset>
     </form>
 </div>
 
-<div class="wrapper">
+<div class="wrapper section-body">
     {% for cause in causes %}
-	<div class="cause row">
-        <div class="span3">
-            {% thumbnail cause.image '164x100' crop="center" format="PNG" as img %}
-                <img src="{{ img.url }}" alt="" width="img.width" height="img.height">
-            {% endthumbnail %}
-            <div>Coins: </div>
-            <div>Rank: {{ forloop.counter }}</div>
-        </div>
-        <div class="span6">
-            <h3><a href="{{ cause.get_game_url }}">{{ cause.name }}</a></h3>
-            <div>
-                <i class="glyphicon-facebook"></i>
-                <i class="glyphicon-twitter-t"></i>
-                Started By <a href="">{{ cause.creator.get_profile.screen_name }}</a>
+    	<div class="cause row">
+            <div class="span4">
+                {% thumbnail cause.image '300x150' crop="center" format="PNG" as img %}
+                    <img src="{{ img.url }}" alt="" width="img.width" height="img.height">
+                {% empty %}
+                    <img src="http://placehold.it/300x150" width="300" height="150" alt="">
+                {% endthumbnail %}
+                <div><i class="icon icon-coin"></i></div>
+                <div>Rank: {{ forloop.counter }}</div>
             </div>
-            <p>{{ cause.description }}</p>
-        </div>
-        <div class="span3">
-            <h3>Give</h3>
-            <input type="text" placeholder="Enter Amount" />
-            <a class="btn btn-primary btn-small">Give</a>
-        </div>
-	</div>
+            <div class="span8">
+                <a href="" class="anchor-comments">4</a>
+                <h3><a href="{{ cause.get_game_url }}">{{ cause.name }}</a></h3>
+                {% comment %}
+                <div>
+                    <i class="glyphicon-facebook"></i>
+                    <i class="glyphicon-twitter-t"></i>
+                    Started By <a href="">{{ cause.creator.get_profile.screen_name }}</a>
+                </div>
+                {% endcomment %}
+                <p>{{ cause.description }}</p>
+
+                <i class="icon icon-coin"></i>
+                <input type="text" placeholder="0" />
+                <a class="btn btn-primary btn-small">Pledge</a>
+            </div>
+    	</div>
     {% endfor %}
 
     <div>
