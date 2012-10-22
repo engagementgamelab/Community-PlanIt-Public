@@ -141,6 +141,8 @@
     <div class="minimap">
         {# if mission.get_previous_mission %}<a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.get_previous_mission.id %}" class="badge">Previous Mission</a>{% endif #}
 
+        <a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.id %}" class="challenge mission"></a>
+
         {% with challenge as current_challenge %}
             {% for challenge in challenges %}
                 <a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.id %}#{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% ifequal current_challenge.id challenge.id %}active{% endifequal %} {% if challenge in mst.locked.all %}challenge-locked{% endif %} {% if challenge in mst.completed.all %}completed{% else %}not-completed{% endif %} {% cycle 'challenge-building-1' 'challenge-building-2' 'challenge-building-3' 'challenge-building-4' %}" data-challenge-id="{{ challenge.id }}">

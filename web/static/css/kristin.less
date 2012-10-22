@@ -107,16 +107,6 @@ html, body {
 			&.challenge-building-4 { background-position: -48*4px 0px; }
 		}
 
-		// &.challenge-barrier {
-		// 	background: url('../img/bg-minimap-gnomes.png') -48px 0px !important;
-		// 	&.completed { background-position: -96px 0px !important; }
-		// }
-
-		// &.challenge-final-barrier {
-		// 	background: url('../img/bg-minimap-gnomes.png') 0px 0px;
-
-		// }
-
 		&.challenge-barrier {
 			width: 72px;
 			background: url('../img/bg-minimap-gnomes_72x72.png') -72px 0px !important;
@@ -131,6 +121,14 @@ html, body {
 			&:hover { background-position: -288px -72px !important; }
 		}
 	}
+
+	.mission {
+		width: 72px; height: 72px;
+		margin-bottom: -5px;
+		border: none;
+		background: url('../img/bg-minimap-gnomes_72x72.png') 0px 0px !important;
+		&:hover { background-position: 0px -72px !important; }
+	}	
 }
 
 .window {
@@ -201,14 +199,25 @@ html, body {
 
 #challenges {
 	background: url('../img/bg-tile.png');
+
+	.mission {
+		&:before {
+			content: '';
+			position: absolute;
+			top: 0; left: 0;
+			width: 300px; height: 300px;
+			background: url('../img/bg-challenges-gnomes.png') 0px 0px;
+		}
+	}
+
 	.challenge {
 		padding: 10px;
-
 		.action {
 			top: 260px;
 			right: 10px;
 		}
 	}
+
 	.challenge-barrier {
 		min-height: 100px !important;
 		color: @k-dark-gray !important;

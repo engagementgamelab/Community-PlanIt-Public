@@ -28,58 +28,35 @@
 {% block body_id %}page-mission-details{% endblock %}
 
 {% block content %}
-<div class="wrapper faux-modal">
-    <div class="close close-faux-modal"><a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.pk %}">×</a></div>
-    <div class="row">
-        <div class="span1">
-            {% if mission.get_previous_mission %}<a href="{{ mission.get_previous_mission.get_absolute_url }}" id="mission-details-prev"></a>{% else %}&nbsp;{% endif %}
-        </div>
-        <div class="span7">
-            <h1>{{ mission.title }}</h1>
-            <p>
-                <a href="#" class="thumbnail">
-                    <img src="http://placehold.it/610x343" alt="">
-                </a>
-                {# {% embed_video mission.video %} #}
-            </p>
-            <p>{{ mission.description }}</p>
+{{ block.super }}
 
-            <p class="align-center">
-                <a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.pk %}" class="btn btn-primary btn-large">
-                    {% with mission.parent as game %}
-                    {% if game.is_present %}
-                        {% trans "Resume Mission" %}
-                    {% elif game.is_future %}
-                        {% trans "Preview Mission" %}
-                    {% elif game.is_past %}
-                        {% trans "Review Mission" %}
-                    {% endif %}
-                    {% endwith %}
-                </a>
-            </p>
+<div id="challenges">
+    <div class="wrapper box-shadow-container">
+        <div id="challenge" class="challenge row-fluid">
+        <h1>{{ mission.title }}</h1>
+            {{ mission.description }}
+            {% with mission.parent as game %}
+                {% if game.is_present %}
+                    {% trans "Resume Mission" %}
+                {% elif game.is_future %}
+                    {% trans "Preview Mission" %}
+                {% elif game.is_past %}
+                    {% trans "Review Mission" %}
+                {% endif %}
+            {% endwith %}
 
+        {% if mission.get_previous_mission %}<a href="{{ mission.get_previous_mission.get_absolute_url }}" id="mission-details-prev"></a>{% else %}&nbsp;{% endif %}
+        {% if mission.get_next_mission %}<a href="{{ mission.get_next_mission.get_absolute_url }}" id="mission-details-next"></a>{% else %}&nbsp;{% endif %}
         </div>
-        <div class="span3">
-            <a href="{% url instances:causes:cause_list active_game.slug %}" class="btn btn-primary btn-large">Bank</a><br><br>
-            <a href="" class="btn btn-primary">Community</a>
-            <a href="" class="btn btn-primary">Resources</a><br><br>
-            
-            <div class="well">
-                <h1>Recent Activity</h1>
-                <ul>
-                    <li>Activity</li>
-                    <li>Activity</li>
-                    <li>Activity</li>
-                    
-                </ul>
-            </div>
+        <div id="challenge-discussion">
+            <h2 class="header-discussion">Discussion</h2>
         </div>
-        <div class="span1">
-            {% if mission.get_next_mission %}<a href="{{ mission.get_next_mission.get_absolute_url }}" id="mission-details-next"></a>{% else %}&nbsp;{% endif %}
-
-        </div>
+        {% with challenge.challenge_ptr.get_next_sibling as next_challenge  %}
+            <a id="challenge-next" class="challenge" href="{{ next_challenge.play_url }}"><h3>{{ next_challenge.title }}</h3></a>
+        {% endwith %}
     </div>
 </div>
+
 
 {% if show_demog_form %}
 <div class="modal hide" id="myModal">

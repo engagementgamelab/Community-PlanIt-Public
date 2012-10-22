@@ -16,10 +16,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class MissionDetail(LoginRequiredMixin, 
-                    PlayerMissionStateContextMixin, 
-                    MissionContextMixin, 
-                    DetailView):
+class MissionDetail(LoginRequiredMixin, PlayerMissionStateContextMixin, MissionContextMixin, DetailView):
     model = Mission
     template_name = 'missions/mission_detail.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
@@ -27,7 +24,7 @@ class MissionDetail(LoginRequiredMixin,
     pk_url_kwarg = 'mission_id'
 
     def get_context_data(self, **kwargs):
-        context = super(MissionDetail, self).get_context_data(**kwargs)
+        context = super(MissionDetail, self).get_context_data(mission=self.object, **kwargs)
         return context
 
 mission_detail_view = MissionDetail.as_view()
