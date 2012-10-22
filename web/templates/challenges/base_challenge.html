@@ -7,8 +7,8 @@
     $(function(){
 
         var minimap =  $('.minimap');
-        minimap.find('.window').animate({
-            'margin-left': minimap.find('.challenge.active').position().left + minimap.find('.challenge.active').width()/2 - minimap.find('.window').width()/2
+        minimap.siblings('.window').css({
+            'margin-left': minimap.find('.challenge.active').position().left + minimap.find('.challenge.active').width()/2 - minimap.siblings('.window').width()/2
         });
 
     });
