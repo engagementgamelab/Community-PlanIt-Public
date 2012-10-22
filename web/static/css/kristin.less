@@ -83,6 +83,7 @@ html, body {
 
 	.challenge {
 		width: 48px; height: 72px;
+		margin-bottom: -5px;
 		border: none;
 		background: url('../img/bg-minimap-challenges.png') 0px -72px;
 		&.challenge-building-1 { background-position: -48*1px -72px; }
@@ -200,6 +201,14 @@ html, body {
 
 #challenges {
 	background: url('../img/bg-tile.png');
+	.challenge {
+		padding: 10px;
+
+		.action {
+			top: 260px;
+			right: 10px;
+		}
+	}
 	.challenge-barrier {
 		min-height: 100px !important;
 		color: @k-dark-gray !important;
@@ -240,8 +249,11 @@ html, body {
 			border: 15px solid transparent;
 			border-top: 15px solid @k-light-light-yellow;
 		}
-
 	}
+	.anchor-comments {
+		float: right;
+	}
+
 }
 
 #footer-fat {
