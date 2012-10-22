@@ -21,17 +21,13 @@ class MissionDetail(LoginRequiredMixin,
                     MissionContextMixin, 
                     DetailView):
     model = Mission
-    template_name = 'missions/mission.html'
+    template_name = 'missions/mission_detail.html'
     #queryset = Instance.objects.exclude(is_disabled=True)
     context_object_name = 'mission'
     pk_url_kwarg = 'mission_id'
 
     def get_context_data(self, **kwargs):
         context = super(MissionDetail, self).get_context_data(**kwargs)
-        #print context
-        #mission = kwargs['object']
-        #game = mission.parent
-        #ontext.update({})
         return context
 
 mission_detail_view = MissionDetail.as_view()

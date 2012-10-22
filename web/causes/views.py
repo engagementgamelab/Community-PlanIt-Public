@@ -39,7 +39,7 @@ class BankContextMixin(object):
 
 class CauseGameDetailView(LoginRequiredMixin, MissionContextMixin, DetailView):
     model = Cause
-    template_name = 'causes/cause_game.html'
+    template_name = 'causes/cause_detail_game.html'
     pk_url_kwarg = 'id'
     context_object_name = 'cause'
 
@@ -48,7 +48,7 @@ cause_game_detail_view = CauseGameDetailView.as_view()
 
 class CausePublicDetailView(DetailView):
     model = Cause
-    template_name = 'causes/cause_public.html'
+    template_name = 'causes/cause_detail_public.html'
     pk_url_kwarg = 'id'
     context_object_name = 'cause'
 
