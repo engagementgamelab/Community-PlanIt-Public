@@ -4,7 +4,7 @@
 {% block body_id %}page-causes-list{% endblock %}
 
 {% block content %}
-{{ block.super }}
+{% with 'True' as tab_cause_list %}{{ block.super }}{% endwith %}
 <div id="bank-causes-intro" class="section-intro section-bank-intro">
     <div class="wrapper">
         <h1>Causes in need of your support</h1>

@@ -4,7 +4,7 @@
 {% block body_id %}page-causes-sponsors{% endblock %}
 
 {% block content %}
-{{ block.super }}
+{% with 'True' as tab_sponsor_list %}{{ block.super }}{% endwith %}
 <div id="bank-sponsors-intro" class="section-intro section-bank-intro">
 	<div class="wrapper">
 		<h1>Prizes and Sponsors</h1>

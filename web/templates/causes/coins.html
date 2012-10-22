@@ -4,7 +4,7 @@
 {% block body_id %}page-causes-coins{% endblock %}
 
 {% block content %}
-{{ block.super }}
+{% with 'True' as tab_coins %}{{ block.super }}{% endwith %}
 
 <div id="bank-coins-intro" class="section-intro section-bank-intro">
 	<div class="wrapper">

@@ -269,7 +269,18 @@ html, body {
 	text-align: center;
 	font-size: 0em;
 	background: url('../img/bg-bank-bannisters.png') no-repeat center bottom;
+	overflow: hidden;
+	ul {
+		margin: 0;
+	}
+	li {
+		position: relative;
+		display: inline-block;
+	}
+
 	a {
+		position: relative;
+		z-index: 1;
 		display: inline-block;
 		vertical-align: bottom;
 		width: 180px; height: 120px;
@@ -287,6 +298,14 @@ html, body {
 			background-position: -360px 0;
 			&:hover { background-position: -360px -120px; }
 		}
+	}
+	li.active:before {
+		content: '';
+		position: absolute;
+		width: 100px; height: 100px;
+		bottom: -40px; left: 120px;
+		margin-left: -50px;
+		background: url('../img/bg-sun.png');
 	}
 }
 
