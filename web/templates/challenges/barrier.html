@@ -1,7 +1,20 @@
 {% extends "challenges/base_challenge.html" %}
 {% load i18n avatar %}
 
-{% block content_challenge %}
+{% block content %}
+<div id="challenges">
+    <div class="wrapper box-shadow-container">
+        <div class="row">
+            <div class="challenge-type-special challenge-type-mission span8">
+                Hello again! Welcome to Mission 1, {{ mission.title }} . We’re all very eager to hear your thoughts about the city! If you haven’t already, I’d encourage you to watch the mission intro video. Need a refresher course on how to play? If you know how to roll, just skip right to Challenge 1!
+            </div>
+        </div>
+        {% with challenge.challenge_ptr.get_next_sibling as next_challenge  %}
+            <a id="challenge-next" class="challenge" href="{{ next_challenge.play_url }}"><h3>{{ next_challenge.title }}</h3></a>
+        {% endwith %}
+    </div>
+</div>
+
     <div>
         <h2>{{ challenge.question|safe }}</h2>
 

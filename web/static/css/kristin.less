@@ -64,8 +64,6 @@ html, body {
 
 		}
 	}
-
-
 }
 
 .minimap {
@@ -201,6 +199,7 @@ html, body {
 	background: url('../img/bg-tile.png');
 
 	.mission {
+		background: none;
 		&:before {
 			content: '';
 			position: absolute;
@@ -211,7 +210,7 @@ html, body {
 	}
 
 	.challenge {
-		padding: 10px;
+		// padding: 10px;
 		.action {
 			top: 260px;
 			right: 10px;
@@ -264,9 +263,17 @@ html, body {
 	}
 }
 
-/* Challenge-Detail View Styles */
+/* Challenge-List-View Styles */
+#page-challenge-list {
+	#challenges {
+		.challenge {
+			padding: 10px;
+		}		
+	}
+}
+/* Challenge-Detail-View Styles */
 #page-challenge-detail, #page-mission-detail {
-	.challenge-type-mission {
+	.challenge-type-special {
 		position: relative;
 		float: right;
 		padding: 20px;
@@ -291,7 +298,13 @@ html, body {
 			background: url('../img/bg-challenges-gnomes.png') 0px 0px;
 		}
 	}
+
+	.challenge-type-mission {
+		&:after { background: url('../img/bg-challenges-gnomes.png') 0px 0px; }		
+	}
 }
+
+
 
 #footer-fat {
 	margin: 0;
