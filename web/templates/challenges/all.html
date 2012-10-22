@@ -51,13 +51,13 @@
 
                         {% else %}
                             <h3>{{ challenge.title }}</h3>
-{# 
+                            {% comment %}
                             {% thumbnail challenge.thumbnail "300x300" crop="center" as im %}
                             <img src="{{ im.url }}">
                             {% empty %}
                             <img class="challenge-image" src="http://placehold.it/300x300" width="300" height="300" alt="">
                             {% endthumbnail %}
- #}
+                            {% endcomment %}
                             <span class="badge">{{ challenge_type }}</span>
                             <div class="meta"><i class="glyphicon-credit"></i> {% ifequal challenge.challenge_type_shortcut 'final-barrier' %}?{% else %}{{ coins }}{% endifequal %} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
                             <div class="action">
