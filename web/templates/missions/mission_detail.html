@@ -25,35 +25,45 @@
     {% endif %}
 {% endblock extra_head %}
 
-{% block body_id %}page-mission-details{% endblock %}
+{% block body_id %}page-mission-detail{% endblock %}
 
 {% block content %}
 {{ block.super }}
 
 <div id="challenges">
     <div class="wrapper box-shadow-container">
-        <div id="challenge" class="challenge row-fluid">
-        <h1>{{ mission.title }}</h1>
-            {{ mission.description }}
-            {% with mission.parent as game %}
-                {% if game.is_present %}
-                    {% trans "Resume Mission" %}
-                {% elif game.is_future %}
-                    {% trans "Preview Mission" %}
-                {% elif game.is_past %}
-                    {% trans "Review Mission" %}
-                {% endif %}
-            {% endwith %}
-
-        {% if mission.get_previous_mission %}<a href="{{ mission.get_previous_mission.get_absolute_url }}" id="mission-details-prev"></a>{% else %}&nbsp;{% endif %}
-        {% if mission.get_next_mission %}<a href="{{ mission.get_next_mission.get_absolute_url }}" id="mission-details-next"></a>{% else %}&nbsp;{% endif %}
-        </div>
-        <div id="challenge-discussion">
-            <h2 class="header-discussion">Discussion</h2>
+        <div class="row">
+            <div class="challenge-type-mission span8">
+                Hello again! Welcome to Mission 1, {{ mission.title }} . We’re all very eager to hear your thoughts about the city! If you haven’t already, I’d encourage you to watch the mission intro video. Need a refresher course on how to play? If you know how to roll, just skip right to Challenge 1!
+            </div>
         </div>
         {% with challenge.challenge_ptr.get_next_sibling as next_challenge  %}
             <a id="challenge-next" class="challenge" href="{{ next_challenge.play_url }}"><h3>{{ next_challenge.title }}</h3></a>
         {% endwith %}
+    </div>
+</div>
+<div class="section-mission-detail">
+    <div class="wrapper">
+        <div class="row">
+            <div class="span4">
+                <h1>{{ mission.title }}</h1>
+                <h3>Goal:</h3>
+                {{ mission.description }}
+            
+                {% with mission.parent as game %}
+                    {% if game.is_present %}
+                        {% trans "Resume Mission" %}
+                    {% elif game.is_future %}
+                        {% trans "Preview Mission" %}
+                    {% elif game.is_past %}
+                        {% trans "Review Mission" %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <div class="span8">
+                <img src="http://placehold.it/620x300" width="620" height="300" alt="">
+            </div>
+        </div>
     </div>
 </div>
 
