@@ -142,6 +142,62 @@ html, body {
 }
 
 
+.carousel {
+    
+    .carousel-controls {
+        width: 48px;
+        height: 48px;
+        margin-top: -24px;
+        top: 50%;
+        background: #000;
+        border: none;
+        cursor: pointer;
+        z-index: 2;
+        .opacity(0.15);
+        .border-radius(100px);
+        -moz-transition: opacity 0.3s linear;
+        -webkit-transition: opacity 0.3s linear;
+        transition: opacity 0.3s linear;
+        &:hover {
+        	background: #000;
+        	.opacity(0.75);
+        }
+        &.carousel-controls-previous {
+            left: 10px;
+            &:after {
+            	content: '';
+            	position: absolute;
+            	width: 0; height: 0;
+            	top: 50%; left: 50%;
+            	margin-top: -10px; margin-left: -16px;
+            	border: 10px solid transparent;
+            	border-right: 10px solid white;
+            }
+        }
+        &.carousel-controls-next {
+            right: 10px;
+            &:after {
+            	content: '';
+            	position: absolute;
+            	width: 0; height: 0;
+            	top: 50%; left: 50%;
+            	margin-top: -10px; margin-left: -3px;
+            	border: 10px solid transparent;
+            	border-left: 10px solid white;
+
+            }
+        }
+    }
+
+    .carousel-clip {
+        // border: 1px dashed #ccc;
+        .carousel-slide{
+            width: 10000%;
+            margin-left: -20px;
+        }
+    }
+}    
+
 #challenges {
 	background: url('../img/bg-tile.png');
 	.challenge-barrier {
@@ -324,6 +380,17 @@ html, body {
 		&:after {
 			border-top: 2px solid lighten(@k-dark-gray, 10%);
 			border-right: 2px solid lighten(@k-dark-gray, 10%);
+		}
+	}
+	&.anchor-comments-white {
+		background: white;
+		color: @k-dark-gray;
+		&:after {
+			border-top: 2px solid white;
+			border-right: 2px solid white;
+		}
+		&:hover {
+
 		}
 	}
 }
