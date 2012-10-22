@@ -4,22 +4,22 @@ from decimal import Decimal
 from operator import attrgetter
 
 from cache_utils.decorators import cached
-#from stream import utils as stream_utils
 
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.datastructures import SortedDict
+from django.dispatch import receiver
 from django.db import models
 from django.conf import settings
-#from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 
 from web.instances.models import Instance, BaseTreeNode
 from web.challenges.models import (
-        Challenge, 
-        BarrierChallenge, 
+        Challenge,
+        BarrierChallenge,
         FinalBarrierChallenge,
 )
 
-#from .managers import MissionManager
+from .managers import MissionManager
 
 import logging
 log = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class Mission(BaseTreeNode):
     challenge_coin_value = models.IntegerField(verbose_name="coin value for challenge", default=0)
     created_date = models.DateTimeField(auto_now_add=True)
 
-    #objects = MissionManager()
+    objects = MissionManager()
 
     @property 
     def start_date(self):
@@ -67,6 +67,14 @@ class Mission(BaseTreeNode):
     @property
     def is_future(self):
         return datetime.now() <= self.start_date
+
+    @property
+    def challenges(self):
+        return self.challenges_cached(self.pk)
+
+    @cached(60*60*24)
+    def challenges_cached(self, mission_id):
+        return Challenge.objects.get_real_instances(self.get_children())
 
     def __unicode__(self):
         return self.title
@@ -123,24 +131,16 @@ class Mission(BaseTreeNode):
 
         return d
 
-#stream_utils.register_target(Mission)
+@receiver(post_delete, dispatch_uid='on_challenge_update')
+def invalidate_mission_cache_post_del(sender, **kwargs):
+    instance = kwargs.pop('instance')
+    if isinstance(instance, Challenge):
+        print 'challenge changed! invalidate `Mission.challenges`'
+        Mission.challenges_cached.invalidate(instance.parent.pk)
 
-#ALTER TABLE stream_action ADD COLUMN action_object_mission_id integer;
-#stream_utils.register_action_object(Mission)
-
-# invalidate cache for 'missions' group
-def invalidate_mission(sender, **kwargs):
-    activity = kwargs.pop('instance')
-    if activity:
-        mission_id = activity.mission.pk
-        Mission.get_challenges_cached.invalidate(mission_id)
-        Mission.get_player_submitted_activities_cached.invalidate(mission_id)
-
-#post_save.connect(invalidate_mission, Mission)
-#post_save.connect(invalidate_prof_per_instance, Mission)
-
-#def invalidate_activities_for_mission(sender, **kwargs):
-#    activity = kwargs.get('instance')
-#    log.debug("on_delete. invaliding activities_for_mission %s" %  activity)
-#    Mission.objects.activities_for_mission(slug=activity.mission.slug)
-
+@receiver(post_save, dispatch_uid='on_challenge_update')
+def invalidate_mission_cache_post_save(sender, **kwargs):
+    instance = kwargs.pop('instance')
+    if isinstance(instance, Challenge):
+        print 'challenge changed! invalidate `Mission.challenges`'
+        Mission.challenges_cached.invalidate(instance.parent.pk)

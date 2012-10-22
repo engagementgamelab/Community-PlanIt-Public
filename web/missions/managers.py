@@ -1,11 +1,14 @@
+from polymorphic_tree.managers import PolymorphicMPTTModelManager
+from cache_utils.decorators import cached
 
-"""
-class MissionManager(TreeManager):
 
-    @cached(60*60*24, 'missions_for_instance')
+class MissionManager(PolymorphicMPTTModelManager):
+
+    @cached(60*60*24)
     def for_instance(self, instance):
-        return self.filter(instance=instance)
+        return self.filter(parent=instance)
 
+    """
     @cached(60*60*24, 'missions')
     def latest_by_instance(self, instance):
         missions_for_instance = self.filter(instance=instance)
@@ -39,5 +42,5 @@ class MissionManager(TreeManager):
         now = datetime.datetime.now()
         qs = self.filter(instance__pk=instance_id, start_date__lte=now, end_date__gte=now).order_by('start_date')
         return qs
-"""
 
+    """
