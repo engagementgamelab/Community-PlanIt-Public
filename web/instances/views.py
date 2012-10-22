@@ -47,15 +47,15 @@ class InstanceDetailView(DetailView):
         log.debug("is auth? %s" % self.request.user.is_authenticated())
 
         if game.is_future:
-            self.template_name = 'instances/instance_future.html'
+            self.template_name = 'instances/instance_detail_future.html'
             #post_reg = bool(self.request.GET.get('post-reg'))
 
         elif game.is_past:
-            self.template_name = 'instances/instance_past.html'
+            self.template_name = 'instances/instance_detail_past.html'
             context['first_mission'] = game.missions[0]
 
         elif game.is_present:
-            self.template_name = 'instances/instance_present.html'
+            self.template_name = 'instances/instance_detail_present.html'
 
             if self.request.user.is_authenticated():
                 # if user is logged in but the active game is not set in the
@@ -82,7 +82,7 @@ instance_detail_view = InstanceDetailView.as_view()
 
 class InstanceListView(ListView):
     model = Instance
-    template_name = "instances/all.html"
+    template_name = "instances/instance_list.html"
 
     #def get_context_data(self, **kwargs):
     #    context = super(InstanceListView, self).get_context_data(
