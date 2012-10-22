@@ -8,8 +8,8 @@
             coordinates: [0,0],
             zoom: 16,
             markers: [],
-            add: ".add",
-            rm: ".rm",
+            add: ".add-marker",
+            rm: ".remove-marker",
             submit: ".submit",
             autocomplete: []
         }, opts);

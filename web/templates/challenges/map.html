@@ -1,35 +1,6 @@
 {% extends "challenges/base_challenge.html" %}
 {% load i18n avatar gmap %}
 
-{% block content_challenge %}
-    <div>
-        <h2>{{ challenge.question|safe }}</h2>
-
-        {% block response %}
-        <form id="id_activity-form" enctype="multipart/form-data" action="" method="post" class="narrow">{% csrf_token %}
-            <div class="map-controls form-inline">
-                <input type="text" name="google_search" id="google_search" placeholder="Search for a company or an address" />
-                <button class="btn btn-primary add">{% trans "Add Point" %}</button>
-                <button class="btn btn-primary rm">{% trans "Clear All Points" %}</button>
-            </div>
-            
-            <div>
-                {% for x, lat, lon in init_coords %}
-                    <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
-                {% endfor %}
-                {{ form.map.errors }}
-
-                <div id="map" class="google-map" data-type="Point" width="200" height="600"></div>
-
-            </div>
-        </form>
-        {% endblock %}
-    </div>
-{% endblock %}
-
-
-
-
 {% block js %}
     {{ block.super }}
     <script src="http://maps.google.com/maps/api/js?sensor=false&libraries=places" type="text/javascript"></script>
@@ -41,3 +12,36 @@
         });
     </script>
 {% endblock %}
+
+{% block content_challenge %}
+    <div>
+        <h2>{{ challenge.question|safe }}</h2>
+
+        {% block response %}
+        <form id="id_activity-form" enctype="multipart/form-data" action="" method="post" class="narrow">{% csrf_token %}
+            <input type="hidden" name="form" value="map">
+            <input type="hidden" id="max_points_input" name="max_points_input" value="{{ challenge.maxNumMarkers }}">
+
+            <div class="map-controls form-inline">
+                <input type="text" name="google_search" id="google_search" placeholder="Search for a company or an address" />
+                <button class="btn btn-primary add-marker">{% trans "Add Point" %}</button>
+                <button class="btn btn-primary remove-marker">{% trans "Clear All Points" %}</button>
+            </div>
+            
+            <div>
+                {% for x, lat, lon in init_coords %}
+                    <input type="hidden" id="init_coords{{x}}" name="init_coords{{x}}" lat="{{lat}}" lon="{{lon}}"/>
+                {% endfor %}
+                {{ form.map.errors }}
+                <div id="map" class="google-map" data-type="Point" width="400" height="600"></div>
+            </div>
+
+            <input type="submit" id="id_activity-btn-submit" class="btn submit" value="Submit" />
+
+        </form>
+        {% endblock %}
+    </div>
+{% endblock %}
+
+
+
