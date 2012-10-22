@@ -1,7 +1,7 @@
 {% extends 'causes/base.html' %}
 {% load i18n thumbnail %}
 
-{% block body_id %}page-causes-bank{% endblock %}
+{% block body_id %}page-causes-sponsors{% endblock %}
 
 {% block content %}
 {{ block.super }}
@@ -15,5 +15,18 @@
 	<h2>A ${{ active_game.prize }} cash prize to each of the top 3 causes!</h2>
 
 	<h3>The Sponsors</h3>
+
+	{# {% for sponsor in sponsors %} #}
+	<div class="row">
+        <a class="sponsor span4" href=""><img class="challenge-image" src="http://placehold.it/300x150" width="300" height="150" alt=""></a>
+        <a class="sponsor span4" href=""><img class="challenge-image" src="http://placehold.it/300x150" width="300" height="150" alt=""></a>
+        <a class="sponsor span4" href=""><img class="challenge-image" src="http://placehold.it/300x150" width="300" height="150" alt=""></a>
+    </div>
+    <br>
+    <div class="row">
+        <a class="sponsor span4" href=""><img class="challenge-image" src="http://placehold.it/300x150" width="300" height="150" alt=""></a>
+    </div>
+	{# {% endfor %} #}
+	<br>
 </div>
 {% endblock %}
