@@ -110,6 +110,10 @@ INSTALLED_APPS = (
     #'template_repl',
     'cache_utils',
     'south',
+
+    #south installs its own test command that turns off migrations during testing.
+    #Make sure that django-nose comes after south
+    'django_nose',
 )
 
 LOGIN_URL = '/accounts/login'
@@ -259,6 +263,9 @@ HEATMAP_THRESHOLD = 2
 #
 SKIP_SOUTH_TESTS = True
 SOUTH_TESTS_MIGRATE = False
+
+#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = 'tddspry.django.runner.TestSuiteRunner'
 
 #
 # Google Maps Field settings 
