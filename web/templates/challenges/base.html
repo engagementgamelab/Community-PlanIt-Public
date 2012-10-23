@@ -133,7 +133,7 @@
 
 {% block content %}
 <div class="wrapper">
-    {% with mst.mission as mission %}
+    {% with mst.this_mission as mission %}
     <h1>{{ mission }}</h1>
     {% endwith %}
 </div>
@@ -146,10 +146,10 @@
             {% for challenge in challenges %}
                 
                 {% if forloop.first %}
-                <a href="{% url instances:missions:challenges:challenges challenge.parent.parent.slug challenge.parent.id %}" class="challenge mission {% ifequal challenge.parent mission %}active{% endifequal %}"></a>
+                <a href="{% url instances:missions:challenges:challenges mst.this_mission.game.slug challenge.this_mission.id %}" class="challenge mission {% ifequal challenge.this_mission mission %}active{% endifequal %}"></a>
                 {% endif %}
 
-                <a href="{% url instances:missions:challenges:challenges mission.parent.slug mission.id %}#{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% ifequal current_challenge.id challenge.id %}active{% endifequal %} {% if challenge in mst.locked.all %}challenge-locked{% endif %} {% if challenge in mst.completed.all %}completed{% else %}not-completed{% endif %} {% cycle 'challenge-building-1' 'challenge-building-2' 'challenge-building-3' 'challenge-building-4' %}" data-challenge-id="{{ challenge.id }}">
+                <a href="{% url instances:missions:challenges:challenges mission.game.slug mission.id %}#{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% ifequal current_challenge.id challenge.id %}active{% endifequal %} {% if challenge in mst.locked.all %}challenge-locked{% endif %} {% if challenge in mst.completed.all %}completed{% else %}not-completed{% endif %} {% cycle 'challenge-building-1' 'challenge-building-2' 'challenge-building-3' 'challenge-building-4' %}" data-challenge-id="{{ challenge.id }}">
                 </a>
             {% endfor %}
         {% endwith %}

@@ -57,14 +57,23 @@ class Challenge(BaseTreeNode):
         return "%s [%s]" % (self.title, self.challenge_type_shortcut)
 
     @property
-    def get_mission(self):
+    def mission(self):
+        return self.mission_cached(self.pk)
+
+    @cached(60*60*24*365)
+    def mission_cached(self, challenge_id):
         return self.parent
 
     @property
-    def get_instance(self):
+    def game(self):
+        return self.game_cached(self.pk)
+
+    @cached(60*60*24*365)
+    def game_cached(self, challenge_id):
         return self.parent.parent
 
     @property
+    @cached(60*60*24*365)
     def challenge_type_shortcut(self):
         return slugify(self.get_challenge_type_display())
 
@@ -72,14 +81,14 @@ class Challenge(BaseTreeNode):
     def play_url(self):
         return reverse(
                 'instances:missions:challenges:'+self.challenge_type_shortcut+'-play',
-                args=(self.parent.parent.slug, self.parent.pk, self.pk)
+                args=(self.game.slug, self.mission.pk, self.pk)
         )
 
     @property
     def overview_url(self):
         return reverse(
                 'instances:missions:challenges:'+self.challenge_type_shortcut+'-overview',
-                args=(self.parent.parent.slug, self.parent.pk, self.pk)
+                args=(self.game.slug, self.mission.pk, self.pk)
         )
 
 
@@ -109,7 +118,7 @@ class BarrierChallenge(Challenge):
     def fifty_fifty_url(self):
         return reverse(
                 'instances:missions:challenges:'+self.challenge_type_shortcut+'-fifty-fifty',
-                args=(self.parent.parent.slug, self.parent.pk, self.pk)
+                args=(self.game.slug, self.parent.pk, self.pk)
         )
 
 

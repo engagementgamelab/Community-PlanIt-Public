@@ -192,7 +192,7 @@ class ChallengeListView(LoginRequiredMixin, PlayerMissionStateContextMixin, Miss
                                                 instance=self.mission.parent,
             )
         except UserProfilePerInstance.DoesNotExist:
-            raise Http404("You are not registered for Game <%s>" % self.mission.parent.title)
+            raise Http404("You are not registered for Game <%s>" % self.mission.game.title)
 
         return super(ChallengeListView, self).\
                 dispatch(request, *args, **kwargs)
