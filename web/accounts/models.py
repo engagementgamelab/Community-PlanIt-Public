@@ -189,6 +189,14 @@ class PlayerMissionState(models.Model):
                     self.unlocked.all():
                 return barrier
 
+    @property
+    def this_mission(self):
+        return self.this_mission_cached(self.mission.pk)
+
+    @cached(60*60*24*365)
+    def this_mission_cached(self, mission_id):
+        return self.mission
+
 
 class UserProfile(models.Model):
 
