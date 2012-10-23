@@ -46,7 +46,7 @@ class MissionDetailWithDemographicForm(MissionDetail, MissionContextMixin, FormV
         mission = kwargs['object']
         # the current game is being used by the DemographicForm to set
         # select variants
-        self.initial['current_game'] = mission.parent
+        self.initial['current_game'] = mission.game
 
         context['show_demog_form'] = True
 

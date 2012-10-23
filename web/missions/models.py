@@ -32,11 +32,11 @@ class Mission(BaseTreeNode):
     challenge_coin_value = models.IntegerField(verbose_name="coin value for challenge", default=0)
     created_date = models.DateTimeField(auto_now_add=True)
 
-    objects = MissionManager()
+    #objects = MissionManager()
 
     @property 
     def start_date(self):
-        for dt, m in self.parent._missions_by_start_date.\
+        for dt, m in self.game._missions_by_start_date.\
                 iteritems():
             if m == self:
                 return dt
@@ -44,7 +44,7 @@ class Mission(BaseTreeNode):
     @property 
     def end_date(self):
         return self.start_date + \
-            timedelta(days=self.parent.days_for_mission)
+            timedelta(days=self.game.days_for_mission)
 
     @property
     def ends_in_days(self):
@@ -58,7 +58,7 @@ class Mission(BaseTreeNode):
 
     @property
     def is_active(self):
-        return self == self.parent.active_mission
+        return self == self.game.active_mission
 
     @property
     def is_expired(self):
@@ -67,6 +67,11 @@ class Mission(BaseTreeNode):
     @property
     def is_future(self):
         return datetime.now() <= self.start_date
+
+    @property
+    @cached(60*60*24*365)
+    def game(self):
+        return self.parent
 
     @property
     def challenges(self):
@@ -82,7 +87,7 @@ class Mission(BaseTreeNode):
     @models.permalink
     def get_absolute_url(self):
         return ('instances:missions:mission', (), {
-            'game_slug': self.parent.slug,
+            'game_slug': self.game.slug,
             'mission_id': self.pk
         })
 
