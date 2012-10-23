@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 
 from dateutil.rrule import *
 
-#from stream import utils as stream_utils
 from cache_utils.decorators import cached
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
 from polymorphic_tree.managers import PolymorphicMPTTModelManager
@@ -135,6 +134,12 @@ class Instance(BaseTreeNode):
 
     @property
     def missions(self):
+        return self.missions_cached(self.pk)
+
+    #TODO invalidate this cache 
+    #     in case missions are added to game
+    @cached(60*60*24)
+    def missions_cached(self, game_id):
         from web.missions.models import Mission
         return Mission.objects.filter(parent=self)
 
@@ -169,6 +174,10 @@ class Instance(BaseTreeNode):
 
     @property
     def active_mission(self):
+        return self.active_mission_cached(self.pk)
+
+    @cached(60*60)
+    def active_mission_cached(self, game_id):
         return self._missions_by_start_date.get(
                 self._mission_recurrences.before(
                     datetime.now(), inc=True)
@@ -201,4 +210,3 @@ class Instance(BaseTreeNode):
             self.slug = slugify(self.title)[:50]
         super(Instance, self).save()
 
-#stream_utils.register_target(Instance)
