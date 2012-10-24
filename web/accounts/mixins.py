@@ -20,15 +20,13 @@ class PlayerMissionStateContextMixin(object):
 
         up = self.request.user.get_profile()
         try:
-            my_game_profile = UserProfilePerInstance.objects.get(
+            ctx['profile_per_instance'] = UserProfilePerInstance.objects.get(
                                         user_profile=up,
-                                        instance=mission.parent,
+                                        instance=mission.game,
             )
             game_profile_exists = True
         except UserProfilePerInstance.DoesNotExist:
             game_profile_exists = False
-        else:
-            ctx['profile_per_instance'] = my_game_profile 
 
         # retrieve or initialize mission state
         try:
