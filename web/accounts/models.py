@@ -11,6 +11,7 @@ from stream.models import Action
 from sorl.thumbnail import ImageField
 
 from django.conf import settings
+from django.db.models import Q
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -122,21 +123,38 @@ class PlayerMissionState(models.Model):
 
     user = models.ForeignKey(User, verbose_name=_('user'), related_name="mission_states")
     mission = models.ForeignKey(Mission, related_name='mission_states')
-    locked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_locked')
-    unlocked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_unlocked')
-    completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
-    barriers_fifty_fifty = models.ManyToManyField(Challenge, blank=True, null=True, related_name='barriers_fifty_fifty')
+    #locked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_locked')
+    #unlocked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_unlocked')
+    #completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
+    #barriers_fifty_fifty = models.ManyToManyField(Challenge, blank=True, null=True, related_name='barriers_fifty_fifty')
+
+    locked = models.CommaSeparatedIntegerField(max_length=200, blank=True, default='')
+    unlocked = models.CommaSeparatedIntegerField(max_length=200, blank=True, default='')
+    completed = models.CommaSeparatedIntegerField(max_length=200, blank=True, default='')
+    barriers_fifty_fifty = models.CommaSeparatedIntegerField(max_length=200, blank=True, default='')
+
     coins = models.IntegerField(default=0)
 
     objects = PlayerMissionStateManager()
 
+    def all_x_foos(self, fld_name, val):
+        val = str(val)
+        kw1 = {'{0}__startswith'.format(fld_name) : val+','}
+        kw2 = {'{0}__endswith'.format(fld_name) : val+','}
+        kw3 = {'{0}__contains'.format(fld_name) : ',{0},'.format(val)}
+        kw4 = {'{0}__exact'.format(fld_name) : val}
+        return PlayerMissionState.objects.filter(
+                Q(**kw1) | Q(**kw2) | Q(**kw3) | Q(**kw4)
+        )
+
     def __unicode__(self):
         return "Mission: %s, %s unlocked, %s locked, %s completed, %s coins" %(
                                             self.mission.__unicode__(),
-                                            self.unlocked.count(),
-                                            self.locked.count(),
-                                            self.completed.count(),
+                                            len(self.unlocked.split(',')),
+                                            len(self.locked.split(',')),
+                                            len(self.completed.split(',')),
                                             self.coins,)
+        return "player mission state..."
 
     class Meta:
         unique_together = ('mission', 'user')
