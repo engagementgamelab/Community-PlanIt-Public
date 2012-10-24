@@ -198,7 +198,8 @@ class ChallengeListView(LoginRequiredMixin, PlayerMissionStateContextMixin, Miss
                 dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Challenge.objects.get_real_instances(self.mission.get_children())
+        #return Challenge.objects.get_real_instances(self.mission.get_children())
+        return self.mission.challenges
 
     def get_context_data(self, *args, **kwargs):
         ctx = super(ChallengeListView, self).\
