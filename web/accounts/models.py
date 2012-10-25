@@ -156,6 +156,11 @@ class PlayerMissionState(models.Model):
         )
 
     def init_state(self):
+        """
+        called by the PlayerMissionState custom manager.
+        initialized the locked, unlocked, completed lists.
+        should unlock the first block of challenges, excluding the barrier
+        """
 
         sorted_challenges = self.mission.challenges_as_sorteddict
         self.locked = []
@@ -169,12 +174,9 @@ class PlayerMissionState(models.Model):
                 # is to earn 3x the coins per one challenge
                 for challenge in sorted_challenges.get(barrier):
                     self.unlocked.append(challenge.pk)
-                    print 'unlocking', self.locked, self.unlocked
             else:
                 for challenge in sorted_challenges.get(barrier):
                     self.locked.append(challenge.pk)
-                    print 'locking', self.locked, self.unlocked
-        print self.locked, self.unlocked
         self.save()
 
     @property
