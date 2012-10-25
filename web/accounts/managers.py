@@ -64,22 +64,7 @@ class PlayerMissionStateManager(models.Manager):
 
         mission = kwargs.get('mission')
         obj = super(PlayerMissionStateManager, self).create(*args, **kwargs)
-        sorted_challenges = mission.challenges_as_sorteddict
-        #import pprint
-        #pp = pprint.PrettyPrinter(indent=4)
-        #pp.pprint(dict(sorted_challenges))
-        for i, barrier in enumerate(sorted_challenges):
-            if i == 0:
-                # Lock the first barrier
-                # The rule for a barrier to be unlocked
-                # is to earn 3x the coins per one challenge
-                obj.locked.add(barrier)
-                for challenge in sorted_challenges.get(barrier):
-                    obj.unlocked.add(challenge)
-            else:
-                obj.locked.add(barrier)
-                for challenge in sorted_challenges.get(barrier):
-                    obj.locked.add(challenge)
+        obj.init_state()
         return obj
 
 

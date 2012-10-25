@@ -137,16 +137,6 @@ class PlayerMissionState(models.Model):
 
     objects = PlayerMissionStateManager()
 
-    def all_x_foos(self, fld_name, val):
-        val = str(val)
-        kw1 = {'{0}__startswith'.format(fld_name) : val+','}
-        kw2 = {'{0}__endswith'.format(fld_name) : val+','}
-        kw3 = {'{0}__contains'.format(fld_name) : ',{0},'.format(val)}
-        kw4 = {'{0}__exact'.format(fld_name) : val}
-        return PlayerMissionState.objects.filter(
-                Q(**kw1) | Q(**kw2) | Q(**kw3) | Q(**kw4)
-        )
-
     def __unicode__(self):
         return "Mission: %s, %s unlocked, %s locked, %s completed, %s coins" %(
                                             self.mission.__unicode__(),
@@ -159,12 +149,64 @@ class PlayerMissionState(models.Model):
     class Meta:
         unique_together = ('mission', 'user')
 
+    #def state_as_str(self, state_name):
+    #    return str(state).replace('[', '').replace(']', '')
+
+    def csvfield_as_list(self, fld_value):
+        if ',' in fld_value:
+            return map(lambda x: int(x.strip()), fld_value.split(','))
+        return []
+
+    def update_challenge_state(self, action, fld, id):
+        fld_value = getattr(self, fld)
+        print fld, "before update: ", fld_value
+        state_list = self.csvfield_as_list(fld_value)
+        if action == 'add':
+            state_list.append(id)
+            print 'added to %s %s' %(fld, id)
+
+        if action == 'remove':
+            state_list.remove(id)
+            print 'removed to %s %s' %(fld, id)
+
+        setattr(self, fld, str(state_list).replace('[', '').replace(']', ''))
+        print fld, "after update: ", getattr(self, fld)
+
+    def all_x_foos(self, fld_name, val):
+        val = str(val)
+        kw1 = {'{0}__startswith'.format(fld_name) : val+','}
+        kw2 = {'{0}__endswith'.format(fld_name) : val+','}
+        kw3 = {'{0}__contains'.format(fld_name) : ',{0},'.format(val)}
+        kw4 = {'{0}__exact'.format(fld_name) : val}
+        return PlayerMissionState.objects.filter(
+                Q(**kw1) | Q(**kw2) | Q(**kw3) | Q(**kw4)
+        )
+
+    def init_state(self):
+
+        sorted_challenges = self.mission.challenges_as_sorteddict
+        self.locked = self.unlocked = self.completed = u''
+        for i, barrier in enumerate(sorted_challenges):
+            if i == 0:
+                # Lock the first barrier
+                # The rule for a barrier to be unlocked
+                # is to earn 3x the coins per one challenge
+                self.update_challenge_state('add', 'locked', barrier.pk)
+                for challenge in sorted_challenges.get(barrier):
+                    self.update_challenge_state('add', 'unlocked', challenge.pk)
+            else:
+                self.update_challenge_state('add', 'locked', barrier.pk)
+                for challenge in sorted_challenges.get(barrier):
+                    self.update_challenge_state('add', 'locked', challenge.pk)
+        self.save()
+
     @property
     def is_mission_completed(self):
         """ consider completed mission if at 
             least one Final Barrier Challenge was completed"""
-        from web.challenges.models import FinalBarrierChallenge
-        return self.completed.instance_of(FinalBarrierChallenge).exists()
+        return False
+        #from web.challenges.models import FinalBarrierChallenge
+        #return self.completed.instance_of(FinalBarrierChallenge).exists()
 
     def unlock_next_block(self):
         """ a barrier has been completed. unlock next block of challenges"""
@@ -200,20 +242,42 @@ class PlayerMissionState(models.Model):
 
 
     @property
-    def next_barrier(self):
-        for barrier in Challenge.objects.filter(parent=self.mission).\
-                instance_of(BarrierChallenge):
-            if barrier.basetreenode_ptr.get_previous_sibling().get_real_instance() in \
-                    self.unlocked.all():
-                return barrier
-
-    @property
     def this_mission(self):
         return self.this_mission_cached(self.mission.pk)
 
     @cached(60*60*24*365)
     def this_mission_cached(self, mission_id):
         return self.mission
+
+    def process_completed_challenge(self, challenge_type=None, answer=None):
+        # barrier
+        if challenge_type == 'barrier':
+            # if chosen answer is incorrect, subtract coins
+            if answer.selected.is_barrier_correct_answer == False:
+                self.coins -= self.this_mission.challenge_coin_value
+            self.unlock_next_block()
+
+        # final barrier
+        elif challenge_type == 'final_barrier':
+            pass
+
+        # regular challenge
+        else:
+            self.coins += self.this_mission.challenge_coin_value
+            # if earned coins for this mission is 3x the challenge_coin_value  
+            # then unlock this blocks barrier
+            if self.coins <=  self.this_mission.challenge_coin_value  * 3:
+
+                def next_barrier(self):
+                    for barrier in Challenge.objects.filter(parent=self.this_mission).\
+                            instance_of(BarrierChallenge):
+                        if barrier.basetreenode_ptr.get_previous_sibling().get_real_instance() in \
+                                self.unlocked.all():
+                            return barrier
+
+                next_barrier = next_barrier()
+                self.locked.remove(next_barrier)
+                self.unlocked.remove(next_barrier)
 
 
 class UserProfile(models.Model):
@@ -286,35 +350,27 @@ def update_player_mission_state(sender, **kwargs):
     instance = kwargs.get('instance')
     if  kwargs.get('created') == True and isinstance(instance, Answer):
         answer = instance
-
-        print answer
-        print answer.challenge
+        #print answer
+        #print answer.challenge
 
         challenge = answer.challenge
-        mission = challenge.parent
+        mission = challenge.mission
         mst =  mission.mission_states.get(user=answer.user)
-
-        # append to the completed challenges
-        mst.completed.add(challenge)
 
         # increment the coins count for non-barrier challenges
         if challenge.challenge_type != Challenge.BARRIER:
-            mst.coins += mission.challenge_coin_value
-            # if earned coins for this mission is 3x the challenge_coin_value  
-            # then unlock this blocks barrier
-            if mst.coins <=  mission.challenge_coin_value  * 3:
-                next_barrier = mst.next_barrier
-                mst.locked.remove(next_barrier)
-                mst.unlocked.remove(next_barrier)
+            mst.process_completed_challenge()
+
         # if barrier has been played, unlock next block of challenges
         elif challenge.challenge_type == Challenge.BARRIER:
-            # if chosen answer is incorrect, subtract coins
-            if answer.selected.is_barrier_correct_answer == False:
-                mst.coins -= mission.challenge_coin_value
-            mst.unlock_next_block()
+            mst.process_completed_challenge(challenge_type='barrier', answer=answer)
+
         # if final barrier has been played, ....
         elif challenge.challenge_type == Challenge.FINAL_BARRIER:
-            pass
+            mst.process_completed_challenge(challenge_type='final_barrier', answer=answer)
+
+        # append to the completed challenges
+        #mst.completed.add(challenge)
 
         mst.save()
 post_save.connect(update_player_mission_state, dispatch_uid='update_mission_state')
