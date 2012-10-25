@@ -3,8 +3,8 @@ import datetime
 import os.path
 
 from gmapsfield.fields import GoogleMapsField
-#from stream import utils as stream_utils
 from cache_utils.decorators import cached
+from polymorphic import PolymorphicModel
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -53,8 +53,11 @@ class Challenge(BaseTreeNode):
     created_date = models.DateTimeField(auto_now_add=True)
 
     #objects = ChallengeManager()
+
     def __unicode__(self):
-        return "%s [%s]" % (self.title, self.challenge_type_shortcut)
+        #if self.challenge_type is not None:
+        #    return "%s [%s]" % (self.title, self.challenge_type_shortcut)
+        return self.title
 
     @property
     def mission(self):
@@ -75,20 +78,30 @@ class Challenge(BaseTreeNode):
     @property
     @cached(60*60*24*365)
     def challenge_type_shortcut(self):
-        return slugify(self.get_challenge_type_display())
+        if self.challenge_type is not None:
+            return slugify(self.get_challenge_type_display())
+        return ''
 
     @property
     def play_url(self):
+        return self.play_url_cached(self.pk)
+
+    @cached(60*60*24*365)
+    def play_url_cached(self, challenge_id):
         return reverse(
                 'instances:missions:challenges:'+self.challenge_type_shortcut+'-play',
-                args=(self.game.slug, self.mission.pk, self.pk)
+                args=(self.game.slug, self.mission.pk, challenge_id)
         )
 
     @property
     def overview_url(self):
+        return self.overview_url_cached(self.pk)
+
+    @cached(60*60*24*365)
+    def overview_url_cached(self, challenge_id):
         return reverse(
                 'instances:missions:challenges:'+self.challenge_type_shortcut+'-overview',
-                args=(self.game.slug, self.mission.pk, self.pk)
+                args=(self.game.slug, self.mission.pk, challenge_id)
         )
 
 
@@ -170,10 +183,6 @@ class MapChallenge(Challenge):
     class Meta:
         pass
 
-    @property
-    def stream_action_title(self):
-        return self.__unicode__()
-
     def save(self, *args, **kwargs):
         if self.challenge_type is None:
             self.challenge_type = Challenge.MAP
@@ -203,10 +212,6 @@ class EmpathyChallenge(Challenge):
     class Meta:
         pass
 
-    @property
-    def stream_action_title(self):
-        return self.__unicode__()
-
     def save(self, *args, **kwargs):
         if self.challenge_type is None:
             self.challenge_type = Challenge.EMPATHY
@@ -234,7 +239,7 @@ class AnswerChoice(models.Model):
         return self.value
 
 
-class Answer(models.Model):
+class Answer(PolymorphicModel):
     """ user submitted response to a challenge """
 
     user = models.ForeignKey(User, editable=False, related_name='answers')
@@ -306,27 +311,3 @@ class AnswerOpenEnded(Answer):
 
     def __unicode__(self):
         return _(u'an answer to %s' % self.challenge)
-
-
-#django-stream registrations
-#stream_utils.register_action_object(Challenge)
-#stream_utils.register_target(Challenge)
-
-#stream_utils.register_action_object(Challenge)
-#stream_utils.register_target(Challenge)
-
-#stream_utils.register_action_object(MapChallenge)
-#stream_utils.register_target(MapChallenge)
-
-#stream_utils.register_action_object(EmpathyChallenge)
-#stream_utils.register_target(EmpathyChallenge)
-
-#@receiver(pre_delete, sender=Challenge, dispatch_uid='web.playeractivities.models')
-#@receiver(pre_delete, sender=PlayerMapActivity, dispatch_uid='web.playeractivities.models')
-#@receiver(pre_delete, sender=PlayerEmpathyActivity, dispatch_uid='web.playeractivities.models')
-#def remove_url_from_news_feeds(sender, **kwargs):     
-#    instance = kwargs['instance']
-#    Activity.objects.filter(url=instance.get_activity_url()).update(url='')
-
-# invalidate cache for 'missions' group
-#post_save.connect(invalidate_mission, Challenge)
