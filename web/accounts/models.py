@@ -28,6 +28,7 @@ from web.instances.models import Instance, Affiliation
 from web.missions.models import Mission
 #from web.causes.models import PlayerCause
 from web.challenges.models import Challenge, BarrierChallenge, Answer
+from web.core.csv_field import CSVField
 
 from .options import *
 from .managers import UserProfilePerInstanceManager, PlayerMissionStateManager
@@ -123,15 +124,11 @@ class PlayerMissionState(models.Model):
 
     user = models.ForeignKey(User, verbose_name=_('user'), related_name="mission_states")
     mission = models.ForeignKey(Mission, related_name='mission_states')
-    #locked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_locked')
-    #unlocked = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_unlocked')
-    #completed = models.ManyToManyField(Challenge, blank=True, null=True, related_name='challenges_completed')
-    #barriers_fifty_fifty = models.ManyToManyField(Challenge, blank=True, null=True, related_name='barriers_fifty_fifty')
 
-    locked = models.CommaSeparatedIntegerField(max_length=200, blank=True, default='')
-    unlocked = models.CommaSeparatedIntegerField(max_length=200, blank=True, default='')
-    completed = models.CommaSeparatedIntegerField(max_length=200, blank=True, default='')
-    barriers_fifty_fifty = models.CommaSeparatedIntegerField(max_length=200, blank=True, default='')
+    locked = CSVField(max_length=200, blank=True, default='')
+    unlocked = CSVField(max_length=200, blank=True, default='')
+    completed = CSVField(max_length=200, blank=True, default='')
+    barriers_fifty_fifty = CSVField(max_length=200, blank=True, default='')
 
     coins = models.IntegerField(default=0)
 
@@ -140,37 +137,13 @@ class PlayerMissionState(models.Model):
     def __unicode__(self):
         return "Mission: %s, %s unlocked, %s locked, %s completed, %s coins" %(
                                             self.mission.__unicode__(),
-                                            len(self.unlocked.split(',')),
-                                            len(self.locked.split(',')),
-                                            len(self.completed.split(',')),
+                                            len(self.unlocked),
+                                            len(self.locked),
+                                            len(self.completed),
                                             self.coins,)
-        return "player mission state..."
 
     class Meta:
         unique_together = ('mission', 'user')
-
-    #def state_as_str(self, state_name):
-    #    return str(state).replace('[', '').replace(']', '')
-
-    def csvfield_as_list(self, fld_value):
-        if ',' in fld_value:
-            return map(lambda x: int(x.strip()), fld_value.split(','))
-        return []
-
-    def update_challenge_state(self, action, fld, id):
-        fld_value = getattr(self, fld)
-        print fld, "before update: ", fld_value
-        state_list = self.csvfield_as_list(fld_value)
-        if action == 'add':
-            state_list.append(id)
-            print 'added to %s %s' %(fld, id)
-
-        if action == 'remove':
-            state_list.remove(id)
-            print 'removed to %s %s' %(fld, id)
-
-        setattr(self, fld, str(state_list).replace('[', '').replace(']', ''))
-        print fld, "after update: ", getattr(self, fld)
 
     def all_x_foos(self, fld_name, val):
         val = str(val)
@@ -185,19 +158,23 @@ class PlayerMissionState(models.Model):
     def init_state(self):
 
         sorted_challenges = self.mission.challenges_as_sorteddict
-        self.locked = self.unlocked = self.completed = u''
+        self.locked = []
+        self.unlocked = []
+        self.completed = []
         for i, barrier in enumerate(sorted_challenges):
+            self.locked.append(barrier.pk)
             if i == 0:
                 # Lock the first barrier
                 # The rule for a barrier to be unlocked
                 # is to earn 3x the coins per one challenge
-                self.update_challenge_state('add', 'locked', barrier.pk)
                 for challenge in sorted_challenges.get(barrier):
-                    self.update_challenge_state('add', 'unlocked', challenge.pk)
+                    self.unlocked.append(challenge.pk)
+                    print 'unlocking', self.locked, self.unlocked
             else:
-                self.update_challenge_state('add', 'locked', barrier.pk)
                 for challenge in sorted_challenges.get(barrier):
-                    self.update_challenge_state('add', 'locked', challenge.pk)
+                    self.locked.append(challenge.pk)
+                    print 'locking', self.locked, self.unlocked
+        print self.locked, self.unlocked
         self.save()
 
     @property
