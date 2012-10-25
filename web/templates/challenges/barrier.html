@@ -9,7 +9,6 @@
         {% block response %}
             <div class="response">
                 <form id="id_activity-form" enctype="multipart/form-data" action="." method="post">{% csrf_token %}
-                    <div><strong>coins needed to play this barrier: {{ challenge.minimum_coins_to_play }} </strong> </div>
 
                     <div class="answerchoices-container">{{ form.selected }}</div>
 

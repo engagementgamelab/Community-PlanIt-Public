@@ -7,8 +7,8 @@ from web.instances.models import BaseTreeNode
 class Attachment(BaseTreeNode):
 
     def attachment_upload(instance, filename):
-        """Stores the attachment in a "per module/appname/primary key" folder"""
-        return 'attachments/%s/%s' % (instance.parent.pk, filename)
+        """Stores the attachment in a dir by parent's primary key. most likely the Challenge """
+        return 'attachments/{0}/{1}'.format(instance.parent.pk, filename)
 
     # used by django-polymorphic-tree for self explanatory purpose
     can_have_children = False

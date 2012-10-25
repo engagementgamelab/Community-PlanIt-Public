@@ -1,6 +1,6 @@
 {% load avatar i18n %}
 <div class="comment-add">
-	{% if activity.type.displayType != 'Open Ended' and activity.type.displayType != 'Empathy' %}
+	{% if challenge.get_challenge_type_display != 'Open Ended' and activity.get_challenge_type_display != 'Empathy' %}
 	    {{ comment_form.message.errors }}
 	    <textarea id="message_area" name="message" cols="80" rows="6"></textarea>
 	    <div class="comment-response-counter counter">(<span class="count">1000</span> characters left)</div>

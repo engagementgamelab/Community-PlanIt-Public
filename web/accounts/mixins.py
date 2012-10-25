@@ -54,6 +54,6 @@ class MissionContextMixin(object):
         if 'mission' in kwargs: 
             mission = kwargs.get('mission').get_real_instance()
             context['mission'] = mission
-            context['challenges'] = Challenge.objects.get_real_instances(mission.get_children())
+            context['challenges'] = mission.challenges
 
         return context

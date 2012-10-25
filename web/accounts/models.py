@@ -282,10 +282,13 @@ class UserProfileVariantsForInstance(models.Model):
 
 @receiver(post_save, sender=Answer)
 def update_player_mission_state(sender, **kwargs):
-    answer = kwargs.get('instance')
 
-    if  kwargs.get('created') == True and \
-            isinstance(answer, Answer):
+    instance = kwargs.get('instance')
+    if  kwargs.get('created') == True and isinstance(instance, Answer):
+        answer = instance
+
+        print answer
+        print answer.challenge
 
         challenge = answer.challenge
         mission = challenge.parent
