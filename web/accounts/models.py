@@ -145,16 +145,6 @@ class PlayerMissionState(models.Model):
     class Meta:
         unique_together = ('mission', 'user')
 
-    def all_x_foos(self, fld_name, val):
-        val = str(val)
-        kw1 = {'{0}__startswith'.format(fld_name) : val+','}
-        kw2 = {'{0}__endswith'.format(fld_name) : val+','}
-        kw3 = {'{0}__contains'.format(fld_name) : ',{0},'.format(val)}
-        kw4 = {'{0}__exact'.format(fld_name) : val}
-        return PlayerMissionState.objects.filter(
-                Q(**kw1) | Q(**kw2) | Q(**kw3) | Q(**kw4)
-        )
-
     def init_state(self):
         """
         called by the PlayerMissionState custom manager.
@@ -186,6 +176,13 @@ class PlayerMissionState(models.Model):
         return False
         #from web.challenges.models import FinalBarrierChallenge
         #return self.completed.instance_of(FinalBarrierChallenge).exists()
+
+    def next_locked_barrier(self):
+        barriers = filter(lambda ch, isinstance(ch, BarrierChallenge), self.this_mission.challenges)
+
+        self.unlocked: 
+            return barrier
+
 
     def unlock_next_block(self):
         """ a barrier has been completed. unlock next block of challenges"""
@@ -248,13 +245,6 @@ class PlayerMissionState(models.Model):
             if self.coins >=  self.this_mission.challenge_coin_value  * self.this_mission.min_challenges_to_unlock_barrier:
 
                 next_barrier = None
-                def next_barrier():
-                    for barrier in Challenge.objects.filter(parent=self.this_mission).\
-                            instance_of(BarrierChallenge):
-                        if barrier.basetreenode_ptr.get_previous_sibling().get_real_instance() in \
-                                self.unlocked:
-                            return barrier
-
                 next_barrier = next_barrier()
                 assert next_barrier is not None, "could not locate next barrier"
                 self.locked.remove(next_barrier)
