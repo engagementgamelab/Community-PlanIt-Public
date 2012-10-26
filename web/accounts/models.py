@@ -245,7 +245,7 @@ class PlayerMissionState(models.Model):
             self.coins += self.this_mission.challenge_coin_value
             # if earned coins for this mission is 3x the challenge_coin_value  
             # then unlock this blocks barrier
-            if self.coins >=  self.this_mission.challenge_coin_value  * 3:
+            if self.coins >=  self.this_mission.challenge_coin_value  * self.this_mission.min_challenges_to_unlock_barrier:
 
                 next_barrier = None
                 def next_barrier():

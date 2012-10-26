@@ -30,6 +30,7 @@ class Mission(BaseTreeNode):
     description = models.TextField(blank=True)
     video = models.TextField(blank=True)
     challenge_coin_value = models.IntegerField(verbose_name="coin value for challenge", default=0)
+    min_challenges_to_unlock_barrier = models.IntegerField(verbose_name="minumum number of challenges to unlock next barrier", default=1)
     created_date = models.DateTimeField(auto_now_add=True)
 
     #objects = MissionManager()
