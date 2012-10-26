@@ -240,8 +240,8 @@ class AnswerChoice(models.Model):
         return self.value
 
 
-class Answer(PolymorphicModel):
-    """ user submitted response to a challenge """
+class ChallengeAnswer(PolymorphicModel):
+    """ user submitted answer to a challenge """
 
     user = models.ForeignKey(User, editable=False, related_name='answers')
     created_date = models.DateTimeField(auto_now_add=True)
@@ -254,7 +254,7 @@ class Answer(PolymorphicModel):
         return ""
 
 
-class AnswerWithMultipleChoices(Answer):
+class ChallengeAnswerWithMultipleChoices(ChallengeAnswer):
     """ user submitted response to a multi response challenge """
 
     selected = models.ManyToManyField(AnswerChoice, related_name='multiresponse_answers')
@@ -265,7 +265,7 @@ class AnswerWithMultipleChoices(Answer):
     def __unicode__(self):
         return _(u'an answer to %s' % self.challenge)
 
-class AnswerWithOneChoice(Answer):
+class ChallengeAnswerWithOneChoice(ChallengeAnswer):
     """ user submitted response to a multi response challenge """
 
     selected = models.OneToOneField(AnswerChoice, related_name='singleresponse_answers')
@@ -276,7 +276,7 @@ class AnswerWithOneChoice(Answer):
     def __unicode__(self):
         return _(u'an answer to %s' % self.challenge)
 
-class AnswerMap(Answer):
+class ChallengeAnswerMap(ChallengeAnswer):
     map = GoogleMapsField()
     challenge = models.ForeignKey(MapChallenge, related_name='map_answers')
 
