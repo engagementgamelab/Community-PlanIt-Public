@@ -81,7 +81,7 @@
                             'margin-left': this.minimap.find('.challenge.active').position().left + this.minimap.find('.challenge.active').width()/2 - this.minimap.siblings('.window').width()/2
                         });
 
-                        if(this.minimap_challenges.eq(challenge.index()).attr('data-challenge-id') !== undefined && this.minimap_challenges.eq(challenge.index()).attr('data-challenge-id') !== false){
+                        if(this.minimap_challenges.eq(challenge.index()).attr('data-challenge-id')!==undefined && this.minimap_challenges.eq(challenge.index()).attr('data-challenge-id') !== false){
                             document.location.hash = this.minimap_challenges.eq(challenge.index()).attr('data-challenge-id');
                         } else {
                             document.location.hash = '';
@@ -122,7 +122,7 @@
                     if(this.get_active_minimap_challenge().length){
                         this.goto_challenge(this.get_active_challenge());
                     } else {
-                        this.goto_challenge(this.challenges.eq(1));
+                        this.goto_challenge(this.challenges.eq(0));
                     }
 
                 }
@@ -153,7 +153,7 @@
         {% for challenge in challenges %}
             {% with mst.this_mission as mission %}
             {% if forloop.first %}
-            <a href="{% url instances:missions:challenges:challenges mission.game.slug mission.id %}" class="challenge mission {% ifequal mission mission %}active{% endifequal %}"></a>
+            <a href="{% url instances:missions:challenges:challenges mission.game.slug mission.id %}" class="challenge mission"></a>
             {% endif %}
 
             <a href="{% url instances:missions:challenges:challenges mission.game.slug mission.id %}#{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% ifequal current_challenge.id challenge.id %}active{% endifequal %} {% if challenge.pk in mst.locked %}challenge-locked{% endif %} {% if challenge.pk in mst.completed %}completed{% else %}not-completed{% endif %} {% cycle 'challenge-building-1' 'challenge-building-2' 'challenge-building-3' 'challenge-building-4' %}" data-challenge-id="{{ challenge.id }}">
