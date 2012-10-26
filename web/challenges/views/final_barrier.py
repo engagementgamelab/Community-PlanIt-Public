@@ -31,7 +31,7 @@ class FinalBarrierDetailView(LoginRequiredMixin,
         # make sure the challenge has not been played yet and is not
         # expired
         if not self.challenge.parent.is_expired and not \
-                AnswerWithOneChoice.objects.filter(
+                ChallengeAnswerWithOneChoice.objects.filter(
                                 user=request.user, 
                                 challenge=self.challenge
                 ).exists():
@@ -62,11 +62,11 @@ class FinalBarrierForm(forms.ModelForm):
             widget=RadioSelect,
             required=True,
             empty_label=None,
-            queryset=AnswerChoice.objects.filter(challenge=challenge).distinct()
+            queryset=ChallengeAnswerChoice.objects.filter(challenge=challenge).distinct()
         )
 
     class Meta:
-        model = AnswerWithMultipleChoices
+        model = ChallengeAnswerWithMultipleChoices
         exclude = ('user', 'challenge')
 
 

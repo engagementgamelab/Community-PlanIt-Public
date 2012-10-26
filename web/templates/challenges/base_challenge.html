@@ -21,6 +21,8 @@
     {{ block.super }}
     <div id="challenges">
         <div class="wrapper box-shadow-container">
+            {% with mst.this_mission as mission %}
+            {% with mst.this_mission.game as game %}
             {% block content_challenge_div %}
                 <div id="challenge" class="challenge row-fluid">
                     <div class="challenge-basics">
@@ -33,13 +35,13 @@
                             {% endthumbnail %}
                         </div>
                         <div>
-                            <span><i class="glyphicon-credit"></i> {{ challenge.parent.challenge_coin_value }}</span>
+                            <span><i class="glyphicon-credit"></i> {{ mission.challenge_coin_value }}</span>
 
                             {% include 'challenges/_resources.html' %}
                         </div>
                     </div>
                     <div class="challenge-details">
-                        <a class="close" href="{% url instances:missions:challenges:challenges challenge.get_instance.slug challenge.get_mission.pk %}">×</a>
+                        <a class="close" href="{% url instances:missions:challenges:challenges game.slug mission.pk %}">×</a>
                         {% block content_challenge %}
                         {% endblock %}
                     </div>
@@ -51,7 +53,7 @@
                 <div id="challenge-discussion">
                     <h2 class="header-discussion">Discussion</h2>
                     {% block comments %}
-                        <p>Once you are done, you will be able to view everyone's responses. {% if request.user in challenge.parent.parent.curators.all %}But since you are a curator for this game, you can just skip ahead to the <a href="{{ challenge.overview_url }}">Overview</a>.{% endif %}</p>
+                        <p>Once you are done, you will be able to view everyone's responses. {% if request.user in game.curators.all %}But since you are a curator for this game, you can just skip ahead to the <a href="{{ challenge.overview_url }}">Overview</a>.{% endif %}</p>
                     {% endblock %}
                 </div>
             {% endblock %}
@@ -64,6 +66,8 @@
             <!-- Next Challenge -->
             {% with challenge.challenge_ptr.get_next_sibling as next_challenge  %}
                 <a id="challenge-next" class="challenge" href="{{ next_challenge.play_url }}"><h3>{{ next_challenge.title }}</h3></a>
+            {% endwith %}
+            {% endwith %}
             {% endwith %}
         </div>
     </div>

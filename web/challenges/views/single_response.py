@@ -30,7 +30,7 @@ class SingleResponseDetailView(LoginRequiredMixin,
         # make sure the challenge has not been played yet and is not
         # expired
         if not self.challenge.parent.is_expired and not \
-                AnswerWithOneChoice.objects.filter(
+                ChallengeAnswerWithOneChoice.objects.filter(
                                 user=request.user, 
                                 challenge=self.challenge
                 ).exists():
@@ -40,7 +40,7 @@ class SingleResponseDetailView(LoginRequiredMixin,
     def get_context_data(self, *args, **kwargs):
         ctx = super(SingleResponseDetailView, self).\
                 get_context_data(mission=self.challenge.parent, *args, **kwargs)
-        my_answer = AnswerWithOneChoice.objects.get(
+        my_answer = ChallengeAnswerWithOneChoice.objects.get(
                                 user=self.request.user,
                                 challenge=self.challenge
         )
@@ -63,7 +63,7 @@ class SingleResponseCreateView(LoginRequiredMixin,
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
 
-        if AnswerWithOneChoice.objects.\
+        if ChallengeAnswerWithOneChoice.objects.\
                     filter(user=request.user, challenge=self.challenge).exists():
             log.debug("%s has already been played by %s. redirecting to overview." % 
                                 (self.challenge, request.user))

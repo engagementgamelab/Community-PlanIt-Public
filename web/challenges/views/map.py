@@ -28,7 +28,7 @@ class MapDetailView(LoginRequiredMixin,
         # make sure the challenge has not been played yet and is not
         # expired
         if not self.challenge.parent.is_expired and not \
-                AnswerMap.objects.filter(
+                ChallengeAnswerMap.objects.filter(
                                 user=request.user, 
                                 challenge=self.challenge
                 ).exists():
@@ -39,7 +39,7 @@ class MapDetailView(LoginRequiredMixin,
         ctx = super(MapDetailView, self).\
                 get_context_data(mission=self.challenge.parent, *args, **kwargs)
 
-        my_answer = AnswerWithOneChoice.objects.get(
+        my_answer = ChallengeAnswerWithOneChoice.objects.get(
                                 user=self.request.user,
                                 challenge=self.challenge
         )
@@ -62,7 +62,7 @@ class MapCreateView(LoginRequiredMixin,
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(MapChallenge, pk=kwargs['challenge_id'])
 
-        if AnswerMap.objects.\
+        if ChallengeAnswerMap.objects.\
                     filter(user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
 

@@ -26,7 +26,7 @@ class MapForm(forms.ModelForm):
         return map
 
     class Meta:
-        model = AnswerMap
+        model = ChallengeAnswerMap
         exclude = ('user', 'challenge')
 
 
@@ -37,7 +37,7 @@ class OpenEndedForm(forms.ModelForm):
         super(OpenEndedForm, self).__init__(*args, **kwargs)
 
     class Meta:
-        model = AnswerOpenEnded
+        model = ChallengeAnswerOpenEnded
         exclude = ('user', 'challenge')
 
 class EmpathyForm(forms.ModelForm):
@@ -47,7 +47,7 @@ class EmpathyForm(forms.ModelForm):
         super(EmpathyForm, self).__init__(*args, **kwargs)
 
     class Meta:
-        model = AnswerEmpathy
+        model = ChallengeAnswerEmpathy
         exclude = ('user', 'challenge')
 
 
@@ -67,7 +67,7 @@ class SingleResponseForm(forms.ModelForm):
         )
 
     class Meta:
-        model = AnswerWithOneChoice
+        model = ChallengeAnswerWithOneChoice
         exclude = ('user', 'challenge')
 
 
@@ -85,7 +85,7 @@ class MultiResponseForm(forms.ModelForm):
         )
 
     class Meta:
-        model = AnswerWithMultipleChoices
+        model = ChallengeAnswerWithMultipleChoices
         exclude = ('user', 'challenge')
 
 

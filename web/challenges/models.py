@@ -290,7 +290,7 @@ class ChallengeAnswerMap(ChallengeAnswer):
         return ''
 
 
-class AnswerEmpathy(Answer):
+class ChallengeAnswerEmpathy(ChallengeAnswer):
     value = models.TextField(verbose_name="Answer Empathy", max_length=1000, default='')
     challenge = models.ForeignKey(EmpathyChallenge, related_name='empathy_answers')
 
@@ -304,7 +304,7 @@ class AnswerEmpathy(Answer):
         return ""
 
 
-class AnswerOpenEnded(Answer):
+class ChallengeAnswerOpenEnded(ChallengeAnswer):
     value = models.TextField(verbose_name="Answer Open Ended", max_length=1000, default='')
     challenge = models.ForeignKey(OpenEndedChallenge, related_name='openended_answers')
 

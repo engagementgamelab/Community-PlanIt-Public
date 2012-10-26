@@ -28,7 +28,7 @@ class EmpathyDetailView(LoginRequiredMixin,
         # make sure the challenge has not been played yet and is not
         # expired
         if not self.challenge.parent.is_expired and not \
-                AnswerEmpathy.objects.filter(
+                ChallengeAnswerEmpathy.objects.filter(
                                 user=request.user, 
                                 challenge=self.challenge
                 ).exists():
@@ -40,7 +40,7 @@ class EmpathyDetailView(LoginRequiredMixin,
         ctx = super(EmpathyDetailView, self).\
                 get_context_data(mission=self.challenge.parent, *args, **kwargs)
 
-        my_answer = AnswerEmpathy.objects.get(
+        my_answer = ChallengeAnswerEmpathy.objects.get(
                                 user=self.request.user,
                                 challenge=self.challenge
         )
@@ -63,7 +63,7 @@ class EmpathyCreateView(LoginRequiredMixin,
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(EmpathyChallenge, pk=kwargs['challenge_id'])
 
-        if AnswerEmpathy.objects.\
+        if ChallengeAnswerEmpathy.objects.\
                     filter(user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
 

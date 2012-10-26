@@ -29,7 +29,7 @@ class MultiResponseDetailView(LoginRequiredMixin,
         # make sure the challenge has not been played yet and is not
         # expired
         if not self.challenge.parent.is_expired and not \
-                AnswerWithMultipleChoices.objects.filter(
+                ChallengeAnswerWithMultipleChoices.objects.filter(
                                 user=request.user, 
                                 challenge=self.challenge
                 ).exists():
@@ -39,7 +39,7 @@ class MultiResponseDetailView(LoginRequiredMixin,
     def get_context_data(self, *args, **kwargs):
         ctx = super(MultiResponseDetailView, self).\
                 get_context_data(mission=self.challenge.parent, *args, **kwargs)
-        my_answers = AnswerWithMultipleChoices.objects.get(
+        my_answers = ChallengeAnswerWithMultipleChoices.objects.get(
                                 user=self.request.user,
                                 challenge=self.object
         )
@@ -65,7 +65,7 @@ class MultiResponseCreateView(LoginRequiredMixin,
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(MultiResponseChallenge, pk=kwargs['challenge_id'])
 
-        if AnswerWithMultipleChoices.objects.\
+        if ChallengeAnswerWithMultipleChoices.objects.\
                         filter(user=request.user, challenge=self.challenge).\
                         exists():
             return redirect(self.challenge.overview_url)

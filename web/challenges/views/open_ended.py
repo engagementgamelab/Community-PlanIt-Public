@@ -29,7 +29,7 @@ class OpenEndedDetailView(LoginRequiredMixin,
         # make sure the challenge has not been played yet and is not
         # expired
         if not self.challenge.parent.is_expired and not \
-                AnswerOpenEnded.objects.filter(
+                ChallengeAnswerOpenEnded.objects.filter(
                                 user=request.user, 
                                 challenge=self.challenge
                 ).exists():
@@ -42,7 +42,7 @@ class OpenEndedDetailView(LoginRequiredMixin,
         ctx = super(OpenEndedDetailView, self).\
                 get_context_data(mission=self.challenge.parent, *args, **kwargs)
 
-        my_answer = AnswerOpenEnded.objects.get(
+        my_answer = ChallengeAnswerOpenEnded.objects.get(
                                 user=self.request.user,
                                 challenge=self.challenge
         )
@@ -65,7 +65,7 @@ class OpenEndedCreateView(LoginRequiredMixin,
     def dispatch(self, request, *args, **kwargs):
         self.challenge = get_object_or_404(Challenge, pk=kwargs['challenge_id'])
 
-        if AnswerOpenEnded.objects.\
+        if ChallengeAnswerOpenEnded.objects.\
                     filter(user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
 

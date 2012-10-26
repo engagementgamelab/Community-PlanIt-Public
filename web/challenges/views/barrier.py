@@ -31,7 +31,7 @@ class BarrierDetailView(LoginRequiredMixin,
         # make sure the challenge has not been played yet and is not
         # expired
         if not self.challenge.parent.is_expired and not \
-                AnswerWithOneChoice.objects.filter(
+                ChallengeAnswerWithOneChoice.objects.filter(
                                 user=request.user, 
                                 challenge=self.challenge
                 ).exists():
@@ -43,7 +43,7 @@ class BarrierDetailView(LoginRequiredMixin,
         ctx = super(BarrierDetailView, self).\
                 get_context_data(mission=self.challenge.parent,
                                                         *args, **kwargs)
-        my_answer = AnswerWithOneChoice.objects.get(
+        my_answer = ChallengeAnswerWithOneChoice.objects.get(
                                 user=self.request.user,
                                 challenge=self.challenge
         )
@@ -86,7 +86,7 @@ class BarrierCreateView(LoginRequiredMixin,
         assert self.challenge.answer_choices.\
                 filter(is_barrier_correct_answer=True).exists() == True, "A correct answer has not been set on the barrier challenge '%s'" % self.challenge.title
 
-        if AnswerWithOneChoice.objects.\
+        if ChallengeAnswerWithOneChoice.objects.\
                 filter(user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
 
@@ -135,7 +135,7 @@ class BarrierFiftyFiftyCreateView(LoginRequiredMixin,
 
         # if player already answered this challenge, redirect to
         # challenge overview
-        if AnswerWithOneChoice.objects.\
+        if ChallengeAnswerWithOneChoice.objects.\
                 filter(user=request.user, challenge=self.challenge).exists():
             return redirect(self.challenge.overview_url)
 
@@ -143,7 +143,7 @@ class BarrierFiftyFiftyCreateView(LoginRequiredMixin,
         return super(BarrierFiftyFiftyCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        answer = AnswerWithOneChoice()
+        answer = ChallengeAnswerWithOneChoice()
         answer.user = self.request.user
         answer.challenge = self.challenge
         answer.selected = AnswerChoice.objects.get(pk=int(form.cleaned_data.get('selected')))

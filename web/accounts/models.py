@@ -27,7 +27,7 @@ from django.contrib.contenttypes.models import ContentType
 from web.instances.models import Instance, Affiliation
 from web.missions.models import Mission
 #from web.causes.models import PlayerCause
-from web.challenges.models import Challenge, BarrierChallenge, Answer
+from web.challenges.models import Challenge, BarrierChallenge, ChallengeAnswer
 from web.core.csv_field import CSVField
 
 from .options import *
@@ -245,16 +245,18 @@ class PlayerMissionState(models.Model):
             self.coins += self.this_mission.challenge_coin_value
             # if earned coins for this mission is 3x the challenge_coin_value  
             # then unlock this blocks barrier
-            if self.coins <=  self.this_mission.challenge_coin_value  * 3:
+            if self.coins >=  self.this_mission.challenge_coin_value  * 3:
 
-                def next_barrier(self):
+                next_barrier = None
+                def next_barrier():
                     for barrier in Challenge.objects.filter(parent=self.this_mission).\
                             instance_of(BarrierChallenge):
                         if barrier.basetreenode_ptr.get_previous_sibling().get_real_instance() in \
-                                self.unlocked.all():
+                                self.unlocked:
                             return barrier
 
                 next_barrier = next_barrier()
+                assert next_barrier is not None, "could not locate next barrier"
                 self.locked.remove(next_barrier)
                 self.unlocked.remove(next_barrier)
 
@@ -323,11 +325,11 @@ class UserProfileVariantsForInstance(models.Model):
     affiliation_variants = models.ManyToManyField(Affiliation, blank=True, null=True, default=None)
 
 
-@receiver(post_save, sender=Answer)
+@receiver(post_save, sender=ChallengeAnswer)
 def update_player_mission_state(sender, **kwargs):
 
     instance = kwargs.get('instance')
-    if  kwargs.get('created') == True and isinstance(instance, Answer):
+    if  kwargs.get('created') == True and isinstance(instance, ChallengeAnswer):
         answer = instance
         #print answer
         #print answer.challenge
@@ -349,7 +351,7 @@ def update_player_mission_state(sender, **kwargs):
             mst.process_completed_challenge(challenge_type='final_barrier', answer=answer)
 
         # append to the completed challenges
-        #mst.completed.add(challenge)
+        mst.completed.append(challenge.pk)
 
         mst.save()
 post_save.connect(update_player_mission_state, dispatch_uid='update_mission_state')
