@@ -17,9 +17,10 @@
         <!-- Carousel Slide -->
         <div class="row box-shadow-container challenges-container carousel-slide">
             <div class="challenge mission span4"></div>
+            {% with mst.this_mission as mission %}
             {% for challenge in challenges %}
-                {% with challenge.mission.challenge_coin_value as coins and challenge.completed_count as completed_count and challenge.get_challenge_type_display as challenge_type %}
-                    {% if challenge.mission.is_expired %}
+                {% with mission.challenge_coin_value as coins and challenge.completed_count as completed_count and challenge.get_challenge_type_display as challenge_type %}
+                    {% if mission.is_expired %}
                         {# mission expired, only allow review #}
                         <div class="challenge {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge.challenge_type_shortcut }}{% endif %} span4">
                             <h3>{{ challenge.title }}</h3>
@@ -27,7 +28,7 @@
                             <div class="meta"><i class="glyphicon-credit"></i> {{ coins }} &nbsp;&nbsp; <i class="icon-comment"></i> {{ completed_count }}</div>
                             <div class="action"><a href="{{ challenge.overview_url }}" class="btn btn-primary">Review</a></div>
                         </div>
-                    {% elif challenge.mission.is_future %}
+                    {% elif mission.is_future %}
                         {# Non-started mission, lock everything #}
                         <div class="challenge challenge-locked {% if challenge.is_trivia %}challenge-barrier{% else %}{{ challenge.challenge_type_shortcut }}{% endif %} span4">
                             <h3>{{ challenge.title }}</h3>
@@ -36,19 +37,18 @@
                         </div>
                     {% else %}
                         {# Active Mission #}
-                        <div id="challenge-{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% if challenge in mst.locked.all %}challenge-locked{% endif %} {% if challenge in mst.completed.all %}completed{% else %}not-completed{% endif %} span4">
+                        <div id="challenge-{{ challenge.id }}" class="challenge challenge-{{ challenge.challenge_type_shortcut }} {% if challenge.pk in mst.locked %}challenge-locked{% endif %} {% if challenge.pk in mst.completed %}completed{% else %}not-completed{% endif %} span4">
                             {% ifequal challenge.challenge_type_shortcut 'barrier' %}
                                 You are not getting past me until you show me how much you care about the city… Ready for a question? [Yum, I'm ready]
                                 <div class="action">
-                                    {% if challenge not in mst.locked.all %}
-                                        <a href="{% if challenge in mst.completed.all %}{{ challenge.overview_url }}{% else %}{{ challenge.play_url }}{% endif %}" class="btn btn-primary">
-                                            {% if challenge in mst.completed.all %}Challenge Overview{% else %}Play Challenge{% endif %}
+                                    {% if challenge.pk not in mst.locked %}
+                                        <a href="{% if challenge.pk in mst.completed %}{{ challenge.overview_url }}{% else %}{{ challenge.play_url }}{% endif %}" class="btn btn-primary">
+                                            {% if challenge.pk in mst.completed %}Challenge Overview{% else %}Play Challenge{% endif %}
                                         </a>
                                     {% else %}
                                         <button class="btn disabled">Locked</button>
                                     {% endif %}
                                 </div>
-
 
                             {% else %}
                                 <span class="anchor-comments anchor-comments-white">0</span>
@@ -63,9 +63,9 @@
                                 {% endcomment %}
                                 {# <span class="badge">{{ challenge_type }}</span> #}
                                 <div class="action">
-                                    {% if challenge not in mst.locked.all %}
-                                        <a href="{% if challenge in mst.completed.all %}{{ challenge.overview_url }}{% else %}{{ challenge.play_url }}{% endif %}" class="btn btn-primary">
-                                            {% if challenge in mst.completed.all %}Challenge Overview{% else %}Play Challenge{% endif %}
+                                    {% if challenge.pk not in mst.locked %}
+                                        <a href="{% if challenge.pk in mst.completed %}{{ challenge.overview_url }}{% else %}{{ challenge.play_url }}{% endif %}" class="btn btn-primary">
+                                            {% if challenge.pk in mst.completed %}Challenge Overview{% else %}Play Challenge{% endif %}
                                         </a>
                                     {% else %}
                                         <button class="btn disabled">Challenge Locked</button>
@@ -76,6 +76,7 @@
                     {% endif %}
                 {% endwith %}
             {% endfor %}
+            {% endwith %}
         </div>
     </div>
 </div>

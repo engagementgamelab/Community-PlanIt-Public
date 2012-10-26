@@ -9,9 +9,10 @@ class CSVField(models.TextField):
         super(CSVField, self).__init__(*args, **kwargs)
 
     def to_python(self, value):
+        if value == '': return []
         if isinstance(value, list):
             return value
-        return value.split(self.delimeter)
+        return map(lambda x: int(x), value.split(self.delimeter))
 
     def get_db_prep_value(self, value, connection, prepared=False):
         return self.delimeter.join([unicode(s) for s in value])

@@ -76,11 +76,12 @@ class Challenge(BaseTreeNode):
         return self.parent.parent
 
     @property
-    @cached(60*60*24*365)
     def challenge_type_shortcut(self):
-        if self.challenge_type is not None:
-            return slugify(self.get_challenge_type_display())
-        return ''
+        return self.challenge_type_shortcut_cached(self.challenge_type)
+
+    @cached(60*60*24*365)
+    def challenge_type_shortcut_cached(self, challenge_type):
+        return slugify(self.get_challenge_type_display())
 
     @property
     def play_url(self):
