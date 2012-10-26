@@ -222,10 +222,10 @@ class PlayerMissionState(models.Model):
 
     @property
     def this_mission(self):
-        return self.this_mission_cached(self.mission.pk)
+        return self.this_mission_cached(self.pk)
 
     @cached(60*60*24*365)
-    def this_mission_cached(self, mission_id):
+    def this_mission_cached(self, id):
         return self.mission
 
     def process_completed_challenge(self, challenge_type=None, answer=None):
