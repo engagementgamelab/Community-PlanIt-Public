@@ -39,9 +39,9 @@
     </div>
 
     <div class="btn-group pull-right">
-        <div id="nav-account-coins" class="nav-account-stats">{{ mst.coins }}</div>
-        <div id="nav-account-rank" class="nav-account-stats">26th</div>
-        <div id="nav-account-awards" class="nav-account-stats">0</div>
+        <div id="nav-account-coins" class="nav-account-stats">{% firstof mst.coins '0' %}</div>
+        <div id="nav-account-rank" class="nav-account-stats">{% firstof mst.rank '100th' %}</div>
+        <div id="nav-account-awards" class="nav-account-stats">{% firstof mst.awards '0' %}</div>
 
 
 

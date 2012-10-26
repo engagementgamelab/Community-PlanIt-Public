@@ -41,11 +41,11 @@
 {% block nav_game %}
 <div id="nav-game">
     <div class="wrapper wrapper-nav-game">
-        <a href="{{ active_mission.get_absolute_url }}" class="btn btn-primary btn-large"><i class="glyphicon-dashboard glyphicon-white"></i> {% trans "Mission" %}</a>
-        <a href="" class="btn btn-primary btn-large disabled"><i class="icon-comment icon-white"></i> {% trans "Public Square" %}</a>
-        <a href="{% url instances:causes:cause_list active_game.slug %}" class="btn btn-primary btn-large"><i class="glyphicon-credit glyphicon-white"></i> {% trans "Bank" %}</a>
-        {# <a href="" class="btn btn-primary disabled"><i class="icon-question-sign icon-white"></i></a> #}
-
+        <ul id="nav-game-main">
+            <li {% if tab_mission %}class="active"{% endif %}><a href="{{ active_mission.get_absolute_url }}" class="">{% trans "Mission" %}</a></li>
+            <li {% if tab_public_square %}class="active"{% endif %}><a href="" class="">{% trans "Public Square" %}</a></li>
+            <li {% if tab_bank %}class="active"{% endif %}><a href="{% url instances:causes:cause_list active_game.slug %}" class="">{% trans "Bank" %}</a></li>
+        </ul>
         <div class="nav-game-account">{% game_nav %}</div>
     </div>
 </div>

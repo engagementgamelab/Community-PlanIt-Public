@@ -3,6 +3,10 @@
 
 {% block title %}Bank{% endblock %}
 
+{% block nav_game %}
+    {% with 'True' as tab_bank %}{{ block.super }}{% endwith %}
+{% endblock %}
+
 {% block content %}
 <div id="bank-nav" class="wrapper">
 	<ul>

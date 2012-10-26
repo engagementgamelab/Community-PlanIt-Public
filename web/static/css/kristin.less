@@ -9,16 +9,42 @@
 @k-dark-gray: #555;
 @k-blue: #0f85a5;
 @k-yellow: #fbc44c;
+
+@k-light-yellow: #f7d06e;
+
 @k-green: #81AC6E;
 @k-light-light-yellow: #f7f7f0; /* speech bubbles */
 
 html, body {
 	background: @k-green;
+	font-family: 'Georgia', serif;
 }
 
 #header {
 	background: white;
 	margin-bottom: 0px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'vinyl', sans-serif;
+}
+
+#nav-game {
+	#nav-game-main {
+		display: inline-block;
+		li {
+			display: inline-block;
+			& > a {
+				display: inline-block;
+				padding: 10px;
+				text-transform: uppercase; text-decoration: none;
+				font-size: 1.3em; font-family: 'vinyl';
+			}		
+			&.active > a, &:hover > a {
+				background: @k-light-yellow;
+			}
+		}
+	}
 }
 .nav-account {
 
@@ -395,6 +421,9 @@ html, body {
 .section-intro {
 	background: url('../img/bg-tile.png');
 	.inner-shadow(0px, 1px, 8px);
+	h1 {
+		text-transform: uppercase;
+	}
 
 	&.section-bank-intro {
 		.wrapper {
