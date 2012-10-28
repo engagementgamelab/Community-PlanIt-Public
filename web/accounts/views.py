@@ -9,6 +9,8 @@ from stream.models import Action
 from stream import utils as stream_utils
 
 from django.views.generic.edit import CreateView
+from django.views.generic.base import TemplateView
+from web.accounts.mixins import MissionContextMixin
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -559,6 +561,18 @@ def profile(request, id, template_name="accounts/profile.html"):
     # this line here updates the context with 
     # mission, my_points_for_mission and progress_percentage
     return render(request, template_name, context)
+
+
+
+class LeaderboardView(MissionContextMixin, TemplateView):
+    template_name = 'public_square/leaderboard.html'
+
+leaderboard_view = LeaderboardView.as_view()
+
+class UserAwardsView(MissionContextMixin, TemplateView):
+    template_name = 'public_square/awards.html'
+
+user_awards_view = UserAwardsView.as_view()
 
 """
 @login_required

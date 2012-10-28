@@ -11,16 +11,28 @@ from django.shortcuts import get_object_or_404
 from django.template import Context, RequestContext, loader, Template
 from django.template.loader import render_to_string
 from django.conf import settings
+from django.views.generic.base import TemplateView
+from web.accounts.mixins import MissionContextMixin
 
 from web.accounts.models import UserProfile, UserProfilePerInstance
-from web.reports.actions import PointsAssigner
-from web.challenges.models import Answer, AnswerMultiChoice
+# from web.reports.actions import PointsAssigner
+# from web.challenges.models import Answer, AnswerMultiChoice
 from web.values.models import Value
 from .forms import *
 from .models import Comment
 
 import logging
 log = logging.getLogger(__name__)
+
+class BuzzView(MissionContextMixin, TemplateView):
+    template_name = 'public_square/buzz.html'
+
+buzz_view = BuzzView.as_view()
+
+class SoapboxView(MissionContextMixin, TemplateView):
+    template_name = 'public_square/soapbox.html'
+
+soapbox_view = SoapboxView.as_view()
 
 @login_required
 def flag(request, id):

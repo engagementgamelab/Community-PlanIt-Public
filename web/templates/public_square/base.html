@@ -1,0 +1,14 @@
+{% extends "base_game.html" %}
+{% load gmap i18n game_extras cpi_tags %}
+
+{% block title %}Public_Square{% endblock %}
+
+{% block content %}
+<div id="bank-nav" class="wrapper">
+	<ul>
+    	<li {% if tab_cause_list %}class="active"{% endif %}><a id="bank-nav-causes" href="{% url instances:causes:cause_list active_game.slug %}" alt="Causes"></a></li>
+    	<li {% if tab_coins %}class="active"{% endif %}><a id="bank-nav-coins" href="{% url instances:causes:coins active_game.slug %}" alt="Your Coins"></a></li>
+    	<li {% if tab_sponsor_list %}class="active"{% endif %}><a id="bank-nav-sponsors" href="{% url instances:causes:sponsor_list active_game.slug %}" alt="Sponsors"></a></li>
+    </ul>
+</div>
+{% endblock %}
