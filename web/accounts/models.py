@@ -178,9 +178,9 @@ class PlayerMissionState(models.Model):
         #return self.completed.instance_of(FinalBarrierChallenge).exists()
 
     def next_locked_barrier(self):
-        barriers = filter(lambda ch, isinstance(ch, BarrierChallenge), self.this_mission.challenges)
+        barriers = filter(lambda ch: isinstance(ch, BarrierChallenge), self.this_mission.challenges)
 
-        self.unlocked: 
+        if self.unlocked: 
             return barrier
 
 
