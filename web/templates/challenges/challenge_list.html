@@ -1,10 +1,26 @@
 {% extends "challenges/base.html" %}
-{% load i18n cpi_tags thumbnail%}
+{% load i18n cpi_tags thumbnail static%}
 
 {% block title %}Challenges{% endblock %}
 
-
 {% block body_id %}page-challenge-list{% endblock %}
+
+{% block js %}
+{{ block.super }}
+    <script src="{% static 'js/jquery-countdown.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            var newYear = new Date(); 
+            newYear = new Date(2013, 1-1, 1); 
+            $('#countdown').countdown({
+                labels: ['yrs', 'mnths', 'wks', 'days', 'hrs', 'mins', 'secs'], 
+                labels1: ['yr', 'mnth', 'wk', 'day', 'hr', 'min', 'sec'], 
+                until: newYear, 
+                format: 'dHMS'
+            }); 
+        });
+    </script>
+{% endblock %}
 
 {% block content %}
 {{ block.super }}
@@ -16,7 +32,20 @@
     <div class="wrapper carousel-clip">
         <!-- Carousel Slide -->
         <div class="row box-shadow-container challenges-container carousel-slide">
-            <div class="challenge mission span4"></div>
+            <a href="" class="challenge mission span4">
+                <div>
+                    <h1>Mission</h1>
+                    {% if mission.is_expired %}
+                        <p>Mission ended</p>
+                    {% elif mission.is_future %}
+                        <h2>Starts in</h2>
+                        <p id="countdown">00:00:00</p>
+                    {% else %}
+                        <h2>Ends in</h2>
+                        <p id="countdown">00:00:00</p>                        
+                    {% endif %}                    
+                </div>
+            </a>
             {% with mst.this_mission as mission %}
             {% for challenge in challenges %}
                 {% with mission.challenge_coin_value as coins and challenge.completed_count as completed_count and challenge.get_challenge_type_display as challenge_type %}
