@@ -4,8 +4,9 @@
 {% block body_id %}page-public-square-buzz{% endblock %}
 
 {% block content %}
+{% with 'active' as tab_awards %}{{ block.super }}{% endwith %}
 
-<div id="public-square-buzz-intro" class="section-intro">
+<div id="publicsquare-buzz-intro" class="section-intro">
 	<div class="wrapper">
 		<h1>Awards</h1>
 		<p>Earn awards...</p>

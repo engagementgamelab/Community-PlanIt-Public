@@ -55,7 +55,7 @@ h1, h2, h3, h4, h5, h6 {
 				width: 100%;
 				margin: 0;
 				list-style: none;
-				z-index: 1;
+				z-index: 99;
 				& > li {
 					background: @k-light-yellow;
 					& > a {
@@ -415,6 +415,55 @@ h1, h2, h3, h4, h5, h6 {
 
 #footer {
 	background: @k-green;
+}
+
+#nav-publicsquare {
+	text-align: center;
+	font-size: 0em;
+	background: url('../img/bg-publicsquare-buildings.png') no-repeat center bottom;
+	overflow: hidden;
+	ul {
+		margin: 0;
+	}
+	li {
+		position: relative;
+		display: inline-block;
+	}
+
+	a {
+		position: relative;
+		z-index: 1;
+		display: inline-block;
+		vertical-align: bottom;
+		width: 180px; height: 120px;
+		margin: 0 0px;
+		background: url('../img/icons-publicsquare.png');
+		&#nav-publicsquare-soapbox {
+			background-position: 0 0;
+			&:hover { background-position: 0 -120px; }
+		}
+		&#nav-publicsquare-buzz {
+			background-position: -180px 0;
+			&:hover { background-position: -180px -120px; }
+		}
+		&#nav-publicsquare-awards {
+			background-position: -360px 0;
+			&:hover { background-position: -360px -120px; }
+		}
+		&#nav-publicsquare-leaderboard {
+			background-position: -540px 0;
+			&:hover { background-position: -540px -120px; }
+		}
+
+	}
+	li.active:before {
+		content: '';
+		position: absolute;
+		width: 100px; height: 100px;
+		bottom: -40px; left: 120px;
+		margin-left: -50px;
+		background: url('../img/bg-sun.png');
+	}
 }
 
 #bank-nav {

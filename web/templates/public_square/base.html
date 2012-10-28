@@ -4,11 +4,14 @@
 {% block title %}Public_Square{% endblock %}
 
 {% block content %}
-<div id="bank-nav" class="wrapper">
-	<ul>
-    	<li {% if tab_cause_list %}class="active"{% endif %}><a id="bank-nav-causes" href="{% url instances:causes:cause_list active_game.slug %}" alt="Causes"></a></li>
-    	<li {% if tab_coins %}class="active"{% endif %}><a id="bank-nav-coins" href="{% url instances:causes:coins active_game.slug %}" alt="Your Coins"></a></li>
-    	<li {% if tab_sponsor_list %}class="active"{% endif %}><a id="bank-nav-sponsors" href="{% url instances:causes:sponsor_list active_game.slug %}" alt="Sponsors"></a></li>
-    </ul>
+<div id="nav-publicsquare">
+	<div class="wrapper">
+		<ul>
+	    	<li {% if tab_soapbox %}class="active"{% endif %}><a id="nav-publicsquare-soapbox" href="{% url instances:public_square:soapbox active_game.slug %}" alt="Soapbox"></a></li>
+	    	<li {% if tab_buzz %}class="active"{% endif %}><a id="nav-publicsquare-buzz" href="{% url instances:public_square:buzz active_game.slug %}" alt="Buzz"></a></li>
+	    	<li {% if tab_leaderboard %}class="active"{% endif %}><a id="nav-publicsquare-leaderboard" href="{% url instances:public_square:leaderboard active_game.slug %}" alt="Leaderboard"></a></li>
+	    	<li {% if tab_awards %}class="active"{% endif %}><a id="nav-publicsquare-awards" href="{% url instances:public_square:user_awards active_game.slug %}" alt="Awards"></a></li>
+	    </ul>
+	</div>
 </div>
 {% endblock %}
