@@ -10,14 +10,35 @@
     <script src="{% static 'js/jquery-countdown.js' %}"></script>
     <script>
         $(document).ready(function(){
-            var newYear = new Date(); 
-            newYear = new Date(2013, 1-1, 1); 
-            $('#countdown').countdown({
-                labels: ['yrs', 'mnths', 'wks', 'days', 'hrs', 'mins', 'secs'], 
-                labels1: ['yr', 'mnth', 'wk', 'day', 'hr', 'min', 'sec'], 
-                until: newYear, 
-                format: 'dHMS'
-            }); 
+            var startMissionCallback = function(){
+                $('#countdown').html('Mission started!').addClass('countdown-ended');
+                setTimeout(function(){
+                    window.location.href='.'; // Refresh
+                }, 2000);
+            }
+
+            var endMissionCallback = function(){
+                $('#countdown').html('Mission ended!').addClass('countdown-ended');
+                setTimeout(function(){
+                    window.location.href='.'; // Refresh
+                }, 2000);
+            }
+
+            {% if not mission.is_expired %}
+                var end_date = new Date();
+                {% if mission.is_future %}
+                    end_date = new Date({{ mission.start_date.year }}, {{ mission.start_date.month }}-1, {{ mission.start_date.day }}, {{ mission.start_date.hour }}, {{ mission.start_date.minute }});                
+                {% else %}
+                    end_date = new Date({{ mission.end_date.year }}, {{ mission.end_date.month }}-1, {{ mission.end_date.day }}, {{ mission.end_date.hour }}, {{ mission.end_date.minute }});
+                {% endif %}  
+                $('#countdown').countdown({
+                    labels: ['yrs', 'mnths', 'wks', 'days', 'hrs', 'mins', 'secs'], 
+                    labels1: ['yr', 'mnth', 'wk', 'day', 'hr', 'min', 'sec'], 
+                    until: end_date, 
+                    format: 'dHMS', 
+                    onExpiry: {% if mission.is_future %}startMissionCallback{% else %}endMissionCallback{% endif %}, 
+                });
+            {% endif %}  
         });
     </script>
 {% endblock %}
@@ -39,10 +60,10 @@
                         <p>Mission ended</p>
                     {% elif mission.is_future %}
                         <h2>Starts in</h2>
-                        <p id="countdown">00:00:00</p>
+                        <p id="countdown">{{ mission.start_date }}</p>
                     {% else %}
                         <h2>Ends in</h2>
-                        <p id="countdown">00:00:00</p>                        
+                        <p id="countdown">{{ mission.end_date }}</p>
                     {% endif %}                    
                 </div>
             </a>

@@ -238,8 +238,8 @@ h1, h2, h3, h4, h5, h6 {
 			line-height: 1.5em;
 		}
 		h2 {
-			font-size: 1.2em;
-			line-height: 1.2em;
+			font-size: 1em;
+			line-height: 0.8em;
 			color: @light-gray;
 		}
 		#countdown {
@@ -249,7 +249,7 @@ h1, h2, h3, h4, h5, h6 {
 				.countdown_section {
 					width: 30px;
 					display: inline-block;
-					margin: 5px;
+					margin: 3px;
 					text-align: center;
 					color: @light-gray;
 				}
@@ -257,6 +257,9 @@ h1, h2, h3, h4, h5, h6 {
 					font-size: 1.5em;
 					color: @k-gray;
 				}
+			}
+			&.countdown-ended {
+				margin: 10px 0px;
 			}
 		}
 		&:before {
