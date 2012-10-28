@@ -43,7 +43,7 @@
     <div class="wrapper wrapper-nav-game">
         <ul id="nav-game-main">
             <li {% if tab_mission %}class="active"{% endif %}><a href="{{ active_mission.get_absolute_url }}" class="">{% trans "Mission" %}</a></li>
-            <li {% if tab_public_square %}class="active"{% endif %}><a href="{% url instances:public_square:soapbox active_game.slug %}">{% trans "Public Square" %}</a>
+            <li {% if tab_publicsquare %}class="active"{% endif %}><a href="{% url instances:public_square:soapbox active_game.slug %}">{% trans "Public Square" %}</a>
                 <ul>
                     <li><a href="{% url instances:public_square:soapbox active_game.slug %}">Soapbox</a></li>
                     <li><a href="{% url instances:public_square:buzz active_game.slug %}">Buzz</a></li>

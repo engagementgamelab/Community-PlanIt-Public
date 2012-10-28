@@ -3,6 +3,10 @@
 
 {% block title %}Public_Square{% endblock %}
 
+{% block nav_game %}
+    {% with 'active' as tab_publicsquare %}{{ block.super }}{% endwith %}
+{% endblock %}
+
 {% block content %}
 <div id="nav-publicsquare">
 	<div class="wrapper">
