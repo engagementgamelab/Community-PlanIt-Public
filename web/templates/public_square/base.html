@@ -9,8 +9,8 @@
 		<ul>
 	    	<li {% if tab_soapbox %}class="active"{% endif %}><a id="nav-publicsquare-soapbox" href="{% url instances:public_square:soapbox active_game.slug %}" alt="Soapbox"></a></li>
 	    	<li {% if tab_buzz %}class="active"{% endif %}><a id="nav-publicsquare-buzz" href="{% url instances:public_square:buzz active_game.slug %}" alt="Buzz"></a></li>
-	    	<li {% if tab_leaderboard %}class="active"{% endif %}><a id="nav-publicsquare-leaderboard" href="{% url instances:public_square:leaderboard active_game.slug %}" alt="Leaderboard"></a></li>
 	    	<li {% if tab_awards %}class="active"{% endif %}><a id="nav-publicsquare-awards" href="{% url instances:public_square:user_awards active_game.slug %}" alt="Awards"></a></li>
+	    	<li {% if tab_leaderboard %}class="active"{% endif %}><a id="nav-publicsquare-leaderboard" href="{% url instances:public_square:leaderboard active_game.slug %}" alt="Leaderboard"></a></li>
 	    </ul>
 	</div>
 </div>
