@@ -546,7 +546,7 @@ h1, h2, h3, h4, h5, h6 {
 		text-transform: uppercase;
 	}
 
-	&.section-bank-intro {
+	&.section-intro-bank, &.section-intro-publicsquare {
 		.wrapper {
 			position: relative;
 			min-height: 230px;
@@ -558,22 +558,33 @@ h1, h2, h3, h4, h5, h6 {
 				position: absolute;
 				bottom: 0; right: 0px;
 				width: 300px; height: 230px;
-				background: url('../img/bg-bank-section.png');
 			}
 		}
 	}
 
-	&#bank-causes-intro {
-		.wrapper:after { background-position: 0px; }
+	&.section-intro-bank .wrapper:after {
+		background: url('../img/bg-bank-section.png');
 	}
 
-	&#bank-coins-intro {
-		.wrapper:after { background-position: -300px; }
+	&.section-intro-publicsquare .wrapper:after {
+		background: url('../img/bg-publicsquare-section.png');
 	}
 
-	&#bank-sponsors-intro {
-		.wrapper:after { background-position: -600px; }
-	}
+	&#bank-causes-intro .wrapper:after { background-position: 0px; }
+
+	&#bank-coins-intro .wrapper:after { background-position: -300px; }
+
+	&#bank-sponsors-intro .wrapper:after { background-position: -600px; }
+
+	&#publicsquare-soapbox-intro .wrapper:after { background-position: 0px; }
+
+	&#publicsquare-buzz-intro .wrapper:after { background-position: -300px; }
+
+	&#publicsquare-awards-intro .wrapper:after { background-position: -600px; }
+
+	&#publicsquare-leaderboard-intro .wrapper:after { background-position: -900px; }
+
+
 }
 
 .section-filter-search {

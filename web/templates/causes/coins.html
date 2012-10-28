@@ -6,7 +6,7 @@
 {% block content %}
 {% with 'True' as tab_coins %}{{ block.super }}{% endwith %}
 
-<div id="bank-coins-intro" class="section-intro section-bank-intro">
+<div id="bank-coins-intro" class="section-intro section-intro-bank">
 	<div class="wrapper">
 			<h1>Your Coins</h1>
 			<p>The details of your coins earned and how you spent them are listed below. When you have completed a mission, you can use the coins you earned to support any of the <a href="{% url instances:causes:cause_list active_game.slug %}">causes in need of support</a>.</p>
