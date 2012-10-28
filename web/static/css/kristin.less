@@ -32,7 +32,8 @@ h1, h2, h3, h4, h5, h6 {
 #nav-game {
 	#nav-game-main {
 		display: inline-block;
-		li {
+		& > li {
+			position: relative;
 			display: inline-block;
 			& > a {
 				display: inline-block;
@@ -42,6 +43,30 @@ h1, h2, h3, h4, h5, h6 {
 			}		
 			&.active > a, &:hover > a {
 				background: @k-light-yellow;
+			}
+			/* Dropdown menu */
+			&:hover ul {
+				display: block;
+			}
+			ul {
+				display: none;
+				position: absolute;
+				top: 100%;
+				width: 100%;
+				margin: 0;
+				list-style: none;
+				z-index: 1;
+				& > li {
+					background: @k-light-yellow;
+					& > a {
+						display: block;
+						padding: 10px;
+						text-decoration: none;
+						&:hover {
+							background: @k-yellow;
+						}
+					}
+				}
 			}
 		}
 	}
