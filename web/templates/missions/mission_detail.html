@@ -8,12 +8,10 @@
     {% block js_gameboard %}
     <script>
         $(function(){
-
             var minimap =  $('.minimap');
             minimap.siblings('.window').css({
-                'margin-left': minimap.find('.challenge.active').position().left + minimap.find('.challenge.active').width()/2 - minimap.siblings('.window').width()/2
+                'margin-left': minimap.find('.challenge.mission').position().left + minimap.find('.challenge.mission').width()/2 - minimap.siblings('.window').width()/2
             });
-
         });
     </script>
     {% endblock %}

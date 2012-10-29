@@ -53,7 +53,7 @@
     <div class="wrapper carousel-clip">
         <!-- Carousel Slide -->
         <div class="row box-shadow-container challenges-container carousel-slide">
-            <a href="" class="challenge mission span4">
+            <a href="{{ mission.get_absolute_url }}" class="challenge mission span4">
                 <div>
                     <h1>Mission</h1>
                     {% if mission.is_expired %}
