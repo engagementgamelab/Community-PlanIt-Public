@@ -17,7 +17,7 @@ from web.accounts.mixins import MissionContextMixin
 from web.accounts.models import UserProfile, UserProfilePerInstance
 # from web.reports.actions import PointsAssigner
 # from web.challenges.models import Answer, AnswerMultiChoice
-from web.values.models import Value
+# from web.values.models import Value
 from .forms import *
 from .models import Comment
 
