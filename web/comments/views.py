@@ -2,7 +2,7 @@ from sijax import Sijax
 from PIL import Image
 from stream import utils as stream_utils
 
-from nani.utils import get_translation
+# from nani.utils import get_translation
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
